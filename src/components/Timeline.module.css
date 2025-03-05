@@ -107,6 +107,9 @@
   height: 100%;
   display: flex;
   align-items: center;
+  border-width: 0;
+  border-left-width: 2px;
+  border-style: dotted;
 }
 
 .entryIndicator::before {
@@ -135,7 +138,6 @@
 
 .idleActivity .entryIndicator {
   background-color: #e5e7eb;
-  border-left-color: #9ca3af;
 }
 
 .idleActivity .entryIndicator::before {
@@ -144,8 +146,6 @@
 
 .leftoverTime .entryIndicator {
   background-color: #f3f4f6;
-  border-left-color: #9ca3af;
-  border-style: dashed;
 }
 
 .entryContent {
@@ -155,10 +155,6 @@
   border-radius: 0.25rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease;
-  border-width: 0;
-  border-left-width: 8px;
-  border-style: solid;
-  border-color: #9ca3af;  /* Default border color */
 }
 
 .entry:hover .entryContent {
@@ -171,8 +167,6 @@
 
 .leftoverTime .entryContent {
   background-color: #f3f4f6;
-  border-color: #9ca3af;
-  border-style: dashed;
 }
 
 .entryHeader {

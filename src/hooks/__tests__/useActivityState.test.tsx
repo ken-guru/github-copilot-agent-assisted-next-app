@@ -16,13 +16,6 @@ describe('useActivityState', () => {
       result.current.handleActivitySelect(mockActivity1);
     });
     await waitForStateUpdate();
-
-    // Debug state
-    console.log('After first activity:', {
-      activities: Array.from(result.current.activities),
-      completed: result.current.completedActivityIds,
-      allCompleted: result.current.allActivitiesCompleted
-    });
     
     act(() => {
       result.current.handleActivitySelect(mockActivity2);
@@ -45,13 +38,6 @@ describe('useActivityState', () => {
     });
     await waitForStateUpdate();
 
-    // Debug state after completing first activity
-    console.log('After completing first activity:', {
-      activities: Array.from(result.current.activities),
-      completed: result.current.completedActivityIds,
-      allCompleted: result.current.allActivitiesCompleted
-    });
-
     act(() => {
       result.current.handleActivitySelect(mockActivity2);
     });
@@ -72,13 +58,6 @@ describe('useActivityState', () => {
     });
     await waitForStateUpdate();
 
-    // Debug final state
-    console.log('Final state:', {
-      activities: Array.from(result.current.activities),
-      completed: result.current.completedActivityIds,
-      allCompleted: result.current.allActivitiesCompleted
-    });
-
     expect(result.current.allActivitiesCompleted).toBe(true);
   });
 
@@ -90,11 +69,6 @@ describe('useActivityState', () => {
       result.current.handleActivitySelect(mockActivity1);
     });
     await waitForStateUpdate();
-    console.log('After first activity:', {
-      activities: Array.from(result.current.activities),
-      completed: result.current.completedActivityIds,
-      allCompleted: result.current.allActivitiesCompleted
-    });
     
     act(() => {
       result.current.handleActivitySelect(mockActivity2);
@@ -111,11 +85,6 @@ describe('useActivityState', () => {
       result.current.handleActivitySelect(mockActivity1);
     });
     await waitForStateUpdate();
-    console.log('After starting activity:', {
-      activities: Array.from(result.current.activities),
-      completed: result.current.completedActivityIds,
-      allCompleted: result.current.allActivitiesCompleted
-    });
 
     // Remove other activities
     act(() => {
@@ -127,22 +96,12 @@ describe('useActivityState', () => {
       result.current.handleActivityRemoval(mockActivity3.id);
     });
     await waitForStateUpdate();
-    console.log('After removing activities:', {
-      activities: Array.from(result.current.activities),
-      completed: result.current.completedActivityIds,
-      allCompleted: result.current.allActivitiesCompleted
-    });
 
     // Complete the running activity
     act(() => {
       result.current.handleActivitySelect(null);
     });
     await waitForStateUpdate();
-    console.log('Final state:', {
-      activities: Array.from(result.current.activities),
-      completed: result.current.completedActivityIds,
-      allCompleted: result.current.allActivitiesCompleted
-    });
 
     expect(result.current.allActivitiesCompleted).toBe(true);
   });
@@ -233,5 +192,135 @@ describe('useActivityState', () => {
     await waitForStateUpdate();
 
     expect(result.current.allActivitiesCompleted).toBe(true);
+  });
+
+  describe('completion state', () => {
+    it('should not mark as completed when there are no activities', () => {
+      const { result } = renderHook(() => useActivityState());
+      expect(result.current.allActivitiesCompleted).toBeFalsy();
+    });
+
+    it('should not mark as completed when there are pending activities', () => {
+      const { result } = renderHook(() => useActivityState());
+
+      // Add an activity
+      act(() => {
+        result.current.handleActivitySelect({
+          id: '1',
+          name: 'Test Activity'
+        });
+      });
+
+      expect(result.current.allActivitiesCompleted).toBeFalsy();
+    });
+
+    it('should not mark as completed when an activity is running', () => {
+      const { result } = renderHook(() => useActivityState());
+
+      // Add and start an activity
+      act(() => {
+        result.current.handleActivitySelect({
+          id: '1',
+          name: 'Test Activity'
+        });
+      });
+
+      expect(result.current.allActivitiesCompleted).toBeFalsy();
+    });
+
+    it('should mark as completed when all activities are completed or removed', () => {
+      const { result } = renderHook(() => useActivityState());
+
+      // Add and complete an activity
+      act(() => {
+        result.current.handleActivitySelect({
+          id: '1',
+          name: 'Test Activity'
+        });
+      });
+
+      act(() => {
+        result.current.handleActivitySelect(null); // Complete the activity
+      });
+
+      expect(result.current.allActivitiesCompleted).toBeTruthy();
+    });
+
+    it('should mark as completed when some activities are completed and others are removed', () => {
+      const { result } = renderHook(() => useActivityState());
+
+      // Add two activities
+      act(() => {
+        result.current.handleActivitySelect({
+          id: '1',
+          name: 'Activity 1'
+        });
+      });
+
+      act(() => {
+        result.current.handleActivitySelect({
+          id: '2',
+          name: 'Activity 2'
+        });
+      });
+
+      // Complete one activity
+      act(() => {
+        result.current.handleActivitySelect(null);
+      });
+
+      // Remove the other activity
+      act(() => {
+        result.current.handleActivityRemoval('2');
+      });
+
+      expect(result.current.allActivitiesCompleted).toBeTruthy();
+    });
+
+    it('should not mark as completed if an activity is removed but another is pending', () => {
+      const { result } = renderHook(() => useActivityState());
+
+      // Add two activities
+      act(() => {
+        result.current.handleActivitySelect({
+          id: '1',
+          name: 'Activity 1'
+        });
+      });
+
+      act(() => {
+        result.current.handleActivitySelect({
+          id: '2',
+          name: 'Activity 2'
+        });
+      });
+
+      // Remove one activity but leave the other pending
+      act(() => {
+        result.current.handleActivityRemoval('2');
+      });
+
+      expect(result.current.allActivitiesCompleted).toBeFalsy();
+    });
+
+    it('should not allow removal of activities that appear in timeline', () => {
+      const { result } = renderHook(() => useActivityState());
+
+      // Add and start an activity
+      act(() => {
+        result.current.handleActivitySelect({
+          id: '1',
+          name: 'Activity 1'
+        });
+      });
+
+      // Try to remove the activity that's in the timeline
+      act(() => {
+        result.current.handleActivityRemoval('1');
+      });
+
+      // The activity should still be present in the timeline
+      expect(result.current.timelineEntries.some(entry => entry.activityId === '1')).toBeTruthy();
+    });
   });
 });

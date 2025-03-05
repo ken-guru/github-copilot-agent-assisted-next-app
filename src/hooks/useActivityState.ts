@@ -99,22 +99,14 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
   }, [currentActivity, timelineEntries, onTimerStart]);
 
   const handleActivityRemoval = useCallback((activityId: string) => {
+    // Check if this activity appears in the timeline
+    const activityInTimeline = timelineEntries.some(entry => entry.activityId === activityId);
+    if (activityInTimeline) {
+      return; // Don't allow removal of activities that are in the timeline
+    }
+
     if (currentActivity?.id === activityId) {
       setCurrentActivity(null);
-      
-      if (timelineEntries.length > 0) {
-        const lastEntry = timelineEntries[timelineEntries.length - 1];
-        if (!lastEntry.endTime) {
-          setTimelineEntries(prev => {
-            const updatedEntries = [...prev];
-            updatedEntries[prev.length - 1] = {
-              ...lastEntry,
-              endTime: Date.now()
-            };
-            return updatedEntries;
-          });
-        }
-      }
     }
 
     setRemovedActivityIds(prev => {

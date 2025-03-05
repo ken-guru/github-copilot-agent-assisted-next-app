@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import styles from './ActivityManager.module.css';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
+import { TimelineEntry } from '../hooks/useActivityState';
 
 export interface Activity {
   id: string;
@@ -15,6 +16,7 @@ interface ActivityManagerProps {
   onActivityRemove?: (activityId: string) => void;
   currentActivityId: string | null;
   completedActivityIds: string[];
+  timelineEntries: TimelineEntry[];
   isTimeUp?: boolean;
 }
 
@@ -23,6 +25,7 @@ export default function ActivityManager({
   onActivityRemove,
   currentActivityId, 
   completedActivityIds,
+  timelineEntries,
   isTimeUp = false
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -150,6 +153,7 @@ export default function ActivityManager({
                     <button
                       onClick={() => handleRemoveActivity(activity.id)}
                       className={styles.removeButton}
+                      disabled={timelineEntries?.some(entry => entry.activityId === activity.id)}
                     >
                       Remove
                     </button>

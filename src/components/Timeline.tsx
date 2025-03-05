@@ -145,14 +145,15 @@ export default function Timeline({
                   <div 
                     className={styles.entryIndicator}
                     style={entry.colors ? {
-                      color: entry.colors.border
+                      color: entry.colors.text,
+                      backgroundColor: entry.colors.background,
+                      borderColor: entry.colors.border
                     } : undefined}
                   />
                   <div 
                     className={styles.entryContent}
                     style={entry.colors ? {
-                      backgroundColor: entry.colors.background,
-                      borderLeftColor: entry.colors.border
+                      backgroundColor: entry.colors.background
                     } : undefined}
                   >
                     <div className={styles.entryHeader}>
