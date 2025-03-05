@@ -9,74 +9,220 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .heading {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #111827; /* Darker text for better contrast */
+  color: #111827;
 }
 
 .timeDisplay {
   font-size: 1.25rem;
   font-weight: bold;
-  color: #111827; /* Darker text for better contrast */
+  color: #111827;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #f3f4f6;
 }
 
 .timeDisplayOvertime {
-  color: #dc2626; /* Darker red for better contrast */
+  color: #dc2626;
+  background-color: #fee2e2;
 }
 
-.emptyState {
-  text-align: center;
-  padding: 2rem 0;
-  color: #4b5563; /* Darker gray for better contrast */
+.timeDisplayInactive {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.timelineContainer {
+  position: relative;
+  min-height: 400px;
+  max-height: 400px;
+  display: flex;
+  transition: max-height 0.3s ease;
+}
+
+.timelineContainer.hasEntries {
+  max-height: none;
+}
+
+.timelineRuler {
+  position: relative;
+  width: 2rem;
+  background-color: #f3f4f6;
+  border-radius: 0.25rem;
+  margin-right: 1rem;
+}
+
+.timelineRulerLine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: #2563eb;
+  transform: translateX(-50%);
+}
+
+.timelineRulerLine::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  width: 20px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 14px,
+    #e5e7eb 14px,
+    #e5e7eb 15px
+  );
+  pointer-events: none;
 }
 
 .entriesList {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  flex: 1;
+  position: relative;
 }
 
 .entry {
-  border-left: 4px solid #2563eb; /* Darker blue for better contrast */
-  padding-left: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  position: absolute;
+  left: -1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  width: calc(100% + 1rem);
+  min-height: 3rem;
+}
+
+.entryIndicator {
+  width: 2rem;
+  position: relative;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.entryIndicator::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: currentColor;
+  transform: translateX(-50%);
+}
+
+.entryIndicator::after {
+  content: '';
+  position: absolute;
+  left: calc(50% + 6px);
+  right: 0;
+  height: 2px;
+  background-color: currentColor;
+}
+
+.entry:hover .entryIndicator {
+  transform: translateX(2px);
+}
+
+.idleActivity .entryIndicator {
+  background-color: #e5e7eb;
+  border-left-color: #9ca3af;
+}
+
+.idleActivity .entryIndicator::before {
+  background-color: #9ca3af;
+}
+
+.leftoverTime .entryIndicator {
+  background-color: #f3f4f6;
+  border-left-color: #9ca3af;
+  border-style: dashed;
+}
+
+.entryContent {
+  flex: 1;
+  padding: 0.75rem;
+  background-color: #f3f4f6;  /* Default background color */
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+  border-width: 0;
+  border-left-width: 8px;
+  border-style: solid;
+  border-color: #9ca3af;  /* Default border color */
+}
+
+.entry:hover .entryContent {
+  transform: translateX(4px);
+}
+
+.shortEntry .entryContent {
+  margin-top: -1rem;
+}
+
+.leftoverTime .entryContent {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+  border-style: dashed;
 }
 
 .entryHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
 }
 
 .activityName {
-  font-weight: 500;
-  color: #111827; /* Darker text for better contrast */
+  font-weight: 600;
+  color: #111827;
+  font-size: 1rem;
 }
 
-.idleActivity {
+.idleActivity .activityName {
   font-style: italic;
-  color: #4b5563; /* Darker gray for better contrast */
+  color: #4b5563;
+}
+
+.leftoverTime .activityName,
+.leftoverTime .timeInfo,
+.leftoverTime .durationInfo {
+  color: #4b5563;
+  font-style: italic;
 }
 
 .timeInfo {
   font-size: 0.875rem;
-  color: #4b5563; /* Darker gray for better contrast */
+  color: #4b5563;
 }
 
 .durationInfo {
   font-size: 0.875rem;
-  color: #111827; /* Darker text for better contrast */
+  color: #111827;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: #4b5563;
 }
 
 .warningMessage {
   margin-top: 1rem;
   padding: 0.75rem;
   background-color: #fee2e2;
-  color: #991b1b; /* Darker red for better contrast */
+  color: #991b1b;
   border-radius: 0.25rem;
+  text-align: center;
 }

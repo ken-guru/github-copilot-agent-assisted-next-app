@@ -187,10 +187,12 @@ a.secondary {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  color: #111827;
 }
 
 .subtitle {
-  color: #6b7280;
+  color: #374151;
+  font-weight: 500;
 }
 
 .grid {
