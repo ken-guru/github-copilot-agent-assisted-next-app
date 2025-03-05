@@ -1,0 +1,88 @@
+.container {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #111827; /* Darker text for better contrast */
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.statCard {
+  background-color: #f3f4f6;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: #374151; /* Darker text for better contrast */
+}
+
+.statValue {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #111827; /* Darker text for better contrast */
+}
+
+.statusMessage {
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.statusMessageOnTime {
+  background-color: #d1fae5;
+  color: #065f46; /* Already good contrast */
+}
+
+.statusMessageEarly {
+  background-color: #dbeafe;
+  color: #1e40af; /* Already good contrast */
+}
+
+.statusMessageLate {
+  background-color: #fef3c7;
+  color: #92400e; /* Already good contrast */
+}
+
+.sectionHeading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #111827; /* Darker text for better contrast */
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+}
+
+.activityItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.activityName {
+  font-weight: 500;
+  color: #111827; /* Darker text for better contrast */
+}
+
+.idleTime {
+  color: #4b5563; /* Darker gray for better contrast */
+  font-style: italic;
+}

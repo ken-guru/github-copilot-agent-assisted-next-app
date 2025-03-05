@@ -1,0 +1,133 @@
+.container {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #111827; /* Darker text for better contrast */
+}
+
+.form {
+  margin-bottom: 1rem;
+}
+
+.inputContainer {
+  display: flex;
+}
+
+.input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #9ca3af; /* Darker border for better contrast */
+  border-radius: 0.25rem 0 0 0.25rem;
+  color: #111827; /* Darker text for better contrast */
+  background-color: white; /* Ensure light background for inputs */
+}
+
+.addButton {
+  background-color: #2563eb; /* Slightly darker blue */
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0 0.25rem 0.25rem 0;
+  cursor: pointer;
+}
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.activityItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid #9ca3af; /* Darker border for better contrast */
+  border-radius: 0.25rem;
+}
+
+.completedActivityItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border: 2px solid #16a34a;
+  border-radius: 0.25rem;
+  background-color: #f0fdf4;
+}
+
+.activityName {
+  flex: 1;
+  color: #111827; /* Darker text for better contrast */
+  font-weight: 500;
+}
+
+.completedActivityName {
+  flex: 1;
+  color: #4b5563;
+  font-weight: 500;
+  text-decoration: line-through;
+}
+
+.completedTag {
+  display: inline-block;
+  color: #16a34a;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid #16a34a;
+  border-radius: 0.25rem;
+  background-color: transparent;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.startButton {
+  background-color: #16a34a; /* Green for start */
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.runningButton {
+  background-color: #16a34a; /* Slightly darker green */
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.removeButton {
+  background-color: #dc2626; /* Slightly darker red */
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.stopButton {
+  background-color: #dc2626; /* Red for stop */
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}

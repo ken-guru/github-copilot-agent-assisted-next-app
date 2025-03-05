@@ -1,0 +1,82 @@
+.container {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #111827; /* Darker text for better contrast */
+}
+
+.timeDisplay {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #111827; /* Darker text for better contrast */
+}
+
+.timeDisplayOvertime {
+  color: #dc2626; /* Darker red for better contrast */
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem 0;
+  color: #4b5563; /* Darker gray for better contrast */
+}
+
+.entriesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.entry {
+  border-left: 4px solid #2563eb; /* Darker blue for better contrast */
+  padding-left: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.entryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.activityName {
+  font-weight: 500;
+  color: #111827; /* Darker text for better contrast */
+}
+
+.idleActivity {
+  font-style: italic;
+  color: #4b5563; /* Darker gray for better contrast */
+}
+
+.timeInfo {
+  font-size: 0.875rem;
+  color: #4b5563; /* Darker gray for better contrast */
+}
+
+.durationInfo {
+  font-size: 0.875rem;
+  color: #111827; /* Darker text for better contrast */
+}
+
+.warningMessage {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #fee2e2;
+  color: #991b1b; /* Darker red for better contrast */
+  border-radius: 0.25rem;
+}

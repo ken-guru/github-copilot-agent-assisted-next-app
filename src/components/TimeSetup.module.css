@@ -1,0 +1,80 @@
+.container {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #111827; /* Darker text for better contrast */
+}
+
+.modeSelector {
+  display: flex;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+}
+
+.buttonPrimary {
+  background-color: #2563eb; /* Darker blue for better contrast */
+  color: white;
+}
+
+.buttonSecondary {
+  background-color: #d1d5db; /* Darker gray for better contrast */
+  color: #111827; /* Darker text for better contrast */
+}
+
+.inputGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #374151; /* Darker text for better contrast */
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #9ca3af; /* Darker border for better contrast */
+  border-radius: 0.25rem;
+  color: #111827; /* Darker text for better contrast */
+  background-color: white; /* Ensure light background for inputs */
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #16a34a; /* Darker green for better contrast */
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background-color: #15803d; /* Even darker green for hover state */
+}
