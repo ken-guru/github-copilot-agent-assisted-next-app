@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import styles from './ActivityManager.module.css';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '../hooks/useActivityState';
+import { useTheme } from '../contexts/ThemeContext';
 
 export interface Activity {
   id: string;
@@ -28,19 +29,30 @@ export default function ActivityManager({
   timelineEntries,
   isTimeUp = false
 }: ActivityManagerProps) {
+  const { isDarkMode } = useTheme();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [newActivityName, setNewActivityName] = useState('');
 
   // Initialize activities with colors on mount
   useEffect(() => {
     const defaultActivities: Activity[] = [
-      { id: '1', name: 'Homework', isDefault: true, colors: getNextAvailableColorSet() },
-      { id: '2', name: 'Reading', isDefault: true, colors: getNextAvailableColorSet() },
-      { id: '3', name: 'Play Time', isDefault: true, colors: getNextAvailableColorSet() },
-      { id: '4', name: 'Chores', isDefault: true, colors: getNextAvailableColorSet() },
+      { id: '1', name: 'Homework', isDefault: true, colors: getNextAvailableColorSet(isDarkMode) },
+      { id: '2', name: 'Reading', isDefault: true, colors: getNextAvailableColorSet(isDarkMode) },
+      { id: '3', name: 'Play Time', isDefault: true, colors: getNextAvailableColorSet(isDarkMode) },
+      { id: '4', name: 'Chores', isDefault: true, colors: getNextAvailableColorSet(isDarkMode) },
     ];
     setActivities(defaultActivities);
-  }, []);
+  }, [isDarkMode]);
+  
+  // Update activity colors when dark mode changes
+  useEffect(() => {
+    setActivities(currentActivities => 
+      currentActivities.map(activity => ({
+        ...activity,
+        colors: getNextAvailableColorSet(isDarkMode)
+      }))
+    );
+  }, [isDarkMode]);
 
   // Adding new activities is only disabled when time is up
   const isAddingDisabled = isTimeUp;
@@ -51,7 +63,7 @@ export default function ActivityManager({
       const newActivity: Activity = {
         id: Date.now().toString(),
         name: newActivityName.trim(),
-        colors: getNextAvailableColorSet()
+        colors: getNextAvailableColorSet(isDarkMode)
       };
       setActivities([...activities, newActivity]);
       setNewActivityName('');
@@ -66,7 +78,7 @@ export default function ActivityManager({
       // Start the selected activity
       onActivitySelect({
         ...activity,
-        colors: activity.colors || getNextAvailableColorSet()
+        colors: activity.colors || getNextAvailableColorSet(isDarkMode)
       });
     }
   };
@@ -83,7 +95,6 @@ export default function ActivityManager({
   return (
     <div className={styles.container}>
       <h2 className={styles.heading}>Activities</h2>
-
       <form onSubmit={handleAddActivity} className={styles.form}>
         <div className={styles.inputContainer}>
           <input
@@ -103,7 +114,6 @@ export default function ActivityManager({
           </button>
         </div>
       </form>
-
       {activities.length === 0 ? (
         <div className={styles.emptyState}>
           No activities defined
@@ -164,7 +174,6 @@ export default function ActivityManager({
           })}
         </div>
       )}
-
       {currentActivityId === null && !isTimeUp && (
         <div className={styles.breakMessage}>
           Taking a break - Click any activity to start

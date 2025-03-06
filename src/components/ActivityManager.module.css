@@ -1,5 +1,5 @@
 .container {
-  background-color: white;
+  background-color: var(--background, white);
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -9,7 +9,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  color: #111827; /* Darker text for better contrast */
+  color: var(--foreground, #111827);
 }
 
 .form {
@@ -23,34 +23,44 @@
 .input {
   flex: 1;
   padding: 0.5rem;
-  border: 1px solid #9ca3af; /* Darker border for better contrast */
+  border: 1px solid var(--border-color, #9ca3af);
   border-radius: 0.25rem 0 0 0.25rem;
-  color: #111827; /* Darker text for better contrast */
-  background-color: white; /* Ensure light background for inputs */
+  color: var(--foreground, #111827);
+  background-color: var(--background, white);
+}
+
+.input:focus {
+  outline: 2px solid var(--accent-color, #2563eb);
+  border-color: transparent;
 }
 
 .input:disabled {
-  background-color: #f3f4f6;
-  color: #9ca3af;
+  background-color: var(--background-muted, #f3f4f6);
+  color: var(--foreground-muted, #9ca3af);
   cursor: not-allowed;
 }
 
 .input:disabled::placeholder {
-  color: #9ca3af;
+  color: var(--foreground-muted, #9ca3af);
 }
 
 .addButton {
-  background-color: #2563eb; /* Slightly darker blue */
+  background-color: var(--accent-color, #2563eb);
   color: white;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 0 0.25rem 0.25rem 0;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.addButton:hover:not(.disabled) {
+  background-color: var(--accent-color-hover, #1d4ed8);
 }
 
 .addButton.disabled {
-  background-color: #e5e7eb;
-  color: #9ca3af;
+  background-color: var(--background-muted, #e5e7eb);
+  color: var(--foreground-muted, #9ca3af);
   cursor: not-allowed;
 }
 
@@ -61,37 +71,53 @@
 .activityList {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem; /* Increased gap for better separation */
 }
 
 .activityItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
-  border: 1px solid #9ca3af; /* Darker border for better contrast */
+  padding: 0.75rem; /* Increased padding for better visibility */
+  border: 1px solid var(--border-color, #9ca3af);
   border-radius: 0.25rem;
+  box-shadow: 0 1px 2px var(--segment-outline, rgba(0, 0, 0, 0.05));
+  transition: transform 0.2s ease;
+}
+
+.activityItem:hover {
+  transform: translateY(-1px);
 }
 
 .completedActivityItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
+  padding: 0.75rem;
   border: 2px solid #16a34a;
   border-radius: 0.25rem;
   background-color: #f0fdf4;
+  transition: transform 0.2s ease;
+}
+
+:global(.dark-mode) .completedActivityItem {
+  background-color: #064e3b;
+  border-color: #10b981;
+}
+
+.completedActivityItem:hover {
+  transform: translateY(-1px);
 }
 
 .activityName {
   flex: 1;
-  color: #111827; /* Darker text for better contrast */
+  color: var(--foreground, #111827);
   font-weight: 500;
 }
 
 .completedActivityName {
   flex: 1;
-  color: #4b5563;
+  color: var(--foreground-muted, #4b5563);
   font-weight: 500;
   text-decoration: line-through;
 }
@@ -107,49 +133,74 @@
   background-color: transparent;
 }
 
+:global(.dark-mode) .completedTag {
+  color: #10b981;
+  border-color: #10b981;
+}
+
 .buttonGroup {
   display: flex;
   gap: 0.5rem;
 }
 
 .startButton {
-  background-color: #16a34a; /* Green for start */
+  background-color: #16a34a;
   color: white;
   padding: 0.25rem 0.75rem;
   border: none;
   border-radius: 0.25rem;
   font-size: 0.875rem;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.startButton:hover {
+  background-color: #15803d;
 }
 
 .runningButton {
-  background-color: #16a34a; /* Slightly darker green */
+  background-color: #16a34a;
   color: white;
   padding: 0.25rem 0.75rem;
   border: none;
   border-radius: 0.25rem;
   font-size: 0.875rem;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.runningButton:hover {
+  background-color: #15803d;
 }
 
 .removeButton {
-  background-color: #dc2626; /* Slightly darker red */
+  background-color: #dc2626;
   color: white;
   padding: 0.25rem 0.75rem;
   border: none;
   border-radius: 0.25rem;
   font-size: 0.875rem;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.removeButton:hover {
+  background-color: #b91c1c;
 }
 
 .stopButton {
-  background-color: #6366f1; /* Indigo color for complete */
+  background-color: #6366f1;
   color: white;
   padding: 0.25rem 0.75rem;
   border: none;
   border-radius: 0.25rem;
   font-size: 0.875rem;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.stopButton:hover {
+  background-color: #4f46e5;
 }
 
 .breakMessage {
@@ -161,4 +212,19 @@
   border-radius: 0.5rem;
   color: #0369a1;
   font-size: 0.875rem;
+}
+
+:global(.dark-mode) .breakMessage {
+  background-color: #0c4a6e;
+  border-color: #0ea5e9;
+  color: #e0f2fe;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: var(--foreground-muted, #4b5563);
+  background-color: var(--background-muted, #f9fafb);
+  border-radius: 0.25rem;
+  margin: 1rem 0;
 }

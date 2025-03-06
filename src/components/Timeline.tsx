@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Activity } from './ActivityManager';
 import styles from './Timeline.module.css';
 import { ColorSet } from '../utils/colors';
+import ProgressBar from './ProgressBar';
+import { useTheme } from '../contexts/ThemeContext';
 
 export interface TimelineEntry {
   id: string;
@@ -28,6 +30,7 @@ export default function Timeline({
   allActivitiesCompleted,
   timerActive = false
 }: TimelineProps) {
+  const { isDarkMode } = useTheme();
   const [timeLeft, setTimeLeft] = useState(totalDuration - elapsedTime);
   const isOvertime = timeLeft < 0;
 
@@ -122,6 +125,15 @@ export default function Timeline({
           )}
         </div>
       </div>
+
+      {/* Use the ProgressBar component with dark mode support */}
+      <ProgressBar 
+        entries={entries}
+        totalDuration={totalDuration}
+        elapsedTime={elapsedTime}
+        timerActive={timerActive}
+        isDarkMode={isDarkMode}
+      />
 
       <div className={`${styles.timelineContainer} ${displayedEntries.length > 0 && styles.hasEntries}`}>
         <div className={styles.timelineRuler}>

@@ -1,5 +1,5 @@
 .container {
-  background-color: white;
+  background-color: var(--background, white);
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -15,26 +15,26 @@
 .heading {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #111827;
+  color: var(--foreground, #111827);
 }
 
 .timeDisplay {
   font-size: 1.25rem;
   font-weight: bold;
-  color: #111827;
+  color: var(--foreground, #111827);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  background-color: #f3f4f6;
+  background-color: var(--background-muted, #f3f4f6);
 }
 
 .timeDisplayOvertime {
   color: #dc2626;
-  background-color: #fee2e2;
+  background-color: var(--break-background, #fee2e2);
 }
 
 .timeDisplayInactive {
-  background-color: #f3f4f6;
-  color: #6b7280;
+  background-color: var(--background-muted, #f3f4f6);
+  color: var(--foreground-muted, #6b7280);
   font-style: italic;
 }
 
@@ -53,7 +53,7 @@
 .timelineRuler {
   position: relative;
   width: 2rem;
-  background-color: #f3f4f6;
+  background-color: var(--background-muted, #f3f4f6);
   border-radius: 0.25rem;
   margin-right: 1rem;
 }
@@ -64,7 +64,7 @@
   top: 0;
   bottom: 0;
   width: 4px;
-  background-color: #2563eb;
+  background-color: var(--accent-color, #2563eb);
   transform: translateX(-50%);
 }
 
@@ -78,8 +78,8 @@
     to bottom,
     transparent,
     transparent 14px,
-    #e5e7eb 14px,
-    #e5e7eb 15px
+    var(--border-color, #e5e7eb) 14px,
+    var(--border-color, #e5e7eb) 15px
   );
   pointer-events: none;
 }
@@ -97,6 +97,7 @@
   align-items: flex-start;
   width: calc(100% + 1rem);
   min-height: 3rem;
+  margin-bottom: 2px; /* Add spacing between entries for better distinction */
 }
 
 .entryIndicator {
@@ -121,6 +122,7 @@
   border-radius: 50%;
   background-color: currentColor;
   transform: translateX(-50%);
+  box-shadow: 0 0 0 1px var(--segment-outline, rgba(0, 0, 0, 0.05)); /* Add outline for better visibility */
 }
 
 .entryIndicator::after {
@@ -137,24 +139,25 @@
 }
 
 .idleActivity .entryIndicator {
-  background-color: #e5e7eb;
+  background-color: var(--border-color, #e5e7eb);
 }
 
 .idleActivity .entryIndicator::before {
-  background-color: #9ca3af;
+  background-color: var(--foreground-muted, #9ca3af);
 }
 
 .leftoverTime .entryIndicator {
-  background-color: #f3f4f6;
+  background-color: var(--break-background, #f3f4f6);
 }
 
 .entryContent {
   flex: 1;
   padding: 0.75rem;
-  background-color: #f3f4f6;  /* Default background color */
+  background-color: var(--break-background, #f3f4f6); /* Default background color */
   border-radius: 0.25rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease;
+  border: 1px solid var(--segment-outline, rgba(0, 0, 0, 0.05)); /* Add subtle border */
 }
 
 .entry:hover .entryContent {
@@ -166,7 +169,7 @@
 }
 
 .leftoverTime .entryContent {
-  background-color: #f3f4f6;
+  background-color: var(--break-background, #f3f4f6);
 }
 
 .entryHeader {
@@ -178,30 +181,30 @@
 
 .activityName {
   font-weight: 600;
-  color: #111827;
+  color: var(--foreground, #111827);
   font-size: 1rem;
 }
 
 .idleActivity .activityName {
   font-style: italic;
-  color: #4b5563;
+  color: var(--foreground-muted, #4b5563);
 }
 
 .leftoverTime .activityName,
 .leftoverTime .timeInfo,
 .leftoverTime .durationInfo {
-  color: #4b5563;
+  color: var(--foreground-muted, #4b5563);
   font-style: italic;
 }
 
 .timeInfo {
   font-size: 0.875rem;
-  color: #4b5563;
+  color: var(--foreground-muted, #4b5563);
 }
 
 .durationInfo {
   font-size: 0.875rem;
-  color: #111827;
+  color: var(--foreground, #111827);
   font-weight: 500;
   white-space: nowrap;
 }
@@ -209,7 +212,7 @@
 .emptyState {
   text-align: center;
   padding: 2rem;
-  color: #4b5563;
+  color: var(--foreground-muted, #4b5563);
 }
 
 .warningMessage {
@@ -219,4 +222,15 @@
   color: #991b1b;
   border-radius: 0.25rem;
   text-align: center;
+}
+
+/* Dark mode specific styles */
+:global(.dark-mode) .warningMessage {
+  background-color: #7f1d1d;
+  color: #fecaca;
+}
+
+:global(.dark-mode) .timeDisplayOvertime {
+  color: #fca5a5;
+  background-color: #7f1d1d;
 }

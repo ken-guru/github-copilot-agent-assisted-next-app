@@ -1,12 +1,56 @@
 :root {
+  /* Light mode variables */
   --background: #ffffff;
   --foreground: #171717;
+  --background-muted: #f9fafb;
+  --foreground-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --break-background: #f3f4f6;
+  --break-text: #4b5563;
+  --segment-separator: white;
+  --segment-outline: rgba(0, 0, 0, 0.05);
+  --text-default: rgba(0, 0, 0, 0.7);
+  --text-muted: #6b7280;
+  --accent-color: #2563eb;
+  --accent-color-hover: #1d4ed8;
 }
 
+html.dark-mode {
+  /* Dark mode variables */
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --background-muted: #1f2937;
+  --foreground-muted: #9ca3af;
+  --border-color: #374151;
+  --break-background: #374151;
+  --break-text: #9ca3af;
+  --segment-separator: #1f2937;
+  --segment-outline: rgba(255, 255, 255, 0.1);
+  --text-default: rgba(255, 255, 255, 0.8);
+  --text-muted: #9ca3af;
+  --accent-color: #3b82f6;
+  --accent-color-hover: #60a5fa;
+  
+  /* Enable dark color scheme */
+  color-scheme: dark;
+}
+
+/* For browser/OS-determined dark mode */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light-mode) {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --background-muted: #1f2937;
+    --foreground-muted: #9ca3af;
+    --border-color: #374151;
+    --break-background: #374151;
+    --break-text: #9ca3af;
+    --segment-separator: #1f2937;
+    --segment-outline: rgba(255, 255, 255, 0.1);
+    --text-default: rgba(255, 255, 255, 0.8);
+    --text-muted: #9ca3af;
+    --accent-color: #3b82f6;
+    --accent-color-hover: #60a5fa;
   }
 }
 
@@ -22,6 +66,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+main {
+  padding-top: 3.5rem; /* Add space for the toggle */
 }
 
 * {
@@ -35,8 +84,10 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Custom toggle styling */
+.toggle-container {
+  background-color: var(--background);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
