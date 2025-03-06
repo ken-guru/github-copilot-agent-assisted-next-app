@@ -70,10 +70,11 @@ describe('Summary Component', () => {
     expect(screen.getByText('Activity Summary')).toBeInTheDocument();
     
     // Verify statistics are displayed
-    expect(screen.getByText('Total Time')).toBeInTheDocument();
-    expect(screen.getByText('Planned Time')).toBeInTheDocument();
-    expect(screen.getByText('Active Time')).toBeInTheDocument();
-    expect(screen.getByText('Idle Time')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Activity Summary' })).toBeInTheDocument();
+    expect(screen.getByText('Total Time:')).toBeInTheDocument();
+    expect(screen.getByText('Planned Time:')).toBeInTheDocument();
+    expect(screen.getByText('Active Time:')).toBeInTheDocument();
+    expect(screen.getByText('Idle Time:')).toBeInTheDocument();
     
     // Verify activity names are displayed
     expect(screen.getByText('Coding')).toBeInTheDocument();

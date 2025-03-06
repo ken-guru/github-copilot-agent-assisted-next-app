@@ -1,175 +1,158 @@
 .container {
-  background-color: var(--background, white);
-  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem;
+  background: var(--background);
   border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
 }
 
 .heading {
+  margin: 0;
   font-size: 1.5rem;
-  font-weight: bold;
-  color: var(--foreground, #111827);
+  font-weight: 600;
+  color: var(--foreground);
 }
 
 .timeDisplay {
   font-size: 1.25rem;
-  font-weight: bold;
-  color: var(--foreground, #111827);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: var(--background-muted, #f3f4f6);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  transition: all 0.2s ease;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  background: var(--background-muted);
+  color: var(--foreground);
 }
 
 .timeDisplayOvertime {
-  color: #dc2626;
-  background-color: var(--break-background, #fee2e2);
+  color: var(--error, #dc2626);
+  background: var(--error-bg, #fee2e2);
+}
+
+:global(.dark-mode) .timeDisplayOvertime {
+  color: #fca5a5;
+  background-color: #7f1d1d;
 }
 
 .timeDisplayInactive {
-  background-color: var(--background-muted, #f3f4f6);
-  color: var(--foreground-muted, #6b7280);
+  background-color: var(--background-muted);
+  color: var(--text-secondary);
   font-style: italic;
 }
 
 .timelineContainer {
-  position: relative;
-  min-height: 400px;
-  max-height: 400px;
   display: flex;
-  transition: max-height 0.3s ease;
-}
-
-.timelineContainer.hasEntries {
-  max-height: none;
+  height: 300px; /* Change min-height to fixed height */
+  border: 1px solid var(--border);
+  border-radius: 0.25rem;
+  position: relative;
+  overflow: hidden;
+  background: var(--background);
 }
 
 .timelineRuler {
+  width: 60px;
+  border-right: 1px solid var(--border);
   position: relative;
-  width: 2rem;
-  background-color: var(--background-muted, #f3f4f6);
-  border-radius: 0.25rem;
-  margin-right: 1rem;
-}
-
-.timelineRulerLine {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background-color: var(--accent-color, #2563eb);
-  transform: translateX(-50%);
-}
-
-.timelineRulerLine::before {
-  content: '';
-  position: absolute;
-  left: -8px;
-  width: 20px;
-  height: 100%;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent,
-    transparent 14px,
-    var(--border-color, #e5e7eb) 14px,
-    var(--border-color, #e5e7eb) 15px
-  );
-  pointer-events: none;
-}
-
-.entriesList {
-  flex: 1;
-  position: relative;
-}
-
-.entry {
-  position: absolute;
-  left: -1rem;
-  display: flex;
-  gap: 0.5rem;
-  align-items: flex-start;
-  width: calc(100% + 1rem);
-  min-height: 3rem;
-  margin-bottom: 2px; /* Add spacing between entries for better distinction */
-}
-
-.entryIndicator {
-  width: 2rem;
-  position: relative;
+  background: var(--background-muted);
   flex-shrink: 0;
-  transition: transform 0.2s ease;
-  height: 100%;
+  z-index: 2;
+}
+
+.timeMarker {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
   display: flex;
   align-items: center;
-  border-width: 0;
-  border-left-width: 2px;
-  border-style: dotted;
+  border-top: 1px solid var(--border);
+  background: var(--background-muted);
+  height: 24px;
+  transform: translateY(-50%);
 }
 
-.entryIndicator::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: currentColor;
-  transform: translateX(-50%);
-  box-shadow: 0 0 0 1px var(--segment-outline, rgba(0, 0, 0, 0.05)); /* Add outline for better visibility */
+.timeMarker:last-child {
+  border-bottom: 1px solid var(--border);
 }
 
-.entryIndicator::after {
-  content: '';
-  position: absolute;
-  left: calc(50% + 6px);
-  right: 0;
-  height: 2px;
-  background-color: currentColor;
+/* Update entriesContainer to use absolute positioning for proper scaling */
+.entriesContainer {
+  flex: 1;
+  position: relative;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
-.entry:hover .entryIndicator {
+.entriesWrapper {
+  position: relative; /* Change from absolute to relative */
+  min-height: 100%;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* Remove min-height from timelineEntry to allow proper scaling */
+.timelineEntry {
+  margin: 0;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  border-width: 1px;
+  border-style: solid;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 3rem; /* Minimum height for very short entries */
+  /* Remove any existing background color settings as it will come from the activity colors */
+}
+
+.timelineEntry:hover {
   transform: translateX(2px);
+  /* Remove brightness filter and use a subtle opacity instead for better color preservation */
+  opacity: 0.95;
 }
 
-.idleActivity .entryIndicator {
-  background-color: var(--border-color, #e5e7eb);
+.timeGap {
+  margin: 0;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+  background-color: var(--background-muted);
+  border: 1px dashed var(--border);
+  border-radius: 0.25rem;
+  opacity: 0.8;
+  min-height: 2rem;
+  font-style: italic;
+  transition: opacity 0.2s ease;
 }
 
-.idleActivity .entryIndicator::before {
-  background-color: var(--foreground-muted, #9ca3af);
-}
-
-.leftoverTime .entryIndicator {
-  background-color: var(--break-background, #f3f4f6);
+.timeGap:hover {
+  opacity: 1;
 }
 
 .entryContent {
-  flex: 1;
-  padding: 0.75rem;
-  background-color: var(--break-background, #f3f4f6); /* Default background color */
-  border-radius: 0.25rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
-  border: 1px solid var(--segment-outline, rgba(0, 0, 0, 0.05)); /* Add subtle border */
-}
-
-.entry:hover .entryContent {
-  transform: translateX(4px);
-}
-
-.shortEntry .entryContent {
-  margin-top: -1rem;
-}
-
-.leftoverTime .entryContent {
-  background-color: var(--break-background, #f3f4f6);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* Ensure text color is inherited from parent */
+  color: inherit;
 }
 
 .entryHeader {
@@ -179,58 +162,82 @@
   gap: 1rem;
 }
 
-.activityName {
-  font-weight: 600;
-  color: var(--foreground, #111827);
-  font-size: 1rem;
-}
-
-.idleActivity .activityName {
-  font-style: italic;
-  color: var(--foreground-muted, #4b5563);
-}
-
-.leftoverTime .activityName,
-.leftoverTime .timeInfo,
-.leftoverTime .durationInfo {
-  color: var(--foreground-muted, #4b5563);
-  font-style: italic;
-}
-
 .timeInfo {
-  font-size: 0.875rem;
-  color: var(--foreground-muted, #4b5563);
+  font-size: 0.75rem;
+  /* Remove opacity to ensure text color is fully applied */
+  font-variant-numeric: tabular-nums;
+  /* Inherit the text color from the parent */
+  color: inherit;
 }
 
-.durationInfo {
-  font-size: 0.875rem;
-  color: var(--foreground, #111827);
+.activityName {
   font-weight: 500;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+  /* Inherit the text color from the parent */
+  color: inherit;
 }
 
-.emptyState {
-  text-align: center;
-  padding: 2rem;
-  color: var(--foreground-muted, #4b5563);
+.breakEntry {
+  margin: 0.25rem 0;
+  border: 1px dashed var(--border);
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+  background-color: var(--background-muted);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  min-height: 2rem;
+}
+
+.noEntries {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--foreground-muted);
+  font-style: italic;
 }
 
 .warningMessage {
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background-color: #fee2e2;
-  color: #991b1b;
+  color: var(--error, #dc2626);
+  font-size: 0.875rem;
+  padding: 0.5rem;
+  border: 1px solid currentColor;
   border-radius: 0.25rem;
-  text-align: center;
+  margin-top: 0.5rem;
+  background: var(--error-bg, #fee2e2);
 }
 
-/* Dark mode specific styles */
 :global(.dark-mode) .warningMessage {
-  background-color: #7f1d1d;
-  color: #fecaca;
-}
-
-:global(.dark-mode) .timeDisplayOvertime {
   color: #fca5a5;
   background-color: #7f1d1d;
+}
+
+:global(.dark-mode) .timelineRulerLine {
+  background-color: var(--border-color);
+}
+
+.timeGuides {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.timeGuide {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--border);
+  opacity: 0.3;
+  transform: translateY(-50%);
 }

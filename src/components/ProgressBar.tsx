@@ -1,6 +1,7 @@
 import React from 'react';
 import { TimelineEntry } from './Timeline';
 import styles from './ProgressBar.module.css';
+import { formatTimeHuman } from '@/utils/time'; // Import formatTimeHuman
 
 interface ProgressBarProps {
   entries: TimelineEntry[];
@@ -96,13 +97,6 @@ export default function ProgressBar({
 
   const segments = calculateSegments();
 
-  // Format time as mm:ss
-  const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.progressBarContainer}>
@@ -115,7 +109,7 @@ export default function ProgressBar({
               backgroundColor: segment.color.background,
               borderColor: segment.color.border
             }}
-            title={`${segment.activityName || 'Break'}: ${formatTime(segment.duration)}`}
+            title={`${segment.activityName || 'Break'}: ${formatTimeHuman(segment.duration * 1000)}`}
           >
             {segment.width > 8 && (
               <span className={styles.segmentLabel}>
@@ -127,8 +121,8 @@ export default function ProgressBar({
       </div>
       <div className={styles.timeMarkers}>
         <span className={styles.timeMarker}>0:00</span>
-        <span className={styles.timeMarker}>{formatTime(Math.floor(totalDuration / 2))}</span>
-        <span className={styles.timeMarker}>{formatTime(totalDuration)}</span>
+        <span className={styles.timeMarker}>{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
+        <span className={styles.timeMarker}>{formatTimeHuman(totalDuration * 1000)}</span>
       </div>
     </div>
   );

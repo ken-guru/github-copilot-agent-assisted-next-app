@@ -1,124 +1,154 @@
-import { Activity } from './ActivityManager';
-import { TimelineEntry } from './Timeline';
+import React from 'react';
 import styles from './Summary.module.css';
+import { TimelineEntry } from './Timeline';
 
 interface SummaryProps {
-  entries: TimelineEntry[];
-  totalDuration: number; // in seconds
-  elapsedTime: number; // in seconds
-  allActivitiesCompleted: boolean;
+  entries?: TimelineEntry[];
+  totalDuration: number;
+  elapsedTime: number;
+  timerActive?: boolean;
+  allActivitiesCompleted?: boolean;
 }
 
-interface ActivitySummary {
-  activityId: string | null;
-  activityName: string | null;
-  totalDuration: number; // in seconds
-}
-
-export default function Summary({ entries, totalDuration, elapsedTime, allActivitiesCompleted }: SummaryProps) {
-  if (!allActivitiesCompleted) {
-    return null;
-  }
-
-  const formatTime = (seconds: number): string => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    
-    if (hours > 0) {
-      return `${hours}h ${minutes}m ${secs}s`;
+export default function Summary({ 
+  entries = [], 
+  totalDuration, 
+  elapsedTime, 
+  timerActive = false,
+  allActivitiesCompleted = false
+}: SummaryProps) {
+  const getStatusMessage = () => {
+    if (timerActive) {
+      const remainingTime = totalDuration - elapsedTime;
+      if (remainingTime < 0) {
+        return {
+          message: "You've gone over the allocated time!",
+          className: styles.statusMessageLate
+        };
+      } else if (remainingTime === 0) {
+        return {
+          message: "Time's up!",
+          className: styles.statusMessageOnTime
+        };
+      } else {
+        return {
+          message: "You're doing great, keep going!",
+          className: styles.statusMessageEarly
+        };
+      }
+    } else if (allActivitiesCompleted) {
+      const timeDiff = elapsedTime - totalDuration;
+      const threshold = 60; // 60 seconds threshold for "on time"
+      
+      if (Math.abs(timeDiff) <= threshold) {
+        return {
+          message: "Great job! You completed everything right on schedule!",
+          className: styles.statusMessageOnTime
+        };
+      } else if (timeDiff < -threshold) {
+        const earlierBy = formatDuration(Math.abs(timeDiff));
+        return {
+          message: `Amazing! You finished ${earlierBy} earlier than planned!`,
+          className: styles.statusMessageEarly
+        };
+      } else {
+        const laterBy = formatDuration(timeDiff);
+        return {
+          message: `You took ${laterBy} more than planned`,
+          className: styles.statusMessageLate
+        };
+      }
     }
-    return `${minutes}m ${secs}s`;
+    return null;
   };
 
-  // Calculate activity summaries
-  const activitySummaries: ActivitySummary[] = entries.reduce((acc: ActivitySummary[], entry) => {
-    const duration = entry.endTime 
-      ? Math.round((entry.endTime - entry.startTime) / 1000) 
-      : 0;
-
-    const existingActivity = acc.find(a => a.activityId === entry.activityId);
+  const formatDuration = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
     
-    if (existingActivity) {
-      existingActivity.totalDuration += duration;
-    } else {
-      acc.push({
-        activityId: entry.activityId,
-        activityName: entry.activityName,
-        totalDuration: duration
-      });
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${remainingSeconds}s`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${remainingSeconds}s`;
     }
-    
-    return acc;
-  }, []);
+    return `${remainingSeconds}s`;
+  };
 
-  // Sort by duration (descending)
-  activitySummaries.sort((a, b) => b.totalDuration - a.totalDuration);
+  const calculateActivityStats = () => {
+    if (!entries || entries.length === 0) return null;
 
-  // Calculate total idle time (null activityId)
-  const idleTime = activitySummaries.find(a => a.activityId === null)?.totalDuration || 0;
+    const stats = {
+      activeTime: 0,
+      idleTime: 0,
+      activities: new Map<string, number>()
+    };
 
-  // Calculate time deviation from plan
-  const timeDeviation = elapsedTime - totalDuration;
-  const onTime = Math.abs(timeDeviation) < 60; // within 1 minute of plan
-  const early = timeDeviation < -60;
-  const late = timeDeviation > 60;
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i];
+      const duration = entry.endTime - entry.startTime;
+      
+      if (entry.activityId) {
+        stats.activeTime += duration / 1000;
+        const activityTime = stats.activities.get(entry.activityName || '') || 0;
+        stats.activities.set(entry.activityName || '', activityTime + duration / 1000);
+      } else {
+        stats.idleTime += duration / 1000;
+      }
+    }
+
+    return stats;
+  };
+
+  const status = getStatusMessage();
+  const stats = calculateActivityStats();
+
+  if (!status && !stats) return null;
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Activity Summary</h2>
-      
-      <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Total Time</div>
-          <div className={styles.statValue}>{formatTime(elapsedTime)}</div>
+      {status && (
+        <div className={`${styles.statusMessage} ${status.className}`}>
+          {status.message}
         </div>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Planned Time</div>
-          <div className={styles.statValue}>{formatTime(totalDuration)}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Active Time</div>
-          <div className={styles.statValue}>{formatTime(elapsedTime - idleTime)}</div>
-        </div>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Idle Time</div>
-          <div className={styles.statValue}>{formatTime(idleTime)}</div>
-        </div>
-      </div>
-      
-      {/* Time status message */}
-      <div className={`${styles.statusMessage} 
-        ${onTime ? styles.statusMessageOnTime : ''}
-        ${early ? styles.statusMessageEarly : ''}
-        ${late ? styles.statusMessageLate : ''}
-      `}>
-        {onTime && <p>Great job! You completed everything right on schedule!</p>}
-        {early && <p>Amazing! You finished {formatTime(Math.abs(timeDeviation))} earlier than planned!</p>}
-        {late && <p>You took {formatTime(timeDeviation)} more than planned, but you got everything done!</p>}
-      </div>
-      
-      <h3 className={styles.sectionHeading}>Activity Breakdown</h3>
-      <div className={styles.activityList}>
-        {activitySummaries
-          .filter(summary => summary.activityId !== null)
-          .map((summary, index) => (
-            <div 
-              key={summary.activityId || index} 
-              className={styles.activityItem}
-            >
-              <span className={styles.activityName}>{summary.activityName}</span>
-              <span>{formatTime(summary.totalDuration)}</span>
+      )}
+      {allActivitiesCompleted && stats && (
+        <div className={styles.summary}>
+          <h2>Activity Summary</h2>
+          <div className={styles.stats}>
+            <div>
+              <span>Total Time:</span>
+              <span>{formatDuration(elapsedTime)}</span>
             </div>
-          ))}
-        
-        {idleTime > 0 && (
-          <div className={styles.activityItem}>
-            <span className={styles.idleTime}>Breaks/Idle time</span>
-            <span>{formatTime(idleTime)}</span>
+            <div>
+              <span>Planned Time:</span>
+              <span>{formatDuration(totalDuration)}</span>
+            </div>
+            <div>
+              <span>Active Time:</span>
+              <span>{formatDuration(stats.activeTime)}</span>
+            </div>
+            <div>
+              <span>Idle Time:</span>
+              <span>{formatDuration(stats.idleTime)}</span>
+            </div>
           </div>
-        )}
-      </div>
+          <div className={styles.activities}>
+            {Array.from(stats.activities).map(([name, duration]) => (
+              <div key={name}>
+                <span>{name}</span>
+                <span>{formatDuration(duration)}</span>
+              </div>
+            ))}
+            {stats.idleTime > 0 && (
+              <div>
+                <span>Breaks/Idle time</span>
+                <span>{formatDuration(stats.idleTime)}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

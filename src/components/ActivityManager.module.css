@@ -1,5 +1,5 @@
 .container {
-  background-color: var(--background, white);
+  background-color: var(--background);
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -9,7 +9,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  color: var(--foreground, #111827);
+  color: var(--foreground);
 }
 
 .form {
@@ -18,6 +18,7 @@
 
 .inputContainer {
   display: flex;
+  gap: 0.75rem;
 }
 
 .input {
@@ -79,9 +80,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem; /* Increased padding for better visibility */
-  border: 1px solid var(--border-color, #9ca3af);
+  border: 1px solid var(--border-color);
   border-radius: 0.25rem;
-  box-shadow: 0 1px 2px var(--segment-outline, rgba(0, 0, 0, 0.05));
+  background-color: var(--background);
+  box-shadow: 0 1px 2px var(--segment-outline);
   transition: transform 0.2s ease;
 }
 
@@ -94,9 +96,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem;
-  border: 2px solid #16a34a;
+  border: 1px solid var(--accent-color);
   border-radius: 0.25rem;
-  background-color: #f0fdf4;
+  background-color: var(--background-muted);
   transition: transform 0.2s ease;
 }
 
@@ -111,24 +113,24 @@
 
 .activityName {
   flex: 1;
-  color: var(--foreground, #111827);
+  color: var(--foreground);
   font-weight: 500;
 }
 
 .completedActivityName {
   flex: 1;
-  color: var(--foreground-muted, #4b5563);
+  color: var(--foreground-muted);
   font-weight: 500;
   text-decoration: line-through;
 }
 
 .completedTag {
   display: inline-block;
-  color: #16a34a;
+  color: var(--accent-color);
   font-size: 0.75rem;
   font-weight: 500;
   padding: 0.2rem 0.5rem;
-  border: 1px solid #16a34a;
+  border: 1px solid var(--accent-color);
   border-radius: 0.25rem;
   background-color: transparent;
 }
@@ -143,9 +145,9 @@
   gap: 0.5rem;
 }
 
-.startButton {
-  background-color: #16a34a;
-  color: white;
+.startButton, .runningButton {
+  background-color: var(--accent-color);
+  color: var(--background);
   padding: 0.25rem 0.75rem;
   border: none;
   border-radius: 0.25rem;
@@ -154,23 +156,8 @@
   transition: background-color 0.2s;
 }
 
-.startButton:hover {
-  background-color: #15803d;
-}
-
-.runningButton {
-  background-color: #16a34a;
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border: none;
-  border-radius: 0.25rem;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.runningButton:hover {
-  background-color: #15803d;
+.startButton:hover, .runningButton:hover {
+  background-color: var(--accent-color-hover);
 }
 
 .removeButton {
@@ -207,24 +194,18 @@
   text-align: center;
   padding: 1rem;
   margin-top: 1rem;
-  background-color: #f0f9ff;
-  border: 1px solid #bae6fd;
+  background-color: var(--background-muted);
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
-  color: #0369a1;
+  color: var(--foreground-muted);
   font-size: 0.875rem;
-}
-
-:global(.dark-mode) .breakMessage {
-  background-color: #0c4a6e;
-  border-color: #0ea5e9;
-  color: #e0f2fe;
 }
 
 .emptyState {
   text-align: center;
   padding: 2rem;
-  color: var(--foreground-muted, #4b5563);
-  background-color: var(--background-muted, #f9fafb);
+  color: var(--foreground-muted);
+  background-color: var(--background-muted);
   border-radius: 0.25rem;
   margin: 1rem 0;
 }

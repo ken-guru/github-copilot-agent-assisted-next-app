@@ -1,203 +1,228 @@
-import { useEffect, useState } from 'react';
-import { Activity } from './ActivityManager';
+import React, { useMemo, useEffect, useState } from 'react';
 import styles from './Timeline.module.css';
-import { ColorSet } from '../utils/colors';
+import { useTheme } from '@/contexts/ThemeContext';
 import ProgressBar from './ProgressBar';
-import { useTheme } from '../contexts/ThemeContext';
+import { calculateTimeSpans } from '@/utils/timelineCalculations';
+import { formatTimeHuman } from '@/utils/time'; // Import formatTimeHuman
 
 export interface TimelineEntry {
   id: string;
   activityId: string | null;
   activityName: string | null;
-  startTime: number; // timestamp in milliseconds
-  endTime: number | null; // timestamp in milliseconds or null if ongoing
-  colors?: ColorSet;
-  isLeftoverTime?: boolean;
+  startTime: number;
+  endTime?: number; // Make endTime optional to support active entries
+  colors?: {
+    background: string;
+    text: string;
+    border: string;
+  };
 }
 
 interface TimelineProps {
   entries: TimelineEntry[];
-  totalDuration: number; // in seconds
-  elapsedTime: number; // in seconds
-  allActivitiesCompleted?: boolean;
+  totalDuration: number;
+  elapsedTime: number;
+  isTimeUp?: boolean;
   timerActive?: boolean;
+  allActivitiesCompleted?: boolean;
 }
 
-export default function Timeline({ 
-  entries, 
-  totalDuration, 
-  elapsedTime, 
-  allActivitiesCompleted,
-  timerActive = false
-}: TimelineProps) {
+function calculateTimeIntervals(totalDuration: number): { interval: number; count: number } {
+  const totalSeconds = Math.floor(totalDuration / 1000);
+  
+  if (totalSeconds <= 60) { // 1 minute or less
+    return { interval: 10, count: Math.ceil(totalSeconds / 10) }; // 10-second intervals
+  } else if (totalSeconds <= 300) { // 5 minutes or less
+    return { interval: 30, count: Math.ceil(totalSeconds / 30) }; // 30-second intervals
+  } else if (totalSeconds <= 600) { // 10 minutes or less
+    return { interval: 60, count: Math.ceil(totalSeconds / 60) }; // 1-minute intervals
+  } else if (totalSeconds <= 3600) { // 1 hour or less
+    return { interval: 300, count: Math.ceil(totalSeconds / 300) }; // 5-minute intervals
+  } else if (totalSeconds <= 7200) { // 2 hours or less
+    return { interval: 600, count: Math.ceil(totalSeconds / 600) }; // 10-minute intervals
+  } else {
+    return { interval: 1800, count: Math.ceil(totalSeconds / 1800) }; // 30-minute intervals
+  }
+}
+
+// Update the helper function to handle undefined endTime
+function getGapDuration(currentStartTime: number, previousEndTime: number | undefined): number {
+  if (!previousEndTime) return 0;
+  return Math.max(0, currentStartTime - previousEndTime);
+}
+
+export default function Timeline({ entries, totalDuration, elapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
   const { isDarkMode } = useTheme();
-  const [timeLeft, setTimeLeft] = useState(totalDuration - elapsedTime);
-  const isOvertime = timeLeft < 0;
-
-  // Calculate the actual time span needed for all activities
-  const calculateActualTimeSpan = () => {
-    if (entries.length === 0) return totalDuration;
-    
-    const lastEntry = entries[entries.length - 1];
-    const lastEndTime = lastEntry.endTime || Date.now();
-    const timeSpanNeeded = Math.round((lastEndTime - entries[0].startTime) / 1000);
-    
-    return Math.max(totalDuration, timeSpanNeeded);
-  };
-
-  // Format time as mm:ss or hh:mm:ss if hours > 0
-  const formatTime = (seconds: number): string => {
-    const absSeconds = Math.abs(seconds);
-    const hours = Math.floor(absSeconds / 3600);
-    const minutes = Math.floor((absSeconds % 3600) / 60);
-    const secs = absSeconds % 60;
-    
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
-  };
-
+  const hasEntries = entries.length > 0;
+  const [now, setNow] = useState(Date.now());
+  
+  // Update 'now' every second when there's an active entry
   useEffect(() => {
-    setTimeLeft(totalDuration - elapsedTime);
-  }, [totalDuration, elapsedTime]);
+    if (!hasEntries || !entries[entries.length - 1]?.endTime) {
+      const interval = setInterval(() => setNow(Date.now()), 1000);
+      return () => clearInterval(interval);
+    }
+  }, [hasEntries, entries]);
 
-  // Calculate duration for a timeline entry
-  const calculateDuration = (entry: TimelineEntry): number => {
-    const end = entry.endTime || Date.now();
-    return Math.round((end - entry.startTime) / 1000);
-  };
+  // Calculate time remaining display
+  const timeLeft = totalDuration - elapsedTime;
+  const isOvertime = timeLeft < 0;
+  const timeDisplay = timerActive 
+    ? `${isOvertime ? 'Overtime: ' : 'Time Left: '}${formatTimeHuman(Math.abs(timeLeft) * 1000)}`
+    : `Timer ready: ${formatTimeHuman(totalDuration * 1000)}`;
 
-  // Calculate position and height for timeline entries
-  const calculateEntryStyle = (entry: TimelineEntry) => {
-    const startOffset = Math.round((entry.startTime - entries[0].startTime) / 1000);
-    const duration = calculateDuration(entry);
-    const actualTimeSpan = calculateActualTimeSpan();
-    
-    const top = (startOffset / actualTimeSpan) * 100;
-    const height = (duration / actualTimeSpan) * 100;
+  const timeMarkers = useMemo(() => {
+    const { interval, count } = calculateTimeIntervals(totalDuration * 1000);
+    return Array.from({ length: count + 1 }, (_, i) => {
+      const milliseconds = i * interval * 1000;
+      return {
+        time: milliseconds,
+        position: (milliseconds / (totalDuration * 1000)) * 100,
+        label: formatTimeHuman(milliseconds)
+      };
+    });
+  }, [totalDuration]);
+
+  const timeSpansData = useMemo(() => {
+    return calculateTimeSpans({
+      entries,
+      totalDuration,
+      now,
+      allActivitiesCompleted,
+      timeLeft,
+    });
+  }, [entries, totalDuration, now, allActivitiesCompleted, timeLeft]);
+
+  const calculateEntryStyle = (item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number }) => {
+    const style: React.CSSProperties = {
+      height: `${item.height}%`,
+      minHeight: item.height < 5 ? '2rem' : undefined // Minimum height for very short entries
+    };
+
+    if (item.type === 'gap') {
+      return {
+        ...style,
+        backgroundColor: 'var(--background-muted)',
+        borderColor: 'var(--border)',
+        color: 'var(--foreground-muted)',
+      };
+    }
+
+    const colors = item.entry?.colors || {
+      background: 'var(--background-muted)',
+      text: 'var(--text-secondary)',
+      border: 'var(--border)'
+    };
 
     return {
-      top: `${Math.min(top, 98)}%`,
-      height: `${Math.min(height, 100 - top)}%`
+      ...style,
+      backgroundColor: colors.background,
+      borderColor: colors.border,
+      color: colors.text,
     };
   };
-
-  // Format time info more concisely
-  const formatTimeInfo = (entry: TimelineEntry) => {
-    const startTime = new Date(entry.startTime);
-    const endTime = entry.endTime ? new Date(entry.endTime) : null;
-    
-    const formatHourMin = (date: Date) => {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    };
-
-    return endTime ? 
-      `${formatHourMin(startTime)} - ${formatHourMin(endTime)}` : 
-      `${formatHourMin(startTime)} - ongoing`;
-  };
-
-  // Add leftover time entry if all activities are completed with time remaining
-  const displayedEntries = [...entries];
-  if (allActivitiesCompleted && timeLeft > 0 && entries.length > 0) {
-    const lastEntry = entries[entries.length - 1];
-    if (lastEntry.endTime) {
-      displayedEntries.push({
-        id: 'leftover',
-        activityId: null,
-        activityName: 'Time Remaining',
-        startTime: lastEntry.endTime,
-        endTime: lastEntry.endTime + (timeLeft * 1000),
-        isLeftoverTime: true
-      });
-    }
-  }
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.heading}>Timeline</h2>
-        <div className={`${styles.timeDisplay} ${isOvertime ? styles.timeDisplayOvertime : ''} ${!timerActive ? styles.timeDisplayInactive : ''}`}>
-          {!timerActive ? (
-            `Timer ready: ${formatTime(totalDuration)}`
-          ) : (
-            `${isOvertime ? 'Overtime: ' : 'Time Left: '} ${formatTime(timeLeft)}`
-          )}
+        <div 
+          className={`${styles.timeDisplay} ${isTimeUp ? styles.timeDisplayOvertime : ''}`}
+          data-testid="time-display"
+        >
+          {timeDisplay}
         </div>
       </div>
-
-      {/* Use the ProgressBar component with dark mode support */}
-      <ProgressBar 
+      
+      <ProgressBar
         entries={entries}
         totalDuration={totalDuration}
         elapsedTime={elapsedTime}
-        timerActive={timerActive}
+        timerActive={hasEntries}
         isDarkMode={isDarkMode}
       />
 
-      <div className={`${styles.timelineContainer} ${displayedEntries.length > 0 && styles.hasEntries}`}>
+      <div className={styles.timelineContainer}>
         <div className={styles.timelineRuler}>
-          <div className={styles.timelineRulerLine} />
+          {timeMarkers.map(({ time, position, label }) => (
+            <div
+              key={time}
+              className={styles.timeMarker}
+              style={{ top: `${position}%` }}
+            >
+              {label}
+            </div>
+          ))}
         </div>
         
-        {displayedEntries.length === 0 ? (
-          <div className={styles.emptyState}>No activities started yet</div>
-        ) : (
-          <div className={styles.entriesList}>
-            {displayedEntries.map((entry) => {
-              const style = calculateEntryStyle(entry);
-              const isShort = parseFloat(style.height) < 10;
-              
-              return (
-                <div
-                  key={entry.id}
-                  className={`${styles.entry} ${!entry.activityId ? styles.idleActivity : ''} ${isShort ? styles.shortEntry : ''} ${entry.isLeftoverTime ? styles.leftoverTime : ''}`}
-                  style={style}
-                >
-                  <div 
-                    className={styles.entryIndicator}
-                    style={entry.colors ? {
-                      color: entry.colors.text,
-                      backgroundColor: entry.colors.background,
-                      borderColor: entry.colors.border
-                    } : undefined}
-                  />
-                  <div 
-                    className={styles.entryContent}
-                    style={entry.colors ? {
-                      backgroundColor: entry.colors.background
-                    } : undefined}
-                  >
-                    <div className={styles.entryHeader}>
-                      <span 
-                        className={styles.activityName}
-                        style={entry.colors ? { color: entry.colors.text } : undefined}
+        <div className={styles.entriesContainer}>
+          <div className={styles.timeGuides}>
+            {timeMarkers.map(({ time, position }) => (
+              <div
+                key={time}
+                className={styles.timeGuide}
+                style={{ top: `${position}%` }}
+              />
+            ))}
+          </div>
+
+          <div className={styles.entriesWrapper}>
+            {hasEntries ? (
+              timeSpansData.items.map((item, index) => {
+                const style = calculateEntryStyle(item);
+                
+                if (item.type === 'gap') {
+                  if (allActivitiesCompleted && index === timeSpansData.items.length - 1) {
+                    return (
+                      <div
+                        key="remaining"
+                        className={styles.timeGap}
+                        style={style}
                       >
-                        {entry.activityName || 'Break'}
-                      </span>
-                      <span 
-                        className={styles.durationInfo}
-                        style={entry.colors ? { color: entry.colors.text } : undefined}
-                      >
-                        {formatTime(calculateDuration(entry))}
-                      </span>
-                    </div>
-                    <div 
-                      className={styles.timeInfo}
-                      style={entry.colors ? { color: entry.colors.text } : undefined}
+                        <span>Time Remaining ({formatTimeHuman(item.duration)})</span>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div
+                      key={`gap-${index}`}
+                      className={styles.timeGap}
+                      style={style}
                     >
-                      {formatTimeInfo(entry)}
+                      <span>Break ({formatTimeHuman(item.duration)})</span>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={item.entry!.id} className={styles.timelineEntry} style={style}>
+                    <div className={styles.entryContent}>
+                      <div className={styles.entryHeader}>
+                        <span
+                          className={styles.activityName}
+                          data-testid="timeline-activity-name"
+                        >
+                          {item.entry!.activityName}
+                        </span>
+                        <span className={styles.timeInfo}>
+                          {formatTimeHuman(item.duration)} {/* Use formatTimeHuman */}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <div className={styles.noEntries}>
+                No activities started yet
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
-
-      {isOvertime && (
-        <div className={styles.warningMessage}>
+      
+      {isTimeUp && hasEntries && (
+        <div className={styles.warningMessage} data-testid="overtime-warning">
           <strong>Warning:</strong> You've exceeded the planned time!
         </div>
       )}

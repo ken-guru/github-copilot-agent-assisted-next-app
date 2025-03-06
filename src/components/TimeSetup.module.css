@@ -1,5 +1,5 @@
 .container {
-  background-color: white;
+  background-color: var(--background);
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -9,7 +9,7 @@
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  color: #111827; /* Darker text for better contrast */
+  color: var(--foreground);
 }
 
 .modeSelector {
@@ -26,13 +26,13 @@
 }
 
 .buttonPrimary {
-  background-color: #2563eb; /* Darker blue for better contrast */
-  color: white;
+  background-color: var(--accent-color);
+  color: var(--background);
 }
 
 .buttonSecondary {
-  background-color: #d1d5db; /* Darker gray for better contrast */
-  color: #111827; /* Darker text for better contrast */
+  background-color: var(--background-muted);
+  color: var(--foreground);
 }
 
 .inputGrid {
@@ -52,23 +52,23 @@
   font-size: 0.875rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: #374151; /* Darker text for better contrast */
+  color: var(--foreground-muted);
 }
 
 .input {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #9ca3af; /* Darker border for better contrast */
+  border: 1px solid var(--border-color);
   border-radius: 0.25rem;
-  color: #111827; /* Darker text for better contrast */
-  background-color: white; /* Ensure light background for inputs */
+  color: var(--foreground);
+  background-color: var(--background);
 }
 
 .submitButton {
   width: 100%;
   padding: 0.5rem;
-  background-color: #16a34a; /* Darker green for better contrast */
-  color: white;
+  background-color: var(--accent-color);
+  color: var(--background);
   border: none;
   border-radius: 0.25rem;
   font-weight: 500;
@@ -76,5 +76,5 @@
 }
 
 .submitButton:hover {
-  background-color: #15803d; /* Even darker green for hover state */
+  background-color: var(--accent-color-hover);
 }

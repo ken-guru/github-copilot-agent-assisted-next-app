@@ -17,6 +17,7 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
     if (!timerActive) {
       setStartTime(Date.now());
       setTimerActive(true);
+      setElapsedTime(0); // Reset elapsed time when starting
     }
   }, [timerActive]);
 
@@ -34,11 +35,12 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
 
     const timer = setInterval(() => {
       const now = Date.now();
-      setElapsedTime(Math.floor((now - startTime) / 1000));
+      const newElapsedTime = Math.floor((now - startTime) / 1000);
+      setElapsedTime(Math.min(newElapsedTime, totalDuration)); // Cap at total duration
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [startTime, timerStopped, timerActive]);
+  }, [startTime, timerStopped, timerActive, totalDuration]);
 
   // Stop timer when activities are completed
   useEffect(() => {
@@ -48,8 +50,8 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
   }, [isCompleted, stopTimer]);
 
   const displayedElapsedTime = timerStopped ? finalElapsedTimeRef.current : elapsedTime;
-  const timeLeft = totalDuration - displayedElapsedTime;
-  const isTimeUp = timeLeft < 0 || isCompleted;
+  const timeLeft = Math.max(0, totalDuration - displayedElapsedTime);
+  const isTimeUp = timeLeft === 0 || isCompleted;
 
   return {
     elapsedTime: displayedElapsedTime,

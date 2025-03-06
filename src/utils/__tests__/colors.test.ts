@@ -1,4 +1,4 @@
-import { activityColors, getRandomColorSet, getNextAvailableColorSet, ColorSet } from '../colors';
+import { activityColors, getRandomColorSet, getNextAvailableColorSet, ColorSet, getColor } from '../colors';
 
 describe('colors utility', () => {
   // Save the original Math.random to restore it after tests
@@ -117,6 +117,22 @@ describe('colors utility', () => {
       // After all colors are used, it should reset and return the first color
       const colorAfterReset = freshGetNextAvailableColorSet();
       expect(colorAfterReset).toEqual(activityColors[0]);
+    });
+  });
+
+  describe('getColor', () => {
+    it('should return a color from the palette for a valid index', () => {
+      expect(getColor(0)).toBe('#E8F5E9');
+      expect(getColor(1)).toBe('#E3F2FD');
+      expect(getColor(2)).toBe('#FCE4EC');
+    });
+
+    it('should return a color from the palette for a large index', () => {
+      expect(getColor(9)).toBe('#E8F5E9');
+    });
+
+    it('should return the first color for index 0', () => {
+      expect(getColor(0)).toBe('#E8F5E9');
     });
   });
 });

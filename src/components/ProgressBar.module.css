@@ -8,7 +8,7 @@
   display: flex;
   width: 100%;
   height: 24px;
-  background-color: var(--background-muted, #f9fafb);
+  background-color: var(--background-muted);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -23,7 +23,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-right: 2px solid var(--segment-separator, white);
+  border-right: 2px solid var(--segment-separator, rgba(255, 255, 255, 0.5));
   box-shadow: 0 0 0 1px var(--segment-outline, rgba(0, 0, 0, 0.05));
 }
 
@@ -83,11 +83,11 @@
 
 /* Dark mode specific overrides - these will be toggled by JavaScript */
 :global(.dark-mode) .progressBarContainer {
-  background-color: #1f2937;
+  background-color: var(--background-muted);
 }
 
 :global(.dark-mode) .segment {
-  border-right-color: #374151;
+  border-right-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
@@ -96,10 +96,10 @@
 }
 
 :global(.dark-mode) .breakSegment {
-  background-color: #374151;
-  color: #9ca3af;
+  background-color: var(--break-background, #374151);
+  color: var(--break-text, #9ca3af);
 }
 
 :global(.dark-mode) .timeMarker {
-  color: #9ca3af;
+  color: var(--text-muted, #9ca3af);
 }

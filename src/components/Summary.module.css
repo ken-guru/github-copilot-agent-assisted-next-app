@@ -1,5 +1,5 @@
 .container {
-  background-color: white;
+  background-color: var(--background);
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -39,7 +39,8 @@
 .statusMessage {
   padding: 0.75rem;
   border-radius: 0.25rem;
-  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 500;
 }
 
 .statusMessageOnTime {
@@ -53,8 +54,8 @@
 }
 
 .statusMessageLate {
-  background-color: #fef3c7;
-  color: #92400e; /* Already good contrast */
+  background-color: #fee2e2;
+  color: #991b1b; /* Already good contrast */
 }
 
 .sectionHeading {
@@ -85,4 +86,20 @@
 .idleTime {
   color: #4b5563; /* Darker gray for better contrast */
   font-style: italic;
+}
+
+/* Dark mode variants */
+:global(.dark-mode) .statusMessageOnTime {
+  background-color: #064e3b;
+  color: #a7f3d0;
+}
+
+:global(.dark-mode) .statusMessageEarly {
+  background-color: #1e3a8a;
+  color: #bfdbfe;
+}
+
+:global(.dark-mode) .statusMessageLate {
+  background-color: #7f1d1d;
+  color: #fecaca;
 }
