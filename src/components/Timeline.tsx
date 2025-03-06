@@ -51,21 +51,27 @@ function getGapDuration(currentStartTime: number, previousEndTime: number | unde
   return Math.max(0, currentStartTime - previousEndTime);
 }
 
-export default function Timeline({ entries, totalDuration, elapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
+export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
   const { isDarkMode } = useTheme();
   const hasEntries = entries.length > 0;
   const [now, setNow] = useState(Date.now());
-  
-  // Update 'now' every second when there's an active entry
+
   useEffect(() => {
-    if (!hasEntries || !entries[entries.length - 1]?.endTime) {
-      const interval = setInterval(() => setNow(Date.now()), 1000);
-      return () => clearInterval(interval);
+    let interval: NodeJS.Timeout | null = null;
+
+    if (timerActive) {
+      interval = setInterval(() => {
+        setNow(Date.now());
+      }, 1000);
     }
-  }, [hasEntries, entries]);
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [timerActive]);
 
   // Calculate time remaining display
-  const timeLeft = totalDuration - elapsedTime;
+  const timeLeft = totalDuration - initialElapsedTime;
   const isOvertime = timeLeft < 0;
   const timeDisplay = timerActive 
     ? `${isOvertime ? 'Overtime: ' : 'Time Left: '}${formatTimeHuman(Math.abs(timeLeft) * 1000)}`
@@ -83,15 +89,15 @@ export default function Timeline({ entries, totalDuration, elapsedTime, isTimeUp
     });
   }, [totalDuration]);
 
-  const timeSpansData = useMemo(() => {
-    return calculateTimeSpans({
-      entries,
-      totalDuration,
-      now,
-      allActivitiesCompleted,
-      timeLeft,
-    });
-  }, [entries, totalDuration, now, allActivitiesCompleted, timeLeft]);
+  const currentElapsedTime = hasEntries && entries[0].startTime ? Date.now() - entries[0].startTime : 0;
+  const currentTimeLeft = totalDuration * 1000 - currentElapsedTime;
+
+  const timeSpansData = calculateTimeSpans({
+    entries,
+    totalDuration: totalDuration * 1000,
+    allActivitiesCompleted,
+    timeLeft: currentTimeLeft,
+  });
 
   const calculateEntryStyle = (item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number }) => {
     const style: React.CSSProperties = {
@@ -137,7 +143,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime, isTimeUp
       <ProgressBar
         entries={entries}
         totalDuration={totalDuration}
-        elapsedTime={elapsedTime}
+        elapsedTime={initialElapsedTime}
         timerActive={hasEntries}
         isDarkMode={isDarkMode}
       />

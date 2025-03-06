@@ -1,4 +1,3 @@
-// contents of src/utils/time.ts
 function formatTimeHuman(milliseconds: number): string {
   const totalSeconds = Math.floor(milliseconds / 1000);
   const hours = Math.floor(totalSeconds / 3600);
