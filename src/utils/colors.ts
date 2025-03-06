@@ -4,26 +4,6 @@ export interface ColorSet {
   border: string;
 }
 
-// Convert HSL to hex color
-function hslToHex(h: number, s: number, l: number): string {
-  l /= 100;
-  const a = s * Math.min(l, 1 - l) / 100;
-  const f = (n: number) => {
-    const k = (n + h / 30) % 12;
-    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-    return Math.round(255 * color).toString(16).padStart(2, '0');
-  };
-  return `#${f(0)}${f(8)}${f(4)}`;
-}
-
-// Parse HSL string and convert to hex
-function convertHslToHex(hslString: string): string {
-  const match = hslString.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-  if (!match) return '#000000';
-  const [, h, s, l] = match.map(Number);
-  return hslToHex(h, s, l);
-}
-
 // Internal HSL colors
 const internalActivityColors: ColorSet[] = [
   // Green - Hue: 120
@@ -102,9 +82,9 @@ const internalActivityColors: ColorSet[] = [
 
 // Convert internal HSL colors to hex for external use
 export const activityColors: ColorSet[] = internalActivityColors.map(color => ({
-  background: convertHslToHex(color.background),
-  text: convertHslToHex(color.text),
-  border: convertHslToHex(color.border)
+  background: color.background,
+  text: color.text,
+  border: color.border
 }));
 
 // Define dark mode variants
@@ -120,9 +100,9 @@ const internalDarkModeActivityColors: ColorSet[] = internalActivityColors.map(co
 });
 
 export const darkModeActivityColors: ColorSet[] = internalDarkModeActivityColors.map(color => ({
-  background: convertHslToHex(color.background),
-  text: convertHslToHex(color.text),
-  border: convertHslToHex(color.border)
+  background: color.background,
+  text: color.text,
+  border: color.border
 }));
 
 const usedColors = new Set<number>();

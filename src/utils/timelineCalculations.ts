@@ -60,7 +60,7 @@ export function calculateTimeSpans({
     }
 
     // Add the activity itself, using current time for active entries
-    const currentDuration = (entry.endTime === undefined ? now : entry.startTime) - entry.startTime;
+    const currentDuration = (entry.endTime === undefined ? now : entry.endTime) - entry.startTime;
 
     const height = (currentDuration / totalTimeSpan) * 100;
     // console.log(`Entry ${entry.activityName} - Duration: ${currentDuration}, Height: ${height}`);

@@ -1,4 +1,5 @@
 import { activityColors, getRandomColorSet, getNextAvailableColorSet, ColorSet, getColor } from '../colors';
+import { darkModeActivityColors } from '../colors';
 
 describe('colors utility', () => {
   // Save the original Math.random to restore it after tests
@@ -34,10 +35,10 @@ describe('colors utility', () => {
         expect(colorSet).toHaveProperty('text');
         expect(colorSet).toHaveProperty('border');
         
-        // Check if they are valid hex colors
-        expect(colorSet.background).toMatch(/^#[0-9A-F]{6}$/i);
-        expect(colorSet.text).toMatch(/^#[0-9A-F]{6}$/i);
-        expect(colorSet.border).toMatch(/^#[0-9A-F]{6}$/i);
+        // Check if they are valid HSL colors
+        expect(colorSet.background).toMatch(/^hsl\(\d+,\s*\d+%,\s*\d+%\)$/);
+        expect(colorSet.text).toMatch(/^hsl\(\d+,\s*\d+%,\s*\d+%\)$/);
+        expect(colorSet.border).toMatch(/^hsl\(\d+,\s*\d+%,\s*\d+%\)$/);
       });
     });
   });
@@ -133,6 +134,26 @@ describe('colors utility', () => {
 
     it('should return the first color for index 0', () => {
       expect(getColor(0)).toBe('#E8F5E9');
+    });
+  });
+
+  describe('darkModeActivityColors', () => {
+    it('should contain a list of color sets', () => {
+      expect(Array.isArray(darkModeActivityColors)).toBe(true);
+      expect(darkModeActivityColors.length).toBeGreaterThan(0);
+    });
+
+    it('should have proper color set structure', () => {
+      darkModeActivityColors.forEach(colorSet => {
+        expect(colorSet).toHaveProperty('background');
+        expect(colorSet).toHaveProperty('text');
+        expect(colorSet).toHaveProperty('border');
+
+        // Check if they are valid HSL colors
+        expect(colorSet.background).toMatch(/^hsl\(\d+,\s*\d+%,\s*\d+%\)$/);
+        expect(colorSet.text).toMatch(/^hsl\(\d+,\s*\d+%,\s*\d+%\)$/);
+        expect(colorSet.border).toMatch(/^hsl\(\d+,\s*\d+%,\s*\d+%\)$/);
+      });
     });
   });
 });
