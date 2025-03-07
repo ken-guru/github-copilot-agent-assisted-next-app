@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import styles from './Timeline.module.css';
 import { useTheme } from '@/contexts/ThemeContext';
 import ProgressBar from './ProgressBar';
@@ -43,12 +43,6 @@ function calculateTimeIntervals(totalDuration: number): { interval: number; coun
   } else {
     return { interval: 1800, count: Math.ceil(totalSeconds / 1800) }; // 30-minute intervals
   }
-}
-
-// Update the helper function to handle undefined endTime
-function getGapDuration(currentStartTime: number, previousEndTime: number | undefined): number {
-  if (!previousEndTime) return 0;
-  return Math.max(0, currentStartTime - previousEndTime);
 }
 
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
@@ -227,7 +221,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       
       {isTimeUp && hasEntries && (
         <div className={styles.warningMessage} data-testid="overtime-warning">
-          <strong>Warning:</strong> You've exceeded the planned time!
+          <strong>Warning:</strong> You&apos;ve exceeded the planned time!
         </div>
       )}
     </div>
