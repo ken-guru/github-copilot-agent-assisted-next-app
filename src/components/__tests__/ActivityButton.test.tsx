@@ -1,24 +1,29 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import ActivityButton from '../ActivityButton';
+import { ActivityButton } from '../ActivityButton';
+import styles from '../ActivityManager.module.css';
+import { jest } from '@jest/globals';
 
 describe('ActivityButton', () => {
-  const defaultProps = {
+  const defaultActivity = {
     id: 'test1',
     name: 'Test Activity',
     colors: {
       background: '#fff',
       text: '#000',
       border: '#ccc'
-    },
+    }
+  };
+
+  const defaultProps = {
+    activity: defaultActivity,
     isCompleted: false,
-    isCurrent: false,
-    duration: 0,
-    disabled: false,
-    onSelect: vi.fn(),
+    isRunning: false,
+    onSelect: jest.fn(),
+    timelineEntries: []
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
   });
 
   it('renders activity name', () => {
@@ -26,34 +31,50 @@ describe('ActivityButton', () => {
     expect(screen.getByText('Test Activity')).toBeInTheDocument();
   });
 
-  it('shows duration when provided', () => {
-    render(<ActivityButton {...defaultProps} duration={300} />);
-    expect(screen.getByText('5 min')).toBeInTheDocument();
-  });
-
-  it('applies completed class when completed', () => {
+  it('applies completed styles when completed', () => {
     render(<ActivityButton {...defaultProps} isCompleted={true} />);
-    expect(screen.getByRole('button')).toHaveClass('completed');
+    const container = screen.getByText('Test Activity').closest('div');
+    expect(container).toHaveClass(styles.completedActivityItem);
   });
 
-  it('applies current class when current', () => {
-    render(<ActivityButton {...defaultProps} isCurrent={true} />);
-    expect(screen.getByRole('button')).toHaveClass('current');
+  it('shows completed tag when completed', () => {
+    render(<ActivityButton {...defaultProps} isCompleted={true} />);
+    expect(screen.getByText('Completed')).toBeInTheDocument();
   });
 
-  it('handles click events', () => {
+  it('shows start/complete button when not completed', () => {
     render(<ActivityButton {...defaultProps} />);
-    fireEvent.click(screen.getByRole('button'));
-    expect(defaultProps.onSelect).toHaveBeenCalledWith(defaultProps.id);
+    expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument();
   });
 
-  it('shows remove button when onRemove provided', () => {
-    const onRemove = vi.fn();
+  it('shows complete button when running', () => {
+    render(<ActivityButton {...defaultProps} isRunning={true} />);
+    expect(screen.getByRole('button', { name: 'Complete' })).toBeInTheDocument();
+  });
+
+  it('handles select events', () => {
+    render(<ActivityButton {...defaultProps} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    expect(defaultProps.onSelect).toHaveBeenCalledWith(defaultActivity);
+  });
+
+  it('shows and handles remove button when onRemove provided', () => {
+    const onRemove = jest.fn();
     render(<ActivityButton {...defaultProps} onRemove={onRemove} />);
     
-    const removeButton = screen.getByLabelText('Remove Test Activity');
+    const removeButton = screen.getByRole('button', { name: 'Remove' });
     fireEvent.click(removeButton);
     
-    expect(onRemove).toHaveBeenCalledWith(defaultProps.id);
+    expect(onRemove).toHaveBeenCalledWith(defaultActivity.id);
+  });
+
+  it('disables remove button when activity is in timeline', () => {
+    const onRemove = jest.fn();
+    render(<ActivityButton {...defaultProps} 
+      onRemove={onRemove}
+      timelineEntries={[{ activityId: 'test1', startTime: 0, endTime: 300 }]}
+    />);
+    
+    expect(screen.getByRole('button', { name: 'Remove' })).toBeDisabled();
   });
 });
