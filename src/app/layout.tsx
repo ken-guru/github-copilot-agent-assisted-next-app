@@ -2,8 +2,6 @@
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "../contexts/ThemeContext";
-import DarkModeToggle from "../components/DarkModeToggle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,19 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <ThemeProvider>
-          <div style={{
-            position: "fixed",
-            top: "1rem",
-            right: "1rem",
-            zIndex: 100,
-          }}>
-            <DarkModeToggle />
-          </div>
-          <main>
-            {children}
-          </main>
-        </ThemeProvider>
+        <main>
+          {children}
+        </main>
       </body>
     </html>
   );

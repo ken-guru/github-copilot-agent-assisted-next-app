@@ -38,11 +38,6 @@
   background: var(--error-bg, #fee2e2);
 }
 
-:global(.dark-mode) .timeDisplayOvertime {
-  color: #fca5a5;
-  background-color: #7f1d1d;
-}
-
 .timeDisplayInactive {
   background-color: var(--background-muted);
   color: var(--text-secondary);
@@ -212,15 +207,6 @@
   border-radius: 0.25rem;
   margin-top: 0.5rem;
   background: var(--error-bg, #fee2e2);
-}
-
-:global(.dark-mode) .warningMessage {
-  color: #fca5a5;
-  background-color: #7f1d1d;
-}
-
-:global(.dark-mode) .timelineRulerLine {
-  background-color: var(--border-color);
 }
 
 .timeGuides {

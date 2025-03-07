@@ -1,6 +1,5 @@
 import React, { useMemo, useEffect } from 'react';
 import styles from './Timeline.module.css';
-import { useTheme } from '@/contexts/ThemeContext';
 import ProgressBar from './ProgressBar';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time'; // Import formatTimeHuman
@@ -46,7 +45,6 @@ function calculateTimeIntervals(totalDuration: number): { interval: number; coun
 }
 
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
-  const { isDarkMode } = useTheme();
   const hasEntries = entries.length > 0;
 
   useEffect(() => {

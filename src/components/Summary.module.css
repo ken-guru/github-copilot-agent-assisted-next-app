@@ -63,22 +63,6 @@
   color: #991b1b;
 }
 
-/* Dark mode variants for status messages */
-.statusMessage.darkMode.statusMessageOnTime {
-  background-color: #064e3b;
-  color: #a7f3d0;
-}
-
-.statusMessage.darkMode.statusMessageEarly {
-  background-color: #1e3a8a;
-  color: #bfdbfe;
-}
-
-.statusMessage.darkMode.statusMessageLate {
-  background-color: #7f1d1d;
-  color: #fecaca;
-}
-
 .sectionHeading {
   font-size: 1.125rem;
   font-weight: 600;
@@ -112,22 +96,6 @@
 .idleTime {
   color: var(--foreground-muted);
   font-style: italic;
-}
-
-/* Dark mode variants */
-:global(.dark-mode) .statusMessageOnTime {
-  background-color: #064e3b;
-  color: #a7f3d0;
-}
-
-:global(.dark-mode) .statusMessageEarly {
-  background-color: #1e3a8a;
-  color: #bfdbfe;
-}
-
-:global(.dark-mode) .statusMessageLate {
-  background-color: #7f1d1d;
-  color: #fecaca;
 }
 
 .stats {

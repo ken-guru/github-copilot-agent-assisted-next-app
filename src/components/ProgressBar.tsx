@@ -2,7 +2,6 @@ import React from 'react';
 import { TimelineEntry } from './Timeline';
 import styles from './ProgressBar.module.css';
 import { formatTimeHuman } from '@/utils/time';
-import { useTheme } from '@/contexts/ThemeContext';
 
 interface ProgressBarProps {
   entries: TimelineEntry[];
@@ -29,8 +28,6 @@ export default function ProgressBar({
   elapsedTime,
   timerActive = false
 }: ProgressBarProps) {
-  const { isDarkMode } = useTheme();
-
   if (!timerActive || entries.length === 0 || totalDuration <= 0) {
     return null;
   }
@@ -55,8 +52,13 @@ export default function ProgressBar({
       remainingWidth -= segmentWidth;
       
       // Default colors for breaks and dark mode adjustments
-      let background = isDarkMode ? '#374151' : '#f3f4f6';
-      let border = isDarkMode ? '#4B5563' : '#d1d5db';
+      let background = '#d1d5db';
+      let border = '#4B5563';
+      
+      // Override background color for break segments
+      if (isBreak) {
+        background = '#d1d5db';
+      }
       
       // Use activity colors if available, with dark mode consideration
       if (entry.colors) {
@@ -83,8 +85,8 @@ export default function ProgressBar({
       segments.push({
         width: remainingWidth,
         color: {
-          background: isDarkMode ? '#374151' : '#f3f4f6',
-          border: isDarkMode ? '#4B5563' : '#d1d5db'
+          background: '#374151',
+          border: '#4B5563'
         },
         activityName: 'Remaining',
         duration: remainingTime,

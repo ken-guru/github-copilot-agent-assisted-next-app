@@ -87,32 +87,13 @@ export const activityColors: ColorSet[] = internalActivityColors.map(color => ({
   border: color.border
 }));
 
-// Define dark mode variants
-const internalDarkModeActivityColors: ColorSet[] = internalActivityColors.map(color => {
-  const hueMatch = color.background.match(/hsl\((\d+),/);
-  const hue = hueMatch ? parseInt(hueMatch[1]) : 0;
-  
-  return {
-    background: `hsl(${hue}, 70%, 25%)`,
-    text: `hsl(${hue}, 70%, 90%)`,
-    border: `hsl(${hue}, 70%, 40%)`
-  };
-});
-
-export const darkModeActivityColors: ColorSet[] = internalDarkModeActivityColors.map(color => ({
-  background: color.background,
-  text: color.text,
-  border: color.border
-}));
-
 const usedColors = new Set<number>();
 
 /**
  * Get a random color set
- * @param darkMode Whether to use dark mode colors
  * @returns A random ColorSet
  */
-export function getRandomColorSet(darkMode = false): ColorSet {
+export function getRandomColorSet(): ColorSet {
   if (usedColors.size === activityColors.length) {
     usedColors.clear();
   }
@@ -124,21 +105,18 @@ export function getRandomColorSet(darkMode = false): ColorSet {
   const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
   usedColors.add(randomIndex);
   
-  const colors = darkMode ? darkModeActivityColors : activityColors;
-  return colors[randomIndex];
+  return activityColors[randomIndex];
 }
 
 /**
  * Get the next available color set
- * @param darkMode Whether to use dark mode colors
  * @param specificIndex Optional specific index to use (overrides the next available logic)
  * @returns A ColorSet
  */
-export function getNextAvailableColorSet(darkMode = false, specificIndex?: number): ColorSet {
+export function getNextAvailableColorSet(specificIndex?: number): ColorSet {
   if (specificIndex !== undefined && specificIndex >= 0 && specificIndex < activityColors.length) {
     // Return the specific color index requested
-    const colors = darkMode ? darkModeActivityColors : activityColors;
-    return colors[specificIndex];
+    return activityColors[specificIndex];
   }
   
   if (usedColors.size === activityColors.length) {
@@ -150,8 +128,7 @@ export function getNextAvailableColorSet(darkMode = false, specificIndex?: numbe
     .find(index => !usedColors.has(index)) || 0;
   usedColors.add(availableIndex);
   
-  const colors = darkMode ? darkModeActivityColors : activityColors;
-  return colors[availableIndex];
+  return activityColors[availableIndex];
 }
 
 const colorPalette = [
