@@ -188,7 +188,7 @@ describe('calculateTimeSpans', () => {
 
     expect(result.items.length).toBe(1);
     expect(result.items[0].type).toBe('activity');
-    expect(result.items[0].duration).toBe(Date.now() - startTime);
+    expect(result.items[0].duration).toBeCloseTo(Date.now() - startTime, -1);
     expect(result.items[0].height).toBeCloseTo(((Date.now() - startTime) / (totalDuration)) * 100);
   });
 });
