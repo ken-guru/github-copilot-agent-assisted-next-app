@@ -74,7 +74,7 @@ describe('Timeline Component', () => {
       }
     ];
 
-    const { container } = render(
+    render(
       <Timeline 
         entries={mockEntries}
         totalDuration={3600}
@@ -83,7 +83,7 @@ describe('Timeline Component', () => {
       />
     );
 
-    expect(screen.getByText((content, element) => {
+    expect(screen.getByText((content) => {
       return content.includes('Break') && content.includes('(');
     })).toBeInTheDocument();
   });
