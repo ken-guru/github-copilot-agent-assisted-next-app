@@ -1,14 +1,14 @@
 import React from 'react';
 import { TimelineEntry } from './Timeline';
 import styles from './ProgressBar.module.css';
-import { formatTimeHuman } from '@/utils/time'; // Import formatTimeHuman
+import { formatTimeHuman } from '@/utils/time';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ProgressBarProps {
   entries: TimelineEntry[];
   totalDuration: number; // in seconds
   elapsedTime: number; // in seconds
   timerActive?: boolean;
-  isDarkMode?: boolean; // Add dark mode prop
 }
 
 interface SegmentData {
@@ -27,9 +27,10 @@ export default function ProgressBar({
   entries,
   totalDuration,
   elapsedTime,
-  timerActive = false,
-  isDarkMode = false
+  timerActive = false
 }: ProgressBarProps) {
+  const { isDarkMode } = useTheme();
+
   if (!timerActive || entries.length === 0 || totalDuration <= 0) {
     return null;
   }

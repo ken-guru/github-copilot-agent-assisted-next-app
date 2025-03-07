@@ -107,6 +107,11 @@ export const darkModeActivityColors: ColorSet[] = internalDarkModeActivityColors
 
 const usedColors = new Set<number>();
 
+/**
+ * Get a random color set
+ * @param darkMode Whether to use dark mode colors
+ * @returns A random ColorSet
+ */
 export function getRandomColorSet(darkMode = false): ColorSet {
   if (usedColors.size === activityColors.length) {
     usedColors.clear();
@@ -123,7 +128,19 @@ export function getRandomColorSet(darkMode = false): ColorSet {
   return colors[randomIndex];
 }
 
-export function getNextAvailableColorSet(darkMode = false): ColorSet {
+/**
+ * Get the next available color set
+ * @param darkMode Whether to use dark mode colors
+ * @param specificIndex Optional specific index to use (overrides the next available logic)
+ * @returns A ColorSet
+ */
+export function getNextAvailableColorSet(darkMode = false, specificIndex?: number): ColorSet {
+  if (specificIndex !== undefined && specificIndex >= 0 && specificIndex < activityColors.length) {
+    // Return the specific color index requested
+    const colors = darkMode ? darkModeActivityColors : activityColors;
+    return colors[specificIndex];
+  }
+  
   if (usedColors.size === activityColors.length) {
     usedColors.clear();
   }

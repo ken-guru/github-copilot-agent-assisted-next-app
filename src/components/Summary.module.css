@@ -9,7 +9,11 @@
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  color: #111827; /* Darker text for better contrast */
+  color: var(--foreground);
+}
+
+.darkContainer {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
 }
 
 .statsGrid {
@@ -20,20 +24,20 @@
 }
 
 .statCard {
-  background-color: #f3f4f6;
+  background-color: var(--background-muted);
   padding: 0.75rem;
   border-radius: 0.25rem;
 }
 
 .statLabel {
   font-size: 0.875rem;
-  color: #374151; /* Darker text for better contrast */
+  color: var(--foreground-muted);
 }
 
 .statValue {
   font-size: 1.25rem;
   font-weight: bold;
-  color: #111827; /* Darker text for better contrast */
+  color: var(--foreground);
 }
 
 .statusMessage {
@@ -41,28 +45,50 @@
   border-radius: 0.25rem;
   text-align: center;
   font-weight: 500;
+  margin-bottom: 1rem;
 }
 
 .statusMessageOnTime {
   background-color: #d1fae5;
-  color: #065f46; /* Already good contrast */
+  color: #065f46;
 }
 
 .statusMessageEarly {
   background-color: #dbeafe;
-  color: #1e40af; /* Already good contrast */
+  color: #1e40af;
 }
 
 .statusMessageLate {
   background-color: #fee2e2;
-  color: #991b1b; /* Already good contrast */
+  color: #991b1b;
+}
+
+/* Dark mode variants for status messages */
+.statusMessage.darkMode.statusMessageOnTime {
+  background-color: #064e3b;
+  color: #a7f3d0;
+}
+
+.statusMessage.darkMode.statusMessageEarly {
+  background-color: #1e3a8a;
+  color: #bfdbfe;
+}
+
+.statusMessage.darkMode.statusMessageLate {
+  background-color: #7f1d1d;
+  color: #fecaca;
 }
 
 .sectionHeading {
   font-size: 1.125rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #111827; /* Darker text for better contrast */
+  color: var(--foreground);
+}
+
+.summary h2 {
+  color: var(--foreground);
+  margin-bottom: 1rem;
 }
 
 .activityList {
@@ -75,16 +101,16 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem;
-  border-bottom: 1px solid #d1d5db;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .activityName {
   font-weight: 500;
-  color: #111827; /* Darker text for better contrast */
+  color: var(--foreground);
 }
 
 .idleTime {
-  color: #4b5563; /* Darker gray for better contrast */
+  color: var(--foreground-muted);
   font-style: italic;
 }
 
@@ -102,4 +128,51 @@
 :global(.dark-mode) .statusMessageLate {
   background-color: #7f1d1d;
   color: #fecaca;
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.stats > div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stats > div span:first-child {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.stats > div span:last-child {
+  color: var(--foreground);
+}
+
+.activities {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.activities > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.activities > div:last-child {
+  border-bottom: none;
+}
+
+.activities > div span:first-child {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.activities > div span:last-child {
+  color: var(--foreground-muted);
 }

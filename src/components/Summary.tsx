@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './Summary.module.css';
 import { TimelineEntry } from './Timeline';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -17,6 +18,8 @@ export default function Summary({
   timerActive = false,
   allActivitiesCompleted = false
 }: SummaryProps) {
+  const { isDarkMode } = useTheme();
+
   const getStatusMessage = () => {
     if (timerActive) {
       const remainingTime = totalDuration - elapsedTime;
@@ -106,9 +109,9 @@ export default function Summary({
   if (!status && !stats) return null;
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${isDarkMode ? styles.darkContainer : ''}`}>
       {status && (
-        <div className={`${styles.statusMessage} ${status.className}`}>
+        <div className={`${styles.statusMessage} ${status.className} ${isDarkMode ? styles.darkMode : ''}`}>
           {status.message}
         </div>
       )}

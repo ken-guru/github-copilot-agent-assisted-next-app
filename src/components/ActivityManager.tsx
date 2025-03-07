@@ -10,6 +10,7 @@ export interface Activity {
   isDefault?: boolean;
   completed?: boolean;
   colors?: ColorSet;
+  colorIndex?: number; // Add colorIndex to preserve color identity across theme changes
 }
 
 interface ActivityManagerProps {
@@ -32,24 +33,40 @@ export default function ActivityManager({
   const { isDarkMode } = useTheme();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [newActivityName, setNewActivityName] = useState('');
+  // Track assigned color indices to prevent duplicates
+  const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
+  
+  // Get next available color index
+  const getNextColorIndex = (): number => {
+    // Find the smallest number (starting from 0) that isn't in assignedColorIndices
+    let index = 0;
+    while (assignedColorIndices.includes(index)) {
+      index++;
+    }
+    return index;
+  };
 
   // Initialize activities with colors on mount
   useEffect(() => {
     const defaultActivities: Activity[] = [
-      { id: '1', name: 'Homework', isDefault: true, colors: getNextAvailableColorSet(isDarkMode) },
-      { id: '2', name: 'Reading', isDefault: true, colors: getNextAvailableColorSet(isDarkMode) },
-      { id: '3', name: 'Play Time', isDefault: true, colors: getNextAvailableColorSet(isDarkMode) },
-      { id: '4', name: 'Chores', isDefault: true, colors: getNextAvailableColorSet(isDarkMode) },
+      { id: '1', name: 'Homework', isDefault: true, colorIndex: 0, colors: getNextAvailableColorSet(isDarkMode, 0) },
+      { id: '2', name: 'Reading', isDefault: true, colorIndex: 1, colors: getNextAvailableColorSet(isDarkMode, 1) },
+      { id: '3', name: 'Play Time', isDefault: true, colorIndex: 2, colors: getNextAvailableColorSet(isDarkMode, 2) },
+      { id: '4', name: 'Chores', isDefault: true, colorIndex: 3, colors: getNextAvailableColorSet(isDarkMode, 3) },
     ];
+    
+    // Update assigned color indices
+    setAssignedColorIndices([0, 1, 2, 3]);
+    
     setActivities(defaultActivities);
-  }, [isDarkMode]);
+  }, []); // Only run once on mount, not dependent on isDarkMode
   
   // Update activity colors when dark mode changes
   useEffect(() => {
     setActivities(currentActivities => 
       currentActivities.map(activity => ({
         ...activity,
-        colors: getNextAvailableColorSet(isDarkMode)
+        colors: getNextAvailableColorSet(isDarkMode, activity.colorIndex || 0)
       }))
     );
   }, [isDarkMode]);
@@ -60,11 +77,18 @@ export default function ActivityManager({
   const handleAddActivity = (e: React.FormEvent) => {
     e.preventDefault();
     if (newActivityName.trim() && !isAddingDisabled) {
+      const nextColorIndex = getNextColorIndex();
+      
       const newActivity: Activity = {
         id: Date.now().toString(),
         name: newActivityName.trim(),
-        colors: getNextAvailableColorSet(isDarkMode)
+        colorIndex: nextColorIndex,
+        colors: getNextAvailableColorSet(isDarkMode, nextColorIndex)
       };
+      
+      // Add the new color index to assigned indices
+      setAssignedColorIndices([...assignedColorIndices, nextColorIndex]);
+      
       setActivities([...activities, newActivity]);
       setNewActivityName('');
     }
@@ -78,7 +102,7 @@ export default function ActivityManager({
       // Start the selected activity
       onActivitySelect({
         ...activity,
-        colors: activity.colors || getNextAvailableColorSet(isDarkMode)
+        colors: activity.colors || getNextAvailableColorSet(isDarkMode, activity.colorIndex || 0)
       });
     }
   };
@@ -88,6 +112,14 @@ export default function ActivityManager({
     if (id === currentActivityId) {
       onActivitySelect(null);
     }
+    
+    // Find the color index of the activity being removed
+    const activity = activities.find(a => a.id === id);
+    if (activity && typeof activity.colorIndex === 'number') {
+      // Remove the color index from assignedColorIndices
+      setAssignedColorIndices(assignedColorIndices.filter(i => i !== activity.colorIndex));
+    }
+    
     setActivities(activities.filter(activity => activity.id !== id));
     onActivityRemove?.(id);
   };
