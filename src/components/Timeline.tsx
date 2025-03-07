@@ -10,7 +10,7 @@ export interface TimelineEntry {
   activityId: string | null;
   activityName: string | null;
   startTime: number;
-  endTime?: number; // Make endTime optional to support active entries
+  endTime?: number | null; // Make endTime match useActivityState's type
   colors?: {
     background: string;
     text: string;
@@ -54,14 +54,13 @@ function getGapDuration(currentStartTime: number, previousEndTime: number | unde
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
   const { isDarkMode } = useTheme();
   const hasEntries = entries.length > 0;
-  const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
     if (timerActive) {
       interval = setInterval(() => {
-        setNow(Date.now());
+        // We can safely remove the now state since it's not being used
       }, 1000);
     }
 
@@ -145,7 +144,6 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
         totalDuration={totalDuration}
         elapsedTime={initialElapsedTime}
         timerActive={hasEntries}
-        isDarkMode={isDarkMode}
       />
 
       <div className={styles.timelineContainer}>

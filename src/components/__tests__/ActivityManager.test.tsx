@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
-import ActivityManager, { Activity } from '../ActivityManager';
+import ActivityManager from '../ActivityManager';
 import * as colorUtils from '../../utils/colors';
 
 // Mock the getNextAvailableColorSet function
@@ -123,6 +123,9 @@ describe('ActivityManager Component', () => {
     
     // Find the homework container div
     const homeworkItem = screen.getByText('Homework').closest('div');
+    if (!homeworkItem) {
+      throw new Error('Could not find homework item container');
+    }
     
     // The homework item should not contain start/complete buttons
     // We need to check this differently since there are multiple Start buttons in the document
@@ -232,6 +235,9 @@ describe('ActivityManager Component', () => {
     
     // Find the first activity item
     const homeworkItem = screen.getByText('Homework').closest('div');
+    if (!homeworkItem) {
+      throw new Error('Could not find homework item container');
+    }
     
     // Find the Start button within this item and click it
     const startButton = within(homeworkItem).getByText('Start');

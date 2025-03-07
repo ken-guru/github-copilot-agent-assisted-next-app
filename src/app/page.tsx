@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import TimeSetup from '@/components/TimeSetup';
-import ActivityManager, { Activity } from '@/components/ActivityManager';
+import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import { useActivityState } from '@/hooks/useActivityState';
@@ -20,7 +20,6 @@ export default function Home() {
     allActivitiesCompleted,
     handleActivitySelect,
     handleActivityRemoval,
-    checkActivitiesCompleted
   } = useActivityState({
     onTimerStart: () => {
       if (!timerActive) startTimer();
@@ -47,7 +46,7 @@ export default function Home() {
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Kid's Activity Timer</h1>
+          <h1 className={styles.title}>Kid&apos;s Activity Timer</h1>
           <p className={styles.subtitle}>Track activities and manage your time!</p>
         </header>
 
@@ -64,12 +63,19 @@ export default function Home() {
                   onActivityRemove={handleActivityRemoval}
                   currentActivityId={currentActivity?.id || null} 
                   completedActivityIds={completedActivityIds}
+                  timelineEntries={timelineEntries.map(entry => ({
+                    ...entry,
+                    endTime: entry.endTime === undefined ? null : entry.endTime
+                  }))}
                   isTimeUp={isTimeUp}
                 />
               </div>
               <div>
                 <Timeline 
-                  entries={timelineEntries} 
+                  entries={timelineEntries.map(entry => ({
+                    ...entry,
+                    endTime: entry.endTime === undefined ? null : entry.endTime
+                  }))}
                   totalDuration={totalDuration} 
                   elapsedTime={elapsedTime}
                   allActivitiesCompleted={allActivitiesCompleted}
@@ -78,7 +84,10 @@ export default function Home() {
                 {allActivitiesCompleted && (
                   <div className={styles.summaryContainer}>
                     <Summary 
-                      entries={timelineEntries} 
+                      entries={timelineEntries.map(entry => ({
+                        ...entry,
+                        endTime: entry.endTime === undefined ? null : entry.endTime
+                      }))}
                       totalDuration={totalDuration} 
                       elapsedTime={elapsedTime}
                       allActivitiesCompleted={allActivitiesCompleted}

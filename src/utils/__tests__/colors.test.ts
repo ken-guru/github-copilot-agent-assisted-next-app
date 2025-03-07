@@ -1,4 +1,4 @@
-import { activityColors, getRandomColorSet, getNextAvailableColorSet, ColorSet, getColor } from '../colors';
+import { activityColors, getRandomColorSet, ColorSet, getColor } from '../colors';
 import { darkModeActivityColors } from '../colors';
 
 describe('colors utility', () => {
@@ -11,10 +11,11 @@ describe('colors utility', () => {
     
     // Reset the module's internal state by re-importing it
     jest.isolateModules(() => {
-      const colorsModule = require('../colors');
-      // Reset the usedColors set in the module
-      // This is necessary since usedColors is a module-level variable that persists between tests
-      Object.defineProperty(colorsModule, 'usedColors', { value: new Set() });
+      import('../colors').then(colorsModule => {
+        // Reset the usedColors set in the module
+        // This is necessary since usedColors is a module-level variable that persists between tests
+        Object.defineProperty(colorsModule, 'usedColors', { value: new Set() });
+      });
     });
   });
   

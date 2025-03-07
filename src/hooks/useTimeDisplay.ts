@@ -41,7 +41,7 @@ export function useTimeDisplay(totalDuration: number, elapsedTime: number, isAct
     const interval = setInterval(updateDisplay, 1000);
     
     return () => clearInterval(interval);
-  }, [isActive]); // Only re-run when active state changes
+  }, [isActive, totalDuration]); // Only re-run when active state or totalDuration changes
 
   return {
     displayTime,

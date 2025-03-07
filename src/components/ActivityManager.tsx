@@ -59,7 +59,7 @@ export default function ActivityManager({
     setAssignedColorIndices([0, 1, 2, 3]);
     
     setActivities(defaultActivities);
-  }, []); // Only run once on mount, not dependent on isDarkMode
+  }, [isDarkMode]); // Add isDarkMode as dependency
   
   // Update activity colors when dark mode changes
   useEffect(() => {
