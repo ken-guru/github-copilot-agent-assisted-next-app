@@ -142,4 +142,37 @@ describe('Summary Component', () => {
     // Check for hours in formatted time (more specifically in the activity item)
     expect(screen.getByText('Long Task').nextSibling).toHaveTextContent('2h 0m 0s');
   });
+  
+  it('should handle entries with null or undefined endTime', () => {
+    // Mock Date.now() to return a fixed timestamp
+    const originalNow = Date.now;
+    const mockNow = 1000000 + 3600000; // 1 hour after start time
+    global.Date.now = jest.fn(() => mockNow);
+    
+    const entries = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Ongoing Task',
+        startTime: 1000000,
+        endTime: null // null endTime to simulate ongoing activity
+      }
+    ];
+    
+    render(
+      <Summary 
+        entries={entries}
+        totalDuration={7200}
+        elapsedTime={3600}
+        timerActive={true}
+        allActivitiesCompleted={true}
+      />
+    );
+    
+    // The activity duration should be calculated using the current time
+    expect(screen.getByText('Ongoing Task').nextSibling).toHaveTextContent('1h 0m 0s');
+    
+    // Clean up the mock
+    global.Date.now = originalNow;
+  });
 });

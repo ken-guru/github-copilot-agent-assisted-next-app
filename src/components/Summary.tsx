@@ -86,7 +86,9 @@ export default function Summary({
 
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i];
-      const duration = entry.endTime - entry.startTime;
+      // Check if endTime exists, otherwise use current time for ongoing activities
+      const endTime = entry.endTime ?? Date.now();
+      const duration = endTime - entry.startTime;
       
       if (entry.activityId) {
         stats.activeTime += duration / 1000;
