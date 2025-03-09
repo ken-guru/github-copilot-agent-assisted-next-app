@@ -48,7 +48,7 @@ export default function Summary({
       } else if (timeDiff < -threshold) {
         const earlierBy = formatDuration(Math.abs(timeDiff));
         return {
-          message: `Amazing! You finished ${earlierBy} earlier than planned!`,
+          message: `Well done! You finished ${earlierBy} ahead of schedule!`,
           className: styles.statusMessageEarly
         };
       } else {

@@ -66,7 +66,10 @@ function calculateTimeSpans({
       height: activityHeight,
     });
 
-    previousEndTime = currentEndTime;
+    // Only assign currentEndTime to previousEndTime if it's defined
+    if (currentEndTime !== undefined && currentEndTime !== null) {
+      previousEndTime = currentEndTime;
+    }
   }
 
   // Handle remaining time if all activities are completed
