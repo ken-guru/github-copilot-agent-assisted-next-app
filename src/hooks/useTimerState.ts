@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 interface UseTimerStateProps {
   totalDuration: number;
@@ -6,60 +6,61 @@ interface UseTimerStateProps {
 }
 
 export function useTimerState({ totalDuration, isCompleted = false }: UseTimerStateProps) {
-  const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
-  const [timerStopped, setTimerStopped] = useState(false);
+  const [isTimeUp, setIsTimeUp] = useState(false);
   const [timerActive, setTimerActive] = useState(false);
-  const finalElapsedTimeRef = useRef(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Start the timer
-  const startTimer = useCallback(() => {
-    if (!timerActive) {
-      setStartTime(Date.now());
-      setTimerActive(true);
-      setElapsedTime(0); // Reset elapsed time when starting
-    }
-  }, [timerActive]);
-
-  // Stop the timer
-  const stopTimer = useCallback(() => {
-    if (timerActive && !timerStopped) {
-      setTimerStopped(true);
-      finalElapsedTimeRef.current = elapsedTime;
-    }
-  }, [timerActive, timerStopped, elapsedTime]);
-
-  // Update elapsed time when timer is running
-  useEffect(() => {
-    if (!startTime || timerStopped || !timerActive) return;
-
-    const timer = setInterval(() => {
-      const now = Date.now();
-      const newElapsedTime = Math.floor((now - startTime) / 1000);
-      setElapsedTime(Math.min(newElapsedTime, totalDuration)); // Cap at total duration
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [startTime, timerStopped, timerActive, totalDuration]);
-
-  // Stop timer when activities are completed
   useEffect(() => {
     if (isCompleted) {
       stopTimer();
     }
-  }, [isCompleted, stopTimer]);
+  }, [isCompleted]);
 
-  const displayedElapsedTime = timerStopped ? finalElapsedTimeRef.current : elapsedTime;
-  const timeLeft = Math.max(0, totalDuration - displayedElapsedTime);
-  const isTimeUp = timeLeft === 0 || isCompleted;
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setTimerActive(false);
+  }, []);
+
+  const startTimer = useCallback(() => {
+    if (!timerActive && !isCompleted) {
+      setTimerActive(true);
+      const startTime = Date.now() - elapsedTime * 1000;
+      
+      timerRef.current = setInterval(() => {
+        const currentElapsed = Math.floor((Date.now() - startTime) / 1000);
+        setElapsedTime(currentElapsed);
+        
+        if (currentElapsed >= totalDuration) {
+          setIsTimeUp(true);
+        }
+      }, 1000);
+    }
+  }, [timerActive, isCompleted, elapsedTime, totalDuration]);
+
+  const resetTimer = useCallback(() => {
+    stopTimer();
+    setElapsedTime(0);
+    setIsTimeUp(false);
+  }, [stopTimer]);
 
   return {
-    elapsedTime: displayedElapsedTime,
-    timeLeft,
+    elapsedTime,
     isTimeUp,
     timerActive,
-    timerStopped,
     startTimer,
-    stopTimer
+    stopTimer,
+    resetTimer
   };
 }

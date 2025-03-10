@@ -235,4 +235,32 @@ describe('useActivityState', () => {
       expect(result.current.allActivitiesCompleted).toBe(true);
     });
   });
+
+  describe('reset functionality', () => {
+    it('should reset all state when resetActivities is called', () => {
+      const { result } = renderHook(() => useActivityState());
+      
+      // Add and start an activity
+      act(() => {
+        result.current.handleActivitySelect({
+          id: '1',
+          name: 'Test Activity'
+        });
+      });
+      
+      expect(result.current.currentActivity).toBeTruthy();
+      expect(result.current.timelineEntries.length).toBe(1);
+      
+      // Reset the state
+      act(() => {
+        result.current.resetActivities();
+      });
+      
+      // Verify everything is reset
+      expect(result.current.currentActivity).toBeNull();
+      expect(result.current.timelineEntries).toHaveLength(0);
+      expect(result.current.completedActivityIds).toHaveLength(0);
+      expect(result.current.allActivitiesCompleted).toBeFalsy();
+    });
+  });
 });

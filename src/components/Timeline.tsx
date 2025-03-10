@@ -1,15 +1,14 @@
 import React, { useMemo, useEffect } from 'react';
 import styles from './Timeline.module.css';
-import ProgressBar from './ProgressBar';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
-import { formatTimeHuman } from '@/utils/time'; // Import formatTimeHuman
+import { formatTimeHuman } from '@/utils/time';
 
 export interface TimelineEntry {
   id: string;
   activityId: string | null;
   activityName: string | null;
   startTime: number;
-  endTime?: number | null; // Make endTime match useActivityState's type
+  endTime?: number | null;
   colors?: {
     background: string;
     text: string;
@@ -46,28 +45,26 @@ function calculateTimeIntervals(totalDuration: number): { interval: number; coun
 
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
   const hasEntries = entries.length > 0;
-
+  
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-
     if (timerActive) {
       interval = setInterval(() => {
         // We can safely remove the now state since it's not being used
       }, 1000);
     }
-
     return () => {
       if (interval) clearInterval(interval);
     };
   }, [timerActive]);
-
+  
   // Calculate time remaining display
   const timeLeft = totalDuration - initialElapsedTime;
   const isOvertime = timeLeft < 0;
   const timeDisplay = timerActive 
     ? `${isOvertime ? 'Overtime: ' : 'Time Left: '}${formatTimeHuman(Math.abs(timeLeft) * 1000)}`
     : `Timer ready: ${formatTimeHuman(totalDuration * 1000)}`;
-
+    
   const timeMarkers = useMemo(() => {
     const { interval, count } = calculateTimeIntervals(totalDuration * 1000);
     return Array.from({ length: count + 1 }, (_, i) => {
@@ -79,23 +76,22 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       };
     });
   }, [totalDuration]);
-
+  
   const currentElapsedTime = hasEntries && entries[0].startTime ? Date.now() - entries[0].startTime : 0;
   const currentTimeLeft = totalDuration * 1000 - currentElapsedTime;
-
   const timeSpansData = calculateTimeSpans({
     entries,
     totalDuration: totalDuration * 1000,
     allActivitiesCompleted,
     timeLeft: currentTimeLeft,
   });
-
+  
   const calculateEntryStyle = (item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number }) => {
     const style: React.CSSProperties = {
       height: `${item.height}%`,
       minHeight: item.height < 5 ? '2rem' : undefined // Minimum height for very short entries
     };
-
+    
     if (item.type === 'gap') {
       return {
         ...style,
@@ -104,13 +100,13 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
         color: 'var(--foreground-muted)',
       };
     }
-
+    
     const colors = item.entry?.colors || {
       background: 'var(--background-muted)',
       text: 'var(--text-secondary)',
       border: 'var(--border)'
     };
-
+    
     return {
       ...style,
       backgroundColor: colors.background,
@@ -118,7 +114,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       color: colors.text,
     };
   };
-
+  
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -131,13 +127,6 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
         </div>
       </div>
       
-      <ProgressBar
-        entries={entries}
-        totalDuration={totalDuration}
-        elapsedTime={initialElapsedTime}
-        timerActive={hasEntries}
-      />
-
       <div className={styles.timelineContainer}>
         <div className={styles.timelineRuler}>
           {timeMarkers.map(({ time, position, label }) => (
@@ -161,7 +150,6 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
               />
             ))}
           </div>
-
           <div className={styles.entriesWrapper}>
             {hasEntries ? (
               timeSpansData.items.map((item, index) => {
@@ -189,7 +177,6 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                     </div>
                   );
                 }
-
                 return (
                   <div key={item.entry!.id} className={styles.timelineEntry} style={style}>
                     <div className={styles.entryContent}>
@@ -201,7 +188,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                           {item.entry!.activityName}
                         </span>
                         <span className={styles.timeInfo}>
-                          {formatTimeHuman(item.duration)} {/* Use formatTimeHuman */}
+                          {formatTimeHuman(item.duration)}
                         </span>
                       </div>
                     </div>

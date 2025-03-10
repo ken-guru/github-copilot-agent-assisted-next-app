@@ -80,20 +80,16 @@ export default function Summary({
 
     const stats = {
       activeTime: 0,
-      idleTime: 0,
-      activities: new Map<string, number>()
+      idleTime: 0
     };
 
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i];
-      // Check if endTime exists, otherwise use current time for ongoing activities
       const endTime = entry.endTime ?? Date.now();
       const duration = endTime - entry.startTime;
       
       if (entry.activityId) {
         stats.activeTime += duration / 1000;
-        const activityTime = stats.activities.get(entry.activityName || '') || 0;
-        stats.activities.set(entry.activityName || '', activityTime + duration / 1000);
       } else {
         stats.idleTime += duration / 1000;
       }
@@ -105,7 +101,7 @@ export default function Summary({
   const status = getStatusMessage();
   const stats = calculateActivityStats();
 
-  if (!status && !stats) return null;
+  if (!allActivitiesCompleted || !stats) return null;
 
   return (
     <div className={`${styles.container}`}>
@@ -114,43 +110,24 @@ export default function Summary({
           {status.message}
         </div>
       )}
-      {allActivitiesCompleted && stats && (
-        <div className={styles.summary}>
-          <h2>Activity Summary</h2>
-          <div className={styles.stats}>
-            <div>
-              <span>Total Time:</span>
-              <span>{formatDuration(elapsedTime)}</span>
-            </div>
-            <div>
-              <span>Planned Time:</span>
-              <span>{formatDuration(totalDuration)}</span>
-            </div>
-            <div>
-              <span>Active Time:</span>
-              <span>{formatDuration(stats.activeTime)}</span>
-            </div>
-            <div>
-              <span>Idle Time:</span>
-              <span>{formatDuration(stats.idleTime)}</span>
-            </div>
-          </div>
-          <div className={styles.activities}>
-            {Array.from(stats.activities).map(([name, duration]) => (
-              <div key={name}>
-                <span>{name}</span>
-                <span>{formatDuration(duration)}</span>
-              </div>
-            ))}
-            {stats.idleTime > 0 && (
-              <div>
-                <span>Breaks/Idle time</span>
-                <span>{formatDuration(stats.idleTime)}</span>
-              </div>
-            )}
-          </div>
+      <div className={styles.statsGrid}>
+        <div className={styles.statCard}>
+          <div className={styles.statLabel}>Total Time</div>
+          <div className={styles.statValue}>{formatDuration(elapsedTime)}</div>
         </div>
-      )}
+        <div className={styles.statCard}>
+          <div className={styles.statLabel}>Planned Time</div>
+          <div className={styles.statValue}>{formatDuration(totalDuration)}</div>
+        </div>
+        <div className={styles.statCard}>
+          <div className={styles.statLabel}>Active Time</div>
+          <div className={styles.statValue}>{formatDuration(stats.activeTime)}</div>
+        </div>
+        <div className={styles.statCard}>
+          <div className={styles.statLabel}>Idle Time</div>
+          <div className={styles.statValue}>{formatDuration(stats.idleTime)}</div>
+        </div>
+      </div>
     </div>
   );
 }

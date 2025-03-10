@@ -1,5 +1,7 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { Activity } from '@/components/ActivityManager';
+import { generateUniqueId } from '@/utils/timeUtils';
+import { getNextAvailableColorSet } from '@/utils/colors';
 
 export interface TimelineEntry {
   id: string;
@@ -72,7 +74,7 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
         activityName: activity.name,
         startTime: Date.now(),
         endTime: null,
-        colors: activity.colors
+        colors: getNextAvailableColorSet()
       };
       setTimelineEntries(prev => [...prev, newEntry]);
       
@@ -177,6 +179,17 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     return false;
   }, [activities, completedActivityIds, removedActivityIds, currentActivity]);
 
+  const resetActivities = useCallback(() => {
+    setActivities(new Set());
+    setTimelineEntries([]);
+    setCompletedActivityIds([]);
+    setRemovedActivityIds([]);
+    setCurrentActivity(null);
+    setStartedActivityIds(new Set());
+    setAllActivityIds(new Set());
+    setHasActuallyStartedActivity(false);
+  }, []);
+
   return {
     currentActivity,
     timelineEntries,
@@ -185,6 +198,7 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     allActivitiesCompleted,
     handleActivitySelect,
     handleActivityRemoval,
-    checkActivitiesCompleted
+    checkActivitiesCompleted,
+    resetActivities
   };
 }
