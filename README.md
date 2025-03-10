@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Activity Timer and Tracker
+
+A comprehensive time management and activity tracking application built with Next.js. This app helps users efficiently manage their time by setting duration goals and tracking activities throughout the day.
+
+## Disclaimer
+
+**This is a hobby project** created for learning and experimentation purposes. It was never intended to be stable, secure, or complete enough for business-related or professional activities. Use at your own risk.
+
+## Development Approach
+
+This application was primarily developed with assistance from various Large Language Models (LLMs) including GitHub Copilot. The code, while functional, represents an exploration of AI-assisted development techniques rather than production-ready software.
+
+## Features
+
+- **Time Management**: Set time durations or deadlines for your work sessions
+- **Activity Tracking**: Create and manage multiple activities
+- **Visual Timeline**: See a visual representation of how time was spent
+- **Progress Tracking**: Monitor ongoing activities with a progress bar
+- **Activity Summary**: Get detailed stats about completed activities
+- **Color-Coded Activities**: Easily identify different activities with unique color schemes
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+
+## Application Flow
+
+1. Set up the timer duration or deadline
+2. Create and manage activities
+3. Start/stop activities as you work
+4. Get a visual timeline of your work session
+5. Receive a summary of your completed activities and time usage
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Testing
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This application is thoroughly tested with Jest and React Testing Library. Run the tests with:
 
-## Learn More
+```bash
+npm test
+# or
+yarn test
+```
 
-To learn more about Next.js, take a look at the following resources:
+For continuous testing during development:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run test:watch
+# or
+yarn test:watch
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+src/
+  ├── app/            # Next.js app directory (routes, layout)
+  ├── components/     # React components
+  │   └── __tests__/  # Component tests
+  ├── hooks/          # Custom React hooks
+  │   └── __tests__/  # Hook tests
+  └── utils/          # Utility functions
+      └── __tests__/  # Utility tests
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Technologies
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js](https://nextjs.org/) - React framework
+- [React](https://reactjs.org/) - UI library
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [Jest](https://jestjs.io/) - Testing framework
+- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) - Testing utilities
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
