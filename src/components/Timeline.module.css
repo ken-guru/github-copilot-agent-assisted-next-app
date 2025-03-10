@@ -1,6 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
+  flex: 1;
   gap: 1rem;
   width: 100%;
   height: 100%;
@@ -8,6 +9,7 @@
   background: var(--background);
   border-radius: 0.5rem;
   border: 1px solid var(--border);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .header {
@@ -54,6 +56,7 @@
   position: relative;
   overflow: hidden;
   background: var(--background);
+  height: 100%; /* Allow full height growth */
 }
 
 .timelineRuler {
@@ -63,24 +66,32 @@
   background: var(--background-muted);
   flex-shrink: 0;
   z-index: 2;
+  padding: 24px 0; /* Increase vertical padding to match marker height */
 }
 
 .timeMarker {
   position: absolute;
   left: 0;
   width: 100%;
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
   color: var(--foreground-muted);
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   border-top: 1px solid var(--border);
   background: var(--background-muted);
   height: 24px;
   transform: translateY(-50%);
+  z-index: 1;
+}
+
+.timeMarker:first-child {
+  transform: translateY(0); /* Prevent first marker from overflowing top */
 }
 
 .timeMarker:last-child {
+  transform: translateY(-100%); /* Prevent last marker from overflowing bottom */
   border-bottom: 1px solid var(--border);
 }
 
