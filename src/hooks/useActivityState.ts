@@ -1,6 +1,5 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Activity } from '@/components/ActivityManager';
-import { generateUniqueId } from '@/utils/timeUtils';
 import { getNextAvailableColorSet } from '@/utils/colors';
 
 export interface TimelineEntry {

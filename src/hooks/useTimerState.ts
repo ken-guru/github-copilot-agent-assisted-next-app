@@ -11,11 +11,19 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
   const [timerActive, setTimerActive] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  const stopTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setTimerActive(false);
+  }, []);
+
   useEffect(() => {
     if (isCompleted) {
       stopTimer();
     }
-  }, [isCompleted]);
+  }, [isCompleted, stopTimer]);
 
   useEffect(() => {
     return () => {
@@ -23,14 +31,6 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
         clearInterval(timerRef.current);
       }
     };
-  }, []);
-
-  const stopTimer = useCallback(() => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    setTimerActive(false);
   }, []);
 
   const startTimer = useCallback(() => {
