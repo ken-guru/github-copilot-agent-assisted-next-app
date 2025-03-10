@@ -95,7 +95,6 @@
 }
 
 .activityItem:hover {
-  transform: translateY(-1px);
   box-shadow: 0 2px 4px var(--segment-outline);
 }
 
@@ -117,7 +116,6 @@
 }
 
 .completedActivityItem:hover {
-  transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
