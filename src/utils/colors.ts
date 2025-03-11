@@ -178,16 +178,18 @@ const isDarkMode = () => {
   return false;
 };
 
-// Export color sets that adapt to the current theme
-export const activityColors: ColorSet[] = internalActivityColors.map(colorSet => {
-  // Check if we're in a browser environment
-  if (typeof window === 'undefined') {
-    return colorSet.light; // Default to light mode during SSR
-  }
-  
-  // Return the appropriate color set based on dark mode state
-  return isDarkMode() ? colorSet.dark : colorSet.light;
-});
+// Export a function that returns theme-appropriate colors instead of a static array
+export function getActivityColors(): ColorSet[] {
+  return internalActivityColors.map(colorSet => {
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined') {
+      return colorSet.light; // Default to light mode during SSR
+    }
+    
+    // Return the appropriate color set based on dark mode state
+    return isDarkMode() ? colorSet.dark : colorSet.light;
+  });
+}
 
 const usedColors = new Set<number>();
 
@@ -196,18 +198,18 @@ const usedColors = new Set<number>();
  * @returns A random ColorSet
  */
 export function getRandomColorSet(): ColorSet {
-  if (usedColors.size === activityColors.length) {
+  if (usedColors.size === internalActivityColors.length) {
     usedColors.clear();
   }
   
-  const availableIndices = activityColors
-    .map((_, index) => index)
+  const availableIndices = Array.from({ length: internalActivityColors.length }, (_, i) => i)
     .filter(index => !usedColors.has(index));
     
   const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
   usedColors.add(randomIndex);
   
-  return activityColors[randomIndex];
+  const colors = getActivityColors();
+  return colors[randomIndex];
 }
 
 /**
@@ -216,21 +218,22 @@ export function getRandomColorSet(): ColorSet {
  * @returns A ColorSet
  */
 export function getNextAvailableColorSet(specificIndex?: number): ColorSet {
-  if (specificIndex !== undefined && specificIndex >= 0 && specificIndex < activityColors.length) {
+  const colors = getActivityColors();
+  
+  if (specificIndex !== undefined && specificIndex >= 0 && specificIndex < colors.length) {
     // Return the specific color index requested
-    return activityColors[specificIndex];
+    return colors[specificIndex];
   }
   
-  if (usedColors.size === activityColors.length) {
+  if (usedColors.size === colors.length) {
     usedColors.clear();
   }
   
-  const availableIndex = activityColors
-    .map((_, index) => index)
+  const availableIndex = Array.from({ length: colors.length }, (_, i) => i)
     .find(index => !usedColors.has(index)) || 0;
   usedColors.add(availableIndex);
   
-  return activityColors[availableIndex];
+  return colors[availableIndex];
 }
 
 // Convert colorPalette to HSL
