@@ -53,10 +53,11 @@ describe('colors utility', () => {
   describe('getRandomColorSet', () => {
     let freshGetRandomColorSet: typeof getRandomColorSet;
     
-    beforeEach(() => {
+    beforeEach(async () => {
       // Reset module to clear usedColors Set
       jest.resetModules();
-      freshGetRandomColorSet = require('../colors').getRandomColorSet;
+      const colorsModule = await import('../colors');
+      freshGetRandomColorSet = colorsModule.getRandomColorSet;
     });
 
     it('should return a color set with proper structure', () => {
@@ -97,10 +98,11 @@ describe('colors utility', () => {
   describe('getNextAvailableColorSet', () => {
     let freshGetNextAvailableColorSet: typeof getNextAvailableColorSet;
     
-    beforeEach(() => {
+    beforeEach(async () => {
       // Reset module to clear usedColors Set
       jest.resetModules();
-      freshGetNextAvailableColorSet = require('../colors').getNextAvailableColorSet;
+      const colorsModule = await import('../colors');
+      freshGetNextAvailableColorSet = colorsModule.getNextAvailableColorSet;
     });
 
     it('should return a color set with proper structure', () => {

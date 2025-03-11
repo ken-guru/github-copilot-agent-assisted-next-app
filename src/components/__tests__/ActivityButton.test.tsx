@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { ActivityButton } from '../ActivityButton';
 import styles from '../ActivityManager.module.css';
 import { jest } from '@jest/globals';
@@ -78,7 +78,13 @@ describe('ActivityButton', () => {
     const onRemove = jest.fn();
     render(<ActivityButton {...defaultProps} 
       onRemove={onRemove}
-      timelineEntries={[{ activityId: 'test1', startTime: 0, endTime: 300 }]}
+      timelineEntries={[{ 
+        id: '1',
+        activityId: 'test1',
+        activityName: 'Test Activity',
+        startTime: 0,
+        endTime: 300 
+      }]}
     />);
     
     expect(screen.getByRole('button', { name: 'Remove' })).toBeDisabled();

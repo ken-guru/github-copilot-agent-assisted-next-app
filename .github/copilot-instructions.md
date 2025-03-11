@@ -10,4 +10,6 @@ After making any changes, summarize these to me to allow me the chance to ask an
 
 If any of the changes made significantly changes the behavior or functionality described in README.md, let me know and suggest how README.md could be updated to better reflect the current state of the application.
 
+If any planned changes require introducing a new package, please discuss with me the reason we need the given package and what it allows us to do. Also consider ways we could solve a given challenge without this package, and analyse whether this might cause unforeseen consequences in the future. When making these considerations keep in mind factors such as security, complexity and whether the given package is actively maintained.
+
 After any and all changes, ALWAYS remind me run the test suite to make sure the changes did not affect any other parts of the application.
