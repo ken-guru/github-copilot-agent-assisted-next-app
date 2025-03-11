@@ -1,10 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Activity } from '@/components/ActivityManager';
 import { useActivitiesTracking } from './useActivitiesTracking';
-import { useTimelineEntries, TimelineEntry } from './useTimelineEntries';
+import { useTimelineEntries } from './useTimelineEntries';
 import { isActivitiesCompleted } from '@/utils/activityUtils';
-
-export { TimelineEntry } from './useTimelineEntries';
 
 export interface UseActivityStateProps {
   onTimerStart?: () => void;

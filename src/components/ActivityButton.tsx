@@ -1,6 +1,6 @@
 import React from 'react';
 import { Activity } from './ActivityManager';
-import { TimelineEntry } from '../hooks/useActivityState';
+import { TimelineEntry } from '../hooks/useTimelineEntries';
 import styles from './ActivityManager.module.css';
 
 interface ActivityButtonProps {

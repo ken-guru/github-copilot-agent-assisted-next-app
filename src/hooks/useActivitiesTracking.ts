@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { Activity } from '@/components/ActivityManager';
 
 export interface UseActivitiesTrackingResult {
   activities: Set<string>;

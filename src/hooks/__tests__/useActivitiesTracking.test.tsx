@@ -4,7 +4,6 @@ import { useActivitiesTracking } from '../useActivitiesTracking';
 describe('useActivitiesTracking', () => {
   const mockActivityId1 = '1';
   const mockActivityId2 = '2';
-  const mockActivityId3 = '3';
 
   it('should initialize with empty state', () => {
     const { result } = renderHook(() => useActivitiesTracking());
