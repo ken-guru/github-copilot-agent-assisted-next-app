@@ -5,6 +5,7 @@ import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import ProgressBar from '@/components/ProgressBar';
+import ThemeToggle from '@/components/ThemeToggle';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import styles from './page.module.css';
@@ -67,15 +68,20 @@ export default function Home() {
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Mr. Timely</h1>
-          {appState !== 'setup' && (
-            <button 
-              className={styles.resetButton} 
-              onClick={handleReset}
-            >
-              Reset
-            </button>
-          )}
+          <div className={styles.headerContent}>
+            <h1 className={styles.title}>Mr. Timely</h1>
+            <ThemeToggle />
+            <div className={styles.resetButtonContainer}>
+              {appState !== 'setup' && (
+                <button 
+                  className={styles.resetButton} 
+                  onClick={handleReset}
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+          </div>
         </header>
 
         {appState === 'setup' && (

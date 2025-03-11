@@ -1,7 +1,6 @@
 'use client';
 
 import { Geist, Geist_Mono } from "next/font/google";
-import ThemeToggle from "@/components/ThemeToggle";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,9 +24,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <div className="toggle-container">
-          <ThemeToggle />
-        </div>
         <main>
           {children}
         </main>
