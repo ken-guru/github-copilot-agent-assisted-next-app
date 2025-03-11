@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { ActivityButton } from '../ActivityButton';
 import styles from '../ActivityManager.module.css';
 import { jest } from '@jest/globals';
@@ -19,11 +19,17 @@ describe('ActivityButton', () => {
     isCompleted: false,
     isRunning: false,
     onSelect: jest.fn(),
-    timelineEntries: []
+    timelineEntries: [],
+    elapsedTime: 0
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   it('renders activity name', () => {
@@ -76,5 +82,27 @@ describe('ActivityButton', () => {
     />);
     
     expect(screen.getByRole('button', { name: 'Remove' })).toBeDisabled();
+  });
+
+  describe('Timer Display', () => {
+    it('shows timer when activity is running', () => {
+      render(<ActivityButton {...defaultProps} isRunning={true} elapsedTime={30} />);
+      expect(screen.getByText('00:30')).toBeInTheDocument();
+    });
+
+    it('does not show timer when activity is not running', () => {
+      render(<ActivityButton {...defaultProps} elapsedTime={30} />);
+      expect(screen.queryByText('00:30')).not.toBeInTheDocument();
+    });
+
+    it('formats time correctly for different durations', () => {
+      render(<ActivityButton {...defaultProps} isRunning={true} elapsedTime={3665} />);
+      expect(screen.getByText('61:05')).toBeInTheDocument();
+    });
+
+    it('does not show timer when activity is completed', () => {
+      render(<ActivityButton {...defaultProps} isCompleted={true} isRunning={false} elapsedTime={30} />);
+      expect(screen.queryByText('00:30')).not.toBeInTheDocument();
+    });
   });
 });

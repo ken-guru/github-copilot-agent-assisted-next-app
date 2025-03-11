@@ -9,3 +9,5 @@ When you work on a single code file that exceeds 200 lines of code, feel free to
 After making any changes, summarize these to me to allow me the chance to ask any follow-up questions. This could be both to clarify or explain the reasoning behind the way something was changed, or to let me direct you to revisit something to approach the solution in a different way.
 
 If any of the changes made significantly changes the behavior or functionality described in README.md, let me know and suggest how README.md could be updated to better reflect the current state of the application.
+
+After any and all changes, ALWAYS remind me run the test suite to make sure the changes did not affect any other parts of the application.

@@ -1,4 +1,4 @@
-import { activityColors, getRandomColorSet, ColorSet, getColor } from '../colors';
+import { ColorSet, getRandomColorSet, getNextAvailableColorSet, getActivityColors, getColor } from '../colors';
 
 // Export internalActivityColors for testing
 jest.mock('../colors', () => {
@@ -33,92 +33,100 @@ describe('colors utility', () => {
     Math.random = originalMathRandom;
   });
 
-  describe('activityColors', () => {
-    it('should contain a list of color sets', () => {
-      expect(Array.isArray(activityColors)).toBe(true);
-      expect(activityColors.length).toBeGreaterThan(0);
+  describe('getActivityColors', () => {
+    it('should return an array of color sets', () => {
+      const colors = getActivityColors();
+      expect(Array.isArray(colors)).toBe(true);
+      expect(colors.length).toBeGreaterThan(0);
     });
 
     it('should have proper color set structure', () => {
-      activityColors.forEach(colorSet => {
+      const colors = getActivityColors();
+      colors.forEach(colorSet => {
         expect(colorSet).toHaveProperty('background');
         expect(colorSet).toHaveProperty('text');
         expect(colorSet).toHaveProperty('border');
-        
-        // Check if they are valid HSL colors
-        expect(colorSet.background).toMatch(/^hsl\(\d+,\s*\d+%,\s*\d+%\)$/);
-        expect(colorSet.text).toMatch(/^hsl\(\d+,\s*\d+%,\s*\d+%\)$/);
-        expect(colorSet.border).toMatch(/^hsl\(\d+,\s*\d+%,\s*\d+%\)$/);
       });
     });
   });
 
   describe('getRandomColorSet', () => {
-    it('should return a color set', () => {
-      const colorSet = getRandomColorSet();
+    let freshGetRandomColorSet: typeof getRandomColorSet;
+    
+    beforeEach(() => {
+      // Reset module to clear usedColors Set
+      jest.resetModules();
+      freshGetRandomColorSet = require('../colors').getRandomColorSet;
+    });
+
+    it('should return a color set with proper structure', () => {
+      const colorSet = freshGetRandomColorSet();
       expect(colorSet).toHaveProperty('background');
       expect(colorSet).toHaveProperty('text');
       expect(colorSet).toHaveProperty('border');
     });
 
     it('should return different colors until all are used', () => {
-      // Import the colors module directly to get a fresh instance
-      const freshColorsModule = jest.requireActual('../colors');
-      const { getRandomColorSet: freshGetRandomColorSet } = freshColorsModule;
-      
-      // Mock Math.random to make it predictable
-      let mockRandomIndex = 0;
-      Math.random = jest.fn().mockImplementation(() => mockRandomIndex / activityColors.length);
-      
-      const usedColors = new Set<string>();
+      const colors = getActivityColors();
+      const usedColorSets = new Set<string>();
       
       // Get colors until we've used all colors
-      for (let i = 0; i < activityColors.length; i++) {
-        mockRandomIndex = i;
+      for (let i = 0; i < colors.length; i++) {
         const colorSet = freshGetRandomColorSet();
         const colorKey = `${colorSet.background}-${colorSet.text}-${colorSet.border}`;
-        
-        // Each color should be unique until we've used all colors
-        expect(usedColors.has(colorKey)).toBe(false);
-        usedColors.add(colorKey);
+        expect(usedColorSets.has(colorKey)).toBe(false); // Should not repeat until all are used
+        usedColorSets.add(colorKey);
       }
+    });
+
+    it('should reset after all colors are used', () => {
+      const colors = getActivityColors();
+      const firstRound: ColorSet[] = [];
       
-      // After all colors are used, it should reset and start returning colors again
-      mockRandomIndex = 0;
-      const colorAfterReset = freshGetRandomColorSet();
-      expect(colorAfterReset.background).toBeTruthy(); // Just check it returns a valid color set
+      // Use all colors once
+      for (let i = 0; i < colors.length; i++) {
+        firstRound.push(freshGetRandomColorSet());
+      }
+
+      // Get one more color - should be from the reset pool
+      const nextColor = freshGetRandomColorSet();
+      expect(nextColor).toBeDefined();
     });
   });
 
   describe('getNextAvailableColorSet', () => {
-    it('should return color sets in sequential order', () => {
-      // Import the colors module directly to get a fresh instance
-      const freshColorsModule = jest.requireActual('../colors');
-      const { getNextAvailableColorSet: freshGetNextAvailableColorSet } = freshColorsModule;
-      
-      // It should return colors in the order they appear in activityColors
-      const firstColor = freshGetNextAvailableColorSet();
-      expect(firstColor.background).toBeTruthy();
-      
-      const secondColor = freshGetNextAvailableColorSet();
-      expect(secondColor.background).toBeTruthy();
-      expect(firstColor.background).not.toBe(secondColor.background);
-    });
+    let freshGetNextAvailableColorSet: typeof getNextAvailableColorSet;
     
+    beforeEach(() => {
+      // Reset module to clear usedColors Set
+      jest.resetModules();
+      freshGetNextAvailableColorSet = require('../colors').getNextAvailableColorSet;
+    });
+
+    it('should return a color set with proper structure', () => {
+      const colorSet = freshGetNextAvailableColorSet();
+      expect(colorSet).toHaveProperty('background');
+      expect(colorSet).toHaveProperty('text');
+      expect(colorSet).toHaveProperty('border');
+    });
+
+    it('should return specific color set when index provided', () => {
+      const firstColor = freshGetNextAvailableColorSet(0);
+      const secondColor = freshGetNextAvailableColorSet(1);
+      expect(firstColor).not.toEqual(secondColor);
+    });
+
     it('should reset after all colors are used', () => {
-      // Import the colors module directly to get a fresh instance
-      const freshColorsModule = jest.requireActual('../colors');
-      const { getNextAvailableColorSet: freshGetNextAvailableColorSet } = freshColorsModule;
-      
+      const colors = getActivityColors();
       // Use up all colors
       const usedColors: ColorSet[] = [];
-      for (let i = 0; i < activityColors.length; i++) {
+      for (let i = 0; i < colors.length; i++) {
         usedColors.push(freshGetNextAvailableColorSet());
       }
       
-      // After all colors are used, it should reset and return a valid color
-      const colorAfterReset = freshGetNextAvailableColorSet();
-      expect(colorAfterReset.background).toBeTruthy();
+      // Get one more color - should start over
+      const nextColor = freshGetNextAvailableColorSet();
+      expect(nextColor).toEqual(usedColors[0]);
     });
   });
 

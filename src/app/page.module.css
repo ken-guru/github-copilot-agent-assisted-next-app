@@ -3,6 +3,7 @@
   background-color: var(--background);
   display: flex;
   flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .wrapper {
@@ -81,7 +82,7 @@
   display: grid;
   gap: 1rem;
   grid-template-columns: minmax(300px, 1fr) minmax(400px, 2fr);
-  grid-template-rows: 1fr auto;
+  grid-template-rows: auto 1fr;
   min-height: 0; /* Allows grid children to properly size */
   height: 100%; /* Ensure the grid takes full height */
 }
@@ -126,21 +127,44 @@
     padding: 0.5rem;
   }
 
+  .headerContent {
+    grid-template-columns: 1fr auto auto;
+    gap: 0.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
   .activityGrid {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr;
+    gap: 0.5rem;
   }
 
   .timelineContainer {
-    min-height: 300px;
-    grid-row: 2;
+    display: none;
   }
 
   .progressContainer {
-    grid-row: 3;
+    grid-row: 1;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
   }
 
   .completedGrid {
     gap: 0.5rem;
+  }
+
+  .container {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Media query for landscape mode on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .activityGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
   }
 }

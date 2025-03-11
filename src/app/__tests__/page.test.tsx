@@ -32,6 +32,17 @@ jest.mock('@/hooks/useTimerState', () => ({
   }),
 }));
 
+// Mock window theme detection
+beforeAll(() => {
+  Object.defineProperty(document.documentElement, 'classList', {
+    value: {
+      contains: jest.fn().mockReturnValue(false),
+      add: jest.fn(),
+      remove: jest.fn(),
+    }
+  });
+});
+
 describe('Home Page', () => {
   beforeEach(() => {
     mockConfirm.mockReset();

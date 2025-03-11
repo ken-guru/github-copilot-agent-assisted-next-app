@@ -1,6 +1,7 @@
 import React from 'react';
 import { Activity } from './ActivityManager';
 import { TimelineEntry } from '../hooks/useTimelineEntries';
+import { formatTime } from '@/utils/timeUtils';
 import styles from './ActivityManager.module.css';
 
 interface ActivityButtonProps {
@@ -10,6 +11,7 @@ interface ActivityButtonProps {
   onSelect: (activity: Activity) => void;
   onRemove?: (id: string) => void;
   timelineEntries?: TimelineEntry[];
+  elapsedTime?: number;
 }
 
 /**
@@ -22,6 +24,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
   onSelect,
   onRemove,
   timelineEntries = [],
+  elapsedTime = 0,
 }) => {
   const { id, name, colors } = activity;
   const isInUse = timelineEntries?.some(entry => entry.activityId === id);
@@ -53,9 +56,14 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
         {name}
       </span>
 
-      {/* Placeholder for potential additional info in top-right */}
+      {/* Status area with timer */}
       <div className={styles.activityStatus}>
-        {isRunning && <span className={styles.runningIndicator}>Active</span>}
+        {isRunning && (
+          <span className={styles.runningIndicator}>
+            <span>Active</span>
+            <span className={styles.timerDisplay}>{formatTime(elapsedTime)}</span>
+          </span>
+        )}
       </div>
       
       {/* Action buttons row */}

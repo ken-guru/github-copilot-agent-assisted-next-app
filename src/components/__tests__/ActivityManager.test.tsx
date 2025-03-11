@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor, within } from '@testing-library/rea
 import ActivityManager from '../ActivityManager';
 import * as colorUtils from '../../utils/colors';
 
-// Mock the getNextAvailableColorSet function
+// Mock window.matchMedia and getNextAvailableColorSet
 jest.mock('../../utils/colors', () => ({
   ...jest.requireActual('../../utils/colors'),
   getNextAvailableColorSet: jest.fn().mockImplementation(() => ({
@@ -11,6 +11,17 @@ jest.mock('../../utils/colors', () => ({
     border: '#2E7D32'
   }))
 }));
+
+// Ensure dark mode detection works in tests
+beforeAll(() => {
+  Object.defineProperty(document.documentElement, 'classList', {
+    value: {
+      contains: jest.fn().mockReturnValue(false),
+      add: jest.fn(),
+      remove: jest.fn(),
+    }
+  });
+});
 
 describe('ActivityManager Component', () => {
   const mockOnActivitySelect = jest.fn();
@@ -247,5 +258,48 @@ describe('ActivityManager Component', () => {
     expect(mockOnActivitySelect).toHaveBeenCalledTimes(1);
     expect(mockOnActivitySelect.mock.calls[0][0]).toHaveProperty('id', '1'); // Homework id
     expect(mockOnActivitySelect.mock.calls[0][0]).toHaveProperty('name', 'Homework');
+  });
+
+  it('should pass elapsedTime to running activity', async () => {
+    render(
+      <ActivityManager 
+        onActivitySelect={mockOnActivitySelect}
+        onActivityRemove={mockOnActivityRemove}
+        currentActivityId="1" // Homework is running
+        completedActivityIds={[]}
+        timelineEntries={[]}
+        elapsedTime={30}
+      />
+    );
+    
+    // Wait for activities to render
+    await waitFor(() => {
+      expect(screen.getByText('Homework')).toBeInTheDocument();
+    });
+    
+    // Check if the timer is displayed with the correct time
+    expect(screen.getByText('00:30')).toBeInTheDocument();
+  });
+
+  it('should not show timer for non-running activities', async () => {
+    render(
+      <ActivityManager 
+        onActivitySelect={mockOnActivitySelect}
+        onActivityRemove={mockOnActivityRemove}
+        currentActivityId="2" // Reading is running
+        completedActivityIds={[]}
+        timelineEntries={[]}
+        elapsedTime={30}
+      />
+    );
+    
+    // Wait for activities to render and find the Homework item
+    await waitFor(() => {
+      expect(screen.getByText('Homework')).toBeInTheDocument();
+    });
+    
+    // The Homework activity (not running) should not show the timer
+    const homeworkItem = screen.getByText('Homework').closest('div');
+    expect(within(homeworkItem || document.body).queryByText('00:30')).not.toBeInTheDocument();
   });
 });

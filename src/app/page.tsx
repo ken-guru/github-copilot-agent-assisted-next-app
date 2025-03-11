@@ -92,6 +92,14 @@ export default function Home() {
         
         {appState === 'activity' && (
           <div className={styles.activityGrid}>
+            <div className={styles.progressContainer}>
+              <ProgressBar 
+                entries={processedEntries}
+                totalDuration={totalDuration}
+                elapsedTime={elapsedTime}
+                timerActive={timerActive}
+              />
+            </div>
             <div>
               <ActivityManager 
                 onActivitySelect={handleActivitySelect} 
@@ -100,6 +108,7 @@ export default function Home() {
                 completedActivityIds={completedActivityIds}
                 timelineEntries={processedEntries}
                 isTimeUp={isTimeUp}
+                elapsedTime={elapsedTime}
               />
             </div>
             <div className={styles.timelineContainer}>
@@ -110,14 +119,6 @@ export default function Home() {
                 allActivitiesCompleted={allActivitiesCompleted}
                 timerActive={timerActive}
                 isTimeUp={isTimeUp}
-              />
-            </div>
-            <div className={styles.progressContainer}>
-              <ProgressBar 
-                entries={processedEntries}
-                totalDuration={totalDuration}
-                elapsedTime={elapsedTime}
-                timerActive={timerActive}
               />
             </div>
           </div>

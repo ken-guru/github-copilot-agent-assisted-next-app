@@ -21,6 +21,7 @@ interface ActivityManagerProps {
   completedActivityIds: string[];
   timelineEntries: TimelineEntry[];
   isTimeUp?: boolean;
+  elapsedTime?: number;
 }
 
 export default function ActivityManager({ 
@@ -29,7 +30,8 @@ export default function ActivityManager({
   currentActivityId, 
   completedActivityIds,
   timelineEntries,
-  isTimeUp = false
+  isTimeUp = false,
+  elapsedTime = 0
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
@@ -161,6 +163,7 @@ export default function ActivityManager({
               onSelect={handleActivitySelect}
               onRemove={onActivityRemove ? handleRemoveActivity : undefined}
               timelineEntries={timelineEntries}
+              elapsedTime={elapsedTime}
             />
           ))}
         </div>

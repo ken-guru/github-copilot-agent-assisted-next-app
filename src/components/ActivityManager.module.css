@@ -149,13 +149,21 @@
 }
 
 .runningIndicator {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--accent-color);
   background-color: var(--background-muted);
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   border: 1px solid var(--accent-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.timerDisplay {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
 }
 
 .completedTag {
