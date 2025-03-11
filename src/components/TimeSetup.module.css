@@ -1,6 +1,6 @@
 .container {
   background-color: var(--background);
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -16,6 +16,7 @@
   display: flex;
   margin-bottom: 1rem;
   gap: 1rem;
+  justify-content: space-evenly;
 }
 
 .button {
@@ -23,6 +24,8 @@
   border-radius: 0.25rem;
   border: none;
   cursor: pointer;
+  flex-grow: 1;
+  text-align: center;
 }
 
 .buttonPrimary {
@@ -39,12 +42,12 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 1rem;
-  margin-bottom: 1rem;
 }
 
 .inputGroup {
   display: flex;
   flex-direction: column;
+  margin-bottom: 1rem;
 }
 
 .label {
@@ -77,4 +80,11 @@
 
 .submitButton:hover {
   background-color: var(--accent-color-hover);
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .container {
+    padding: .5rem;  
+  }
 }

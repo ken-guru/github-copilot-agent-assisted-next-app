@@ -154,6 +154,11 @@ export default function ActivityManager({
         </div>
       ) : (
         <div className={styles.activityList}>
+          {currentActivityId === null && !isTimeUp && (
+            <div className={styles.breakMessage}>
+              Taking a break - Click any activity to start
+            </div>
+          )}
           {activities.map((activity) => (
             <ActivityButton
               key={activity.id}
@@ -166,12 +171,6 @@ export default function ActivityManager({
               elapsedTime={elapsedTime}
             />
           ))}
-        </div>
-      )}
-
-      {currentActivityId === null && !isTimeUp && (
-        <div className={styles.breakMessage}>
-          Taking a break - Click any activity to start
         </div>
       )}
     </div>

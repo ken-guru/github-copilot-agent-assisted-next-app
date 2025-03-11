@@ -7,7 +7,6 @@
 }
 
 .wrapper {
-  padding: 1rem;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
@@ -16,8 +15,11 @@
   flex-direction: column;
 }
 
-.header {
-  margin-bottom: 2rem;
+.wrapper header,
+.wrapper .setupGrid,
+.wrapper .activityGrid,
+.wrapper .completedGrid {
+  padding: 1rem;
 }
 
 .headerContent {
@@ -66,13 +68,12 @@
 .completedGrid {
   display: grid;
   gap: 2rem;
-  margin-top: 2rem;
 }
 
 .setupGrid {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
@@ -98,7 +99,6 @@
 .progressContainer {
   background-color: var(--background);
   border-radius: 0.5rem;
-  padding: 1rem;
   border: 1px solid var(--border);
 }
 
@@ -123,8 +123,11 @@
 
 /* Media query for smaller screens */
 @media (max-width: 768px) {
-  .wrapper {
-    padding: 0.5rem;
+  .wrapper header,
+  .wrapper .setupGrid,
+  .wrapper .activityGrid,
+  .wrapper .completedGrid {
+        padding: 0.5rem;
   }
 
   .headerContent {

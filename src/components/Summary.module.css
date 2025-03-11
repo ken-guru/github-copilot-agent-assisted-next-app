@@ -1,6 +1,6 @@
 .container {
   background-color: var(--background);
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -147,4 +147,11 @@
 
 .activities > div span:last-child {
   color: var(--foreground-muted);
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .container {
+    padding: .5rem;  
+  }
 }
