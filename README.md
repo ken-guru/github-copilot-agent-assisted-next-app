@@ -1,73 +1,63 @@
 # Activity Timer and Tracker
 
-A comprehensive time management and activity tracking application built with Next.js. This app helps users efficiently manage their time by setting duration goals and tracking activities throughout the day.
+## Project Context
+You are working on a time management and activity tracking application built with Next.js. This documentation serves as both a guide for developers and a prompt for AI assistance in development.
 
-## Disclaimer
-
-**This is a hobby project** created for learning and experimentation purposes. It was never intended to be stable, secure, or complete enough for business-related or professional activities. Use at your own risk.
-
-## Development Approach
-
-This application was primarily developed with assistance from various Large Language Models (LLMs) including GitHub Copilot. The code, while functional, represents an exploration of AI-assisted development techniques rather than production-ready software.
-
-## Features
-
-- **Time Management**: Set time durations or deadlines for your work sessions
-- **Activity Tracking**: Create and manage multiple activities
-- **Visual Timeline**: See a visual representation of how time was spent
-- **Progress Tracking**: Monitor ongoing activities with a progress bar
-- **Activity Summary**: Get detailed stats about completed activities
-- **Color-Coded Activities**: Easily identify different activities with unique color schemes
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-
-## Application Flow
-
-1. Set up the timer duration or deadline
-2. Create and manage activities
-3. Start/stop activities as you work
-4. Get a visual timeline of your work session
-5. Receive a summary of your completed activities and time usage
-
-## Getting Started
-
-First, install the dependencies:
-
-```bash
-npm install
-# or
-yarn install
+## Project Scope and Limitations
+```markdown
+This is a hobby project with the following characteristics:
+- Created for learning and experimentation purposes
+- Not intended for production use
+- May contain experimental features
+- Built with AI assistance (primarily GitHub Copilot)
 ```
 
-Then, run the development server:
+## Development Philosophy
+The application is developed using AI-assisted techniques with these principles:
+- Test-Driven Development (TDD)
+- Component-based architecture
+- Responsive design
+- Theme-aware styling
+- Accessibility considerations
 
-```bash
-npm run dev
-# or
-yarn dev
+### Change Management Approach
+```markdown
+The project uses a dual-file system for tracking changes:
+1. PLANNED_CHANGES.md: 
+   - Contains upcoming feature specifications
+   - Written in a prompt-friendly format
+   - Used as input for AI-assisted implementation
+2. IMPLEMENTED_CHANGES.md:
+   - Chronicles completed implementations
+   - Includes timestamps and implementation details
+   - Serves as reference for similar future changes
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
-
-## Testing
-
-This application is thoroughly tested with Jest and React Testing Library. Run the tests with:
-
-```bash
-npm test
-# or
-yarn test
+## Core Features
+When implementing or modifying features, ensure adherence to these core functionalities:
+```markdown
+- Time Management
+  - Duration setting for work sessions
+  - Deadline tracking capabilities
+  
+- Activity Management
+  - Creation and tracking of multiple activities
+  - Real-time status monitoring
+  
+- Visual Feedback
+  - Progress bar for ongoing activities
+  - Timeline visualization
+  - Color-coded activity identification
+  
+- Theme System
+  - Light/Dark/System theme modes
+  - HSL-based color system
+  - Persistent theme preferences
 ```
 
-For continuous testing during development:
+## Implementation Guidelines
 
-```bash
-npm run test:watch
-# or
-yarn test:watch
-```
-
-## Project Structure
-
+### Project Structure
 ```
 src/
   ├── app/            # Next.js app directory (routes, layout)
@@ -79,14 +69,79 @@ src/
       └── __tests__/  # Utility tests
 ```
 
-## Technologies
+### Design System Specifications
 
-- [Next.js](https://nextjs.org/) - React framework
-- [React](https://reactjs.org/) - UI library
-- [TypeScript](https://www.typescriptlang.org/) - Type safety
-- [Jest](https://jestjs.io/) - Testing framework
-- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) - Testing utilities
+#### Color System Requirements
+```markdown
+- Use HSL color format exclusively
+- Maintain consistent hue values across themes
+- Adjust saturation/lightness for theme variants
+- Implement via CSS variables
+- Ensure WCAG compliance for contrast ratios
+```
+
+#### Theme Implementation Requirements
+```markdown
+- Support three modes: Light/Dark/System
+- Use CSS variables for theme values
+- Implement smooth transitions
+- Persist user preferences
+- Handle system preference changes
+```
+
+## Development Setup
+
+### Environment Requirements
+```bash
+Node.js (Latest LTS)
+npm or yarn
+```
+
+### Installation Commands
+```bash
+# Install dependencies
+npm install
+# or
+yarn install
+
+# Start development server
+npm run dev
+# or
+yarn dev
+
+# Run tests
+npm test
+# or
+yarn test
+
+# Watch mode for tests
+npm run test:watch
+# or
+yarn test:watch
+```
+
+### Testing Requirements
+When implementing new features or modifying existing ones:
+```markdown
+1. Write tests first (TDD approach)
+2. Ensure full coverage of new functionality
+3. Update existing tests when changing behavior
+4. Validate both light and dark theme scenarios
+5. Test system theme preference handling
+```
+
+## Technology Stack
+When implementing features, utilize these core technologies:
+```markdown
+- Next.js: Application framework
+- React: UI component library
+- TypeScript: Type safety
+- Jest: Testing framework
+- React Testing Library: Component testing
+```
 
 ## License
-
 [MIT](https://choosealicense.com/licenses/mit/)
+
+---
+Note: When using this document as a prompt for AI assistance, ensure to provide specific context about which section or feature you're working on to receive more targeted and relevant responses.

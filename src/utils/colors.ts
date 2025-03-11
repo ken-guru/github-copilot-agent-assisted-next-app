@@ -4,88 +4,190 @@ export interface ColorSet {
   border: string;
 }
 
-// Internal HSL colors
-const internalActivityColors: ColorSet[] = [
+// Internal HSL colors with dark mode consideration
+// Each color has a light and dark mode variation defined in the same group
+const internalActivityColors: {
+  light: ColorSet;
+  dark: ColorSet;
+}[] = [
   // Green - Hue: 120
   {
-    background: 'hsl(120, 60%, 95%)',
-    text: 'hsl(120, 60%, 25%)',
-    border: 'hsl(120, 60%, 35%)'
+    light: {
+      background: 'hsl(120, 60%, 95%)',
+      text: 'hsl(120, 60%, 25%)',
+      border: 'hsl(120, 60%, 35%)'
+    },
+    dark: {
+      background: 'hsl(120, 60%, 20%)',
+      text: 'hsl(120, 60%, 85%)',
+      border: 'hsl(120, 60%, 40%)'
+    }
   },
   // Blue - Hue: 210
   {
-    background: 'hsl(210, 100%, 95%)',
-    text: 'hsl(210, 100%, 30%)',
-    border: 'hsl(210, 83%, 45%)'
+    light: {
+      background: 'hsl(210, 100%, 95%)',
+      text: 'hsl(210, 100%, 30%)',
+      border: 'hsl(210, 83%, 45%)'
+    },
+    dark: {
+      background: 'hsl(210, 100%, 20%)',
+      text: 'hsl(210, 100%, 85%)',
+      border: 'hsl(210, 83%, 50%)'
+    }
   },
   // Orange - Hue: 30
   {
-    background: 'hsl(30, 100%, 95%)',
-    text: 'hsl(30, 100%, 30%)',
-    border: 'hsl(30, 100%, 45%)'
+    light: {
+      background: 'hsl(30, 100%, 95%)',
+      text: 'hsl(30, 100%, 30%)',
+      border: 'hsl(30, 100%, 45%)'
+    },
+    dark: {
+      background: 'hsl(30, 100%, 20%)',
+      text: 'hsl(30, 100%, 85%)',
+      border: 'hsl(30, 100%, 50%)'
+    }
   },
   // Purple - Hue: 280
   {
-    background: 'hsl(280, 100%, 95%)',
-    text: 'hsl(280, 100%, 30%)',
-    border: 'hsl(280, 67%, 45%)'
+    light: {
+      background: 'hsl(280, 100%, 95%)',
+      text: 'hsl(280, 100%, 30%)',
+      border: 'hsl(280, 67%, 45%)'
+    },
+    dark: {
+      background: 'hsl(280, 100%, 20%)',
+      text: 'hsl(280, 100%, 85%)',
+      border: 'hsl(280, 67%, 50%)'
+    }
   },
   // Red - Hue: 0
   {
-    background: 'hsl(0, 100%, 95%)',
-    text: 'hsl(0, 100%, 30%)',
-    border: 'hsl(0, 100%, 40%)'
+    light: {
+      background: 'hsl(0, 100%, 95%)',
+      text: 'hsl(0, 100%, 30%)',
+      border: 'hsl(0, 100%, 40%)'
+    },
+    dark: {
+      background: 'hsl(0, 100%, 20%)',
+      text: 'hsl(0, 100%, 85%)',
+      border: 'hsl(0, 100%, 45%)'
+    }
   },
   // Cyan - Hue: 180
   {
-    background: 'hsl(180, 100%, 95%)',
-    text: 'hsl(180, 100%, 20%)',
-    border: 'hsl(180, 100%, 30%)'
+    light: {
+      background: 'hsl(180, 100%, 95%)',
+      text: 'hsl(180, 100%, 20%)',
+      border: 'hsl(180, 100%, 30%)'
+    },
+    dark: {
+      background: 'hsl(180, 100%, 20%)',
+      text: 'hsl(180, 100%, 85%)',
+      border: 'hsl(180, 100%, 35%)'
+    }
   },
   // Amber - Hue: 45
   {
-    background: 'hsl(45, 100%, 95%)',
-    text: 'hsl(45, 100%, 30%)',
-    border: 'hsl(45, 100%, 40%)'
+    light: {
+      background: 'hsl(45, 100%, 95%)',
+      text: 'hsl(45, 100%, 30%)',
+      border: 'hsl(45, 100%, 40%)'
+    },
+    dark: {
+      background: 'hsl(45, 100%, 20%)',
+      text: 'hsl(45, 100%, 85%)',
+      border: 'hsl(45, 100%, 45%)'
+    }
   },
   // Light-green - Hue: 90
   {
-    background: 'hsl(90, 100%, 95%)',
-    text: 'hsl(90, 100%, 25%)',
-    border: 'hsl(90, 100%, 35%)'
+    light: {
+      background: 'hsl(90, 100%, 95%)',
+      text: 'hsl(90, 100%, 25%)',
+      border: 'hsl(90, 100%, 35%)'
+    },
+    dark: {
+      background: 'hsl(90, 100%, 20%)',
+      text: 'hsl(90, 100%, 85%)',
+      border: 'hsl(90, 100%, 40%)'
+    }
   },
   // Indigo - Hue: 240
   {
-    background: 'hsl(240, 100%, 95%)',
-    text: 'hsl(240, 100%, 25%)',
-    border: 'hsl(240, 100%, 40%)'
+    light: {
+      background: 'hsl(240, 100%, 95%)',
+      text: 'hsl(240, 100%, 25%)',
+      border: 'hsl(240, 100%, 40%)'
+    },
+    dark: {
+      background: 'hsl(240, 100%, 20%)',
+      text: 'hsl(240, 100%, 85%)',
+      border: 'hsl(240, 100%, 45%)'
+    }
   },
   // Pink - Hue: 330
   {
-    background: 'hsl(330, 100%, 95%)',
-    text: 'hsl(330, 100%, 30%)',
-    border: 'hsl(330, 100%, 40%)'
+    light: {
+      background: 'hsl(330, 100%, 95%)',
+      text: 'hsl(330, 100%, 30%)',
+      border: 'hsl(330, 100%, 40%)'
+    },
+    dark: {
+      background: 'hsl(330, 100%, 20%)',
+      text: 'hsl(330, 100%, 85%)',
+      border: 'hsl(330, 100%, 45%)'
+    }
   },
   // Brown - Hue: 20
   {
-    background: 'hsl(20, 20%, 95%)',
-    text: 'hsl(20, 20%, 25%)',
-    border: 'hsl(20, 20%, 35%)'
+    light: {
+      background: 'hsl(20, 20%, 95%)',
+      text: 'hsl(20, 20%, 25%)',
+      border: 'hsl(20, 20%, 35%)'
+    },
+    dark: {
+      background: 'hsl(20, 20%, 20%)',
+      text: 'hsl(20, 20%, 85%)',
+      border: 'hsl(20, 20%, 40%)'
+    }
   },
   // Teal - Hue: 165
   {
-    background: 'hsl(165, 100%, 95%)',
-    text: 'hsl(165, 100%, 25%)',
-    border: 'hsl(165, 100%, 30%)'
+    light: {
+      background: 'hsl(165, 100%, 95%)',
+      text: 'hsl(165, 100%, 25%)',
+      border: 'hsl(165, 100%, 30%)'
+    },
+    dark: {
+      background: 'hsl(165, 100%, 20%)',
+      text: 'hsl(165, 100%, 85%)',
+      border: 'hsl(165, 100%, 35%)'
+    }
   }
 ];
 
-// Convert internal HSL colors to hex for external use
-export const activityColors: ColorSet[] = internalActivityColors.map(color => ({
-  background: color.background,
-  text: color.text,
-  border: color.border
-}));
+// Get appropriate color set based on theme
+const isDarkMode = () => {
+  if (typeof window !== 'undefined') {
+    return document.documentElement.classList.contains('dark-mode') ||
+      (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches &&
+       !document.documentElement.classList.contains('light-mode'));
+  }
+  return false;
+};
+
+// Export color sets that adapt to the current theme
+export const activityColors: ColorSet[] = internalActivityColors.map(colorSet => {
+  // Check if we're in a browser environment
+  if (typeof window === 'undefined') {
+    return colorSet.light; // Default to light mode during SSR
+  }
+  
+  // Return the appropriate color set based on dark mode state
+  return isDarkMode() ? colorSet.dark : colorSet.light;
+});
 
 const usedColors = new Set<number>();
 
@@ -131,16 +233,17 @@ export function getNextAvailableColorSet(specificIndex?: number): ColorSet {
   return activityColors[availableIndex];
 }
 
+// Convert colorPalette to HSL
 const colorPalette = [
-  '#E8F5E9', // Light Green
-  '#E3F2FD', // Light Blue
-  '#FCE4EC', // Light Pink
-  '#FFF9C4', // Light Yellow
-  '#F5F5F5', // Light Gray
-  '#EDE7F6', // Light Purple
-  '#E0F2F1', // Light Teal
-  '#FBE9E7', // Light Orange
-  '#FFCDD2', // Light Red
+  'hsl(140, 50%, 92%)', // Light Green
+  'hsl(210, 100%, 95%)', // Light Blue
+  'hsl(340, 100%, 95%)', // Light Pink
+  'hsl(54, 100%, 95%)', // Light Yellow
+  'hsl(0, 0%, 96%)', // Light Gray
+  'hsl(260, 60%, 95%)', // Light Purple
+  'hsl(174, 60%, 95%)', // Light Teal
+  'hsl(14, 100%, 95%)', // Light Orange
+  'hsl(0, 100%, 95%)', // Light Red
 ];
 
 export const getColor = (index: number) => {

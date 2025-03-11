@@ -1,18 +1,107 @@
 :root {
-  /* Light mode variables */
-  --background: #ffffff;
-  --foreground: #171717;
-  --background-muted: #f9fafb;
-  --foreground-muted: #6b7280;
-  --border-color: #e5e7eb;
-  --break-background: #f3f4f6;
-  --break-text: #4b5563;
-  --segment-separator: white;
-  --segment-outline: rgba(0, 0, 0, 0.05);
-  --text-default: rgba(0, 0, 0, 0.7);
-  --text-muted: #6b7280;
-  --accent-color: #2563eb;
-  --accent-color-hover: #1d4ed8;
+  /* Base HSL colors - these define our color palette */
+  --color-hue-primary: 220; /* Blue-ish base for UI */
+  --color-hue-accent: 215; /* Slightly different blue for accent elements */
+  --color-hue-success: 145; /* Green */
+  --color-hue-warning: 38; /* Orange/Amber */
+  --color-hue-error: 360; /* Red */
+
+  /* Light theme variables using HSL */
+  --background: hsl(var(--color-hue-primary), 20%, 98%);
+  --foreground: hsl(var(--color-hue-primary), 15%, 12%);
+  --background-muted: hsl(var(--color-hue-primary), 20%, 94%);
+  --foreground-muted: hsl(var(--color-hue-primary), 10%, 45%);
+  --border-color: hsl(var(--color-hue-primary), 20%, 88%);
+  --break-background: hsl(var(--color-hue-primary), 10%, 96%);
+  --break-text: hsl(var(--color-hue-primary), 10%, 35%);
+  --segment-separator: hsl(var(--color-hue-primary), 0%, 100%);
+  --segment-outline: hsla(var(--color-hue-primary), 10%, 10%, 0.05);
+  --text-default: hsla(var(--color-hue-primary), 10%, 10%, 0.7);
+  --text-muted: hsl(var(--color-hue-primary), 10%, 45%);
+  
+  /* Accent colors */
+  --accent-color: hsl(var(--color-hue-accent), 85%, 55%);
+  --accent-color-hover: hsl(var(--color-hue-accent), 85%, 45%);
+  
+  /* Status colors */
+  --success: hsl(var(--color-hue-success), 85%, 40%);
+  --success-bg: hsl(var(--color-hue-success), 85%, 95%);
+  --warning: hsl(var(--color-hue-warning), 85%, 40%);
+  --warning-bg: hsl(var(--color-hue-warning), 85%, 95%);
+  --error: hsl(var(--color-hue-error), 85%, 45%);
+  --error-bg: hsl(var(--color-hue-error), 85%, 95%);
+
+  /* Shadow values */
+  --shadow-small: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.12);
+  --shadow-medium: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.1);
+  --shadow-large: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.1);
+}
+
+/* Dark theme styles */
+.dark-mode {
+  /* Dark theme variables using HSL */
+  --background: hsl(var(--color-hue-primary), 15%, 12%);
+  --foreground: hsl(var(--color-hue-primary), 10%, 95%);
+  --background-muted: hsl(var(--color-hue-primary), 15%, 18%);
+  --foreground-muted: hsl(var(--color-hue-primary), 10%, 70%);
+  --border-color: hsl(var(--color-hue-primary), 15%, 25%);
+  --break-background: hsl(var(--color-hue-primary), 15%, 22%);
+  --break-text: hsl(var(--color-hue-primary), 10%, 75%);
+  --segment-separator: hsl(var(--color-hue-primary), 15%, 20%);
+  --segment-outline: hsla(var(--color-hue-primary), 10%, 90%, 0.1);
+  --text-default: hsla(var(--color-hue-primary), 10%, 90%, 0.9);
+  --text-muted: hsl(var(--color-hue-primary), 10%, 65%);
+  
+  /* Accent colors - adjusted for dark mode */
+  --accent-color: hsl(var(--color-hue-accent), 90%, 65%);
+  --accent-color-hover: hsl(var(--color-hue-accent), 90%, 70%);
+  
+  /* Status colors - adjusted for dark mode */
+  --success: hsl(var(--color-hue-success), 70%, 45%);
+  --success-bg: hsla(var(--color-hue-success), 70%, 35%, 0.2);
+  --warning: hsl(var(--color-hue-warning), 70%, 50%);
+  --warning-bg: hsla(var(--color-hue-warning), 70%, 35%, 0.2);
+  --error: hsl(var(--color-hue-error), 70%, 55%);
+  --error-bg: hsla(var(--color-hue-error), 70%, 40%, 0.2);
+
+  /* Shadow values - darker and more subtle for dark mode */
+  --shadow-small: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.3);
+  --shadow-medium: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.4);
+  --shadow-large: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-mode) {
+    /* Apply dark theme variables when the user's system preference is dark */
+    --background: hsl(var(--color-hue-primary), 15%, 12%);
+    --foreground: hsl(var(--color-hue-primary), 10%, 95%);
+    --background-muted: hsl(var(--color-hue-primary), 15%, 18%);
+    --foreground-muted: hsl(var(--color-hue-primary), 10%, 70%);
+    --border-color: hsl(var(--color-hue-primary), 15%, 25%);
+    --break-background: hsl(var(--color-hue-primary), 15%, 22%);
+    --break-text: hsl(var(--color-hue-primary), 10%, 75%);
+    --segment-separator: hsl(var(--color-hue-primary), 15%, 20%);
+    --segment-outline: hsla(var(--color-hue-primary), 10%, 90%, 0.1);
+    --text-default: hsla(var(--color-hue-primary), 10%, 90%, 0.9);
+    --text-muted: hsl(var(--color-hue-primary), 10%, 65%);
+    
+    /* Accent colors - adjusted for dark mode */
+    --accent-color: hsl(var(--color-hue-accent), 90%, 65%);
+    --accent-color-hover: hsl(var(--color-hue-accent), 90%, 70%);
+    
+    /* Status colors - adjusted for dark mode */
+    --success: hsl(var(--color-hue-success), 70%, 45%);
+    --success-bg: hsla(var(--color-hue-success), 70%, 35%, 0.2);
+    --warning: hsl(var(--color-hue-warning), 70%, 50%);
+    --warning-bg: hsla(var(--color-hue-warning), 70%, 35%, 0.2);
+    --error: hsl(var(--color-hue-error), 70%, 55%);
+    --error-bg: hsla(var(--color-hue-error), 70%, 40%, 0.2);
+
+    /* Shadow values - darker and more subtle for dark mode */
+    --shadow-small: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.3);
+    --shadow-medium: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.4);
+    --shadow-large: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.5);
+  }
 }
 
 html, body {
@@ -26,7 +115,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: color 0.2s, background-color 0.2s;
+  transition: color 0.3s ease, background-color 0.3s ease;
 }
 
 * {
@@ -51,5 +140,6 @@ a {
   background-color: var(--background);
   border-radius: 0.5rem;
   padding: 0.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-small);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
