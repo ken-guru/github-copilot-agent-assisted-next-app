@@ -22,15 +22,19 @@ The application is developed using AI-assisted techniques with these principles:
 
 ### Change Management Approach
 ```markdown
-The project uses a dual-file system for tracking changes:
-1. PLANNED_CHANGES.md: 
+The project uses a documentation system for tracking changes:
+1. docs/PLANNED_CHANGES.md: 
    - Contains upcoming feature specifications
    - Written in a prompt-friendly format
    - Used as input for AI-assisted implementation
-2. IMPLEMENTED_CHANGES.md:
+2. docs/IMPLEMENTED_CHANGES.md:
    - Chronicles completed implementations
    - Includes timestamps and implementation details
    - Serves as reference for similar future changes
+3. docs/BACKLOG_CHANGES.md:
+   - Contains features temporarily set aside for prioritization
+   - Follows the same detailed specification format
+   - Used as a repository for future implementation ideas
 ```
 
 ## Core Features
@@ -67,6 +71,10 @@ src/
   │   └── __tests__/  # Hook tests
   └── utils/          # Utility functions
       └── __tests__/  # Utility tests
+docs/                 # Project documentation
+  ├── PLANNED_CHANGES.md    # Upcoming changes
+  ├── IMPLEMENTED_CHANGES.md # Completed changes
+  └── BACKLOG_CHANGES.md    # Deprioritized changes
 ```
 
 ### Design System Specifications
