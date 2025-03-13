@@ -82,8 +82,8 @@
   flex: 1;
   display: grid;
   gap: 1rem;
-  grid-template-columns: minmax(300px, 1fr) minmax(400px, 2fr);
-  grid-template-rows: auto 1fr;
+  grid-template-columns: 2fr 3fr;
+  grid-template-rows: 1fr;
   min-height: 0; /* Allows grid children to properly size */
   height: 100%; /* Ensure the grid takes full height */
 }

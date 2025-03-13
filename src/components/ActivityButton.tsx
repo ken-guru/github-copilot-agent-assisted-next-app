@@ -67,39 +67,35 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
       </div>
       
       {/* Action buttons row */}
-      <div className={styles.buttonGroup}>
-        <div>
-          {isCompleted ? (
-            <span 
-              className={styles.completedTag}
-              style={colors ? {
-                color: colors.text,
-                borderColor: colors.border
-              } : undefined}
-            >
-              Completed
-            </span>
-          ) : (
-            <button
-              onClick={handleClick}
-              className={isRunning ? styles.stopButton : styles.startButton}
-              disabled={isCompleted}
-            >
-              {isRunning ? 'Complete' : 'Start'}
-            </button>
-          )}
-        </div>
-        {!isCompleted && (
-          <button
-            onClick={handleRemove}
-            className={styles.removeButton}
-            disabled={isInUse}
-            title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
-          >
-            Remove
-          </button>
-        )}
-      </div>
+      {isCompleted ? (
+        <span 
+          className={styles.completedTag}
+          style={colors ? {
+            color: colors.text,
+            borderColor: colors.border
+          } : undefined}
+        >
+          Completed
+        </span>
+      ) : (
+        <button
+          onClick={handleClick}
+          className={isRunning ? styles.stopButton : styles.startButton}
+          disabled={isCompleted}
+        >
+          {isRunning ? 'Complete' : 'Start'}
+        </button>
+      )}
+      {!isCompleted && (
+        <button
+          onClick={handleRemove}
+          className={styles.removeButton}
+          disabled={isInUse}
+          title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
+        >
+          Remove
+        </button>
+      )}
     </div>
   );
 };

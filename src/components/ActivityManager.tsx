@@ -143,10 +143,6 @@ export default function ActivityManager({
     <div className={styles.container}>
       <h2 className={styles.heading}>Activities</h2>
       
-      <ActivityForm
-        onAddActivity={handleAddActivity}
-        isDisabled={isTimeUp}
-      />
 
       {activities.length === 0 ? (
         <div className={styles.emptyState}>
@@ -154,11 +150,10 @@ export default function ActivityManager({
         </div>
       ) : (
         <div className={styles.activityList}>
-          {currentActivityId === null && !isTimeUp && (
-            <div className={styles.breakMessage}>
-              Taking a break - Click any activity to start
-            </div>
-          )}
+          <ActivityForm
+            onAddActivity={handleAddActivity}
+            isDisabled={isTimeUp}
+          />
           {activities.map((activity) => (
             <ActivityButton
               key={activity.id}
