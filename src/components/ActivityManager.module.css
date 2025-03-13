@@ -15,59 +15,6 @@
   color: var(--foreground);
 }
 
-.inputContainer {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.input {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid var(--border-color, #9ca3af);
-  border-radius: 0.25rem;
-  color: var(--foreground, #111827);
-  background-color: var(--background, white);
-}
-
-.input:focus {
-  outline: 2px solid var(--accent-color, #2563eb);
-  border-color: transparent;
-}
-
-.input:disabled {
-  background-color: var(--background-muted, #f3f4f6);
-  color: var(--foreground-muted, #9ca3af);
-  cursor: not-allowed;
-}
-
-.input:disabled::placeholder {
-  color: var(--foreground-muted, #9ca3af);
-}
-
-.addButton {
-  background-color: var(--accent-color, #2563eb);
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.addButton:hover:not(.disabled) {
-  background-color: var(--accent-color-hover, #1d4ed8);
-}
-
-.addButton.disabled {
-  background-color: var(--background-muted, #e5e7eb);
-  color: var(--foreground-muted, #9ca3af);
-  cursor: not-allowed;
-}
-
-.addButton.disabled:hover {
-  background-color: #e5e7eb;
-}
-
 .activityList {
   display: flex;
   flex-direction: column;
@@ -77,44 +24,37 @@
   padding-right: 0.5rem;
 }
 
-/* Updated to use a 3-column single row grid layout */
-.activityItem {
+.activityItem, .completedActivityItem {
   display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: start; /* Change from center to start to align to top */
+  grid-template-columns: 1fr auto;
+  align-items: center;
   grid-gap: 0.75rem;
   padding: 0.75rem;
-  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.activityItem {
+  border: 1px solid var(--border-color);
   background-color: var(--background);
   box-shadow: 0 1px 2px var(--segment-outline);
-  transition: all 0.2s ease;
 }
 
-.activityItem:hover {
-  box-shadow: 0 2px 4px var(--segment-outline);
-}
-
-/* Updated to use a 3-column single row grid layout */
 .completedActivityItem {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: start; /* Change from center to start to align to top */
-  grid-gap: 0.75rem;
-  padding: 0.75rem;
   border: 1px solid var(--accent-color);
-  border-radius: 0.5rem;
   background-color: var(--background-muted);
-  transition: all 0.2s ease;
 }
 
-:global(.dark-mode) .completedActivityItem {
-  background-color: #064e3b;
-  border-color: #10b981;
+/* Right side content wrapper */
+.activityRightContent {
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
 
-.completedActivityItem:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+/* Add gap between elements when there's more than one */
+.activityRightContent > :not(:last-child) {
+  margin-right: 0.75rem;
 }
 
 /* Title column styling */
@@ -283,4 +223,10 @@
   .container {
     padding: .5rem;  
   }
+}
+
+/* Right side content wrapper */
+.activityRightContent {
+  display: flex;
+  align-items: center;
 }
