@@ -213,8 +213,7 @@
 
 .entryHeader {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  align-items: flex-start; /* Change from center to flex-start to align to top */
   gap: 1rem;
 }
 
@@ -222,15 +221,16 @@
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
   color: inherit;
+  flex-shrink: 0; /* Prevent time info from wrapping */
 }
 
 .activityName {
   font-weight: 500;
   font-size: 0.875rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   color: inherit;
+  white-space: normal; /* Allow text to wrap */
+  flex: 1; /* Take up remaining space */
+  word-break: break-word; /* Break long words if needed */
 }
 
 .breakEntry {

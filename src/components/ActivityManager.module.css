@@ -81,7 +81,7 @@
 .activityItem {
   display: grid;
   grid-template-columns: 1fr auto auto;
-  align-items: center;
+  align-items: start; /* Change from center to start to align to top */
   grid-gap: 0.75rem;
   padding: 0.75rem;
   border: 1px solid var(--border-color);
@@ -99,7 +99,7 @@
 .completedActivityItem {
   display: grid;
   grid-template-columns: 1fr auto auto;
-  align-items: center;
+  align-items: start; /* Change from center to start to align to top */
   grid-gap: 0.75rem;
   padding: 0.75rem;
   border: 1px solid var(--accent-color);
@@ -123,10 +123,8 @@
   font-weight: 600;
   font-size: 1rem;
   margin: 0;
-  align-self: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal; /* Allow text wrapping */
+  word-break: break-word; /* Break long words if needed */
 }
 
 .completedActivityName {
@@ -135,10 +133,8 @@
   font-size: 1rem;
   text-decoration: line-through;
   margin: 0;
-  align-self: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal; /* Allow text wrapping */
+  word-break: break-word; /* Break long words if needed */
 }
 
 /* Status column styling */
