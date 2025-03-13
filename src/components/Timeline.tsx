@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
@@ -25,8 +25,8 @@ interface TimelineProps {
   allActivitiesCompleted?: boolean;
 }
 
-function calculateTimeIntervals(totalDuration: number): { interval: number; count: number } {
-  const totalSeconds = Math.floor(totalDuration / 1000);
+function calculateTimeIntervals(duration: number): { interval: number; count: number } {
+  const totalSeconds = Math.floor(duration / 1000);
   
   if (totalSeconds <= 60) { // 1 minute or less
     return { interval: 10, count: Math.ceil(totalSeconds / 10) }; // 10-second intervals
@@ -45,43 +45,79 @@ function calculateTimeIntervals(totalDuration: number): { interval: number; coun
 
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
   const hasEntries = entries.length > 0;
+  // Track current elapsed time for running calculations
+  const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
   
+  // Update elapsed time with a timer if active
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-    if (timerActive) {
+    
+    if (timerActive && hasEntries) {
       interval = setInterval(() => {
-        // We can safely remove the now state since it's not being used
+        const activeEntry = entries.find(e => !e.endTime);
+        if (activeEntry) {
+          // Calculate total elapsed time from first entry
+          const elapsed = (Date.now() - entries[0].startTime) / 1000;
+          setCurrentElapsedTime(elapsed);
+        }
       }, 1000);
+    } else {
+      setCurrentElapsedTime(initialElapsedTime);
     }
+    
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [timerActive]);
+  }, [timerActive, hasEntries, entries, initialElapsedTime]);
   
   // Calculate time remaining display
-  const timeLeft = totalDuration - initialElapsedTime;
+  const timeLeft = totalDuration - currentElapsedTime;
   const isOvertime = timeLeft < 0;
   const timeDisplay = timerActive 
     ? `${isOvertime ? 'Overtime: ' : 'Time Left: '}${formatTimeHuman(Math.abs(timeLeft) * 1000)}`
     : `Timer ready: ${formatTimeHuman(totalDuration * 1000)}`;
-    
+
+  // Calculate effective duration for timeline - dynamically adjust if in overtime
+  const effectiveDuration = useMemo(() => {
+    if (isOvertime) {
+      // Use actual elapsed time if it exceeds planned duration
+      return Math.max(totalDuration, currentElapsedTime) * 1000;
+    }
+    return totalDuration * 1000;
+  }, [totalDuration, currentElapsedTime, isOvertime]);
+  
+  // Generate time markers based on effective duration
   const timeMarkers = useMemo(() => {
-    const { interval, count } = calculateTimeIntervals(totalDuration * 1000);
+    const { interval, count } = calculateTimeIntervals(effectiveDuration);
     return Array.from({ length: count + 1 }, (_, i) => {
       const milliseconds = i * interval * 1000;
+      // Calculate position percentage based on effective duration
+      const position = (milliseconds / effectiveDuration) * 100;
+      // Determine if this marker is in the overtime section
+      const isOvertimeMarker = milliseconds > totalDuration * 1000;
+      
       return {
         time: milliseconds,
-        position: (milliseconds / (totalDuration * 1000)) * 100,
-        label: formatTimeHuman(milliseconds)
+        position,
+        label: formatTimeHuman(milliseconds),
+        isOvertimeMarker
       };
     });
-  }, [totalDuration]);
+  }, [effectiveDuration, totalDuration]);
   
-  const currentElapsedTime = hasEntries && entries[0].startTime ? Date.now() - entries[0].startTime : 0;
-  const currentTimeLeft = totalDuration * 1000 - currentElapsedTime;
+  // Calculate position percentage of the original planned duration
+  const plannedDurationPosition = useMemo(() => {
+    if (isOvertime) {
+      return (totalDuration * 1000 / effectiveDuration) * 100;
+    }
+    return 100;
+  }, [totalDuration, effectiveDuration, isOvertime]);
+  
+  // Calculate data for timeline entries
+  const currentTimeLeft = totalDuration * 1000 - (hasEntries && entries[0].startTime ? Date.now() - entries[0].startTime : 0);
   const timeSpansData = calculateTimeSpans({
     entries,
-    totalDuration: totalDuration * 1000,
+    totalDuration: effectiveDuration,
     allActivitiesCompleted,
     timeLeft: currentTimeLeft,
   });
@@ -129,27 +165,70 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       
       <div className={styles.timelineContainer}>
         <div className={styles.timelineRuler}>
-          {timeMarkers.map(({ time, position, label }) => (
+          {/* Add overtime background to the ruler */}
+          {isOvertime && (
+            <div 
+              className={styles.overtimeRulerSection}
+              style={{ 
+                top: `${plannedDurationPosition}%`,
+                height: `${100 - plannedDurationPosition}%`
+              }}
+              data-testid="overtime-ruler-section"
+            />
+          )}
+          
+          {timeMarkers.map(({ time, position, label, isOvertimeMarker }) => (
             <div
               key={time}
-              className={styles.timeMarker}
+              className={`${styles.timeMarker} ${isOvertimeMarker ? styles.overtimeMarker : ''}`}
               style={{ top: `${position}%` }}
+              data-testid="time-marker"
             >
               {label}
             </div>
           ))}
+          
+          {/* Overtime indicator line */}
+          {isOvertime && (
+            <div 
+              className={styles.overtimeDivider}
+              style={{ top: `${plannedDurationPosition}%` }}
+              title="Original planned duration"
+            />
+          )}
         </div>
         
         <div className={styles.entriesContainer}>
+          {/* Overtime background section */}
+          {isOvertime && (
+            <div 
+              className={styles.overtimeSection}
+              style={{ 
+                top: `${plannedDurationPosition}%`,
+                height: `${100 - plannedDurationPosition}%`
+              }}
+              data-testid="overtime-section"
+            />
+          )}
+          
           <div className={styles.timeGuides}>
-            {timeMarkers.map(({ time, position }) => (
+            {timeMarkers.map(({ time, position, isOvertimeMarker }) => (
               <div
                 key={time}
-                className={styles.timeGuide}
+                className={`${styles.timeGuide} ${isOvertimeMarker ? styles.overtimeGuide : ''}`}
                 style={{ top: `${position}%` }}
               />
             ))}
+            
+            {/* Overtime divider guide */}
+            {isOvertime && (
+              <div 
+                className={styles.overtimeDividerGuide}
+                style={{ top: `${plannedDurationPosition}%` }}
+              />
+            )}
           </div>
+          
           <div className={styles.entriesWrapper}>
             {hasEntries ? (
               timeSpansData.items.map((item, index) => {

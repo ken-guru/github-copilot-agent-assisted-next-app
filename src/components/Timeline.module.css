@@ -67,6 +67,7 @@
   flex-shrink: 0;
   z-index: 2;
   padding: 24px 0; /* Increase vertical padding to match marker height */
+  overflow: hidden; /* Ensure the overtime section stays within bounds */
 }
 
 .timeMarker {
@@ -80,10 +81,10 @@
   align-items: center;
   justify-content: flex-start;
   border-top: 1px solid var(--border);
-  background: var(--background-muted);
+  background: transparent; /* Make background transparent to show ruler background */
   height: 24px;
   transform: translateY(-50%);
-  z-index: 1;
+  z-index: 3; /* Above the overtime section */
 }
 
 .timeMarker:first-child {
@@ -93,6 +94,56 @@
 .timeMarker:last-child {
   transform: translateY(-100%); /* Prevent last marker from overflowing bottom */
   border-bottom: 1px solid var(--border);
+}
+
+/* New styles for overtime ruler section */
+.overtimeRulerSection {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background-color: var(--error-bg, #fee2e2);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Styles for overtime markers */
+.overtimeMarker {
+  color: var(--error, #dc2626);
+  font-weight: 500;
+}
+
+.overtimeDivider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--error, #dc2626);
+  z-index: 3;
+  transform: translateY(-50%);
+}
+
+.overtimeSection {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background-color: rgba(220, 38, 38, 0.05); /* Light red background for overtime section */
+  z-index: 1;
+  pointer-events: none;
+}
+
+.overtimeGuide {
+  background-color: var(--error, #dc2626);
+  opacity: 0.2;
+}
+
+.overtimeDividerGuide {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--error, #dc2626);
+  z-index: 3;
+  transform: translateY(-50%);
 }
 
 /* Update entriesContainer to use flex for proper scaling */
