@@ -3,6 +3,7 @@
   padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .heading {
@@ -42,6 +43,7 @@
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--foreground);
+  white-space: nowrap;
 }
 
 .statusMessage {
@@ -152,6 +154,46 @@
 /* Media query for smaller screens */
 @media (max-width: 768px) {
   .container {
-    padding: .5rem;  
+    padding: 0.75rem;
+  }
+  
+  .statsGrid {
+    gap: 0.75rem;
+  }
+  
+  .statCard {
+    padding: 0.75rem;
+  }
+  
+  .statLabel {
+    font-size: 0.75rem;
+  }
+  
+  .statValue {
+    font-size: 1rem;
+  }
+  
+  .statusMessage {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Special handling for very small screens */
+@media (max-width: 380px) {
+  .container {
+    padding: 0.5rem;
+  }
+  
+  .statsGrid {
+    gap: 0.5rem;
+  }
+  
+  .statCard {
+    padding: 0.5rem;
+  }
+  
+  .statValue {
+    font-size: 0.875rem;
   }
 }

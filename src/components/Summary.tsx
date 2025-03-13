@@ -63,6 +63,9 @@ export default function Summary({
   };
 
   const formatDuration = (seconds: number): string => {
+    // Round to nearest whole second
+    seconds = Math.round(seconds);
+    
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
@@ -77,32 +80,41 @@ export default function Summary({
 
   const calculateActivityStats = () => {
     if (!entries || entries.length === 0) return null;
-
+    
     const stats = {
-      activeTime: 0,
-      idleTime: 0
+      idleTime: 0,
+      activeTime: 0
     };
-
+    
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i];
       const endTime = entry.endTime ?? Date.now();
-      const duration = endTime - entry.startTime;
+      // Round to nearest whole second
+      const duration = Math.round((endTime - entry.startTime) / 1000);
       
       if (entry.activityId) {
-        stats.activeTime += duration / 1000;
+        stats.activeTime += duration;
       } else {
-        stats.idleTime += duration / 1000;
+        stats.idleTime += duration;
       }
     }
-
+    
     return stats;
+  };
+
+  // Calculate overtime - any time spent beyond the planned duration, minimum 0
+  const calculateOvertime = () => {
+    const overtime = Math.max(0, elapsedTime - totalDuration);
+    return Math.round(overtime); // Round to nearest whole second
   };
 
   const status = getStatusMessage();
   const stats = calculateActivityStats();
-
+  
   if (!allActivitiesCompleted || !stats) return null;
-
+  
+  const overtime = calculateOvertime();
+  
   return (
     <div className={`${styles.container}`}>
       {status && (
@@ -110,22 +122,26 @@ export default function Summary({
           {status.message}
         </div>
       )}
+      
       <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Total Time</div>
-          <div className={styles.statValue}>{formatDuration(elapsedTime)}</div>
-        </div>
         <div className={styles.statCard}>
           <div className={styles.statLabel}>Planned Time</div>
           <div className={styles.statValue}>{formatDuration(totalDuration)}</div>
         </div>
+        
         <div className={styles.statCard}>
-          <div className={styles.statLabel}>Active Time</div>
-          <div className={styles.statValue}>{formatDuration(stats.activeTime)}</div>
+          <div className={styles.statLabel}>Spent Time</div>
+          <div className={styles.statValue}>{formatDuration(elapsedTime)}</div>
         </div>
+        
         <div className={styles.statCard}>
           <div className={styles.statLabel}>Idle Time</div>
           <div className={styles.statValue}>{formatDuration(stats.idleTime)}</div>
+        </div>
+        
+        <div className={styles.statCard}>
+          <div className={styles.statLabel}>Overtime</div>
+          <div className={styles.statValue}>{formatDuration(overtime)}</div>
         </div>
       </div>
     </div>

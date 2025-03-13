@@ -51,7 +51,7 @@ describe('Summary Component', () => {
     expect(document.body.textContent).toBe('');
   });
   
-  it('should render activity summary with grid layout when activities are completed', () => {
+  it('should render activity summary with updated metric names when activities are completed', () => {
     const entries = createMockTimelineEntries();
     const totalDuration = 3600; // 1 hour planned
     const elapsedTime = 5400; // 1h 30m actually spent
@@ -65,17 +65,17 @@ describe('Summary Component', () => {
       />
     );
     
-    // Check for time statistics
-    expect(screen.getByText('Total Time')).toBeInTheDocument();
+    // Check for the new metric names
     expect(screen.getByText('Planned Time')).toBeInTheDocument();
-    expect(screen.getByText('Active Time')).toBeInTheDocument();
+    expect(screen.getByText('Spent Time')).toBeInTheDocument();
     expect(screen.getByText('Idle Time')).toBeInTheDocument();
+    expect(screen.getByText('Overtime')).toBeInTheDocument();
     
-    // Verify the time values are displayed
-    expect(screen.getByText('1h 30m 0s')).toBeInTheDocument(); // Total time
+    // Verify the time values are displayed with whole seconds (no decimals)
     expect(screen.getByText('1h 0m 0s')).toBeInTheDocument(); // Planned time
-    expect(screen.getByText('1h 25m 0s')).toBeInTheDocument(); // Active time (85 minutes)
-    expect(screen.getByText('5m 0s')).toBeInTheDocument(); // Idle time (5 minutes)
+    expect(screen.getByText('1h 30m 0s')).toBeInTheDocument(); // Spent time
+    expect(screen.getByText('5m 0s')).toBeInTheDocument(); // Idle time
+    expect(screen.getByText('30m 0s')).toBeInTheDocument(); // Overtime
     
     // Verify late message is displayed
     expect(screen.getByText(/You took .* more than planned/, { exact: false })).toBeInTheDocument();
@@ -96,6 +96,8 @@ describe('Summary Component', () => {
     );
     
     expect(screen.getByText('Great job! You completed everything right on schedule!')).toBeInTheDocument();
+    // Overtime should be 0 when within threshold
+    expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('0s');
   });
   
   it('should display early message when completed before planned time', () => {
@@ -113,6 +115,8 @@ describe('Summary Component', () => {
     );
     
     expect(screen.getByText(/Amazing! You finished .* earlier than planned!/, { exact: false })).toBeInTheDocument();
+    // Overtime should be 0s when completed early
+    expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('0s');
   });
 
   it('should handle ongoing activities using current time', () => {
@@ -140,13 +144,38 @@ describe('Summary Component', () => {
       />
     );
     
-    // Look for the Active Time specifically
-    const activeTimeValue = screen.getByText('Active Time')
+    // Look for the Spent Time specifically
+    const spentTimeValue = screen.getByText('Spent Time')
       .closest('.statCard')
       ?.querySelector('.statValue');
-    expect(activeTimeValue).toHaveTextContent('1h 0m 0s');
+    expect(spentTimeValue).toHaveTextContent('1h 0m 0s');
     
     // Clean up the mock
     global.Date.now = originalNow;
+  });
+
+  it('should not display decimal places in time values', () => {
+    const entries = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Activity with decimal seconds',
+        startTime: 1000000,
+        endTime: 1000000 + 3661500, // 1h 1m 1.5s
+      }
+    ];
+    
+    render(
+      <Summary 
+        entries={entries}
+        totalDuration={3600}
+        elapsedTime={3661.5} // 1h 1m 1.5s
+        allActivitiesCompleted={true}
+      />
+    );
+    
+    // All time displays should be rounded to whole seconds
+    expect(screen.getByText('1h 1m 2s')).toBeInTheDocument(); // Spent time (rounded up)
+    expect(screen.queryByText('1h 1m 1.5s')).not.toBeInTheDocument(); // No decimals
   });
 });
