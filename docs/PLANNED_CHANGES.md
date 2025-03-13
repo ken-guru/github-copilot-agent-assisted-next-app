@@ -47,66 +47,121 @@ Describe what success looks like:
 
 Note: When implementing a change, copy this template and fill it out completely. The more detailed the prompt, the better the AI assistance will be in implementation.
 
----
 
 # Clarify Activity Completion Logic
-## Context
-The application's logic for determining when all activities are complete is currently complex and potentially inconsistent. This affects:
-- `activityUtils.ts` and its completion logic
-- `useActivityState.ts` hook that uses this logic
-- All test files that verify completion behavior
 
-Current behavior has some ambiguity around:
-- The relationship between started and completed activities
-- How removed activities affect completion status
-- The order-dependency of completion checks
+## Context
+The activity state management currently spans multiple hooks and utilities, tracking state across various collections (activities, allActivityIds, startedActivityIds, etc). This has led to:
+- Complex completion logic
+- Potential state inconsistencies
+- Difficult-to-predict behavior
+- Hard-to-maintain code
+
+Components/utilities affected:
+- useActivitiesTracking.ts
+- useActivityState.ts
+- activityUtils.ts
 
 ## Requirements
-1. Implement Clear Completion Rules
-   - Immediate false conditions must be checked first
-     - Any activity currently running
-     - Any activities still in active set
-   - Base requirements for completion
-     - At least one activity must be started AND completed
-     - All activities must be "handled" (completed or removed)
-   - Specific case handling
-     - Non-removed activities must ALL be started and completed
-     - Removed activities don't need to be started
-     - System must have at least one completed activity
+1. Implement Activity State Machine
+   - Define explicit states: PENDING, RUNNING, COMPLETED, REMOVED
+   - Define allowed transitions:
+     * PENDING -> RUNNING -> COMPLETED
+     * PENDING -> RUNNING -> REMOVED
+     * PENDING -> REMOVED
+   - Track temporal data (startedAt, completedAt)
+   - Validate all state transitions
 
-2. Update Test Coverage
-   - Add comprehensive test cases for all edge cases
-   - Ensure consistent testing of `hasActuallyStartedActivity` flag
-   - Add tests for order-independence of completion checks
-   - Update existing tests to align with clarified rules
+2. State Management Interface
+   - Replace multiple state collections with single state map
+   - Maintain activity history for timeline
+   - Prevent invalid state transitions
+   - Provide clear activity status queries
 
-3. Improve Documentation
-   - Update code comments to clearly explain each rule
-   - Add detailed explanations for edge cases
-   - Document the reasoning behind completion checks
+3. Migration Strategy
+   - Maintain backward compatibility
+   - Preserve existing activity data during transitions
+   - Update tests to reflect new state model
+
+## Implementation Strategy
+1. Core State Machine Types and Interfaces:
+```typescript
+interface ActivityState {
+  id: string;
+  state: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'REMOVED';
+  startedAt?: number;
+  completedAt?: number;
+}
+
+interface ActivityStateMachine {
+  states: Map<string, ActivityState>;
+  currentActivityId: string | null;
+
+  // State Transitions
+  addActivity(id: string): void;
+  startActivity(id: string): void;
+  completeActivity(id: string): void;
+  removeActivity(id: string): void;
+
+  // Queries
+  isCompleted(): boolean;
+  hasStartedAny(): boolean;
+  getCurrentActivity(): ActivityState | null;
+  getActivityState(id: string): ActivityState | undefined;
+}
+```
+
+2. Implementation Phases
+   - Create and test state machine implementation
+   - Update useActivitiesTracking to use state machine internally
+   - Refactor useActivityState to leverage new model
+   - Update activityUtils.ts to work with state machine
+   - Update tests to cover new state transitions
 
 ## Technical Guidelines
-- Keep the implementation in TypeScript
-- Maintain current function signature for backward compatibility
-- Ensure consistent behavior regardless of how the state was reached
-- Add detailed JSDoc comments
+- Keep implementation in TypeScript
+- Use strict type checking
+- Implement as pure functions where possible
+- Add comprehensive error handling
+- Include detailed state transition validation
+- Add extensive test coverage for state transitions
+- Document all public interfaces
 - Consider extracting complex logic into well-named helper functions
+- Maintain current function signatures for backward compatibility
+- Ensure consistent behavior regardless of how state was reached
+- Add detailed JSDoc comments
 
 ## Expected Outcome
 User Perspective:
+- More predictable activity progression
+- Clearer feedback about activity state
+- No unexpected transitions to summary screen
 - More predictable behavior when activities are completed
 - Clearer understanding of when the system will move to summary state
 
 Technical Perspective:
+- Single source of truth for activity state
+- Explicit and validated state transitions
+- Simpler completion logic
+- Better testability
+- Easier maintenance
+- Clear activity lifecycle documentation
 - More maintainable and understandable code
 - Better test coverage
 - Elimination of order-dependent logic
-- Clear documentation of all rules
 
 ## Validation Criteria
-- [ ] Comprehensive test suite written first
-- [ ] Implementation matches test cases
+- [ ] State machine tests written and passing
+- [ ] All state transitions tested
+- [ ] Invalid transitions prevented
+- [ ] Migration tests verifying backward compatibility
+- [ ] Integration tests with existing components
+- [ ] Documentation updated with state machine diagram
+- [ ] No regression in existing functionality
+- [ ] Edge cases covered:
+  - Multiple activities
+  - Activity removal mid-session
+  - Activity completion order
+  - Timeline integrity maintained
 - [ ] All tests passing
 - [ ] Documentation updated
-- [ ] Edge cases covered
-- [ ] No regression in existing functionality
