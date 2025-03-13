@@ -102,10 +102,41 @@ export default function Summary({
     return stats;
   };
 
-  // Calculate overtime - any time spent beyond the planned duration, minimum 0
   const calculateOvertime = () => {
+    // Calculate overtime - any time spent beyond the planned duration, minimum 0
     const overtime = Math.max(0, elapsedTime - totalDuration);
     return Math.round(overtime); // Round to nearest whole second
+  };
+
+  const calculateActivityTimes = () => {
+    if (!entries || entries.length === 0) return [];
+    
+    const activityTimes: { id: string; name: string; duration: number; colors?: TimelineEntry['colors'] }[] = [];
+    const activityMap = new Map<string, { duration: number; name: string; colors?: TimelineEntry['colors'] }>();
+    
+    for (const entry of entries) {
+      if (entry.activityId && entry.activityName) {
+        const endTime = entry.endTime ?? Date.now();
+        const duration = Math.round((endTime - entry.startTime) / 1000);
+        
+        if (activityMap.has(entry.activityId)) {
+          const existing = activityMap.get(entry.activityId)!;
+          existing.duration += duration;
+        } else {
+          activityMap.set(entry.activityId, {
+            duration,
+            name: entry.activityName,
+            colors: entry.colors
+          });
+        }
+      }
+    }
+    
+    activityMap.forEach((value, id) => {
+      activityTimes.push({ id, ...value });
+    });
+    
+    return activityTimes.sort((a, b) => b.duration - a.duration);
   };
 
   const status = getStatusMessage();
@@ -114,7 +145,9 @@ export default function Summary({
   if (!allActivitiesCompleted || !stats) return null;
   
   const overtime = calculateOvertime();
-  
+
+  const activityTimes = calculateActivityTimes();
+
   return (
     <div className={`${styles.container}`}>
       {status && (
@@ -144,6 +177,32 @@ export default function Summary({
           <div className={styles.statValue}>{formatDuration(overtime)}</div>
         </div>
       </div>
+
+      {activityTimes.length > 0 && (
+        <div className={styles.activityList}>
+          <h3 className={styles.activityListHeading}>Time Spent per Activity</h3>
+          {activityTimes.map(activity => (
+            <div 
+              key={activity.id}
+              className={styles.activityItem}
+              style={activity.colors ? {
+                backgroundColor: activity.colors.background,
+                borderColor: activity.colors.border
+              } : undefined}
+            >
+              <span 
+                className={styles.activityName}
+                style={activity.colors ? { color: activity.colors.text } : undefined}
+              >
+                {activity.name}
+              </span>
+              <span className={styles.activityTime}>
+                {formatDuration(activity.duration)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -72,10 +72,25 @@ describe('Summary Component', () => {
     expect(screen.getByText('Overtime')).toBeInTheDocument();
     
     // Verify the time values are displayed with whole seconds (no decimals)
-    expect(screen.getByText('1h 0m 0s')).toBeInTheDocument(); // Planned time
-    expect(screen.getByText('1h 30m 0s')).toBeInTheDocument(); // Spent time
-    expect(screen.getByText('5m 0s')).toBeInTheDocument(); // Idle time
-    expect(screen.getByText('30m 0s')).toBeInTheDocument(); // Overtime
+    const plannedTime = screen.getByText('Planned Time')
+      .closest('.statCard')
+      ?.querySelector('.statValue');
+    expect(plannedTime).toHaveTextContent('1h 0m 0s');
+
+    const spentTime = screen.getByText('Spent Time')
+      .closest('.statCard')
+      ?.querySelector('.statValue');
+    expect(spentTime).toHaveTextContent('1h 30m 0s');
+
+    const idleTime = screen.getByText('Idle Time')
+      .closest('.statCard')
+      ?.querySelector('.statValue');
+    expect(idleTime).toHaveTextContent('5m 0s');
+
+    const overtime = screen.getByText('Overtime')
+      .closest('.statCard')
+      ?.querySelector('.statValue');
+    expect(overtime).toHaveTextContent('30m 0s');
     
     // Verify late message is displayed
     expect(screen.getByText(/You took .* more than planned/, { exact: false })).toBeInTheDocument();
@@ -174,8 +189,11 @@ describe('Summary Component', () => {
       />
     );
     
-    // All time displays should be rounded to whole seconds
-    expect(screen.getByText('1h 1m 2s')).toBeInTheDocument(); // Spent time (rounded up)
+    // Verify spent time is rounded without decimals
+    const spentTime = screen.getByText('Spent Time')
+      .closest('.statCard')
+      ?.querySelector('.statValue');
+    expect(spentTime).toHaveTextContent('1h 1m 2s'); // Spent time (rounded up)
     expect(screen.queryByText('1h 1m 1.5s')).not.toBeInTheDocument(); // No decimals
   });
 });

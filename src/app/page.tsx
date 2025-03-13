@@ -134,16 +134,6 @@ export default function Home() {
                 allActivitiesCompleted={allActivitiesCompleted}
               />
             </div>
-            <div className={styles.timelineContainer}>
-              <Timeline 
-                entries={processedEntries}
-                totalDuration={totalDuration} 
-                elapsedTime={elapsedTime}
-                allActivitiesCompleted={allActivitiesCompleted}
-                timerActive={false}
-                isTimeUp={isTimeUp}
-              />
-            </div>
           </div>
         )}
       </div>
