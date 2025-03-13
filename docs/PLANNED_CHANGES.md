@@ -47,4 +47,66 @@ Describe what success looks like:
 
 Note: When implementing a change, copy this template and fill it out completely. The more detailed the prompt, the better the AI assistance will be in implementation.
 
-<!-- Changes that are temporarily deprioritized should be moved to BACKLOG_CHANGES.md -->
+---
+
+# Clarify Activity Completion Logic
+## Context
+The application's logic for determining when all activities are complete is currently complex and potentially inconsistent. This affects:
+- `activityUtils.ts` and its completion logic
+- `useActivityState.ts` hook that uses this logic
+- All test files that verify completion behavior
+
+Current behavior has some ambiguity around:
+- The relationship between started and completed activities
+- How removed activities affect completion status
+- The order-dependency of completion checks
+
+## Requirements
+1. Implement Clear Completion Rules
+   - Immediate false conditions must be checked first
+     - Any activity currently running
+     - Any activities still in active set
+   - Base requirements for completion
+     - At least one activity must be started AND completed
+     - All activities must be "handled" (completed or removed)
+   - Specific case handling
+     - Non-removed activities must ALL be started and completed
+     - Removed activities don't need to be started
+     - System must have at least one completed activity
+
+2. Update Test Coverage
+   - Add comprehensive test cases for all edge cases
+   - Ensure consistent testing of `hasActuallyStartedActivity` flag
+   - Add tests for order-independence of completion checks
+   - Update existing tests to align with clarified rules
+
+3. Improve Documentation
+   - Update code comments to clearly explain each rule
+   - Add detailed explanations for edge cases
+   - Document the reasoning behind completion checks
+
+## Technical Guidelines
+- Keep the implementation in TypeScript
+- Maintain current function signature for backward compatibility
+- Ensure consistent behavior regardless of how the state was reached
+- Add detailed JSDoc comments
+- Consider extracting complex logic into well-named helper functions
+
+## Expected Outcome
+User Perspective:
+- More predictable behavior when activities are completed
+- Clearer understanding of when the system will move to summary state
+
+Technical Perspective:
+- More maintainable and understandable code
+- Better test coverage
+- Elimination of order-dependent logic
+- Clear documentation of all rules
+
+## Validation Criteria
+- [ ] Comprehensive test suite written first
+- [ ] Implementation matches test cases
+- [ ] All tests passing
+- [ ] Documentation updated
+- [ ] Edge cases covered
+- [ ] No regression in existing functionality
