@@ -43,19 +43,25 @@ describe('ActivityButton', () => {
     expect(container).toHaveClass(styles.completedActivityItem);
   });
 
-  it('shows completed tag when completed', () => {
+  it('shows checkmark icon when completed', () => {
     render(<ActivityButton {...defaultProps} isCompleted={true} />);
-    expect(screen.getByText('Completed')).toBeInTheDocument();
+    const completedTag = screen.getByLabelText('Completed');
+    expect(completedTag).toBeInTheDocument();
+    expect(completedTag.querySelector('svg')).toBeInTheDocument();
   });
 
-  it('shows start/complete button when not completed', () => {
+  it('shows start button with play icon when not completed', () => {
     render(<ActivityButton {...defaultProps} />);
-    expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument();
+    const startButton = screen.getByRole('button', { name: 'Start' });
+    expect(startButton).toBeInTheDocument();
+    expect(startButton.querySelector('svg')).toBeInTheDocument();
   });
 
-  it('shows complete button when running', () => {
+  it('shows complete button with checkmark when running', () => {
     render(<ActivityButton {...defaultProps} isRunning={true} />);
-    expect(screen.getByRole('button', { name: 'Complete' })).toBeInTheDocument();
+    const completeButton = screen.getByRole('button', { name: 'Complete' });
+    expect(completeButton).toBeInTheDocument();
+    expect(completeButton.querySelector('svg')).toBeInTheDocument();
   });
 
   it('handles select events', () => {
@@ -64,13 +70,14 @@ describe('ActivityButton', () => {
     expect(defaultProps.onSelect).toHaveBeenCalledWith(defaultActivity);
   });
 
-  it('shows and handles remove button when onRemove provided', () => {
+  it('shows and handles remove button with trash icon when onRemove provided', () => {
     const onRemove = jest.fn();
     render(<ActivityButton {...defaultProps} onRemove={onRemove} />);
     
     const removeButton = screen.getByRole('button', { name: 'Remove' });
-    fireEvent.click(removeButton);
+    expect(removeButton.querySelector('svg')).toBeInTheDocument();
     
+    fireEvent.click(removeButton);
     expect(onRemove).toHaveBeenCalledWith(defaultActivity.id);
   });
 

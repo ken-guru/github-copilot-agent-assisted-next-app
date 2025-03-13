@@ -48,7 +48,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
         borderColor: colors.border
       } : undefined}
     >
-      {/* Title row */}
+      {/* Title column */}
       <span 
         className={isCompleted ? styles.completedActivityName : styles.activityName}
         style={colors ? { color: colors.text } : undefined}
@@ -56,46 +56,65 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
         {name}
       </span>
 
-      {/* Status area with timer */}
+      {/* Status column */}
       <div className={styles.activityStatus}>
         {isRunning && (
           <span className={styles.runningIndicator}>
-            <span>Active</span>
             <span className={styles.timerDisplay}>{formatTime(elapsedTime)}</span>
+          </span>
+        )}
+        {isCompleted && (
+          <span 
+            className={styles.completedTag}
+            style={colors ? {
+              color: colors.text,
+              borderColor: colors.border
+            } : undefined}
+            title="Completed"
+            aria-label="Completed"
+          >
+            <svg className={styles.checkIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+            </svg>
           </span>
         )}
       </div>
       
-      {/* Action buttons row */}
-      {isCompleted ? (
-        <span 
-          className={styles.completedTag}
-          style={colors ? {
-            color: colors.text,
-            borderColor: colors.border
-          } : undefined}
-        >
-          Completed
-        </span>
-      ) : (
-        <button
-          onClick={handleClick}
-          className={isRunning ? styles.stopButton : styles.startButton}
-          disabled={isCompleted}
-        >
-          {isRunning ? 'Complete' : 'Start'}
-        </button>
-      )}
-      {!isCompleted && (
-        <button
-          onClick={handleRemove}
-          className={styles.removeButton}
-          disabled={isInUse}
-          title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
-        >
-          Remove
-        </button>
-      )}
+      {/* Action buttons column */}
+      <div className={styles.activityActions}>
+        {!isCompleted && (
+          <button
+            onClick={handleClick}
+            className={isRunning ? styles.stopButton : styles.startButton}
+            disabled={isCompleted}
+            title={isRunning ? "Complete" : "Start"}
+            aria-label={isRunning ? "Complete" : "Start"}
+          >
+            {isRunning ? (
+              <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+              </svg>
+            ) : (
+              <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
+          </button>
+        )}
+        {!isCompleted && (
+          <button
+            onClick={handleRemove}
+            className={styles.removeButton}
+            disabled={isInUse}
+            title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
+            aria-label="Remove"
+          >
+            <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+            </svg>
+          </button>
+        )}
+      </div>
     </div>
   );
 };

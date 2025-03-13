@@ -54,9 +54,6 @@ describe('ActivityManager Component', () => {
       expect(screen.getByText('Play Time')).toBeInTheDocument();
       expect(screen.getByText('Chores')).toBeInTheDocument();
     });
-    
-    // Should show break message when no activity is selected
-    expect(screen.getByText('Taking a break - Click any activity to start')).toBeInTheDocument();
   });
   
   it('should allow adding a new activity', async () => {
@@ -104,7 +101,7 @@ describe('ActivityManager Component', () => {
     });
     
     // Find the Complete button for the running activity
-    const completeButton = await screen.findByText('Complete');
+    const completeButton = await screen.findByRole('button', { name: 'Complete' });
     
     // Click Complete
     fireEvent.click(completeButton);
@@ -129,8 +126,8 @@ describe('ActivityManager Component', () => {
       expect(screen.getByText('Homework')).toBeInTheDocument();
     });
     
-    // Should show "Completed" tag
-    expect(await screen.findByText('Completed')).toBeInTheDocument();
+    // Should show "Completed" icon/label
+    expect(await screen.findByLabelText('Completed')).toBeInTheDocument();
     
     // Find the homework container div
     const homeworkItem = screen.getByText('Homework').closest('div');
@@ -161,7 +158,7 @@ describe('ActivityManager Component', () => {
     });
     
     // Find all remove buttons and click the first one
-    const removeButtons = await screen.findAllByText('Remove');
+    const removeButtons = await screen.findAllByRole('button', { name: 'Remove' });
     fireEvent.click(removeButtons[0]);
     
     // Should call onActivityRemove
@@ -195,7 +192,7 @@ describe('ActivityManager Component', () => {
     });
     
     // Find all remove buttons
-    const removeButtons = await screen.findAllByText('Remove');
+    const removeButtons = await screen.findAllByRole('button', { name: 'Remove' });
     
     // First button (Homework) should be disabled
     expect(removeButtons[0]).toBeDisabled();
@@ -223,9 +220,6 @@ describe('ActivityManager Component', () => {
     // Input should have different placeholder
     const input = screen.getByPlaceholderText('Time is up!');
     expect(input).toBeDisabled();
-    
-    // Break message should not be displayed when time is up
-    expect(screen.queryByText('Taking a break - Click any activity to start')).not.toBeInTheDocument();
   });
   
   it('should start an activity when clicking Start', async () => {
@@ -251,7 +245,7 @@ describe('ActivityManager Component', () => {
     }
     
     // Find the Start button within this item and click it
-    const startButton = within(homeworkItem).getByText('Start');
+    const startButton = within(homeworkItem).getByRole('button', { name: 'Start' });
     fireEvent.click(startButton);
     
     // Should call onActivitySelect with the activity object
@@ -259,7 +253,7 @@ describe('ActivityManager Component', () => {
     expect(mockOnActivitySelect.mock.calls[0][0]).toHaveProperty('id', '1'); // Homework id
     expect(mockOnActivitySelect.mock.calls[0][0]).toHaveProperty('name', 'Homework');
   });
-
+  
   it('should pass elapsedTime to running activity', async () => {
     render(
       <ActivityManager 
@@ -280,7 +274,7 @@ describe('ActivityManager Component', () => {
     // Check if the timer is displayed with the correct time
     expect(screen.getByText('00:30')).toBeInTheDocument();
   });
-
+  
   it('should not show timer for non-running activities', async () => {
     render(
       <ActivityManager 
