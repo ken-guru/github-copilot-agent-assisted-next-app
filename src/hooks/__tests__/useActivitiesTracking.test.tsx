@@ -42,17 +42,15 @@ describe('useActivitiesTracking', () => {
   it('should track completed activities', () => {
     const { result } = renderHook(() => useActivitiesTracking());
 
-    // Add the activity
+    // Add and start the activity in separate act calls to be more explicit
     act(() => {
       result.current.addActivity(mockActivityId1);
     });
 
-    // Start the activity - now in a separate act call
     act(() => {
       result.current.startActivity(mockActivityId1);
     });
 
-    // Complete the activity - now in a separate act call
     act(() => {
       result.current.completeActivity(mockActivityId1);
     });
@@ -61,16 +59,25 @@ describe('useActivitiesTracking', () => {
     expect(result.current.activities.has(mockActivityId1)).toBe(false);
   });
 
-  it('should not mark activity as completed if it was not started', () => {
+  it('should complete activity when completeActivity is called, even if not explicitly started', () => {
     const { result } = renderHook(() => useActivitiesTracking());
 
+    // With our new state machine implementation, completing an activity 
+    // will automatically transition it through the required states
+    // (PENDING -> RUNNING -> COMPLETED)
     act(() => {
       result.current.addActivity(mockActivityId1);
+    });
+
+    // This should internally start and then complete the activity
+    act(() => {
       result.current.completeActivity(mockActivityId1);
     });
 
-    expect(result.current.completedActivityIds).not.toContain(mockActivityId1);
+    // The activity should now be in the completed list and removed from active activities
+    expect(result.current.completedActivityIds).toContain(mockActivityId1);
     expect(result.current.activities.has(mockActivityId1)).toBe(false);
+    expect(result.current.startedActivityIds.has(mockActivityId1)).toBe(true);
   });
 
   it('should track removed activities', () => {
