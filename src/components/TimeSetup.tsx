@@ -44,7 +44,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-testid="time-setup">
       <h2 className={styles.heading}>Set Time</h2>
       
       <div className={styles.modeSelector}>

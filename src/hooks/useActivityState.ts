@@ -95,7 +95,13 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
 
   // Use the state machine's isCompleted method to update allActivitiesCompleted state
   useEffect(() => {
-    setAllActivitiesCompleted(isActivitiesCompleted());
+    const checkCompleted = () => {
+      const isCompleted = isActivitiesCompleted();
+      setAllActivitiesCompleted(isCompleted);
+    };
+
+    // Check completion status after any state changes
+    checkCompleted();
   }, [
     isActivitiesCompleted,
     activities,

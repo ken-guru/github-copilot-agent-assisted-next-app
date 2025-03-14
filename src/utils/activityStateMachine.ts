@@ -158,6 +158,7 @@ export class ActivityStateMachine {
    * Activities are considered completed when:
    * 1. There are no PENDING or RUNNING activities
    * 2. At least one activity has been COMPLETED
+   * 3. All other activities are either COMPLETED or REMOVED
    * @returns Boolean indicating if all activities are completed
    */
   isCompleted(): boolean {
@@ -177,7 +178,17 @@ export class ActivityStateMachine {
     }
 
     // Must have at least one completed activity
-    return completed.length > 0;
+    if (completed.length === 0) {
+      return false;
+    }
+
+    // All activities must be either COMPLETED or REMOVED
+    const allActivities = this.getAllActivities();
+    const allHandledCorrectly = allActivities.every(activity => 
+      activity.state === 'COMPLETED' || activity.state === 'REMOVED'
+    );
+
+    return allHandledCorrectly;
   }
 
   /**
