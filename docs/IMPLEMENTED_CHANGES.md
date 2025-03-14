@@ -52,7 +52,6 @@ The application needed a comprehensive dark theme to reduce eye strain and provi
 - Handle theme preferences with system detection
 
 ### Implementation Details
-```markdown
 1. Color System Implementation
    - Base HSL palette:
      ```css
@@ -87,17 +86,14 @@ The application needed a comprehensive dark theme to reduce eye strain and provi
    - Theme transition system
    - SVG/asset handling
    - Test suite updates
-```
 
 ### Testing Approach
-```markdown
 - Theme toggle functionality
 - System preference handling
 - LocalStorage persistence
 - Component appearance in both themes
 - Transition animations
 - Accessibility compliance
-```
 
 ### Validation Results
 - ✅ All tests passing
@@ -112,3 +108,92 @@ This change can serve as a template for:
 - Implementing HSL-based color systems
 - Creating theme toggle functionality
 - Handling system theme preferences
+
+## Activity State Machine Implementation (2024-01-26)
+
+### Context
+Previously, activity state management was spread across multiple hooks and utilities, making state transitions complex and potentially inconsistent. This implementation centralizes state management in a dedicated state machine.
+
+### Implementation Details
+1. Core Components:
+   - ActivityStateMachine class in activityUtils.ts
+   - Defined states: PENDING, RUNNING, COMPLETED, REMOVED
+   - Valid transitions:
+     * PENDING -> RUNNING -> COMPLETED
+     * PENDING -> RUNNING -> REMOVED
+     * PENDING -> REMOVED
+
+2. Key Features:
+   - Single source of truth for activity states
+   - Explicit state transitions with validation
+   - Temporal tracking (startedAt, completedAt, removedAt)
+   - Current activity tracking
+   - Clear completion logic
+
+3. Integration Points:
+   - useActivitiesTracking hook uses state machine internally
+   - useActivityState hook leverages state machine for activity management
+   - activityUtils.ts updated to use state machine for completion logic
+
+### Technical Details
+```typescript
+// Activity States
+type ActivityStateType = 'PENDING' | 'RUNNING' | 'COMPLETED' | 'REMOVED';
+
+// Activity State Interface
+interface ActivityState {
+  id: string;
+  state: ActivityStateType;
+  startedAt?: number;    // Set when activity starts
+  completedAt?: number;  // Set when activity completes
+  removedAt?: number;    // Set when activity is removed
+}
+
+// State Machine Capabilities
+- Add activities (always in PENDING state)
+- Start activities (PENDING -> RUNNING)
+- Complete activities (RUNNING -> COMPLETED)
+- Remove activities (PENDING/RUNNING -> REMOVED)
+- Query current activity and states
+- Validate state transitions
+- Track activity history
+```
+
+### Testing Approach
+1. State Transition Testing:
+   - Valid state transitions
+   - Invalid state transition prevention
+   - Temporal data tracking
+   - Current activity management
+
+2. Integration Testing:
+   - Hook integration
+   - Component interaction
+   - Timeline integrity
+   - Backward compatibility
+
+3. Edge Cases:
+   - Multiple activities
+   - Activity removal mid-session
+   - Activity completion order
+   - Timeline consistency
+
+### Migration Strategy
+- Maintained backward compatibility
+- Preserved existing activity data
+- Updated tests to reflect new state model
+- Documented new implementation
+
+### Benefits Achieved
+1. Technical Improvements:
+   - Single source of truth for activity state
+   - Explicit and validated state transitions
+   - Simplified completion logic
+   - Improved testability
+   - Better maintainability
+
+2. User Experience:
+   - More predictable activity progression
+   - Clearer activity state feedback
+   - Consistent behavior across scenarios
+   - Reliable completion handling

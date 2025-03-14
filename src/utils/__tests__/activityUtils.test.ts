@@ -7,8 +7,7 @@ describe('activityUtils', () => {
     allActivityIds: new Set<string>(),
     startedActivityIds: new Set<string>(),
     completedActivityIds: [],
-    removedActivityIds: [],
-    hasActuallyStartedActivity: false
+    removedActivityIds: []
   };
 
   describe('isActivitiesCompleted', () => {
@@ -31,8 +30,7 @@ describe('activityUtils', () => {
         ...defaultParams,
         allActivityIds: new Set(['1', '2']),
         startedActivityIds: new Set(['1', '2']),
-        completedActivityIds: ['1', '2'],
-        hasActuallyStartedActivity: true
+        completedActivityIds: ['1', '2']
       })).toBe(true);
     });
 
@@ -41,8 +39,7 @@ describe('activityUtils', () => {
         ...defaultParams,
         allActivityIds: new Set(['1', '2']),
         startedActivityIds: new Set(['1']),
-        completedActivityIds: ['1'],
-        hasActuallyStartedActivity: true
+        completedActivityIds: ['1']
       })).toBe(false);
     });
 
@@ -52,8 +49,7 @@ describe('activityUtils', () => {
         allActivityIds: new Set(['1', '2']),
         startedActivityIds: new Set(['1']),
         completedActivityIds: ['1'],
-        removedActivityIds: ['2'],
-        hasActuallyStartedActivity: true
+        removedActivityIds: ['2']
       })).toBe(true);
     });
 
@@ -71,8 +67,7 @@ describe('activityUtils', () => {
         allActivityIds: new Set(['1', '2', '3']),
         startedActivityIds: new Set(['1']),
         completedActivityIds: ['1'],
-        removedActivityIds: ['2', '3'],
-        hasActuallyStartedActivity: true
+        removedActivityIds: ['2', '3']
       })).toBe(true);
     });
 

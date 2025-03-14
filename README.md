@@ -46,6 +46,8 @@ When implementing or modifying features, ensure adherence to these core function
   
 - Activity Management
   - Creation and tracking of multiple activities
+  - State machine-based activity lifecycle (PENDING → RUNNING → COMPLETED)
+  - Validated state transitions
   - Real-time status monitoring
   
 - Visual Feedback
@@ -60,6 +62,14 @@ When implementing or modifying features, ensure adherence to these core function
 ```
 
 ## Implementation Guidelines
+
+### Architecture Patterns
+```markdown
+- Component-based UI architecture
+- Custom React hooks for state management
+- Activity State Machine for lifecycle management
+- Theme system using CSS variables
+```
 
 ### Project Structure
 ```
