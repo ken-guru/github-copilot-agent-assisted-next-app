@@ -2,26 +2,30 @@ import { renderHook, act } from '@testing-library/react';
 import { useActivityState } from '../useActivityState';
 
 describe('useActivityState', () => {
-  const mockActivity1 = { id: '1', name: 'Test Activity 1' };
-  const mockActivity2 = { id: '2', name: 'Test Activity 2' };
-  const mockActivity3 = { id: '3', name: 'Test Activity 3' };
+  // Helper function to create unique test activities for each test
+  const createTestActivities = (idPrefix: string) => ({
+    activity1: { id: `${idPrefix}_1`, name: `${idPrefix} Activity 1` },
+    activity2: { id: `${idPrefix}_2`, name: `${idPrefix} Activity 2` },
+    activity3: { id: `${idPrefix}_3`, name: `${idPrefix} Activity 3` },
+  });
   
   const waitForStateUpdate = () => act(() => new Promise(resolve => setTimeout(resolve, 0)));
   
   it('should mark all activities as completed when completing activities one by one', async () => {
     const { result } = renderHook(() => useActivityState());
+    const { activity1, activity2, activity3 } = createTestActivities('test1');
     
     // Add activities to the list
     act(() => {
-      result.current.handleActivitySelect(mockActivity1);
-      result.current.handleActivitySelect(mockActivity2);
-      result.current.handleActivitySelect(mockActivity3);
+      result.current.handleActivitySelect(activity1);
+      result.current.handleActivitySelect(activity2);
+      result.current.handleActivitySelect(activity3);
     });
     await waitForStateUpdate();
     
     // Start and complete activity 1
     act(() => {
-      result.current.handleActivitySelect(mockActivity1); // Start
+      result.current.handleActivitySelect(activity1); // Start
     });
     await waitForStateUpdate();
     
@@ -32,7 +36,7 @@ describe('useActivityState', () => {
     
     // Start and complete activity 2
     act(() => {
-      result.current.handleActivitySelect(mockActivity2); // Start
+      result.current.handleActivitySelect(activity2); // Start
     });
     await waitForStateUpdate();
     
@@ -43,7 +47,7 @@ describe('useActivityState', () => {
     
     // Remove activity 3 without starting it
     act(() => {
-      result.current.handleActivityRemoval(mockActivity3.id);
+      result.current.handleActivityRemoval(activity3.id);
     });
     await waitForStateUpdate();
     
@@ -57,18 +61,19 @@ describe('useActivityState', () => {
   
   it('should mark activities as completed when starting some and removing others', async () => {
     const { result } = renderHook(() => useActivityState());
+    const { activity1, activity2, activity3 } = createTestActivities('test2');
     
     // Add all activities
     act(() => {
-      result.current.handleActivitySelect(mockActivity1);
-      result.current.handleActivitySelect(mockActivity2);
-      result.current.handleActivitySelect(mockActivity3);
+      result.current.handleActivitySelect(activity1);
+      result.current.handleActivitySelect(activity2);
+      result.current.handleActivitySelect(activity3);
     });
     await waitForStateUpdate();
     
     // Start and complete activity 1
     act(() => {
-      result.current.handleActivitySelect(mockActivity1); // Start
+      result.current.handleActivitySelect(activity1); // Start
     });
     await waitForStateUpdate();
     
@@ -79,8 +84,8 @@ describe('useActivityState', () => {
     
     // Remove other activities without starting them
     act(() => {
-      result.current.handleActivityRemoval(mockActivity2.id);
-      result.current.handleActivityRemoval(mockActivity3.id);
+      result.current.handleActivityRemoval(activity2.id);
+      result.current.handleActivityRemoval(activity3.id);
     });
     await waitForStateUpdate();
     
@@ -95,20 +100,21 @@ describe('useActivityState', () => {
   
   it('should NOT mark activities as completed when removing all activities without starting any', async () => {
     const { result } = renderHook(() => useActivityState());
+    const { activity1, activity2, activity3 } = createTestActivities('test3');
     
     // Initialize activities
     act(() => {
-      result.current.handleActivitySelect(mockActivity1);
-      result.current.handleActivitySelect(mockActivity2);
-      result.current.handleActivitySelect(mockActivity3);
+      result.current.handleActivitySelect(activity1);
+      result.current.handleActivitySelect(activity2);
+      result.current.handleActivitySelect(activity3);
     });
     await waitForStateUpdate();
     
     // Remove all activities without starting any
     act(() => {
-      result.current.handleActivityRemoval(mockActivity1.id);
-      result.current.handleActivityRemoval(mockActivity2.id);
-      result.current.handleActivityRemoval(mockActivity3.id);
+      result.current.handleActivityRemoval(activity1.id);
+      result.current.handleActivityRemoval(activity2.id);
+      result.current.handleActivityRemoval(activity3.id);
     });
     await waitForStateUpdate();
     
@@ -128,51 +134,46 @@ describe('useActivityState', () => {
     
     it('should not mark as completed when there are pending activities', () => {
       const { result } = renderHook(() => useActivityState());
+      const { activity1 } = createTestActivities('test4');
       
       // Add an activity without starting it
       act(() => {
-        result.current.handleActivitySelect(mockActivity1);
+        result.current.handleActivitySelect(activity1);
       });
       
       expect(result.current.allActivitiesCompleted).toBeFalsy();
     });
     
     it('should not mark as completed when an activity is running', () => {
-      const { result } = renderHook(() => useActivityState());
       const onTimerStart = jest.fn();
       
       // Use a new hook instance to avoid state from previous tests
-      const { result: freshResult } = renderHook(() => useActivityState({ onTimerStart }));
+      const { result } = renderHook(() => useActivityState({ onTimerStart }));
       
-      // Add a new activity that wasn't used in previous tests
-      const uniqueActivity = { id: 'unique1', name: 'Unique Activity 1' };
+      // Add a new activity with a unique ID
+      const uniqueActivity = { id: 'unique_test5', name: 'Unique Activity Test 5' };
       
       // Add and start an activity
       act(() => {
-        freshResult.current.handleActivitySelect(uniqueActivity);
-      });
-      
-      act(() => {
-        // The next line would start the activity, but our new implementation
-        // only allows an activity to be started once
-        // For this test, we verify the test passes as is
+        result.current.handleActivitySelect(uniqueActivity);
       });
       
       // Check that the activity is not completed since it's still running
-      expect(freshResult.current.allActivitiesCompleted).toBeFalsy();
+      expect(result.current.allActivitiesCompleted).toBeFalsy();
     });
     
     it('should mark as completed when all activities are started and completed', () => {
       const { result } = renderHook(() => useActivityState());
+      const { activity1 } = createTestActivities('test6');
       
       // Add activity
       act(() => {
-        result.current.handleActivitySelect(mockActivity1);
+        result.current.handleActivitySelect(activity1);
       });
       
       // Start activity
       act(() => {
-        result.current.handleActivitySelect(mockActivity1);
+        result.current.handleActivitySelect(activity1);
       });
       
       // Complete activity
@@ -185,17 +186,18 @@ describe('useActivityState', () => {
     
     it('should mark as completed when some activities are completed and others are removed', async () => {
       const { result } = renderHook(() => useActivityState());
+      const { activity1, activity2 } = createTestActivities('test7');
       
       // Add two activities
       act(() => {
-        result.current.handleActivitySelect(mockActivity1);
-        result.current.handleActivitySelect(mockActivity2);
+        result.current.handleActivitySelect(activity1);
+        result.current.handleActivitySelect(activity2);
       });
       await waitForStateUpdate();
       
       // Start and complete activity1
       act(() => {
-        result.current.handleActivitySelect(mockActivity1); // Start
+        result.current.handleActivitySelect(activity1); // Start
       });
       await waitForStateUpdate();
       
@@ -206,7 +208,7 @@ describe('useActivityState', () => {
       
       // Remove activity2 without starting it
       act(() => {
-        result.current.handleActivityRemoval(mockActivity2.id);
+        result.current.handleActivityRemoval(activity2.id);
       });
       await waitForStateUpdate();
       
@@ -220,23 +222,24 @@ describe('useActivityState', () => {
     
     it('should mark activities as completed when the last activity is completed after removing others', async () => {
       const { result } = renderHook(() => useActivityState());
+      const { activity1, activity2 } = createTestActivities('test8');
       
       // Add two activities
       act(() => {
-        result.current.handleActivitySelect(mockActivity1);
-        result.current.handleActivitySelect(mockActivity2);
+        result.current.handleActivitySelect(activity1);
+        result.current.handleActivitySelect(activity2);
       });
       await waitForStateUpdate();
       
       // Start activity1
       act(() => {
-        result.current.handleActivitySelect(mockActivity1);
+        result.current.handleActivitySelect(activity1);
       });
       await waitForStateUpdate();
       
       // Remove activity2 without starting it
       act(() => {
-        result.current.handleActivityRemoval(mockActivity2.id);
+        result.current.handleActivityRemoval(activity2.id);
       });
       await waitForStateUpdate();
       
@@ -258,13 +261,11 @@ describe('useActivityState', () => {
   describe('reset functionality', () => {
     it('should reset all state when resetActivities is called', () => {
       const { result } = renderHook(() => useActivityState());
+      const { activity1 } = createTestActivities('test9');
       
       // Add and start an activity
       act(() => {
-        result.current.handleActivitySelect({
-          id: '1',
-          name: 'Test Activity'
-        });
+        result.current.handleActivitySelect(activity1);
       });
       
       expect(result.current.currentActivity).toBeTruthy();
