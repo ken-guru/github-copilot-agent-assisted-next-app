@@ -92,6 +92,23 @@ describe('Activity State Transitions', () => {
     cy.get('[data-testid="summary"]').should('be.visible')
   })
 
+  it('should reach summary when starting all activities consecutively, then finally completing the last one', () => {
+    // Start all activities
+    cy.get('[data-testid="start-activity-homework"]').click()
+    cy.get('[data-testid="start-activity-reading"]').click()
+    cy.get('[data-testid="start-activity-play-time"]').click()
+    cy.get('[data-testid="start-activity-chores"]').click()
+
+    // Verify we're not in summary state yet
+    cy.get('[data-testid="summary"]').should('not.exist')
+
+    // Complete the last activity
+    cy.get('[data-testid="complete-activity-chores"]').click()
+
+    // Now we should see the summary
+    cy.get('[data-testid="summary"]').should('be.visible')
+  })
+
   it('should not show summary when all activities are removed without completion', () => {
     // Remove all activities without completing any
     cy.get('[data-testid="remove-activity-homework"]').click()

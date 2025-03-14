@@ -46,18 +46,16 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     if (activity) {
       // Add activity to the state machine if it's not already there
       addActivity(activity.id);
-    }
+      
+      // If there's a current activity, complete it first
+      if (currentActivity) {
+        completeActivity(currentActivity.id);
+        completeCurrentTimelineEntry();
+      }
 
-    // If there's a current activity, complete it
-    if (currentActivity) {
-      completeActivity(currentActivity.id);
-      completeCurrentTimelineEntry();
-    }
-
-    setCurrentActivity(activity);
-
-    // If a new activity was selected, start it
-    if (activity && (!currentActivity || currentActivity.id !== activity.id)) {
+      setCurrentActivity(activity);
+      
+      // Start the new activity
       addTimelineEntry(activity);
       startActivity(activity.id);
       
@@ -65,6 +63,11 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
       if (timelineEntries.length === 0) {
         onTimerStart?.();
       }
+    } else if (currentActivity) {
+      // If we're deselecting the current activity, complete it
+      completeActivity(currentActivity.id);
+      completeCurrentTimelineEntry();
+      setCurrentActivity(null);
     }
   }, [
     currentActivity, 
@@ -96,19 +99,28 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
   // Use the state machine's isCompleted method to update allActivitiesCompleted state
   useEffect(() => {
     const checkCompleted = () => {
+      if (currentActivity) {
+        // If there's a current activity, we're not completed
+        setAllActivitiesCompleted(false);
+        return;
+      }
       const isCompleted = isActivitiesCompleted();
-      setAllActivitiesCompleted(isCompleted);
+      if (isCompleted !== allActivitiesCompleted) {
+        setAllActivitiesCompleted(isCompleted);
+      }
     };
-
+    
     // Check completion status after any state changes
     checkCompleted();
   }, [
     isActivitiesCompleted,
+    allActivitiesCompleted,
+    currentActivity, // Add currentActivity as a dependency
     activities,
     allActivityIds,
     startedActivityIds,
     completedActivityIds,
-    removedActivityIds, 
+    removedActivityIds,
     hasActuallyStartedActivity
   ]);
 

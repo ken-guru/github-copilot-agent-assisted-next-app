@@ -91,7 +91,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
               disabled={isCompleted}
               title={isRunning ? "Complete" : "Start"}
               aria-label={isRunning ? "Complete" : "Start"}
-              data-testid={`${isRunning ? 'complete' : 'start'}-activity-${name.toLowerCase().replace(/\s+/g, '-')}`}
+              data-testid={`${isRunning ? 'complete' : 'start'}-activity-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
             >
               {isRunning ? (
                 <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">

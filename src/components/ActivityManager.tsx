@@ -45,16 +45,19 @@ export default function ActivityManager({
   };
 
   useEffect(() => {
-    const defaultActivities: Activity[] = [
-      { id: '1', name: 'Homework', isDefault: true, colorIndex: 0, colors: getNextAvailableColorSet(0) },
-      { id: '2', name: 'Reading', isDefault: true, colorIndex: 1, colors: getNextAvailableColorSet(1) },
-      { id: '3', name: 'Play Time', isDefault: true, colorIndex: 2, colors: getNextAvailableColorSet(2) },
-      { id: '4', name: 'Chores', isDefault: true, colorIndex: 3, colors: getNextAvailableColorSet(3) },
+    const defaultActivities = [
+      { id: '1', name: 'Homework', isDefault: true, colorIndex: 0 },
+      { id: '2', name: 'Reading', isDefault: true, colorIndex: 1 },
+      { id: '3', name: 'Play Time', isDefault: true, colorIndex: 2 },
+      { id: '4', name: 'Chores', isDefault: true, colorIndex: 3 }
     ];
-    
-    setAssignedColorIndices([0, 1, 2, 3]);
-    setActivities(defaultActivities);
-  }, []);
+
+    if (activities.length === 0) {
+      const initialColors = defaultActivities.map((_, index) => getNextAvailableColorSet(index));
+      setAssignedColorIndices(defaultActivities.map(a => a.colorIndex));
+      setActivities(defaultActivities);
+    }
+  }, [activities.length]);
   
   useEffect(() => {
     setActivities(currentActivities => 
@@ -136,7 +139,9 @@ export default function ActivityManager({
     }
     
     setActivities(activities.filter(activity => activity.id !== id));
-    onActivityRemove?.(id);
+    if (onActivityRemove) {
+      onActivityRemove(id);
+    }
   };
 
   return (
