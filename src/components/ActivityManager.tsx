@@ -14,7 +14,7 @@ export interface Activity {
 }
 
 interface ActivityManagerProps {
-  onActivitySelect: (activity: Activity | null) => void;
+  onActivitySelect: (activity: Activity | null, justAdd?: boolean) => void;
   onActivityRemove?: (activityId: string) => void;
   currentActivityId: string | null;
   completedActivityIds: string[];
@@ -56,14 +56,14 @@ export default function ActivityManager({
       const initialColors = defaultActivities.map((_, index) => getNextAvailableColorSet(index));
       setAssignedColorIndices(defaultActivities.map(a => a.colorIndex));
       
-      // Add activities through the state machine
+      // Add activities to the state machine in pending state
       defaultActivities.forEach(activity => {
         const activityWithColors = {
           ...activity,
           colors: getNextAvailableColorSet(activity.colorIndex || 0)
         };
-        onActivitySelect(activityWithColors);
-        onActivitySelect(null); // Deselect to put it in PENDING state
+        // Pass true as second argument to just add the activity without starting it
+        onActivitySelect(activityWithColors, true);
       });
       
       setActivities(defaultActivities);
@@ -127,8 +127,8 @@ export default function ActivityManager({
     
     setAssignedColorIndices([...assignedColorIndices, nextColorIndex]);
     setActivities([...activities, newActivity]);
-    onActivitySelect(newActivity); // Add to state machine
-    onActivitySelect(null); // Deselect to put it in PENDING state
+    // Just add the activity without starting it
+    onActivitySelect(newActivity);
   };
 
   const handleActivitySelect = (activity: Activity) => {

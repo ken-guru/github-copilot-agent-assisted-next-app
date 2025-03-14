@@ -42,11 +42,16 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     resetTimelineEntries
   } = useTimelineEntries();
 
-  const handleActivitySelect = useCallback((activity: Activity | null) => {
+  const handleActivitySelect = useCallback((activity: Activity | null, justAdd: boolean = false) => {
     if (activity) {
       // Add activity to the state machine if it's not already there
       addActivity(activity.id);
       
+      // If we're just adding (initializing), don't start the activity
+      if (justAdd) {
+        return;
+      }
+
       // If there's a current activity, complete it first
       if (currentActivity) {
         completeActivity(currentActivity.id);
