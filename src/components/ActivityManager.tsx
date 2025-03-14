@@ -8,7 +8,6 @@ import ActivityForm from './ActivityForm';
 export interface Activity {
   id: string;
   name: string;
-  isDefault?: boolean;
   completed?: boolean;
   colors?: ColorSet;
   colorIndex?: number;
@@ -46,10 +45,10 @@ export default function ActivityManager({
 
   useEffect(() => {
     const defaultActivities = [
-      { id: '1', name: 'Homework', isDefault: true, colorIndex: 0 },
-      { id: '2', name: 'Reading', isDefault: true, colorIndex: 1 },
-      { id: '3', name: 'Play Time', isDefault: true, colorIndex: 2 },
-      { id: '4', name: 'Chores', isDefault: true, colorIndex: 3 }
+      { id: '1', name: 'Homework', colorIndex: 0 },
+      { id: '2', name: 'Reading', colorIndex: 1 },
+      { id: '3', name: 'Play Time', colorIndex: 2 },
+      { id: '4', name: 'Chores', colorIndex: 3 }
     ];
 
     if (activities.length === 0) {
