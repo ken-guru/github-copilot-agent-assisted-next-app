@@ -53,7 +53,6 @@ export default function ActivityManager({
     ];
 
     if (!hasInitializedActivities) {
-      const initialColors = defaultActivities.map((_, index) => getNextAvailableColorSet(index));
       setAssignedColorIndices(defaultActivities.map(a => a.colorIndex));
       
       // Add activities to the state machine in pending state
