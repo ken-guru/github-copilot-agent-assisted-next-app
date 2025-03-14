@@ -49,6 +49,9 @@ describe('Activity State Transitions', () => {
     // Remove third activity
     cy.get('[data-testid="remove-activity-play-time"]').click()
 
+    // Remove fourth activity
+    cy.get('[data-testid="remove-activity-chores"]').click()
+
     // Now we should see the summary since we completed one and removed the rest
     cy.get('[data-testid="summary"]').should('be.visible')
   })
@@ -59,6 +62,9 @@ describe('Activity State Transitions', () => {
 
     // Remove third activity
     cy.get('[data-testid="remove-activity-play-time"]').click()
+
+    // Remove fourth activity
+    cy.get('[data-testid="remove-activity-chores"]').click()
 
     // Verify we're not in summary state yet
     cy.get('[data-testid="summary"]').should('not.exist')
