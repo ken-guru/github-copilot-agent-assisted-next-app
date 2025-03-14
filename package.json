@@ -9,6 +9,9 @@
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
+    "cypress": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:headless": "cypress run --headless",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
