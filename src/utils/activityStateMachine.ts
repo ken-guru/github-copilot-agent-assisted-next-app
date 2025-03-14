@@ -72,7 +72,7 @@ export class ActivityStateMachine {
         if (currentActivity && currentActivity.state === 'RUNNING') {
           this.completeActivity(this.currentActivityId);
         }
-      } catch (e) {
+      } catch {
         // Ignore errors when completing the previous activity
       }
     }

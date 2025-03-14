@@ -17,15 +17,13 @@ export function isActivitiesCompleted(params: {
   startedActivityIds: Set<string>;
   completedActivityIds: string[];
   removedActivityIds: string[];
-  hasActuallyStartedActivity: boolean;
 }): boolean {
   const {
     currentActivityRunning,
     allActivityIds,
     startedActivityIds,
     completedActivityIds,
-    removedActivityIds,
-    hasActuallyStartedActivity
+    removedActivityIds
   } = params;
   
   // Create a temporary state machine to evaluate completion state
