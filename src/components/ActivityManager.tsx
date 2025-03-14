@@ -34,6 +34,7 @@ export default function ActivityManager({
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
+  const [hasInitializedActivities, setHasInitializedActivities] = useState(false);
   
   const getNextColorIndex = (): number => {
     let index = 0;
@@ -51,12 +52,24 @@ export default function ActivityManager({
       { id: '4', name: 'Chores', colorIndex: 3 }
     ];
 
-    if (activities.length === 0) {
+    if (!hasInitializedActivities) {
       const initialColors = defaultActivities.map((_, index) => getNextAvailableColorSet(index));
       setAssignedColorIndices(defaultActivities.map(a => a.colorIndex));
+      
+      // Add activities through the state machine
+      defaultActivities.forEach(activity => {
+        const activityWithColors = {
+          ...activity,
+          colors: getNextAvailableColorSet(activity.colorIndex || 0)
+        };
+        onActivitySelect(activityWithColors);
+        onActivitySelect(null); // Deselect to put it in PENDING state
+      });
+      
       setActivities(defaultActivities);
+      setHasInitializedActivities(true);
     }
-  }, [activities.length]);
+  }, [hasInitializedActivities, onActivitySelect]);
   
   useEffect(() => {
     setActivities(currentActivities => 
@@ -114,6 +127,8 @@ export default function ActivityManager({
     
     setAssignedColorIndices([...assignedColorIndices, nextColorIndex]);
     setActivities([...activities, newActivity]);
+    onActivitySelect(newActivity); // Add to state machine
+    onActivitySelect(null); // Deselect to put it in PENDING state
   };
 
   const handleActivitySelect = (activity: Activity) => {
@@ -147,7 +162,6 @@ export default function ActivityManager({
     <div className={styles.container}>
       <h2 className={styles.heading}>Activities</h2>
       
-
       {activities.length === 0 ? (
         <div className={styles.emptyState}>
           No activities defined
