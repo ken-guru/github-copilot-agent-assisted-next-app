@@ -18,7 +18,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onAddActivity, isDisabled }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form} role="form">
+    <form onSubmit={handleSubmit} className={styles.form} role="form" data-testid="activity-form">
       <div className={styles.inputContainer}>
         <input
           type="text"

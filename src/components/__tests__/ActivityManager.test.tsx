@@ -233,10 +233,13 @@ describe('ActivityManager Component', () => {
       />
     );
     
-    // Wait for activities to render
+    // Wait for activities to render and initialization to complete
     await waitFor(() => {
       expect(screen.getByText('Homework')).toBeInTheDocument();
     });
+    
+    // Clear mocks after initialization but before the action we're testing
+    mockOnActivitySelect.mockClear();
     
     // Find the first activity item
     const homeworkItem = screen.getByText('Homework').closest('div');

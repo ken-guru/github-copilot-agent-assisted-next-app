@@ -142,14 +142,16 @@ export default function Summary({
   const status = getStatusMessage();
   const stats = calculateActivityStats();
   
-  if (!allActivitiesCompleted || !stats) return null;
+  // Early return if not in completed state or no stats available
+  if (!allActivitiesCompleted || !stats) {
+    return null;
+  }
   
   const overtime = calculateOvertime();
-
   const activityTimes = calculateActivityTimes();
 
   return (
-    <div className={`${styles.container}`}>
+    <div className={`${styles.container}`} data-testid="summary">
       {status && (
         <div className={`${styles.statusMessage} ${status.className}`}>
           {status.message}

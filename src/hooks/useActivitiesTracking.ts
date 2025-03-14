@@ -191,10 +191,11 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
         }
       }
       
-      // Only complete if in RUNNING state
+      // Only complete if in RUNNING state and make sure to update state immediately
       if (updatedState.state === 'RUNNING' || stateMachine.getActivityState(activityId)?.state === 'RUNNING') {
         try {
           stateMachine.completeActivity(activityId);
+          updateLocalStateFromMachine(); // Update state immediately after completion
         } catch (error) {
           if (!isTestEnvironment) {
             console.warn(`Failed to complete activity ${activityId}:`, error);
@@ -202,7 +203,7 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
         }
       }
       
-      updateLocalStateFromMachine();
+      updateLocalStateFromMachine(); // Final state update
     } catch (error) {
       if (!isTestEnvironment) {
         console.warn(`Error in completeActivity for ${activityId}:`, error);
@@ -224,7 +225,7 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
       // Only PENDING or RUNNING activities can be removed
       if (activityState.state === 'PENDING' || activityState.state === 'RUNNING') {
         stateMachine.removeActivity(activityId);
-        updateLocalStateFromMachine();
+        updateLocalStateFromMachine(); // Update state immediately after removal
       }
     } catch (error) {
       if (!isTestEnvironment) {

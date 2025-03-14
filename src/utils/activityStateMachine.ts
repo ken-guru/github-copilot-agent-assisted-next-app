@@ -65,15 +65,11 @@ export class ActivityStateMachine {
       throw new Error(`Cannot start activity ${id} from ${activity.state} state`);
     }
 
-    // If there's a current activity, automatically stop it
+    // If there's a current activity in RUNNING state, complete it first
     if (this.currentActivityId && this.currentActivityId !== id) {
-      try {
-        const currentActivity = this.states.get(this.currentActivityId);
-        if (currentActivity && currentActivity.state === 'RUNNING') {
-          this.completeActivity(this.currentActivityId);
-        }
-      } catch {
-        // Ignore errors when completing the previous activity
+      const currentActivity = this.states.get(this.currentActivityId);
+      if (currentActivity && currentActivity.state === 'RUNNING') {
+        this.completeActivity(this.currentActivityId);
       }
     }
 
@@ -84,6 +80,7 @@ export class ActivityStateMachine {
       startedAt: Date.now()
     });
     
+    // Set as current activity
     this.currentActivityId = id;
   }
 
@@ -128,6 +125,7 @@ export class ActivityStateMachine {
       throw new Error(`Activity with ID ${id} not found`);
     }
     
+    // Allow removal from PENDING or RUNNING states only
     if (activity.state !== 'PENDING' && activity.state !== 'RUNNING') {
       throw new Error(`Cannot remove activity ${id} from ${activity.state} state`);
     }
@@ -158,26 +156,35 @@ export class ActivityStateMachine {
    * Activities are considered completed when:
    * 1. There are no PENDING or RUNNING activities
    * 2. At least one activity has been COMPLETED
+   * 3. All other activities are either COMPLETED or REMOVED
    * @returns Boolean indicating if all activities are completed
    */
   isCompleted(): boolean {
-    // If there's a current activity running, not completed
-    if (this.currentActivityId !== null) {
-      return false;
-    }
-
     // Get all activities by state
     const pending = this.getActivitiesByState('PENDING');
     const running = this.getActivitiesByState('RUNNING');
     const completed = this.getActivitiesByState('COMPLETED');
+    const removed = this.getActivitiesByState('REMOVED');
 
     // If there are pending or running activities, not completed
     if (pending.length > 0 || running.length > 0) {
       return false;
     }
 
+    // Must have at least one activity
+    const allActivities = this.getAllActivities();
+    if (allActivities.length === 0) {
+      return false;
+    }
+
     // Must have at least one completed activity
-    return completed.length > 0;
+    if (completed.length === 0) {
+      return false;
+    }
+
+    // Every activity must be either COMPLETED or REMOVED
+    const totalHandled = completed.length + removed.length;
+    return totalHandled === allActivities.length;
   }
 
   /**

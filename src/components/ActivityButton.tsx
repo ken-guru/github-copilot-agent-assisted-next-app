@@ -91,6 +91,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
               disabled={isCompleted}
               title={isRunning ? "Complete" : "Start"}
               aria-label={isRunning ? "Complete" : "Start"}
+              data-testid={`${isRunning ? 'complete' : 'start'}-activity-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
             >
               {isRunning ? (
                 <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
@@ -102,19 +103,22 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
                 </svg>
               )}
             </button>
-            <button
-              onClick={handleRemove}
-              className={styles.removeButton}
-              disabled={isInUse}
-              title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
-              aria-label="Remove"
-            >
-              <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-              </svg>
-            </button>
-        </div>
-          )}
+            {onRemove && (
+              <button
+                onClick={handleRemove}
+                className={styles.removeButton}
+                disabled={isInUse}
+                title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
+                aria-label="Remove"
+                data-testid={`remove-activity-${name.toLowerCase().replace(/\s+/g, '-')}`}
+              >
+                <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

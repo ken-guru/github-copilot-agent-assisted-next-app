@@ -8,14 +8,13 @@ import ActivityForm from './ActivityForm';
 export interface Activity {
   id: string;
   name: string;
-  isDefault?: boolean;
   completed?: boolean;
   colors?: ColorSet;
   colorIndex?: number;
 }
 
 interface ActivityManagerProps {
-  onActivitySelect: (activity: Activity | null) => void;
+  onActivitySelect: (activity: Activity | null, justAdd?: boolean) => void;
   onActivityRemove?: (activityId: string) => void;
   currentActivityId: string | null;
   completedActivityIds: string[];
@@ -35,6 +34,7 @@ export default function ActivityManager({
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
+  const [hasInitializedActivities, setHasInitializedActivities] = useState(false);
   
   const getNextColorIndex = (): number => {
     let index = 0;
@@ -45,16 +45,30 @@ export default function ActivityManager({
   };
 
   useEffect(() => {
-    const defaultActivities: Activity[] = [
-      { id: '1', name: 'Homework', isDefault: true, colorIndex: 0, colors: getNextAvailableColorSet(0) },
-      { id: '2', name: 'Reading', isDefault: true, colorIndex: 1, colors: getNextAvailableColorSet(1) },
-      { id: '3', name: 'Play Time', isDefault: true, colorIndex: 2, colors: getNextAvailableColorSet(2) },
-      { id: '4', name: 'Chores', isDefault: true, colorIndex: 3, colors: getNextAvailableColorSet(3) },
+    const defaultActivities = [
+      { id: '1', name: 'Homework', colorIndex: 0 },
+      { id: '2', name: 'Reading', colorIndex: 1 },
+      { id: '3', name: 'Play Time', colorIndex: 2 },
+      { id: '4', name: 'Chores', colorIndex: 3 }
     ];
-    
-    setAssignedColorIndices([0, 1, 2, 3]);
-    setActivities(defaultActivities);
-  }, []);
+
+    if (!hasInitializedActivities) {
+      setAssignedColorIndices(defaultActivities.map(a => a.colorIndex));
+      
+      // Add activities to the state machine in pending state
+      defaultActivities.forEach(activity => {
+        const activityWithColors = {
+          ...activity,
+          colors: getNextAvailableColorSet(activity.colorIndex || 0)
+        };
+        // Pass true as second argument to just add the activity without starting it
+        onActivitySelect(activityWithColors, true);
+      });
+      
+      setActivities(defaultActivities);
+      setHasInitializedActivities(true);
+    }
+  }, [hasInitializedActivities, onActivitySelect]);
   
   useEffect(() => {
     setActivities(currentActivities => 
@@ -112,6 +126,8 @@ export default function ActivityManager({
     
     setAssignedColorIndices([...assignedColorIndices, nextColorIndex]);
     setActivities([...activities, newActivity]);
+    // Just add the activity without starting it
+    onActivitySelect(newActivity);
   };
 
   const handleActivitySelect = (activity: Activity) => {
@@ -136,14 +152,15 @@ export default function ActivityManager({
     }
     
     setActivities(activities.filter(activity => activity.id !== id));
-    onActivityRemove?.(id);
+    if (onActivityRemove) {
+      onActivityRemove(id);
+    }
   };
 
   return (
     <div className={styles.container}>
       <h2 className={styles.heading}>Activities</h2>
       
-
       {activities.length === 0 ? (
         <div className={styles.emptyState}>
           No activities defined
