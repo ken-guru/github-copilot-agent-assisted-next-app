@@ -1,6 +1,9 @@
 import { useState, useCallback, useRef } from 'react';
 import { ActivityStateMachine, ActivityState } from '@/utils/activityStateMachine';
 
+// Determine if we're in a test environment
+const isTestEnvironment = process && process.env && process.env.NODE_ENV === 'test';
+
 export interface UseActivitiesTrackingResult {
   activities: Set<string>;
   allActivityIds: Set<string>;
@@ -80,19 +83,56 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
   
   const addActivity = useCallback((activityId: string) => {
     try {
+      const exists = stateMachine.getActivityState(activityId);
+      if (exists) {
+        // Activity already exists, don't add it again
+        if (!isTestEnvironment) {
+          console.warn(`Failed to add activity ${activityId}: Activity with ID ${activityId} already exists`);
+        }
+        return;
+      }
+      
       stateMachine.addActivity(activityId);
       updateLocalStateFromMachine();
     } catch (error) {
-      console.warn(`Failed to add activity ${activityId}:`, error);
+      if (!isTestEnvironment) {
+        console.warn(`Failed to add activity ${activityId}:`, error);
+      }
     }
   }, [stateMachine, updateLocalStateFromMachine]);
   
   const startActivity = useCallback((activityId: string) => {
     try {
+      const currentState = stateMachine.getActivityState(activityId);
+      
+      // If activity is already in the desired state or can't be started, just return
+      if (currentState?.state === 'RUNNING' || 
+          currentState?.state === 'COMPLETED' ||
+          currentState?.state === 'REMOVED') {
+        if (!isTestEnvironment) {
+          console.warn(`Cannot start activity ${activityId} from ${currentState.state} state`);
+        }
+        return;
+      }
+      
+      // Add the activity if it doesn't exist yet
+      if (!currentState) {
+        try {
+          stateMachine.addActivity(activityId);
+        } catch (error) {
+          if (!isTestEnvironment) {
+            console.warn(`Failed to add activity ${activityId} before starting:`, error);
+          }
+          return;
+        }
+      }
+      
       stateMachine.startActivity(activityId);
       updateLocalStateFromMachine();
     } catch (error) {
-      console.warn(`Failed to start activity ${activityId}:`, error);
+      if (!isTestEnvironment) {
+        console.warn(`Failed to start activity ${activityId}:`, error);
+      }
       
       // If activity doesn't exist yet, add it first and try again
       if (error instanceof Error && error.message.includes('not found')) {
@@ -101,7 +141,9 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
           stateMachine.startActivity(activityId);
           updateLocalStateFromMachine();
         } catch (innerError) {
-          console.error(`Failed to add and start activity ${activityId}:`, innerError);
+          if (!isTestEnvironment) {
+            console.error(`Failed to add and start activity ${activityId}:`, innerError);
+          }
         }
       }
     }
@@ -117,14 +159,23 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
         try {
           stateMachine.addActivity(activityId);
         } catch (error) {
-          console.warn(`Failed to add activity ${activityId} before completing:`, error);
+          if (!isTestEnvironment) {
+            console.warn(`Failed to add activity ${activityId} before completing:`, error);
+          }
         }
       }
       
       // Try to get the activity state again after potentially adding it
       const updatedState = stateMachine.getActivityState(activityId);
       if (!updatedState) {
-        console.warn(`Cannot complete non-existent activity ${activityId}`);
+        if (!isTestEnvironment) {
+          console.warn(`Cannot complete non-existent activity ${activityId}`);
+        }
+        return;
+      }
+      
+      // If activity is already completed, just return
+      if (updatedState.state === 'COMPLETED') {
         return;
       }
       
@@ -133,7 +184,9 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
         try {
           stateMachine.startActivity(activityId);
         } catch (error) {
-          console.warn(`Failed to start activity ${activityId} before completing:`, error);
+          if (!isTestEnvironment) {
+            console.warn(`Failed to start activity ${activityId} before completing:`, error);
+          }
           return;
         }
       }
@@ -143,13 +196,17 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
         try {
           stateMachine.completeActivity(activityId);
         } catch (error) {
-          console.warn(`Failed to complete activity ${activityId}:`, error);
+          if (!isTestEnvironment) {
+            console.warn(`Failed to complete activity ${activityId}:`, error);
+          }
         }
       }
       
       updateLocalStateFromMachine();
     } catch (error) {
-      console.warn(`Error in completeActivity for ${activityId}:`, error);
+      if (!isTestEnvironment) {
+        console.warn(`Error in completeActivity for ${activityId}:`, error);
+      }
     }
   }, [stateMachine, updateLocalStateFromMachine]);
   
@@ -158,7 +215,9 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
       const activityState = stateMachine.getActivityState(activityId);
       
       if (!activityState) {
-        console.warn(`Cannot remove non-existent activity ${activityId}`);
+        if (!isTestEnvironment) {
+          console.warn(`Cannot remove non-existent activity ${activityId}`);
+        }
         return;
       }
       
@@ -168,7 +227,9 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
         updateLocalStateFromMachine();
       }
     } catch (error) {
-      console.warn(`Failed to remove activity ${activityId}:`, error);
+      if (!isTestEnvironment) {
+        console.warn(`Failed to remove activity ${activityId}:`, error);
+      }
     }
   }, [stateMachine, updateLocalStateFromMachine]);
   
