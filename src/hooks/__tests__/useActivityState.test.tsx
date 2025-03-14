@@ -12,40 +12,51 @@ describe('useActivityState', () => {
   const waitForStateUpdate = () => act(() => new Promise(resolve => setTimeout(resolve, 0)));
   
   it('should mark all activities as completed when completing activities one by one', async () => {
+    // Create a fresh hook instance for this test
     const { result } = renderHook(() => useActivityState());
     const { activity1, activity2, activity3 } = createTestActivities('test1');
     
-    // Add activities to the list
+    // Add activity1 first
     act(() => {
       result.current.handleActivitySelect(activity1);
+    });
+    
+    // Add activity2 
+    act(() => {
       result.current.handleActivitySelect(activity2);
+    });
+    
+    // Add activity3
+    act(() => {
       result.current.handleActivitySelect(activity3);
     });
     await waitForStateUpdate();
     
-    // Start and complete activity 1
+    // Start activity1
     act(() => {
-      result.current.handleActivitySelect(activity1); // Start
+      result.current.handleActivitySelect(activity1);
     });
     await waitForStateUpdate();
     
+    // Complete activity1 by selecting null
     act(() => {
-      result.current.handleActivitySelect(null); // Complete
+      result.current.handleActivitySelect(null);
     });
     await waitForStateUpdate();
     
-    // Start and complete activity 2
+    // Start activity2
     act(() => {
-      result.current.handleActivitySelect(activity2); // Start
+      result.current.handleActivitySelect(activity2);
     });
     await waitForStateUpdate();
     
+    // Complete activity2 by selecting null
     act(() => {
-      result.current.handleActivitySelect(null); // Complete
+      result.current.handleActivitySelect(null);
     });
     await waitForStateUpdate();
     
-    // Remove activity 3 without starting it
+    // Remove activity3 without starting it
     act(() => {
       result.current.handleActivityRemoval(activity3.id);
     });
@@ -60,31 +71,42 @@ describe('useActivityState', () => {
   });
   
   it('should mark activities as completed when starting some and removing others', async () => {
+    // Create a fresh hook instance for this test
     const { result } = renderHook(() => useActivityState());
     const { activity1, activity2, activity3 } = createTestActivities('test2');
     
-    // Add all activities
+    // Add activities one by one to avoid duplicate warnings
     act(() => {
       result.current.handleActivitySelect(activity1);
+    });
+    
+    act(() => {
       result.current.handleActivitySelect(activity2);
+    });
+    
+    act(() => {
       result.current.handleActivitySelect(activity3);
     });
     await waitForStateUpdate();
     
-    // Start and complete activity 1
+    // Start activity1
     act(() => {
-      result.current.handleActivitySelect(activity1); // Start
+      result.current.handleActivitySelect(activity1);
     });
     await waitForStateUpdate();
     
+    // Complete activity1
     act(() => {
-      result.current.handleActivitySelect(null); // Complete
+      result.current.handleActivitySelect(null);
     });
     await waitForStateUpdate();
     
     // Remove other activities without starting them
     act(() => {
       result.current.handleActivityRemoval(activity2.id);
+    });
+    
+    act(() => {
       result.current.handleActivityRemoval(activity3.id);
     });
     await waitForStateUpdate();
@@ -99,13 +121,20 @@ describe('useActivityState', () => {
   });
   
   it('should NOT mark activities as completed when removing all activities without starting any', async () => {
+    // Create a fresh hook instance for this test
     const { result } = renderHook(() => useActivityState());
     const { activity1, activity2, activity3 } = createTestActivities('test3');
     
-    // Initialize activities
+    // Add activities one by one
     act(() => {
       result.current.handleActivitySelect(activity1);
+    });
+    
+    act(() => {
       result.current.handleActivitySelect(activity2);
+    });
+    
+    act(() => {
       result.current.handleActivitySelect(activity3);
     });
     await waitForStateUpdate();
@@ -113,7 +142,13 @@ describe('useActivityState', () => {
     // Remove all activities without starting any
     act(() => {
       result.current.handleActivityRemoval(activity1.id);
+    });
+    
+    act(() => {
       result.current.handleActivityRemoval(activity2.id);
+    });
+    
+    act(() => {
       result.current.handleActivityRemoval(activity3.id);
     });
     await waitForStateUpdate();
@@ -136,7 +171,7 @@ describe('useActivityState', () => {
       const { result } = renderHook(() => useActivityState());
       const { activity1 } = createTestActivities('test4');
       
-      // Add an activity without starting it
+      // Just add the activity without starting it
       act(() => {
         result.current.handleActivitySelect(activity1);
       });
@@ -171,7 +206,7 @@ describe('useActivityState', () => {
         result.current.handleActivitySelect(activity1);
       });
       
-      // Start activity
+      // Start activity (this would also select it)
       act(() => {
         result.current.handleActivitySelect(activity1);
       });
@@ -188,21 +223,25 @@ describe('useActivityState', () => {
       const { result } = renderHook(() => useActivityState());
       const { activity1, activity2 } = createTestActivities('test7');
       
-      // Add two activities
+      // Add activities one at a time
       act(() => {
         result.current.handleActivitySelect(activity1);
+      });
+      
+      act(() => {
         result.current.handleActivitySelect(activity2);
       });
       await waitForStateUpdate();
       
-      // Start and complete activity1
+      // Start activity1
       act(() => {
-        result.current.handleActivitySelect(activity1); // Start
+        result.current.handleActivitySelect(activity1);
       });
       await waitForStateUpdate();
       
+      // Complete activity1
       act(() => {
-        result.current.handleActivitySelect(null); // Complete
+        result.current.handleActivitySelect(null);
       });
       await waitForStateUpdate();
       
@@ -224,9 +263,12 @@ describe('useActivityState', () => {
       const { result } = renderHook(() => useActivityState());
       const { activity1, activity2 } = createTestActivities('test8');
       
-      // Add two activities
+      // Add activities one at a time
       act(() => {
         result.current.handleActivitySelect(activity1);
+      });
+      
+      act(() => {
         result.current.handleActivitySelect(activity2);
       });
       await waitForStateUpdate();

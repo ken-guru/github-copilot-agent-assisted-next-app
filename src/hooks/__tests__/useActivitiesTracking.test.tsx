@@ -3,10 +3,7 @@ import { useActivitiesTracking } from '../useActivitiesTracking';
 
 describe('useActivitiesTracking', () => {
   // Create unique IDs for each test to avoid state interference between tests
-  const getActivityIds = (testName: string) => ({
-    id1: `${testName}_id1`,
-    id2: `${testName}_id2`,
-  });
+  const getActivityId = (testName: string) => `${testName}_${Date.now()}`;
 
   it('should initialize with empty state', () => {
     const { result } = renderHook(() => useActivitiesTracking());
@@ -21,108 +18,135 @@ describe('useActivitiesTracking', () => {
 
   it('should track added activities', () => {
     const { result } = renderHook(() => useActivitiesTracking());
-    const { id1 } = getActivityIds('trackAdded');
+    const id = getActivityId('trackAdded');
 
     act(() => {
-      result.current.addActivity(id1);
+      result.current.addActivity(id);
     });
 
-    expect(result.current.activities.has(id1)).toBe(true);
-    expect(result.current.allActivityIds.has(id1)).toBe(true);
+    expect(result.current.activities.has(id)).toBe(true);
+    expect(result.current.allActivityIds.has(id)).toBe(true);
   });
 
   it('should track started activities', () => {
     const { result } = renderHook(() => useActivitiesTracking());
-    const { id1 } = getActivityIds('trackStarted');
+    const id = getActivityId('trackStarted');
 
     act(() => {
-      result.current.addActivity(id1);
-      result.current.startActivity(id1);
+      result.current.addActivity(id);
     });
 
-    expect(result.current.startedActivityIds.has(id1)).toBe(true);
+    act(() => {
+      result.current.startActivity(id);
+    });
+
+    expect(result.current.startedActivityIds.has(id)).toBe(true);
     expect(result.current.hasActuallyStartedActivity).toBe(true);
   });
 
   it('should track completed activities', () => {
     const { result } = renderHook(() => useActivitiesTracking());
-    const { id1 } = getActivityIds('trackCompleted');
+    const id = getActivityId('trackCompleted');
 
-    // Add and start the activity in separate act calls to be more explicit
+    // Add the activity
     act(() => {
-      result.current.addActivity(id1);
+      result.current.addActivity(id);
     });
 
+    // Start the activity
     act(() => {
-      result.current.startActivity(id1);
+      result.current.startActivity(id);
     });
 
+    // Complete the activity
     act(() => {
-      result.current.completeActivity(id1);
+      result.current.completeActivity(id);
     });
 
-    expect(result.current.completedActivityIds).toContain(id1);
-    expect(result.current.activities.has(id1)).toBe(false);
+    expect(result.current.completedActivityIds).toContain(id);
+    expect(result.current.activities.has(id)).toBe(false);
   });
 
   it('should complete activity when completeActivity is called, even if not explicitly started', () => {
     const { result } = renderHook(() => useActivitiesTracking());
-    const { id1 } = getActivityIds('autoComplete');
+    const id = getActivityId('autoComplete');
 
     // With our new state machine implementation, completing an activity 
     // will automatically transition it through the required states
     // (PENDING -> RUNNING -> COMPLETED)
     act(() => {
-      result.current.addActivity(id1);
+      result.current.addActivity(id);
     });
 
     // This should internally start and then complete the activity
     act(() => {
-      result.current.completeActivity(id1);
+      result.current.completeActivity(id);
     });
 
     // The activity should now be in the completed list and removed from active activities
-    expect(result.current.completedActivityIds).toContain(id1);
-    expect(result.current.activities.has(id1)).toBe(false);
-    expect(result.current.startedActivityIds.has(id1)).toBe(true);
+    expect(result.current.completedActivityIds).toContain(id);
+    expect(result.current.activities.has(id)).toBe(false);
+    expect(result.current.startedActivityIds.has(id)).toBe(true);
   });
 
   it('should track removed activities', () => {
     const { result } = renderHook(() => useActivitiesTracking());
-    const { id1 } = getActivityIds('trackRemoved');
+    const id = getActivityId('trackRemoved');
 
     act(() => {
-      result.current.addActivity(id1);
-      result.current.removeActivity(id1);
+      result.current.addActivity(id);
     });
 
-    expect(result.current.removedActivityIds).toContain(id1);
-    expect(result.current.activities.has(id1)).toBe(false);
+    act(() => {
+      result.current.removeActivity(id);
+    });
+
+    expect(result.current.removedActivityIds).toContain(id);
+    expect(result.current.activities.has(id)).toBe(false);
   });
 
   it('should preserve started status when removing activities', () => {
     const { result } = renderHook(() => useActivitiesTracking());
-    const { id1 } = getActivityIds('preserveStarted');
+    const id = getActivityId('preserveStarted');
 
     act(() => {
-      result.current.addActivity(id1);
-      result.current.startActivity(id1);
-      result.current.removeActivity(id1);
+      result.current.addActivity(id);
     });
 
-    expect(result.current.startedActivityIds.has(id1)).toBe(true);
+    act(() => {
+      result.current.startActivity(id);
+    });
+
+    act(() => {
+      result.current.removeActivity(id);
+    });
+
+    expect(result.current.startedActivityIds.has(id)).toBe(true);
     expect(result.current.hasActuallyStartedActivity).toBe(true);
   });
 
   it('should reset all state', () => {
     const { result } = renderHook(() => useActivitiesTracking());
-    const { id1, id2 } = getActivityIds('reset');
+    const id1 = getActivityId('reset1');
+    const id2 = getActivityId('reset2');
 
     act(() => {
       result.current.addActivity(id1);
+    });
+
+    act(() => {
       result.current.startActivity(id1);
+    });
+
+    act(() => {
       result.current.completeActivity(id1);
+    });
+
+    act(() => {
       result.current.addActivity(id2);
+    });
+
+    act(() => {
       result.current.removeActivity(id2);
     });
 
