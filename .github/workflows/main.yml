@@ -85,7 +85,7 @@ jobs:
         run: npm test
 
   build:
-    needs: [type-check]
+    needs: [type-check, lint, test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
