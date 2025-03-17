@@ -1,17 +1,46 @@
-We always want to make sure to start implementation of any functionality by writing tests. Ask any relevant questions to clarify the expected behavior before writing these tests.
+# GitHub Copilot Instructions
 
-When refactoring code, we always make sure to update any relevant tests to ensure they still run as expected. If changes to the test include changes to expected behavior, ask clarifying questions to ensure we avoid changing behavior of the application due to outdated tests, or due to unintended changes in refactored code.
+## Testing Guidelines
 
-If you are asked to work on, or refactor, some code which seems to not be covered by any tests, let me know about this so that I am allowed to decide whether to spend time building tests at this time, or if I am comfortable with postponing this until a later time. If I decide to postpone this, do not ask about this again in the current session, but if I indicate I've completed the planned tasks for this session, remind me of this decision to allow me to revisit the missing tests before finishing the session.
+1. **Test-First Development**: Always begin implementation of any functionality by writing tests first. Ask clarifying questions about expected behavior before writing these tests.
 
-When you work on a single code file that exceeds 200 lines of code, feel free to suggest changes such as refactoring by splitting it up in a logical way or creating new components to contain functionality that could be extracted this way.
+2. **Test Coverage for Refactoring**: When refactoring code, update all relevant tests to ensure they still work as intended. If expected behavior in tests needs to change, ask clarifying questions to prevent unintended behavioral changes.
 
-After making any changes, summarize these to me to allow me the chance to ask any follow-up questions. This could be both to clarify or explain the reasoning behind the way something was changed, or to let me direct you to revisit something to approach the solution in a different way.
+3. **Missing Test Coverage**: When working on code without test coverage, raise this concern to allow me to decide whether to:
+   - Create tests immediately before proceeding
+   - Postpone test creation for later
+   
+   If I choose to postpone, don't remind me during the current session unless I indicate completion of planned tasks.
 
-If any of the changes made significantly changes the behavior or functionality described in README.md, let me know and suggest how README.md could be updated to better reflect the current state of the application.
+4. **Test Verification**: After any code changes, always remind me to run the test suite to ensure no regressions were introduced.
 
-If any planned changes require introducing a new package, please discuss with me the reason we need the given package and what it allows us to do. Also consider ways we could solve a given challenge without this package, and analyse whether this might cause unforeseen consequences in the future. When making these considerations keep in mind factors such as security, complexity and whether the given package is actively maintained.
+## Code Quality and Organization
 
-After any and all changes, ALWAYS remind me run the test suite to make sure the changes did not affect any other parts of the application.
+1. **Large File Refactoring**: When working with files exceeding 200 lines of code, suggest logical refactoring options such as:
+   - Splitting the file into smaller modules
+   - Creating new components for extracted functionality
+   - Improving code organization
 
-Always consult and update the Memory Log (docs/MEMORY_LOG.md) when working on issues or bugs. Before attempting to solve a problem, check if similar issues have been addressed before to avoid repeating unsuccessful approaches. When implementing a solution, document the approach, outcome, and any relevant tags in the Memory Log following the established format. This practice ensures we maintain institutional knowledge about solution attempts and avoid repeating work that has proven ineffective in the past.
+2. **Documentation Updates**: If changes significantly alter functionality described in README.md, highlight this discrepancy and suggest appropriate documentation updates.
+
+## Change Management
+
+1. **Change Summary**: After implementing changes, provide a concise summary to facilitate:
+   - Understanding the reasoning behind implementation choices
+   - Asking follow-up questions
+   - Requesting alternative approaches if needed
+
+2. **Memory Log Management**: Always consult and update the Memory Log (docs/MEMORY_LOG.md) when working on issues or bugs:
+   - Before attempting solutions, check for similar past issues to avoid repeating unsuccessful approaches
+   - Document all solution attempts, outcomes, and relevant tags following the established format
+   - Maintain institutional knowledge about effective and ineffective solutions
+
+## Package Management
+
+1. **New Package Evaluation**: Before introducing a new package, discuss:
+   - The specific need the package addresses
+   - Alternative implementation approaches without the package
+   - Analysis of potential future consequences considering:
+     - Security implications
+     - Added complexity
+     - Maintenance status of the package
