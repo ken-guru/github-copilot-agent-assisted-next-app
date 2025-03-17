@@ -13,3 +13,5 @@ If any of the changes made significantly changes the behavior or functionality d
 If any planned changes require introducing a new package, please discuss with me the reason we need the given package and what it allows us to do. Also consider ways we could solve a given challenge without this package, and analyse whether this might cause unforeseen consequences in the future. When making these considerations keep in mind factors such as security, complexity and whether the given package is actively maintained.
 
 After any and all changes, ALWAYS remind me run the test suite to make sure the changes did not affect any other parts of the application.
+
+Always consult and update the Memory Log (docs/MEMORY_LOG.md) when working on issues or bugs. Before attempting to solve a problem, check if similar issues have been addressed before to avoid repeating unsuccessful approaches. When implementing a solution, document the approach, outcome, and any relevant tags in the Memory Log following the established format. This practice ensures we maintain institutional knowledge about solution attempts and avoid repeating work that has proven ineffective in the past.
