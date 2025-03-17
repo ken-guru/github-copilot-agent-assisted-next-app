@@ -35,6 +35,11 @@ The project uses a documentation system for tracking changes:
    - Contains features temporarily set aside for prioritization
    - Follows the same detailed specification format
    - Used as a repository for future implementation ideas
+4. docs/MEMORY_LOG.md:
+   - Tracks solutions attempted by AI for application issues
+   - Prevents repetitive solution attempts 
+   - Maintains a history of approaches with outcomes and tags
+   - Should be consulted before addressing recurring issues
 ```
 
 ## Core Features
