@@ -370,16 +370,20 @@ describe('ActivityManager Component', () => {
         />
       );
       
-      // Initially, transition button should not be visible
-      expect(screen.queryByText('Start Activities')).not.toBeInTheDocument();
+      // Initially, transition button should be disabled
+      const initialButton = screen.getByText('Start Activities');
+      expect(initialButton).toBeDisabled();
       
       // Add an activity
       const input = screen.getByPlaceholderText('New activity name');
       fireEvent.change(input, { target: { value: 'Test Activity' } });
       fireEvent.click(screen.getByText('Add'));
       
-      // Now the transition button should be visible
-      expect(await screen.findByText('Start Activities')).toBeInTheDocument();
+      // Now the transition button should be enabled
+      await waitFor(() => {
+        const button = screen.getByText('Start Activities');
+        expect(button).toBeEnabled();
+      });
     });
 
     it('should trigger transition when clicking Start Activities', async () => {

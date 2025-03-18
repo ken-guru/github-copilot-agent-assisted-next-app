@@ -318,6 +318,94 @@ Successfully implemented missing function and integrated it with:
 3. Use TypeScript to catch undefined function issues earlier
 4. Keep utility functions close to their primary usage location
 
+### Issue: Planning State Transition Button Visibility and State
+**Date:** 2024-01-06
+**Tags:** #ui #testing #state-management #react #visibility
+
+#### Context
+While implementing the Planning state UI's "Start Activities" transition button, we encountered a conflict between two test requirements:
+1. The button should not be visible when there are no activities
+2. The button should be disabled when there are no activities
+
+These requirements created a test contradiction where one test expects the button to not exist, while another expects to find it and verify its disabled state.
+
+#### Attempted Solutions
+1. Conditional Rendering
+   - What was tried: Only rendered button when hasActivities is true
+   - Outcome: Failed - "disable transition button" test couldn't find button to check disabled state
+   - Why it didn't work: Button needs to exist for disabled state test
+
+2. CSS Visibility
+   - What was tried: Used style.visibility to hide button instead of removing from DOM
+   - Outcome: Failed - Button still found by test looking for non-existence
+   - Why it didn't work: Hidden elements still exist in DOM
+
+3. Split Button State Logic
+   - What was tried: Separated visibility and disabled state handling with explicit conditions
+   - Outcome: In Progress - Working on finding right balance between visibility and state
+
+#### Investigation
+The core issue appears to be a conflict in the test expectations:
+```javascript
+// Test 1 expects button to not exist initially
+expect(screen.queryByText('Start Activities')).not.toBeInTheDocument();
+
+// Test 2 expects button to exist but be disabled
+expect(transitionButton).toBeDisabled();
+```
+
+#### Next Steps
+1. Review test requirements to determine if both conditions are actually needed
+2. Consider updating tests to have consistent expectations about button presence
+3. Investigate using aria-hidden instead of CSS visibility
+4. Consider using a different approach to indicate empty state
+
+#### Lessons Learned
+1. Be careful when mixing visibility and state in UI elements
+2. Test requirements should be reviewed for potential conflicts
+3. Consider accessibility implications of hiding vs removing elements
+4. DOM presence and visual presence are different concerns
+
+### Issue: Planning State Transition Button Resolution
+**Date:** 2024-01-06
+**Tags:** #ui #testing #state-management #react #resolved
+
+#### Context
+We had conflicting test requirements for the "Start Activities" transition button in planning mode:
+1. One test expected the button to not exist when there are no activities
+2. Another test expected to find the button and verify its disabled state
+
+#### Resolution
+We resolved the issue by:
+1. Updating test expectations to be more consistent:
+   - Button is always present in planning mode
+   - Button is disabled when there are no activities
+   - Button is enabled when activities exist
+
+2. Simplifying the component implementation:
+   - Always render button in planning mode
+   - Use disabled attribute for state management
+   - Removed visibility logic to avoid complexity
+
+#### Key Decisions
+1. Chose to always show the button with disabled state over hiding it because:
+   - Provides better UX by showing available actions
+   - Makes the UI more predictable
+   - Follows common patterns in form submission buttons
+   - Simplifies state management
+   - Improves accessibility by maintaining consistent layout
+
+2. Updated test suite to reflect real-world usage:
+   - Tests now verify state transitions
+   - Better matches user expectations
+   - More maintainable test code
+
+#### Lessons Learned
+1. When faced with conflicting UI requirements, prefer the more explicit approach
+2. Button state (disabled) is often clearer than visibility toggling
+3. Tests should reflect actual user interactions
+4. Consider accessibility and UX when choosing between hiding and disabling elements
+
 ## Current Progress on 4-State Model Implementation
 - ✅ Progress bar color states
 - ✅ State transition validation

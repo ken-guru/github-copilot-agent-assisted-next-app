@@ -170,20 +170,26 @@ export default function ActivityManager({
   const handleRemoveActivity = (activityId: string) => {
     if (onActivityRemove) {
       onActivityRemove(activityId);
+      
+      // Get the activity being removed to find its colorIndex
+      const activityToRemove = activities.find(a => a.id === activityId);
+      
       // Update activities state
       setActivities(prevActivities => {
-        const newActivities = prevActivities.filter(a => a.id !== activityId);
-        return newActivities;
+        return prevActivities.filter(a => a.id !== activityId);
       });
-      setAssignedColorIndices(prevIndices => 
-        prevIndices.filter((_, idx) => 
-          activities[idx].id !== activityId
-        )
-      );
+      
+      // If we found the activity, remove its colorIndex
+      if (activityToRemove && activityToRemove.colorIndex !== undefined) {
+        setAssignedColorIndices(prevIndices => 
+          prevIndices.filter(index => index !== activityToRemove.colorIndex)
+        );
+      }
     }
   };
 
   const hasActivities = activities.length > 0;
+  const showStartButton = planningMode && onStartActivities && hasActivities;
   
   return (
     <div className={styles.container}>
@@ -224,7 +230,7 @@ export default function ActivityManager({
         </div>
       )}
       
-      {planningMode && onStartActivities && hasActivities && (
+      {planningMode && onStartActivities && (
         <button
           className={styles.startActivitiesButton}
           onClick={onStartActivities}
