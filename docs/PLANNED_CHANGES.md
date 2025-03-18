@@ -126,3 +126,78 @@ This change affects the core state management and user flow of the application.
 - [ ] All tests passing
 - [ ] Theme compatibility verified for all new UI components
 - [ ] Documentation updated to reflect new application flow
+
+# Application Flow Restructuring: 3-State to 4-State Model - Remaining Features
+
+## Context
+The core state machine transition from 3-state to 4-state model has been partially implemented:
+- AppStateMachine class supports all four states (SETUP → PLANNING → ACTIVITY → COMPLETED)
+- useAppState hook includes state transition methods
+- Initial drag-and-drop functionality for activity reordering is implemented
+- Test coverage for state transitions exists
+
+The remaining features focus on UI/UX improvements and state-specific behavior modifications.
+
+## Requirements
+
+1. Planning State UI Enhancement
+   - Remove default activities in Planning state
+   - Show empty state message: "Add activities to get started"
+   - Update activity list initialization logic
+   - Testing: Verify empty state and activity addition flow
+
+2. Activity State Behavior Restrictions
+   - Remove ability to add new activities once in Activity state
+   - Remove ability to remove activities once in Activity state
+   - Maintain only start/complete functionality
+   - Update ActivityManager and ActivityForm components
+   - Testing: Verify state-specific behavioral restrictions
+
+3. Progress Bar Visual Enhancement
+   - Redesign progress bar to show total elapsed time
+   - Implement color-coded progress states:
+     * >50% remaining: green glow
+     * 25-50% remaining: yellow glow
+     * <25% remaining: orange glow
+     * Time expired: pulsing red glow
+   - Stop showing overtime when time expires
+   - Update progress bar styles and animations
+   - Testing: Verify all time boundary conditions and visual indicators
+
+4. Completed State UI Enhancement
+   - Add prominent "Start New" button
+   - Position button for maximum visibility
+   - Add clear visual feedback for state reset
+   - Testing: Verify reset functionality
+
+## Technical Guidelines
+- Use CSS animations for glow effects
+- Implement responsive styling for all new UI elements
+- Use CSS custom properties for theme-consistent colors
+- Add ARIA labels for accessibility
+- Consider reduced motion preferences
+- Add comprehensive test coverage for new functionality
+
+## Expected Outcome
+User perspective:
+- Clear distinction between planning and activity phases
+- Intuitive progress visualization
+- Easy activity management in appropriate states
+- Smooth transition between states
+
+Technical perspective:
+- Clean separation of concerns
+- Maintainable animation code
+- Proper test coverage
+- Accessible UI components
+
+## Validation Criteria
+- [ ] Empty activity list in Planning state implemented
+- [ ] Activity state restrictions implemented and tested
+- [ ] Progress bar redesign complete with all visual states
+- [ ] Reset functionality from Completed state implemented
+- [ ] Animation performance verified
+- [ ] Accessibility features tested
+- [ ] Theme compatibility verified
+- [ ] All tests passing
+- [ ] Documentation updated
