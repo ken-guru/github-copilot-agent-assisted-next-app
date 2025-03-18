@@ -83,7 +83,8 @@ describe('ActivityButton', () => {
 
   it('disables remove button when activity is in timeline', () => {
     const onRemove = jest.fn();
-    render(<ActivityButton {...defaultProps} 
+    render(<ActivityButton 
+      {...defaultProps} 
       onRemove={onRemove}
       timelineEntries={[{ 
         id: '1',
@@ -92,6 +93,7 @@ describe('ActivityButton', () => {
         startTime: 0,
         endTime: 300 
       }]}
+      isInTimeline={true}
     />);
     
     expect(screen.getByRole('button', { name: 'Remove' })).toBeDisabled();

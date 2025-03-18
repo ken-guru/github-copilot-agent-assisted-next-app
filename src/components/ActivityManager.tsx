@@ -19,6 +19,7 @@ interface ActivityManagerProps {
   currentActivityId: string | null;
   completedActivityIds: string[];
   timelineEntries: TimelineEntry[];
+  planningMode?: boolean; // New prop for planning mode
   isTimeUp?: boolean;
   elapsedTime?: number;
 }
@@ -29,6 +30,7 @@ export default function ActivityManager({
   currentActivityId, 
   completedActivityIds,
   timelineEntries,
+  planningMode = false, // Default to false (Activity mode)
   isTimeUp = false,
   elapsedTime = 0
 }: ActivityManagerProps) {
@@ -43,16 +45,18 @@ export default function ActivityManager({
     }
     return index;
   };
-
+  
   useEffect(() => {
-    const defaultActivities = [
-      { id: '1', name: 'Homework', colorIndex: 0 },
-      { id: '2', name: 'Reading', colorIndex: 1 },
-      { id: '3', name: 'Play Time', colorIndex: 2 },
-      { id: '4', name: 'Chores', colorIndex: 3 }
-    ];
-
-    if (!hasInitializedActivities) {
+    // Only initialize with default activities if NOT in planning mode
+    // In planning mode, we start with an empty list
+    if (!planningMode && !hasInitializedActivities) {
+      const defaultActivities = [
+        { id: '1', name: 'Homework', colorIndex: 0 },
+        { id: '2', name: 'Reading', colorIndex: 1 },
+        { id: '3', name: 'Play Time', colorIndex: 2 },
+        { id: '4', name: 'Chores', colorIndex: 3 }
+      ];
+      
       setAssignedColorIndices(defaultActivities.map(a => a.colorIndex));
       
       // Add activities to the state machine in pending state
@@ -67,8 +71,11 @@ export default function ActivityManager({
       
       setActivities(defaultActivities);
       setHasInitializedActivities(true);
+    } else if (planningMode && !hasInitializedActivities) {
+      // In planning mode, we start with an empty list
+      setHasInitializedActivities(true);
     }
-  }, [hasInitializedActivities, onActivitySelect]);
+  }, [hasInitializedActivities, onActivitySelect, planningMode]);
   
   useEffect(() => {
     setActivities(currentActivities => 
@@ -78,7 +85,7 @@ export default function ActivityManager({
       }))
     );
   }, []);
-
+  
   // Listen for theme changes
   useEffect(() => {
     const updateColors = () => {
@@ -89,11 +96,11 @@ export default function ActivityManager({
         }))
       );
     };
-
+    
     // Update colors when theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     mediaQuery.addEventListener('change', updateColors);
-
+    
     // Update colors when manually switching themes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
@@ -102,18 +109,17 @@ export default function ActivityManager({
         }
       });
     });
-
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class']
     });
-
+    
     return () => {
       mediaQuery.removeEventListener('change', updateColors);
       observer.disconnect();
     };
   }, []);
-
+  
   const handleAddActivity = (activityName: string) => {
     const nextColorIndex = getNextColorIndex();
     
@@ -126,11 +132,21 @@ export default function ActivityManager({
     
     setAssignedColorIndices([...assignedColorIndices, nextColorIndex]);
     setActivities([...activities, newActivity]);
+    
     // Just add the activity without starting it
-    onActivitySelect(newActivity);
+    onActivitySelect(newActivity, true);
   };
-
+  
   const handleActivitySelect = (activity: Activity) => {
+    // In planning mode, selecting an activity doesn't start it
+    // It just adds it to the planning list
+    if (planningMode) {
+      // In planning mode, just highlight the activity (don't start it)
+      // This might be used for reordering in the future
+      return;
+    }
+    
+    // In activity mode, follow the original behavior
     if (activity.id === currentActivityId) {
       onActivitySelect(null);
     } else {
@@ -140,8 +156,13 @@ export default function ActivityManager({
       });
     }
   };
-
+  
   const handleRemoveActivity = (id: string) => {
+    // Only allow removing if the activity can be removed
+    if (isActivityInTimeline(id) && !planningMode) {
+      return; // Don't remove if the activity is in the timeline (except in planning mode)
+    }
+    
     if (id === currentActivityId) {
       onActivitySelect(null);
     }
@@ -156,33 +177,48 @@ export default function ActivityManager({
       onActivityRemove(id);
     }
   };
-
+  
+  // Function to determine if the activity is in the timeline
+  const isActivityInTimeline = (activityId: string) => {
+    return timelineEntries.some(entry => entry.activityId === activityId);
+  };
+  
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Activities</h2>
+      <h2 className={styles.heading}>
+        {planningMode ? 'Plan Your Activities' : 'Activities'}
+      </h2>
+      
+      <ActivityForm
+        onAddActivity={handleAddActivity}
+        isDisabled={isTimeUp || (!planningMode && timelineEntries.length > 0)}
+      />
       
       {activities.length === 0 ? (
         <div className={styles.emptyState}>
-          No activities defined
+          {planningMode 
+            ? 'Add activities to get started' 
+            : 'No activities defined'}
         </div>
       ) : (
         <div className={styles.activityList}>
-          <ActivityForm
-            onAddActivity={handleAddActivity}
-            isDisabled={isTimeUp}
-          />
-          {activities.map((activity) => (
-            <ActivityButton
-              key={activity.id}
-              activity={activity}
-              isCompleted={completedActivityIds.includes(activity.id)}
-              isRunning={activity.id === currentActivityId}
-              onSelect={handleActivitySelect}
-              onRemove={onActivityRemove ? handleRemoveActivity : undefined}
-              timelineEntries={timelineEntries}
-              elapsedTime={elapsedTime}
-            />
-          ))}
+          {activities.map((activity) => {
+            const isInTimeline = isActivityInTimeline(activity.id);
+            
+            return (
+              <ActivityButton
+                key={activity.id}
+                activity={activity}
+                isCompleted={completedActivityIds.includes(activity.id)}
+                isRunning={activity.id === currentActivityId}
+                onSelect={handleActivitySelect}
+                onRemove={onActivityRemove ? handleRemoveActivity : undefined}
+                timelineEntries={timelineEntries}
+                elapsedTime={elapsedTime}
+                isInTimeline={isInTimeline && !planningMode}
+              />
+            );
+          })}
         </div>
       )}
     </div>

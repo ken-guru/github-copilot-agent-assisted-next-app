@@ -17,6 +17,7 @@
 
 .wrapper header,
 .wrapper .setupGrid,
+.wrapper .planningGrid,
 .wrapper .activityGrid,
 .wrapper .completedGrid {
   padding: 1rem;
@@ -64,6 +65,7 @@
 }
 
 .setupGrid,
+.planningGrid,
 .activityGrid,
 .completedGrid {
   display: grid;
@@ -75,6 +77,27 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
+}
+
+.planningGrid {
+  flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.planningGrid h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--foreground);
+}
+
+.planningGrid p {
+  color: var(--foreground-muted);
+  margin-bottom: 2rem;
 }
 
 .activityGrid {
@@ -122,10 +145,58 @@
   margin-top: 1rem;
 }
 
+/* Button styles */
+.button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.startButton {
+  composes: button;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.startButton:hover {
+  background-color: var(--primary-dark);
+}
+
+.startButton:disabled {
+  background-color: var(--background-muted);
+  color: var(--foreground-muted);
+  cursor: not-allowed;
+}
+
+.startNewButton {
+  composes: button;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.startNewButton:hover {
+  background-color: var(--primary-dark);
+}
+
 /* Media query for smaller screens */
 @media (max-width: 768px) {
   .wrapper header,
   .wrapper .setupGrid,
+  .wrapper .planningGrid,
   .wrapper .activityGrid,
   .wrapper .completedGrid {
         padding: 0.5rem;
@@ -162,6 +233,10 @@
 
   .container {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .planningGrid {
+    padding: 0.5rem 1rem;
   }
 }
 

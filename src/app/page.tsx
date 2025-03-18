@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
@@ -7,12 +7,29 @@ import Summary from '@/components/Summary';
 import ProgressBar from '@/components/ProgressBar';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useActivityState } from '@/hooks/useActivityState';
+import { useAppState } from '@/hooks/useAppState';
 import { useTimerState } from '@/hooks/useTimerState';
 import styles from './page.module.css';
 
 export default function Home() {
-  const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
+  
+  // Use the new AppState hook for managing the overall application flow
+  const {
+    currentState,
+    moveToPlanning,
+    moveToActivity,
+    moveToCompleted,
+    reset: resetAppState,
+    isSetupState,
+    isPlanningState,
+    isActivityState,
+    isCompletedState
+  } = useAppState({
+    onTimerStart: () => {
+      if (!timerActive) startTimer();
+    }
+  });
   
   const {
     currentActivity,
@@ -22,11 +39,7 @@ export default function Home() {
     handleActivitySelect,
     handleActivityRemoval,
     resetActivities,
-  } = useActivityState({
-    onTimerStart: () => {
-      if (!timerActive) startTimer();
-    }
-  });
+  } = useActivityState();
   
   const {
     elapsedTime,
@@ -41,23 +54,53 @@ export default function Home() {
   
   const handleTimeSet = (durationInSeconds: number) => {
     setTotalDuration(durationInSeconds);
-    setTimeSet(true);
+    // Transition from Setup to Planning state
+    moveToPlanning();
   };
   
-  const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset the application? All progress will be lost.')) {
-      setTimeSet(false);
-      setTotalDuration(0);
-      resetActivities();
-      resetTimer();
+  const handleStartActivity = () => {
+    // Transition from Planning to Activity state
+    moveToActivity();
+  };
+  
+  // Handle completion of all activities
+  const handleActivitiesCompleted = () => {
+    if (allActivitiesCompleted && isActivityState) {
+      moveToCompleted();
     }
   };
   
-  const appState = !timeSet 
-    ? 'setup' 
-    : allActivitiesCompleted 
-      ? 'completed' 
-      : 'activity';
+  // Check if activities are completed when allActivitiesCompleted changes
+  // or when the app state changes to Activity
+  useEffect(() => {
+    if (allActivitiesCompleted && isActivityState) {
+      moveToCompleted();
+    }
+  }, [allActivitiesCompleted, isActivityState, moveToCompleted]);
+  
+  const handleReset = () => {
+    if (window.confirm('Are you sure you want to reset the application? All progress will be lost.')) {
+      setTotalDuration(0);
+      resetActivities();
+      resetTimer();
+      
+      // Only reset app state if we're in the Completed state
+      // otherwise we'll throw an error
+      if (isCompletedState) {
+        resetAppState();
+      } else {
+        // Force reset by refreshing the page if not in Completed state
+        window.location.reload();
+      }
+    }
+  };
+  
+  const handleStartNew = () => {
+    setTotalDuration(0);
+    resetActivities();
+    resetTimer();
+    resetAppState();
+  };
   
   const processedEntries = timelineEntries.map(entry => ({
     ...entry,
@@ -72,7 +115,7 @@ export default function Home() {
             <h1 className={styles.title}>Mr. Timely</h1>
             <ThemeToggle />
             <div className={styles.resetButtonContainer}>
-              {appState !== 'setup' && (
+              {!isSetupState && (
                 <button 
                   className={styles.resetButton} 
                   onClick={handleReset}
@@ -83,14 +126,43 @@ export default function Home() {
             </div>
           </div>
         </header>
-
-        {appState === 'setup' && (
+        
+        {/* SETUP STATE */}
+        {isSetupState && (
           <div className={styles.setupGrid}>
             <TimeSetup onTimeSet={handleTimeSet} />
           </div>
         )}
         
-        {appState === 'activity' && (
+        {/* PLANNING STATE */}
+        {isPlanningState && (
+          <div className={styles.planningGrid || styles.activityGrid}>
+            <div>
+              <h2>Planning Phase</h2>
+              <p>Add and arrange your activities for this session</p>
+              <ActivityManager 
+                onActivitySelect={handleActivitySelect} 
+                onActivityRemove={handleActivityRemoval}
+                currentActivityId={null} 
+                completedActivityIds={[]}
+                timelineEntries={[]}
+                planningMode={true}
+                isTimeUp={false}
+                elapsedTime={0}
+              />
+              <button 
+                className={styles.startButton || styles.button} 
+                onClick={handleStartActivity}
+                disabled={timelineEntries.length === 0}
+              >
+                Start Activities
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {/* ACTIVITY STATE */}
+        {isActivityState && (
           <div className={styles.activityGrid}>
             <div className={styles.progressContainer}>
               <ProgressBar 
@@ -107,6 +179,7 @@ export default function Home() {
                 currentActivityId={currentActivity?.id || null} 
                 completedActivityIds={completedActivityIds}
                 timelineEntries={processedEntries}
+                planningMode={false}
                 isTimeUp={isTimeUp}
                 elapsedTime={elapsedTime}
               />
@@ -124,7 +197,8 @@ export default function Home() {
           </div>
         )}
         
-        {appState === 'completed' && (
+        {/* COMPLETED STATE */}
+        {isCompletedState && (
           <div className={styles.completedGrid}>
             <div className={styles.summaryContainer}>
               <Summary 
@@ -133,6 +207,12 @@ export default function Home() {
                 elapsedTime={elapsedTime}
                 allActivitiesCompleted={allActivitiesCompleted}
               />
+              <button 
+                className={styles.startNewButton || styles.button} 
+                onClick={handleStartNew}
+              >
+                Start New
+              </button>
             </div>
           </div>
         )}

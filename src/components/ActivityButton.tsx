@@ -12,6 +12,7 @@ interface ActivityButtonProps {
   onRemove?: (id: string) => void;
   timelineEntries?: TimelineEntry[];
   elapsedTime?: number;
+  isInTimeline?: boolean; // New prop to explicitly indicate if activity is in timeline
 }
 
 /**
@@ -25,9 +26,9 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
   onRemove,
   timelineEntries = [],
   elapsedTime = 0,
+  isInTimeline = false, // Default to false
 }) => {
   const { id, name, colors } = activity;
-  const isInUse = timelineEntries?.some(entry => entry.activityId === id);
   
   const handleClick = () => {
     onSelect(activity);
@@ -35,7 +36,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onRemove) {
+    if (onRemove && !isInTimeline) {
       onRemove(id);
     }
   };
@@ -107,8 +108,8 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
               <button
                 onClick={handleRemove}
                 className={styles.removeButton}
-                disabled={isInUse}
-                title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
+                disabled={isInTimeline}
+                title={isInTimeline ? "Can't remove while activity is in use" : "Remove activity"}
                 aria-label="Remove"
                 data-testid={`remove-activity-${name.toLowerCase().replace(/\s+/g, '-')}`}
               >
