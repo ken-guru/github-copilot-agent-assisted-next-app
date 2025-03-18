@@ -19,6 +19,13 @@ describe('ProgressBar Component', () => {
     },
   ];
 
+  // Helper function to get the progress bar container
+  const getProgressBarContainer = () => {
+    const outerContainer = screen.getByRole('complementary', { name: 'Progress' });
+    // The progress bar container is the first child with aria-valuenow
+    return outerContainer.querySelector('[aria-valuenow]') as HTMLElement;
+  };
+
   it('should render null when timer is not active', () => {
     const { container } = render(
       <ProgressBar 
@@ -99,5 +106,88 @@ describe('ProgressBar Component', () => {
     );
 
     expect(container.querySelector('.breakSegment')).toBeInTheDocument();
+  });
+
+  describe('Time-based color states', () => {
+    const totalDuration = 3600; // 1 hour in seconds
+
+    it('should show green glow when more than 50% time remaining', () => {
+      render(
+        <ProgressBar 
+          entries={mockEntries}
+          totalDuration={totalDuration}
+          elapsedTime={totalDuration * 0.2} // 20% elapsed, 80% remaining
+          timerActive={true}
+        />
+      );
+      
+      const progressBar = getProgressBarContainer();
+      expect(progressBar).toHaveClass('stateGreen');
+    });
+
+    it('should show yellow glow when 25-50% time remaining', () => {
+      render(
+        <ProgressBar 
+          entries={mockEntries}
+          totalDuration={totalDuration}
+          elapsedTime={totalDuration * 0.6} // 60% elapsed, 40% remaining
+          timerActive={true}
+        />
+      );
+      
+      const progressBar = getProgressBarContainer();
+      expect(progressBar).toHaveClass('stateYellow');
+    });
+
+    it('should show orange glow when less than 25% time remaining', () => {
+      render(
+        <ProgressBar 
+          entries={mockEntries}
+          totalDuration={totalDuration}
+          elapsedTime={totalDuration * 0.8} // 80% elapsed, 20% remaining
+          timerActive={true}
+        />
+      );
+      
+      const progressBar = getProgressBarContainer();
+      expect(progressBar).toHaveClass('stateOrange');
+    });
+
+    it('should show pulsing red glow when time has expired', () => {
+      render(
+        <ProgressBar 
+          entries={mockEntries}
+          totalDuration={totalDuration}
+          elapsedTime={totalDuration + 1} // Time expired
+          timerActive={true}
+        />
+      );
+      
+      const progressBar = getProgressBarContainer();
+      expect(progressBar).toHaveClass('stateRed', 'statePulsing');
+    });
+
+    it('should maintain pulsing red state without showing overtime', () => {
+      render(
+        <ProgressBar 
+          entries={mockEntries}
+          totalDuration={totalDuration}
+          elapsedTime={totalDuration * 1.5} // 50% overtime
+          timerActive={true}
+        />
+      );
+      
+      const progressBar = getProgressBarContainer();
+      expect(progressBar).toHaveClass('stateRed', 'statePulsing');
+      
+      // Check that the progress bar doesn't show more than 100% completion
+      const segments = screen.getAllByRole('progressbar');
+      const totalWidth = segments.reduce((sum, segment) => {
+        const width = parseFloat(window.getComputedStyle(segment).width) || 0;
+        return sum + width;
+      }, 0);
+      
+      expect(totalWidth).toBeLessThanOrEqual(100);
+    });
   });
 });

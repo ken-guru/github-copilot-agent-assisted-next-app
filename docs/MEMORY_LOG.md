@@ -122,3 +122,89 @@ No changes were needed as this is working as designed.
 2. Error logging before throwing helps with debugging without affecting the error handling flow
 3. When testing error cases, consider both the error messages and the actual error handling
 4. Document expected error messages to prevent future confusion
+
+### Issue: Progress Bar Color States Implementation
+**Date:** 2024-01-06
+**Tags:** #ui #animation #testing #time-tracking
+**Status:** Resolved
+
+#### Context
+As part of the 4-state model implementation, we needed to add color-coded progress bar indicators based on remaining time:
+- >50% time remaining: green glow
+- 25-50% time remaining: yellow glow
+- <25% time remaining: orange glow
+- Time expired: pulsing red glow
+
+#### Technical Implementation
+1. Added new CSS classes for each state with glow effects
+2. Implemented time-based state calculation
+3. Added pulsing animation for expired state
+4. Ensured dark mode compatibility for all states
+
+#### Test Strategy
+1. Created comprehensive test suite covering all time thresholds
+2. Added test helper to properly access progress bar container
+3. Verified both regular and pulsing states
+4. Ensured bar doesn't exceed 100% in overtime
+
+#### Resolution
+Successfully implemented and tested all color states with:
+1. CSS modules for styling
+2. Time-based state calculation logic
+3. Accessible color combinations
+4. Animation for expired state
+5. Dark mode support
+
+#### Lessons Learned
+1. When testing DOM elements with multiple nested containers, use helper functions to consistently access the right element
+2. CSS animations and transitions should be theme-aware
+3. Use CSS modules to prevent style leakage and maintain clean separation
+4. Document expected console errors in tests to avoid confusion
+
+### Issue: State Transition Error Handling
+**Date:** 2024-01-06
+**Tags:** #state-management #error-handling #testing
+**Status:** Resolved
+
+#### Context
+While implementing the 4-state model (Setup → Planning → Activity → Completed), we needed to ensure proper error handling for invalid state transitions.
+
+#### Implementation Details
+1. Added error handling for all invalid transitions:
+   - SETUP to ACTIVITY/COMPLETED
+   - PLANNING to COMPLETED
+   - Reset from non-COMPLETED states
+
+2. Implemented error logging for debugging
+3. Added comprehensive test coverage for invalid transitions
+
+#### Test Strategy
+1. Created test cases for each invalid transition
+2. Verified error messages and state preservation
+3. Ensured proper error throwing and catching
+4. Documented expected console errors
+
+#### Resolution
+Successfully implemented strict state transition validation with:
+1. Clear error messages
+2. State preservation on invalid transitions
+3. Complete test coverage
+4. Proper error handling and logging
+
+#### Lessons Learned
+1. Console errors in tests can be valid when testing error cases
+2. Document expected error messages to avoid confusion
+3. Test both valid and invalid state transitions
+4. Error messages should be descriptive for debugging
+
+## Current Progress on 4-State Model Implementation
+- ✅ Progress bar color states
+- ✅ State transition validation
+- ✅ Invalid state handling
+- ✅ Test coverage for new features
+
+## Next Steps
+1. Complete Planning state UI implementation
+2. Add activity reordering functionality
+3. Implement clear transition buttons between states
+4. Update documentation for new workflow

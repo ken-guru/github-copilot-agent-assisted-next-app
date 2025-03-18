@@ -22,6 +22,22 @@ interface SegmentData {
   isCurrent: boolean;
 }
 
+const getTimeBasedState = (elapsedTime: number, totalDuration: number) => {
+  if (elapsedTime >= totalDuration) {
+    return { state: 'stateRed', pulsing: true };
+  }
+
+  const remainingPercentage = ((totalDuration - elapsedTime) / totalDuration) * 100;
+
+  if (remainingPercentage > 50) {
+    return { state: 'stateGreen', pulsing: false };
+  } else if (remainingPercentage > 25) {
+    return { state: 'stateYellow', pulsing: false };
+  } else {
+    return { state: 'stateOrange', pulsing: false };
+  }
+};
+
 export default function ProgressBar({
   entries,
   totalDuration,
@@ -79,7 +95,7 @@ export default function ProgressBar({
       });
     });
     
-    // Add remaining time segment if there's still time left
+    // Add remaining time segment if there's still time left and not exceeded
     if (remainingWidth > 0 && elapsedTime < totalDuration) {
       const remainingTime = totalDuration - elapsedTime;
       segments.push({
@@ -99,10 +115,30 @@ export default function ProgressBar({
   };
 
   const segments = calculateSegments();
+  const timeState = getTimeBasedState(elapsedTime, totalDuration);
+  const containerClasses = [
+    styles.progressBarContainer,
+    styles[timeState.state],
+    timeState.pulsing ? styles.statePulsing : ''
+  ].filter(Boolean).join(' ');
+
+  const remainingTime = Math.max(0, totalDuration - elapsedTime);
+  const remainingTimeFormatted = formatTimeHuman(remainingTime * 1000);
+  const progressPercentage = Math.min(100, (elapsedTime / totalDuration) * 100);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.progressBarContainer}>
+    <div 
+      className={styles.container}
+      role="complementary"
+      aria-label="Progress"
+    >
+      <div 
+        className={containerClasses}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={progressPercentage}
+        aria-label={`Time remaining: ${remainingTimeFormatted}`}
+      >
         {segments.map((segment, index) => (
           <div
             key={index}
@@ -112,7 +148,11 @@ export default function ProgressBar({
               backgroundColor: segment.color.background,
               borderColor: segment.color.border
             }}
-            title={`${segment.activityName || 'Break'}: ${formatTimeHuman(segment.duration * 1000)}`}
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={segment.width}
+            aria-label={`${segment.activityName || 'Break'}: ${formatTimeHuman(segment.duration * 1000)}`}
           >
             {segment.width > 8 && (
               <span className={styles.segmentLabel}>

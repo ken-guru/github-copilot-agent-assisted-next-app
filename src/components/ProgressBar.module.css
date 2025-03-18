@@ -86,6 +86,43 @@
   }
 }
 
+/* Time-based state classes */
+.stateGreen {
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+  border: 1px solid rgba(34, 197, 94, 0.8);
+}
+
+.stateYellow {
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.5);
+  border: 1px solid rgba(234, 179, 8, 0.8);
+}
+
+.stateOrange {
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.5);
+  border: 1px solid rgba(249, 115, 22, 0.8);
+}
+
+.stateRed {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+  border: 1px solid rgba(239, 68, 68, 0.8);
+}
+
+.statePulsing {
+  animation: glowPulse 2s infinite;
+}
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+  }
+}
+
 /* Dark mode specific overrides - these will be toggled by JavaScript */
 :global(.dark-mode) .progressBarContainer {
   background-color: var(--background-muted);
@@ -107,4 +144,25 @@
 
 :global(.dark-mode) .timeMarker {
   color: var(--text-muted, #9ca3af);
+}
+
+/* Dark mode overrides for time-based states */
+:global(.dark-mode) .stateGreen {
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+  border: 1px solid rgba(34, 197, 94, 0.9);
+}
+
+:global(.dark-mode) .stateYellow {
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.6);
+  border: 1px solid rgba(234, 179, 8, 0.9);
+}
+
+:global(.dark-mode) .stateOrange {
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.6);
+  border: 1px solid rgba(249, 115, 22, 0.9);
+}
+
+:global(.dark-mode) .stateRed {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+  border: 1px solid rgba(239, 68, 68, 0.9);
 }
