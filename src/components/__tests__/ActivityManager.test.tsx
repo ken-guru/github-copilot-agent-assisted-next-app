@@ -299,4 +299,146 @@ describe('ActivityManager Component', () => {
     const homeworkItem = screen.getByText('Homework').closest('div');
     expect(within(homeworkItem || document.body).queryByText('00:30')).not.toBeInTheDocument();
   });
+
+  describe('Planning Mode', () => {
+    it('should start with an empty list in planning mode', async () => {
+      render(
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          planningMode={true}
+        />
+      );
+      
+      // Should show planning mode heading
+      expect(screen.getByText('Plan Your Activities')).toBeInTheDocument();
+      
+      // Should show empty state message
+      expect(screen.getByText('Add activities to get started')).toBeInTheDocument();
+      
+      // Should not render any default activities
+      expect(screen.queryByText('Homework')).not.toBeInTheDocument();
+      expect(screen.queryByText('Reading')).not.toBeInTheDocument();
+      expect(screen.queryByText('Play Time')).not.toBeInTheDocument();
+      expect(screen.queryByText('Chores')).not.toBeInTheDocument();
+    });
+
+    it('should allow adding activities in planning mode', async () => {
+      render(
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          planningMode={true}
+        />
+      );
+      
+      // Type in a new activity name
+      const input = screen.getByPlaceholderText('New activity name');
+      fireEvent.change(input, { target: { value: 'New Test Activity' } });
+      
+      // Click the Add button
+      fireEvent.click(screen.getByText('Add'));
+      
+      // New activity should appear in the list
+      expect(await screen.findByText('New Test Activity')).toBeInTheDocument();
+      
+      // Should call onActivitySelect with justAdd=true
+      expect(mockOnActivitySelect).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'New Test Activity'
+        }),
+        true
+      );
+    });
+
+    it('should show transition button when activities are added', async () => {
+      render(
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          planningMode={true}
+          onStartActivities={jest.fn()}
+        />
+      );
+      
+      // Initially, transition button should not be visible
+      expect(screen.queryByText('Start Activities')).not.toBeInTheDocument();
+      
+      // Add an activity
+      const input = screen.getByPlaceholderText('New activity name');
+      fireEvent.change(input, { target: { value: 'Test Activity' } });
+      fireEvent.click(screen.getByText('Add'));
+      
+      // Now the transition button should be visible
+      expect(await screen.findByText('Start Activities')).toBeInTheDocument();
+    });
+
+    it('should trigger transition when clicking Start Activities', async () => {
+      const mockStartActivities = jest.fn();
+      render(
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          planningMode={true}
+          onStartActivities={mockStartActivities}
+        />
+      );
+      
+      // Add an activity
+      const input = screen.getByPlaceholderText('New activity name');
+      fireEvent.change(input, { target: { value: 'Test Activity' } });
+      fireEvent.click(screen.getByText('Add'));
+      
+      // Click the transition button
+      const transitionButton = await screen.findByText('Start Activities');
+      fireEvent.click(transitionButton);
+      
+      // Should call onStartActivities
+      expect(mockStartActivities).toHaveBeenCalled();
+    });
+
+    it('should disable transition button when no activities are planned', async () => {
+      const mockStartActivities = jest.fn();
+      render(
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          planningMode={true}
+          onStartActivities={mockStartActivities}
+        />
+      );
+      
+      // Add and then remove an activity
+      const input = screen.getByPlaceholderText('New activity name');
+      fireEvent.change(input, { target: { value: 'Test Activity' } });
+      fireEvent.click(screen.getByText('Add'));
+      
+      const transitionButton = await screen.findByText('Start Activities');
+      expect(transitionButton).toBeEnabled();
+      
+      // Remove the activity
+      const removeButton = await screen.findByRole('button', { name: 'Remove' });
+      fireEvent.click(removeButton);
+      
+      // Wait for button to be disabled after state update
+      await waitFor(() => {
+        expect(transitionButton).toBeDisabled();
+      });
+    });
+  });
 });

@@ -22,6 +22,11 @@ interface ActivityManagerProps {
   planningMode?: boolean; // New prop for planning mode
   isTimeUp?: boolean;
   elapsedTime?: number;
+  onStartActivities?: () => void; // New prop for transitioning to Activity state
+}
+
+function isActivityInTimeline(activityId: string, timelineEntries: TimelineEntry[]) {
+  return timelineEntries.some(entry => entry.activityId === activityId);
 }
 
 export default function ActivityManager({ 
@@ -32,7 +37,8 @@ export default function ActivityManager({
   timelineEntries,
   planningMode = false, // Default to false (Activity mode)
   isTimeUp = false,
-  elapsedTime = 0
+  elapsedTime = 0,
+  onStartActivities
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
@@ -46,10 +52,17 @@ export default function ActivityManager({
     return index;
   };
   
+  // Initialize activities based on mode
   useEffect(() => {
-    // Only initialize with default activities if NOT in planning mode
-    // In planning mode, we start with an empty list
-    if (!planningMode && !hasInitializedActivities) {
+    if (hasInitializedActivities) return;
+    
+    if (planningMode) {
+      // In planning mode, we start with an empty list
+      setHasInitializedActivities(true);
+      setActivities([]);
+      setAssignedColorIndices([]);
+    } else {
+      // In activity mode, initialize with default activities
       const defaultActivities = [
         { id: '1', name: 'Homework', colorIndex: 0 },
         { id: '2', name: 'Reading', colorIndex: 1 },
@@ -70,9 +83,6 @@ export default function ActivityManager({
       });
       
       setActivities(defaultActivities);
-      setHasInitializedActivities(true);
-    } else if (planningMode && !hasInitializedActivities) {
-      // In planning mode, we start with an empty list
       setHasInitializedActivities(true);
     }
   }, [hasInitializedActivities, onActivitySelect, planningMode]);
@@ -157,31 +167,23 @@ export default function ActivityManager({
     }
   };
   
-  const handleRemoveActivity = (id: string) => {
-    // Only allow removing if the activity can be removed
-    if (isActivityInTimeline(id) && !planningMode) {
-      return; // Don't remove if the activity is in the timeline (except in planning mode)
-    }
-    
-    if (id === currentActivityId) {
-      onActivitySelect(null);
-    }
-    
-    const activity = activities.find(a => a.id === id);
-    if (activity && typeof activity.colorIndex === 'number') {
-      setAssignedColorIndices(assignedColorIndices.filter(i => i !== activity.colorIndex));
-    }
-    
-    setActivities(activities.filter(activity => activity.id !== id));
+  const handleRemoveActivity = (activityId: string) => {
     if (onActivityRemove) {
-      onActivityRemove(id);
+      onActivityRemove(activityId);
+      // Update activities state
+      setActivities(prevActivities => {
+        const newActivities = prevActivities.filter(a => a.id !== activityId);
+        return newActivities;
+      });
+      setAssignedColorIndices(prevIndices => 
+        prevIndices.filter((_, idx) => 
+          activities[idx].id !== activityId
+        )
+      );
     }
   };
-  
-  // Function to determine if the activity is in the timeline
-  const isActivityInTimeline = (activityId: string) => {
-    return timelineEntries.some(entry => entry.activityId === activityId);
-  };
+
+  const hasActivities = activities.length > 0;
   
   return (
     <div className={styles.container}>
@@ -194,7 +196,7 @@ export default function ActivityManager({
         isDisabled={isTimeUp || (!planningMode && timelineEntries.length > 0)}
       />
       
-      {activities.length === 0 ? (
+      {!hasActivities ? (
         <div className={styles.emptyState}>
           {planningMode 
             ? 'Add activities to get started' 
@@ -203,7 +205,7 @@ export default function ActivityManager({
       ) : (
         <div className={styles.activityList}>
           {activities.map((activity) => {
-            const isInTimeline = isActivityInTimeline(activity.id);
+            const isInTimeline = isActivityInTimeline(activity.id, timelineEntries);
             
             return (
               <ActivityButton
@@ -220,6 +222,19 @@ export default function ActivityManager({
             );
           })}
         </div>
+      )}
+      
+      {planningMode && onStartActivities && hasActivities && (
+        <button
+          className={styles.startActivitiesButton}
+          onClick={onStartActivities}
+          disabled={!hasActivities}
+          aria-disabled={!hasActivities}
+          aria-label="Start Activities"
+          type="button"
+        >
+          Start Activities
+        </button>
       )}
     </div>
   );

@@ -278,3 +278,42 @@
   color: var(--foreground-muted);
   cursor: not-allowed;
 }
+
+.startActivitiesButton {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #fff;
+  background-color: #22c55e;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.startActivitiesButton:hover:not(:disabled) {
+  background-color: #16a34a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.startActivitiesButton:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+  transform: none;
+}
+
+:global(.dark-mode) .startActivitiesButton {
+  background-color: #16a34a;
+}
+
+:global(.dark-mode) .startActivitiesButton:hover:not(:disabled) {
+  background-color: #15803d;
+}
+
+:global(.dark-mode) .startActivitiesButton:disabled {
+  background-color: #4b5563;
+}
