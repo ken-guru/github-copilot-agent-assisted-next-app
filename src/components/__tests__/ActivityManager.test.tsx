@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import ActivityManager from '../ActivityManager';
 import * as colorUtils from '../../utils/colors';
+import { act } from 'react-dom/test-utils';
 
 // Mock window.matchMedia and getNextAvailableColorSet
 jest.mock('../../utils/colors', () => ({
@@ -442,6 +443,154 @@ describe('ActivityManager Component', () => {
       // Wait for button to be disabled after state update
       await waitFor(() => {
         expect(transitionButton).toBeDisabled();
+      });
+    });
+
+    describe('Activity Reordering', () => {
+      const createDragEvent = (type: string) => {
+        const event = new Event(type, { bubbles: true });
+        Object.defineProperty(event, 'dataTransfer', {
+          value: {
+            setData: jest.fn(),
+            getData: jest.fn(),
+            effectAllowed: null,
+            dropEffect: null
+          }
+        });
+        return event;
+      };
+
+      const simulateDragAndDrop = async (draggedItem: HTMLElement, dropTarget: HTMLElement) => {
+        await act(async () => {
+          // Create dragstart event
+          const dragStartEvent = createDragEvent('dragstart');
+          draggedItem.dispatchEvent(dragStartEvent);
+        });
+
+        await act(async () => {
+          // Create dragover event
+          const dragOverEvent = createDragEvent('dragover');
+          dropTarget.dispatchEvent(dragOverEvent);
+        });
+
+        await act(async () => {
+          // Create drop event
+          const dropEvent = createDragEvent('drop');
+          dropTarget.dispatchEvent(dropEvent);
+        });
+
+        await act(async () => {
+          // Create dragend event
+          const dragEndEvent = createDragEvent('dragend');
+          draggedItem.dispatchEvent(dragEndEvent);
+        });
+      };
+
+      it('should allow reordering activities in planning mode', async () => {
+        render(
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+            planningMode={true}
+            onStartActivities={jest.fn()}
+          />
+        );
+        
+        // Add two activities
+        const input = screen.getByPlaceholderText('New activity name');
+        
+        // Add first activity
+        fireEvent.change(input, { target: { value: 'First Activity' } });
+        fireEvent.click(screen.getByText('Add'));
+        
+        // Add second activity
+        fireEvent.change(input, { target: { value: 'Second Activity' } });
+        fireEvent.click(screen.getByText('Add'));
+        
+        // Get activity items
+        const activities = await screen.findAllByRole('listitem');
+        expect(activities).toHaveLength(2);
+        
+        // Initially, First Activity should be first
+        const firstActivity = activities[0];
+        const secondActivity = activities[1];
+        
+        // Simulate drag and drop
+        await simulateDragAndDrop(secondActivity, firstActivity);
+        
+        // Wait for state updates and verify order
+        await waitFor(() => {
+          const activitiesAfter = screen.getAllByRole('listitem');
+          expect(activitiesAfter[0]).toHaveTextContent('Second Activity');
+          expect(activitiesAfter[1]).toHaveTextContent('First Activity');
+        });
+      });
+
+      it('should maintain activity order after adding new activities', async () => {
+        render(
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+            planningMode={true}
+            onStartActivities={jest.fn()}
+          />
+        );
+        
+        // Add two activities
+        const input = screen.getByPlaceholderText('New activity name');
+        
+        // Add activities
+        fireEvent.change(input, { target: { value: 'First Activity' } });
+        fireEvent.click(screen.getByText('Add'));
+        fireEvent.change(input, { target: { value: 'Second Activity' } });
+        fireEvent.click(screen.getByText('Add'));
+        
+        // Get and reorder activities
+        const activities = await screen.findAllByRole('listitem');
+        await simulateDragAndDrop(activities[1], activities[0]);
+        
+        // Add a third activity
+        fireEvent.change(input, { target: { value: 'Third Activity' } });
+        fireEvent.click(screen.getByText('Add'));
+        
+        // Wait for state updates and verify order
+        await waitFor(() => {
+          const activitiesAfter = screen.getAllByRole('listitem');
+          expect(activitiesAfter[0]).toHaveTextContent('Second Activity');
+          expect(activitiesAfter[1]).toHaveTextContent('First Activity');
+          expect(activitiesAfter[2]).toHaveTextContent('Third Activity');
+        });
+      });
+
+      it('should not allow reordering in non-planning mode', async () => {
+        render(
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+            planningMode={false}
+          />
+        );
+        
+        // Wait for default activities to render
+        await waitFor(() => {
+          expect(screen.getByText('Homework')).toBeInTheDocument();
+          expect(screen.getByText('Reading')).toBeInTheDocument();
+        });
+        
+        // Activities should not be draggable
+        const activities = screen.getAllByRole('listitem');
+        activities.forEach(activity => {
+          expect(activity.getAttribute('draggable')).toBe('false');
+        });
       });
     });
   });

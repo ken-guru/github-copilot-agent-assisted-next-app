@@ -6,6 +6,10 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  gap: 1rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .heading {
@@ -13,6 +17,9 @@
   font-weight: bold;
   margin-bottom: 1rem;
   color: var(--foreground);
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
 }
 
 .activityList {
@@ -22,6 +29,28 @@
   flex: 1;
   overflow-y: auto;
   padding-right: 0.5rem;
+  gap: 0.5rem;
+  min-height: 100px;
+}
+
+.activityList > div[draggable="true"] {
+  cursor: move;
+  user-select: none;
+  position: relative;
+}
+
+.activityList > div[draggable="true"]::after {
+  content: '☰';
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.activityList > div[draggable="true"]:hover::after {
+  opacity: 0.8;
 }
 
 .activityItem, .completedActivityItem {
@@ -216,6 +245,9 @@
   background-color: var(--background-muted);
   border-radius: 0.25rem;
   margin: 1rem 0;
+  color: var(--text-muted);
+  background: var(--background-muted);
+  border-radius: 0.5rem;
 }
 
 /* Media query for smaller screens */
@@ -292,18 +324,27 @@
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--accent);
+  transition: all 0.2s ease;
 }
 
 .startActivitiesButton:hover:not(:disabled) {
   background-color: #16a34a;
   transform: translateY(-1px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: var(--accent-hover);
 }
 
 .startActivitiesButton:disabled {
   background-color: #d1d5db;
   cursor: not-allowed;
   transform: none;
+  background: var(--background-muted);
+  color: var(--text-muted);
 }
 
 :global(.dark-mode) .startActivitiesButton {

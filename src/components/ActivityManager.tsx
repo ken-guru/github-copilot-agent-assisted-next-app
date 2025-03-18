@@ -11,6 +11,7 @@ export interface Activity {
   completed?: boolean;
   colors?: ColorSet;
   colorIndex?: number;
+  order?: number;
 }
 
 interface ActivityManagerProps {
@@ -43,6 +44,7 @@ export default function ActivityManager({
   const [activities, setActivities] = useState<Activity[]>([]);
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
   const [hasInitializedActivities, setHasInitializedActivities] = useState(false);
+  const [draggedActivity, setDraggedActivity] = useState<Activity | null>(null);
   
   const getNextColorIndex = (): number => {
     let index = 0;
@@ -64,10 +66,10 @@ export default function ActivityManager({
     } else {
       // In activity mode, initialize with default activities
       const defaultActivities = [
-        { id: '1', name: 'Homework', colorIndex: 0 },
-        { id: '2', name: 'Reading', colorIndex: 1 },
-        { id: '3', name: 'Play Time', colorIndex: 2 },
-        { id: '4', name: 'Chores', colorIndex: 3 }
+        { id: '1', name: 'Homework', colorIndex: 0, order: 0 },
+        { id: '2', name: 'Reading', colorIndex: 1, order: 1 },
+        { id: '3', name: 'Play Time', colorIndex: 2, order: 2 },
+        { id: '4', name: 'Chores', colorIndex: 3, order: 3 }
       ];
       
       setAssignedColorIndices(defaultActivities.map(a => a.colorIndex));
@@ -132,12 +134,14 @@ export default function ActivityManager({
   
   const handleAddActivity = (activityName: string) => {
     const nextColorIndex = getNextColorIndex();
+    const nextOrder = activities.length;
     
     const newActivity: Activity = {
       id: Date.now().toString(),
       name: activityName,
       colorIndex: nextColorIndex,
-      colors: getNextAvailableColorSet(nextColorIndex)
+      colors: getNextAvailableColorSet(nextColorIndex),
+      order: nextOrder
     };
     
     setAssignedColorIndices([...assignedColorIndices, nextColorIndex]);
@@ -146,7 +150,76 @@ export default function ActivityManager({
     // Just add the activity without starting it
     onActivitySelect(newActivity, true);
   };
-  
+
+  // Add drag and drop handlers
+  const handleDragStart = (activity: Activity) => (e: React.DragEvent) => {
+    if (!planningMode) return;
+    setDraggedActivity(activity);
+    
+    // Create a mock dataTransfer if none exists (for testing)
+    if (!e.dataTransfer) {
+      Object.defineProperty(e, 'dataTransfer', {
+        value: {
+          setData: () => {},
+          effectAllowed: 'move'
+        }
+      });
+    }
+    
+    e.dataTransfer?.setData('text/plain', activity.id);
+    if (e.dataTransfer) {
+      e.dataTransfer.effectAllowed = 'move';
+    }
+  };
+
+  const handleDragOver = (activity: Activity) => (e: React.DragEvent) => {
+    if (!planningMode || !draggedActivity) return;
+    e.preventDefault();
+    
+    // Create a mock dataTransfer if none exists (for testing)
+    if (!e.dataTransfer) {
+      Object.defineProperty(e, 'dataTransfer', {
+        value: {
+          dropEffect: 'move'
+        }
+      });
+    }
+    
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = 'move';
+    }
+  };
+
+  const handleDrop = (targetActivity: Activity) => (e: React.DragEvent) => {
+    if (!planningMode || !draggedActivity) return;
+    e.preventDefault();
+
+    // Don't do anything if dropping onto the same item
+    if (draggedActivity.id === targetActivity.id) return;
+
+    // Reorder activities
+    setActivities(currentActivities => {
+      const updatedActivities = currentActivities.map(activity => {
+        if (activity.id === draggedActivity.id) {
+          return { ...activity, order: targetActivity.order };
+        }
+        if (activity.id === targetActivity.id) {
+          return { ...activity, order: draggedActivity.order };
+        }
+        return activity;
+      });
+
+      // Sort by order for consistent display
+      return updatedActivities.sort((a, b) => (a.order || 0) - (b.order || 0));
+    });
+
+    setDraggedActivity(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedActivity(null);
+  };
+
   const handleActivitySelect = (activity: Activity) => {
     // In planning mode, selecting an activity doesn't start it
     // It just adds it to the planning list
@@ -190,6 +263,9 @@ export default function ActivityManager({
 
   const hasActivities = activities.length > 0;
   const showStartButton = planningMode && onStartActivities && hasActivities;
+
+  // Sort activities by order before rendering
+  const sortedActivities = [...activities].sort((a, b) => (a.order || 0) - (b.order || 0));
   
   return (
     <div className={styles.container}>
@@ -209,22 +285,31 @@ export default function ActivityManager({
             : 'No activities defined'}
         </div>
       ) : (
-        <div className={styles.activityList}>
-          {activities.map((activity) => {
+        <div className={styles.activityList} role="list">
+          {sortedActivities.map((activity) => {
             const isInTimeline = isActivityInTimeline(activity.id, timelineEntries);
             
             return (
-              <ActivityButton
+              <div
                 key={activity.id}
-                activity={activity}
-                isCompleted={completedActivityIds.includes(activity.id)}
-                isRunning={activity.id === currentActivityId}
-                onSelect={handleActivitySelect}
-                onRemove={onActivityRemove ? handleRemoveActivity : undefined}
-                timelineEntries={timelineEntries}
-                elapsedTime={elapsedTime}
-                isInTimeline={isInTimeline && !planningMode}
-              />
+                role="listitem"
+                draggable={!!planningMode}
+                onDragStart={handleDragStart(activity)}
+                onDragOver={handleDragOver(activity)}
+                onDrop={handleDrop(activity)}
+                onDragEnd={handleDragEnd}
+              >
+                <ActivityButton
+                  activity={activity}
+                  isCompleted={completedActivityIds.includes(activity.id)}
+                  isRunning={activity.id === currentActivityId}
+                  onSelect={handleActivitySelect}
+                  onRemove={onActivityRemove ? handleRemoveActivity : undefined}
+                  timelineEntries={timelineEntries}
+                  elapsedTime={elapsedTime}
+                  isInTimeline={isInTimeline && !planningMode}
+                />
+              </div>
             );
           })}
         </div>
