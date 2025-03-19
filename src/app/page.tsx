@@ -13,6 +13,7 @@ import styles from './page.module.css';
 
 export default function Home() {
   const [totalDuration, setTotalDuration] = useState(0);
+  const [showResetFeedback, setShowResetFeedback] = useState(false);
   
   // Use the new AppState hook for managing the overall application flow
   const {
@@ -96,10 +97,17 @@ export default function Home() {
   };
   
   const handleStartNew = () => {
-    setTotalDuration(0);
-    resetActivities();
-    resetTimer();
-    resetAppState();
+    // Show visual feedback first
+    setShowResetFeedback(true);
+    
+    // Wait for animation to complete, then reset state
+    setTimeout(() => {
+      setTotalDuration(0);
+      resetActivities();
+      resetTimer();
+      resetAppState();
+      setShowResetFeedback(false);
+    }, 800);
   };
   
   const processedEntries = timelineEntries.map(entry => ({
@@ -109,6 +117,17 @@ export default function Home() {
   
   return (
     <div className={styles.container}>
+      {/* Reset feedback overlay - shows when starting a new session */}
+      {showResetFeedback && (
+        <div className={styles.resetFeedbackOverlay} data-testid="reset-feedback">
+          <div className={styles.resetFeedbackContent}>
+            <svg className={styles.checkmarkIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+            </svg>
+            <p>Starting new session...</p>
+          </div>
+        </div>
+      )}
       <div className={styles.wrapper}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
@@ -195,17 +214,33 @@ export default function Home() {
         {isCompletedState && (
           <div className={styles.completedGrid}>
             <div className={styles.summaryContainer}>
+              <h2>Session Complete!</h2>
+              
+              <div className={styles.completionSuccess} data-testid="completion-message">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                  <path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                </svg>
+                All activities have been completed successfully!
+              </div>
+              
               <Summary 
                 entries={processedEntries}
                 totalDuration={totalDuration} 
                 elapsedTime={elapsedTime}
                 allActivitiesCompleted={allActivitiesCompleted}
               />
+              
               <button 
-                className={styles.startNewButton || styles.button} 
+                className={styles.startNewButton}
                 onClick={handleStartNew}
+                data-testid="start-new-session"
               >
-                Start New
+                <span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 5v14M5 12h14"></path>
+                  </svg>
+                  Start New Session
+                </span>
               </button>
             </div>
           </div>
