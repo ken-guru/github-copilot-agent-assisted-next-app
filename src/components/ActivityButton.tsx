@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Activity } from './ActivityManager';
 import { TimelineEntry } from '../hooks/useTimelineEntries';
 import { formatTime } from '@/utils/timeUtils';
-import styles from './ActivityManager.module.css';
+import styles from './ActivityButton.module.css';
 
 interface ActivityButtonProps {
   activity: Activity;
@@ -29,7 +29,11 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
   isInTimeline = false, // Default to false
 }) => {
   const { id, name, colors } = activity;
+  const [isHovered, setIsHovered] = useState(false);
   
+  // Generate a testId-safe activity name
+  const safeActivityName = name.toLowerCase().replace(/\s+/g, '-');
+
   const handleClick = () => {
     onSelect(activity);
   };
@@ -48,6 +52,8 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
         backgroundColor: colors.background,
         borderColor: colors.border
       } : undefined}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Title */}
       <span 
@@ -92,7 +98,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
               disabled={isCompleted}
               title={isRunning ? "Complete" : "Start"}
               aria-label={isRunning ? "Complete" : "Start"}
-              data-testid={`${isRunning ? 'complete' : 'start'}-activity-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+              data-testid={isRunning ? `complete-activity-${safeActivityName}` : `start-activity-${safeActivityName}`}
             >
               {isRunning ? (
                 <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
@@ -111,7 +117,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
                 disabled={isInTimeline}
                 title={isInTimeline ? "Can't remove while activity is in use" : "Remove activity"}
                 aria-label="Remove"
-                data-testid={`remove-activity-${name.toLowerCase().replace(/\s+/g, '-')}`}
+                data-testid={`remove-activity-${safeActivityName}`}
               >
                 <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                   <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>

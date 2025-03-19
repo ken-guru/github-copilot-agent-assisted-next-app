@@ -53,7 +53,7 @@ export default function ActivityManager({
     }
     return index;
   };
-  
+    
   // Initialize activities based on mode
   useEffect(() => {
     if (hasInitializedActivities) return;
@@ -66,37 +66,27 @@ export default function ActivityManager({
     } else {
       // In activity mode, initialize with default activities
       const defaultActivities = [
-        { id: '1', name: 'Homework', colorIndex: 0, order: 0 },
-        { id: '2', name: 'Reading', colorIndex: 1, order: 1 },
-        { id: '3', name: 'Play Time', colorIndex: 2, order: 2 },
-        { id: '4', name: 'Chores', colorIndex: 3, order: 3 }
-      ];
+        { id: 'homework', name: 'Homework', colorIndex: 0, order: 0 },
+        { id: 'reading', name: 'Reading', colorIndex: 1, order: 1 },
+        { id: 'play-time', name: 'Play Time', colorIndex: 2, order: 2 },
+        { id: 'chores', name: 'Chores', colorIndex: 3, order: 3 }
+      ].map(activity => ({
+        ...activity,
+        colors: getNextAvailableColorSet(activity.colorIndex)
+      }));
       
-      setAssignedColorIndices(defaultActivities.map(a => a.colorIndex));
+      // Set initial state
+      setAssignedColorIndices(defaultActivities.map(a => a.colorIndex!));
+      setActivities(defaultActivities);
       
-      // Add activities to the state machine in pending state
+      // Add each activity to the state machine
       defaultActivities.forEach(activity => {
-        const activityWithColors = {
-          ...activity,
-          colors: getNextAvailableColorSet(activity.colorIndex || 0)
-        };
-        // Pass true as second argument to just add the activity without starting it
-        onActivitySelect(activityWithColors, true);
+        onActivitySelect(activity, true);
       });
       
-      setActivities(defaultActivities);
       setHasInitializedActivities(true);
     }
   }, [hasInitializedActivities, onActivitySelect, planningMode]);
-  
-  useEffect(() => {
-    setActivities(currentActivities => 
-      currentActivities.map(activity => ({
-        ...activity,
-        colors: getNextAvailableColorSet(activity.colorIndex || 0)
-      }))
-    );
-  }, []);
   
   // Listen for theme changes
   useEffect(() => {
@@ -104,7 +94,7 @@ export default function ActivityManager({
       setActivities(currentActivities => 
         currentActivities.map(activity => ({
           ...activity,
-          colors: getNextAvailableColorSet(activity.colorIndex)
+          colors: getNextAvailableColorSet(activity.colorIndex || 0)
         }))
       );
     };
@@ -136,8 +126,11 @@ export default function ActivityManager({
     const nextColorIndex = getNextColorIndex();
     const nextOrder = activities.length;
     
+    // Generate a testId-safe activity ID
+    const activityId = activityName.toLowerCase().replace(/\s+/g, '-');
+    
     const newActivity: Activity = {
-      id: Date.now().toString(),
+      id: activityId,
       name: activityName,
       colorIndex: nextColorIndex,
       colors: getNextAvailableColorSet(nextColorIndex),
@@ -150,82 +143,10 @@ export default function ActivityManager({
     // Just add the activity without starting it
     onActivitySelect(newActivity, true);
   };
-
-  // Add drag and drop handlers
-  const handleDragStart = (activity: Activity) => (e: React.DragEvent) => {
-    if (!planningMode) return;
-    setDraggedActivity(activity);
-    
-    // Create a mock dataTransfer if none exists (for testing)
-    if (!e.dataTransfer) {
-      Object.defineProperty(e, 'dataTransfer', {
-        value: {
-          setData: () => {},
-          effectAllowed: 'move'
-        }
-      });
-    }
-    
-    e.dataTransfer?.setData('text/plain', activity.id);
-    if (e.dataTransfer) {
-      e.dataTransfer.effectAllowed = 'move';
-    }
-  };
-
-  const handleDragOver = (activity: Activity) => (e: React.DragEvent) => {
-    if (!planningMode || !draggedActivity) return;
-    e.preventDefault();
-    
-    // Create a mock dataTransfer if none exists (for testing)
-    if (!e.dataTransfer) {
-      Object.defineProperty(e, 'dataTransfer', {
-        value: {
-          dropEffect: 'move'
-        }
-      });
-    }
-    
-    if (e.dataTransfer) {
-      e.dataTransfer.dropEffect = 'move';
-    }
-  };
-
-  const handleDrop = (targetActivity: Activity) => (e: React.DragEvent) => {
-    if (!planningMode || !draggedActivity) return;
-    e.preventDefault();
-
-    // Don't do anything if dropping onto the same item
-    if (draggedActivity.id === targetActivity.id) return;
-
-    // Reorder activities
-    setActivities(currentActivities => {
-      const updatedActivities = currentActivities.map(activity => {
-        if (activity.id === draggedActivity.id) {
-          return { ...activity, order: targetActivity.order };
-        }
-        if (activity.id === targetActivity.id) {
-          return { ...activity, order: draggedActivity.order };
-        }
-        return activity;
-      });
-
-      // Sort by order for consistent display
-      return updatedActivities.sort((a, b) => (a.order || 0) - (b.order || 0));
-    });
-
-    setDraggedActivity(null);
-  };
-
-  const handleDragEnd = () => {
-    setDraggedActivity(null);
-  };
-
+  
   const handleActivitySelect = (activity: Activity) => {
     // In planning mode, selecting an activity doesn't start it
-    // It just adds it to the planning list
     if (planningMode) {
-      // In planning mode, just highlight the activity (don't start it)
-      // This might be used for reordering in the future
       return;
     }
     
@@ -261,8 +182,79 @@ export default function ActivityManager({
     }
   };
 
+  const handleDragStart = (activity: Activity) => (e: React.DragEvent) => {
+    if (!planningMode) return;
+    setDraggedActivity(activity);
+    // Store the drag source element's position
+    const rect = (e.target as HTMLElement).getBoundingClientRect();
+    (e.target as HTMLElement).setAttribute('data-y', rect.top.toString());
+  };
+
+  const handleDragOver = (activity: Activity) => (e: React.DragEvent) => {
+    if (!planningMode || !draggedActivity) return;
+    e.preventDefault();
+    if (activity.id !== draggedActivity.id) {
+      const dropTarget = e.currentTarget;
+      const dropRect = dropTarget.getBoundingClientRect();
+      const dragY = parseFloat(document.querySelector(`[data-testid="activity-${draggedActivity.id}"]`)?.getAttribute('data-y') || '0');
+      
+      dropTarget.classList.remove(styles.dragOver);
+      if (dragY < dropRect.top) {
+        dropTarget.classList.add(styles.dragOverBottom);
+      } else {
+        dropTarget.classList.add(styles.dragOverTop);
+      }
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    if (!planningMode) return;
+    e.currentTarget.classList.remove(styles.dragOver);
+  };
+
+  const handleDrop = (activity: Activity) => (e: React.DragEvent) => {
+    if (!planningMode || !draggedActivity) return;
+    e.preventDefault();
+    const dropTarget = e.currentTarget;
+    dropTarget.classList.remove(styles.dragOverTop, styles.dragOverBottom);
+    
+    if (draggedActivity.id === activity.id) return;
+    
+    const draggedIndex = activities.findIndex(a => a.id === draggedActivity.id);
+    const dropIndex = activities.findIndex(a => a.id === activity.id);
+    
+    if (draggedIndex === -1 || dropIndex === -1) return;
+    
+    const updatedActivities = [...activities];
+    const [removed] = updatedActivities.splice(draggedIndex, 1);
+    const dragY = parseFloat(document.querySelector(`[data-testid="activity-${draggedActivity.id}"]`)?.getAttribute('data-y') || '0');
+    const dropRect = dropTarget.getBoundingClientRect();
+    
+    // Insert before or after based on drag position
+    const insertIndex = dragY < dropRect.top ? dropIndex : dropIndex + 1;
+    updatedActivities.splice(insertIndex, 0, removed);
+    
+    // Update order property for all activities
+    const reorderedActivities = updatedActivities.map((act, index) => ({
+      ...act,
+      order: index
+    }));
+    
+    setActivities(reorderedActivities);
+  };
+
+  const handleDragEnd = () => {
+    if (!planningMode) return;
+    setDraggedActivity(null);
+    // Clean up data-y attributes
+    document.querySelectorAll('[data-y]').forEach(el => el.removeAttribute('data-y'));
+  };
+
+  // Update hasActivities to be based on activities array length
   const hasActivities = activities.length > 0;
-  const showStartButton = planningMode && onStartActivities && hasActivities;
+
+  // Update the showStartButton logic to be based on planningMode only
+  const showStartButton = planningMode && onStartActivities;
 
   // Sort activities by order before rendering
   const sortedActivities = [...activities].sort((a, b) => (a.order || 0) - (b.order || 0));
@@ -273,10 +265,13 @@ export default function ActivityManager({
         {planningMode ? 'Plan Your Activities' : 'Activities'}
       </h2>
       
-      <ActivityForm
-        onAddActivity={handleAddActivity}
-        isDisabled={isTimeUp || (!planningMode && timelineEntries.length > 0)}
-      />
+      {planningMode && (
+        <ActivityForm
+          onAddActivity={handleAddActivity}
+          isDisabled={isTimeUp || (!planningMode && timelineEntries.length > 0)}
+          data-testid="activity-input"
+        />
+      )}
       
       {!hasActivities ? (
         <div className={styles.emptyState}>
@@ -293,11 +288,14 @@ export default function ActivityManager({
               <div
                 key={activity.id}
                 role="listitem"
+                className={styles.activityListItem}
                 draggable={!!planningMode}
                 onDragStart={handleDragStart(activity)}
                 onDragOver={handleDragOver(activity)}
+                onDragLeave={handleDragLeave}
                 onDrop={handleDrop(activity)}
                 onDragEnd={handleDragEnd}
+                data-testid={`activity-${activity.id}`}
               >
                 <ActivityButton
                   activity={activity}
@@ -315,7 +313,7 @@ export default function ActivityManager({
         </div>
       )}
       
-      {planningMode && onStartActivities && (
+      {showStartButton && (
         <button
           className={styles.startActivitiesButton}
           onClick={onStartActivities}
@@ -323,6 +321,7 @@ export default function ActivityManager({
           aria-disabled={!hasActivities}
           aria-label="Start Activities"
           type="button"
+          data-testid="start-activities"
         >
           Start Activities
         </button>

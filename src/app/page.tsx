@@ -149,14 +149,8 @@ export default function Home() {
                 planningMode={true}
                 isTimeUp={false}
                 elapsedTime={0}
+                onStartActivities={handleStartActivity}
               />
-              <button 
-                className={styles.startButton || styles.button} 
-                onClick={handleStartActivity}
-                disabled={timelineEntries.length === 0}
-              >
-                Start Activities
-              </button>
             </div>
           </div>
         )}

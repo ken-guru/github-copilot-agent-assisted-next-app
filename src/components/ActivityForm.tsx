@@ -4,9 +4,14 @@ import styles from './ActivityManager.module.css';
 interface ActivityFormProps {
   onAddActivity: (activityName: string) => void;
   isDisabled: boolean;
+  'data-testid'?: string;
 }
 
-const ActivityForm: React.FC<ActivityFormProps> = ({ onAddActivity, isDisabled }) => {
+const ActivityForm: React.FC<ActivityFormProps> = ({ 
+  onAddActivity, 
+  isDisabled,
+  'data-testid': dataTestId 
+}) => {
   const [newActivityName, setNewActivityName] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -18,7 +23,10 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onAddActivity, isDisabled }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form} role="form" data-testid="activity-form">
+    <form 
+      onSubmit={handleSubmit} 
+      className={styles.form}
+    >
       <div className={styles.inputContainer}>
         <input
           type="text"
@@ -27,6 +35,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onAddActivity, isDisabled }
           placeholder={isDisabled ? "Time is up!" : "New activity name"}
           className={styles.input}
           disabled={isDisabled}
+          data-testid="activity-input"
         />
         <button 
           type="submit"

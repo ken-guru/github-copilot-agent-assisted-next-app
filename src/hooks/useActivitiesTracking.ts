@@ -162,6 +162,7 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
           if (!isTestEnvironment) {
             console.warn(`Failed to add activity ${activityId} before completing:`, error);
           }
+          return;
         }
       }
       
@@ -183,6 +184,7 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
       if (updatedState.state === 'PENDING') {
         try {
           stateMachine.startActivity(activityId);
+          // Don't update state here, we'll do it after completion
         } catch (error) {
           if (!isTestEnvironment) {
             console.warn(`Failed to start activity ${activityId} before completing:`, error);
@@ -191,19 +193,18 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
         }
       }
       
-      // Only complete if in RUNNING state and make sure to update state immediately
-      if (updatedState.state === 'RUNNING' || stateMachine.getActivityState(activityId)?.state === 'RUNNING') {
+      // Only complete if in RUNNING state
+      const currentState = stateMachine.getActivityState(activityId);
+      if (currentState?.state === 'RUNNING') {
         try {
           stateMachine.completeActivity(activityId);
-          updateLocalStateFromMachine(); // Update state immediately after completion
+          updateLocalStateFromMachine(); // Single update after all state changes
         } catch (error) {
           if (!isTestEnvironment) {
             console.warn(`Failed to complete activity ${activityId}:`, error);
           }
         }
       }
-      
-      updateLocalStateFromMachine(); // Final state update
     } catch (error) {
       if (!isTestEnvironment) {
         console.warn(`Error in completeActivity for ${activityId}:`, error);

@@ -74,6 +74,49 @@
   background-color: var(--background-muted);
 }
 
+.activityListItem {
+  position: relative;
+  cursor: grab;
+}
+
+.activityListItem:active {
+  cursor: grabbing;
+}
+
+.dragOver {
+  position: relative;
+}
+
+.dragOver::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: 1px;
+}
+
+.dragOverTop::before,
+.dragOverBottom::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-color);
+  border-radius: 1px;
+}
+
+.dragOverTop::before {
+  top: -1px;
+}
+
+.dragOverBottom::after {
+  bottom: -1px;
+}
+
 /* Right side content wrapper */
 .activityRightContent {
   display: flex;

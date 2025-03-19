@@ -14,6 +14,8 @@
  * - PENDING -> REMOVED
  */
 
+import { ActivityState, ActivityStatusType } from '@/types/activities';
+
 export type ActivityStateType = 'PENDING' | 'RUNNING' | 'COMPLETED' | 'REMOVED';
 
 export interface ActivityState {
@@ -29,7 +31,7 @@ export class ActivityStateMachine {
   private currentActivityId: string | null;
 
   constructor() {
-    this.states = new Map<string, ActivityState>();
+    this.states = new Map();
     this.currentActivityId = null;
   }
 
@@ -45,7 +47,10 @@ export class ActivityStateMachine {
 
     this.states.set(id, {
       id,
-      state: 'PENDING'
+      state: 'PENDING',
+      startedAt: null,
+      completedAt: null,
+      removedAt: null
     });
   }
 
@@ -155,36 +160,41 @@ export class ActivityStateMachine {
    * Checks if all activities are completed
    * Activities are considered completed when:
    * 1. There are no PENDING or RUNNING activities
-   * 2. At least one activity has been COMPLETED
-   * 3. All other activities are either COMPLETED or REMOVED
+   * 2. At least one activity has been COMPLETED, or all activities have been REMOVED
    * @returns Boolean indicating if all activities are completed
    */
   isCompleted(): boolean {
-    // Get all activities by state
-    const pending = this.getActivitiesByState('PENDING');
-    const running = this.getActivitiesByState('RUNNING');
-    const completed = this.getActivitiesByState('COMPLETED');
-    const removed = this.getActivitiesByState('REMOVED');
-
-    // If there are pending or running activities, not completed
-    if (pending.length > 0 || running.length > 0) {
+    // Get all activities
+    const activities = Array.from(this.states.values());
+    
+    // If there are no activities, we're not completed
+    if (activities.length === 0) {
       return false;
     }
 
-    // Must have at least one activity
-    const allActivities = this.getAllActivities();
-    if (allActivities.length === 0) {
+    // Check if any activities are still PENDING or RUNNING
+    const hasIncompleteActivities = activities.some(
+      activity => activity.state === 'PENDING' || activity.state === 'RUNNING'
+    );
+    if (hasIncompleteActivities) {
       return false;
     }
 
-    // Must have at least one completed activity
-    if (completed.length === 0) {
-      return false;
-    }
+    // All activities must be either COMPLETED or REMOVED
+    const isAllCompletedOrRemoved = activities.every(
+      activity => activity.state === 'COMPLETED' || activity.state === 'REMOVED'
+    );
 
-    // Every activity must be either COMPLETED or REMOVED
-    const totalHandled = completed.length + removed.length;
-    return totalHandled === allActivities.length;
+    // We're completed if we either have at least one COMPLETED activity,
+    // or if all activities have been REMOVED
+    const hasCompletedActivity = activities.some(
+      activity => activity.state === 'COMPLETED'
+    );
+    const allActivitiesRemoved = activities.every(
+      activity => activity.state === 'REMOVED'
+    );
+
+    return isAllCompletedOrRemoved && (hasCompletedActivity || allActivitiesRemoved);
   }
 
   /**
@@ -192,12 +202,9 @@ export class ActivityStateMachine {
    * @returns Boolean indicating if any activity has been started
    */
   hasStartedAny(): boolean {
-    for (const activity of this.states.values()) {
-      if (activity.startedAt) {
-        return true;
-      }
-    }
-    return false;
+    return Array.from(this.states.values()).some(
+      activity => activity.startedAt !== null
+    );
   }
 
   /**
@@ -208,7 +215,6 @@ export class ActivityStateMachine {
     if (!this.currentActivityId) {
       return null;
     }
-    
     return this.states.get(this.currentActivityId) || null;
   }
 
@@ -226,16 +232,10 @@ export class ActivityStateMachine {
    * @param state Activity state to filter by
    * @returns Array of activities in the specified state
    */
-  getActivitiesByState(state: ActivityStateType): ActivityState[] {
-    const result: ActivityState[] = [];
-    
-    for (const activity of this.states.values()) {
-      if (activity.state === state) {
-        result.push(activity);
-      }
-    }
-    
-    return result;
+  getActivitiesByState(state: ActivityStatusType): ActivityState[] {
+    return Array.from(this.states.values()).filter(
+      activity => activity.state === state
+    );
   }
 
   /**

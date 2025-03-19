@@ -29,7 +29,6 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     completeActivity,
     removeActivity,
     resetActivities: resetActivityTracking,
-    // New state machine methods
     getCurrentActivity: getCurrentActivityState,
     isCompleted: isActivitiesCompleted,
     getActivityState
@@ -58,9 +57,8 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
         completeCurrentTimelineEntry();
       }
 
+      // Set new activity as current and start it
       setCurrentActivity(activity);
-      
-      // Start the new activity
       addTimelineEntry(activity);
       startActivity(activity.id);
       
@@ -69,7 +67,7 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
         onTimerStart?.();
       }
     } else if (currentActivity) {
-      // If we're deselecting the current activity, complete it
+      // If we're deselecting the current activity (completing it)
       completeActivity(currentActivity.id);
       completeCurrentTimelineEntry();
       setCurrentActivity(null);
@@ -86,22 +84,17 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
   ]);
 
   const handleActivityRemoval = useCallback((activityId: string) => {
-    // Check if this activity has already been used in the timeline
-    const activityInTimeline = timelineEntries.some(entry => entry.activityId === activityId);
-    if (activityInTimeline) {
-      return; // Don't remove activities that are already in the timeline
-    }
-
-    // Clear current activity if it's being removed
+    // Only prevent removal of the currently running activity
     if (currentActivity?.id === activityId) {
-      setCurrentActivity(null);
+      return; // Don't remove the currently running activity
     }
 
     // Remove the activity from the state machine
     removeActivity(activityId);
-  }, [currentActivity, timelineEntries, removeActivity]);
+    setCurrentActivity(prev => prev?.id === activityId ? null : prev);
+  }, [currentActivity, removeActivity]);
 
-  // Use the state machine's isCompleted method to update allActivitiesCompleted state
+  // Update allActivitiesCompleted state when relevant state changes
   useEffect(() => {
     const checkCompleted = () => {
       if (currentActivity) {
@@ -120,7 +113,7 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
   }, [
     isActivitiesCompleted,
     allActivitiesCompleted,
-    currentActivity, // Add currentActivity as a dependency
+    currentActivity,
     activities,
     allActivityIds,
     startedActivityIds,
@@ -129,7 +122,6 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     hasActuallyStartedActivity
   ]);
 
-  // Simplified method that uses the state machine directly
   const checkActivitiesCompleted = useCallback(() => {
     const isCompleted = isActivitiesCompleted();
     setAllActivitiesCompleted(isCompleted);
@@ -143,11 +135,6 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     setAllActivitiesCompleted(false);
   }, [resetActivityTracking, resetTimelineEntries]);
 
-  // Get the current activity state from the state machine
-  const getCurrentActivityStateDetails = useCallback((): ActivityState | null => {
-    return getCurrentActivityState();
-  }, [getCurrentActivityState]);
-
   return {
     currentActivity,
     timelineEntries,
@@ -158,9 +145,7 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     handleActivityRemoval,
     checkActivitiesCompleted,
     resetActivities,
-    // New method to get current activity state
-    getCurrentActivityStateDetails,
-    // Method to get state of a specific activity
+    getCurrentActivityState,
     getActivityState
   };
 }

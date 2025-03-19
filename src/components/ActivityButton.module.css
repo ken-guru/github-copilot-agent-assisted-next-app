@@ -1,0 +1,111 @@
+.activityItem,
+.completedActivityItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.activityItem:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.completedActivityItem {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.activityName,
+.completedActivityName {
+  font-size: 1rem;
+  font-weight: 500;
+  flex: 1;
+}
+
+.completedActivityName {
+  text-decoration: line-through;
+}
+
+.activityRightContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activityStatus {
+  display: flex;
+  align-items: center;
+}
+
+.runningIndicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.completedTag {
+  display: flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid;
+  font-size: 0.75rem;
+}
+
+.checkIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.activityActions {
+  display: flex;
+  gap: 4px;
+}
+
+.startButton,
+.stopButton,
+.removeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.startButton:hover,
+.stopButton:hover,
+.removeButton:hover {
+  opacity: 1;
+}
+
+.startButton:disabled,
+.stopButton:disabled,
+.removeButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.buttonIcon {
+  width: 16px;
+  height: 16px;
+  color: currentColor;
+}
+
+.timerDisplay {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}

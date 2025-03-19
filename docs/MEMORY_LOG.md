@@ -406,6 +406,51 @@ We resolved the issue by:
 3. Tests should reflect actual user interactions
 4. Consider accessibility and UX when choosing between hiding and disabling elements
 
+### Issue: Cypress End-to-End Test Failures for Planning State [RESOLVED]
+**Date:** 2024-03-19
+**Tags:** #testing #cypress #state-management #e2e
+**Status:** Resolved
+
+#### Context
+During end-to-end testing with Cypress, we encountered failures in the planning state functionality test. The test expects specific behavior around the "Start Activities" button and activity management during the planning phase.
+
+#### Issues Fixed
+1. Start Activities button not found with correct data-testid
+   - Fixed by properly handling planningMode prop in ActivityManager
+   - Added consistent data-testid attribute handling
+2. Race conditions in activity state updates
+   - Improved state update batching
+   - Removed redundant updates
+3. Drag and drop functionality
+   - Implemented Cypress-compatible drag and drop
+   - Added position-based drop indicators
+   - Used element positions for more reliable reordering
+
+#### Solution Implementation
+1. ActivityManager changes:
+   - Added position-based drag and drop handling
+   - Improved button state management
+   - Fixed activity reordering logic
+2. CSS updates:
+   - Added drag and drop visual indicators
+   - Implemented top/bottom drop zone styling
+   - Fixed button visibility states
+
+#### Test Coverage
+Successfully verified:
+- Adding activities in planning mode
+- Button disabled state management
+- Activity reordering via drag and drop
+- State transitions from planning to activity mode
+- Form visibility in different states
+
+#### Lessons Learned
+1. End-to-end tests require careful coordination of component state
+2. Cypress synthetic events need special handling for drag and drop
+3. State updates should be batched when possible
+4. Component responsibilities need clear boundaries
+5. Visual indicators improve both UX and test reliability
+
 ## Current Progress on 4-State Model Implementation
 - ✅ Progress bar color states
 - ✅ State transition validation
