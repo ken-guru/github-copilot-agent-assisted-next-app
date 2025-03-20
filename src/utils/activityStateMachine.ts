@@ -48,9 +48,6 @@ export class ActivityStateMachine {
     this.states.set(id, {
       id,
       state: 'PENDING',
-      startedAt: null,
-      completedAt: null,
-      removedAt: null
     });
   }
 
@@ -203,7 +200,7 @@ export class ActivityStateMachine {
    */
   hasStartedAny(): boolean {
     return Array.from(this.states.values()).some(
-      activity => activity.startedAt !== null
+      activity => activity.startedAt !== undefined
     );
   }
 

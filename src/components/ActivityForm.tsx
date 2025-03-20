@@ -26,6 +26,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
     <form 
       onSubmit={handleSubmit} 
       className={styles.form}
+      role="form"
     >
       <div className={styles.inputContainer}>
         <input

@@ -67,6 +67,12 @@ export function isActivitiesCompleted(params: {
     return false;
   }
   
+  // Special case: if all activities are removed without any being started,
+  // we should consider it not completed
+  if (removedActivityIds.length === allActivityIds.size && startedActivityIds.size === 0) {
+    return false;
+  }
+  
   // Use the state machine to determine if all activities are completed
   return stateMachine.isCompleted();
 }
