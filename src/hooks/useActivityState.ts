@@ -1,28 +1,39 @@
-import { useState, useCallback, useMemo } from 'react';
-import { Activity } from '../components/ActivityManager';
-import { isActivitiesCompleted } from '../utils/activityUtils';
+import { useState, useCallback, useEffect } from 'react';
+import { Activity } from '@/components/ActivityManager';
+import { useTimelineEntries } from './useTimelineEntries';
+import { isActivitiesCompleted } from '@/utils/activityUtils';
+
+export interface UseActivityStateProps {
+  onTimerStart?: () => void;
+}
 
 /**
- * Custom hook for managing activity state
+ * Main hook for activity state management
+ * Combines activity tracking and timeline entries
  */
-export const useActivityState = (onActivitiesCompleted?: () => void) => {
+export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [currentActivityId, setCurrentActivityId] = useState<string | null>(null);
+  const [currentActivity, setCurrentActivity] = useState<Activity | null>(null);
   const [completedActivityIds, setCompletedActivityIds] = useState<string[]>([]);
   const [allActivityIds, setAllActivityIds] = useState<Set<string>>(new Set());
   const [removedActivityIds, setRemovedActivityIds] = useState<string[]>([]);
+  const [startedActivityIds, setStartedActivityIds] = useState<Set<string>>(new Set());
+  const [allActivitiesCompleted, setAllActivitiesCompleted] = useState(false);
   
-  // Define handleActivitySelect early to avoid circular reference
+  const {
+    timelineEntries,
+    addTimelineEntry,
+    completeCurrentTimelineEntry,
+    resetTimelineEntries
+  } = useTimelineEntries();
+
+  // Define handleActivitySelect first since it's used by other functions
   const handleActivitySelect = useCallback((activity: Activity | null, justAdd: boolean = false) => {
     if (activity) {
       if (justAdd) {
         setActivities(prev => {
-          // Check if activity with this ID already exists
-          const exists = prev.some(a => a.id === activity.id);
-          if (!exists) {
-            return [...prev, activity];
-          }
-          return prev;
+          if (prev.some(a => a.id === activity.id)) return prev;
+          return [...prev, activity];
         });
         
         setAllActivityIds(prev => {
@@ -31,104 +42,134 @@ export const useActivityState = (onActivitiesCompleted?: () => void) => {
           return newSet;
         });
       } else {
-        setCurrentActivityId(activity.id);
-      }
-    } else {
-      // Complete current activity and check if all activities are completed
-      if (currentActivityId) {
-        setCompletedActivityIds(prev => [...prev, currentActivityId]);
-        setCurrentActivityId(null);
+        if (currentActivity) {
+          setCompletedActivityIds(prev => [...prev, currentActivity.id]);
+          completeCurrentTimelineEntry();
+        }
         
-        // Check after state update if all activities are completed
-        setTimeout(() => {
-          const isCompleted = isActivitiesCompleted({
-            completedActivityIds: [...completedActivityIds, currentActivityId!],
-            allActivityIds,
-            removedActivityIds
-          });
-          
-          if (isCompleted && onActivitiesCompleted) {
-            onActivitiesCompleted();
-          }
-        }, 0);
+        setCurrentActivity(activity);
+        setStartedActivityIds(prev => {
+          const newSet = new Set(prev);
+          newSet.add(activity.id);
+          return newSet;
+        });
+        addTimelineEntry(activity);
+        
+        if (!currentActivity && timelineEntries.length === 0) {
+          onTimerStart?.();
+        }
       }
-    }
-  }, [currentActivityId, completedActivityIds, allActivityIds, removedActivityIds, onActivitiesCompleted]);
-  
-  const addActivity = useCallback((activity: Activity) => {
-    setActivities(prev => [...prev, activity]);
-    setAllActivityIds(prev => {
-      const newSet = new Set(prev);
-      newSet.add(activity.id);
-      return newSet;
-    });
-  }, []);
-  
-  const removeActivity = useCallback((id: string) => {
-    setActivities(prev => prev.filter(activity => activity.id !== id));
-    setRemovedActivityIds(prev => [...prev, id]);
-    
-    // Check if the activity being removed is the current one
-    if (currentActivityId === id) {
-      setCurrentActivityId(null);
-    }
-    
-    // Remove from completed if it's there
-    setCompletedActivityIds(prev => prev.filter(activityId => activityId !== id));
-    
-    // Check after state update if all activities are completed
-    setTimeout(() => {
-      const isCompleted = isActivitiesCompleted({
-        completedActivityIds,
-        allActivityIds,
-        removedActivityIds: [...removedActivityIds, id]
-      });
+    } else if (currentActivity) {
+      setCompletedActivityIds(prev => [...prev, currentActivity.id]);
+      completeCurrentTimelineEntry();
+      setCurrentActivity(null);
       
-      if (isCompleted && onActivitiesCompleted) {
-        onActivitiesCompleted();
-      }
+      // Check completion status after state updates
+      setTimeout(() => {
+        checkActivitiesCompleted();
+      }, 0);
+    }
+  }, [currentActivity, timelineEntries.length, addTimelineEntry, completeCurrentTimelineEntry, onTimerStart]);
+
+  const handleActivityRemoval = useCallback((activityId: string) => {
+    if (currentActivity?.id === activityId) {
+      return;
+    }
+    
+    setActivities(prev => prev.filter(a => a.id !== activityId));
+    setRemovedActivityIds(prev => [...prev, activityId]);
+    setCompletedActivityIds(prev => prev.filter(id => id !== activityId));
+    
+    setTimeout(() => {
+      checkActivitiesCompleted();
     }, 0);
-  }, [currentActivityId, completedActivityIds, allActivityIds, removedActivityIds, onActivitiesCompleted]);
-  
-  const resetActivityTracking = useCallback(() => {
+  }, [currentActivity]);
+
+  // Define reset function before it's used in initializeActivities
+  const resetActivities = useCallback(() => {
     setActivities([]);
-    setCurrentActivityId(null);
+    setCurrentActivity(null);
     setCompletedActivityIds([]);
     setAllActivityIds(new Set());
     setRemovedActivityIds([]);
-  }, []);
-  
-  // Initialize with default activities if needed
+    setStartedActivityIds(new Set());
+    resetTimelineEntries();
+    setAllActivitiesCompleted(false);
+  }, [resetTimelineEntries]);
+
+  // Now we can safely use resetActivities in initializeActivities
   const initializeActivities = useCallback((defaultActivities: Activity[] = []) => {
-    // Reset everything first
-    resetActivityTracking();
-    
-    // Then add each default activity
+    resetActivities();
     defaultActivities.forEach(activity => {
       handleActivitySelect(activity, true);
     });
-  }, [resetActivityTracking, handleActivitySelect]);
-  
-  // Compute if all activities are completed
-  const areActivitiesCompleted = useMemo(() => {
-    return isActivitiesCompleted({
-      completedActivityIds,
-      allActivityIds,
-      removedActivityIds
-    });
-  }, [completedActivityIds, allActivityIds, removedActivityIds]);
-  
+  }, [handleActivitySelect, resetActivities]);
+
+  const checkActivitiesCompleted = useCallback(() => {
+    if (currentActivity) {
+      setAllActivitiesCompleted(false);
+      return false;
+    }
+    
+    if (allActivityIds.size === 0) {
+      setAllActivitiesCompleted(false);
+      return false;
+    }
+    
+    // Calculate remaining activities (not removed)
+    const remainingActivities = Array.from(allActivityIds).filter(
+      id => !removedActivityIds.includes(id)
+    );
+    
+    // If all activities were removed and none were started, not complete
+    if (remainingActivities.length === 0 && startedActivityIds.size === 0) {
+      setAllActivitiesCompleted(false);
+      return false;
+    }
+    
+    // If there are remaining activities, they must all be completed
+    if (remainingActivities.length > 0) {
+      const allRemaining = remainingActivities.every(
+        id => completedActivityIds.includes(id)
+      );
+      
+      // Only mark as completed if at least one activity was started
+      if (allRemaining && startedActivityIds.size > 0) {
+        setAllActivitiesCompleted(true);
+        return true;
+      }
+    } else if (startedActivityIds.size > 0) {
+      // If no remaining activities but some were started and completed
+      setAllActivitiesCompleted(true);
+      return true;
+    }
+    
+    setAllActivitiesCompleted(false);
+    return false;
+  }, [currentActivity, allActivityIds, removedActivityIds, completedActivityIds, startedActivityIds]);
+
+  useEffect(() => {
+    checkActivitiesCompleted();
+  }, [
+    checkActivitiesCompleted,
+    currentActivity, 
+    activities, 
+    completedActivityIds,
+    allActivityIds,
+    removedActivityIds,
+    startedActivityIds
+  ]);
+
   return {
     activities,
-    currentActivityId,
+    currentActivity,
+    timelineEntries,
     completedActivityIds,
-    initializeActivities,
+    allActivitiesCompleted,
     handleActivitySelect,
-    addActivity,
-    removeActivity,
-    resetActivityTracking,
-    areActivitiesCompleted
+    handleActivityRemoval,
+    checkActivitiesCompleted,
+    resetActivities,
+    initializeActivities
   };
-};
-
-export default useActivityState;
+}

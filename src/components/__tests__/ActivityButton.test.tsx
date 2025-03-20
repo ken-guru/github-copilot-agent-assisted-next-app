@@ -315,4 +315,120 @@ describe('ActivityButton', () => {
       expect(screen.queryByText('Continue to iterate?')).not.toBeInTheDocument();
     });
   });
+
+  describe('Iteration Prompt Feature', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('shows iteration prompt after completing activity', async () => {
+      render(<ActivityButton {...defaultProps} isRunning={true} />);
+
+      // Click the complete button
+      fireEvent.click(screen.getByRole('button', { name: 'Complete' }));
+
+      // Fast-forward time by 3 seconds to complete the activity
+      act(() => {
+        jest.advanceTimersByTime(3100);
+      });
+
+      // Check that the iteration prompt appears
+      expect(screen.getByText('Continue to iterate?')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Yes' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'No' })).toBeInTheDocument();
+    });
+
+    it('restarts activity when clicking Yes', async () => {
+      render(<ActivityButton {...defaultProps} isRunning={true} />);
+
+      // Click the complete button
+      fireEvent.click(screen.getByRole('button', { name: 'Complete' }));
+
+      // Fast-forward time by 3 seconds
+      act(() => {
+        jest.advanceTimersByTime(3100);
+      });
+
+      // Click Yes to restart
+      fireEvent.click(screen.getByRole('button', { name: 'Yes' }));
+
+      // Should call onSelect with the activity
+      expect(defaultProps.onSelect).toHaveBeenCalledWith(defaultActivity);
+
+      // Prompt should be dismissed
+      expect(screen.queryByText('Continue to iterate?')).not.toBeInTheDocument();
+    });
+
+    it('dismisses prompt when clicking No', async () => {
+      render(<ActivityButton {...defaultProps} isRunning={true} />);
+
+      // Click the complete button
+      fireEvent.click(screen.getByRole('button', { name: 'Complete' }));
+
+      // Fast-forward time by 3 seconds
+      act(() => {
+        jest.advanceTimersByTime(3100);
+      });
+
+      // Click No to dismiss
+      fireEvent.click(screen.getByRole('button', { name: 'No' }));
+
+      // Prompt should be dismissed
+      expect(screen.queryByText('Continue to iterate?')).not.toBeInTheDocument();
+
+      // onSelect should not be called again
+      expect(defaultProps.onSelect).toHaveBeenCalledTimes(1);
+    });
+
+    it('auto-dismisses iteration prompt after timeout', async () => {
+      render(<ActivityButton {...defaultProps} isRunning={true} />);
+
+      // Click the complete button
+      fireEvent.click(screen.getByRole('button', { name: 'Complete' }));
+
+      // Fast-forward time by 3 seconds to complete activity
+      act(() => {
+        jest.advanceTimersByTime(3100);
+      });
+
+      // Verify prompt is shown
+      expect(screen.getByText('Continue to iterate?')).toBeInTheDocument();
+
+      // Fast-forward time by 5 seconds (iteration prompt timeout)
+      act(() => {
+        jest.advanceTimersByTime(5000);
+      });
+
+      // Prompt should be dismissed
+      expect(screen.queryByText('Continue to iterate?')).not.toBeInTheDocument();
+    });
+
+    it('cleans up timeouts on unmount', () => {
+      const { unmount } = render(<ActivityButton {...defaultProps} isRunning={true} />);
+
+      // Click the complete button
+      fireEvent.click(screen.getByRole('button', { name: 'Complete' }));
+
+      // Fast-forward time by 3 seconds
+      act(() => {
+        jest.advanceTimersByTime(3100);
+      });
+
+      // Spy on clearTimeout
+      const clearTimeoutSpy = jest.spyOn(window, 'clearTimeout');
+
+      // Unmount the component
+      unmount();
+
+      // Check if clearTimeout was called
+      expect(clearTimeoutSpy).toHaveBeenCalled();
+
+      // Restore the spy
+      clearTimeoutSpy.mockRestore();
+    });
+  });
 });

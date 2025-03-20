@@ -4,6 +4,31 @@ import { TimelineEntry } from '../hooks/useTimelineEntries';
 import { formatTime } from '@/utils/timeUtils';
 import styles from './ActivityButton.module.css';
 
+interface IconProps {
+  className?: string;
+}
+
+// Icon components
+const PlayIcon: React.FC<IconProps> = ({ className }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M4 3.5L12 8L4 12.5V3.5Z" fill="currentColor"/>
+  </svg>
+);
+
+const CheckIcon: React.FC<IconProps> = ({ className }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const TrashIcon: React.FC<IconProps> = ({ className }) => (
+  <svg width="16" height="16" viewBox="0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M2 4H14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    <path d="M5 4V3C5 2.44772 5.44772 2 6 2H10C10.5523 2 11 2.44772 11 3V4" stroke="currentColor" strokeWidth="2"/>
+    <path d="M12 4V13C12 13.5523 11.5523 14 11 14H5C4.44772 14 4 13.5523 4 13V4" stroke="currentColor" strokeWidth="2"/>
+  </svg>
+);
+
 interface ActivityButtonProps {
   activity: Activity;
   isCompleted: boolean;
@@ -18,7 +43,7 @@ interface ActivityButtonProps {
 /**
  * ActivityButton component for displaying and interacting with activity items
  */
-const ActivityButton: React.FC<ActivityButtonProps> = ({
+export const ActivityButton: React.FC<ActivityButtonProps> = ({
   activity,
   isCompleted,
   isRunning,
@@ -144,129 +169,95 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
   
   return (
     <div 
-      className={isCompleted ? styles.completedActivityItem : styles.activityItem}
-      style={colors ? {
-        backgroundColor: colors.background,
-        borderColor: colors.border
-      } : undefined}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={styles.activityContainer}
+      data-testid={`activity-${activity.id}`}
+      style={{
+        backgroundColor: activity.colors?.background,
+        borderColor: activity.colors?.border,
+        color: activity.colors?.text
+      }}
     >
-      {/* Title */}
-      <span 
-        className={isCompleted ? styles.completedActivityName : styles.activityName}
-        style={colors ? { color: colors.text } : undefined}
-      >
-        {name}
-      </span>
-      
-      {/* Right side content grouped together */}
-      <div className={styles.activityRightContent}>
-        {/* Status */}
-        <div className={styles.activityStatus}>
-          {isRunning && !isPendingCompletion && (
-            <span className={styles.runningIndicator}>
-              <span className={styles.timerDisplay}>{formatTime(elapsedTime)}</span>
-            </span>
-          )}
-          {isCompleted && (
-            <span 
-              className={styles.completedTag}
-              style={colors ? {
-                color: colors.text,
-                borderColor: colors.border
-              } : undefined}
-              title="Completed"
-              aria-label="Completed"
+      <div className={`${styles.activityContent} ${isCompleted ? styles.completedActivityItem : styles.activityItem}`}>
+        <span className={isCompleted ? styles.completedActivityName : styles.activityName}>
+          {activity.name}
+        </span>
+        {isRunning && (
+          <div className={styles.timerDisplay}>
+            {formatTime(elapsedTime)}
+          </div>
+        )}
+      </div>
+      <div className={styles.activityActions}>
+        {isPendingCompletion && (
+          <div className={styles.completionProgressContainer}>
+            <div 
+              className={styles.completionProgressBar}
+              style={{ width: `${completionProgress}%` }}
+              data-testid={`completion-progress-${safeActivityName}`}
+            />
+            <button
+              type="button"
+              onClick={cancelCompletionDelay}
+              className={styles.cancelButton}
+              aria-label="Cancel completion"
             >
-              <svg className={styles.checkIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-              </svg>
-            </span>
-          )}
-          
-          {/* Iteration prompt */}
-          {showIterationPrompt && !isPendingCompletion && (
-            <div className={styles.iterationPrompt}>
-              <span className={styles.iterationQuestion}>Continue to iterate?</span>
-              <div className={styles.iterationActions}>
-                <button
-                  onClick={() => handleIterationResponse(true)}
-                  className={styles.iterationButton}
-                  aria-label="Yes"
-                >
-                  Yes
-                </button>
-                <button
-                  onClick={() => handleIterationResponse(false)}
-                  className={styles.iterationButton}
-                  aria-label="No"
-                >
-                  No
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-        
-        {/* Action buttons */}
-        {!isCompleted && !showIterationPrompt && (
-          <div className={styles.activityActions}>
-            {isPendingCompletion ? (
-              // Show cancel button and progress during pending completion
-              <div className={styles.completionDelayContainer}>
-                <div 
-                  className={styles.completionProgressBar}
-                  style={{ width: `${completionProgress}%` }}
-                  data-testid={`completion-progress-${safeActivityName}`}
-                ></div>
-                <button
-                  onClick={cancelCompletionDelay}
-                  className={styles.cancelCompletionButton}
-                  title="Cancel completion"
-                  aria-label="Cancel completion"
-                  data-testid={`cancel-completion-${safeActivityName}`}
-                >
-                  <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                  </svg>
-                </button>
-              </div>
-            ) : (
+              Cancel
+            </button>
+          </div>
+        )}
+        {showIterationPrompt ? (
+          <div className={styles.iterationPrompt}>
+            <span className={styles.iterationQuestion}>Continue to iterate?</span>
+            <div className={styles.iterationActions}>
               <button
-                onClick={handleClick}
-                className={isRunning ? styles.stopButton : styles.startButton}
-                disabled={isCompleted}
-                title={isRunning ? "Complete" : "Start"}
-                aria-label={isRunning ? "Complete" : "Start"}
-                data-testid={isRunning ? `complete-activity-${safeActivityName}` : `start-activity-${safeActivityName}`}
+                type="button"
+                onClick={() => handleIterationResponse(true)}
+                className={styles.iterationButton}
+                aria-label="Yes"
               >
-                {isRunning ? (
-                  <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                  </svg>
-                ) : (
-                  <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                )}
+                Yes
+              </button>
+              <button
+                type="button"
+                onClick={() => handleIterationResponse(false)}
+                className={styles.iterationButton}
+                aria-label="No"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {!isCompleted && (
+              <button
+                type="button"
+                onClick={handleClick}
+                className={isRunning ? styles.runningButton : styles.startButton}
+                aria-label={isRunning ? 'Complete' : 'Start'}
+                data-testid={isRunning ? `complete-activity-${activity.id}` : `start-activity-${activity.id}`}
+              >
+                {isRunning ? <CheckIcon className={styles.buttonIcon} /> : <PlayIcon className={styles.buttonIcon} />}
               </button>
             )}
-            {onRemove && !isPendingCompletion && (
+            {onRemove && (
               <button
-                onClick={handleRemove}
+                type="button"
+                onClick={() => onRemove(activity.id)}
                 className={styles.removeButton}
                 disabled={isInTimeline}
-                title={isInTimeline ? "Can't remove while activity is in use" : "Remove activity"}
                 aria-label="Remove"
-                data-testid={`remove-activity-${safeActivityName}`}
+                data-testid={`remove-activity-${activity.id}`}
               >
-                <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                </svg>
+                <TrashIcon className={styles.buttonIcon} />
               </button>
             )}
-          </div>
+            {isCompleted && (
+              <div className={styles.completedTag} aria-label="Completed">
+                <CheckIcon className={styles.checkIcon} />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -274,4 +265,3 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
 };
 
 export default ActivityButton;
-export { ActivityButton };

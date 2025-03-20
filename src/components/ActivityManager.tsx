@@ -185,7 +185,6 @@ export default function ActivityManager({
   const handleDragStart = (activity: Activity) => (e: React.DragEvent) => {
     if (!planningMode) return;
     setDraggedActivity(activity);
-    // Store the drag source element's position
     const rect = (e.target as HTMLElement).getBoundingClientRect();
     (e.target as HTMLElement).setAttribute('data-y', rect.top.toString());
   };
@@ -198,18 +197,13 @@ export default function ActivityManager({
       const dropRect = dropTarget.getBoundingClientRect();
       const dragY = parseFloat(document.querySelector(`[data-testid="activity-${draggedActivity.id}"]`)?.getAttribute('data-y') || '0');
       
-      dropTarget.classList.remove(styles.dragOver);
+      dropTarget.classList.remove(styles.dragOverTop, styles.dragOverBottom);
       if (dragY < dropRect.top) {
-        dropTarget.classList.add(styles.dragOverBottom);
-      } else {
         dropTarget.classList.add(styles.dragOverTop);
+      } else {
+        dropTarget.classList.add(styles.dragOverBottom);
       }
     }
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    if (!planningMode) return;
-    e.currentTarget.classList.remove(styles.dragOver);
   };
 
   const handleDrop = (activity: Activity) => (e: React.DragEvent) => {
@@ -227,12 +221,8 @@ export default function ActivityManager({
     
     const updatedActivities = [...activities];
     const [removed] = updatedActivities.splice(draggedIndex, 1);
-    const dragY = parseFloat(document.querySelector(`[data-testid="activity-${draggedActivity.id}"]`)?.getAttribute('data-y') || '0');
-    const dropRect = dropTarget.getBoundingClientRect();
-    
-    // Insert before or after based on drag position
-    const insertIndex = dragY < dropRect.top ? dropIndex : dropIndex + 1;
-    updatedActivities.splice(insertIndex, 0, removed);
+    const insertAt = draggedIndex < dropIndex ? dropIndex : dropIndex;
+    updatedActivities.splice(insertAt, 0, removed);
     
     // Update order property for all activities
     const reorderedActivities = updatedActivities.map((act, index) => ({
@@ -290,6 +280,8 @@ export default function ActivityManager({
       ) : (
         <div className={styles.activityList} role="list">
           {sortedActivities.map((activity) => {
+            const isCompleted = completedActivityIds.includes(activity.id);
+            const isRunning = activity.id === currentActivityId;
             const isInTimeline = isActivityInTimeline(activity.id, timelineEntries);
             
             return (
@@ -300,15 +292,15 @@ export default function ActivityManager({
                 draggable={!!planningMode}
                 onDragStart={handleDragStart(activity)}
                 onDragOver={handleDragOver(activity)}
-                onDragLeave={handleDragLeave}
+                onDragLeave={(e) => e.currentTarget.classList.remove(styles.dragOverTop, styles.dragOverBottom)}
                 onDrop={handleDrop(activity)}
                 onDragEnd={handleDragEnd}
                 data-testid={`activity-${activity.id}`}
               >
                 <ActivityButton
                   activity={activity}
-                  isCompleted={completedActivityIds.includes(activity.id)}
-                  isRunning={activity.id === currentActivityId}
+                  isCompleted={isCompleted}
+                  isRunning={isRunning}
                   onSelect={handleActivitySelect}
                   onRemove={onActivityRemove ? handleRemoveActivity : undefined}
                   timelineEntries={timelineEntries}

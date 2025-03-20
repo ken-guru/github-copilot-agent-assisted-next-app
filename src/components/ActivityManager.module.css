@@ -53,7 +53,7 @@
   opacity: 0.8;
 }
 
-.activityItem, .completedActivityItem {
+.activityItem {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
@@ -61,17 +61,22 @@
   padding: 0.75rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease;
-}
-
-.activityItem {
   border: 1px solid var(--border-color);
   background-color: var(--background);
   box-shadow: 0 1px 2px var(--segment-outline);
 }
 
 .completedActivityItem {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  grid-gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
   border: 1px solid var(--accent-color);
   background-color: var(--background-muted);
+  box-shadow: 0 1px 2px var(--segment-outline);
 }
 
 .activityListItem {
@@ -143,10 +148,10 @@
   color: var(--foreground-muted);
   font-weight: 600;
   font-size: 1rem;
-  text-decoration: line-through;
   margin: 0;
-  white-space: normal; /* Allow text wrapping */
-  word-break: break-word; /* Break long words if needed */
+  white-space: normal;
+  word-break: break-word;
+  text-decoration: line-through;
 }
 
 /* Status column styling */

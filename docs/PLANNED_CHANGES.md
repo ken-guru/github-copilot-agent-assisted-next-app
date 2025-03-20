@@ -202,3 +202,59 @@ Technical perspective:
 - [ ] Theme compatibility verified
 - [ ] All tests passing
 - [ ] Documentation updated
+
+# Test Suite Improvements
+
+## Context
+Several tests are currently failing due to mismatches between test expectations and actual implementation details. These issues need to be resolved to maintain a reliable test suite.
+
+## Current Test Issues
+1. `useActivityState.test.tsx` (7 failures):
+   - Missing `handleActivityRemoval` function in updated version
+   - Missing `allActivitiesCompleted` property
+   - Misalignment between timelineEntries logic and tests
+   - Circular dependency issues in hook implementation
+
+2. `ActivityManager.test.tsx` (6 failures):
+   - Form selector issues (tests can't find form element properly)
+   - Issues with completion of activities
+   - Drag-and-drop reordering test failures
+   - Selectors using outdated class names or IDs
+
+3. Console errors in tests:
+   - AppStateMachine state transition errors (expected in tests)
+   - Act warnings for asynchronous state updates
+
+## Requirements
+1. Align hook interfaces with test expectations
+   - Ensure `useActivityState` exports all methods needed by tests
+   - Fix circular references in hook implementations
+   - Update type definitions as needed
+
+2. Update test selectors to match current implementation
+   - Use data-testid attributes consistently
+   - Update form selection to use role="form"
+   - Fix drag-and-drop simulation in tests
+
+3. Improve test robustness
+   - Add more waitFor calls for async state updates
+   - Update queries to use more reliable selectors 
+   - Document expected console errors in tests
+
+## Technical Guidelines
+- Preserve existing behavior when fixing implementations
+- Use React Testing Library best practices for queries
+- Add ARIA attributes to improve test reliability
+- Consider test isolation to prevent cross-test pollution
+
+## Expected Outcome
+- All tests passing consistently
+- Improved test maintainability
+- Better alignment between implementation and tests
+- Clearer error messages when tests do fail
+
+## Validation Criteria
+- [ ] useActivityState tests passing
+- [ ] ActivityManager tests passing  
+- [ ] No unexpected console errors in tests
+- [ ] Test selector strategy documented for future maintenance

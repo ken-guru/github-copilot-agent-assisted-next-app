@@ -513,6 +513,110 @@ Successfully implemented all planned enhancements:
 4. CSS animations can be used effectively for visual feedback without complex JavaScript
 5. Visual hierarchy in the UI helps guide users to the next appropriate action
 
+### Issue: useActivityState Hook Test Failures Debugging Session
+**Date:** 2024-01-08
+**Tags:** #debugging #tests #hooks #state-management
+**Status:** In Progress
+
+#### Initial State
+- Seven failing tests in useActivityState.test.tsx
+- Tests expecting handleActivityRemoval function and allActivitiesCompleted property
+- Implementation and test expectations misaligned
+- Activity completion state not being properly tracked
+
+#### Debug Process
+1. Initial Investigation
+   - Examined useActivityState implementation
+   - Found missing handleActivityRemoval function
+   - Discovered allActivitiesCompleted state not being tracked
+   - Identified circular dependency in hook initialization
+
+2. First Solution Attempt
+   - Added handleActivityRemoval function
+   - Added allActivitiesCompleted state
+   - Implemented basic activity tracking
+   - Outcome: Tests still failing due to completion logic mismatch
+
+3. Current Solution Implementation
+   - Added startedActivityIds tracking
+   - Implemented more accurate completion check logic
+   - Added timeout for state updates
+   - Fixed circular dependency by reordering function definitions
+   - Added proper activity ID tracking with Set
+   - Modified completion logic to match test expectations
+
+#### Investigation Details
+The tests revealed several key requirements:
+1. Activities should be considered completed when:
+   - All activities have been started and completed, OR
+   - Some activities completed and rest removed
+2. Activities should NOT be considered completed when:
+   - All activities removed without starting any
+   - Some activities still running
+   - No activities have been started
+
+#### Current Progress
+- Fixed circular dependency issues
+- Implemented proper activity state tracking
+- Added missing functions and properties
+- Updated completion logic
+- Working on final test verifications
+
+#### Lessons Learned So Far
+1. State tracking requires careful consideration of:
+   - Which activities have been started
+   - Which activities have been completed
+   - Which activities have been removed
+2. Test expectations often reveal implicit requirements
+3. State updates may need timeouts for proper test synchronization
+4. Circular dependencies can be resolved through careful function ordering
+5. Using Sets for ID tracking can simplify state management
+
+#### Next Steps
+1. Run tests to verify current implementation
+2. Fix any remaining test failures
+3. Document final solution approach
+4. Update related components if needed
+
+### Issue: ActivityButton Iteration Prompt Debugging Session
+**Date:** 2024-01-24
+**Tags:** #debugging #tests #ui-components #activity-state
+**Status:** Resolved
+
+#### Initial State
+- Missing iteration prompt functionality after activity completion
+- Inconsistent handling of activity state during transitions
+- No proper cleanup of timers and intervals
+
+#### Debug Process
+1. Component Structure Investigation
+   - Identified need for proper state management for iteration prompt
+   - Found missing timer cleanup on component unmount
+   - Discovered potential memory leaks from uncleaned intervals
+
+2. Solution Implementation
+   - Added showIterationPrompt state and management
+   - Implemented iteration prompt UI with Yes/No buttons
+   - Added auto-dismiss functionality with 5-second timeout
+   - Added proper cleanup of all timers in useEffect
+
+3. Test Coverage
+   - Added comprehensive test suite for iteration prompt
+   - Verified proper timeout handling
+   - Confirmed prompt dismissal behaviors
+   - Validated state management during transitions
+
+#### Resolution
+- Successfully implemented iteration prompt with proper state management
+- Added comprehensive test coverage
+- Ensured proper cleanup of all timers and intervals
+- Verified smooth transitions between states
+
+#### Lessons Learned
+- Importance of proper timer cleanup in React components
+- Need for comprehensive testing of timeout-based features
+- Value of proper state management for UI transitions
+
 ## Current Progress on 4-State Model Implementation
 - ✅ Progress bar color states
 - ✅ State transition validation

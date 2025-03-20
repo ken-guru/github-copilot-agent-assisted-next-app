@@ -58,7 +58,7 @@ describe('ActivityManager Component', () => {
   });
   
   it('should allow adding a new activity', async () => {
-    const { container } = render(
+    render(
       <ActivityManager 
         onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
@@ -68,15 +68,13 @@ describe('ActivityManager Component', () => {
       />
     );
     
-    // Find the form and input
-    const form = container.querySelector('form');
-    if (!form) throw new Error('Form not found');
+    // Find the form elements using proper role queries
+    const input = screen.getByRole('textbox', { name: /new activity name/i });
+    const addButton = screen.getByRole('button', { name: /add/i });
     
-    const input = screen.getByTestId('activity-input');
+    // Add a new activity
     fireEvent.change(input, { target: { value: 'New Test Activity' } });
-    
-    // Submit the form
-    fireEvent.submit(form);
+    fireEvent.click(addButton);
     
     // New activity should appear in the list
     expect(await screen.findByText('New Test Activity')).toBeInTheDocument();
@@ -209,7 +207,7 @@ describe('ActivityManager Component', () => {
   });
   
   it('should disable adding activities when time is up', async () => {
-    const { container } = render(
+    render(
       <ActivityManager 
         onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
@@ -220,16 +218,16 @@ describe('ActivityManager Component', () => {
       />
     );
     
-    // Find the add button within the form
-    const form = container.querySelector('form');
-    if (!form) throw new Error('Form not found');
+    // Find form elements using proper role queries
+    const input = screen.getByRole('textbox');
+    const addButton = screen.getByRole('button', { name: /add/i });
     
-    const addButton = form.querySelector('button[type="submit"]');
-    expect(addButton).toHaveAttribute('disabled');
+    // Verify disabled state
+    expect(input).toBeDisabled();
+    expect(addButton).toBeDisabled();
     
-    // Input should have different placeholder
-    const input = screen.getByPlaceholderText('Time is up!');
-    expect(input).toHaveAttribute('disabled');
+    // Verify placeholder text
+    expect(input).toHaveAttribute('placeholder', 'Time is up!');
   });
   
   it('should start an activity when clicking Start', async () => {
