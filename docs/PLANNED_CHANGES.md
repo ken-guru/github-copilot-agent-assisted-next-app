@@ -136,6 +136,7 @@ The core state machine transition from 3-state to 4-state model has been partial
 - Initial drag-and-drop functionality for activity reordering is implemented
 - Test coverage for state transitions exists
 - Completed State UI Enhancement implemented with success message and improved reset flow (2024-06-26)
+- Activity Iteration functionality implemented with proper testing and validation (2024-01-24)
 
 The remaining features focus on UI/UX improvements and state-specific behavior modifications.
 
