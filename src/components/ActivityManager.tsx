@@ -36,7 +36,7 @@ export default function ActivityManager({
   currentActivityId, 
   completedActivityIds,
   timelineEntries,
-  planningMode = false, // Default to false (Activity mode)
+  planningMode = false,
   isTimeUp = false,
   elapsedTime = 0,
   onStartActivities
@@ -58,36 +58,15 @@ export default function ActivityManager({
   useEffect(() => {
     if (hasInitializedActivities) return;
     
+    // Always start with empty list in planning mode
     if (planningMode) {
-      // In planning mode, we start with an empty list
       setHasInitializedActivities(true);
       setActivities([]);
       setAssignedColorIndices([]);
-    } else {
-      // In activity mode, initialize with default activities
-      const defaultActivities = [
-        { id: 'homework', name: 'Homework', colorIndex: 0, order: 0 },
-        { id: 'reading', name: 'Reading', colorIndex: 1, order: 1 },
-        { id: 'play-time', name: 'Play Time', colorIndex: 2, order: 2 },
-        { id: 'chores', name: 'Chores', colorIndex: 3, order: 3 }
-      ].map(activity => ({
-        ...activity,
-        colors: getNextAvailableColorSet(activity.colorIndex)
-      }));
-      
-      // Set initial state
-      setAssignedColorIndices(defaultActivities.map(a => a.colorIndex!));
-      setActivities(defaultActivities);
-      
-      // Add each activity to the state machine
-      defaultActivities.forEach(activity => {
-        onActivitySelect(activity, true);
-      });
-      
-      setHasInitializedActivities(true);
     }
-  }, [hasInitializedActivities, onActivitySelect, planningMode]);
-  
+    setHasInitializedActivities(true);
+  }, [hasInitializedActivities, planningMode]);
+
   // Listen for theme changes
   useEffect(() => {
     const updateColors = () => {
@@ -266,18 +245,20 @@ export default function ActivityManager({
       {planningMode && (
         <ActivityForm
           onAddActivity={handleAddActivity}
-          isDisabled={isTimeUp || (!planningMode && timelineEntries.length > 0)}
+          isDisabled={isTimeUp}
           data-testid="activity-input"
         />
       )}
       
-      {!hasActivities ? (
-        <div className={styles.emptyState}>
+      {!hasActivities && (
+        <div className={styles.emptyState} role="status">
           {planningMode 
             ? 'Add activities to get started' 
             : 'No activities defined'}
         </div>
-      ) : (
+      )}
+      
+      {hasActivities && (
         <div className={styles.activityList} role="list">
           {sortedActivities.map((activity) => {
             const isCompleted = completedActivityIds.includes(activity.id);
@@ -312,7 +293,7 @@ export default function ActivityManager({
           })}
         </div>
       )}
-      
+
       {showStartButton && (
         <button
           className={styles.startActivitiesButton}

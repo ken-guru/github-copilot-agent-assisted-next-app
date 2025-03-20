@@ -601,5 +601,103 @@ describe('ActivityManager Component', () => {
         });
       });
     });
+
+    it('should start with empty state in planning mode', () => {
+      render(
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          planningMode={true}
+          onStartActivities={jest.fn()}
+        />
+      );
+      
+      // Should show planning mode heading
+      expect(screen.getByText('Plan Your Activities')).toBeInTheDocument();
+      
+      // Should show empty state message
+      expect(screen.getByText('Add activities to get started')).toBeInTheDocument();
+      
+      // Should not render any default activities
+      expect(screen.queryByText('Homework')).not.toBeInTheDocument();
+      expect(screen.queryByText('Reading')).not.toBeInTheDocument();
+      expect(screen.queryByText('Play Time')).not.toBeInTheDocument();
+      expect(screen.queryByText('Chores')).not.toBeInTheDocument();
+    });
+
+    it('should disable Start Activities button when no activities exist', () => {
+      render(
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          planningMode={true}
+          onStartActivities={jest.fn()}
+        />
+      );
+
+      const startButton = screen.getByRole('button', { name: /start activities/i });
+      expect(startButton).toBeDisabled();
+      expect(startButton).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    it('should enable Start Activities button when activities are added', async () => {
+      render(
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          planningMode={true}
+          onStartActivities={jest.fn()}
+        />
+      );
+
+      // Add an activity
+      const input = screen.getByPlaceholderText(/new activity name/i);
+      fireEvent.change(input, { target: { value: 'Test Activity' } });
+      fireEvent.click(screen.getByText('Add'));
+
+      // Start Activities button should be enabled
+      const startButton = screen.getByRole('button', { name: /start activities/i });
+      expect(startButton).not.toBeDisabled();
+      expect(startButton).toHaveAttribute('aria-disabled', 'false');
+    });
+
+    it('should maintain empty state message when all activities are removed', () => {
+      render(
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          planningMode={true}
+          onStartActivities={jest.fn()}
+        />
+      );
+
+      // Add and then remove an activity
+      const input = screen.getByPlaceholderText(/new activity name/i);
+      fireEvent.change(input, { target: { value: 'Test Activity' } });
+      fireEvent.click(screen.getByText('Add'));
+
+      // Remove the activity
+      fireEvent.click(screen.getByLabelText(/remove test activity/i));
+
+      // Should show empty state message again
+      expect(screen.getByText('Add activities to get started')).toBeInTheDocument();
+      
+      // Start Activities button should be disabled again
+      const startButton = screen.getByRole('button', { name: /start activities/i });
+      expect(startButton).toBeDisabled();
+      expect(startButton).toHaveAttribute('aria-disabled', 'true');
+    });
   });
 });

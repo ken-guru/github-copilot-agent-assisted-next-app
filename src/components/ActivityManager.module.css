@@ -288,20 +288,31 @@
 
 .emptyState {
   text-align: center;
-  padding: 2rem;
-  color: var(--foreground-muted);
-  background-color: var(--background-muted);
-  border-radius: 0.25rem;
-  margin: 1rem 0;
+  padding: 2.5rem;
+  margin: 2rem 0;
   color: var(--text-muted);
   background: var(--background-muted);
+  border: 1px dashed var(--border-color);
   border-radius: 0.5rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
 }
 
-/* Media query for smaller screens */
+.emptyState:hover {
+  border-style: solid;
+  transform: scale(1.01);
+}
+
 @media (max-width: 768px) {
   .container {
     padding: .5rem;  
+  }
+}
+
+@media (max-width: 768px) {
+  .emptyState {
+    padding: 1.5rem;
+    margin: 1rem 0;
   }
 }
 
