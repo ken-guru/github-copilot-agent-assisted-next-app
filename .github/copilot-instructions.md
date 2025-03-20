@@ -44,3 +44,51 @@
      - Security implications
      - Added complexity
      - Maintenance status of the package
+
+## Debugging Process Documentation
+
+1. **Memory Log Updates During Debugging**:
+   - Document each significant debugging step in the Memory Log
+   - Include failed attempts and their outcomes
+   - Note any unexpected behavior or test failures
+   - Tag entries appropriately for future reference
+
+2. **Debugging Entry Format**:
+   ```markdown
+   ### Issue: [Test/Feature Name] Debugging Session
+   **Date:** YYYY-MM-DD
+   **Tags:** #debugging #tests #[relevant-area]
+   **Status:** [In Progress|Resolved|Blocked]
+
+   #### Initial State
+   - Description of the failing tests/features
+   - Error messages or unexpected behavior
+   - Current implementation state
+
+   #### Debug Process
+   1. First investigation step
+      - What was examined
+      - What was found
+      - Next steps determined
+
+   2. Solution attempts
+      - What was tried
+      - Outcome
+      - Why it did/didn't work
+
+   #### Resolution (if reached)
+   - Final solution implemented
+   - Why it worked
+   - Tests affected
+
+   #### Lessons Learned
+   - Key insights gained
+   - Patterns identified
+   - Future considerations
+   ```
+
+3. **Real-Time Documentation**:
+   - Update Memory Log entries as debugging progresses
+   - Include all significant solution attempts
+   - Document both successful and failed approaches
+   - Note any patterns or recurring issues
