@@ -41,6 +41,20 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     resetTimelineEntries
   } = useTimelineEntries();
 
+  // Initialize activities with ordered activities from Planning state
+  const initializeActivities = useCallback((orderedActivities: Activity[]) => {
+    // Reset any existing activities
+    resetActivityTracking();
+    
+    // Add each activity to the state machine in the specified order
+    orderedActivities.forEach(activity => {
+      addActivity(activity.id);
+      
+      // Just add the activity, don't start it yet
+      handleActivitySelect(activity, true);
+    });
+  }, [resetActivityTracking, addActivity, handleActivitySelect]);
+
   const handleActivitySelect = useCallback((activity: Activity | null, justAdd: boolean = false) => {
     if (activity) {
       // Add activity to the state machine if it's not already there
@@ -145,6 +159,7 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     handleActivityRemoval,
     checkActivitiesCompleted,
     resetActivities,
+    initializeActivities,
     getCurrentActivityState,
     getActivityState
   };

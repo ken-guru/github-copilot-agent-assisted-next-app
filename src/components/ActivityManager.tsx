@@ -23,7 +23,7 @@ interface ActivityManagerProps {
   planningMode?: boolean; // New prop for planning mode
   isTimeUp?: boolean;
   elapsedTime?: number;
-  onStartActivities?: () => void; // New prop for transitioning to Activity state
+  onStartActivities?: (orderedActivities?: Activity[]) => void; // Modified to pass ordered activities
 }
 
 function isActivityInTimeline(activityId: string, timelineEntries: TimelineEntry[]) {
@@ -259,6 +259,14 @@ export default function ActivityManager({
   // Sort activities by order before rendering
   const sortedActivities = [...activities].sort((a, b) => (a.order || 0) - (b.order || 0));
   
+  // Handler for the Start Activities button
+  const handleStartActivities = () => {
+    if (onStartActivities) {
+      // Pass the sorted activities to preserve order when transitioning to Activity state
+      onStartActivities(sortedActivities);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <h2 className={styles.heading}>
@@ -316,7 +324,7 @@ export default function ActivityManager({
       {showStartButton && (
         <button
           className={styles.startActivitiesButton}
-          onClick={onStartActivities}
+          onClick={handleStartActivities}
           disabled={!hasActivities}
           aria-disabled={!hasActivities}
           aria-label="Start Activities"

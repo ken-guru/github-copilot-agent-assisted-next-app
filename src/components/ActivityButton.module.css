@@ -73,7 +73,8 @@
 
 .startButton,
 .stopButton,
-.removeButton {
+.removeButton,
+.cancelCompletionButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -88,13 +89,15 @@
 
 .startButton:hover,
 .stopButton:hover,
-.removeButton:hover {
+.removeButton:hover,
+.cancelCompletionButton:hover {
   opacity: 1;
 }
 
 .startButton:disabled,
 .stopButton:disabled,
-.removeButton:disabled {
+.removeButton:disabled,
+.cancelCompletionButton:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
@@ -108,4 +111,80 @@
 .timerDisplay {
   font-family: var(--font-mono);
   font-size: 0.875rem;
+}
+
+/* Styles for the completion delay feature */
+.completionDelayContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 80px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: var(--background-secondary);
+  overflow: hidden;
+}
+
+.completionProgressBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: var(--accent-color);
+  opacity: 0.5;
+  z-index: 1;
+  transition: width 0.03s linear;
+}
+
+.cancelCompletionButton {
+  position: relative;
+  z-index: 2;
+  margin-left: auto;
+  background-color: var(--background-secondary);
+  border-radius: 50%;
+  padding: 2px;
+  width: 20px;
+  height: 20px;
+  margin-right: 2px;
+}
+
+.cancelCompletionButton:hover {
+  background-color: var(--background-hover);
+}
+
+/* Styles for the iteration prompt feature */
+.iterationPrompt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--background-secondary);
+  border-radius: 12px;
+  padding: 4px 8px;
+  font-size: 0.875rem;
+}
+
+.iterationQuestion {
+  color: var(--text-muted);
+}
+
+.iterationActions {
+  display: flex;
+  gap: 4px;
+}
+
+.iterationButton {
+  background-color: var(--background-hover);
+  border: none;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iterationButton:hover {
+  background-color: var(--accent-color);
+  color: var(--background-primary);
 }

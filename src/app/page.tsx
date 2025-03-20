@@ -9,6 +9,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useAppState } from '@/hooks/useAppState';
 import { useTimerState } from '@/hooks/useTimerState';
+import { Activity } from '@/components/ActivityManager';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -40,6 +41,7 @@ export default function Home() {
     handleActivitySelect,
     handleActivityRemoval,
     resetActivities,
+    initializeActivities,
   } = useActivityState();
   
   const {
@@ -59,7 +61,12 @@ export default function Home() {
     moveToPlanning();
   };
   
-  const handleStartActivity = () => {
+  const handleStartActivity = (activities: Activity[]) => {
+    // Initialize activities with the ordered activities from the Planning state
+    if (activities && activities.length > 0) {
+      initializeActivities(activities);
+    }
+    
     // Transition from Planning to Activity state
     moveToActivity();
   };
