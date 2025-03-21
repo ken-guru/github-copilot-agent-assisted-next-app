@@ -83,6 +83,33 @@ describe('ActivityManager Component', () => {
     // It should have assigned a color to the activity
     expect(colorUtils.getNextAvailableColorSet).toHaveBeenCalled();
   });
+
+  it('should add activity in pending state without starting it', async () => {
+    render(
+      <ActivityManager 
+        onActivitySelect={mockOnActivitySelect}
+        onActivityRemove={mockOnActivityRemove}
+        currentActivityId={null}
+        completedActivityIds={[]}
+        timelineEntries={[]}
+      />
+    );
+    
+    // Type in a new activity name
+    const input = screen.getByPlaceholderText('New activity name');
+    fireEvent.change(input, { target: { value: 'New Test Activity' } });
+    
+    // Click the Add button
+    fireEvent.click(screen.getByText('Add'));
+
+    // Should call onActivitySelect with the new activity and justAdd=true
+    expect(mockOnActivitySelect).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'New Test Activity'
+      }),
+      true
+    );
+  });
   
   it('should mark an activity as completed when clicking Complete', async () => {
     render(
