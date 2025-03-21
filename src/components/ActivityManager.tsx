@@ -126,8 +126,8 @@ export default function ActivityManager({
     
     setAssignedColorIndices([...assignedColorIndices, nextColorIndex]);
     setActivities([...activities, newActivity]);
-    // Just add the activity without starting it
-    onActivitySelect(newActivity);
+    // Pass true as second argument to just add the activity without starting it
+    onActivitySelect(newActivity, true);
   };
 
   const handleActivitySelect = (activity: Activity) => {

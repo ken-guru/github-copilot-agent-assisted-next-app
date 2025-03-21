@@ -273,3 +273,37 @@ interface ActivityState {
    - Clearer activity state feedback
    - Consistent behavior across scenarios
    - Reliable completion handling
+
+## Activity Auto-Start Prevention (2024-01-20)
+
+### Context
+Previously, activities would automatically start when added to the list, leading to unintended state transitions and potential timing inaccuracies.
+
+### Implementation Details
+1. Modified ActivityManager component to use `justAdd` parameter when adding new activities
+2. Ensured default activities are added in pending state during initialization
+3. Updated tests to verify correct activity state handling
+
+### Technical Details
+- Activities now start in PENDING state when added
+- Added unit test to verify new activities don't auto-start
+- Maintained compatibility with existing activity state machine
+- Preserved existing state transition rules
+
+### Benefits Achieved
+1. User Experience:
+   - Activities remain in pending state until explicitly started
+   - More predictable activity transitions
+   - Better control over activity timing
+   - Accurate activity duration tracking
+
+2. Technical Improvements:
+   - Clearer activity state management
+   - More reliable state transitions
+   - Better test coverage for activity states
+   - Eliminated unintended state changes
+
+### Verification
+- All unit tests passing (168 tests)
+- End-to-end tests passing (6 scenarios)
+- Manual testing confirms expected behavior

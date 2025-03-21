@@ -31,36 +31,6 @@ How this affects users/functionality
 
 ## Current Bugs
 
-### Activity Auto-Start Issue
-
-#### Description
-The system automatically starts new activities without user confirmation when they are added to the list.
-
-#### Current Behavior
-1. New activities start immediately upon creation
-2. Currently running activities are automatically marked as completed
-
-#### Expected Behavior
-1. New activities should remain in a "ready" state until explicitly started by the user
-2. Currently running activities should only complete when the user chooses to end them
-
-#### Steps to Reproduce
-1. Start an activity
-2. While that activity is running, create a new activity
-3. Observe that the new activity starts automatically
-
-#### Impact
-- Removes user control over activity timing
-- Creates unintended activity state transitions
-- May result in inaccurate activity durations
-
-#### Related Components
-- ActivityManager
-- useActivityState
-- activityStateMachine
-
----
-
 ### Incorrect Activity Order in Summary
 
 #### Description
