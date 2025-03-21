@@ -24,4 +24,35 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 ```
 
 ## Issue Log
-<!-- Entries will be added here as issues are addressed -->
+
+### Issue: MRTMLY-001: Progress Bar Mobile Layout Enhancement
+- **Date:** 2024-01-27
+- **Tags:** #mobile #layout #progress-bar #optimization #responsive-design
+
+#### Initial State
+- Progress bar time markers positioned below the bar in mobile view
+- Layout not optimized for mobile viewport
+- Progress bar component had same behavior across all viewports
+
+#### Implementation Process
+1. Mobile-First Approach
+   - Added mobile viewport detection with `window.matchMedia`
+   - Implemented conditional rendering based on viewport size
+   - Created mobile-specific CSS classes and styling
+
+2. Time Markers Positioning
+   - Moved time markers above progress bar in mobile view
+   - Used flexbox order property for layout control
+   - Maintained existing desktop layout
+
+#### Resolution
+- Successfully implemented mobile-optimized layout
+- All tests passing (163/163)
+- Maintained accessibility and theme compatibility
+- No regressions in desktop view
+
+#### Lessons Learned
+- Using CSS order property provides clean DOM structure while allowing visual reordering
+- Window.matchMedia with useEffect provides reliable viewport detection
+- Test mocking for matchMedia is essential for reliable tests
+- Mobile-specific styles should be clearly separated for maintainability
