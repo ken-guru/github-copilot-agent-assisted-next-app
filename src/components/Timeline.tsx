@@ -45,31 +45,41 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
 
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
   const hasEntries = entries.length > 0;
-  // Track current elapsed time for running calculations
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
+  
+  // Update current elapsed time when prop changes
+  useEffect(() => {
+    setCurrentElapsedTime(initialElapsedTime);
+  }, [initialElapsedTime]);
   
   // Update elapsed time with a timer if active
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     
     if (timerActive && hasEntries) {
-      interval = setInterval(() => {
+      const updateElapsedTime = () => {
         const activeEntry = entries.find(e => !e.endTime);
         if (activeEntry) {
           // Calculate total elapsed time from first entry
-          const elapsed = (Date.now() - entries[0].startTime) / 1000;
+          const elapsed = Math.floor((Date.now() - entries[0].startTime) / 1000);
           setCurrentElapsedTime(elapsed);
         }
-      }, 1000);
-    } else {
-      setCurrentElapsedTime(initialElapsedTime);
+      };
+
+      // Initial update
+      updateElapsedTime();
+      
+      // Set up interval for updates
+      interval = setInterval(updateElapsedTime, 1000);
     }
     
     return () => {
-      if (interval) clearInterval(interval);
+      if (interval) {
+        clearInterval(interval);
+      }
     };
-  }, [timerActive, hasEntries, entries, initialElapsedTime]);
-  
+  }, [timerActive, hasEntries, entries]);
+
   // Calculate time remaining display
   const timeLeft = totalDuration - currentElapsedTime;
   const isOvertime = timeLeft < 0;
