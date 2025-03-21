@@ -160,10 +160,22 @@ describe('Summary Component', () => {
   });
 
   describe('Status Messages', () => {
-    it('should display on time message when completed within threshold', () => {
-      const entries = createMockTimelineEntries();
+    it('should display late completion message for any time over planned duration', () => {
+      const entries = [{
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Activity 1',
+        startTime: 1000000,
+        endTime: 1000000 + 3602000, // 1 hour + 2 seconds
+        colors: {
+          background: '#E8F5E9',
+          text: '#1B5E20',
+          border: '#2E7D32'
+        }
+      }];
+      
       const totalDuration = 3600;
-      const elapsedTime = 3630; // Within 60s threshold
+      const elapsedTime = 3602; // Just 2 seconds over
       
       render(
         <Summary 
@@ -174,32 +186,14 @@ describe('Summary Component', () => {
         />
       );
       
-      expect(screen.getByText('Great job! You completed everything within the time limit!')).toBeInTheDocument();
-      expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('0s');
+      expect(screen.getByText('You took 2s more than planned')).toBeInTheDocument();
+      expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('2s');
     });
 
-    it('should display early completion message', () => {
-      const entries = createMockTimelineEntries();
-      const totalDuration = 7200; // 2 hours planned
-      const elapsedTime = 5400; // 1h 30m - 30m early
-      
-      render(
-        <Summary 
-          entries={entries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
-      );
-      
-      expect(screen.getByText(/Amazing! You finished .* earlier than planned!/, { exact: false })).toBeInTheDocument();
-      expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('0s');
-    });
-
-    it('should display late completion message', () => {
+    it('should display early completion message when finishing under planned time', () => {
       const entries = createMockTimelineEntries();
       const totalDuration = 3600;
-      const elapsedTime = 5400; // 30m over
+      const elapsedTime = 3540; // 1 minute early
       
       render(
         <Summary 
@@ -210,8 +204,8 @@ describe('Summary Component', () => {
         />
       );
       
-      expect(screen.getByText(/You took .* more than planned/, { exact: false })).toBeInTheDocument();
-      expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('30m 0s');
+      expect(screen.getByText('Amazing! You finished 1m 0s earlier than planned!')).toBeInTheDocument();
+      expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('0s');
     });
   });
 

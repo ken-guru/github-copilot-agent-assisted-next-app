@@ -48,24 +48,18 @@ export default function Summary({
       }
     } else if (allActivitiesCompleted) {
       const timeDiff = elapsedTime - totalDuration;
-      const threshold = 60; // 60 seconds threshold for "on time"
       
-      if (Math.abs(timeDiff) <= threshold) {
-        return {
-          message: "Great job! You completed everything within the time limit!",
-          className: styles.statusMessageOnTime
-        };
-      } else if (timeDiff < -threshold) {
-        const earlierBy = formatDuration(Math.abs(timeDiff));
-        return {
-          message: `Amazing! You finished ${earlierBy} earlier than planned!`,
-          className: styles.statusMessageEarly
-        };
-      } else {
+      if (timeDiff > 0) {
         const laterBy = formatDuration(timeDiff);
         return {
           message: `You took ${laterBy} more than planned`,
           className: styles.statusMessageLate
+        };
+      } else {
+        const earlierBy = formatDuration(Math.abs(timeDiff));
+        return {
+          message: `Amazing! You finished ${earlierBy} earlier than planned!`,
+          className: styles.statusMessageEarly
         };
       }
     }
