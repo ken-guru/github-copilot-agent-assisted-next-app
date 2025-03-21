@@ -2,22 +2,44 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import Home from '../page';
 import resetService from '@/utils/resetService';
+import { ResetCallback } from '@/utils/resetService';
+
+// Define a proper interface for the mock resetService to avoid 'any' types
+interface MockResetService {
+  reset: jest.Mock;
+  registerResetCallback: jest.Mock;
+  callbacks: ResetCallback[];
+  executeCallbacks: () => void;
+  setConfirmFunction: jest.Mock;
+}
 
 // Mock resetService
-jest.mock('@/utils/resetService', () => ({
-  __esModule: true,
-  default: {
+jest.mock('@/utils/resetService', () => {
+  const mockService: Partial<MockResetService> = {
     reset: jest.fn(),
-    registerResetCallback: jest.fn().mockImplementation(callback => {
-      (resetService as any).callbacks = [(resetService as any).callbacks || [], callback].flat();
+    registerResetCallback: jest.fn().mockImplementation((callback: ResetCallback) => {
+      if (!mockService.callbacks) {
+        mockService.callbacks = [];
+      }
+      mockService.callbacks.push(callback);
       return jest.fn();
     }),
     executeCallbacks: () => {
-      ((resetService as any).callbacks || []).forEach((cb: () => void) => cb());
+      if (mockService.callbacks) {
+        mockService.callbacks.forEach(cb => cb());
+      }
     },
     setConfirmFunction: jest.fn()
-  }
-}));
+  };
+  
+  return {
+    __esModule: true,
+    default: mockService
+  };
+});
+
+// Cast the mocked service to our interface type
+const mockedResetService = resetService as unknown as MockResetService;
 
 // Mock the hooks with reset functionality
 const mockResetActivities = jest.fn();
@@ -59,7 +81,7 @@ beforeAll(() => {
 describe('Home Page', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (resetService as any).callbacks = [];
+    mockedResetService.callbacks = [];
   });
 
   it('should not show reset button in setup state', () => {
@@ -89,16 +111,16 @@ describe('Home Page', () => {
     const resetButton = screen.getByText('Reset');
     fireEvent.click(resetButton);
     
-    expect(resetService.reset).toHaveBeenCalled();
+    expect(mockedResetService.reset).toHaveBeenCalled();
   });
 
   it('should register reset callbacks with resetService', () => {
     render(<Home />);
     
-    expect(resetService.registerResetCallback).toHaveBeenCalled();
+    expect(mockedResetService.registerResetCallback).toHaveBeenCalled();
     
     // Simulate reset service execution of callbacks
-    (resetService as any).executeCallbacks();
+    mockedResetService.executeCallbacks();
     
     // Check that reset functions were called through callbacks
     expect(mockResetActivities).toHaveBeenCalled();
