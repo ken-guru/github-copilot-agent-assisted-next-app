@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { formatTime } from '@/utils/timeUtils';
 
 export function useTimeDisplay(totalDuration: number, elapsedTime: number, isActive: boolean) {
