@@ -1,8 +1,7 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import ProgressBar from '../ProgressBar';
 import { TimelineEntry } from '../Timeline';
-import styles from '../ProgressBar.module.css';
 
 // Mock the CSS module
 jest.mock('../ProgressBar.module.css', () => ({
@@ -208,10 +207,13 @@ describe('ProgressBar Component', () => {
     );
     
     // Check that container has mobile class
-    expect(container.firstChild).toHaveClass('mobileContainer');
+    const root = container.firstChild;
+    expect(root).not.toBeNull();
+    expect(root).toHaveClass('mobileContainer');
     
     // Get all direct children of the container
-    const children = container.firstChild.childNodes;
+    if (!root) return;
+    const children = root.childNodes;
     
     // First child should be time markers in mobile view
     expect(children[0]).toHaveClass('timeMarkers');
