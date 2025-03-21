@@ -115,3 +115,90 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Prefer direct prop dependencies over ref-based implementations for timer updates
 - Important to handle immediate updates when starting timers to prevent initial delay
 - Use consistent time calculations (Math.floor) to prevent timing edge cases
+
+### Issue: Summary Component Test Suite Refactor
+**Date:** 2024-02-06
+**Tags:** #testing #refactoring #edge-cases #performance
+**Status:** Resolved
+
+#### Initial State
+- Some tests were testing component visibility, which is handled by page component
+- Missing edge cases in time calculation tests
+- No performance tests for large activity sets
+- Test structure needed improvement for better organization
+
+#### Debug Process
+1. Component Responsibility Analysis
+   - Identified Summary's core responsibilities
+   - Found overlap with page component's visibility control
+   - Located critical time calculation edge cases
+
+2. Test Coverage Review
+   - Identified redundant visibility tests
+   - Found gaps in time calculation edge cases
+   - Discovered need for performance testing
+
+#### Resolution
+1. Removed redundant visibility tests that overlapped with page component
+2. Added comprehensive edge case tests:
+   - Zero duration activities
+   - Single activity sessions
+   - Sessions with only breaks
+   - Maximum duration values
+3. Added performance test with 100 activities
+4. Improved test organization with logical groupings:
+   - Time Metrics Display
+   - Status Messages
+   - Time Up State
+   - Performance
+   - Edge Cases
+
+#### Lessons Learned
+- Component tests should focus on component-specific responsibilities
+- Page-level behavior should be tested at the page level
+- Edge cases in time calculations need explicit testing
+- Performance benchmarks help prevent regression in data-heavy components
+- Test organization should reflect component's logical responsibilities
+
+### Issue: Summary Component Status Message Bug Fix
+**Date:** 2024-02-06
+**Tags:** #bugfix #testing #ui #state-management
+**Status:** Resolved
+
+#### Initial State
+- Status messages weren't correctly reflecting time differences
+- Messages defaulted to "Great job!" even when over planned duration
+- Small overtime durations (e.g., 2 seconds) weren't showing correct message
+- Unnecessary complexity with "on time" state and 60-second threshold
+
+#### Debug Process
+1. Status Message Logic Analysis
+   - Found unnecessary complexity in status message conditions
+   - Identified incorrect order of time difference checks
+   - Located threshold-based logic causing improper message selection
+   - Discovered issue with mock timeline entries affecting test accuracy
+
+2. Implementation Approach
+   - Simplified status message states to just early/late completion
+   - Removed unnecessary "on time" state and threshold
+   - Fixed time calculation tests to use accurate timeline entries
+   - Updated test suite to verify small time differences
+
+#### Resolution
+1. Simplified Logic Implementation
+   - Removed 60-second threshold for "on time" state
+   - Simplified to two states: early or late completion
+   - Fixed time difference calculation checks
+   - Added test for 2-second overtime scenario
+
+2. Test Improvements
+   - Added specific test case for small overtime durations
+   - Updated timeline entry mocks to match test scenarios
+   - Verified overtime message shows for any duration > 0
+   - Maintained existing test coverage while simplifying logic
+
+#### Lessons Learned
+- Simpler state management often leads to more reliable behavior
+- Edge cases (like exact-time completion) can be eliminated when improbable
+- Test data should match real-world scenarios as closely as possible
+- Small time differences need explicit test coverage

@@ -8,6 +8,7 @@ interface SummaryProps {
   elapsedTime: number;
   timerActive?: boolean;
   allActivitiesCompleted?: boolean;
+  isTimeUp?: boolean; // Add this prop to handle time-up state
 }
 
 export default function Summary({ 
@@ -15,9 +16,18 @@ export default function Summary({
   totalDuration, 
   elapsedTime, 
   timerActive = false,
-  allActivitiesCompleted = false
+  allActivitiesCompleted = false,
+  isTimeUp = false // Add this prop to handle time-up state
 }: SummaryProps) {
   const getStatusMessage = () => {
+    // First check if time is up, this should take precedence
+    if (isTimeUp) {
+      return {
+        message: "Time's up! Review your completed activities below.",
+        className: styles.statusMessageLate
+      };
+    }
+
     if (timerActive) {
       const remainingTime = totalDuration - elapsedTime;
       if (remainingTime < 0) {
@@ -28,7 +38,7 @@ export default function Summary({
       } else if (remainingTime === 0) {
         return {
           message: "Time's up!",
-          className: styles.statusMessageOnTime
+          className: styles.statusMessageLate
         };
       } else {
         return {
@@ -38,24 +48,18 @@ export default function Summary({
       }
     } else if (allActivitiesCompleted) {
       const timeDiff = elapsedTime - totalDuration;
-      const threshold = 60; // 60 seconds threshold for "on time"
       
-      if (Math.abs(timeDiff) <= threshold) {
-        return {
-          message: "Great job! You completed everything right on schedule!",
-          className: styles.statusMessageOnTime
-        };
-      } else if (timeDiff < -threshold) {
-        const earlierBy = formatDuration(Math.abs(timeDiff));
-        return {
-          message: `Amazing! You finished ${earlierBy} earlier than planned!`,
-          className: styles.statusMessageEarly
-        };
-      } else {
+      if (timeDiff > 0) {
         const laterBy = formatDuration(timeDiff);
         return {
           message: `You took ${laterBy} more than planned`,
           className: styles.statusMessageLate
+        };
+      } else {
+        const earlierBy = formatDuration(Math.abs(timeDiff));
+        return {
+          message: `Amazing! You finished ${earlierBy} earlier than planned!`,
+          className: styles.statusMessageEarly
         };
       }
     }
@@ -86,10 +90,18 @@ export default function Summary({
       activeTime: 0
     };
     
+    let lastEndTime: number | null = null;
+    
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i];
       const endTime = entry.endTime ?? Date.now();
-      // Round to nearest whole second
+      
+      // Calculate break time between activities
+      if (lastEndTime && entry.startTime > lastEndTime) {
+        stats.idleTime += Math.round((entry.startTime - lastEndTime) / 1000);
+      }
+      
+      // Calculate activity duration
       const duration = Math.round((endTime - entry.startTime) / 1000);
       
       if (entry.activityId) {
@@ -97,15 +109,28 @@ export default function Summary({
       } else {
         stats.idleTime += duration;
       }
+      
+      lastEndTime = endTime;
     }
     
     return stats;
   };
 
   const calculateOvertime = () => {
-    // Calculate overtime - any time spent beyond the planned duration, minimum 0
-    const overtime = Math.max(0, elapsedTime - totalDuration);
-    return Math.round(overtime); // Round to nearest whole second
+    if (!entries || entries.length === 0) return 0;
+    
+    // Get the timestamp of the first activity start
+    const firstStart = entries[0]?.startTime;
+    if (!firstStart) return 0;
+    
+    // Calculate total time from first activity to last completion or now
+    const lastEntry = entries[entries.length - 1];
+    const lastEnd = lastEntry?.endTime ?? Date.now();
+    const totalTimeUsed = Math.round((lastEnd - firstStart) / 1000);
+    
+    // Calculate overtime as any time spent beyond the planned duration
+    const overtime = Math.max(0, totalTimeUsed - totalDuration);
+    return overtime;
   };
 
   const calculateActivityTimes = () => {
@@ -142,8 +167,8 @@ export default function Summary({
   const status = getStatusMessage();
   const stats = calculateActivityStats();
   
-  // Early return if not in completed state or no stats available
-  if (!allActivitiesCompleted || !stats) {
+  // Early return modified to handle isTimeUp case
+  if ((!allActivitiesCompleted && !isTimeUp) || !stats) {
     return null;
   }
   
