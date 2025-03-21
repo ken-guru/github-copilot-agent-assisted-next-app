@@ -2,17 +2,17 @@
   width: 100%;
   margin-bottom: 0.5rem;
   position: relative; /* Ensures the container properly contains the overflowing shadows */
-  padding: 3px; /* Add some padding to allow the glow to be visible outside the container */
+  padding: 2px; /* Reduced padding */
 }
 
 .progressBarContainer {
   position: relative;
   width: 100%;
-  height: 32px;
+  height: 16px; /* Reduced from 32px to 16px */
   background-color: var(--background-muted);
-  border-radius: 16px;
+  border-radius: 8px; /* Reduced from 16px to maintain proportions */
   overflow: visible; /* Changed from hidden to allow glow to extend outside */
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1); /* Smaller shadow */
 }
 
 .progressFill {
@@ -20,42 +20,42 @@
   top: 0;
   left: 0;
   height: 100%;
-  border-radius: 16px;
+  border-radius: 8px; /* Match container border-radius */
   transition: width 0.3s ease;
   z-index: 1; /* Ensure the fill is above the container */
 }
 
-/* Color-coded glow effects with enhanced shadows */
+/* Color-coded glow effects with reduced intensity */
 .greenGlow {
   background-color: var(--success, #22c55e);
   box-shadow: 
-    0 0 12px 3px var(--success-glow, rgba(34, 197, 94, 0.4)),
-    0 0 6px 1px var(--success, rgba(34, 197, 94, 0.7));
+    0 0 6px 1px var(--success-glow, rgba(34, 197, 94, 0.4)),
+    0 0 3px 0px var(--success, rgba(34, 197, 94, 0.7));
   transition: width 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .yellowGlow {
   background-color: var(--warning, #eab308);
   box-shadow: 
-    0 0 15px 4px var(--warning-glow, rgba(234, 179, 8, 0.4)),
-    0 0 8px 2px var(--warning, rgba(234, 179, 8, 0.7));
+    0 0 7px 2px var(--warning-glow, rgba(234, 179, 8, 0.4)),
+    0 0 4px 1px var(--warning, rgba(234, 179, 8, 0.7));
   transition: width 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .orangeGlow {
   background-color: var(--caution, #f97316);
   box-shadow: 
-    0 0 18px 5px var(--caution-glow, rgba(249, 115, 22, 0.4)),
-    0 0 9px 2px var(--caution, rgba(249, 115, 22, 0.7));
+    0 0 8px 2px var(--caution-glow, rgba(249, 115, 22, 0.4)),
+    0 0 5px 1px var(--caution, rgba(249, 115, 22, 0.7));
   transition: width 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Enhanced red pulse animation with more dramatic shadow effects */
+/* Reduced red pulse animation */
 .redPulse {
   background-color: var(--error, #dc2626);
   box-shadow: 
-    0 0 20px 5px var(--error-glow, rgba(220, 38, 38, 0.5)),
-    0 0 10px 2px var(--error, rgba(220, 38, 38, 0.8));
+    0 0 10px 2px var(--error-glow, rgba(220, 38, 38, 0.5)),
+    0 0 5px 1px var(--error, rgba(220, 38, 38, 0.8));
   animation: pulsate 1.5s infinite;
   /* No transition to avoid interference with animation */
 }
@@ -64,21 +64,21 @@
   0% {
     background-color: var(--error, #dc2626);
     box-shadow: 
-      0 0 15px 3px var(--error-glow, rgba(220, 38, 38, 0.5)),
-      0 0 5px 1px var(--error, rgba(220, 38, 38, 0.6));
+      0 0 7px 1px var(--error-glow, rgba(220, 38, 38, 0.5)),
+      0 0 3px 0px var(--error, rgba(220, 38, 38, 0.6));
   }
   50% {
     background-color: var(--error-bright, #ef4444);
     box-shadow: 
-      0 0 30px 8px var(--error-glow, rgba(220, 38, 38, 0.6)),
-      0 0 15px 5px var(--error, rgba(220, 38, 38, 0.9));
-    transform: scale(1.03); /* Subtle scaling effect */
+      0 0 12px 3px var(--error-glow, rgba(220, 38, 38, 0.6)),
+      0 0 7px 2px var(--error, rgba(220, 38, 38, 0.9));
+    transform: scale(1.02); /* Reduced scale effect */
   }
   100% {
     background-color: var(--error, #dc2626);
     box-shadow: 
-      0 0 15px 3px var(--error-glow, rgba(220, 38, 38, 0.5)),
-      0 0 5px 1px var(--error, rgba(220, 38, 38, 0.6));
+      0 0 7px 1px var(--error-glow, rgba(220, 38, 38, 0.5)),
+      0 0 3px 0px var(--error, rgba(220, 38, 38, 0.6));
   }
 }
 

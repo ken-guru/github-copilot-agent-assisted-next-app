@@ -2,6 +2,20 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ProgressBar from '../ProgressBar';
 import { TimelineEntry } from '../Timeline';
+import styles from '../ProgressBar.module.css';
+
+// Mock the CSS module
+jest.mock('../ProgressBar.module.css', () => ({
+  container: 'container',
+  progressBarContainer: 'progressBarContainer',
+  progressFill: 'progressFill',
+  greenGlow: 'greenGlow',
+  yellowGlow: 'yellowGlow',
+  orangeGlow: 'orangeGlow',
+  redPulse: 'redPulse',
+  timeMarkers: 'timeMarkers',
+  timeMarker: 'timeMarker'
+}));
 
 describe('ProgressBar Component', () => {
   const mockEntries: TimelineEntry[] = [
@@ -143,5 +157,21 @@ describe('ProgressBar Component', () => {
     
     const progressBar = container.querySelector('[role="progressbar"]');
     expect(progressBar).toHaveAttribute('aria-valuenow', '50');
+  });
+
+  // Since testing height directly isn't reliable in Jest, we'll verify it exists and is rendered
+  it('should render the progress bar component', () => {
+    const { container } = render(
+      <ProgressBar 
+        entries={mockEntries}
+        totalDuration={3600}
+        elapsedTime={1800}
+        timerActive={true}
+      />
+    );
+    
+    const progressBarContainer = container.querySelector('.progressBarContainer');
+    expect(progressBarContainer).toBeInTheDocument();
+    // We'll rely on the CSS file for the height definition
   });
 });
