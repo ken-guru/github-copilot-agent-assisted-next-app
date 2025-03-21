@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
@@ -8,6 +8,7 @@ import ProgressBar from '@/components/ProgressBar';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
+import resetService from '@/utils/resetService';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -39,18 +40,26 @@ export default function Home() {
     isCompleted: allActivitiesCompleted
   });
   
+  // Register all reset callbacks
+  useEffect(() => {
+    const unregisterCallbacks = resetService.registerResetCallback(() => {
+      setTimeSet(false);
+      setTotalDuration(0);
+      resetActivities();
+      resetTimer();
+    });
+    
+    // Clean up on component unmount
+    return unregisterCallbacks;
+  }, [resetActivities, resetTimer]);
+  
   const handleTimeSet = (durationInSeconds: number) => {
     setTotalDuration(durationInSeconds);
     setTimeSet(true);
   };
   
   const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset the application? All progress will be lost.')) {
-      setTimeSet(false);
-      setTotalDuration(0);
-      resetActivities();
-      resetTimer();
-    }
+    resetService.reset();
   };
   
   const appState = !timeSet 

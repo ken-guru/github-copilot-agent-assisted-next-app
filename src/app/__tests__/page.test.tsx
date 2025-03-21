@@ -1,10 +1,23 @@
 /// <reference types="@testing-library/jest-dom" />
 import { render, screen, fireEvent } from '@testing-library/react';
 import Home from '../page';
+import resetService from '@/utils/resetService';
 
-// Mock window.confirm
-const mockConfirm = jest.fn();
-window.confirm = mockConfirm;
+// Mock resetService
+jest.mock('@/utils/resetService', () => ({
+  __esModule: true,
+  default: {
+    reset: jest.fn(),
+    registerResetCallback: jest.fn().mockImplementation(callback => {
+      (resetService as any).callbacks = [(resetService as any).callbacks || [], callback].flat();
+      return jest.fn();
+    }),
+    executeCallbacks: () => {
+      ((resetService as any).callbacks || []).forEach((cb: () => void) => cb());
+    },
+    setConfirmFunction: jest.fn()
+  }
+}));
 
 // Mock the hooks with reset functionality
 const mockResetActivities = jest.fn();
@@ -45,9 +58,8 @@ beforeAll(() => {
 
 describe('Home Page', () => {
   beforeEach(() => {
-    mockConfirm.mockReset();
-    mockResetActivities.mockReset();
-    mockResetTimer.mockReset();
+    jest.clearAllMocks();
+    (resetService as any).callbacks = [];
   });
 
   it('should not show reset button in setup state', () => {
@@ -66,8 +78,7 @@ describe('Home Page', () => {
     expect(screen.getByText('Reset')).toBeInTheDocument();
   });
 
-  it('should show confirmation dialog when reset is clicked', () => {
-    mockConfirm.mockImplementation(() => true);
+  it('should call resetService when reset is clicked', () => {
     render(<Home />);
     
     // Set initial time to move past setup state
@@ -78,25 +89,19 @@ describe('Home Page', () => {
     const resetButton = screen.getByText('Reset');
     fireEvent.click(resetButton);
     
-    expect(mockConfirm).toHaveBeenCalled();
-    expect(mockResetActivities).toHaveBeenCalled();
-    expect(mockResetTimer).toHaveBeenCalled();
+    expect(resetService.reset).toHaveBeenCalled();
   });
 
-  it('should not reset if user cancels confirmation', () => {
-    mockConfirm.mockImplementation(() => false);
+  it('should register reset callbacks with resetService', () => {
     render(<Home />);
     
-    // Set initial time to move past setup state
-    const timeSetupButton = screen.getByRole('button', { name: /set time/i });
-    fireEvent.click(timeSetupButton);
+    expect(resetService.registerResetCallback).toHaveBeenCalled();
     
-    // Click reset button
-    const resetButton = screen.getByText('Reset');
-    fireEvent.click(resetButton);
+    // Simulate reset service execution of callbacks
+    (resetService as any).executeCallbacks();
     
-    expect(mockConfirm).toHaveBeenCalled();
-    expect(mockResetActivities).not.toHaveBeenCalled();
-    expect(mockResetTimer).not.toHaveBeenCalled();
+    // Check that reset functions were called through callbacks
+    expect(mockResetActivities).toHaveBeenCalled();
+    expect(mockResetTimer).toHaveBeenCalled();
   });
 });
