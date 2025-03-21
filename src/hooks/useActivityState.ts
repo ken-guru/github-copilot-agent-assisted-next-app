@@ -100,8 +100,17 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
   // Now we can safely use resetActivities in initializeActivities
   const initializeActivities = useCallback((defaultActivities: Activity[] = []) => {
     resetActivities();
-    defaultActivities.forEach(activity => {
-      handleActivitySelect(activity, true);
+    
+    // Process all activities in order
+    const orderedActivities = [...defaultActivities].sort((a, b) => (a.order || 0) - (b.order || 0));
+    
+    // First, add all activities without starting them
+    orderedActivities.forEach(activity => {
+      const processedActivity = {
+        ...activity,
+        id: activity.id.toLowerCase().replace(/\s+/g, '-'),
+      };
+      handleActivitySelect(processedActivity, true);
     });
   }, [handleActivitySelect, resetActivities]);
 

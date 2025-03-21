@@ -101,16 +101,21 @@ export default function ActivityManager({
     };
   }, []);
   
+  const normalizeActivityId = (name: string): string => {
+    // Convert spaces to hyphens and make lowercase, but keep it simple
+    return name.toLowerCase().trim();
+  };
+
   const handleAddActivity = (activityName: string) => {
     const nextColorIndex = getNextColorIndex();
     const nextOrder = activities.length;
     
-    // Generate a testId-safe activity ID
-    const activityId = activityName.toLowerCase().replace(/\s+/g, '-');
+    // Generate a simple lowercase ID from the name
+    const activityId = normalizeActivityId(activityName);
     
     const newActivity: Activity = {
       id: activityId,
-      name: activityName,
+      name: activityName, // Keep the original name for display
       colorIndex: nextColorIndex,
       colors: getNextAvailableColorSet(nextColorIndex),
       order: nextOrder
@@ -141,7 +146,7 @@ export default function ActivityManager({
   };
   
   const handleRemoveActivity = (activityId: string) => {
-    if (onActivityRemove) {
+    if (onActivityRemove && planningMode) {
       onActivityRemove(activityId);
       
       // Get the activity being removed to find its colorIndex
@@ -231,8 +236,12 @@ export default function ActivityManager({
   // Handler for the Start Activities button
   const handleStartActivities = () => {
     if (onStartActivities) {
-      // Pass the sorted activities to preserve order when transitioning to Activity state
-      onStartActivities(sortedActivities);
+      // Reset any completion or removal states before transitioning
+      const initialActivities = sortedActivities.map(activity => ({
+        ...activity,
+        completed: false
+      }));
+      onStartActivities(initialActivities);
     }
   };
 
@@ -259,7 +268,18 @@ export default function ActivityManager({
       )}
       
       {hasActivities && (
-        <div className={styles.activityList} role="list">
+        <div 
+          className={styles.activityList} 
+          role="list"
+          onDragOver={(e) => {
+            e.preventDefault();
+            const dropTarget = e.currentTarget;
+            dropTarget.classList.add(styles.dragOverList);
+          }}
+          onDragLeave={(e) => {
+            e.currentTarget.classList.remove(styles.dragOverList);
+          }}
+        >
           {sortedActivities.map((activity) => {
             const isCompleted = completedActivityIds.includes(activity.id);
             const isRunning = activity.id === currentActivityId;
@@ -272,10 +292,6 @@ export default function ActivityManager({
                 className={styles.activityListItem}
                 draggable={!!planningMode}
                 onDragStart={handleDragStart(activity)}
-                onDragOver={handleDragOver(activity)}
-                onDragLeave={(e) => e.currentTarget.classList.remove(styles.dragOverTop, styles.dragOverBottom)}
-                onDrop={handleDrop(activity)}
-                onDragEnd={handleDragEnd}
                 data-testid={`activity-${activity.id}`}
               >
                 <ActivityButton
@@ -293,7 +309,6 @@ export default function ActivityManager({
           })}
         </div>
       )}
-
       {showStartButton && (
         <button
           className={styles.startActivitiesButton}

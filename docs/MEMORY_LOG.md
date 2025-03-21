@@ -617,6 +617,45 @@ The tests revealed several key requirements:
 - Need for comprehensive testing of timeout-based features
 - Value of proper state management for UI transitions
 
+### Issue: Activity State Transitions Debugging Session
+**Date:** 2024-01-30
+**Tags:** #debugging #tests #state-management #cypress
+**Status:** In Progress
+
+#### Initial State
+- Tests failing when transitioning from Planning to Activity state
+- Error: Unable to find activity control buttons (e.g., "start-activity-homework")
+- Activity IDs not being preserved correctly during state transition
+
+#### Debug Process
+1. Initial Investigation
+   - Reviewed ActivityManager component
+   - Found inconsistency in activity ID generation between states
+   - Identified need for consistent ID normalization
+
+2. First Solution Attempt
+   - Updated handleAddActivity in ActivityManager to normalize IDs
+   - Added consistent ID formatting (lowercase, hyphenated)
+   - Result: Test still failing, suggesting state transition issue
+
+3. Second Solution Attempt
+   - Investigated useActivityState hook
+   - Found activities not being properly initialized in Activity state
+   - Updated initializeActivities to preserve IDs
+   - Result: Still having issues with activity control visibility
+
+4. Current Solution Direction
+   - Found that activity IDs need to be normalized at multiple points:
+     1. When initially adding activities in Planning state
+     2. During transition to Activity state
+     3. When handling activity state changes
+   - Implementing consistent ID normalization across all points
+
+#### Lessons Learned
+- State transitions need careful handling of ID consistency
+- Multiple points of ID transformation need coordination
+- Test failures revealed gaps in state transition implementation
+
 ## Current Progress on 4-State Model Implementation
 - ✅ Progress bar color states
 - ✅ State transition validation

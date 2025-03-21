@@ -65,9 +65,6 @@ export const ActivityButton: React.FC<ActivityButtonProps> = ({
   const [showIterationPrompt, setShowIterationPrompt] = useState(false);
   const iterationPromptTimerRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Generate a testId-safe activity name
-  const safeActivityName = name.toLowerCase().replace(/\s+/g, '-');
-  
   const handleClick = () => {
     // If it's currently running and clicked, start the completion delay
     if (isRunning) {
@@ -170,7 +167,7 @@ export const ActivityButton: React.FC<ActivityButtonProps> = ({
   return (
     <div 
       className={styles.activityContainer}
-      data-testid={`activity-${activity.id}`}
+      data-testid={`activity-${id}`}
       style={{
         backgroundColor: activity.colors?.background,
         borderColor: activity.colors?.border,
@@ -193,7 +190,7 @@ export const ActivityButton: React.FC<ActivityButtonProps> = ({
             <div 
               className={styles.completionProgressBar}
               style={{ width: `${completionProgress}%` }}
-              data-testid={`completion-progress-${safeActivityName}`}
+              data-testid={`completion-progress-${id}`}
             />
             <button
               type="button"
@@ -243,9 +240,10 @@ export const ActivityButton: React.FC<ActivityButtonProps> = ({
             {onRemove && (
               <button
                 type="button"
-                onClick={() => onRemove(activity.id)}
+                onClick={handleRemove}
                 className={styles.removeButton}
                 disabled={isInTimeline}
+                aria-disabled={isInTimeline}
                 aria-label="Remove"
                 data-testid={`remove-activity-${activity.id}`}
               >

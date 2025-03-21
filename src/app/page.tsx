@@ -60,11 +60,24 @@ export default function Home() {
     // Transition from Setup to Planning state
     moveToPlanning();
   };
+
+  const normalizeActivityId = (name: string): string => {
+    return name.toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+  };
   
   const handleStartActivity = (activities: Activity[]) => {
+    // Normalize activity IDs before initializing
+    const normalizedActivities = activities.map(activity => ({
+      ...activity,
+      id: activity.name ? normalizeActivityId(activity.name) : activity.id
+    }));
+    
     // Initialize activities with the ordered activities from the Planning state
-    if (activities && activities.length > 0) {
-      initializeActivities(activities);
+    if (normalizedActivities && normalizedActivities.length > 0) {
+      initializeActivities(normalizedActivities);
     }
     
     // Transition from Planning to Activity state

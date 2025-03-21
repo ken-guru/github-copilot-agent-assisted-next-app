@@ -14,10 +14,17 @@ const ActivityForm: React.FC<ActivityFormProps> = ({
 }) => {
   const [newActivityName, setNewActivityName] = useState('');
 
+  const normalizeActivityName = (name: string): string => {
+    // Keep name as-is but add simple validation
+    return name.trim();
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newActivityName.trim() && !isDisabled) {
-      onAddActivity(newActivityName.trim());
+      // Normalize the activity name before passing it up
+      const normalizedName = normalizeActivityName(newActivityName);
+      onAddActivity(normalizedName);
       setNewActivityName('');
     }
   };
