@@ -14,7 +14,9 @@ jest.mock('../ProgressBar.module.css', () => ({
   orangeGlow: 'orangeGlow',
   redPulse: 'redPulse',
   timeMarkers: 'timeMarkers',
-  timeMarker: 'timeMarker'
+  timeMarker: 'timeMarker',
+  inactiveBar: 'inactiveBar',
+  mobileContainer: 'mobileContainer'
 }));
 
 describe('ProgressBar Component', () => {
@@ -33,16 +35,24 @@ describe('ProgressBar Component', () => {
     },
   ];
 
-  it('should render null when timer is not active', () => {
+  it('should render empty inactive progress bar when timer is not active', () => {
     const { container } = render(
       <ProgressBar 
         entries={mockEntries}
         totalDuration={3600}
-        elapsedTime={1800}
+        elapsedTime={0}
         timerActive={false}
       />
     );
-    expect(container.firstChild).toBeNull();
+    
+    // Should now render an empty progress bar instead of null
+    expect(container.firstChild).not.toBeNull();
+    
+    const progressBarContainer = container.querySelector('.progressBarContainer');
+    expect(progressBarContainer).toBeInTheDocument();
+    
+    // Should have inactive state
+    expect(progressBarContainer).toHaveClass('inactiveBar');
   });
 
   it('should render the progress bar with correct progress percentage', () => {
@@ -173,5 +183,40 @@ describe('ProgressBar Component', () => {
     const progressBarContainer = container.querySelector('.progressBarContainer');
     expect(progressBarContainer).toBeInTheDocument();
     // We'll rely on the CSS file for the height definition
+  });
+
+  it('should render time markers in the correct order for mobile view', () => {
+    // Mock matchMedia to simulate mobile viewport
+    window.matchMedia = jest.fn().mockImplementation((query) => ({
+      matches: query === '(max-width: 768px)',
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    }));
+
+    const { container } = render(
+      <ProgressBar 
+        entries={mockEntries}
+        totalDuration={3600}
+        elapsedTime={1800}
+        timerActive={true}
+      />
+    );
+    
+    // Check that container has mobile class
+    expect(container.firstChild).toHaveClass('mobileContainer');
+    
+    // Get all direct children of the container
+    const children = container.firstChild.childNodes;
+    
+    // First child should be time markers in mobile view
+    expect(children[0]).toHaveClass('timeMarkers');
+    
+    // Second child should be progress bar container
+    expect(children[1]).toHaveClass('progressBarContainer');
   });
 });

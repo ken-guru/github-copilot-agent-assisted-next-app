@@ -5,6 +5,13 @@
   padding: 2px; /* Reduced padding */
 }
 
+/* Mobile specific container styling */
+.mobileContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
 .progressBarContainer {
   position: relative;
   width: 100%;
@@ -13,6 +20,13 @@
   border-radius: 8px; /* Reduced from 16px to maintain proportions */
   overflow: visible; /* Changed from hidden to allow glow to extend outside */
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1); /* Smaller shadow */
+}
+
+/* Style for inactive progress bar */
+.inactiveBar {
+  background-color: var(--background-muted);
+  opacity: 0.5;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
 .progressFill {
@@ -87,6 +101,14 @@
   justify-content: space-between;
   margin-top: 0.5rem;
   padding: 0 4px;
+}
+
+/* Mobile specific time markers styling */
+.mobileContainer .timeMarkers {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+  padding: 0 4px;
+  order: -1; /* Ensure it appears before the progress bar even in DOM order */
 }
 
 .timeMarker {
