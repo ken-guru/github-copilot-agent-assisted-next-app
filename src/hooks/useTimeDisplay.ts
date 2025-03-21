@@ -5,26 +5,10 @@ export function useTimeDisplay(totalDuration: number, elapsedTime: number, isAct
   const [displayTime, setDisplayTime] = useState('');
   const [isCountingUp, setIsCountingUp] = useState(false);
   
-  // Use refs to track the latest values inside the interval callback
-  const elapsedTimeRef = useRef(elapsedTime);
-  const totalDurationRef = useRef(totalDuration);
-  
-  // Update refs when props change
   useEffect(() => {
-    elapsedTimeRef.current = elapsedTime;
-    totalDurationRef.current = totalDuration;
-  }, [elapsedTime, totalDuration]);
-
-  useEffect(() => {
-    // When inactive, just show the total duration
-    if (!isActive) {
-      setDisplayTime(formatTime(totalDuration));
-      return;
-    }
-    
     const updateDisplay = () => {
       // Calculate remaining time in seconds
-      const remainingTime = totalDurationRef.current - elapsedTimeRef.current;
+      const remainingTime = totalDuration - elapsedTime;
       
       // Determine if we should count up (when in overtime)
       const shouldCountUp = remainingTime < 0;
@@ -37,11 +21,18 @@ export function useTimeDisplay(totalDuration: number, elapsedTime: number, isAct
     // Initial update
     updateDisplay();
     
-    // Update the display every second
-    const interval = setInterval(updateDisplay, 1000);
+    let interval: NodeJS.Timeout | null = null;
+    if (isActive) {
+      // Update the display every second
+      interval = setInterval(updateDisplay, 1000);
+    }
     
-    return () => clearInterval(interval);
-  }, [isActive, totalDuration]); // Only re-run when active state or totalDuration changes
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isActive, totalDuration, elapsedTime]); // Include all dependencies
 
   return {
     displayTime,

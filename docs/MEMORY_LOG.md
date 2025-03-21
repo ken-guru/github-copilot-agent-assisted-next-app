@@ -81,3 +81,37 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Type checking catches potential runtime errors before deployment
 - Linting ensures code quality and consistency
 - Multiple verification steps provide better reliability
+
+### Issue: Timeline Component Countdown Timer Fix
+**Date:** 2024-01-26
+**Tags:** #debugging #timer #useEffect #cleanup
+**Status:** Resolved
+
+#### Initial State
+- Countdown timer in Timeline component stopped updating
+- Timer display was not properly reflecting elapsed time
+- Interval cleanup was not properly handled
+
+#### Debug Process
+1. Investigation of timer implementation
+   - Found issue with useTimeDisplay hook using unnecessary refs
+   - Identified missing interval cleanup in Timeline component
+   - Discovered timing edge cases in elapsed time calculation
+
+2. Solution implementation
+   - Simplified useTimeDisplay hook to respond directly to prop changes
+   - Added proper interval cleanup in both Timeline and useTimeDisplay
+   - Implemented immediate timer update on start
+   - Standardized elapsed time calculation using Math.floor
+
+#### Resolution
+- Timer now updates reliably every second
+- Proper cleanup of intervals when component unmounts or timer stops
+- Consistent timing calculations prevent state update misses
+- All Timeline component tests passing
+
+#### Lessons Learned
+- Always ensure proper cleanup in useEffect hooks with timers
+- Prefer direct prop dependencies over ref-based implementations for timer updates
+- Important to handle immediate updates when starting timers to prevent initial delay
+- Use consistent time calculations (Math.floor) to prevent timing edge cases
