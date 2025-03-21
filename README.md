@@ -143,6 +143,25 @@ npm run test:watch
 yarn test:watch
 ```
 
+### Deployment Verification
+Before considering any feature or change complete, run these verification steps:
+```markdown
+1. Type checking:
+   ```bash
+   npm run type-check
+   npm run tsc
+   ```
+2. Linting:
+   ```bash
+   npm run lint
+   ```
+3. Ensure all tests pass:
+   ```bash
+   npm test
+   ```
+
+All steps must pass without errors before deploying to Vercel. Address any warnings or errors that could impact deployment.
+
 ### Testing Requirements
 When implementing new features or modifying existing ones:
 ```markdown

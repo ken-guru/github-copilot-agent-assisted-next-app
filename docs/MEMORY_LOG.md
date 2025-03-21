@@ -56,3 +56,28 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Window.matchMedia with useEffect provides reliable viewport detection
 - Test mocking for matchMedia is essential for reliable tests
 - Mobile-specific styles should be clearly separated for maintainability
+
+### Issue: MRTMLY-002: Vercel Deployment Verification Requirements
+- **Date:** 2024-01-30
+- **Tags:** #deployment #vercel #type-checking #quality-assurance
+#### Initial State
+- Need to ensure all code changes are Vercel-deployment ready
+- Multiple verification steps required before considering work complete
+#### Implementation Process
+1. Required Verification Steps
+   - Type checking with `npm run type-check` and `tsc`
+   - Linting with `npm run lint`
+   - All tests must pass
+2. Implementation Guidelines
+   - These checks must be run before considering any feature complete
+   - All type errors must be resolved
+   - All lint warnings must be addressed
+   - No deployment-blocking issues should remain
+#### Resolution
+- Established clear verification process for all changes
+- Added to standard workflow requirements
+#### Lessons Learned
+- Early verification prevents deployment issues
+- Type checking catches potential runtime errors before deployment
+- Linting ensures code quality and consistency
+- Multiple verification steps provide better reliability
