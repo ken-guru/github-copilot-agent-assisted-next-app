@@ -92,3 +92,33 @@
    - Include all significant solution attempts
    - Document both successful and failed approaches
    - Note any patterns or recurring issues
+
+## Deployment Verification
+
+1. **Pre-deployment Checks**: Before considering any feature or change complete, verify:
+   - Type checking passes:
+     ```bash
+     npm run type-check
+     npm run tsc
+     ```
+   - Linting passes:
+     ```bash
+     npm run lint
+     ```
+   - All tests pass:
+     ```bash
+     npm test
+     ```
+
+2. **Verification Process**:
+   - Run all checks before marking work as complete
+   - Address all type errors and warnings
+   - Resolve any linting issues
+   - Fix any test failures
+   - Document any deployment-specific considerations in the Memory Log
+
+3. **Error Resolution**:
+   - Document any recurring deployment issues in the Memory Log
+   - Track patterns in type errors or linting warnings
+   - Note any workarounds needed for deployment
+   - Tag entries with #deployment for future reference

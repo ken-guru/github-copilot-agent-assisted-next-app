@@ -1,65 +1,99 @@
 .container {
   width: 100%;
   margin-bottom: 0.5rem;
+  position: relative; /* Ensures the container properly contains the overflowing shadows */
+  padding: 2px; /* Reduced padding */
+}
+
+/* Mobile specific container styling */
+.mobileContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
 }
 
 .progressBarContainer {
   position: relative;
-  display: flex;
   width: 100%;
-  height: 32px; /* Slightly taller for better visibility */
+  height: 16px; /* Reduced from 32px to 16px */
   background-color: var(--background-muted);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-  gap: 2px; /* Add gap between segments */
+  border-radius: 8px; /* Reduced from 16px to maintain proportions */
+  overflow: visible; /* Changed from hidden to allow glow to extend outside */
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1); /* Smaller shadow */
 }
 
-.segment {
-  position: relative;
+/* Style for inactive progress bar */
+.inactiveBar {
+  background-color: var(--background-muted);
+  opacity: 0.5;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+.progressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
+  border-radius: 8px; /* Match container border-radius */
   transition: width 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border-right: 2px solid var(--segment-separator, rgba(255, 255, 255, 0.5));
-  box-shadow: 0 0 0 1px var(--segment-outline, rgba(0, 0, 0, 0.05));
+  z-index: 1; /* Ensure the fill is above the container */
 }
 
-.segment.remaining {
-  background-color: #d1d5db; /* New suitable color */
+/* Color-coded glow effects with reduced intensity */
+.greenGlow {
+  background-color: var(--success, #22c55e);
+  box-shadow: 
+    0 0 6px 1px var(--success-glow, rgba(34, 197, 94, 0.4)),
+    0 0 3px 0px var(--success, rgba(34, 197, 94, 0.7));
+  transition: width 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.segment:last-child {
-  border-right: none;
-  border-top-right-radius: 16px;
-  border-bottom-right-radius: 16px;
+.yellowGlow {
+  background-color: var(--warning, #eab308);
+  box-shadow: 
+    0 0 7px 2px var(--warning-glow, rgba(234, 179, 8, 0.4)),
+    0 0 4px 1px var(--warning, rgba(234, 179, 8, 0.7));
+  transition: width 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.segment:first-child {
-  border-top-left-radius: 16px;
-  border-bottom-left-radius: 16px;
+.orangeGlow {
+  background-color: var(--caution, #f97316);
+  box-shadow: 
+    0 0 8px 2px var(--caution-glow, rgba(249, 115, 22, 0.4)),
+    0 0 5px 1px var(--caution, rgba(249, 115, 22, 0.7));
+  transition: width 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.segmentLabel {
-  font-size: 0.8rem; /* Slightly larger font */
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  padding: 0 8px;
-  color: var(--text-default, rgba(0, 0, 0, 0.7));
+/* Reduced red pulse animation */
+.redPulse {
+  background-color: var(--error, #dc2626);
+  box-shadow: 
+    0 0 10px 2px var(--error-glow, rgba(220, 38, 38, 0.5)),
+    0 0 5px 1px var(--error, rgba(220, 38, 38, 0.8));
+  animation: pulsate 1.5s infinite;
+  /* No transition to avoid interference with animation */
 }
 
-/* Update the background color for the break segment */
-.breakSegment {
-  background-color: #d1d5db; /* New suitable color */
-  color: var(--break-text, #4b5563);
-}
-
-.currentSegment {
-  animation: pulse 2s infinite;
+@keyframes pulsate {
+  0% {
+    background-color: var(--error, #dc2626);
+    box-shadow: 
+      0 0 7px 1px var(--error-glow, rgba(220, 38, 38, 0.5)),
+      0 0 3px 0px var(--error, rgba(220, 38, 38, 0.6));
+  }
+  50% {
+    background-color: var(--error-bright, #ef4444);
+    box-shadow: 
+      0 0 12px 3px var(--error-glow, rgba(220, 38, 38, 0.6)),
+      0 0 7px 2px var(--error, rgba(220, 38, 38, 0.9));
+    transform: scale(1.02); /* Reduced scale effect */
+  }
+  100% {
+    background-color: var(--error, #dc2626);
+    box-shadow: 
+      0 0 7px 1px var(--error-glow, rgba(220, 38, 38, 0.5)),
+      0 0 3px 0px var(--error, rgba(220, 38, 38, 0.6));
+  }
 }
 
 .timeMarkers {
@@ -69,42 +103,28 @@
   padding: 0 4px;
 }
 
+/* Mobile specific time markers styling */
+.mobileContainer .timeMarkers {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+  padding: 0 4px;
+  order: -1; /* Ensure it appears before the progress bar even in DOM order */
+}
+
 .timeMarker {
   font-size: 0.75rem;
-  color: var(--text-muted, #6b7280);
+  color: var(--foreground-muted);
 }
 
-@keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.8;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* Dark mode specific overrides - these will be toggled by JavaScript */
+/* Dark mode specific overrides */
 :global(.dark-mode) .progressBarContainer {
   background-color: var(--background-muted);
 }
 
-:global(.dark-mode) .segment {
-  border-right-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-:global(.dark-mode) .segmentLabel {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-:global(.dark-mode) .breakSegment {
-  background-color: var(--break-background, #374151);
-  color: var(--break-text, #9ca3af);
-}
-
 :global(.dark-mode) .timeMarker {
-  color: var(--text-muted, #9ca3af);
+  color: var(--foreground-muted);
+}
+
+:global(.dark-mode) .redPulse {
+  --error-bright: #f87171; /* Brighter red for dark mode */
 }

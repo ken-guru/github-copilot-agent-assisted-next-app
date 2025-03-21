@@ -92,14 +92,6 @@ export default function Home() {
         
         {appState === 'activity' && (
           <div className={styles.activityGrid}>
-            <div className={styles.progressContainer}>
-              <ProgressBar 
-                entries={processedEntries}
-                totalDuration={totalDuration}
-                elapsedTime={elapsedTime}
-                timerActive={timerActive}
-              />
-            </div>
             <div>
               <ActivityManager 
                 onActivitySelect={handleActivitySelect} 
@@ -136,6 +128,16 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        {/* Progress bar always visible and fixed to bottom in mobile view */}
+        <div className={styles.progressContainer}>
+          <ProgressBar 
+            entries={processedEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            timerActive={timerActive}
+          />
+        </div>
       </div>
     </div>
   );

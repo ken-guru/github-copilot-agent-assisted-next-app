@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TimelineEntry } from './Timeline';
 import styles from './ProgressBar.module.css';
 import { formatTimeHuman } from '@/utils/time';
@@ -10,123 +10,96 @@ interface ProgressBarProps {
   timerActive?: boolean;
 }
 
-interface SegmentData {
-  width: number; // percentage of the bar
-  color: {
-    background: string;
-    border: string;
-  };
-  activityName: string | null;
-  duration: number; // in seconds
-  isBreak: boolean;
-  isCurrent: boolean;
-}
-
 export default function ProgressBar({
   entries,
   totalDuration,
   elapsedTime,
   timerActive = false
 }: ProgressBarProps) {
-  if (!timerActive || entries.length === 0 || totalDuration <= 0) {
-    return null;
-  }
+  // State to track if the component is being viewed on mobile
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Calculate segments based on timeline entries
-  const calculateSegments = (): SegmentData[] => {
-    const segments: SegmentData[] = [];
-    const now = Date.now();
-    let remainingWidth = 100; // total percentage
+  // Effect to check if the device is mobile on mount and when window is resized
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.matchMedia('(max-width: 768px)').matches);
+    };
     
-    entries.forEach((entry, index) => {
-      const isLast = index === entries.length - 1;
-      const duration = entry.endTime 
-        ? Math.round((entry.endTime - entry.startTime) / 1000)
-        : Math.round((now - entry.startTime) / 1000);
-      
-      const isBreak = entry.activityId === null;
-      const isCurrent = !entry.endTime || isLast;
-      
-      // Calculate this segment's width as a percentage of total duration
-      const segmentWidth = Math.min(remainingWidth, (duration / totalDuration) * 100);
-      remainingWidth -= segmentWidth;
-      
-      // Default colors for breaks and dark mode adjustments
-      let background = '#d1d5db';
-      let border = '#4B5563';
-      
-      // Override background color for break segments
-      if (isBreak) {
-        background = '#d1d5db';
-      }
-      
-      // Use activity colors if available, with dark mode consideration
-      if (entry.colors) {
-        background = entry.colors.background;
-        border = entry.colors.border;
-      }
-      
-      segments.push({
-        width: segmentWidth,
-        color: {
-          background,
-          border
-        },
-        activityName: entry.activityName || (isBreak ? 'Break' : null),
-        duration,
-        isBreak,
-        isCurrent
-      });
-    });
+    // Initial check
+    checkIsMobile();
     
-    // Add remaining time segment if there's still time left
-    if (remainingWidth > 0 && elapsedTime < totalDuration) {
-      const remainingTime = totalDuration - elapsedTime;
-      segments.push({
-        width: remainingWidth,
-        color: {
-          background: '#374151',
-          border: '#4B5563'
-        },
-        activityName: 'Remaining',
-        duration: remainingTime,
-        isBreak: true,
-        isCurrent: false
-      });
+    // Add listener for window resize
+    window.addEventListener('resize', checkIsMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
+  // Always render the progress bar container, even if timer is inactive
+  const isActive = timerActive && entries.length > 0 && totalDuration > 0;
+  
+  // Calculate the progress percentage (capped at 100%) when active
+  const progressPercentage = isActive ? Math.min(100, (elapsedTime / totalDuration) * 100) : 0;
+  
+  // Determine the appropriate color class based on elapsed time percentage
+  const getColorClass = () => {
+    if (!isActive) return '';
+    
+    const timeRatio = elapsedTime / totalDuration;
+    
+    if (timeRatio >= 1) {
+      return styles.redPulse;  // 100%+ - Red pulsing
+    } else if (timeRatio >= 0.75) {
+      return styles.orangeGlow; // 75%-100% - Orange glow
+    } else if (timeRatio >= 0.5) {
+      return styles.yellowGlow; // 50%-75% - Yellow glow
+    } else {
+      return styles.greenGlow;  // <50% - Green glow
     }
-    
-    return segments;
   };
 
-  const segments = calculateSegments();
+  // Render time markers component
+  const timeMarkersComponent = totalDuration > 0 && (
+    <div className={styles.timeMarkers}>
+      <span className={styles.timeMarker}>0:00</span>
+      <span className={styles.timeMarker}>{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
+      <span className={styles.timeMarker}>{formatTimeHuman(totalDuration * 1000)}</span>
+    </div>
+  );
+
+  // Render progress bar component
+  const progressBarComponent = (
+    <div 
+      className={`${styles.progressBarContainer} ${!isActive ? styles.inactiveBar : ''}`}
+      role="progressbar"
+      aria-valuenow={Math.round(progressPercentage)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label="Progress towards total duration"
+    >
+      {isActive && (
+        <div 
+          className={`${styles.progressFill} ${getColorClass()}`} 
+          style={{ width: `${progressPercentage}%` }}
+        />
+      )}
+    </div>
+  );
 
   return (
-    <div className={styles.container}>
-      <div className={styles.progressBarContainer}>
-        {segments.map((segment, index) => (
-          <div
-            key={index}
-            className={`${styles.segment} ${segment.isBreak ? styles.breakSegment : ''} ${segment.isCurrent ? styles.currentSegment : ''}`}
-            style={{
-              width: `${segment.width}%`,
-              backgroundColor: segment.color.background,
-              borderColor: segment.color.border
-            }}
-            title={`${segment.activityName || 'Break'}: ${formatTimeHuman(segment.duration * 1000)}`}
-          >
-            {segment.width > 8 && (
-              <span className={styles.segmentLabel}>
-                {segment.activityName}
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-      <div className={styles.timeMarkers}>
-        <span className={styles.timeMarker}>0:00</span>
-        <span className={styles.timeMarker}>{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
-        <span className={styles.timeMarker}>{formatTimeHuman(totalDuration * 1000)}</span>
-      </div>
+    <div className={`${styles.container} ${isMobile ? styles.mobileContainer : ''}`}>
+      {/* Render in different order based on viewport */}
+      {isMobile ? (
+        <>
+          {timeMarkersComponent}
+          {progressBarComponent}
+        </>
+      ) : (
+        <>
+          {progressBarComponent}
+          {timeMarkersComponent}
+        </>
+      )}
     </div>
   );
 }
