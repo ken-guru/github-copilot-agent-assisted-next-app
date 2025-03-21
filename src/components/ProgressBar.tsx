@@ -10,18 +10,6 @@ interface ProgressBarProps {
   timerActive?: boolean;
 }
 
-interface SegmentData {
-  width: number; // percentage of the bar
-  color: {
-    background: string;
-    border: string;
-  };
-  activityName: string | null;
-  duration: number; // in seconds
-  isBreak: boolean;
-  isCurrent: boolean;
-}
-
 export default function ProgressBar({
   entries,
   totalDuration,
@@ -32,95 +20,38 @@ export default function ProgressBar({
     return null;
   }
 
-  // Calculate segments based on timeline entries
-  const calculateSegments = (): SegmentData[] => {
-    const segments: SegmentData[] = [];
-    const now = Date.now();
-    let remainingWidth = 100; // total percentage
+  // Calculate the progress percentage (capped at 100%)
+  const progressPercentage = Math.min(100, (elapsedTime / totalDuration) * 100);
+  
+  // Determine the appropriate color class based on elapsed time percentage
+  const getColorClass = () => {
+    const timeRatio = elapsedTime / totalDuration;
     
-    entries.forEach((entry, index) => {
-      const isLast = index === entries.length - 1;
-      const duration = entry.endTime 
-        ? Math.round((entry.endTime - entry.startTime) / 1000)
-        : Math.round((now - entry.startTime) / 1000);
-      
-      const isBreak = entry.activityId === null;
-      const isCurrent = !entry.endTime || isLast;
-      
-      // Calculate this segment's width as a percentage of total duration
-      const segmentWidth = Math.min(remainingWidth, (duration / totalDuration) * 100);
-      remainingWidth -= segmentWidth;
-      
-      // Default colors for breaks and dark mode adjustments
-      let background = '#d1d5db';
-      let border = '#4B5563';
-      
-      // Override background color for break segments
-      if (isBreak) {
-        background = '#d1d5db';
-      }
-      
-      // Use activity colors if available, with dark mode consideration
-      if (entry.colors) {
-        background = entry.colors.background;
-        border = entry.colors.border;
-      }
-      
-      segments.push({
-        width: segmentWidth,
-        color: {
-          background,
-          border
-        },
-        activityName: entry.activityName || (isBreak ? 'Break' : null),
-        duration,
-        isBreak,
-        isCurrent
-      });
-    });
-    
-    // Add remaining time segment if there's still time left
-    if (remainingWidth > 0 && elapsedTime < totalDuration) {
-      const remainingTime = totalDuration - elapsedTime;
-      segments.push({
-        width: remainingWidth,
-        color: {
-          background: '#374151',
-          border: '#4B5563'
-        },
-        activityName: 'Remaining',
-        duration: remainingTime,
-        isBreak: true,
-        isCurrent: false
-      });
+    if (timeRatio >= 1) {
+      return styles.redPulse;  // 100%+ - Red pulsing
+    } else if (timeRatio >= 0.75) {
+      return styles.orangeGlow; // 75%-100% - Orange glow
+    } else if (timeRatio >= 0.5) {
+      return styles.yellowGlow; // 50%-75% - Yellow glow
+    } else {
+      return styles.greenGlow;  // <50% - Green glow
     }
-    
-    return segments;
   };
-
-  const segments = calculateSegments();
 
   return (
     <div className={styles.container}>
-      <div className={styles.progressBarContainer}>
-        {segments.map((segment, index) => (
-          <div
-            key={index}
-            className={`${styles.segment} ${segment.isBreak ? styles.breakSegment : ''} ${segment.isCurrent ? styles.currentSegment : ''}`}
-            style={{
-              width: `${segment.width}%`,
-              backgroundColor: segment.color.background,
-              borderColor: segment.color.border
-            }}
-            title={`${segment.activityName || 'Break'}: ${formatTimeHuman(segment.duration * 1000)}`}
-          >
-            {segment.width > 8 && (
-              <span className={styles.segmentLabel}>
-                {segment.activityName}
-              </span>
-            )}
-          </div>
-        ))}
+      <div 
+        className={styles.progressBarContainer}
+        role="progressbar"
+        aria-valuenow={Math.round(progressPercentage)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Progress towards total duration"
+      >
+        <div 
+          className={`${styles.progressFill} ${getColorClass()}`} 
+          style={{ width: `${progressPercentage}%` }}
+        />
       </div>
       <div className={styles.timeMarkers}>
         <span className={styles.timeMarker}>0:00</span>
