@@ -1,3 +1,15 @@
+// Event handler type for ServiceWorker update events
+type UpdateHandler = (message: string) => void;
+
+let updateHandler: UpdateHandler | null = null;
+
+/**
+ * Set a handler for service worker update notifications
+ */
+export function setUpdateHandler(handler: UpdateHandler | null): void {
+  updateHandler = handler;
+}
+
 /**
  * Registers a service worker for offline functionality
  */
@@ -13,8 +25,26 @@ export async function registerServiceWorker(): Promise<void> {
     const registration = await navigator.serviceWorker.register('/service-worker.js');
     console.log('Service worker registered');
     
-    // Check for updates
+    // Check for updates on registration
     await registration.update();
+    
+    // Listen for new service worker installation
+    registration.addEventListener('updatefound', () => {
+      const newWorker = registration.installing;
+      if (newWorker) {
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // New content is available
+            const message = 'A new version is available. Please refresh to update.';
+            console.log(message);
+            if (updateHandler) {
+              updateHandler(message);
+            }
+          }
+        });
+      }
+    });
+
   } catch (error) {
     console.error('Service worker registration failed', error);
   }
