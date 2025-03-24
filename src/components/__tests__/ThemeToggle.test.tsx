@@ -182,6 +182,8 @@ describe('Mobile Layout', () => {
     expect(container).not.toBeNull();
     expect(container).toHaveClass(styles.container);
     // Container has explicit height: 44px in mobile CSS
-    expect(container.className).toContain(styles.container);
+    if (container) { // Add null check to satisfy TypeScript
+      expect(container.className).toContain(styles.container);
+    }
   });
 });
