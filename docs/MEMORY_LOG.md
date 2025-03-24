@@ -248,3 +248,32 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Promise-based patterns work well for asynchronous user confirmations
 - Centralized services help make code more testable by removing direct browser API dependencies
 - Prefer callback registration over direct function calls for more flexible code architecture
+
+### Issue: Service Worker Test Build Error Fix
+**Date:** 2025-03-24
+**Tags:** #debugging #tests #typescript #linting
+**Status:** Resolved
+
+#### Initial State
+- Build failing due to TypeScript linting error
+- Unused interface `MockServiceWorkerContainer` in serviceWorkerRegistration.test.ts
+- Error message: "'MockServiceWorkerContainer' is defined but never used"
+
+#### Debug Process
+1. Code Analysis
+   - Identified unused interface in test file
+   - Confirmed interface wasn't necessary for test functionality
+
+2. Solution Implementation
+   - Removed unused interface while preserving test functionality
+   - Kept type safety through implicit typing of mock objects
+
+#### Resolution
+- Removed unused interface
+- Build passes successfully with all type checks and linting
+- All tests continue to pass with proper type safety
+
+#### Lessons Learned
+- Keep test mock types minimal and remove unused type definitions
+- TypeScript interfaces should be used only when explicitly needed
+- Implicit typing can be sufficient for simple mock objects in tests

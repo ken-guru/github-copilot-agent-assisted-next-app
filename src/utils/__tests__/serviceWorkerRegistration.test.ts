@@ -1,10 +1,5 @@
 import { registerServiceWorker, unregisterServiceWorker } from '../serviceWorkerRegistration';
 
-interface MockServiceWorkerContainer extends Partial<ServiceWorkerContainer> {
-  register: jest.Mock;
-  getRegistration: jest.Mock;
-}
-
 describe('Service Worker Registration', () => {
   // Original navigator
   const originalNavigator = global.navigator;
