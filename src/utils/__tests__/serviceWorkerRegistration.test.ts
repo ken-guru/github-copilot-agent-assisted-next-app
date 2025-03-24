@@ -6,31 +6,12 @@ interface MockServiceWorkerContainer extends Partial<ServiceWorkerContainer> {
 }
 
 describe('Service Worker Registration', () => {
-  // Mock service worker registration
-  const mockRegistration = {
-    unregister: jest.fn().mockResolvedValue(undefined),
-    update: jest.fn().mockResolvedValue(undefined),
-    scope: '/'
-  };
-  
-  // Original navigator.serviceWorker
-  const originalServiceWorker = global.navigator.serviceWorker;
+  // Original navigator
+  const originalNavigator = global.navigator;
   
   beforeEach(() => {
-    // Clear mocks between tests
+    // Clear all mocks
     jest.clearAllMocks();
-    
-    // Mock navigator.serviceWorker
-    const mockServiceWorker: MockServiceWorkerContainer = {
-      register: jest.fn().mockResolvedValue(mockRegistration),
-      getRegistration: jest.fn().mockResolvedValue(mockRegistration)
-    };
-    
-    Object.defineProperty(global.navigator, 'serviceWorker', {
-      configurable: true,
-      value: mockServiceWorker,
-      writable: true
-    });
     
     // Mock console
     global.console.log = jest.fn();
@@ -38,16 +19,29 @@ describe('Service Worker Registration', () => {
   });
   
   afterEach(() => {
-    // Restore navigator.serviceWorker after each test
-    Object.defineProperty(global.navigator, 'serviceWorker', {
+    // Restore original navigator
+    Object.defineProperty(global, 'navigator', {
       configurable: true,
-      value: originalServiceWorker,
+      value: originalNavigator,
       writable: true
     });
   });
   
   describe('registerServiceWorker', () => {
     it('should register the service worker when supported', async () => {
+      // Arrange
+      const mockRegistration = {
+        update: jest.fn().mockResolvedValue(undefined)
+      };
+      const mockServiceWorker = {
+        register: jest.fn().mockResolvedValue(mockRegistration)
+      };
+      Object.defineProperty(global.navigator, 'serviceWorker', {
+        configurable: true,
+        value: mockServiceWorker,
+        writable: true
+      });
+      
       // Act
       await registerServiceWorker();
       
@@ -59,7 +53,14 @@ describe('Service Worker Registration', () => {
     it('should handle registration errors', async () => {
       // Arrange
       const error = new Error('Registration failed');
-      (navigator.serviceWorker.register as jest.Mock).mockRejectedValueOnce(error);
+      const mockServiceWorker = {
+        register: jest.fn().mockRejectedValue(error)
+      };
+      Object.defineProperty(global.navigator, 'serviceWorker', {
+        configurable: true,
+        value: mockServiceWorker,
+        writable: true
+      });
       
       // Act
       await registerServiceWorker();
@@ -69,10 +70,10 @@ describe('Service Worker Registration', () => {
     });
     
     it('should not attempt registration when service workers are not supported', async () => {
-      // Arrange
-      Object.defineProperty(global.navigator, 'serviceWorker', {
+      // Arrange - Remove the serviceWorker property entirely
+      Object.defineProperty(global, 'navigator', {
         configurable: true,
-        value: undefined,
+        value: {},
         writable: true
       });
       
@@ -86,30 +87,50 @@ describe('Service Worker Registration', () => {
   
   describe('unregisterServiceWorker', () => {
     it('should unregister the service worker when registered', async () => {
+      // Arrange
+      const mockRegistration = {
+        unregister: jest.fn().mockResolvedValue(undefined)
+      };
+      const mockServiceWorker = {
+        getRegistration: jest.fn().mockResolvedValue(mockRegistration)
+      };
+      Object.defineProperty(global.navigator, 'serviceWorker', {
+        configurable: true,
+        value: mockServiceWorker,
+        writable: true
+      });
+      
       // Act
       await unregisterServiceWorker();
       
       // Assert
-      expect(navigator.serviceWorker.getRegistration).toHaveBeenCalled();
       expect(mockRegistration.unregister).toHaveBeenCalled();
+      expect(console.log).toHaveBeenCalledWith('Service worker unregistered');
     });
     
     it('should handle case when no service worker is registered', async () => {
       // Arrange
-      (navigator.serviceWorker.getRegistration as jest.Mock).mockResolvedValueOnce(undefined);
+      const mockServiceWorker = {
+        getRegistration: jest.fn().mockResolvedValue(undefined)
+      };
+      Object.defineProperty(global.navigator, 'serviceWorker', {
+        configurable: true,
+        value: mockServiceWorker,
+        writable: true
+      });
       
       // Act
       await unregisterServiceWorker();
       
       // Assert
-      expect(mockRegistration.unregister).not.toHaveBeenCalled();
+      expect(console.log).not.toHaveBeenCalled();
     });
     
     it('should not attempt unregistration when service workers are not supported', async () => {
-      // Arrange
-      Object.defineProperty(global.navigator, 'serviceWorker', {
+      // Arrange - Remove the serviceWorker property entirely
+      Object.defineProperty(global, 'navigator', {
         configurable: true,
-        value: undefined,
+        value: {},
         writable: true
       });
       

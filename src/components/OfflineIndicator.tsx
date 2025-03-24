@@ -14,7 +14,7 @@ export function OfflineIndicator(): React.ReactElement | null {
   }
 
   return (
-    <div className={styles.offlineIndicator}>
+    <div className={styles.offlineIndicator} role="status">
       You are offline
     </div>
   );

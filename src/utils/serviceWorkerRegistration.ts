@@ -5,12 +5,10 @@ export async function registerServiceWorker(): Promise<void> {
   if (typeof window === 'undefined') {
     return; // SSR check
   }
-
-  if (!navigator || !('serviceWorker' in navigator)) {
+  if (typeof navigator === 'undefined' || !navigator || !('serviceWorker' in navigator)) {
     console.log('Service workers are not supported in this browser');
     return;
   }
-
   try {
     const registration = await navigator.serviceWorker.register('/service-worker.js');
     console.log('Service worker registered');
@@ -29,12 +27,10 @@ export async function unregisterServiceWorker(): Promise<void> {
   if (typeof window === 'undefined') {
     return; // SSR check
   }
-
-  if (!navigator || !('serviceWorker' in navigator)) {
+  if (typeof navigator === 'undefined' || !navigator || !('serviceWorker' in navigator)) {
     console.log('Service workers are not supported in this browser');
     return;
   }
-
   try {
     const registration = await navigator.serviceWorker.getRegistration();
     if (registration) {
