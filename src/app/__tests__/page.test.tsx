@@ -89,16 +89,19 @@ const mockedResetService = resetService as unknown as MockResetService;
 const mockResetActivities = jest.fn();
 const mockResetTimer = jest.fn();
 
+// Set up useActivityState mock with reusable implementation
+const mockUseActivityState = jest.fn().mockImplementation(() => ({
+  currentActivity: null,
+  timelineEntries: [],
+  completedActivityIds: [],
+  allActivitiesCompleted: false,
+  handleActivitySelect: jest.fn(),
+  handleActivityRemoval: jest.fn(),
+  resetActivities: mockResetActivities,
+}));
+
 jest.mock('@/hooks/useActivityState', () => ({
-  useActivityState: () => ({
-    currentActivity: null,
-    timelineEntries: [],
-    completedActivityIds: [],
-    allActivitiesCompleted: false,
-    handleActivitySelect: jest.fn(),
-    handleActivityRemoval: jest.fn(),
-    resetActivities: mockResetActivities,
-  }),
+  useActivityState: () => mockUseActivityState(),
 }));
 
 jest.mock('@/hooks/useTimerState', () => ({
@@ -301,8 +304,8 @@ describe('OfflineIndicator Integration', () => {
     expect(activityOfflineIndicator).toHaveTextContent('You are offline');
     expect(activityOfflineIndicator.nextElementSibling).toHaveClass(styles.activityGrid);
 
-    // Transition to completed state by mocking allActivitiesCompleted
-    jest.spyOn(require('@/hooks/useActivityState'), 'useActivityState').mockImplementation(() => ({
+    // Mock completed state
+    mockUseActivityState.mockImplementationOnce(() => ({
       currentActivity: null,
       timelineEntries: [],
       completedActivityIds: ['1'],

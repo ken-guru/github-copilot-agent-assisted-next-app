@@ -355,3 +355,37 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Use natural document flow over fixed positioning when possible
 - Consider component positioning in the overall page layout
 - Document element role and semantic structure in tests
+
+### Issue: Deployment Build Failing Due to CommonJS Require
+**Date:** 2025-03-24
+**Tags:** #deployment #testing #eslint #typescript
+**Status:** Resolved
+
+#### Initial State
+- Build failing during deployment with ESLint error
+- Error in page.test.tsx: "A `require()` style import is forbidden"
+- Using CommonJS require() for dynamic mock during test
+
+#### Debug Process
+1. Issue Investigation
+   - Located problematic code in OfflineIndicator integration test
+   - Found inline jest.mock() using require() style import
+   - ESLint rule @typescript-eslint/no-require-imports triggered failure
+
+2. Solution Implementation
+   - Moved mock setup to top-level with other mocks
+   - Created reusable mockUseActivityState function
+   - Used mockImplementationOnce for state-specific mocks
+   - Maintained test functionality while following ES module patterns
+
+#### Resolution
+- Refactored test to use ES module imports
+- Created centralized mock setup
+- Verified build passes without ESLint errors
+- Maintained test coverage and functionality
+
+#### Lessons Learned
+- Always use ES module imports in Next.js projects
+- Keep mocks at top-level when possible
+- Use mockImplementation/mockImplementationOnce for dynamic mocks
+- Verify build process locally before deployment
