@@ -1,0 +1,16 @@
+{
+  "name": "Activity Timer App",
+  "short_name": "Timer App",
+  "description": "An application to track and manage activity times",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
