@@ -400,3 +400,67 @@ Previously, activities would automatically start when added to the list, leading
 - ✅ Theme compatibility confirmed
 - ✅ Documentation updated
 - ✅ Accessibility requirements met
+
+## Optimize Offline Indicator Positioning
+**Date Implemented:** 2025-03-24
+
+### Context
+The offline indicator component needed optimization to prevent overlap with the header and improve layout consistency across all application states.
+
+### Implementation Details
+1. Layout Structure
+   - Positioned offline indicator between header and main content
+   - Removed fixed positioning in favor of natural document flow
+   - Added proper margin spacing from surrounding content
+   - Maintained animation for smooth appearance/disappearance
+
+2. DOM Organization
+   - Added semantic HTML structure with status role
+   - Ensured consistent positioning across app states (setup, activity, completed)
+   - Preserved responsive behavior and theme compatibility
+   - Maintained accessibility standards
+
+3. Test Coverage
+   - Added integration tests for all app states
+   - Verified positioning and structure
+   - Confirmed theme compatibility
+   - Validated accessibility requirements
+
+### Technical Details
+- Used natural document flow for reliable positioning
+- Implemented semantic HTML with proper ARIA attributes
+- Applied consistent spacing through CSS variables
+- Maintained existing animation effects
+
+### Testing Approach
+1. Integration Testing
+   - Verified positioning in setup state
+   - Confirmed layout in activity state
+   - Validated appearance in completed state
+   - Tested theme compatibility
+
+2. Structure Testing
+   - Validated semantic HTML structure
+   - Confirmed proper role attributes
+   - Verified content organization
+   - Tested accessibility features
+
+### Benefits Achieved
+1. User Experience:
+   - Consistent indicator positioning
+   - No overlap with header content
+   - Smooth visual transitions
+   - Clear offline state feedback
+
+2. Technical Improvements:
+   - More maintainable layout structure
+   - Better semantic markup
+   - Improved accessibility
+   - Reliable test coverage
+
+### Validation Results
+- ✅ Integration tests implemented and passing
+- ✅ Component structure verified
+- ✅ Layout consistency confirmed
+- ✅ Theme compatibility maintained
+- ✅ Accessibility requirements met
