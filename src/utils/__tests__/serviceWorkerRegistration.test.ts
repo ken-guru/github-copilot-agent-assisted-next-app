@@ -1,5 +1,10 @@
 import { registerServiceWorker, unregisterServiceWorker } from '../serviceWorkerRegistration';
 
+interface MockServiceWorkerContainer extends Partial<ServiceWorkerContainer> {
+  register: jest.Mock;
+  getRegistration: jest.Mock;
+}
+
 describe('Service Worker Registration', () => {
   // Mock service worker registration
   const mockRegistration = {
@@ -16,12 +21,14 @@ describe('Service Worker Registration', () => {
     jest.clearAllMocks();
     
     // Mock navigator.serviceWorker
+    const mockServiceWorker: MockServiceWorkerContainer = {
+      register: jest.fn().mockResolvedValue(mockRegistration),
+      getRegistration: jest.fn().mockResolvedValue(mockRegistration)
+    };
+    
     Object.defineProperty(global.navigator, 'serviceWorker', {
       configurable: true,
-      value: {
-        register: jest.fn().mockResolvedValue(mockRegistration),
-        getRegistration: jest.fn().mockResolvedValue(mockRegistration)
-      },
+      value: mockServiceWorker,
       writable: true
     });
     
@@ -63,7 +70,11 @@ describe('Service Worker Registration', () => {
     
     it('should not attempt registration when service workers are not supported', async () => {
       // Arrange
-      delete (global.navigator as any).serviceWorker;
+      Object.defineProperty(global.navigator, 'serviceWorker', {
+        configurable: true,
+        value: undefined,
+        writable: true
+      });
       
       // Act
       await registerServiceWorker();
@@ -96,7 +107,11 @@ describe('Service Worker Registration', () => {
     
     it('should not attempt unregistration when service workers are not supported', async () => {
       // Arrange
-      delete (global.navigator as any).serviceWorker;
+      Object.defineProperty(global.navigator, 'serviceWorker', {
+        configurable: true,
+        value: undefined,
+        writable: true
+      });
       
       // Act
       await unregisterServiceWorker();
