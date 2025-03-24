@@ -7,10 +7,14 @@ import { useState, useEffect } from 'react';
 export function useOnlineStatus(): boolean {
   // Get initial online status from navigator
   const [isOnline, setIsOnline] = useState<boolean>(
-    typeof window !== 'undefined' && navigator.onLine
+    // Default to true for SSR, then check navigator.onLine on client
+    typeof window === 'undefined' ? true : navigator.onLine
   );
 
   useEffect(() => {
+    // Update initial state on mount to ensure accuracy
+    setIsOnline(navigator.onLine);
+
     // Handler for online event
     const handleOnline = () => {
       setIsOnline(true);
