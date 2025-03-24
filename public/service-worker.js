@@ -5,13 +5,13 @@ const CACHE_NAME = 'github-copilot-agent-assisted-next-app-v1';
 // Files to cache for offline use - list core app files
 const urlsToCache = [
   '/',
-  '/index.html',
   '/favicon.ico',
   '/file.svg',
   '/globe.svg',
   '/next.svg',
   '/vercel.svg',
   '/window.svg',
+  '/manifest.json'
 ];
 
 // Install service worker and cache all assets
@@ -56,8 +56,26 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) {
     return; // Skip non-same-origin resources
   }
+
+  // Network-first strategy for HTML requests
+  if (event.request.headers.get('accept')?.includes('text/html')) {
+    event.respondWith(
+      fetch(event.request)
+        .catch(() => {
+          return caches.match(event.request)
+            .then(response => {
+              if (response) {
+                return response;
+              }
+              // If no cached version, return cached home page as fallback
+              return caches.match('/');
+            });
+        })
+    );
+    return;
+  }
   
-  // Cache-first strategy for static assets
+  // Cache-first strategy for other static assets
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
@@ -85,11 +103,6 @@ self.addEventListener('fetch', (event) => {
             return response;
           })
           .catch(() => {
-            // If both cache and network fail, return a fallback if it's an HTML page
-            if (event.request.headers.get('accept').includes('text/html')) {
-              return caches.match('/');
-            }
-            
             return new Response('Network error occurred', {
               status: 503,
               headers: { 'Content-Type': 'text/plain' }
