@@ -1,15 +1,12 @@
 .offlineIndicator {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
   background-color: var(--color-warning-background, #fff3cd);
   color: var(--color-warning-text, #856404);
-  z-index: 1000;
   padding: 0.5rem;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   animation: slideDown 0.3s ease-out;
+  margin-bottom: 1rem;
 }
 
 .content {
@@ -26,9 +23,11 @@
 
 @keyframes slideDown {
   from {
-    transform: translateY(-100%);
+    opacity: 0;
+    transform: translateY(-0.5rem);
   }
   to {
+    opacity: 1;
     transform: translateY(0);
   }
 }

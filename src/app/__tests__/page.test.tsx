@@ -266,3 +266,56 @@ describe('Home Page', () => {
     });
   });
 });
+
+describe('OfflineIndicator Integration', () => {
+  beforeEach(() => {
+    // Mock offline status
+    Object.defineProperty(window.navigator, 'onLine', {
+      configurable: true,
+      value: false,
+    });
+  });
+
+  afterEach(() => {
+    // Reset online status
+    Object.defineProperty(window.navigator, 'onLine', {
+      configurable: true,
+      value: true,
+    });
+  });
+
+  it('should maintain offline indicator positioning across all app states', () => {
+    const { rerender } = render(<Home />);
+    
+    // Check setup state
+    const setupOfflineIndicator = screen.getByRole('status');
+    expect(setupOfflineIndicator).toHaveTextContent('You are offline');
+    expect(setupOfflineIndicator.nextElementSibling).toHaveClass(styles.setupGrid);
+
+    // Transition to activity state
+    const timeSetupButton = screen.getByRole('button', { name: /set time/i });
+    fireEvent.click(timeSetupButton);
+    
+    // Check activity state
+    const activityOfflineIndicator = screen.getByRole('status');
+    expect(activityOfflineIndicator).toHaveTextContent('You are offline');
+    expect(activityOfflineIndicator.nextElementSibling).toHaveClass(styles.activityGrid);
+
+    // Transition to completed state by mocking allActivitiesCompleted
+    jest.spyOn(require('@/hooks/useActivityState'), 'useActivityState').mockImplementation(() => ({
+      currentActivity: null,
+      timelineEntries: [],
+      completedActivityIds: ['1'],
+      allActivitiesCompleted: true,
+      handleActivitySelect: jest.fn(),
+      handleActivityRemoval: jest.fn(),
+      resetActivities: mockResetActivities,
+    }));
+    rerender(<Home />);
+
+    // Check completed state
+    const completedOfflineIndicator = screen.getByRole('status');
+    expect(completedOfflineIndicator).toHaveTextContent('You are offline');
+    expect(completedOfflineIndicator.nextElementSibling).toHaveClass(styles.completedGrid);
+  });
+});

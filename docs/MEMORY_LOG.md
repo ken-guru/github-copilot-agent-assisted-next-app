@@ -315,3 +315,43 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Use explicit dimensions for touch targets rather than relative sizes
 - Consider mobile breakpoints early in component design
 - Document mobile-specific style requirements in tests
+
+### Issue: Offline Indicator Layout and Test Optimization
+**Date:** 2025-03-24
+**Tags:** #layout #testing #accessibility #mobile
+**Status:** Resolved
+
+#### Initial State
+- Offline indicator overlapped with header due to fixed positioning
+- Tests relied on computed styles causing brittle assertions
+- CSS module class testing was unreliable in Jest environment
+
+#### Implementation Process
+1. Layout Restructuring
+   - Moved offline indicator between header and content
+   - Removed fixed positioning in favor of natural document flow
+   - Added proper margin for spacing from content
+   - Maintained animation for smooth appearance
+
+2. Component Structure Enhancement
+   - Added proper nested structure for content
+   - Improved semantic HTML with status role
+   - Maintained consistent theme integration
+
+3. Test Suite Improvements
+   - Moved from computed style checks to structure verification
+   - Added explicit tests for component hierarchy
+   - Improved test reliability and maintainability
+   - Removed brittle CSS module class tests
+
+#### Resolution
+- Successfully repositioned offline indicator without overlap
+- All tests passing with improved reliability
+- Maintained accessibility and semantic structure
+- Preserved responsive layout and animations
+
+#### Lessons Learned
+- Prefer testing component structure over computed styles in Jest
+- Use natural document flow over fixed positioning when possible
+- Consider component positioning in the overall page layout
+- Document element role and semantic structure in tests

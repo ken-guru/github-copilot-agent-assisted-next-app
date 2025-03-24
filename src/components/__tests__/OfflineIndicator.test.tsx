@@ -19,36 +19,32 @@ describe('OfflineIndicator', () => {
   });
   
   it('should not render anything when online', () => {
-    // Arrange
     mockedUseOnlineStatus.mockReturnValue(true);
-    
-    // Act
     const { container } = render(<OfflineIndicator />);
-    
-    // Assert
     expect(container.firstChild).toBeNull();
   });
   
   it('should render offline message when offline', () => {
-    // Arrange
     mockedUseOnlineStatus.mockReturnValue(false);
-    
-    // Act
     render(<OfflineIndicator />);
-    
-    // Assert
     expect(screen.getByText(/you are offline/i)).toBeInTheDocument();
   });
   
   it('should apply offline indicator styles when offline', () => {
-    // Arrange
     mockedUseOnlineStatus.mockReturnValue(false);
-    
-    // Act
     render(<OfflineIndicator />);
-    
-    // Assert
     const indicator = screen.getByRole('status');
     expect(indicator).toHaveClass('offlineIndicator');
+  });
+
+  it('should render with proper nested structure', () => {
+    mockedUseOnlineStatus.mockReturnValue(false);
+    const { container } = render(<OfflineIndicator />);
+    
+    const outerDiv = container.firstChild as HTMLElement;
+    const innerDiv = outerDiv?.firstChild as HTMLElement;
+    
+    expect(outerDiv?.getAttribute('role')).toBe('status');
+    expect(innerDiv?.textContent).toBe('You are offline');
   });
 });
