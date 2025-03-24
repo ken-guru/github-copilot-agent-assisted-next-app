@@ -1,18 +1,21 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import ProgressBar from '@/components/ProgressBar';
 import ThemeToggle from '@/components/ThemeToggle';
+import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
+import resetService from '@/utils/resetService';
 import styles from './page.module.css';
 
 export default function Home() {
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
+  const resetDialogRef = useRef<ConfirmationDialogRef>(null);
   
   const {
     currentActivity,
@@ -39,18 +42,63 @@ export default function Home() {
     isCompleted: allActivitiesCompleted
   });
   
+  // Set up the dialog callback for resetService
+  useEffect(() => {
+    resetService.setDialogCallback((message) => {
+      return new Promise((resolve) => {
+        const handleConfirm = () => {
+          resolve(true);
+        };
+        
+        const handleCancel = () => {
+          resolve(false);
+        };
+        
+        // Store these in component state so they can be used by the dialog
+        setDialogActions({
+          message,
+          onConfirm: handleConfirm,
+          onCancel: handleCancel
+        });
+        
+        // Show the dialog
+        resetDialogRef.current?.showDialog();
+      });
+    });
+    
+    return () => {
+      // Clean up by removing the callback on unmount
+      resetService.setDialogCallback(null);
+    };
+  }, []);
+  
+  // Store dialog action handlers in state so they're stable across renders
+  const [dialogActions, setDialogActions] = useState({
+    message: 'Are you sure you want to reset the application? All progress will be lost.',
+    onConfirm: () => {},
+    onCancel: () => {}
+  });
+  
+  // Register all reset callbacks
+  useEffect(() => {
+    const unregisterCallbacks = resetService.registerResetCallback(() => {
+      setTimeSet(false);
+      setTotalDuration(0);
+      resetActivities();
+      resetTimer();
+    });
+    
+    // Clean up on component unmount
+    return unregisterCallbacks;
+  }, [resetActivities, resetTimer]);
+  
   const handleTimeSet = (durationInSeconds: number) => {
     setTotalDuration(durationInSeconds);
     setTimeSet(true);
   };
   
-  const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset the application? All progress will be lost.')) {
-      setTimeSet(false);
-      setTotalDuration(0);
-      resetActivities();
-      resetTimer();
-    }
+  const handleReset = async () => {
+    await resetService.reset();
   };
   
   const appState = !timeSet 
@@ -66,6 +114,16 @@ export default function Home() {
   
   return (
     <div className={styles.container}>
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
+        ref={resetDialogRef}
+        message={dialogActions.message}
+        confirmText="Reset"
+        cancelText="Cancel"
+        onConfirm={dialogActions.onConfirm}
+        onCancel={dialogActions.onCancel}
+      />
+      
       <div className={styles.wrapper}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
