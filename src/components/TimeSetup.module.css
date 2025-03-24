@@ -31,6 +31,15 @@
 .buttonPrimary {
   background-color: var(--accent-color);
   color: var(--background);
+  transition: all 0.2s ease, outline-offset 0.2s ease;
+  outline: 2px solid transparent;
+  outline-offset: 0;
+}
+
+.buttonPrimary:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(var(--accent-color-rgb), 0.35);
 }
 
 .buttonSecondary {
@@ -89,6 +98,15 @@
   border-radius: 0.25rem;
   font-weight: 500;
   cursor: pointer;
+  transition: all 0.2s ease, outline-offset 0.2s ease;
+  outline: 2px solid transparent;
+  outline-offset: 0;
+}
+
+.submitButton:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(var(--accent-color-rgb), 0.35);
 }
 
 .submitButton:hover {
