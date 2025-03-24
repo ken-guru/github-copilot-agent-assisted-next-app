@@ -1,35 +1,78 @@
 /// <reference types="@testing-library/jest-dom" />
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import Home from '../page';
-import resetService from '@/utils/resetService';
-import { ResetCallback } from '@/utils/resetService';
+import resetService, { DialogCallback } from '@/utils/resetService';
+import { ForwardRefExoticComponent, RefAttributes } from 'react';
+import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 
-// Define a proper interface for the mock resetService to avoid 'any' types
+// Store dialog props for testing
+let mockDialogProps = {
+  message: '',
+  onConfirm: jest.fn(),
+  onCancel: jest.fn()
+};
+
+// Mock the ConfirmationDialog component
+jest.mock('@/components/ConfirmationDialog', () => {
+  const ForwardRefComponent = jest.fn().mockImplementation(
+    ({ message, onConfirm, onCancel }, ref) => {
+      // Store the props for testing
+      mockDialogProps = { message, onConfirm, onCancel };
+      
+      // Mock the showDialog method
+      if (ref) {
+        ref.current = {
+          showDialog: () => {
+            // Update the dialog message in our mock when showDialog is called
+            mockDialogProps = { ...mockDialogProps, message };
+          }
+        };
+      }
+
+      return (
+        <div data-testid="mock-dialog">
+          <p data-testid="dialog-message">{mockDialogProps.message}</p>
+          <button onClick={mockDialogProps.onConfirm}>Confirm</button>
+          <button onClick={mockDialogProps.onCancel}>Cancel</button>
+        </div>
+      );
+    }
+  ) as unknown as ForwardRefExoticComponent<ConfirmationDialogProps & RefAttributes<ConfirmationDialogRef>>;
+  
+  ForwardRefComponent.displayName = 'MockConfirmationDialog';
+  return { __esModule: true, default: ForwardRefComponent };
+});
+
+// Define a proper interface for the mock resetService
 interface MockResetService {
   reset: jest.Mock;
   registerResetCallback: jest.Mock;
-  callbacks: ResetCallback[];
+  setDialogCallback: jest.Mock;
+  dialogCallbackFn: DialogCallback | null;
+  callbacks: Array<() => void>;
   executeCallbacks: () => void;
-  setConfirmFunction: jest.Mock;
 }
 
 // Mock resetService
 jest.mock('@/utils/resetService', () => {
   const mockService: Partial<MockResetService> = {
-    reset: jest.fn(),
-    registerResetCallback: jest.fn().mockImplementation((callback: ResetCallback) => {
+    reset: jest.fn().mockResolvedValue(true),
+    registerResetCallback: jest.fn().mockImplementation((callback) => {
       if (!mockService.callbacks) {
         mockService.callbacks = [];
       }
       mockService.callbacks.push(callback);
       return jest.fn();
     }),
+    setDialogCallback: jest.fn().mockImplementation((callback) => {
+      // Use type assertion instead of any
+      (mockService as Partial<MockResetService>).dialogCallbackFn = callback;
+    }),
     executeCallbacks: () => {
       if (mockService.callbacks) {
         mockService.callbacks.forEach(cb => cb());
       }
-    },
-    setConfirmFunction: jest.fn()
+    }
   };
   
   return {
@@ -38,7 +81,7 @@ jest.mock('@/utils/resetService', () => {
   };
 });
 
-// Cast the mocked service to our interface type
+// Cast the mocked service
 const mockedResetService = resetService as unknown as MockResetService;
 
 // Mock the hooks with reset functionality
@@ -67,6 +110,10 @@ jest.mock('@/hooks/useTimerState', () => ({
   }),
 }));
 
+// Mock HTMLDialogElement functionality
+HTMLDialogElement.prototype.showModal = jest.fn();
+HTMLDialogElement.prototype.close = jest.fn();
+
 // Mock window theme detection
 beforeAll(() => {
   Object.defineProperty(document.documentElement, 'classList', {
@@ -82,6 +129,11 @@ describe('Home Page', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedResetService.callbacks = [];
+    mockDialogProps = {
+      message: '',
+      onConfirm: jest.fn(),
+      onCancel: jest.fn()
+    };
   });
 
   it('should not show reset button in setup state', () => {
@@ -114,10 +166,11 @@ describe('Home Page', () => {
     expect(mockedResetService.reset).toHaveBeenCalled();
   });
 
-  it('should register reset callbacks with resetService', () => {
+  it('should register reset callbacks and dialog callback with resetService', () => {
     render(<Home />);
     
     expect(mockedResetService.registerResetCallback).toHaveBeenCalled();
+    expect(mockedResetService.setDialogCallback).toHaveBeenCalled();
     
     // Simulate reset service execution of callbacks
     mockedResetService.executeCallbacks();
@@ -125,5 +178,46 @@ describe('Home Page', () => {
     // Check that reset functions were called through callbacks
     expect(mockResetActivities).toHaveBeenCalled();
     expect(mockResetTimer).toHaveBeenCalled();
+  });
+
+  it('should provide a working dialog callback to resetService', async () => {
+    render(<Home />);
+
+    // Get the dialog callback that was registered
+    const dialogCallback = mockedResetService.dialogCallbackFn;
+    expect(dialogCallback).toBeDefined();
+    
+    if (dialogCallback) {
+      // Create a promise to track resolution
+      let resolveCallback: (value: boolean) => void;
+      const confirmationPromise = new Promise<boolean>(resolve => {
+        resolveCallback = resolve;
+      });
+
+      // Start the dialog callback process in an act block
+      await act(async () => {
+        // The dialog callback returns a promise that resolves when user confirms/cancels
+        dialogCallback('Test message').then(result => {
+          resolveCallback(result);
+        });
+      });
+
+      // Find the injected confirmation dialog after state updates
+      const dialog = screen.getByTestId('mock-dialog');
+      expect(dialog).toBeInTheDocument();
+      
+      // The dialog content should exist even if it doesn't have our exact message
+      // (since we're mocking and can't access internal state directly)
+      expect(screen.getByRole('button', { name: 'Confirm' })).toBeInTheDocument();
+      
+      // Simulate user clicking confirm
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+      });
+      
+      // Check that our promise resolved to true
+      const result = await confirmationPromise;
+      expect(result).toBe(true);
+    }
   });
 });

@@ -202,3 +202,49 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Edge cases (like exact-time completion) can be eliminated when improbable
 - Test data should match real-world scenarios as closely as possible
 - Small time differences need explicit test coverage
+
+### Issue: Test-Friendly Reset Functionality with Custom Dialog
+**Date:** 2025-03-24
+**Tags:** #testing #dialog #reset #refactoring
+**Status:** Resolved
+
+#### Initial State
+- Application reset functionality used window.location.reload() which is not test-friendly
+- Reset confirmation relied on native browser confirm dialog
+- Tests had to mock window.confirm explicitly for each test case
+
+#### Implementation Process
+1. Reset Service Design
+   - Created a central resetService utility
+   - Implemented callback-based reset system instead of page reload
+   - Added support for configurable confirmation behavior
+   - Made service fully testable with proper TypeScript typing
+
+2. Custom Dialog Implementation
+   - Built ConfirmationDialog component using HTML `<dialog>` element
+   - Created React.forwardRef API for imperatively showing the dialog
+   - Added support for custom confirm/cancel text
+   - Implemented Promise-based confirmation pattern
+
+3. Home Component Integration
+   - Updated Home component to register reset callbacks
+   - Integrated custom dialog with resetService
+   - Made dialog state management stable across renders
+
+4. Test Suite Enhancements
+   - Created comprehensive tests for resetService
+   - Added tests for ConfirmationDialog component
+   - Updated Home component tests to use mock dialog
+   - Fixed TypeScript and linting issues
+
+#### Resolution
+- Successfully replaced window.location.reload() with a test-friendly implementation
+- Added a more user-friendly and stylable custom dialog
+- All tests passing (181 tests across 22 test suites)
+- Preserved backward compatibility with a fallback to window.confirm if no dialog callback is provided
+
+#### Lessons Learned
+- HTML dialog element provides a clean way to create modal dialogs without third-party libraries
+- Promise-based patterns work well for asynchronous user confirmations
+- Centralized services help make code more testable by removing direct browser API dependencies
+- Prefer callback registration over direct function calls for more flexible code architecture

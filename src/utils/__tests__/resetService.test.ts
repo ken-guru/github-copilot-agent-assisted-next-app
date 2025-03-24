@@ -4,86 +4,115 @@ describe('resetService', () => {
   beforeEach(() => {
     // Reset the module state between tests
     resetService['resetCallbacks'] = [];
-    resetService['confirmFn'] = (message: string) => window.confirm(message);
-    jest.spyOn(window, 'confirm').mockImplementation(() => true);
+    resetService.setDialogCallback(null);
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it('should register and execute callbacks on reset', () => {
+  it('should register and execute callbacks on reset', async () => {
     const mockCallback1 = jest.fn();
     const mockCallback2 = jest.fn();
     
     resetService.registerResetCallback(mockCallback1);
     resetService.registerResetCallback(mockCallback2);
     
-    resetService.reset({ skipConfirmation: true });
+    // Mock the dialog function to immediately return true (confirmed)
+    resetService.setDialogCallback(() => Promise.resolve(true));
     
+    const result = await resetService.reset({ skipConfirmation: true });
+    
+    expect(result).toBe(true);
     expect(mockCallback1).toHaveBeenCalledTimes(1);
     expect(mockCallback2).toHaveBeenCalledTimes(1);
   });
 
-  it('should return an unregister function that works', () => {
+  it('should return an unregister function that works', async () => {
     const mockCallback = jest.fn();
     
     const unregister = resetService.registerResetCallback(mockCallback);
-    resetService.reset({ skipConfirmation: true });
+    
+    // Mock the dialog function to immediately return true (confirmed)
+    resetService.setDialogCallback(() => Promise.resolve(true));
+    
+    await resetService.reset({ skipConfirmation: true });
     
     expect(mockCallback).toHaveBeenCalledTimes(1);
     
     // Now unregister the callback
     unregister();
-    resetService.reset({ skipConfirmation: true });
+    await resetService.reset({ skipConfirmation: true });
     
     // The callback should not have been called again
     expect(mockCallback).toHaveBeenCalledTimes(1);
   });
 
-  it('should use custom confirmation function when provided', () => {
-    const mockConfirmFn = jest.fn(() => true);
-    resetService.setConfirmFunction(mockConfirmFn);
+  it('should use dialog callback when provided', async () => {
+    const mockDialogCallback = jest.fn().mockImplementation(() => Promise.resolve(true));
+    resetService.setDialogCallback(mockDialogCallback);
     
-    resetService.reset();
+    const mockResetCallback = jest.fn();
+    resetService.registerResetCallback(mockResetCallback);
     
-    expect(mockConfirmFn).toHaveBeenCalledTimes(1);
-    expect(window.confirm).not.toHaveBeenCalled();
+    await resetService.reset({ confirmMessage: 'Custom message' });
+    
+    expect(mockDialogCallback).toHaveBeenCalledTimes(1);
+    expect(mockDialogCallback).toHaveBeenCalledWith('Custom message');
+    expect(mockResetCallback).toHaveBeenCalled();
   });
 
-  it('should not execute callbacks if confirmation is false', () => {
+  it('should not execute callbacks if dialog returns false', async () => {
     const mockCallback = jest.fn();
     resetService.registerResetCallback(mockCallback);
     
-    // Set the confirm function to return false
-    resetService.setConfirmFunction(() => false);
+    // Set the dialog callback to return false (cancelled)
+    resetService.setDialogCallback(() => Promise.resolve(false));
     
-    const result = resetService.reset();
+    const result = await resetService.reset();
     
     expect(mockCallback).not.toHaveBeenCalled();
     expect(result).toBe(false);
   });
 
-  it('should execute callbacks if skipConfirmation is true', () => {
+  it('should execute callbacks if skipConfirmation is true', async () => {
     const mockCallback = jest.fn();
     resetService.registerResetCallback(mockCallback);
     
-    // Set the confirm function to return false, but skipConfirmation is true
-    resetService.setConfirmFunction(() => false);
+    // Set the dialog callback to return false, but skipConfirmation is true
+    resetService.setDialogCallback(() => Promise.resolve(false));
     
-    const result = resetService.reset({ skipConfirmation: true });
+    const result = await resetService.reset({ skipConfirmation: true });
     
     expect(mockCallback).toHaveBeenCalledTimes(1);
     expect(result).toBe(true);
   });
   
-  it('should use custom confirm message when provided', () => {
-    const mockConfirmFn = jest.fn(() => true);
-    resetService.setConfirmFunction(mockConfirmFn);
+  it('should use custom confirm message in dialog callback', async () => {
+    const mockDialogCallback = jest.fn().mockImplementation(() => Promise.resolve(true));
+    resetService.setDialogCallback(mockDialogCallback);
     
     const customMessage = 'Custom reset message';
-    resetService.reset({ confirmMessage: customMessage });
+    await resetService.reset({ confirmMessage: customMessage });
     
-    expect(mockConfirmFn).toHaveBeenCalledWith(customMessage);
+    expect(mockDialogCallback).toHaveBeenCalledWith(customMessage);
+  });
+
+  it('should use legacy window.confirm if no dialog callback is set', async () => {
+    // Mock window.confirm to always return true
+    const originalConfirm = window.confirm;
+    window.confirm = jest.fn().mockReturnValue(true);
+
+    const mockCallback = jest.fn();
+    resetService.registerResetCallback(mockCallback);
+    
+    // No dialog callback set, should fall back to window.confirm
+    await resetService.reset();
+    
+    expect(window.confirm).toHaveBeenCalled();
+    expect(mockCallback).toHaveBeenCalled();
+
+    // Restore original confirm
+    window.confirm = originalConfirm;
   });
 });

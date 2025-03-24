@@ -6,7 +6,7 @@
  */
 
 export type ResetCallback = () => void;
-export type ConfirmCallback = (message: string) => boolean;
+export type DialogCallback = (message: string) => Promise<boolean>;
 
 export interface ResetOptions {
   confirmMessage?: string;
@@ -15,7 +15,7 @@ export interface ResetOptions {
 
 class ResetService {
   private resetCallbacks: ResetCallback[] = [];
-  private confirmFn: ConfirmCallback = (message) => window.confirm(message);
+  private dialogCallback: DialogCallback | null = null;
   private defaultOptions: ResetOptions = {
     confirmMessage: 'Are you sure you want to reset the application? All progress will be lost.',
     skipConfirmation: false,
@@ -34,28 +34,51 @@ class ResetService {
   }
 
   /**
-   * Set a custom confirmation function for testing
-   * @param confirmFn Function to use for confirmation
+   * Set a dialog callback function for custom dialog confirmation
+   * @param dialogCallback Function that shows a dialog and returns a promise resolving to boolean
    */
-  setConfirmFunction(confirmFn: ConfirmCallback): void {
-    this.confirmFn = confirmFn;
+  setDialogCallback(dialogCallback: DialogCallback | null): void {
+    this.dialogCallback = dialogCallback;
   }
 
   /**
    * Reset the application state by calling all registered callbacks
    * @param options Reset options
-   * @returns Boolean indicating whether reset was performed
+   * @returns Promise resolving to boolean indicating whether reset was performed
    */
-  reset(options?: ResetOptions): boolean {
+  async reset(options?: ResetOptions): Promise<boolean> {
     const { confirmMessage, skipConfirmation } = { ...this.defaultOptions, ...options };
     
-    if (!skipConfirmation && !this.confirmFn(confirmMessage || this.defaultOptions.confirmMessage!)) {
+    if (skipConfirmation) {
+      this.executeResetCallbacks();
+      return true;
+    }
+
+    const message = confirmMessage || this.defaultOptions.confirmMessage!;
+    let confirmed = false;
+
+    if (this.dialogCallback) {
+      // Use the dialog component
+      confirmed = await this.dialogCallback(message);
+    } else {
+      // Fall back to window.confirm for backward compatibility
+      confirmed = window.confirm(message);
+    }
+
+    if (!confirmed) {
       return false;
     }
 
-    // Execute all registered reset callbacks
-    this.resetCallbacks.forEach(callback => callback());
+    this.executeResetCallbacks();
     return true;
+  }
+
+  /**
+   * Execute all registered reset callbacks
+   * @private
+   */
+  private executeResetCallbacks(): void {
+    this.resetCallbacks.forEach(callback => callback());
   }
 }
 
