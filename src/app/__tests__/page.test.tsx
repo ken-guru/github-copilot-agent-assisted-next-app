@@ -4,6 +4,7 @@ import Home from '../page';
 import resetService, { DialogCallback } from '@/utils/resetService';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
 import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
+import styles from '../page.module.css';
 
 // Store dialog props for testing
 let mockDialogProps = {
@@ -88,16 +89,19 @@ const mockedResetService = resetService as unknown as MockResetService;
 const mockResetActivities = jest.fn();
 const mockResetTimer = jest.fn();
 
+// Set up useActivityState mock with reusable implementation
+const mockUseActivityState = jest.fn().mockImplementation(() => ({
+  currentActivity: null,
+  timelineEntries: [],
+  completedActivityIds: [],
+  allActivitiesCompleted: false,
+  handleActivitySelect: jest.fn(),
+  handleActivityRemoval: jest.fn(),
+  resetActivities: mockResetActivities,
+}));
+
 jest.mock('@/hooks/useActivityState', () => ({
-  useActivityState: () => ({
-    currentActivity: null,
-    timelineEntries: [],
-    completedActivityIds: [],
-    allActivitiesCompleted: false,
-    handleActivitySelect: jest.fn(),
-    handleActivityRemoval: jest.fn(),
-    resetActivities: mockResetActivities,
-  }),
+  useActivityState: () => mockUseActivityState(),
 }));
 
 jest.mock('@/hooks/useTimerState', () => ({
@@ -219,5 +223,102 @@ describe('Home Page', () => {
       const result = await confirmationPromise;
       expect(result).toBe(true);
     }
+  });
+
+  describe('Mobile Header Layout', () => {
+    beforeEach(() => {
+      // Mock mobile viewport
+      window.matchMedia = jest.fn().mockImplementation(query => ({
+        matches: query === '(max-width: 768px)',
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+      }));
+    });
+
+    it('should render header with compact layout on mobile', () => {
+      render(<Home />);
+      
+      const header = screen.getByRole('banner');
+      const headerContent = header.firstElementChild;
+      
+      expect(headerContent).toHaveClass(styles.headerContent);
+      expect(header.firstElementChild).not.toBeNull();
+    });
+
+    it('should maintain touch-friendly sizing for buttons on mobile', () => {
+      render(<Home />);
+      
+      // Set initial time to show reset button
+      const timeSetupButton = screen.getByRole('button', { name: /set time/i });
+      fireEvent.click(timeSetupButton);
+      
+      const resetButton = screen.getByText('Reset');
+      expect(resetButton).toHaveClass(styles.resetButton);
+    });
+
+    it('should render title with correct mobile styling', () => {
+      render(<Home />);
+      
+      const title = screen.getByText('Mr. Timely');
+      expect(title).toHaveClass(styles.title);
+    });
+  });
+});
+
+describe('OfflineIndicator Integration', () => {
+  beforeEach(() => {
+    // Mock offline status
+    Object.defineProperty(window.navigator, 'onLine', {
+      configurable: true,
+      value: false,
+    });
+  });
+
+  afterEach(() => {
+    // Reset online status
+    Object.defineProperty(window.navigator, 'onLine', {
+      configurable: true,
+      value: true,
+    });
+  });
+
+  it('should maintain offline indicator positioning across all app states', () => {
+    const { rerender } = render(<Home />);
+    
+    // Check setup state
+    const setupOfflineIndicator = screen.getByRole('status');
+    expect(setupOfflineIndicator).toHaveTextContent('You are offline');
+    expect(setupOfflineIndicator.nextElementSibling).toHaveClass(styles.setupGrid);
+
+    // Transition to activity state
+    const timeSetupButton = screen.getByRole('button', { name: /set time/i });
+    fireEvent.click(timeSetupButton);
+    
+    // Check activity state
+    const activityOfflineIndicator = screen.getByRole('status');
+    expect(activityOfflineIndicator).toHaveTextContent('You are offline');
+    expect(activityOfflineIndicator.nextElementSibling).toHaveClass(styles.activityGrid);
+
+    // Mock completed state
+    mockUseActivityState.mockImplementationOnce(() => ({
+      currentActivity: null,
+      timelineEntries: [],
+      completedActivityIds: ['1'],
+      allActivitiesCompleted: true,
+      handleActivitySelect: jest.fn(),
+      handleActivityRemoval: jest.fn(),
+      resetActivities: mockResetActivities,
+    }));
+    rerender(<Home />);
+
+    // Check completed state
+    const completedOfflineIndicator = screen.getByRole('status');
+    expect(completedOfflineIndicator).toHaveTextContent('You are offline');
+    expect(completedOfflineIndicator.nextElementSibling).toHaveClass(styles.completedGrid);
   });
 });

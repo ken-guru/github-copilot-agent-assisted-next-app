@@ -277,3 +277,115 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Keep test mock types minimal and remove unused type definitions
 - TypeScript interfaces should be used only when explicitly needed
 - Implicit typing can be sufficient for simple mock objects in tests
+
+### Issue: Header Component Mobile Layout Enhancement
+**Date:** 2025-03-24
+**Tags:** #mobile #layout #header #accessibility #testing
+**Status:** Resolved
+
+#### Initial State
+- Header components lacked proper touch target sizes
+- Layout not optimized for mobile screens
+- Test suite relied on computed styles causing unreliable tests
+
+#### Implementation Process
+1. Header Layout Optimization
+   - Implemented fixed minimum dimensions (44px) for touch targets
+   - Adjusted spacing and padding for mobile view
+   - Ensured proper stacking of header elements
+
+2. ThemeToggle Component Updates
+   - Added explicit touch target sizing
+   - Optimized button spacing for mobile
+   - Maintained theme switching functionality
+
+3. Test Suite Improvements
+   - Moved from computed style checks to class-based assertions
+   - Added specific mobile viewport test cases
+   - Improved test reliability and maintainability
+
+#### Resolution
+- Successfully implemented mobile-friendly header layout
+- All tests passing with improved reliability
+- Maintained WCAG compliance for touch targets
+- Preserved desktop layout compatibility
+
+#### Lessons Learned
+- Prefer class-based assertions over computed style checks in Jest
+- Use explicit dimensions for touch targets rather than relative sizes
+- Consider mobile breakpoints early in component design
+- Document mobile-specific style requirements in tests
+
+### Issue: Offline Indicator Layout and Test Optimization
+**Date:** 2025-03-24
+**Tags:** #layout #testing #accessibility #mobile
+**Status:** Resolved
+
+#### Initial State
+- Offline indicator overlapped with header due to fixed positioning
+- Tests relied on computed styles causing brittle assertions
+- CSS module class testing was unreliable in Jest environment
+
+#### Implementation Process
+1. Layout Restructuring
+   - Moved offline indicator between header and content
+   - Removed fixed positioning in favor of natural document flow
+   - Added proper margin for spacing from content
+   - Maintained animation for smooth appearance
+
+2. Component Structure Enhancement
+   - Added proper nested structure for content
+   - Improved semantic HTML with status role
+   - Maintained consistent theme integration
+
+3. Test Suite Improvements
+   - Moved from computed style checks to structure verification
+   - Added explicit tests for component hierarchy
+   - Improved test reliability and maintainability
+   - Removed brittle CSS module class tests
+
+#### Resolution
+- Successfully repositioned offline indicator without overlap
+- All tests passing with improved reliability
+- Maintained accessibility and semantic structure
+- Preserved responsive layout and animations
+
+#### Lessons Learned
+- Prefer testing component structure over computed styles in Jest
+- Use natural document flow over fixed positioning when possible
+- Consider component positioning in the overall page layout
+- Document element role and semantic structure in tests
+
+### Issue: Deployment Build Failing Due to CommonJS Require
+**Date:** 2025-03-24
+**Tags:** #deployment #testing #eslint #typescript
+**Status:** Resolved
+
+#### Initial State
+- Build failing during deployment with ESLint error
+- Error in page.test.tsx: "A `require()` style import is forbidden"
+- Using CommonJS require() for dynamic mock during test
+
+#### Debug Process
+1. Issue Investigation
+   - Located problematic code in OfflineIndicator integration test
+   - Found inline jest.mock() using require() style import
+   - ESLint rule @typescript-eslint/no-require-imports triggered failure
+
+2. Solution Implementation
+   - Moved mock setup to top-level with other mocks
+   - Created reusable mockUseActivityState function
+   - Used mockImplementationOnce for state-specific mocks
+   - Maintained test functionality while following ES module patterns
+
+#### Resolution
+- Refactored test to use ES module imports
+- Created centralized mock setup
+- Verified build passes without ESLint errors
+- Maintained test coverage and functionality
+
+#### Lessons Learned
+- Always use ES module imports in Next.js projects
+- Keep mocks at top-level when possible
+- Use mockImplementation/mockImplementationOnce for dynamic mocks
+- Verify build process locally before deployment

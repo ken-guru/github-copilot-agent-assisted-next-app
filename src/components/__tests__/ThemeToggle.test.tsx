@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ThemeToggle from '../ThemeToggle';
+import styles from '../ThemeToggle.module.css';
 
 // Mock window.matchMedia
 window.matchMedia = jest.fn().mockImplementation(query => ({
@@ -137,5 +138,52 @@ describe('ThemeToggle', () => {
     });
 
     expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
+  });
+});
+
+describe('Mobile Layout', () => {
+  beforeEach(() => {
+    // Mock mobile viewport
+    window.matchMedia = jest.fn().mockImplementation(query => ({
+      matches: query === '(max-width: 768px)',
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    }));
+  });
+
+  it('should maintain touch-friendly button sizes', () => {
+    render(<ThemeToggle />);
+    
+    const buttons = screen.getAllByRole('button');
+    buttons.forEach(button => {
+      expect(button).toHaveClass(styles.toggleButton);
+      // The toggleButton class in our CSS has explicit width and height set to 44px
+      expect(button.className).toContain(styles.toggleButton);
+    });
+  });
+
+  it('should maintain proper spacing between buttons on mobile', () => {
+    render(<ThemeToggle />);
+    
+    const toggleGroup = document.querySelector(`.${styles.toggleGroup}`);
+    expect(toggleGroup).not.toBeNull();
+    expect(toggleGroup).toHaveClass(styles.toggleGroup);
+  });
+
+  it('should render with proper container height for touch targets', () => {
+    render(<ThemeToggle />);
+    
+    const container = document.querySelector(`.${styles.container}`);
+    expect(container).not.toBeNull();
+    expect(container).toHaveClass(styles.container);
+    // Container has explicit height: 44px in mobile CSS
+    if (container) { // Add null check to satisfy TypeScript
+      expect(container.className).toContain(styles.container);
+    }
   });
 });

@@ -6,6 +6,7 @@ import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import ProgressBar from '@/components/ProgressBar';
 import ThemeToggle from '@/components/ThemeToggle';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
@@ -141,6 +142,8 @@ export default function Home() {
             </div>
           </div>
         </header>
+
+        <OfflineIndicator />
 
         {appState === 'setup' && (
           <div className={styles.setupGrid}>
