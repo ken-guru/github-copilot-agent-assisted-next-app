@@ -1,9 +1,10 @@
 'use client';
 import { Geist, Geist_Mono } from "next/font/google";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./globals.css";
 import { OfflineIndicator } from "../components/OfflineIndicator";
-import { registerServiceWorker } from "../utils/serviceWorkerRegistration";
+import { UpdateNotification } from "@/components/UpdateNotification";
+import { registerServiceWorker, setUpdateHandler } from "../utils/serviceWorkerRegistration";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,9 +22,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [updateMessage, setUpdateMessage] = useState<string | null>(null);
+
   // Register service worker for offline functionality
   useEffect(() => {
+    // Set up update handler before registering service worker
+    setUpdateHandler((message) => {
+      setUpdateMessage(message);
+    });
+
+    // Register service worker
     registerServiceWorker();
+
+    // Clean up handler on unmount
+    return () => setUpdateHandler(null);
   }, []);
 
   return (
@@ -34,6 +46,12 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <OfflineIndicator />
+        {updateMessage && (
+          <UpdateNotification
+            message={updateMessage}
+            onDismiss={() => setUpdateMessage(null)}
+          />
+        )}
         <main>
           {children}
         </main>

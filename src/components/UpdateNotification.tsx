@@ -1,0 +1,38 @@
+import React, { useEffect, useState } from 'react';
+import styles from './UpdateNotification.module.css';
+
+interface UpdateNotificationProps {
+  message: string;
+  onDismiss: () => void;
+}
+
+export function UpdateNotification({ message, onDismiss }: UpdateNotificationProps): React.ReactElement | null {
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+      onDismiss();
+    }, 5000); // Auto dismiss after 5 seconds
+
+    return () => clearTimeout(timer);
+  }, [onDismiss]);
+
+  if (!isVisible) return null;
+
+  return (
+    <div className={styles.updateNotification} role="status">
+      <span className={styles.message}>{message}</span>
+      <button 
+        className={styles.dismissButton}
+        onClick={() => {
+          setIsVisible(false);
+          onDismiss();
+        }}
+        aria-label="Dismiss notification"
+      >
+        ✕
+      </button>
+    </div>
+  );
+}

@@ -1,0 +1,51 @@
+.updateNotification {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: var(--background);
+  color: var(--foreground);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-medium);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1000;
+  max-width: 90vw;
+  border: 1px solid var(--border);
+  animation: slideIn 0.3s ease-out;
+}
+
+.message {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dismissButton {
+  background: none;
+  border: none;
+  color: var(--foreground-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.dismissButton:hover {
+  color: var(--foreground);
+  background-color: var(--background-muted);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
