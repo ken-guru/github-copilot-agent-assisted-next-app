@@ -12,6 +12,9 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  maxWorkers: 1, // Run tests sequentially
+  maxConcurrency: 1,
+  workerIdleMemoryLimit: '512MB',
 };
 
 module.exports = createJestConfig(customJestConfig);

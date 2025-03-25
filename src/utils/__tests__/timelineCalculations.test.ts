@@ -135,9 +135,13 @@ describe('calculateTimeSpans', () => {
   });
 
   it('should include a gap item for the remaining time when all activities are completed', () => {
-    const startTime1 = Date.now() - 20000;
-    const endTime1 = Date.now() - 10000;
-
+    // Mock Date.now to return a fixed timestamp
+    const fixedNow = 1000000;
+    jest.spyOn(Date, 'now').mockImplementation(() => fixedNow);
+    
+    const startTime1 = fixedNow - 20000; // 20 seconds ago
+    const endTime1 = fixedNow - 10000;   // 10 seconds ago
+    
     const entries: TimelineEntry[] = [
       {
         id: 'test-id-1',
@@ -150,18 +154,31 @@ describe('calculateTimeSpans', () => {
     const totalDuration = 60 * 1000;
     const allActivitiesCompleted = true;
     const timeLeft = 10 * 1000;
-
+    
     const result = calculateTimeSpans({
-      entries: entries,
-      totalDuration: totalDuration,
-      allActivitiesCompleted: allActivitiesCompleted,
-      timeLeft: timeLeft,
+      entries,
+      totalDuration,
+      allActivitiesCompleted,
+      timeLeft,
     });
 
-    expect(result.items.length).toBe(2);
-    expect(result.items[1].type).toBe('gap');
-    expect(result.items[1].duration).toBe(timeLeft);
-    expect(result.items[1].height).toBeCloseTo(((timeLeft) / (totalDuration)) * 100);
+    // We expect 3 items:
+    // 1. The activity
+    // 2. The ongoing break since activity completion (10 seconds)
+    // 3. The remaining time gap (10 seconds)
+    expect(result.items.length).toBe(3);
+    expect(result.items[0].type).toBe('activity');
+    expect(result.items[0].duration).toBe(10000); // Activity lasted 10 seconds
+    
+    expect(result.items[1].type).toBe('gap'); // Ongoing break
+    expect(result.items[1].duration).toBe(10000); // Break is 10 seconds
+    
+    expect(result.items[2].type).toBe('gap'); // Remaining time
+    expect(result.items[2].duration).toBe(timeLeft);
+    expect(result.items[2].height).toBeCloseTo((timeLeft / totalDuration) * 100);
+
+    // Clean up
+    jest.restoreAllMocks();
   });
 
   it('should use Date.now() to calculate the duration for entries with `endTime` undefined', () => {

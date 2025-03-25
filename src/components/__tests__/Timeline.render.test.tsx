@@ -1,35 +1,26 @@
-/// <reference types="@testing-library/jest-dom" />
 import { render, screen } from '@testing-library/react';
 import Timeline, { TimelineEntry } from '../Timeline';
 
-describe('Timeline Component', () => {
+describe('Timeline Component Rendering', () => {
   let dateNowSpy: jest.SpyInstance;
-  const FIXED_TIME = 1000000;
+  
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
   
   beforeEach(() => {
-    jest.useFakeTimers();
-    dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => FIXED_TIME);
+    dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => 1000000);
   });
 
   afterEach(() => {
     dateNowSpy.mockRestore();
-    jest.useRealTimers();
     jest.clearAllMocks();
     jest.clearAllTimers();
   });
-
-  // Helper function to render timeline with standard props
-  const renderTimeline = (entries: TimelineEntry[], props = {}) => {
-    return render(
-      <Timeline 
-        entries={entries}
-        totalDuration={3600}
-        elapsedTime={30}
-        timerActive={true}
-        {...props}
-      />
-    );
-  };
 
   it('should render the timeline with entries', () => {
     const mockEntries: TimelineEntry[] = [
@@ -37,28 +28,41 @@ describe('Timeline Component', () => {
         id: '1',
         activityId: 'activity-1',
         activityName: 'Task 1',
-        startTime: FIXED_TIME - 30000,
-        endTime: FIXED_TIME - 10000,
+        startTime: 1000000,
+        endTime: 1000000 + 1800000,
         colors: {
           background: '#E8F5E9',
           text: '#1B5E20',
           border: '#2E7D32'
         }
-      }
+      },
     ];
-
-    renderTimeline(mockEntries);
+    render(
+      <Timeline 
+        entries={mockEntries}
+        totalDuration={3600}
+        elapsedTime={1800}
+        timerActive={true}
+      />
+    );
     expect(screen.getByTestId('timeline-activity-name')).toBeInTheDocument();
   });
-
+  
   it('should render an empty state when no entries are present', () => {
-    renderTimeline([]);
+    render(
+      <Timeline 
+        entries={[]}
+        totalDuration={3600}
+        elapsedTime={0}
+        timerActive={false}
+      />
+    );
     expect(screen.getByText('No activities started yet')).toBeInTheDocument();
   });
 
   it('should adjust timeline ruler when activities run into overtime', () => {
-    const startTime = FIXED_TIME - 4000 * 1000;
-    const endTime = FIXED_TIME;
+    const startTime = 1000000 - 4000 * 1000;
+    const endTime = 1000000;
     const mockEntries: TimelineEntry[] = [
       {
         id: '1',
@@ -74,10 +78,15 @@ describe('Timeline Component', () => {
       }
     ];
     
-    renderTimeline(mockEntries, {
-      elapsedTime: 4000,
-      isTimeUp: true
-    });
+    render(
+      <Timeline 
+        entries={mockEntries}
+        totalDuration={3600}
+        elapsedTime={4000}
+        timerActive={true}
+        isTimeUp={true}
+      />
+    );
     
     expect(screen.getByTestId('overtime-warning')).toBeInTheDocument();
     expect(screen.getByTestId('overtime-section')).toBeInTheDocument();
