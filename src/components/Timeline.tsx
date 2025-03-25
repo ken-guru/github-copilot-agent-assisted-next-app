@@ -52,30 +52,28 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     setCurrentElapsedTime(initialElapsedTime);
   }, [initialElapsedTime]);
   
-  // Update elapsed time with a timer if active
+  // Single interval effect for all time-based updates
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    let timeoutId: NodeJS.Timeout | null = null;
     
-    if (timerActive && hasEntries) {
-      const updateElapsedTime = () => {
-        const activeEntry = entries.find(e => !e.endTime);
-        if (activeEntry) {
-          // Calculate total elapsed time from first entry
-          const elapsed = Math.floor((Date.now() - entries[0].startTime) / 1000);
-          setCurrentElapsedTime(elapsed);
-        }
-      };
+    const updateTime = () => {
+      if (hasEntries) {
+        const elapsed = Math.floor((Date.now() - entries[0].startTime) / 1000);
+        setCurrentElapsedTime(elapsed);
+      }
+    };
 
-      // Initial update
-      updateElapsedTime();
-      
-      // Set up interval for updates
-      interval = setInterval(updateElapsedTime, 1000);
+    // Only run timer if we need real-time updates
+    const hasOngoingBreak = hasEntries && entries[entries.length - 1]?.endTime != null;
+    if ((timerActive && hasEntries) || hasOngoingBreak) {
+      updateTime(); // Initial update
+      timeoutId = setInterval(updateTime, 1000);
     }
     
     return () => {
-      if (interval) {
-        clearInterval(interval);
+      if (timeoutId) {
+        clearInterval(timeoutId);
+        timeoutId = null;
       }
     };
   }, [timerActive, hasEntries, entries]);

@@ -455,3 +455,154 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - JavaScript and JSON files are as critical as CSS for immediate refresh during development
 - Consolidated handling of development assets simplifies maintenance
 - Service worker caching strategies need different approaches based on both environment and file type
+
+### Issue: Timeline Break Visualization Fix
+**Date:** 2025-03-25
+**Tags:** #timeline #visualization #breaks #real-time-updates
+**Status:** Resolved
+
+#### Initial State
+- Break periods weren't shown in timeline until next activity starts
+- Users couldn't see ongoing breaks in real-time
+- Break visualization was delayed and inconsistent
+
+#### Debug Process
+1. Investigation of timeline calculations
+   - Found gaps only calculated between activities
+   - No handling of ongoing breaks after last activity
+   - Break durations not updating in real-time
+
+2. Solution implementation
+   - Modified calculateTimeSpans to detect ongoing breaks
+   - Added real-time updates for break visualization
+   - Ensured timer continues during breaks
+   - Added test coverage for break scenarios
+
+#### Resolution
+- Breaks now appear immediately after activity completion
+- Break durations update in real-time
+- Proper transition when new activity starts
+- All timeline states properly tested
+
+#### Lessons Learned
+- Real-time updates should consider all dynamic elements
+- Gap calculations need to handle both completed and ongoing periods
+- Timer logic should account for break periods
+- Test coverage should include real-time updates
+
+#### Test Coverage Added
+- Immediate break visualization after activity completion
+- Real-time break duration updates
+- Break to activity transitions
+- Long-duration break handling
+
+### Issue: Timeline Component Memory Leak
+**Date:** 2025-03-25
+**Tags:** #debugging #memory-leak #jest #timeline #testing
+**Status:** In Progress
+
+#### Initial State
+- Timeline component tests causing Jest worker process to terminate
+- Error: "FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory"
+- Tests pass individually but memory usage grows during test execution
+- Issue occurs after implementing real-time break visualization
+
+#### Debug Process
+1. Initial Investigation
+   - All other test suites passing (25/26)
+   - Memory issue specifically in Timeline component tests
+   - Heap grows significantly during test execution
+   - Memory leak appears related to Date.now() mocking
+
+2. Identified Potential Causes
+   - Multiple setInterval calls in useEffect
+   - Potential memory leak from incomplete timer cleanup
+   - Date.now() mocking in timelineCalculations test affecting Timeline tests
+   - Possible memory accumulation from repeated state updates
+
+3. Code Analysis
+   - Recent changes to break visualization added new interval timer
+   - Multiple components using Date.now() mocking
+   - Test setup might not properly clean up timers
+   - Jest timer mocks possibly conflicting
+
+#### Current Investigation
+1. Timer Management
+   - Examining all useEffect cleanup functions
+   - Verifying proper interval clearing
+   - Checking for missed clearInterval calls
+
+2. Jest Configuration
+   - Analyzing test isolation
+   - Checking timer mock cleanup
+   - Reviewing test environment setup
+
+3. Test Structure
+   - Looking for shared state between tests
+   - Examining mock cleanup procedures
+   - Verifying test isolation
+
+#### Next Steps
+1. Implement proper timer cleanup in all useEffect hooks
+2. Review and update Date.now() mocking strategy
+3. Consider implementing test isolation improvements
+4. Add explicit cleanup in test teardown
+5. Monitor memory usage during test execution
+
+#### Initial Findings
+- Memory leak likely caused by interaction between timer mocks and Date.now() mocks
+- Multiple timer instances possibly not being cleaned up properly
+- Test environment state possibly persisting between tests
+- Real-time updates potentially causing excessive re-renders
+
+#### Impact
+- CI/CD pipeline affected
+- Local development test runs failing
+- Test reliability compromised
+- Development workflow disrupted
+
+#### Related Components
+- Timeline.tsx
+- timelineCalculations.ts
+- useTimeDisplay.ts
+- Jest configuration
+- Test environment setup
+
+### Issue: Timeline Component Test Suite Memory Leak and Failures
+**Date:** 2025-03-25
+**Tags:** #debugging #tests #timeline #memory-leak #jest
+**Status:** Resolved
+
+#### Initial State
+- Timeline component tests causing memory leak and process termination
+- Tests failing due to time format mismatch
+- `mockDateNow` reference error in tests
+
+#### Debug Process
+1. Initial Investigation
+   - Memory leak identified in Timeline test suite
+   - Jest worker process terminated due to heap out of memory
+   - Test failures related to time format expectations
+
+2. Solution Attempts
+   - Split Timeline tests into separate files:
+     - Timeline.test.tsx (base functionality)
+     - Timeline.render.test.tsx (rendering tests)
+     - Timeline.breaks.test.tsx (break visualization)
+   - Updated Jest configuration:
+     - Set maxWorkers and maxConcurrency to 1
+     - Added workerIdleMemoryLimit
+   - Fixed time format assertions to match actual output
+   - Implemented proper test cleanup
+
+#### Resolution
+- Split test files prevented memory accumulation
+- Updated time format assertions (e.g., "0:10" instead of "10s")
+- Added proper Date.now() mocking with cleanup
+- All 221 tests now passing without memory issues
+
+#### Lessons Learned
+- Large test suites with complex component rendering can cause memory issues
+- Splitting tests into focused files improves maintainability and prevents memory leaks
+- Time format assertions should match actual component implementation
+- Proper cleanup in afterEach blocks is crucial for test reliability
