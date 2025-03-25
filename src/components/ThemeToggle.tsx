@@ -2,17 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import styles from './ThemeToggle.module.css';
-
-type Theme = 'light' | 'dark' | 'system';
+import { validateThemeColors } from '../utils/colors';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>('system');
+  const [theme, setTheme] = useState('system');
   const [mounted, setMounted] = useState(false);
 
   // Initialize theme from localStorage or system preference
   useEffect(() => {
     setMounted(true);
-    const savedTheme = localStorage.getItem('theme') as Theme;
+    const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setTheme(savedTheme);
       applyTheme(savedTheme);
@@ -28,25 +27,20 @@ export default function ThemeToggle() {
     if (!mounted) return;
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
     const handleChange = (e: MediaQueryListEvent) => {
       if (theme === 'system') {
         applyTheme(e.matches ? 'dark' : 'light');
       }
     };
 
-    // Modern browsers
     mediaQuery.addEventListener('change', handleChange);
-    
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme, mounted]);
 
-  const applyTheme = (newTheme: Theme) => {
+  const applyTheme = (newTheme: string) => {
     const root = document.documentElement;
-    const isDark = 
-      newTheme === 'dark' || 
-      (newTheme === 'system' && 
-       window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const isDark = newTheme === 'dark' || 
+      (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
     if (isDark) {
       root.classList.add('dark-mode');
@@ -62,9 +56,14 @@ export default function ThemeToggle() {
     } else {
       localStorage.removeItem('theme');
     }
+
+    // Validate contrast ratios after theme change
+    setTimeout(() => {
+      validateThemeColors();
+    }, 100); // Small delay to ensure CSS variables are updated
   };
 
-  const handleThemeChange = (newTheme: Theme) => {
+  const handleThemeChange = (newTheme: string) => {
     setTheme(newTheme);
     applyTheme(newTheme);
   };

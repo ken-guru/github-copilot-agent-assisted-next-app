@@ -2,6 +2,18 @@ import { calculateTimeSpans } from '../timelineCalculations';
 import { TimelineEntry } from '@/components/Timeline';
 
 describe('calculateTimeSpans', () => {
+  let dateNowSpy: jest.SpyInstance;
+  const FIXED_TIME = 1000000;
+
+  beforeEach(() => {
+    // Mock Date.now to return a fixed timestamp
+    dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => FIXED_TIME);
+  });
+
+  afterEach(() => {
+    dateNowSpy.mockRestore();
+  });
+
   it('should return an empty array when there are no entries', () => {
     const entries: TimelineEntry[] = [];
     const totalDuration = 60 * 1000;
@@ -18,9 +30,9 @@ describe('calculateTimeSpans', () => {
     expect(result.items).toEqual([]);
   });
 
-  it('should return a single activity item with the correct duration and height', () => {
-    const startTime = Date.now() - 10000;
-    const endTime = Date.now();
+  it('should return activity and break items for a completed activity', () => {
+    const startTime = FIXED_TIME - 20000; // 20 seconds ago
+    const endTime = FIXED_TIME - 10000;   // 10 seconds ago
     const entries: TimelineEntry[] = [
       {
         id: 'test-id',
@@ -41,10 +53,18 @@ describe('calculateTimeSpans', () => {
       timeLeft: timeLeft,
     });
 
-    expect(result.items.length).toBe(1);
+    // Expect two items: the activity and the break after it
+    expect(result.items.length).toBe(2);
+    
+    // Verify activity item
     expect(result.items[0].type).toBe('activity');
     expect(result.items[0].duration).toBe(endTime - startTime);
-    expect(result.items[0].height).toBeCloseTo(((endTime - startTime) / (totalDuration)) * 100);
+    expect(result.items[0].height).toBeCloseTo(((endTime - startTime) / totalDuration) * 100);
+    
+    // Verify break item
+    expect(result.items[1].type).toBe('gap');
+    expect(result.items[1].duration).toBe(FIXED_TIME - endTime);
+    expect(result.items[1].height).toBeCloseTo(((FIXED_TIME - endTime) / totalDuration) * 100);
   });
 
   it('should return multiple activity items with the correct durations and heights', () => {
@@ -135,12 +155,8 @@ describe('calculateTimeSpans', () => {
   });
 
   it('should include a gap item for the remaining time when all activities are completed', () => {
-    // Mock Date.now to return a fixed timestamp
-    const fixedNow = 1000000;
-    jest.spyOn(Date, 'now').mockImplementation(() => fixedNow);
-    
-    const startTime1 = fixedNow - 20000; // 20 seconds ago
-    const endTime1 = fixedNow - 10000;   // 10 seconds ago
+    const startTime1 = FIXED_TIME - 20000; // 20 seconds ago
+    const endTime1 = FIXED_TIME - 10000;   // 10 seconds ago
     
     const entries: TimelineEntry[] = [
       {
@@ -176,9 +192,6 @@ describe('calculateTimeSpans', () => {
     expect(result.items[2].type).toBe('gap'); // Remaining time
     expect(result.items[2].duration).toBe(timeLeft);
     expect(result.items[2].height).toBeCloseTo((timeLeft / totalDuration) * 100);
-
-    // Clean up
-    jest.restoreAllMocks();
   });
 
   it('should use Date.now() to calculate the duration for entries with `endTime` undefined', () => {
