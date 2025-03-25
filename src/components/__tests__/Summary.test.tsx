@@ -318,4 +318,105 @@ describe('Summary Component', () => {
       expect(screen.getByText('Spent Time')).toBeInTheDocument();
     });
   });
+
+  describe('Activity Order', () => {
+    it('should display activities in chronological order', () => {
+      const entries = [
+        {
+          id: '2',
+          activityId: 'activity-2',
+          activityName: 'Second Activity',
+          startTime: 1000000 + 3600000, // Started 1 hour after first
+          endTime: 1000000 + 7200000,   // 2 hours duration
+          colors: {
+            background: '#E3F2FD',
+            text: '#0D47A1',
+            border: '#1976D2'
+          }
+        },
+        {
+          id: '1',
+          activityId: 'activity-1',
+          activityName: 'First Activity',
+          startTime: 1000000,           // Started first
+          endTime: 1000000 + 1800000,   // 30 minutes duration
+          colors: {
+            background: '#E8F5E9',
+            text: '#1B5E20',
+            border: '#2E7D32'
+          }
+        }
+      ];
+
+      render(
+        <Summary 
+          entries={entries}
+          totalDuration={7200}
+          elapsedTime={7200}
+          allActivitiesCompleted={true}
+        />
+      );
+
+      // Get all activity names in order
+      const activityItems = screen.getAllByText(/(First|Second) Activity$/);
+      expect(activityItems[0]).toHaveTextContent('First Activity');
+      expect(activityItems[1]).toHaveTextContent('Second Activity');
+    });
+
+    it('should maintain chronological order with multiple activities of varying durations', () => {
+      const entries = [
+        {
+          id: '3',
+          activityId: 'activity-3',
+          activityName: 'Third Activity',
+          startTime: 1000000 + 7200000,  // Started last
+          endTime: 1000000 + 9000000,    // 30 minutes duration
+          colors: {
+            background: '#FFF3E0',
+            text: '#E65100',
+            border: '#F57C00'
+          }
+        },
+        {
+          id: '1',
+          activityId: 'activity-1',
+          activityName: 'First Activity',
+          startTime: 1000000,            // Started first
+          endTime: 1000000 + 3600000,    // 1 hour duration
+          colors: {
+            background: '#E8F5E9',
+            text: '#1B5E20',
+            border: '#2E7D32'
+          }
+        },
+        {
+          id: '2',
+          activityId: 'activity-2',
+          activityName: 'Second Activity',
+          startTime: 1000000 + 3600000,  // Started second
+          endTime: 1000000 + 7200000,    // 1 hour duration
+          colors: {
+            background: '#E3F2FD',
+            text: '#0D47A1',
+            border: '#1976D2'
+          }
+        }
+      ];
+
+      render(
+        <Summary 
+          entries={entries}
+          totalDuration={9000}
+          elapsedTime={9000}
+          allActivitiesCompleted={true}
+        />
+      );
+
+      // Get all activity names in order
+      const activityItems = screen.getAllByText(/(First|Second|Third) Activity$/);
+      expect(activityItems[0]).toHaveTextContent('First Activity');
+      expect(activityItems[1]).toHaveTextContent('Second Activity');
+      expect(activityItems[2]).toHaveTextContent('Third Activity');
+    });
+  });
 });

@@ -730,3 +730,36 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Monitor contrast ratios in production
 - Watch for any theme-related user feedback
 - Verify service worker updates properly
+
+### Issue: Summary Activity Order Fix
+**Date:** 2025-03-25
+**Tags:** #bug-fix #summary #chronological-order #testing
+**Status:** Resolved
+
+#### Initial State
+- Activities in summary view were sorted by duration instead of chronological order
+- Timeline entries displayed correctly, but summary showed longest activities first
+- No test coverage for activity order in summary view
+
+#### Debug Process
+1. Added test cases to verify chronological order requirements
+   - Two-activity test case for basic ordering
+   - Three-activity test case for multiple activities with varying durations
+2. Identified sorting issue in calculateActivityTimes function
+   - Activities were being sorted by duration
+   - Timeline entries order was not preserved
+
+#### Resolution
+1. Modified calculateActivityTimes to maintain chronological order:
+   - Sort entries by startTime before processing
+   - Track first appearance of activities to maintain order
+   - Preserve original entry order for duration calculations
+2. Test suite updated to verify:
+   - Basic two-activity ordering
+   - Multiple activities with varying durations
+   - Edge cases with existing functionality
+
+#### Lessons Learned
+- Always verify order-sensitive data against original input
+- Test both basic and complex scenarios for order-dependent features
+- Consider adding tests when fixing bugs to prevent regression
