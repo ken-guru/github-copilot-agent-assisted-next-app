@@ -2,6 +2,15 @@
 // Cache name with version for cache busting
 const CACHE_NAME = 'github-copilot-agent-assisted-next-app-v1';
 
+// Determine if we're in development mode
+// This checks if the URL contains localhost or a port number typically used in development
+const isDevelopment = () => {
+  return self.location.hostname === 'localhost' || 
+         self.location.hostname === '127.0.0.1' ||
+         self.location.port === '3000' || 
+         self.location.port === '8080';
+};
+
 // Files to cache for offline use - list core app files
 const urlsToCache = [
   '/',
@@ -70,6 +79,36 @@ self.addEventListener('fetch', (event) => {
               // If no cached version, return cached home page as fallback
               return caches.match('/');
             });
+        })
+    );
+    return;
+  }
+  
+  // Check file types for development-specific handling
+  const isCssFile = url.pathname.endsWith('.css');
+  const isJsFile = url.pathname.endsWith('.js') || url.pathname.endsWith('.jsx') || 
+                  url.pathname.endsWith('.ts') || url.pathname.endsWith('.tsx');
+  const isJsonFile = url.pathname.endsWith('.json');
+  const isDevAsset = isDevelopment() && (isCssFile || isJsFile || isJsonFile);
+  
+  // Network-first strategy for development assets (CSS, JS, JSON)
+  if (isDevAsset) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Clone the response to use it and cache it
+          const responseToCache = response.clone();
+          
+          caches.open(CACHE_NAME)
+            .then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+            
+          return response;
+        })
+        .catch(() => {
+          // Fall back to cache if network fails
+          return caches.match(event.request);
         })
     );
     return;
