@@ -1,4 +1,13 @@
+# Planned Changes
+
+## Purpose
+This file outlines planned changes to the application, including features, refactorings, and improvements. Items listed here are intended for near-future implementation.
+
+## How to Use
+Use this file to track upcoming changes to the application. When work on a change begins, move it from BACKLOG_CHANGES.md. When completed, move it to IMPLEMENTED_CHANGES.md with a timestamp.
+
 # Development Flow Improvements
+
 **Target Date:** Post-current cycle
 **Priority:** Medium
 **Status:** Planning
