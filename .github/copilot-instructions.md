@@ -2,9 +2,21 @@
 
 ## Testing Guidelines
 
-1. **Test-First Development**: Always begin implementation of any functionality by writing tests first. Ask clarifying questions about expected behavior before writing these tests.
+1. **Test-First Development**: 
+   - Always begin implementation of any functionality by writing tests first
+   - Write test cases that verify both basic and complex scenarios
+   - Consider edge cases and variations in the test data
+   - Ask clarifying questions about expected behavior before writing these tests
+   - For data display, explicitly test:
+     - Order of displayed items
+     - Format of displayed values
+     - Edge cases in the data
 
-2. **Test Coverage for Refactoring**: When refactoring code, update all relevant tests to ensure they still work as intended. If expected behavior in tests needs to change, ask clarifying questions to prevent unintended behavioral changes.
+2. **Test Coverage for Refactoring**: 
+   - Update all relevant tests to ensure they still work as intended
+   - When changing display order or sorting, add specific order verification tests
+   - If expected behavior in tests needs to change, ask clarifying questions
+   - Verify that existing edge cases are still covered
 
 3. **Missing Test Coverage**: When working on code without test coverage, raise this concern to allow me to decide whether to:
    - Create tests immediately before proceeding

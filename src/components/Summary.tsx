@@ -138,8 +138,13 @@ export default function Summary({
     
     const activityTimes: { id: string; name: string; duration: number; colors?: TimelineEntry['colors'] }[] = [];
     const activityMap = new Map<string, { duration: number; name: string; colors?: TimelineEntry['colors'] }>();
+    const seenActivityIds = new Set<string>(); // Track order of first appearance
     
-    for (const entry of entries) {
+    // Sort entries by startTime to ensure chronological order
+    const sortedEntries = [...entries].sort((a, b) => a.startTime - b.startTime);
+    
+    // First pass: Calculate total durations
+    for (const entry of sortedEntries) {
       if (entry.activityId && entry.activityName) {
         const endTime = entry.endTime ?? Date.now();
         const duration = Math.round((endTime - entry.startTime) / 1000);
@@ -154,14 +159,23 @@ export default function Summary({
             colors: entry.colors
           });
         }
+        
+        // Track first appearance of each activity
+        if (!seenActivityIds.has(entry.activityId)) {
+          seenActivityIds.add(entry.activityId);
+          activityTimes.push({ 
+            id: entry.activityId, 
+            ...activityMap.get(entry.activityId)! 
+          });
+        }
       }
     }
     
-    activityMap.forEach((value, id) => {
-      activityTimes.push({ id, ...value });
-    });
-    
-    return activityTimes.sort((a, b) => b.duration - a.duration);
+    // Update durations in activityTimes with final values
+    return activityTimes.map(activity => ({
+      ...activity,
+      duration: activityMap.get(activity.id)!.duration
+    }));
   };
 
   const status = getStatusMessage();
