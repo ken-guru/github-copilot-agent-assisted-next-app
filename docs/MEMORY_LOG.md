@@ -389,3 +389,35 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Keep mocks at top-level when possible
 - Use mockImplementation/mockImplementationOnce for dynamic mocks
 - Verify build process locally before deployment
+
+### Service Worker CSS Caching Strategy Update
+**Date:** 2025-03-25
+**Tags:** #service-worker #caching #development-experience #CSS
+**Status:** Resolved
+
+#### Initial State
+- CSS changes required manual cache clearing during development
+- Service worker was using cache-first strategy for all non-HTML resources including CSS files
+- This caused development issues where style updates weren't immediately visible
+
+#### Debug Process
+1. Identified the service worker caching strategy
+   - Found that CSS files were being served from cache first in all environments
+   - This created a poor developer experience requiring manual cache clearing
+
+2. Solution implementation
+   - Added environment detection to identify development context
+   - Created special handling for CSS files in development
+   - Implemented network-first strategy for CSS only in development mode
+   - Maintained cache-first strategy for production use and other file types
+
+#### Resolution
+- Modified service-worker.js to detect development environments
+- Implemented network-first strategy specifically for CSS files in development
+- Maintained cache-first strategy for all other cases to preserve production performance
+- Now CSS changes are immediately visible upon refresh during development
+
+#### Lessons Learned
+- Service workers need different caching strategies for development vs production
+- File type-specific caching strategies can balance performance and developer experience
+- Detecting the environment context within service workers is key for adaptive behavior
