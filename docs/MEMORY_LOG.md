@@ -421,3 +421,37 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Service workers need different caching strategies for development vs production
 - File type-specific caching strategies can balance performance and developer experience
 - Detecting the environment context within service workers is key for adaptive behavior
+
+### Service Worker Development Caching Strategy Enhancement
+**Date:** 2025-03-25
+**Tags:** #service-worker #caching #development-experience #javascript #json
+**Status:** Resolved
+
+#### Initial State
+- Previously modified service worker to use network-first strategy for CSS files in development
+- JavaScript and JSON files were still using cache-first strategy in all environments
+- This caused development issues where code changes weren't immediately visible
+
+#### Debug Process
+1. Analysis of Additional Cache-First Issues
+   - Identified JavaScript files experiencing similar caching problems during development
+   - Found JSON data files could remain stale even after changes
+   - Recognized that, like CSS, these file types are frequently updated during development
+
+2. Solution Implementation
+   - Extended the existing development environment detection logic
+   - Added file type detection for JavaScript and JSON files
+   - Implemented network-first strategy for JS and JSON files in development mode
+   - Consolidated the handling of all development assets (CSS, JS, JSON)
+
+#### Resolution
+- Modified service-worker.js to use network-first strategy for JavaScript and JSON files in development
+- Added support for various JavaScript extensions (.js, .jsx, .ts, .tsx)
+- Maintained cache-first strategy for other assets and production environments
+- All development assets now refresh properly without manual cache clearing
+
+#### Lessons Learned
+- Development caching strategies should consider all frequently modified file types
+- JavaScript and JSON files are as critical as CSS for immediate refresh during development
+- Consolidated handling of development assets simplifies maintenance
+- Service worker caching strategies need different approaches based on both environment and file type

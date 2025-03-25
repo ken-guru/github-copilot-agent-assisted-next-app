@@ -84,11 +84,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Check if this is a CSS file
+  // Check file types for development-specific handling
   const isCssFile = url.pathname.endsWith('.css');
+  const isJsFile = url.pathname.endsWith('.js') || url.pathname.endsWith('.jsx') || 
+                  url.pathname.endsWith('.ts') || url.pathname.endsWith('.tsx');
+  const isJsonFile = url.pathname.endsWith('.json');
+  const isDevAsset = isDevelopment() && (isCssFile || isJsFile || isJsonFile);
   
-  // Network-first strategy for CSS files in development mode
-  if (isDevelopment() && isCssFile) {
+  // Network-first strategy for development assets (CSS, JS, JSON)
+  if (isDevAsset) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
