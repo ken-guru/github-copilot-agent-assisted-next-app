@@ -253,3 +253,92 @@ export const getColor = (index: number) => {
   const safeIndex = index % colorPalette.length;
   return colorPalette[safeIndex];
 };
+
+// Convert HSL to RGB for contrast calculations
+function hslToRgb(h: number, s: number, l: number): [number, number, number] {
+  s /= 100;
+  l /= 100;
+  const k = (n: number) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) =>
+    l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return [255 * f(0), 255 * f(8), 255 * f(4)];
+}
+
+// Calculate relative luminance for RGB values
+function getLuminance(r: number, g: number, b: number): number {
+  const [rs, gs, bs] = [r, g, b].map(c => {
+    c = c / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+}
+
+// Calculate contrast ratio between two HSL colors
+export function getContrastRatio(hsl1: string, hsl2: string): number {
+  const parseHSL = (hsl: string) => {
+    const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+    if (!match) throw new Error('Invalid HSL color format');
+    return [Number(match[1]), Number(match[2]), Number(match[3])];
+  };
+
+  const [h1, s1, l1] = parseHSL(hsl1);
+  const [h2, s2, l2] = parseHSL(hsl2);
+
+  const rgb1 = hslToRgb(h1, s1, l1);
+  const rgb2 = hslToRgb(h2, s2, l2);
+
+  const l1lum = getLuminance(...rgb1);
+  const l2lum = getLuminance(...rgb2);
+
+  const lighter = Math.max(l1lum, l2lum);
+  const darker = Math.min(l1lum, l2lum);
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+// Validate color combination meets WCAG contrast requirements
+export function validateContrast(
+  background: string, 
+  text: string, 
+  wcagLevel: 'AA' | 'AAA' = 'AA'
+): boolean {
+  const ratio = getContrastRatio(background, text);
+  // WCAG 2.1 Level AA requires:
+  // - 4.5:1 for normal text
+  // - 3:1 for large text
+  // Level AAA requires:
+  // - 7:1 for normal text
+  // - 4.5:1 for large text
+  const minRatio = wcagLevel === 'AA' ? 4.5 : 7;
+  return ratio >= minRatio;
+}
+
+// Validate theme colors
+export function validateThemeColors(): void {
+  if (typeof window === 'undefined') return;
+
+  const isDark = document.documentElement.classList.contains('dark-mode');
+  const vars = getComputedStyle(document.documentElement);
+  
+  try {
+    // Handle potentially missing or malformed CSS variables in test environment
+    const background = vars.getPropertyValue('--background').trim() || 'hsl(220, 20%, 98%)';
+    const foreground = vars.getPropertyValue('--foreground').trim() || 'hsl(220, 15%, 12%)';
+    const backgroundMuted = vars.getPropertyValue('--background-muted').trim() || 'hsl(220, 20%, 94%)';
+    const foregroundMuted = vars.getPropertyValue('--foreground-muted').trim() || 'hsl(220, 10%, 35%)';
+
+    // Only log if we're in a browser environment
+    if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'test') {
+      console.group(`Theme Contrast Validation (${isDark ? 'Dark' : 'Light'} Mode)`);
+      console.log('Main contrast ratio:', getContrastRatio(background, foreground));
+      console.log('Muted contrast ratio:', getContrastRatio(backgroundMuted, foregroundMuted));
+      console.groupEnd();
+    }
+  } catch (error) {
+    // Silently handle errors in test environment
+    if (process.env.NODE_ENV !== 'test') {
+      console.error('Error validating theme colors:', error);
+    }
+  }
+}

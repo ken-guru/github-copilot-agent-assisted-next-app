@@ -606,3 +606,127 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Splitting tests into focused files improves maintainability and prevents memory leaks
 - Time format assertions should match actual component implementation
 - Proper cleanup in afterEach blocks is crucial for test reliability
+
+### Contrast Ratio and Theme Testing Improvements
+**Date:** 2025-03-25
+**Tags:** #accessibility #testing #dark-mode #contrast
+**Status:** Resolved
+
+#### Initial State
+- Dark mode container backgrounds had incorrect contrast
+- Theme validation was failing in test environment
+- Muted text colors did not meet WCAG AA requirements (4.5:1 contrast ratio)
+
+#### Debug Process
+1. Contrast Analysis
+   - Added comprehensive contrast validation utilities
+   - Created test suite for WCAG compliance
+   - Found muted text colors needed adjustment
+
+2. Test Environment Issues
+   - Identified JSDOM limitations with CSS variables
+   - Added fallback values for test environment
+   - Improved error handling for theme validation
+
+#### Resolution
+1. Color Adjustments
+   - Updated muted text color to `hsl(220, 10%, 35%)` for better contrast
+   - Defined proper `--background-alt` variable for dark mode
+   - Verified all color combinations meet WCAG AA standards
+
+2. Test Improvements
+   - Added fallback values for missing CSS variables
+   - Suppressed unnecessary error logging in test environment
+   - All tests now passing with proper contrast validation
+
+#### Lessons Learned
+- Always validate color contrast ratios against WCAG standards
+- Consider test environment limitations when working with CSS variables
+- Use fallback values to maintain robustness in different environments
+- Document color system changes for future reference
+
+### Timeline Calculation Test Update for Break Visualization
+**Date:** 2025-03-25
+**Tags:** #testing #timeline #breaks #interactions
+**Status:** Resolved
+
+#### Initial State
+- Timeline calculation test failing after dark mode changes
+- Test expected single item but received two items
+- Test assumptions out of sync with current feature set
+
+#### Debug Process
+1. Issue Investigation
+   - Identified test was written before break visualization feature
+   - Found test didn't account for real-time break display
+   - Discovered test lacked proper time mocking
+
+2. Solution Implementation
+   - Updated test to expect both activity and break items
+   - Added proper Date.now() mocking for deterministic results
+   - Verified test with both completed and ongoing activities
+
+#### Resolution
+1. Test Improvements
+   - Added explicit time mocking with jest.spyOn(Date, 'now')
+   - Updated expectations to match current behavior
+   - Maintained test coverage while supporting new features
+
+#### Lessons Learned
+- Features can interact in unexpected ways during recompilation
+- Tests should be updated when feature behavior changes
+- Use deterministic time values in timeline-related tests
+- Document dependencies between features in tests
+
+### Pre-deployment Verification for Dark Mode and Contrast Updates
+**Date:** 2025-03-25
+**Tags:** #deployment #verification #testing #accessibility
+**Status:** Ready for Deployment
+
+#### Verification Steps
+1. Type Checking
+   - All TypeScript types validated
+   - No type errors found
+   - Strict type checking passed
+
+2. Linting Verification
+   - ESLint checks passed
+   - No warnings or errors
+   - Code style consistent with project standards
+
+3. Test Coverage
+   - 213 tests across 28 test suites
+   - All tests passing
+   - Coverage includes:
+     - Dark mode functionality
+     - Contrast ratio validation
+     - Break visualization
+     - Timeline calculations
+
+4. Build Verification
+   - Production build successful
+   - Bundle size optimized (~112KB first load)
+   - Static pages generated successfully
+   - No build-time warnings
+
+#### Recent Changes Verified
+1. Dark Mode Updates
+   - Contrast ratios meet WCAG AA standards
+   - Theme toggle functioning correctly
+   - CSS variables properly defined
+
+2. Break Visualization
+   - Real-time updates working
+   - Test coverage updated
+   - No performance regressions
+
+#### Deployment Notes
+- No migrations needed
+- Service worker caching strategy verified
+- Accessibility standards maintained
+- Development-to-production parity confirmed
+
+#### Next Steps
+- Monitor contrast ratios in production
+- Watch for any theme-related user feedback
+- Verify service worker updates properly

@@ -464,3 +464,65 @@ The offline indicator component needed optimization to prevent overlap with the 
 - ✅ Layout consistency confirmed
 - ✅ Theme compatibility maintained
 - ✅ Accessibility requirements met
+
+## Real-time Break Visualization Implementation
+**Date Implemented:** 2025-03-25
+
+### Context
+- **Components/Utilities Modified**: 
+  - Timeline component
+  - useTimelineEntries hook
+  - timelineCalculations utility
+- **Previous Behavior**: Break periods weren't shown in timeline until the next activity started
+- **User Need Addressed**: Real-time visualization of break periods for accurate time tracking
+
+### Implementation Details
+1. Timeline Calculation Enhancement
+   - Modified `calculateTimeSpans` to detect and show ongoing breaks
+   - Added real-time break duration calculations
+   - Implemented proper scaling of break visualization
+   - Ensured backward compatibility with existing gap visualization
+
+2. State Management Updates
+   - Added break state tracking in activity state machine
+   - Implemented real-time break duration updates
+   - Maintained state consistency during transitions
+
+3. Visual Integration
+   - Applied existing gap/break styling to real-time breaks
+   - Ensured proper ARIA attributes for accessibility
+   - Verified theme compatibility in light and dark modes
+
+### Technical Details
+- Used React's useEffect for timer management
+- Implemented proper cleanup of intervals
+- Added Date.now() mocking in tests for deterministic results
+- Split timeline tests into focused files to prevent memory leaks
+
+### Testing Approach
+1. Unit Tests
+   - Break visualization in isolation
+   - Time calculation accuracy
+   - State transitions
+
+2. Integration Tests
+   - Real-time updates
+   - Theme compatibility
+   - Break to activity transitions
+
+3. Performance Tests
+   - Memory leak prevention
+   - Timer cleanup verification
+   - Long-duration break handling
+
+### Benefits Achieved
+- Immediate break visualization after activity completion
+- Real-time duration updates
+- Consistent theme integration
+- Improved user time tracking accuracy
+
+### Validation Results
+- All 213 tests passing
+- No memory leaks
+- Consistent behavior across themes
+- WCAG compliance maintained

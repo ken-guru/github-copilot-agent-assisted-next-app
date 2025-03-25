@@ -8,9 +8,10 @@
 
   /* Light theme variables using HSL */
   --background: hsl(var(--color-hue-primary), 20%, 98%);
+  --background-alt: hsl(var(--color-hue-primary), 20%, 100%);
   --foreground: hsl(var(--color-hue-primary), 15%, 12%);
   --background-muted: hsl(var(--color-hue-primary), 20%, 94%);
-  --foreground-muted: hsl(var(--color-hue-primary), 10%, 45%);
+  --foreground-muted: hsl(var(--color-hue-primary), 10%, 35%);
   --border-color: hsl(var(--color-hue-primary), 20%, 88%);
   --border-hover: hsl(var(--color-hue-primary), 20%, 70%);
   --break-background: hsl(var(--color-hue-primary), 10%, 96%);
@@ -18,7 +19,7 @@
   --segment-separator: hsl(var(--color-hue-primary), 0%, 100%);
   --segment-outline: hsla(var(--color-hue-primary), 10%, 10%, 0.05);
   --text-default: hsla(var(--color-hue-primary), 10%, 10%, 0.7);
-  --text-muted: hsl(var(--color-hue-primary), 10%, 45%);
+  --text-muted: hsl(var(--color-hue-primary), 10%, 35%);
   
   /* Accent colors */
   --accent-color: hsl(var(--color-hue-accent), 85%, 55%);
@@ -43,9 +44,10 @@
 .dark-mode {
   /* Dark theme variables using HSL */
   --background: hsl(var(--color-hue-primary), 15%, 12%);
+  --background-alt: hsl(var(--color-hue-primary), 15%, 15%);
   --foreground: hsl(var(--color-hue-primary), 10%, 95%);
   --background-muted: hsl(var(--color-hue-primary), 15%, 18%);
-  --foreground-muted: hsl(var(--color-hue-primary), 10%, 70%);
+  --foreground-muted: hsl(var(--color-hue-primary), 10%, 75%);
   --border-color: hsl(var(--color-hue-primary), 15%, 25%);
   --border-hover: hsl(var(--color-hue-primary), 15%, 40%);
   --break-background: hsl(var(--color-hue-primary), 15%, 22%);
@@ -78,9 +80,10 @@
   :root:not(.light-mode) {
     /* Apply dark theme variables when the user's system preference is dark */
     --background: hsl(var(--color-hue-primary), 15%, 12%);
+    --background-alt: hsl(var(--color-hue-primary), 15%, 15%);
     --foreground: hsl(var(--color-hue-primary), 10%, 95%);
     --background-muted: hsl(var(--color-hue-primary), 15%, 18%);
-    --foreground-muted: hsl(var(--color-hue-primary), 10%, 70%);
+    --foreground-muted: hsl(var(--color-hue-primary), 10%, 75%);
     --border-color: hsl(var(--color-hue-primary), 15%, 25%);
     --border-hover: hsl(var(--color-hue-primary), 15%, 40%);
     --break-background: hsl(var(--color-hue-primary), 15%, 22%);
@@ -92,7 +95,7 @@
     
     /* Accent colors - adjusted for dark mode */
     --accent-color: hsl(var(--color-hue-accent), 90%, 65%);
-    --accent-color-rgb: 96, 165, 250; /* RGB equivalent for rgba() usage - brighter for dark mode */
+    --accent-color-rgb: 96, 165, 250;
     --accent-color-hover: hsl(var(--color-hue-accent), 90%, 70%);
     
     /* Status colors - adjusted for dark mode */
