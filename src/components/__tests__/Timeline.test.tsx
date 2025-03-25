@@ -1,5 +1,5 @@
 /// <reference types="@testing-library/jest-dom" />
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import Timeline, { TimelineEntry } from '../Timeline';
 
 describe('Timeline Component', () => {
@@ -124,5 +124,132 @@ describe('Timeline Component', () => {
     // The last time marker should represent a time greater than the initial totalDuration
     const lastMarkerTime = timeMarkers[timeMarkers.length - 1].textContent;
     expect(lastMarkerTime).not.toBe('1:00:00'); // Not just 1 hour (3600 seconds)
+  });
+
+  it('should show ongoing break immediately after completing an activity', () => {
+    // Mock date for consistent testing
+    jest.useFakeTimers();
+    const now = Date.now();
+
+    const mockEntries: TimelineEntry[] = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Task 1',
+        startTime: now - 30000, // 30 seconds ago
+        endTime: now - 10000,   // 10 seconds ago
+        colors: {
+          background: '#E8F5E9',
+          text: '#1B5E20',
+          border: '#2E7D32'
+        }
+      }
+    ];
+
+    render(
+      <Timeline 
+        entries={mockEntries}
+        totalDuration={3600}
+        elapsedTime={30}
+        timerActive={true}
+      />
+    );
+
+    // Should show an ongoing break immediately
+    expect(screen.getByText((content) => {
+      return content.includes('Break') && content.includes('(10s)');
+    })).toBeInTheDocument();
+
+    // Advance time by 5 seconds
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
+
+    // Break duration should update
+    expect(screen.getByText((content) => {
+      return content.includes('Break') && content.includes('(15s)');
+    })).toBeInTheDocument();
+
+    jest.useRealTimers();
+  });
+
+  it('should handle ongoing break after completing the last activity', () => {
+    const now = Date.now();
+    const mockEntries: TimelineEntry[] = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Task 1',
+        startTime: now - 3600000, // 1 hour ago
+        endTime: now - 1800000,   // 30 minutes ago
+        colors: {
+          background: '#E8F5E9',
+          text: '#1B5E20',
+          border: '#2E7D32'
+        }
+      }
+    ];
+
+    render(
+      <Timeline 
+        entries={mockEntries}
+        totalDuration={7200}    // 2 hours total
+        elapsedTime={3600}      // 1 hour elapsed
+        timerActive={true}
+        allActivitiesCompleted={true}
+      />
+    );
+
+    // Should show an ongoing break
+    expect(screen.getByText((content) => {
+      return content.includes('Break') && content.includes('(30m');
+    })).toBeInTheDocument();
+  });
+
+  it('should transition from break to new activity correctly', () => {
+    const now = Date.now();
+    const mockEntries: TimelineEntry[] = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Task 1',
+        startTime: now - 30000,  // 30 seconds ago
+        endTime: now - 20000,    // 20 seconds ago
+        colors: {
+          background: '#E8F5E9',
+          text: '#1B5E20',
+          border: '#2E7D32'
+        }
+      },
+      {
+        id: '2',
+        activityId: 'activity-2',
+        activityName: 'Task 2',
+        startTime: now - 10000,  // 10 seconds ago
+        endTime: null,           // Still running
+        colors: {
+          background: '#FFEBEE',
+          text: '#C62828',
+          border: '#B71C1C'
+        }
+      }
+    ];
+
+    render(
+      <Timeline 
+        entries={mockEntries}
+        totalDuration={3600}
+        elapsedTime={30}
+        timerActive={true}
+      />
+    );
+
+    // Should show a completed break between activities
+    expect(screen.getByText((content) => {
+      return content.includes('Break') && content.includes('(10s)');
+    })).toBeInTheDocument();
+
+    // Both activities should be visible
+    expect(screen.getAllByTestId('timeline-activity-name')).toHaveLength(2);
   });
 });

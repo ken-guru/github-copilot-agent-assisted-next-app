@@ -455,3 +455,43 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - JavaScript and JSON files are as critical as CSS for immediate refresh during development
 - Consolidated handling of development assets simplifies maintenance
 - Service worker caching strategies need different approaches based on both environment and file type
+
+### Issue: Timeline Break Visualization Fix
+**Date:** 2025-03-25
+**Tags:** #timeline #visualization #breaks #real-time-updates
+**Status:** Resolved
+
+#### Initial State
+- Break periods weren't shown in timeline until next activity starts
+- Users couldn't see ongoing breaks in real-time
+- Break visualization was delayed and inconsistent
+
+#### Debug Process
+1. Investigation of timeline calculations
+   - Found gaps only calculated between activities
+   - No handling of ongoing breaks after last activity
+   - Break durations not updating in real-time
+
+2. Solution implementation
+   - Modified calculateTimeSpans to detect ongoing breaks
+   - Added real-time updates for break visualization
+   - Ensured timer continues during breaks
+   - Added test coverage for break scenarios
+
+#### Resolution
+- Breaks now appear immediately after activity completion
+- Break durations update in real-time
+- Proper transition when new activity starts
+- All timeline states properly tested
+
+#### Lessons Learned
+- Real-time updates should consider all dynamic elements
+- Gap calculations need to handle both completed and ongoing periods
+- Timer logic should account for break periods
+- Test coverage should include real-time updates
+
+#### Test Coverage Added
+- Immediate break visualization after activity completion
+- Real-time break duration updates
+- Break to activity transitions
+- Long-duration break handling

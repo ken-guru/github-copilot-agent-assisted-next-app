@@ -52,14 +52,15 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     setCurrentElapsedTime(initialElapsedTime);
   }, [initialElapsedTime]);
   
-  // Update elapsed time with a timer if active
+  // Update elapsed time with a timer if active or if there's an ongoing break
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     
-    if (timerActive && hasEntries) {
+    const hasOngoingBreak = hasEntries && entries[entries.length - 1]?.endTime != null;
+    
+    if ((timerActive && hasEntries) || hasOngoingBreak) {
       const updateElapsedTime = () => {
-        const activeEntry = entries.find(e => !e.endTime);
-        if (activeEntry) {
+        if (hasEntries) {
           // Calculate total elapsed time from first entry
           const elapsed = Math.floor((Date.now() - entries[0].startTime) / 1000);
           setCurrentElapsedTime(elapsed);
