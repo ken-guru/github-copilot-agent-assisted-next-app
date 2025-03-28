@@ -798,3 +798,49 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Service worker update errors should be handled separately from registration errors
 - Continuing execution after update failures allows the application to work with the previous service worker version
 - Testing specific error conditions improves reliability and error handling
+
+### Issue: Service Worker Update Retry Implementation
+**Date:** 2023-11-07
+**Tags:** #service-worker #retry-mechanism #error-handling #reliability
+**Status:** Resolved
+
+#### Initial State
+- Service worker update could fail with error: `TypeError: Failed to update a ServiceWorker for scope ('http://localhost:3000/') with script ('http://localhost:3000/service-worker.js'): An unknown error occurred when fetching the script.`
+- Basic error handling was in place but no retry mechanism
+- Single failed update would prevent service worker from getting latest version until next page load
+
+#### Implementation Process
+1. Test-First Development
+   - Created comprehensive test cases for retry scenarios:
+     - Single retry success
+     - Multiple consecutive failures
+     - Maximum retry limit
+     - Timeout cleanup during unregistration
+   - Added proper mocking for setTimeout and clearTimeout
+   - Ensured test coverage for all retry paths
+
+2. Retry Mechanism Design
+   - Implemented configurable retry system with:
+     - Maximum retry count (3 attempts)
+     - Configurable delay between retries (5 seconds)
+     - Proper timeout management
+     - Support for future exponential backoff
+   - Added proper cleanup to prevent memory leaks
+   - Reset retry count on successful registration or update
+
+3. Error Handling Improvements
+   - Added specific error messages for different retry states
+   - Implemented proper logging for retry success/failure
+   - Added final error message when max retries exceeded
+
+#### Resolution
+- Successfully implemented service worker update retry mechanism
+- System now attempts up to 3 retries with 5-second intervals
+- All timeouts properly cleared during unregistration
+- Full test coverage for retry scenarios
+
+#### Lessons Learned
+- Transient network errors can be mitigated with a simple retry strategy
+- Timeouts must be properly cleaned up to prevent memory leaks
+- Configurable retry parameters allow for future tuning
+- Test-first development ensures all retry paths are properly tested
