@@ -2,7 +2,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { useEffect, useState } from "react";
 import "./globals.css";
-import { OfflineIndicator } from "../components/OfflineIndicator";
 import { UpdateNotification } from "@/components/UpdateNotification";
 import { registerServiceWorker, setUpdateHandler } from "../utils/serviceWorkerRegistration";
 
