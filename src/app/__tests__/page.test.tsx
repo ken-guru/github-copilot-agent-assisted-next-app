@@ -360,14 +360,12 @@ describe('Progress Element Positioning', () => {
     render(<Home />);
     
     const header = screen.getByRole('banner');
-    const offlineIndicator = screen.queryByRole('status');
     const progressContainer = document.querySelector(`.${styles.progressContainer}`);
     
-    // In our implementation, the offline indicator is the sibling of the header
-    // and the progress container is positioned after the offline indicator
+    // Verify the progress container is in the document
     expect(progressContainer).toBeInTheDocument();
     
-    // Just verify the progress container is in the document and between header and content
+    // Verify the progress container is between header and content
     // rather than checking exact DOM order which might change
     const wrapperElement = header.parentElement;
     expect(wrapperElement?.contains(progressContainer)).toBe(true);
