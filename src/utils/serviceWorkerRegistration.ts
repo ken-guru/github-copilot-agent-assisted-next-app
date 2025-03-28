@@ -4,7 +4,7 @@ type UpdateHandler = (message: string) => void;
 // Configuration for service worker update retries
 const SW_UPDATE_RETRY_CONFIG = {
   maxRetries: 3,              // Maximum number of retry attempts
-  retryDelay: 5000,           // Delay between retries in milliseconds (5 seconds)
+  retryDelay: process.env.NODE_ENV === 'test' ? 500 : 5000,   // 500ms for tests, 5s for production
   exponentialBackoff: false   // Whether to use exponential backoff (not implemented yet)
 };
 

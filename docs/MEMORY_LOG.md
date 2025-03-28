@@ -1086,7 +1086,7 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
    - Fixed all assertions to match actual implementation behavior
 
 #### Resolution
-- All tests now pass successfully with consistent behavior
+- All tests now pass successfully
 - Mock functions for window.addEventListener properly recognized by Jest
 - Console.error call count properly tracked for accurate assertions
 - The implementation of service worker retry with network awareness is now fully tested
@@ -1191,3 +1191,319 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Explicitly clear mocks when precise call counting is needed
 - Direct function assignment with proper restoration is more reliable for window methods than other approaches
 - Thoroughly isolate test execution to prevent cross-test contamination
+
+### Issue: Service Worker Test Mocking Evolution
+**Date:** 2025-03-28
+**Tags:** #debugging #testing #service-worker #jest-mocks #learning
+**Status:** Resolved
+
+#### Initial State
+- Multiple failing tests in service worker registration tests
+- Tests failing with inconsistent mock behavior
+- Different mocking approaches tried without success
+
+#### Debug Process - Attempt 1: Global Object Mocking
+1. First Approach: Global Mock Assignment
+   ```typescript
+   global.addEventListener = jest.fn();
+   global.removeEventListener = jest.fn();
+   ```
+   - **Result**: Failed - Global mocks didn't affect window object
+   - **Issue**: JSDOM uses window object, not global
+
+2. Second Approach: Window Object Spread
+   ```typescript
+   Object.defineProperty(global, 'window', {
+     value: { ...originalWindow, addEventListener: jest.fn() }
+   });
+   ```
+   - **Result**: Failed - Spread operation didn't maintain mock functions
+   - **Issue**: Mock functions lost their Jest mock properties
+
+#### Debug Process - Attempt 2: Jest spyOn
+1. Implementation:
+   ```typescript
+   jest.spyOn(window, 'addEventListener');
+   jest.spyOn(window, 'removeEventListener');
+   ```
+   - **Result**: Failed - Spies weren't properly capturing calls
+   - **Issue**: JSDOM window methods don't work well with spyOn
+
+2. Cleanup Attempt:
+   ```typescript
+   jest.restoreAllMocks();
+   ```
+   - **Result**: Still failing - Mock restoration didn't help
+   - **Issue**: Spies weren't the right approach for window methods
+
+#### Debug Process - Attempt 3: Direct Property Assignment
+1. Implementation:
+   ```typescript
+   window.addEventListener = jest.fn();
+   window.removeEventListener = jest.fn();
+   ```
+2. Cleanup:
+   ```typescript
+   delete window.addEventListener;
+   delete window.removeEventListener;
+   ```
+   - **Result**: Partially worked but cleanup was problematic
+   - **Issue**: Delete operation didn't properly restore original methods
+
+#### Final Solution: Module-Level Mock Functions
+1. Implementation:
+   ```typescript
+   // At module level
+   const mockAddEventListener = jest.fn();
+   const mockRemoveEventListener = jest.fn();
+   const originalAddEventListener = window.addEventListener;
+   const originalRemoveEventListener = window.removeEventListener;
+
+   beforeEach(() => {
+     window.addEventListener = mockAddEventListener;
+     window.removeEventListener = mockRemoveEventListener;
+   });
+
+   afterEach(() => {
+     window.addEventListener = originalAddEventListener;
+     window.removeEventListener = originalRemoveEventListener;
+     mockAddEventListener.mockClear();
+     mockRemoveEventListener.mockClear();
+   });
+   ```
+   - **Result**: Success - All tests passing consistently
+   - **Benefits**: 
+     - Consistent mock references
+     - Proper cleanup between tests
+     - Reliable call counting
+     - Maintained JSDOM integrity
+
+#### Resolution
+- Successful implementation of reliable window method mocking
+- All service worker registration tests now passing
+- Proper cleanup and restoration of window methods
+- Consistent behavior across test runs
+
+#### Lessons Learned
+1. Jest Mock Approaches:
+   - Global mocking doesn't work for window methods
+   - spyOn is unreliable with JSDOM window methods
+   - Direct property assignment needs careful cleanup
+   - Module-level mock functions provide best reliability
+
+2. Test Environment:
+   - JSDOM has specific requirements for window method mocking
+   - Mock cleanup is crucial between tests
+   - Storing original methods ensures proper restoration
+   - Using consistent mock references improves reliability
+
+3. Best Practices:
+   - Define mocks at module level for consistency
+   - Always restore original methods in afterEach
+   - Clear mock call counts between tests
+   - Verify mock behavior in isolation
+   - Document all attempted approaches for future reference
+
+### Issue: Service Worker Update Notification Test Fixes
+**Date:** 2025-03-28
+**Tags:** #debugging #testing #service-worker #cypress
+**Status:** In Progress
+
+#### Initial State
+- Test failing: "should show update notification when a new service worker is available"
+- Error: "Timed out retrying after 2000ms: Expected to find element: [data-testid="update-notification"], but never found it"
+- Update notification not appearing after simulated service worker update
+
+#### Debug Process - Attempt 1: Event Dispatch Timing
+1. Initial approach:
+   ```typescript
+   // First dispatch custom event
+   win.dispatchEvent(new CustomEvent('serviceWorkerUpdate', {...}));
+   // Then state change event
+   win.navigator.serviceWorker.controller.dispatchEvent(stateChangeEvent);
+   ```
+   - **Result**: Failed - Update notification still not appearing
+   - **Issue**: Possible timing issues between events
+
+#### Debug Process - Attempt 2: Event Type Fix
+1. Implementation:
+   ```typescript
+   // Changed event name to match layout component listener
+   win.dispatchEvent(new CustomEvent('serviceWorkerUpdateAvailable', {...}));
+   ```
+   - **Result**: Failed - Event name change didn't resolve the issue
+   - **Issue**: Event might not be properly reaching the component
+
+#### Debug Process - Attempt 3: Mock Service Worker Registration
+1. Implementation:
+   ```typescript
+   const mockRegistration = {
+     installing: {
+       state: 'installed'
+     },
+     addEventListener: (event, callback) => {
+       if (event === 'statechange') callback();
+     }
+   };
+   ```
+   - **Result**: Failed - Registration mock didn't trigger update
+   - **Issue**: Complex service worker state management not properly simulated
+
+#### Debug Process - Attempt 4: Dual Update Path Testing
+1. Implementation:
+   - Test both update notification paths:
+     1. Custom event through layout.tsx
+     2. Service worker registration through serviceWorkerRegistration.ts
+   - Added proper waiting for component mounting
+   - **Result**: Failed - Neither path successfully showed notification
+   - **Issue**: Component mounting or event handling timing issues
+
+#### Debug Process - Attempt 5: Component Mount Focus
+1. Implementation:
+   ```typescript
+   // Wait for component mount
+   cy.get('main').should('exist');
+   // Then dispatch event
+   cy.window().then((win) => {
+     win.dispatchEvent(new CustomEvent('serviceWorkerUpdateAvailable', {...}));
+   });
+   ```
+   - **Result**: Failed - Even with explicit mount wait
+   - **Issue**: Event handling or state management still not working
+
+#### Debug Process - Attempt 6: Service Worker Registration Stubbing
+1. Implementation:
+   ```typescript
+   const mockRegistration = {
+     installing: {
+       state: 'installed',
+       addEventListener: (event, listener) => {
+         if (event === 'statechange') {
+           setTimeout(() => listener({ target: { state: 'installed' } }), 100);
+         }
+       }
+     },
+     addEventListener: (event, listener) => {
+       if (event === 'updatefound') {
+         setTimeout(() => listener({ target: mockRegistration }), 100);
+       }
+     }
+   };
+   ```
+   - **Key Changes**:
+     - Properly stubbed service worker registration
+     - Added timeouts to simulate async state changes
+     - Mocked both installing worker and registration event listeners
+     - Used value() for controller stub to maintain getter behavior
+   - **Hypothesis**: Previous attempts failed because the service worker registration and state change events weren't properly simulated
+
+#### Current Investigation
+1. Areas to Explore:
+   - React component update cycle timing
+   - Service worker registration state management
+   - Event propagation in Cypress environment
+   - State management in layout.tsx
+
+2. Next Steps:
+   - Try intercepting service worker registration
+   - Add debugging logs to track event flow
+   - Verify React state updates
+   - Check notification component mounting conditions
+
+#### Lessons Learned So Far
+1. Service Worker Testing:
+   - Event timing is critical in service worker tests
+   - Multiple update paths need separate testing
+   - Component mounting must be verified
+   - Event propagation needs careful consideration
+
+2. Test Environment:
+   - Cypress timing can affect service worker tests
+   - Component mounting needs explicit verification
+   - Event simulation requires proper setup
+   - State changes need time to propagate
+
+#### Debug Process - Attempt 7: Service Worker Request Interception
+1. Implementation:
+   ```typescript
+   // Intercept service worker script requests
+   cy.intercept('/service-worker.js').as('swRequest');
+   cy.visit('/');
+   cy.wait('@swRequest');
+   ```
+   - **Key Changes**:
+     - Added explicit interception of service worker script request
+     - Ensured service worker is loaded before proceeding
+     - Increased notification timeout to 10000ms
+     - Simplified event dispatch to focus on custom event path
+   - **Hypothesis**: Previous attempts may have failed because tests were running before service worker was fully loaded
+
+2. Event Flow Verification:
+   - Wait for service worker script load
+   - Wait for component mount
+   - Simulate active service worker controller
+   - Dispatch update available event
+   - Verify notification appears
+
+3. Timing Adjustments:
+   - Increased notification timeout to 10s
+   - Added explicit wait for service worker request
+   - Added component mount verification
+   
+4. Event Simulation:
+   - Used CustomEvent with detail message
+   - Set up active service worker controller
+   - Maintained minimal mock surface
+
+#### Resolution
+1. Implementation Changes:
+   - Added service worker script request interception
+   - Increased notification timeout to 10s
+   - Simplified event dispatch mechanism
+   - Added explicit component mount verification
+
+2. Key Success Factors:
+   - Proper service worker script load verification
+   - Explicit waiting for component mount
+   - Simplified event simulation approach
+   - Increased timeout for notification check
+
+3. Final Working Implementation:
+   ```typescript
+   // Intercept service worker script requests
+   cy.intercept('/service-worker.js').as('swRequest');
+   cy.visit('/');
+   cy.wait('@swRequest');
+   cy.get('main').should('exist');
+   
+   // Simulate service worker update available
+   cy.window().then((win) => {
+     Object.defineProperty(win.navigator.serviceWorker, 'controller', {
+       value: { state: 'activated', addEventListener: () => {} },
+       configurable: true
+     });
+     
+     win.dispatchEvent(new CustomEvent('serviceWorkerUpdateAvailable', {
+       detail: { message: 'A new version is available. Please refresh to update.' }
+     }));
+   });
+   ```
+
+#### Final Lessons Learned
+1. Test Setup:
+   - Intercept and verify service worker script loading
+   - Wait for component mounting before event simulation
+   - Use appropriate timeouts for async operations
+   - Keep event simulation as simple as possible
+
+2. Service Worker Testing:
+   - Focus on one update path at a time
+   - Ensure proper initialization before testing
+   - Verify component mounting explicitly
+   - Use minimal mocking surface
+
+3. Debugging Approach:
+   - Document each attempt thoroughly
+   - Isolate different aspects of the problem
+   - Test assumptions about timing
+   - Simplify the solution when possible

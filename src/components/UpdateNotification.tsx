@@ -21,8 +21,8 @@ export function UpdateNotification({ message, onDismiss }: UpdateNotificationPro
   if (!isVisible) return null;
 
   return (
-    <div className={styles.updateNotification} role="status">
-      <span className={styles.message}>{message}</span>
+    <div className={styles.updateNotification} role="status" data-testid="update-notification">
+      <span className={styles.message} data-testid="update-notification-message">{message}</span>
       <button 
         className={styles.dismissButton}
         onClick={() => {
@@ -30,6 +30,7 @@ export function UpdateNotification({ message, onDismiss }: UpdateNotificationPro
           onDismiss();
         }}
         aria-label="Dismiss notification"
+        data-testid="update-notification-dismiss"
       >
         ✕
       </button>

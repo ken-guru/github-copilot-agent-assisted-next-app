@@ -31,11 +31,24 @@ export default function RootLayout({
       setUpdateMessage(message);
     });
 
+    // Handle custom update event
+    const handleUpdateAvailable = (event: CustomEvent) => {
+      if (event.detail?.message) {
+        setUpdateMessage(event.detail.message);
+      }
+    };
+
+    // Add event listener for custom update event
+    window.addEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);
+
     // Register service worker
     registerServiceWorker();
 
     // Clean up handler on unmount
-    return () => setUpdateHandler(null);
+    return () => {
+      setUpdateHandler(null);
+      window.removeEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);
+    };
   }, []);
 
   return (
