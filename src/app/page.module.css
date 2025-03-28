@@ -1,4 +1,5 @@
-:root {
+/* Global variables for layout spacing */
+.layout {
   --toast-area-height: 3rem; /* Space reserved for toast messages */
   --progress-bar-height: 2.5rem; /* Height of the progress bar component */
 }

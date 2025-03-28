@@ -114,7 +114,7 @@ export default function Home() {
   }));
   
   return (
-    <div className={styles.container}>
+    <div className={`${styles.layout} ${styles.container}`}>
       {/* Confirmation Dialog */}
       <ConfirmationDialog
         ref={resetDialogRef}

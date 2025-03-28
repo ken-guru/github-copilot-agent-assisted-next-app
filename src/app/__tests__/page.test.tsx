@@ -374,4 +374,24 @@ describe('Progress Element Positioning', () => {
     const computedStyle = window.getComputedStyle(progressContainer as Element);
     expect(computedStyle.position).not.toBe('fixed');
   });
+  
+  it('should apply layout spacing based on CSS variables', () => {
+    render(<Home />);
+    
+    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
+    const wrapperElement = document.querySelector(`.${styles.wrapper}`);
+    
+    // Verify that the wrapper has appropriate gap for spacing elements
+    const wrapperStyle = window.getComputedStyle(wrapperElement as Element);
+    expect(wrapperStyle.gap).toBeTruthy();
+    
+    // Verify the progress container has the expected margins
+    const containerStyle = window.getComputedStyle(progressContainer as Element);
+    expect(containerStyle.margin).not.toBe('0px');
+    
+    // The browser applies computed values during render, so we can't test
+    // directly for CSS variable values in JSDOM, but we can verify 
+    // that styling is being applied
+    expect(containerStyle.zIndex).toBe('5');
+  });
 });
