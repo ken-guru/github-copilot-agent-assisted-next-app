@@ -1507,3 +1507,37 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
    - Isolate different aspects of the problem
    - Test assumptions about timing
    - Simplify the solution when possible
+
+### Issue: Service Worker ESLint Errors Blocking Build
+**Date:** 2023-11-15
+**Tags:** #debugging #eslint #build #serviceworker
+**Status:** Resolved
+
+#### Initial State
+- Build was failing due to ESLint errors in the service worker implementation
+- Multiple unused variable warnings in layout.tsx and serviceWorkerRegistration.test.ts
+- TypeScript function type error in the tests
+
+#### Debug Process
+1. Identified all ESLint errors from the build log:
+   - Unused 'OfflineIndicator' import in layout.tsx
+   - Multiple unused variables in serviceWorkerRegistration.test.ts
+   - Unsafe function type issue in the test file
+
+2. Solution implemented:
+   - Removed the unused 'OfflineIndicator' import from layout.tsx
+   - Fixed the serviceWorkerRegistration.test.ts file by:
+     - Removing unused imports and variables
+     - Commenting out the unused 'triggerOnlineEvent' function
+     - Properly typing the mock navigator with 'as unknown as ServiceWorkerContainer'
+     - Removing unused 'options' parameters in test functions
+
+#### Resolution
+- All ESLint errors were resolved
+- Build completed successfully
+- No functionality was affected as the changes only addressed unused code
+
+#### Lessons Learned
+- Unused imports and variables can block production builds with strict ESLint rules
+- TypeScript function types need explicit definitions when setting up test mocks
+- Properly maintaining test files is as important as maintaining application code
