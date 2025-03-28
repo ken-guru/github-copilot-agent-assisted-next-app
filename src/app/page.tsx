@@ -142,9 +142,18 @@ export default function Home() {
             </div>
           </div>
         </header>
-
         <OfflineIndicator />
-
+        
+        {/* Progress bar positioned between header and main content */}
+        <div className={styles.progressContainer}>
+          <ProgressBar 
+            entries={processedEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            timerActive={timerActive}
+          />
+        </div>
+        
         {appState === 'setup' && (
           <div className={styles.setupGrid}>
             <TimeSetup onTimeSet={handleTimeSet} />
@@ -189,16 +198,6 @@ export default function Home() {
             </div>
           </div>
         )}
-
-        {/* Progress bar always visible and fixed to bottom in mobile view */}
-        <div className={styles.progressContainer}>
-          <ProgressBar 
-            entries={processedEntries}
-            totalDuration={totalDuration}
-            elapsedTime={elapsedTime}
-            timerActive={timerActive}
-          />
-        </div>
       </div>
     </div>
   );

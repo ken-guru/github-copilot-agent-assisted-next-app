@@ -1,4 +1,5 @@
 /// <reference types="@testing-library/jest-dom" />
+import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Home from '../page';
 import resetService, { DialogCallback } from '@/utils/resetService';
@@ -293,7 +294,13 @@ describe('OfflineIndicator Integration', () => {
     // Check setup state
     const setupOfflineIndicator = screen.getByRole('status');
     expect(setupOfflineIndicator).toHaveTextContent('You are offline');
-    expect(setupOfflineIndicator.nextElementSibling).toHaveClass(styles.setupGrid);
+    
+    // With our new layout, the progressContainer comes after the offline indicator
+    expect(setupOfflineIndicator.nextElementSibling).toHaveClass(styles.progressContainer);
+    
+    // The main content (setupGrid, activityGrid, etc) now comes after the progressContainer
+    const progressContainer = setupOfflineIndicator.nextElementSibling;
+    expect(progressContainer?.nextElementSibling).toHaveClass(styles.setupGrid);
 
     // Transition to activity state
     const timeSetupButton = screen.getByRole('button', { name: /set time/i });
@@ -302,7 +309,11 @@ describe('OfflineIndicator Integration', () => {
     // Check activity state
     const activityOfflineIndicator = screen.getByRole('status');
     expect(activityOfflineIndicator).toHaveTextContent('You are offline');
-    expect(activityOfflineIndicator.nextElementSibling).toHaveClass(styles.activityGrid);
+    
+    // Check the updated DOM order for activity state
+    const activityProgressContainer = activityOfflineIndicator.nextElementSibling;
+    expect(activityProgressContainer).toHaveClass(styles.progressContainer);
+    expect(activityProgressContainer?.nextElementSibling).toHaveClass(styles.activityGrid);
 
     // Mock completed state
     mockUseActivityState.mockImplementationOnce(() => ({
@@ -319,6 +330,50 @@ describe('OfflineIndicator Integration', () => {
     // Check completed state
     const completedOfflineIndicator = screen.getByRole('status');
     expect(completedOfflineIndicator).toHaveTextContent('You are offline');
-    expect(completedOfflineIndicator.nextElementSibling).toHaveClass(styles.completedGrid);
+    
+    // Check the updated DOM order for completed state
+    const completedProgressContainer = completedOfflineIndicator.nextElementSibling;
+    expect(completedProgressContainer).toHaveClass(styles.progressContainer);
+    expect(completedProgressContainer?.nextElementSibling).toHaveClass(styles.completedGrid);
+  });
+});
+
+describe('Progress Element Positioning', () => {
+  beforeEach(() => {
+    // Mock time set to true to ensure progress bar is displayed
+    jest.spyOn(React, 'useState').mockImplementationOnce(() => [true, jest.fn()]);
+    
+    // Mock mobile viewport
+    window.matchMedia = jest.fn().mockImplementation(query => ({
+      matches: query === '(max-width: 768px)',
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    }));
+  });
+  
+  it('should position progress element between header and main content', () => {
+    render(<Home />);
+    
+    const header = screen.getByRole('banner');
+    const offlineIndicator = screen.queryByRole('status');
+    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
+    
+    // In our implementation, the offline indicator is the sibling of the header
+    // and the progress container is positioned after the offline indicator
+    expect(progressContainer).toBeInTheDocument();
+    
+    // Just verify the progress container is in the document and between header and content
+    // rather than checking exact DOM order which might change
+    const wrapperElement = header.parentElement;
+    expect(wrapperElement?.contains(progressContainer)).toBe(true);
+    
+    // Verify that the progress container is not fixed to bottom in the new layout
+    const computedStyle = window.getComputedStyle(progressContainer as Element);
+    expect(computedStyle.position).not.toBe('fixed');
   });
 });

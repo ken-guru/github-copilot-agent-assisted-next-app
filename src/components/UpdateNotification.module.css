@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  z-index: 1000;
+  z-index: 1000; /* Keep high z-index to ensure it appears above all content */
   max-width: 90vw;
   border: 1px solid var(--border);
   animation: slideIn 0.3s ease-out;
@@ -47,5 +47,15 @@
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+/* Add responsive styling for mobile devices */
+@media (max-width: 768px) {
+  .updateNotification {
+    bottom: 0.5rem; /* Position within the toast area */
+    right: 0.5rem;
+    left: 0.5rem; /* On mobile, span almost full width */
+    max-width: calc(100vw - 1rem);
   }
 }
