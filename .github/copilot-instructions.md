@@ -34,7 +34,16 @@
    - Creating new components for extracted functionality
    - Improving code organization
 
-2. **Documentation Updates**: If changes significantly alter functionality described in README.md, highlight this discrepancy and suggest appropriate documentation updates.
+2. **Documentation Updates**: 
+   - If changes significantly alter functionality described in README.md, highlight this discrepancy and suggest appropriate documentation updates
+   - After completing a development cycle, always evaluate if README.md needs updates to reflect:
+     - New features or functionality added
+     - Changes to installation or setup procedures
+     - Updated usage examples
+     - Modified configuration options
+     - Revised dependencies or requirements
+   - Prompt for README.md updates with specific suggestions based on the changes made
+   - Ensure documentation remains synchronized with the current state of the application
 
 ## Change Management
 
