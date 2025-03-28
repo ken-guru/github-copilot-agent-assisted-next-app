@@ -58,7 +58,6 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <OfflineIndicator />
         {updateMessage && (
           <UpdateNotification
             message={updateMessage}
