@@ -25,8 +25,13 @@ export async function registerServiceWorker(): Promise<void> {
     const registration = await navigator.serviceWorker.register('/service-worker.js');
     console.log('Service worker registered');
     
-    // Check for updates on registration
-    await registration.update();
+    // Check for updates on registration with error handling
+    try {
+      await registration.update();
+    } catch (updateError) {
+      console.error('Service worker update failed', updateError);
+      // Continue execution despite update failure
+    }
     
     // Listen for new service worker installation
     registration.addEventListener('updatefound', () => {

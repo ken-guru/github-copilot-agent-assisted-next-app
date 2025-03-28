@@ -1,4 +1,4 @@
-import { registerServiceWorker, unregisterServiceWorker } from '../serviceWorkerRegistration';
+import { registerServiceWorker, unregisterServiceWorker, setUpdateHandler } from '../serviceWorkerRegistration';
 
 describe('Service Worker Registration', () => {
   // Original navigator
@@ -26,7 +26,8 @@ describe('Service Worker Registration', () => {
     it('should register the service worker when supported', async () => {
       // Arrange
       const mockRegistration = {
-        update: jest.fn().mockResolvedValue(undefined)
+        update: jest.fn().mockResolvedValue(undefined),
+        addEventListener: jest.fn()
       };
       const mockServiceWorker = {
         register: jest.fn().mockResolvedValue(mockRegistration)
@@ -62,6 +63,31 @@ describe('Service Worker Registration', () => {
       
       // Assert
       expect(console.error).toHaveBeenCalledWith('Service worker registration failed', error);
+    });
+
+    it('should handle service worker update errors', async () => {
+      // Arrange
+      const updateError = new TypeError('Failed to update a ServiceWorker');
+      const mockRegistration = {
+        update: jest.fn().mockRejectedValue(updateError),
+        addEventListener: jest.fn()
+      };
+      const mockServiceWorker = {
+        register: jest.fn().mockResolvedValue(mockRegistration)
+      };
+      Object.defineProperty(global.navigator, 'serviceWorker', {
+        configurable: true,
+        value: mockServiceWorker,
+        writable: true
+      });
+      
+      // Act
+      await registerServiceWorker();
+      
+      // Assert
+      expect(navigator.serviceWorker.register).toHaveBeenCalledWith('/service-worker.js');
+      expect(mockRegistration.update).toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalledWith('Service worker update failed', updateError);
     });
     
     it('should not attempt registration when service workers are not supported', async () => {

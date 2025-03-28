@@ -763,3 +763,38 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Always verify order-sensitive data against original input
 - Test both basic and complex scenarios for order-dependent features
 - Consider adding tests when fixing bugs to prevent regression
+
+### Issue: Service Worker Update Error Debugging Session
+**Date:** 2023-11-07
+**Tags:** #debugging #service-worker #error-handling
+**Status:** Resolved
+
+#### Initial State
+- Error message: `TypeError: Failed to update a ServiceWorker for scope ('http://localhost:3000/') with script ('http://localhost:3000/service-worker.js'): An unknown error occurred when fetching the script.`
+- The service worker registration was failing during the update process
+- This could prevent the service worker from properly updating when new content is available
+
+#### Debug Process
+1. Analyzed the error message
+   - Identified that the error occurs specifically during the update process
+   - The service worker was registering successfully, but the update call was failing
+
+2. Added test coverage
+   - Created a specific test case to simulate the update error scenario
+   - Verified that error handling would work as expected
+
+3. Solution implementation
+   - Added a try/catch block around the `registration.update()` call
+   - Added proper error logging to capture the update failure
+   - Ensured application continues execution despite update failures
+
+#### Resolution
+- Implemented error handling to gracefully handle service worker update failures
+- Application continues to function even when service worker updates fail
+- Added test coverage to verify this behavior
+- All tests are now passing
+
+#### Lessons Learned
+- Service worker update errors should be handled separately from registration errors
+- Continuing execution after update failures allows the application to work with the previous service worker version
+- Testing specific error conditions improves reliability and error handling
