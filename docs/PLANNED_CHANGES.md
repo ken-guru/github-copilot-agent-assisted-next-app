@@ -45,18 +45,18 @@ Describe what success looks like:
 
 Note: When implementing a change, copy this template and fill it out completely. The more detailed the prompt, the better the AI assistance will be in implementation.
 
-# Mobile Layout Optimization for Toast Message Display
-
+# Repositioning Progress Element to Top of Application
 ## Context
-Currently, the mobile layout positions the Progress element at the very bottom of the screen using a fixed position, which leaves no space for displaying toast notifications. This creates a usability issue as toast messages have nowhere to appear without overlapping with existing UI elements.
+Currently, the mobile layout positions the Progress element at the very bottom of the screen using a fixed position, which creates usability issues with toast notifications. Instead of just creating space for toast messages below the Progress element, we've decided to move the Progress element to the top of the application, between the header and main content.
 
 **Key components involved**:
 - ProgressBar component (src/components/ProgressBar.tsx)
 - Mobile-specific CSS in page.module.css
+- Page structure in page.tsx
 - UpdateNotification component (potential style conflicts)
 
 ## Issue Analysis
-1. The Progress element is attached to the bottom of the mobile viewport using fixed positioning:
+1. The Progress element is currently attached to the bottom of the mobile viewport using fixed positioning:
    ```css
    .progressContainer {
      position: fixed;
@@ -67,96 +67,114 @@ Currently, the mobile layout positions the Progress element at the very bottom o
      /* ... */
    }
    ```
-
-2. This positioning leaves no dedicated space for toast messages, which typically appear at the bottom or top of the viewport.
-
-3. Any content shift caused by moving the Progress element might affect the overall layout experience.
+2. This positioning creates conflicts with toast messages that typically appear at the bottom of the viewport.
+3. A better approach is to integrate the Progress element into the natural flow of the page, positioning it between the header and main content.
 
 ## Implementation Plan
+### 1. Reposition Progress Element in DOM Structure
+- **Move Element in DOM Hierarchy**: Reposition the Progress element to appear after the header and OfflineIndicator, but before the main content.
+  - Update the DOM order in page.tsx
+  - Ensure the element appears in a logical reading order
 
-### 1. Modify Progress Element Positioning
-- **Create Space by Moving Upward**: Adjust the position of the Progress element to be positioned higher in the mobile layout.
-  - Modify the fixed position to include a gap at the bottom for toast messages
-  - Add bottom margin/padding to ensure consistent space
-
-### 2. Define Toast Message Area
-- **Create Reserved Space**: Define a dedicated area below the Progress element for toast messages.
-  - Add CSS variables for toast message area height
-  - Ensure toast area has proper z-index for visibility
+### 2. Update CSS Styling
+- **Remove Fixed Positioning**: Convert the Progress element from fixed positioning to normal flow.
+  - Remove position: fixed from progressContainer
+  - Add appropriate margins for visual separation
+  - Maintain consistent styling across viewport sizes
 
 ### 3. Layout Adjustments
-- **Fix Content Overlap Issues**: Adjust any content that might overlap with the new positioning.
-  - Update padding-bottom on main content container to account for raised Progress element
-  - Ensure spacing between content and Progress element remains visually balanced
+- **Adjust Main Content Spacing**: Update spacing for main content to accommodate the new Progress element position.
+  - Remove extra padding-bottom from container
+  - Ensure proper visual hierarchy with spacing between elements
 
 ### 4. Responsive Considerations
-- **Handle Various Device Sizes**: Implement responsive adjustments for different mobile viewports.
-  - Test with different device sizes
-  - Ensure proper handling of notch/bezel areas on modern phones
-  - Consider landscape mode handling
+- **Maintain Responsive Design**: Ensure the repositioned element works well across all device sizes.
+  - Update media queries for mobile and landscape orientations
+  - Test with different viewport dimensions
 
-### 5. Theme Compatibility
+### 5. Toast Notification Compatibility
+- **Restore Standard Toast Positioning**: Allow toast notifications to use their standard bottom positioning.
+  - Update any toast-specific CSS if needed
+  - Ensure consistent z-index hierarchy
+
+### 6. Theme Compatibility
 - **Maintain Existing Theme Support**: Ensure all changes maintain compatibility with existing light/dark themes.
   - Use CSS variables for colors and spacing
   - Test in both theme modes
 
-### 6. Testing Strategy
+### 7. Testing Strategy
 1. Unit Tests:
-   - Update ProgressBar.test.tsx to verify correct rendering with new spacing
-   - Test different screen dimensions
-
+   - Verify correct DOM positioning of Progress element
+   - Test responsive behavior across viewports
 2. Integration Tests:
-   - Verify no layout shifts when timer activates
-   - Ensure content is not obscured
-
+   - Ensure no layout issues when switching between application states
+   - Verify toast notifications appear correctly
 3. Visual Tests:
-   - Test with mocked toast messages to verify proper spacing
-   - Validate in different browser sizes and device orientations
+   - Validate appearance in different viewport sizes and orientations
+   - Test with both light and dark themes
 
 ## Technical Implementation Details
+### DOM Structure Update
+```jsx
+{/* In page.tsx */}
+<div className={styles.wrapper}>
+  <header className={styles.header}>
+    {/* Header content */}
+  </header>
+  <OfflineIndicator />
+  {/* Progress bar positioned between header and main content */}
+  <div className={styles.progressContainer}>
+    <ProgressBar 
+      entries={processedEntries}
+      totalDuration={totalDuration}
+      elapsedTime={elapsedTime}
+      timerActive={timerActive}
+    />
+  </div>
+  {/* Main content (setup/activity/completed grids) */}
+</div>
+```
 
 ### CSS Modifications
 ```css
 /* Update to progressContainer in page.module.css */
 .progressContainer {
-  position: fixed;
-  bottom: var(--toast-area-height, 3rem); /* Adjust from bottom: 0 */
-  left: 0;
-  right: 0;
-  z-index: 100;
-  /* ... existing styles ... */
+  margin: 0 1rem 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: var(--background-alt, white);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  z-index: 10; /* Ensure it's above content but below header */
 }
 
-/* Add space for toast messages */
-:root {
-  --toast-area-height: 3rem; /* Default space for toast messages */
-}
-
-/* Update container padding to account for both progress bar and toast area */
-.container {
-  padding-bottom: calc(env(safe-area-inset-bottom) + var(--progress-bar-height, 2.5rem) + var(--toast-area-height, 3rem));
+/* Media query updates for mobile */
+@media (max-width: 768px) {
+  .progressContainer {
+    margin: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  /* Remove extra padding since progress bar is no longer at bottom */
+  .container {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 ```
 
-### Component Updates
-1. **ProgressBar Component**: No functionality changes needed, only position changes via CSS
-2. **Page Layout**: Ensure main content respects the new spacing to prevent content being hidden
-
 ## Benefits
-
 1. **User Experience**:
-   - Toast messages will have dedicated space for visibility
-   - No component overlap when notifications appear
-   - Consistent layout without sudden shifts
-
+   - Progress bar is more visible in the natural reading flow
+   - Toast messages can use standard positioning without conflicts
+   - Layout flows more naturally without fixed elements interrupting content
 2. **Developer Experience**:
-   - Well-defined toast area makes it easier to implement future notifications
-   - Clear separation of concerns between progress and notification areas
-   - Consistent pattern for adding future system messages
+   - Simpler CSS structure without fixed positioning complexities
+   - Better alignment with standard web patterns for progress indicators
+   - Easier implementation of future notifications
 
 ## Validation Criteria
-- [ ] Progress bar visible and functional in correct position
-- [ ] Space available for toast messages below progress bar
+- [ ] Progress bar visible and functional in new position between header and main content
+- [ ] Toast messages appear correctly without positioning conflicts
 - [ ] No layout shifts when switching between application states
 - [ ] Theme compatibility verified in light and dark modes
 - [ ] Mobile testing completed across different device sizes
