@@ -1576,3 +1576,46 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - DOM structure tests need to be flexible enough to accommodate layout changes
 - Positioning UI elements in natural document flow often leads to better responsive design
 - Consider the impact of fixed positioning on other UI elements like notifications
+
+### Issue: Service Worker Registration Test Console Error Fix
+**Date:** 2025-03-28
+**Tags:** #debugging #tests #service-worker #test-mocking
+**Status:** Resolved
+
+#### Initial State
+- Test suite was passing but showing console error: `TypeError: registration.addEventListener is not a function`
+- Error occurred in `serviceWorkerRegistration.test.ts` when running `npm test`
+- Mock registration object didn't implement the `addEventListener` method used in the real implementation
+- Tests were passing despite the error due to try/catch block in service worker registration
+
+#### Debug Process
+1. Initial Investigation
+   - Identified error source in `serviceWorkerRegistration.ts` at line 168
+   - Found that mock registration object in test only implemented `unregister` and `update` methods
+   - Error was being caught by try/catch block but still appearing in test output
+
+2. Solution Implementation
+   - Enhanced mock registration object to include `addEventListener` method:
+   ```typescript
+   const mockRegistration = {
+     unregister: jest.fn().mockResolvedValue(undefined),
+     update: jest.fn().mockResolvedValue(undefined),
+     addEventListener: jest.fn(),
+     installing: {
+       addEventListener: jest.fn()
+     }
+   };
+   ```
+   - Added `installing` property with its own `addEventListener` method to match production code path
+
+#### Resolution
+- Successfully eliminated console error in test output
+- All tests continue to pass with cleaner output
+- Maintained same test behavior while improving mock fidelity
+- Console output now only shows expected log messages without errors
+
+#### Lessons Learned
+- Mock objects should implement all methods used by the code being tested
+- Error-free test output makes it easier to spot actual issues
+- Even when try/catch blocks handle errors in production code, test mocks should be complete
+- Including child objects in mocks (like `installing`) is important for complete testing

@@ -5,6 +5,10 @@ import { registerServiceWorker, unregisterServiceWorker } from '../serviceWorker
 const mockRegistration = {
   unregister: jest.fn().mockResolvedValue(undefined),
   update: jest.fn().mockResolvedValue(undefined),
+  addEventListener: jest.fn(),
+  installing: {
+    addEventListener: jest.fn()
+  }
 };
 
 // Fix function type definition
