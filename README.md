@@ -39,6 +39,9 @@ The project uses a documentation system for tracking changes:
    - Tracks solutions attempted by AI for application issues
    - Prevents repetitive solution attempts 
    - Maintains a history of approaches with outcomes and tags
+   - Documents debugging processes in a structured format
+   - Records test implementation strategies and lessons learned
+   - Preserves institutional knowledge about effective approaches
    - Should be consulted before addressing recurring issues
 ```
 
@@ -59,11 +62,18 @@ When implementing or modifying features, ensure adherence to these core function
   - Progress bar for ongoing activities
   - Timeline visualization
   - Color-coded activity identification
+  - Break visualization between activities
   
 - Theme System
   - Light/Dark/System theme modes
   - HSL-based color system
   - Persistent theme preferences
+
+- Offline Support
+  - Full functionality without network connectivity
+  - Offline status indication
+  - Service worker caching strategies
+  - Update notification system
 ```
 
 ## Implementation Guidelines
@@ -170,6 +180,16 @@ When implementing new features or modifying existing ones:
 3. Update existing tests when changing behavior
 4. Validate both light and dark theme scenarios
 5. Test system theme preference handling
+6. For complex browser APIs:
+   - Use module-level mock functions for consistency
+   - Properly restore original methods in afterEach blocks
+   - Clear mock call counts between tests when needed
+   - Document all testing approaches in Memory Log
+7. For service worker tests:
+   - Provide explicit mocks for navigator.serviceWorker
+   - Handle event timing with appropriate test patterns
+   - Test network-awareness functionality
+   - Test update mechanisms and user notifications
 ```
 
 ## Technology Stack
