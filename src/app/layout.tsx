@@ -2,7 +2,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { useEffect, useState } from "react";
 import "./globals.css";
-import { OfflineIndicator } from "../components/OfflineIndicator";
 import { UpdateNotification } from "@/components/UpdateNotification";
 import { registerServiceWorker, setUpdateHandler } from "../utils/serviceWorkerRegistration";
 
@@ -31,11 +30,24 @@ export default function RootLayout({
       setUpdateMessage(message);
     });
 
+    // Handle custom update event
+    const handleUpdateAvailable = (event: CustomEvent) => {
+      if (event.detail?.message) {
+        setUpdateMessage(event.detail.message);
+      }
+    };
+
+    // Add event listener for custom update event
+    window.addEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);
+
     // Register service worker
     registerServiceWorker();
 
     // Clean up handler on unmount
-    return () => setUpdateHandler(null);
+    return () => {
+      setUpdateHandler(null);
+      window.removeEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);
+    };
   }, []);
 
   return (
@@ -45,7 +57,6 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <OfflineIndicator />
         {updateMessage && (
           <UpdateNotification
             message={updateMessage}

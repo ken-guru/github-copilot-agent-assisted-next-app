@@ -7,6 +7,7 @@
    - Write test cases that verify both basic and complex scenarios
    - Consider edge cases and variations in the test data
    - Ask clarifying questions about expected behavior before writing these tests
+   - When fixing failing tests, update the Memory Log before running tests
    - For data display, explicitly test:
      - Order of displayed items
      - Format of displayed values
@@ -45,6 +46,8 @@
 2. **Memory Log Management**: Always consult and update the Memory Log (docs/MEMORY_LOG.md) when working on issues or bugs:
    - Before attempting solutions, check for similar past issues to avoid repeating unsuccessful approaches
    - Document all solution attempts, outcomes, and relevant tags following the established format
+   - When fixing failing tests or bugs, ALWAYS update the memory log BEFORE running the tests
+   - Record the debugging approach and expected outcomes before test execution
    - Maintain institutional knowledge about effective and ineffective solutions
 
 ## Package Management
