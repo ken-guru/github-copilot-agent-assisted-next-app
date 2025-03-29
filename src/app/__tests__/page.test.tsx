@@ -295,13 +295,9 @@ describe('OfflineIndicator Integration', () => {
     const setupOfflineIndicator = screen.getByRole('status');
     expect(setupOfflineIndicator).toHaveTextContent('You are offline');
     
-    // With our new layout, the progressContainer comes after the offline indicator
-    expect(setupOfflineIndicator.nextElementSibling).toHaveClass(styles.progressContainer);
+    // In setup state, the offline indicator is followed by the setupGrid (no progress container)
+    expect(setupOfflineIndicator.nextElementSibling).toHaveClass(styles.setupGrid);
     
-    // The main content (setupGrid, activityGrid, etc) now comes after the progressContainer
-    const progressContainer = setupOfflineIndicator.nextElementSibling;
-    expect(progressContainer?.nextElementSibling).toHaveClass(styles.setupGrid);
-
     // Transition to activity state
     const timeSetupButton = screen.getByRole('button', { name: /set time/i });
     fireEvent.click(timeSetupButton);
@@ -310,11 +306,11 @@ describe('OfflineIndicator Integration', () => {
     const activityOfflineIndicator = screen.getByRole('status');
     expect(activityOfflineIndicator).toHaveTextContent('You are offline');
     
-    // Check the updated DOM order for activity state
+    // In activity state, the offline indicator is followed by the progressContainer
     const activityProgressContainer = activityOfflineIndicator.nextElementSibling;
     expect(activityProgressContainer).toHaveClass(styles.progressContainer);
     expect(activityProgressContainer?.nextElementSibling).toHaveClass(styles.activityGrid);
-
+    
     // Mock completed state
     mockUseActivityState.mockImplementationOnce(() => ({
       currentActivity: null,
@@ -326,70 +322,76 @@ describe('OfflineIndicator Integration', () => {
       resetActivities: mockResetActivities,
     }));
     rerender(<Home />);
-
+    
     // Check completed state
     const completedOfflineIndicator = screen.getByRole('status');
     expect(completedOfflineIndicator).toHaveTextContent('You are offline');
     
-    // Check the updated DOM order for completed state
-    const completedProgressContainer = completedOfflineIndicator.nextElementSibling;
-    expect(completedProgressContainer).toHaveClass(styles.progressContainer);
-    expect(completedProgressContainer?.nextElementSibling).toHaveClass(styles.completedGrid);
+    // In completed state, the offline indicator is followed by the completedGrid (no progress container)
+    expect(completedOfflineIndicator.nextElementSibling).toHaveClass(styles.completedGrid);
   });
 });
 
-describe('Progress Element Positioning', () => {
+describe('Progress Element Visibility', () => {
   beforeEach(() => {
-    // Mock time set to true to ensure progress bar is displayed
+    jest.clearAllMocks();
+  });
+  
+  it('should show progress container in activity state', () => {
+    // Mock activity state (timeSet = true, !allActivitiesCompleted)
+    jest.spyOn(React, 'useState').mockImplementationOnce(() => [true, jest.fn()]);
+    mockUseActivityState.mockImplementationOnce(() => ({
+      currentActivity: { id: '1', name: 'Test Activity' },
+      timelineEntries: [{ id: '1', activityId: '1', activityName: 'Test Activity', startTime: 0 }],
+      completedActivityIds: [],
+      allActivitiesCompleted: false,
+      handleActivitySelect: jest.fn(),
+      handleActivityRemoval: jest.fn(),
+      resetActivities: mockResetActivities,
+    }));
+    
+    render(<Home />);
+    
+    // In activity state, progress container should be present
+    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
+    expect(progressContainer).toBeInTheDocument();
+  });
+  
+  it('should not show progress container in setup state', () => {
+    // Mock for setup state (timeSet = false)
+    jest.spyOn(React, 'useState').mockImplementationOnce(() => [false, jest.fn()]);
+    
+    render(<Home />);
+    
+    // In setup state, progress container should not be rendered
+    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
+    
+    // Since our conditionally rendered progress bar should only appear
+    // in the activity state, it should not be in the document in setup state
+    expect(progressContainer).not.toBeInTheDocument();
+  });
+  
+  it('should not show progress container in completed state', () => {
+    // Mock for completed state (timeSet = true, allActivitiesCompleted = true)
     jest.spyOn(React, 'useState').mockImplementationOnce(() => [true, jest.fn()]);
     
-    // Mock mobile viewport
-    window.matchMedia = jest.fn().mockImplementation(query => ({
-      matches: query === '(max-width: 768px)',
-      media: query,
-      onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
+    mockUseActivityState.mockImplementationOnce(() => ({
+      currentActivity: null,
+      timelineEntries: [],
+      completedActivityIds: ['1'],
+      allActivitiesCompleted: true,
+      handleActivitySelect: jest.fn(),
+      handleActivityRemoval: jest.fn(),
+      resetActivities: mockResetActivities,
     }));
-  });
-  
-  it('should position progress element between header and main content', () => {
+    
     render(<Home />);
     
-    const header = screen.getByRole('banner');
+    // In completed state, progress container should not be rendered
     const progressContainer = document.querySelector(`.${styles.progressContainer}`);
     
-    // Verify the progress container is in the document
-    expect(progressContainer).toBeInTheDocument();
-    
-    // Verify the progress container is between header and content
-    // rather than checking exact DOM order which might change
-    const wrapperElement = header.parentElement;
-    expect(wrapperElement?.contains(progressContainer)).toBe(true);
-    
-    // Verify that the progress container is not fixed to bottom in the new layout
-    const computedStyle = window.getComputedStyle(progressContainer as Element);
-    expect(computedStyle.position).not.toBe('fixed');
-  });
-  
-  it('should apply layout spacing based on CSS variables', () => {
-    render(<Home />);
-    
-    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
-    const wrapperElement = document.querySelector(`.${styles.wrapper}`);
-    
-    // Verify that the wrapper has the class that applies gap spacing
-    expect(wrapperElement).toHaveClass(styles.wrapper);
-    
-    // Verify the progress container has the expected class
-    expect(progressContainer).toHaveClass(styles.progressContainer);
-    
-    // Instead of checking computed styles which may vary in test environment,
-    // verify that the DOM structure and classes are correct
-    expect(progressContainer).not.toBeNull();
-    expect(wrapperElement).not.toBeNull();
+    // Since our conditionally rendered progress bar should only appear
+    // in the activity state, it should not be in the document in completed state
+    expect(progressContainer).not.toBeInTheDocument();
   });
 });

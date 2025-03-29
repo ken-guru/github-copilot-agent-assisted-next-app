@@ -144,15 +144,17 @@ export default function Home() {
         </header>
         <OfflineIndicator />
         
-        {/* Progress bar positioned between header and main content */}
-        <div className={styles.progressContainer}>
-          <ProgressBar 
-            entries={processedEntries}
-            totalDuration={totalDuration}
-            elapsedTime={elapsedTime}
-            timerActive={timerActive}
-          />
-        </div>
+        {/* Progress bar only rendered for activity state */}
+        {timeSet && !allActivitiesCompleted && (
+          <div className={styles.progressContainer}>
+            <ProgressBar 
+              entries={processedEntries}
+              totalDuration={totalDuration}
+              elapsedTime={elapsedTime}
+              timerActive={timerActive}
+            />
+          </div>
+        )}
         
         {appState === 'setup' && (
           <div className={styles.setupGrid}>
