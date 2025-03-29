@@ -1,3 +1,9 @@
+/* Global variables for layout spacing */
+.layout {
+  --toast-area-height: 3rem; /* Space reserved for toast messages */
+  --progress-bar-height: 2.5rem; /* Height of the progress bar component */
+}
+
 .container {
   min-height: 100vh;
   background-color: var(--background);
@@ -126,13 +132,6 @@
   background-color: var(--background-alt, white);
 }
 
-.timelineContainer,
-.progressContainer {
-  background-color: var(--background-alt, white);
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-}
-
 .timelineContainer {
   display: flex;
   flex-direction: column;
@@ -142,9 +141,13 @@
 }
 
 .progressContainer {
-  grid-column: 1 / -1;
-  grid-row: 2;
-  margin-top: 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--background-alt, white);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  margin: 0 1rem 1rem;
+  padding: 0.75rem;
+  z-index: 5; /* Ensure it's above content but below header */
 }
 
 /* Update container backgrounds and add visual separation */
@@ -205,37 +208,26 @@
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
     gap: 0.5rem;
-    padding-bottom: 3rem; /* Added to make room for bottom progress bar */
   }
 
   .timelineContainer {
     display: none;
   }
 
-  /* Position the progress container at the bottom of the window */
+  /* Mobile-specific progress container styles */
   .progressContainer {
-    position: fixed; /* Fixed position at the bottom */
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 100; /* Ensure it appears above other content */
-    margin: 0;
+    margin: 0.5rem;
     padding: 0.5rem;
-    border-radius: 0; /* Remove border radius at the bottom */
-    border-top: 1px solid var(--border); /* Only keep the top border */
-    border-left: 0;
-    border-right: 0;
-    border-bottom: 0;
-    background-color: var(--background-alt, white);
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  }
+
+  /* Remove the fixed positioning and associated padding */
+  .container {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .completedGrid {
     gap: 0.5rem;
-  }
-
-  .container {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 2.5rem); /* Add extra padding to account for the progress bar */
   }
 
   /* Ensure mobile containers have proper styling */
@@ -251,11 +243,11 @@
   .activityGrid {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
-    padding-bottom: 3rem; /* Keep space for progress bar in landscape too */
   }
-
-  /* Adjust progress bar for landscape */
+  
+  /* Adjusted progress container for landscape mode */
   .progressContainer {
-    height: auto;
+    margin: 0.5rem;
+    padding: 0.5rem;
   }
 }

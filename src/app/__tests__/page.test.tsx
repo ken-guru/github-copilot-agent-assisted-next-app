@@ -1,4 +1,5 @@
 /// <reference types="@testing-library/jest-dom" />
+import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Home from '../page';
 import resetService, { DialogCallback } from '@/utils/resetService';
@@ -293,8 +294,10 @@ describe('OfflineIndicator Integration', () => {
     // Check setup state
     const setupOfflineIndicator = screen.getByRole('status');
     expect(setupOfflineIndicator).toHaveTextContent('You are offline');
+    
+    // In setup state, the offline indicator is followed by the setupGrid (no progress container)
     expect(setupOfflineIndicator.nextElementSibling).toHaveClass(styles.setupGrid);
-
+    
     // Transition to activity state
     const timeSetupButton = screen.getByRole('button', { name: /set time/i });
     fireEvent.click(timeSetupButton);
@@ -302,8 +305,12 @@ describe('OfflineIndicator Integration', () => {
     // Check activity state
     const activityOfflineIndicator = screen.getByRole('status');
     expect(activityOfflineIndicator).toHaveTextContent('You are offline');
-    expect(activityOfflineIndicator.nextElementSibling).toHaveClass(styles.activityGrid);
-
+    
+    // In activity state, the offline indicator is followed by the progressContainer
+    const activityProgressContainer = activityOfflineIndicator.nextElementSibling;
+    expect(activityProgressContainer).toHaveClass(styles.progressContainer);
+    expect(activityProgressContainer?.nextElementSibling).toHaveClass(styles.activityGrid);
+    
     // Mock completed state
     mockUseActivityState.mockImplementationOnce(() => ({
       currentActivity: null,
@@ -315,10 +322,76 @@ describe('OfflineIndicator Integration', () => {
       resetActivities: mockResetActivities,
     }));
     rerender(<Home />);
-
+    
     // Check completed state
     const completedOfflineIndicator = screen.getByRole('status');
     expect(completedOfflineIndicator).toHaveTextContent('You are offline');
+    
+    // In completed state, the offline indicator is followed by the completedGrid (no progress container)
     expect(completedOfflineIndicator.nextElementSibling).toHaveClass(styles.completedGrid);
+  });
+});
+
+describe('Progress Element Visibility', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  
+  it('should show progress container in activity state', () => {
+    // Mock activity state (timeSet = true, !allActivitiesCompleted)
+    jest.spyOn(React, 'useState').mockImplementationOnce(() => [true, jest.fn()]);
+    mockUseActivityState.mockImplementationOnce(() => ({
+      currentActivity: { id: '1', name: 'Test Activity' },
+      timelineEntries: [{ id: '1', activityId: '1', activityName: 'Test Activity', startTime: 0 }],
+      completedActivityIds: [],
+      allActivitiesCompleted: false,
+      handleActivitySelect: jest.fn(),
+      handleActivityRemoval: jest.fn(),
+      resetActivities: mockResetActivities,
+    }));
+    
+    render(<Home />);
+    
+    // In activity state, progress container should be present
+    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
+    expect(progressContainer).toBeInTheDocument();
+  });
+  
+  it('should not show progress container in setup state', () => {
+    // Mock for setup state (timeSet = false)
+    jest.spyOn(React, 'useState').mockImplementationOnce(() => [false, jest.fn()]);
+    
+    render(<Home />);
+    
+    // In setup state, progress container should not be rendered
+    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
+    
+    // Since our conditionally rendered progress bar should only appear
+    // in the activity state, it should not be in the document in setup state
+    expect(progressContainer).not.toBeInTheDocument();
+  });
+  
+  it('should not show progress container in completed state', () => {
+    // Mock for completed state (timeSet = true, allActivitiesCompleted = true)
+    jest.spyOn(React, 'useState').mockImplementationOnce(() => [true, jest.fn()]);
+    
+    mockUseActivityState.mockImplementationOnce(() => ({
+      currentActivity: null,
+      timelineEntries: [],
+      completedActivityIds: ['1'],
+      allActivitiesCompleted: true,
+      handleActivitySelect: jest.fn(),
+      handleActivityRemoval: jest.fn(),
+      resetActivities: mockResetActivities,
+    }));
+    
+    render(<Home />);
+    
+    // In completed state, progress container should not be rendered
+    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
+    
+    // Since our conditionally rendered progress bar should only appear
+    // in the activity state, it should not be in the document in completed state
+    expect(progressContainer).not.toBeInTheDocument();
   });
 });

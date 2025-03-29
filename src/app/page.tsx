@@ -114,7 +114,7 @@ export default function Home() {
   }));
   
   return (
-    <div className={styles.container}>
+    <div className={`${styles.layout} ${styles.container}`}>
       {/* Confirmation Dialog */}
       <ConfirmationDialog
         ref={resetDialogRef}
@@ -142,9 +142,20 @@ export default function Home() {
             </div>
           </div>
         </header>
-
         <OfflineIndicator />
-
+        
+        {/* Progress bar only rendered for activity state */}
+        {timeSet && !allActivitiesCompleted && (
+          <div className={styles.progressContainer}>
+            <ProgressBar 
+              entries={processedEntries}
+              totalDuration={totalDuration}
+              elapsedTime={elapsedTime}
+              timerActive={timerActive}
+            />
+          </div>
+        )}
+        
         {appState === 'setup' && (
           <div className={styles.setupGrid}>
             <TimeSetup onTimeSet={handleTimeSet} />
@@ -189,16 +200,6 @@ export default function Home() {
             </div>
           </div>
         )}
-
-        {/* Progress bar always visible and fixed to bottom in mobile view */}
-        <div className={styles.progressContainer}>
-          <ProgressBar 
-            entries={processedEntries}
-            totalDuration={totalDuration}
-            elapsedTime={elapsedTime}
-            timerActive={timerActive}
-          />
-        </div>
       </div>
     </div>
   );
