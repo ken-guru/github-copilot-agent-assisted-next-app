@@ -108,7 +108,7 @@ describe('Timeline Component', () => {
     ];
     
     // Create a custom mock of the isDarkMode function that we can control
-    let mockIsDarkMode = false;
+    const mockIsDarkMode = false;
     jest.mock('../../utils/colors', () => ({
       ...jest.requireActual('../../utils/colors'),
       isDarkMode: () => mockIsDarkMode,

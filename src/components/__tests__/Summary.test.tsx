@@ -1,4 +1,4 @@
-import { render, screen, act, cleanup } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import Summary from '../Summary';
 import { TimelineEntry } from '../Timeline';
 
@@ -443,7 +443,7 @@ describe('Summary Component', () => {
     
     // Create a custom mock of the isDarkMode function that we can control
     // This is simpler than trying to simulate actual DOM changes
-    let mockIsDarkMode = false;
+    const mockIsDarkMode = false;
     jest.mock('../../utils/colors', () => ({
       ...jest.requireActual('../../utils/colors'),
       isDarkMode: () => mockIsDarkMode
@@ -488,7 +488,7 @@ describe('Summary Component', () => {
     
     // Create a custom mock of the isDarkMode function that we can control
     // This is simpler than trying to simulate actual DOM changes
-    let mockIsDarkMode = false;
+    const mockIsDarkMode = false;
     jest.mock('../../utils/colors', () => ({
       ...jest.requireActual('../../utils/colors'),
       isDarkMode: () => mockIsDarkMode

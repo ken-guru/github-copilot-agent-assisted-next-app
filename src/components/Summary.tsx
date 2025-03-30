@@ -44,7 +44,7 @@ export default function Summary({
     try {
       const hueMatch = hslColor.match(/hsl\(\s*(\d+)/);
       return hueMatch ? parseInt(hueMatch[1], 10) : 0;
-    } catch (error) {
+    } catch {
       // Fallback for non-HSL colors or parsing errors
       return 0;
     }
