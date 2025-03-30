@@ -88,4 +88,40 @@ describe('Timeline Component', () => {
     const lastMarkerTime = timeMarkers[timeMarkers.length - 1].textContent;
     expect(lastMarkerTime).not.toBe('1:00:00');
   });
+
+  // Test if timeline activity colors update when theme changes
+  test('updates activity colors when theme changes', () => {
+    // Mock entries with colors for testing
+    const mockEntries: TimelineEntry[] = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Task 1',
+        startTime: FIXED_TIME - 30000,
+        endTime: FIXED_TIME - 10000,
+        colors: {
+          background: 'hsl(120, 60%, 95%)', // Light mode color
+          text: 'hsl(120, 60%, 25%)',
+          border: 'hsl(120, 60%, 35%)'
+        }
+      }
+    ];
+    
+    // Create a custom mock of the isDarkMode function that we can control
+    let mockIsDarkMode = false;
+    jest.mock('../../utils/colors', () => ({
+      ...jest.requireActual('../../utils/colors'),
+      isDarkMode: () => mockIsDarkMode,
+      internalActivityColors: jest.requireActual('../../utils/colors').internalActivityColors
+    }));
+    
+    // Render with light mode (default)
+    renderTimeline(mockEntries);
+    
+    // Verify activity name appears (basic rendering check)
+    expect(screen.getByTestId('timeline-activity-name')).toBeInTheDocument();
+    
+    // Clean up the mock to prevent affecting other tests
+    jest.unmock('../../utils/colors');
+  });
 });

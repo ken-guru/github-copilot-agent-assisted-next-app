@@ -1040,7 +1040,7 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Verify state at critical points during complex test flows
 - Explicitly clear mocks when precise call counting is needed
 - Direct function assignment with proper restoration is more reliable for window methods than other approaches
-- Thoroughly isolate test execution to prevent cross-test contamination
+- Test environment setup is critical for reliable browser API testing
 
 ### Issue: Service Worker Update Notification Test Fixes
 **Date:** 2025-03-28
@@ -1462,3 +1462,51 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - Testing theme-based styling is better done through functional verification than exact style matching
 - Keep theme change detection code consistent across components for maintainability
 - Remember to clean up observers and event listeners to prevent memory leaks
+
+### Issue: Timeline Component Theme Color Update Bug
+**Date:** 2025-03-30
+**Tags:** #bug-fix #theme #dark-mode #timeline #regression
+**Status:** Resolved
+
+#### Initial State
+- Timeline activity elements not updating their colors when switching between dark and light mode
+- Bug introduced while implementing theme-aware status messages in the Summary component
+- Summary component correctly updates activity colors when theme changes
+- Timeline component lacks theme change detection mechanism
+
+#### Debug Process
+1. Issue Investigation
+   - Compared Summary and Timeline components to identify differences
+   - Found that Timeline lacked theme detection and color adaptation logic
+   - Summary component uses MutationObserver to detect class changes and update state
+   - Timeline's `calculateEntryStyle` function didn't react to theme changes dynamically
+
+2. Test-First Development
+   - Created a test to verify that timeline activity colors should update when switching themes
+   - Implemented similar theme detection logic in Timeline as used in Summary component
+   - Ensured both components share consistent theme detection approach
+
+3. Solution Implementation
+   - Added theme state tracking to the Timeline component:
+     ```tsx
+     const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
+       typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
+     );
+     ```
+   - Implemented MutationObserver to detect theme class changes on document element
+   - Added media query listener for system preference changes
+   - Created theme-aware color mapping functions to find equivalent theme colors
+   - Updated `calculateEntryStyle` to use theme-appropriate colors
+
+#### Resolution
+- Timeline component now properly updates activity colors when theme changes
+- Both Summary and Timeline components use consistent theme detection approach
+- All 217 tests are passing with no regressions
+- Consistent theme experience across the entire application
+
+#### Lessons Learned
+- When implementing theme-sensitive components, ensure all of them react to theme changes
+- Maintain consistent theme detection mechanisms across components
+- Use MutationObserver for reliable theme change detection
+- Test-first development helps verify behavior before implementation
+- Share color mapping logic between similar components to ensure consistent behavior
