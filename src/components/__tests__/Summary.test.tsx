@@ -486,62 +486,57 @@ describe('Summary Component', () => {
       }
     ];
     
-    // Create a custom mock of the isDarkMode function that we can control
-    // This is simpler than trying to simulate actual DOM changes
-    const mockIsDarkMode = false;
-    jest.mock('../../utils/colors', () => ({
-      ...jest.requireActual('../../utils/colors'),
-      isDarkMode: () => mockIsDarkMode
-    }));
+    // Setup the test cases we want to run
+    const testCases = [
+      // Light mode with early completion
+      {
+        mode: 'light',
+        totalDuration: 3000,
+        elapsedTime: 2000,
+        expectedMessage: /finished .+ earlier than planned/
+      },
+      // Light mode with late completion
+      {
+        mode: 'light',
+        totalDuration: 1000,
+        elapsedTime: 2000,
+        expectedMessage: /took .+ more than planned/
+      },
+      // Dark mode with late completion
+      {
+        mode: 'dark',
+        totalDuration: 1000,
+        elapsedTime: 2000,
+        expectedMessage: /took .+ more than planned/
+      }
+    ];
     
-    // Render with light mode (default) - early completion scenario
-    render(
-      <Summary 
-        entries={mockEntries}
-        totalDuration={3000}
-        elapsedTime={2000}
-        allActivitiesCompleted={true}
-      />
-    );
-    
-    // Verify early completion message appears
-    const earlyMessage = screen.getByText(/finished .+ earlier than planned/);
-    expect(earlyMessage).toBeInTheDocument();
-    
-    // Clean up
-    cleanup();
-    
-    // Test late completion in light mode
-    render(
-      <Summary 
-        entries={mockEntries}
-        totalDuration={1000}
-        elapsedTime={2000}
-        allActivitiesCompleted={true}
-      />
-    );
-    
-    // Verify late completion message appears
-    const lateMessage = screen.getByText(/took .+ more than planned/);
-    expect(lateMessage).toBeInTheDocument();
-    
-    // Clean up and simulate dark mode
-    cleanup();
-    mockIsDarkMode = true;
-    
-    // Render with dark mode - late completion scenario
-    render(
-      <Summary 
-        entries={mockEntries}
-        totalDuration={1000}
-        elapsedTime={2000}
-        allActivitiesCompleted={true}
-      />
-    );
-    
-    // Verify message still appears in dark mode
-    const darkModeMessage = screen.getByText(/took .+ more than planned/);
-    expect(darkModeMessage).toBeInTheDocument();
+    // Run each test case separately
+    testCases.forEach(testCase => {
+      // Create a custom mock of the isDarkMode function for this specific test case
+      jest.mock('../../utils/colors', () => ({
+        ...jest.requireActual('../../utils/colors'),
+        isDarkMode: () => testCase.mode === 'dark'
+      }));
+      
+      // Render the component with the test case configuration
+      render(
+        <Summary 
+          entries={mockEntries}
+          totalDuration={testCase.totalDuration}
+          elapsedTime={testCase.elapsedTime}
+          allActivitiesCompleted={true}
+        />
+      );
+      
+      // Verify the expected message appears
+      const message = screen.getByText(testCase.expectedMessage);
+      expect(message).toBeInTheDocument();
+      
+      // Clean up for the next test case
+      cleanup();
+      jest.resetModules();
+    });
     
     // Clean up mock
     jest.unmock('../../utils/colors');
