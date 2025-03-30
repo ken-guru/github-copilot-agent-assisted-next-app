@@ -2,6 +2,7 @@ import React, { useMemo, useEffect, useState } from 'react';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
+import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 
 export interface TimelineEntry {
   id: string;
@@ -46,6 +47,101 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
+  
+  // Add state to track current theme mode
+  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
+    typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
+  );
+  
+  // Function to get the theme-appropriate color for an activity
+  const getThemeAppropriateColor = (colors?: TimelineEntry['colors']) => {
+    if (!colors) return undefined;
+    
+    // Extract hue from current color
+    const hue = extractHueFromHsl(colors.background);
+    
+    // Find the closest matching color set in internalActivityColors
+    const closestColorSet = findClosestColorSet(hue, colors);
+    
+    // Return the appropriate theme version
+    return currentTheme === 'dark' ? closestColorSet.dark : closestColorSet.light;
+  };
+  
+  // Helper to extract hue from HSL color
+  const extractHueFromHsl = (hslColor: string): number => {
+    try {
+      const hueMatch = hslColor.match(/hsl\(\s*(\d+)/);
+      return hueMatch ? parseInt(hueMatch[1], 10) : 0;
+    } catch {
+      // Fallback for non-HSL colors or parsing errors
+      return 0;
+    }
+  };
+  
+  // Find the closest color set by hue
+  const findClosestColorSet = (hue: number, originalColors: ColorSet) => {
+    // If we can't determine hue from the color, use a fallback
+    if (hue === 0 && !originalColors.background.includes('hsl(0')) {
+      // Default to blue if we can't determine the hue
+      return internalActivityColors[1]; // Blue color set
+    }
+    
+    // Find the closest matching hue in our color sets
+    let closestMatch = internalActivityColors[0];
+    let smallestDiff = 360;
+    
+    internalActivityColors.forEach(colorSet => {
+      const lightColorHue = extractHueFromHsl(colorSet.light.background);
+      const hueDiff = Math.abs(lightColorHue - hue);
+      
+      // Handle hue circle wraparound (e.g., 350 is closer to 10 than 300)
+      const wrappedHueDiff = Math.min(hueDiff, 360 - hueDiff);
+      
+      if (wrappedHueDiff < smallestDiff) {
+        smallestDiff = wrappedHueDiff;
+        closestMatch = colorSet;
+      }
+    });
+    
+    return closestMatch;
+  };
+  
+  // Effect to listen for theme changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // Function to handle theme changes
+    const handleThemeChange = () => {
+      setCurrentTheme(isDarkMode() ? 'dark' : 'light');
+    };
+    
+    // Initial check
+    handleThemeChange();
+    
+    // Set up MutationObserver to watch for class changes on document.documentElement
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+          mutation.type === 'attributes' && 
+          mutation.attributeName === 'class'
+        ) {
+          handleThemeChange();
+        }
+      });
+    });
+    
+    observer.observe(document.documentElement, { attributes: true });
+    
+    // Also listen for system preference changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', handleThemeChange);
+    
+    // Clean up
+    return () => {
+      observer.disconnect();
+      mediaQuery.removeEventListener('change', handleThemeChange);
+    };
+  }, []);
   
   // Update current elapsed time when prop changes
   useEffect(() => {
@@ -145,10 +241,16 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       };
     }
     
-    const colors = item.entry?.colors || {
+    // Get theme-appropriate colors using the theme detection
+    const themeColors = item.entry?.colors ? 
+      getThemeAppropriateColor(item.entry.colors) : 
+      undefined;
+    
+    // Use theme-appropriate colors or fallback to defaults
+    const colors = themeColors || {
       background: 'var(--background-muted)',
-      text: 'var(--text-secondary)',
-      border: 'var(--border)'
+      text: 'var(--foreground)',
+      border: 'var(--border-color)'
     };
     
     return {

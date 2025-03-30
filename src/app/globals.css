@@ -34,6 +34,14 @@
   --error: hsl(var(--color-hue-error), 85%, 45%);
   --error-bg: hsl(var(--color-hue-error), 85%, 95%);
 
+  /* Status message colors for Summary component */
+  --status-ontime-bg: #d1fae5;
+  --status-ontime-text: #065f46;
+  --status-early-bg: #dbeafe;
+  --status-early-text: #1e40af;
+  --status-late-bg: #fee2e2;
+  --status-late-text: #991b1b;
+
   /* Shadow values */
   --shadow-small: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.12);
   --shadow-medium: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.1);
@@ -69,6 +77,14 @@
   --warning-bg: hsla(var(--color-hue-warning), 70%, 35%, 0.2);
   --error: hsl(var(--color-hue-error), 70%, 55%);
   --error-bg: hsla(var(--color-hue-error), 70%, 40%, 0.2);
+    
+  /* Status message colors for Summary component - adjusted for dark mode */
+  --status-ontime-bg: hsla(var(--color-hue-success), 70%, 35%, 0.2);
+  --status-ontime-text: hsl(var(--color-hue-success), 70%, 60%);
+  --status-early-bg: hsla(var(--color-hue-accent), 70%, 30%, 0.3);
+  --status-early-text: hsl(var(--color-hue-accent), 70%, 75%);
+  --status-late-bg: hsla(var(--color-hue-error), 70%, 40%, 0.2);
+  --status-late-text: hsl(var(--color-hue-error), 70%, 75%);
 
   /* Shadow values - darker and more subtle for dark mode */
   --shadow-small: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.3);
@@ -105,6 +121,14 @@
     --warning-bg: hsla(var(--color-hue-warning), 70%, 35%, 0.2);
     --error: hsl(var(--color-hue-error), 70%, 55%);
     --error-bg: hsla(var(--color-hue-error), 70%, 40%, 0.2);
+    
+    /* Status message colors for Summary component - adjusted for dark mode */
+    --status-ontime-bg: hsla(var(--color-hue-success), 70%, 35%, 0.2);
+    --status-ontime-text: hsl(var(--color-hue-success), 70%, 60%);
+    --status-early-bg: hsla(var(--color-hue-accent), 70%, 30%, 0.3);
+    --status-early-text: hsl(var(--color-hue-accent), 70%, 75%);
+    --status-late-bg: hsla(var(--color-hue-error), 70%, 40%, 0.2);
+    --status-late-text: hsl(var(--color-hue-error), 70%, 75%);
 
     /* Shadow values - darker and more subtle for dark mode */
     --shadow-small: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.3);

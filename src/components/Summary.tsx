@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Summary.module.css';
 import { TimelineEntry } from './Timeline';
+import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -19,6 +20,101 @@ export default function Summary({
   allActivitiesCompleted = false,
   isTimeUp = false // Add this prop to handle time-up state
 }: SummaryProps) {
+  // Add state to track current theme mode
+  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
+    typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
+  );
+
+  // Function to get the theme-appropriate color for an activity
+  const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
+    if (!colors) return undefined;
+
+    // Extract hue from current color
+    const hue = extractHueFromHsl(colors.background);
+    
+    // Find the closest matching color set in internalActivityColors
+    const closestColorSet = findClosestColorSet(hue, colors);
+    
+    // Return the appropriate theme version
+    return currentTheme === 'dark' ? closestColorSet.dark : closestColorSet.light;
+  };
+
+  // Helper to extract hue from HSL color
+  const extractHueFromHsl = (hslColor: string): number => {
+    try {
+      const hueMatch = hslColor.match(/hsl\(\s*(\d+)/);
+      return hueMatch ? parseInt(hueMatch[1], 10) : 0;
+    } catch {
+      // Fallback for non-HSL colors or parsing errors
+      return 0;
+    }
+  };
+
+  // Find the closest color set by hue
+  const findClosestColorSet = (hue: number, originalColors: ColorSet) => {
+    // If we can't determine hue from the color, use a fallback
+    if (hue === 0 && !originalColors.background.includes('hsl(0')) {
+      // Default to blue if we can't determine the hue
+      return internalActivityColors[1]; // Blue color set
+    }
+
+    // Find the closest matching hue in our color sets
+    let closestMatch = internalActivityColors[0];
+    let smallestDiff = 360;
+
+    internalActivityColors.forEach(colorSet => {
+      const lightColorHue = extractHueFromHsl(colorSet.light.background);
+      const hueDiff = Math.abs(lightColorHue - hue);
+      
+      // Handle hue circle wraparound (e.g., 350 is closer to 10 than 300)
+      const wrappedHueDiff = Math.min(hueDiff, 360 - hueDiff);
+      
+      if (wrappedHueDiff < smallestDiff) {
+        smallestDiff = wrappedHueDiff;
+        closestMatch = colorSet;
+      }
+    });
+
+    return closestMatch;
+  };
+
+  // Effect to listen for theme changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Function to handle theme changes
+    const handleThemeChange = () => {
+      setCurrentTheme(isDarkMode() ? 'dark' : 'light');
+    };
+
+    // Initial check
+    handleThemeChange();
+
+    // Set up MutationObserver to watch for class changes on document.documentElement
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+          mutation.type === 'attributes' && 
+          mutation.attributeName === 'class'
+        ) {
+          handleThemeChange();
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true });
+
+    // Also listen for system preference changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', handleThemeChange);
+
+    // Clean up
+    return () => {
+      observer.disconnect();
+      mediaQuery.removeEventListener('change', handleThemeChange);
+    };
+  }, []);
+
   const getStatusMessage = () => {
     // First check if time is up, this should take precedence
     if (isTimeUp) {
@@ -222,26 +318,33 @@ export default function Summary({
       {activityTimes.length > 0 && (
         <div className={styles.activityList}>
           <h3 className={styles.activityListHeading}>Time Spent per Activity</h3>
-          {activityTimes.map(activity => (
-            <div 
-              key={activity.id}
-              className={styles.activityItem}
-              style={activity.colors ? {
-                backgroundColor: activity.colors.background,
-                borderColor: activity.colors.border
-              } : undefined}
-            >
-              <span 
-                className={styles.activityName}
-                style={activity.colors ? { color: activity.colors.text } : undefined}
+          {activityTimes.map(activity => {
+            // Get theme-appropriate colors
+            const themeColors = activity.colors ? 
+              getThemeAppropriateColor(activity.colors) || activity.colors : 
+              undefined;
+            
+            return (
+              <div 
+                key={activity.id}
+                className={styles.activityItem}
+                style={themeColors ? {
+                  backgroundColor: themeColors.background,
+                  borderColor: themeColors.border
+                } : undefined}
               >
-                {activity.name}
-              </span>
-              <span className={styles.activityTime}>
-                {formatDuration(activity.duration)}
-              </span>
-            </div>
-          ))}
+                <span 
+                  className={styles.activityName}
+                  style={themeColors ? { color: themeColors.text } : undefined}
+                >
+                  {activity.name}
+                </span>
+                <span className={styles.activityTime}>
+                  {formatDuration(activity.duration)}
+                </span>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

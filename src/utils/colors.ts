@@ -6,7 +6,7 @@ export interface ColorSet {
 
 // Internal HSL colors with dark mode consideration
 // Each color has a light and dark mode variation defined in the same group
-const internalActivityColors: {
+export const internalActivityColors: {
   light: ColorSet;
   dark: ColorSet;
 }[] = [
@@ -169,7 +169,7 @@ const internalActivityColors: {
 ];
 
 // Get appropriate color set based on theme
-const isDarkMode = () => {
+export const isDarkMode = () => {
   if (typeof window !== 'undefined') {
     return document.documentElement.classList.contains('dark-mode') ||
       (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches &&

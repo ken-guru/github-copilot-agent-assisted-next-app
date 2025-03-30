@@ -54,19 +54,20 @@
   margin-bottom: 1rem;
 }
 
+/* Theme-aware status message styles */
 .statusMessageOnTime {
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: var(--status-ontime-bg, #d1fae5);
+  color: var(--status-ontime-text, #065f46);
 }
 
 .statusMessageEarly {
-  background-color: #dbeafe;
-  color: #1e40af;
+  background-color: var(--status-early-bg, #dbeafe);
+  color: var(--status-early-text, #1e40af);
 }
 
 .statusMessageLate {
-  background-color: #fee2e2;
-  color: #991b1b;
+  background-color: var(--status-late-bg, #fee2e2);
+  color: var(--status-late-text, #991b1b);
 }
 
 .sectionHeading {
