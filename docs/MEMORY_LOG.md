@@ -985,62 +985,6 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - When testing browser APIs, consider the proper mocking approach for each specific API
 - Test environment setup is critical for reliable browser API testing
 
-### Issue: Service Worker Test Mocking Failures
-**Date:** 2023-11-07
-**Tags:** #debugging #testing #service-worker #jest-mocks
-**Status:** Resolved
-
-#### Initial State
-- Three failing tests in `serviceWorkerRegistration.test.ts`:
-  1. `should handle multiple update retry failures` - Expected 4 console.error calls but received 5
-  2. `should resume retry when network comes back online` - window.addEventListener not properly mocked
-  3. `should handle offline status during retry attempts` - window.addEventListener not properly mocked
-- Tests are failing despite using jest.spyOn() for window.addEventListener
-- Mock functions not being properly registered or detected
-
-#### Debug Process
-1. Analysis of Jest Spies Implementation
-   - The spyOn approach is correct in principle but not working as expected
-   - JSDOM environment may have limitations with certain window method mocks
-   - The test may be running in a context where window object is different than expected
-
-2. Alternative Mocking Approaches
-   - Direct mock function assignment is more reliable for window object methods
-   - Jest's spyOn may not work correctly with all JSDOM window methods
-   - Need to properly restore mocked methods after tests
-
-3. Test Execution Flow
-   - Console error count discrepancy caused by accumulated calls across tests
-   - Need to clear mocks explicitly for precise call counting
-   - Proper test isolation required to prevent state leakage
-
-#### Resolution
-1. Implemented direct mock function assignment
-   ```javascript
-   window.addEventListener = jest.fn();
-   window.removeEventListener = jest.fn();
-   ```
-
-2. Cleanup:
-   ```javascript
-   delete window.addEventListener;
-   delete window.removeEventListener;
-   ```
-
-3. Added explicit console.error mock clearing
-   ```javascript
-   (console.error as jest.Mock).mockClear();
-   ```
-
-4. Fixed test assertions to match actual implementation behavior
-
-#### Lessons Learned
-- Direct function assignment is more reliable than spyOn for JSDOM window methods
-- Use delete to restore original window methods rather than reassignment
-- Explicitly clear mocks when precise call counting is needed
-- Test each network transition scenario independently
-- Mock cleanup is essential for reliable test runs with browser APIs
-
 ### Issue: Service Worker Registration Test Failures
 **Date:** 2023-11-07
 **Tags:** #debugging #tests #service-worker #jest-mocks
@@ -1049,10 +993,10 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 #### Initial State
 - Three failing tests in `serviceWorkerRegistration.test.ts`:
   1. `should handle multiple update retry failures` - Expected 4 console.error calls but received 5
-  2. `should resume retry when network comes back online` - window.addEventListener not being called
-  3. `should handle offline status during retry attempts` - window.addEventListener not being called
-- Previous attempts to mock window.addEventListener have not been successful
-- Tests are failing consistently with the same pattern
+  2. `should resume retry when network comes back online` - window.addEventListener not properly mocked
+  3. `should handle offline status during retry attempts` - window.addEventListener not properly mocked
+- Tests are failing despite using jest.spyOn() for window.addEventListener
+- Mock functions not being properly registered or detected
 
 #### Debug Process
 1. Initial Investigation

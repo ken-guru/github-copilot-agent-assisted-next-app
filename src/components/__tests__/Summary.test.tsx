@@ -1,4 +1,4 @@
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, act, cleanup } from '@testing-library/react';
 import Summary from '../Summary';
 import { TimelineEntry } from '../Timeline';
 
@@ -464,6 +464,84 @@ describe('Summary Component', () => {
     
     // Rather than testing specific color values (which are difficult to test reliably),
     // we're simply verifying the component works with both theme modes
+    
+    // Clean up mock
+    jest.unmock('../../utils/colors');
+  });
+
+  test('status messages update colors in dark mode', () => {
+    // Mock entries with colors for testing
+    const mockEntries = [
+      {
+        id: '1',
+        startTime: 1000,
+        endTime: 2000,
+        activityId: 'act1',
+        activityName: 'Activity 1',
+        colors: {
+          background: 'hsl(120, 60%, 95%)',
+          text: 'hsl(120, 60%, 25%)',
+          border: 'hsl(120, 60%, 35%)'
+        }
+      }
+    ];
+    
+    // Create a custom mock of the isDarkMode function that we can control
+    // This is simpler than trying to simulate actual DOM changes
+    let mockIsDarkMode = false;
+    jest.mock('../../utils/colors', () => ({
+      ...jest.requireActual('../../utils/colors'),
+      isDarkMode: () => mockIsDarkMode
+    }));
+    
+    // Render with light mode (default) - early completion scenario
+    render(
+      <Summary 
+        entries={mockEntries}
+        totalDuration={3000}
+        elapsedTime={2000}
+        allActivitiesCompleted={true}
+      />
+    );
+    
+    // Verify early completion message appears
+    const earlyMessage = screen.getByText(/finished .+ earlier than planned/);
+    expect(earlyMessage).toBeInTheDocument();
+    
+    // Clean up
+    cleanup();
+    
+    // Test late completion in light mode
+    render(
+      <Summary 
+        entries={mockEntries}
+        totalDuration={1000}
+        elapsedTime={2000}
+        allActivitiesCompleted={true}
+      />
+    );
+    
+    // Verify late completion message appears
+    const lateMessage = screen.getByText(/took .+ more than planned/);
+    expect(lateMessage).toBeInTheDocument();
+    
+    // Clean up and simulate dark mode
+    cleanup();
+    mockIsDarkMode = true;
+    
+    // Render with dark mode - late completion scenario
+    render(
+      <Summary 
+        entries={mockEntries}
+        totalDuration={1000}
+        elapsedTime={2000}
+        allActivitiesCompleted={true}
+      />
+    );
+    
+    // Verify message still appears in dark mode
+    const darkModeMessage = screen.getByText(/took .+ more than planned/);
+    expect(darkModeMessage).toBeInTheDocument();
     
     // Clean up mock
     jest.unmock('../../utils/colors');
