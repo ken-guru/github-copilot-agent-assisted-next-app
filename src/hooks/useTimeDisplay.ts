@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { formatTime } from '@/utils/timeUtils';
+import { formatTimeFromSeconds } from '@/utils/timeUtils';
 
 export function useTimeDisplay(totalDuration: number, elapsedTime: number, isActive: boolean) {
   const [displayTime, setDisplayTime] = useState('');
@@ -15,7 +15,7 @@ export function useTimeDisplay(totalDuration: number, elapsedTime: number, isAct
       setIsCountingUp(shouldCountUp);
       
       // Format the absolute time value for display
-      setDisplayTime(formatTime(Math.abs(remainingTime)));
+      setDisplayTime(formatTimeFromSeconds(Math.abs(remainingTime)));
     };
 
     // Initial update

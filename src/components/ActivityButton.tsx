@@ -1,7 +1,7 @@
 import React from 'react';
 import { Activity } from './ActivityManager';
 import { TimelineEntry } from '../hooks/useTimelineEntries';
-import { formatTime } from '@/utils/timeUtils';
+import { formatTimeFromSeconds } from '@/utils/timeUtils';
 import styles from './ActivityManager.module.css';
 
 interface ActivityButtonProps {
@@ -62,7 +62,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
         <div className={styles.activityStatus}>
           {isRunning && (
             <span className={styles.runningIndicator}>
-              <span className={styles.timerDisplay}>{formatTime(elapsedTime)}</span>
+              <span className={styles.timerDisplay}>{formatTimeFromSeconds(elapsedTime)}</span>
             </span>
           )}
           {isCompleted && (

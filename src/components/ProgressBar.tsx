@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TimelineEntry } from './Timeline';
 import styles from './ProgressBar.module.css';
-import { formatTimeHuman } from '@/utils/time';
+import { formatTimeHuman } from '@/utils/timeUtils';
 
 interface ProgressBarProps {
   entries: TimelineEntry[];

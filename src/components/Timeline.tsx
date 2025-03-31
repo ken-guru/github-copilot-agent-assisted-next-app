@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
-import { formatTimeHuman } from '@/utils/time';
+import { formatTimeHuman } from '@/utils/timeUtils';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 
 export interface TimelineEntry {
