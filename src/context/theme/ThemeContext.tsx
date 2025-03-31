@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useContext, ReactNode, useCallback } from 'react';
 
 // Define the Theme type
 export type Theme = 'light' | 'dark' | 'system';
@@ -27,24 +27,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [isDark, setIsDark] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Set theme and handle side effects
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-    applyTheme(newTheme);
-  };
-
-  // Enable CSS transitions for theme changes
-  const enableTransitions = () => {
-    document.documentElement.classList.add('theme-transitions');
-  };
-
-  // Disable CSS transitions (useful when you need an immediate change without animation)
-  const disableTransitions = () => {
-    document.documentElement.classList.remove('theme-transitions');
-  };
-
   // Apply the theme to the DOM
-  const applyTheme = (newTheme: Theme) => {
+  const applyTheme = useCallback((newTheme: Theme) => {
     const root = document.documentElement;
     const isDarkMode = 
       newTheme === 'dark' || 
@@ -66,7 +50,23 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     } else {
       localStorage.removeItem('theme');
     }
-  };
+  }, []);
+
+  // Set theme and handle side effects - wrapped in useCallback to stabilize reference
+  const setTheme = useCallback((newTheme: Theme) => {
+    setThemeState(newTheme);
+    applyTheme(newTheme);
+  }, [applyTheme]);
+
+  // Enable CSS transitions for theme changes
+  const enableTransitions = useCallback(() => {
+    document.documentElement.classList.add('theme-transitions');
+  }, []);
+
+  // Disable CSS transitions (useful when you need an immediate change without animation)
+  const disableTransitions = useCallback(() => {
+    document.documentElement.classList.remove('theme-transitions');
+  }, []);
 
   // Initialize theme from localStorage or system preference
   useEffect(() => {
@@ -88,7 +88,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [applyTheme, enableTransitions, setTheme]);
 
   // Handle system preference changes
   useEffect(() => {
@@ -105,7 +105,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme, mounted, setTheme]);
+  }, [theme, mounted, applyTheme]);
 
   // Provide the context value
   const contextValue: ThemeContextType = {
