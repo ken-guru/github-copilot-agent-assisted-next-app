@@ -1,15 +1,15 @@
 /**
  * Unified time utilities for formatting and converting time values.
- * This file centralizes all time-related functions to provide consistent behavior.
+ * Consolidates functionality from previous time.ts and timeUtils.ts files.
  */
 
 /**
  * Formats milliseconds into a human-readable time string (H:MM:SS or M:SS format)
- * @param milliseconds - Time in milliseconds (negative values are treated as positive)
+ * @param milliseconds - Time in milliseconds
  * @returns Formatted time string
  */
 export function formatTimeHuman(milliseconds: number): string {
-  const totalSeconds = Math.floor(Math.abs(milliseconds) / 1000);
+  const totalSeconds = Math.floor(milliseconds / 1000);
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
@@ -22,7 +22,7 @@ export function formatTimeHuman(milliseconds: number): string {
 
 /**
  * Formats seconds into a MM:SS format
- * @param seconds - Time in seconds (negative values are treated as positive)
+ * @param seconds - Time in seconds (can be negative)
  * @returns Formatted time string in MM:SS format
  */
 export function formatTime(seconds: number): string {
@@ -34,31 +34,30 @@ export function formatTime(seconds: number): string {
 
 /**
  * Formats milliseconds into a MM:SS.mmm format with millisecond precision
- * @param milliseconds - Time in milliseconds (negative values are treated as positive)
+ * @param milliseconds - Time in milliseconds
  * @returns Formatted time string with millisecond precision
  */
 export function formatTimeWithMilliseconds(milliseconds: number): string {
-  const absMsec = Math.abs(milliseconds);
-  const totalSeconds = Math.floor(absMsec / 1000);
+  const totalSeconds = Math.floor(milliseconds / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-  const ms = absMsec % 1000;
+  const ms = milliseconds % 1000;
   
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
 }
 
 /**
  * Formats milliseconds into a MM:SS format
- * @param milliseconds - Time in milliseconds (negative values are treated as positive)
+ * @param milliseconds - Time in milliseconds
  * @returns Formatted time string in MM:SS format
  */
 export function formatTimeFromMilliseconds(milliseconds: number): string {
-  return formatTime(Math.floor(Math.abs(milliseconds) / 1000));
+  return formatTime(Math.floor(milliseconds / 1000));
 }
 
 /**
  * Formats seconds into a MM:SS format (alias for formatTime)
- * @param seconds - Time in seconds (negative values are treated as positive)
+ * @param seconds - Time in seconds
  * @returns Formatted time string in MM:SS format
  */
 export function formatTimeFromSeconds(seconds: number): string {
