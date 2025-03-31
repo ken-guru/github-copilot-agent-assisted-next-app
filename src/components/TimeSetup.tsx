@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button, Card } from '@/components/common';
 import styles from './TimeSetup.module.css';
 
 interface TimeSetupProps {
@@ -44,24 +45,27 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   };
 
   return (
-    <div className={styles.container} data-testid="time-setup">
-      <h2 className={styles.heading}>Set Time</h2>
-      
+    <Card
+      className={styles.container}
+      title="Set Time"
+      data-testid="time-setup"
+      padding="medium"
+    >
       <div className={styles.modeSelector}>
-        <button
-          type="button"
-          className={`${styles.button} ${setupMode === 'duration' ? styles.buttonPrimary : styles.buttonSecondary}`}
+        <Button
           onClick={() => setSetupMode('duration')}
+          className={setupMode === 'duration' ? styles.buttonPrimary : styles.buttonSecondary}
+          variant={setupMode === 'duration' ? 'primary' : 'secondary'}
         >
           Set Duration
-        </button>
-        <button
-          type="button"
-          className={`${styles.button} ${setupMode === 'deadline' ? styles.buttonPrimary : styles.buttonSecondary}`}
+        </Button>
+        <Button
           onClick={() => setSetupMode('deadline')}
+          className={setupMode === 'deadline' ? styles.buttonPrimary : styles.buttonSecondary}
+          variant={setupMode === 'deadline' ? 'primary' : 'secondary'}
         >
           Set Deadline
-        </button>
+        </Button>
       </div>
       
       <form onSubmit={handleSubmit}>
@@ -116,13 +120,14 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
           </div>
         )}
         
-        <button
+        <Button
           type="submit"
+          variant="primary"
           className={styles.submitButton}
         >
           Set Time
-        </button>
+        </Button>
       </form>
-    </div>
+    </Card>
   );
 }

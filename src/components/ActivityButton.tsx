@@ -2,6 +2,7 @@ import React from 'react';
 import { Activity } from './ActivityManager';
 import { TimelineEntry } from '../hooks/useTimelineEntries';
 import { formatTimeFromSeconds } from '@/utils/timeUtils';
+import { IconButton } from '@/components/common';
 import styles from './ActivityManager.module.css';
 
 interface ActivityButtonProps {
@@ -85,37 +86,25 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
         {/* Action buttons */}
         {!isCompleted && (
         <div className={styles.activityActions}>
-            <button
+            <IconButton
+              icon={isRunning ? "check" : "play"}
+              label={isRunning ? "Complete" : "Start"}
               onClick={handleClick}
               className={isRunning ? styles.stopButton : styles.startButton}
               disabled={isCompleted}
-              title={isRunning ? "Complete" : "Start"}
-              aria-label={isRunning ? "Complete" : "Start"}
-              data-testid={`${isRunning ? 'complete' : 'start'}-activity-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-            >
-              {isRunning ? (
-                <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                </svg>
-              ) : (
-                <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              )}
-            </button>
+              testId={`${isRunning ? 'complete' : 'start'}-activity-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+            />
+            
             {onRemove && (
-              <button
+              <IconButton
+                icon="close"
+                label="Remove"
                 onClick={handleRemove}
                 className={styles.removeButton}
                 disabled={isInUse}
                 title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
-                aria-label="Remove"
-                data-testid={`remove-activity-${name.toLowerCase().replace(/\s+/g, '-')}`}
-              >
-                <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                </svg>
-              </button>
+                testId={`remove-activity-${name.toLowerCase().replace(/\s+/g, '-')}`}
+              />
             )}
           </div>
         )}

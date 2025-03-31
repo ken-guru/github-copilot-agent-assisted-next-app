@@ -1,0 +1,80 @@
+.container {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Status variants */
+.default {
+  background-color: var(--foreground-muted, #808080);
+}
+
+.success {
+  background-color: var(--success-color, #34c759);
+}
+
+.error {
+  background-color: var(--danger-color, #ff3b30);
+}
+
+.warning {
+  background-color: var(--warning-color, #ff9500);
+}
+
+.info {
+  background-color: var(--info-color, #0078ff);
+}
+
+.running {
+  background-color: var(--primary-color, #0078ff);
+}
+
+/* Size variants */
+.small {
+  width: 8px;
+  height: 8px;
+}
+
+.medium {
+  width: 10px;
+  height: 10px;
+}
+
+.large {
+  width: 12px;
+  height: 12px;
+}
+
+/* Label styling */
+.label {
+  font-size: 14px;
+  color: var(--foreground, #333333);
+}
+
+/* Pulsing animation */
+.pulsing {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
