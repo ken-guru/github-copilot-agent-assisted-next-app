@@ -58,7 +58,7 @@ interface IconButtonProps {
   /**
    * Additional button props
    */
-  [key: string]: any;
+  [key: string]: React.ButtonHTMLAttributes<HTMLButtonElement>[keyof React.ButtonHTMLAttributes<HTMLButtonElement>] | React.ReactNode;
 }
 
 /**

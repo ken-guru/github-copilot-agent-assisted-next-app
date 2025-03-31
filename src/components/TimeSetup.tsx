@@ -124,7 +124,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
           type="submit"
           variant="primary"
           className={styles.submitButton}
-          onClick={(e) => {/* Form submit is handled by onSubmit */}}
+          onClick={() => {/* Form submit is handled by onSubmit */}}
         >
           Set Time
         </Button>

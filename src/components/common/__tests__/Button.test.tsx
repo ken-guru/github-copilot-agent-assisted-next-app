@@ -109,7 +109,6 @@ describe('Button', () => {
       <Button {...defaultProps} iconRight="play" />
     );
     
-    const button = screen.getByRole('button');
     const icon = document.querySelector('svg');
     expect(icon).toBeInTheDocument();
     
