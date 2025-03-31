@@ -105,7 +105,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme, mounted]);
+  }, [theme, mounted, setTheme]);
 
   // Provide the context value
   const contextValue: ThemeContextType = {

@@ -24,9 +24,11 @@ export function renderWithTheme(
  * @returns The wrapped component
  */
 export function withTheme<P>(Component: React.ComponentType<P>): React.FC<P> {
-  return (props: P) => (
+  const WithThemeComponent = (props: P) => (
     <ThemeProvider>
       <Component {...props} />
     </ThemeProvider>
   );
+  WithThemeComponent.displayName = `WithTheme(${Component.displayName || Component.name || 'Component'})`;
+  return WithThemeComponent;
 }

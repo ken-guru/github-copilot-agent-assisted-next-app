@@ -1,5 +1,4 @@
 import React from 'react';
-import { render as rtlRender } from '@testing-library/react';
 import { renderWithTheme } from '@/test/utils/renderWithTheme';
 import ProgressBar from '../ProgressBar';
 import { TimelineEntry } from '../Timeline';

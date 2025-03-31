@@ -1,7 +1,6 @@
 'use client';
 
 import { useThemeContext } from '../context/theme/ThemeContext';
-import type { Theme } from '../context/theme/ThemeContext';
 
 /**
  * A hook to access and control the application theme
@@ -24,23 +23,8 @@ export function useTheme() {
       enableTransitions: themeContext.enableTransitions,
       disableTransitions: themeContext.disableTransitions
     };
-  } catch (error) {
+  } catch {
     // Rethrow with our hook's name for better error messages
     throw new Error('useTheme must be used within a ThemeProvider');
   }
-}
-
-/**
- * Get the current theme mode without using the React context
- * 
- * @returns Boolean indicating if dark mode is active
- */
-export function getIsDarkMode(): boolean {
-  if (typeof window === 'undefined') {
-    return false; // Default to light during SSR
-  }
-  
-  return document.documentElement.classList.contains('dark-mode') ||
-    (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches &&
-     !document.documentElement.classList.contains('light-mode'));
 }

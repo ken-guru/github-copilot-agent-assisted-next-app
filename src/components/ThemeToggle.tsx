@@ -5,7 +5,9 @@ import styles from './ThemeToggle.module.css';
 import { validateThemeColors } from '../utils/themeColors';
 
 export default function ThemeToggle() {
-  const { theme, setTheme, isDark } = useTheme();
+  // We're extracting isDark for other components that might need it
+  // but not using it directly in this component
+  const { theme, setTheme } = useTheme();
   
   // Validate contrast ratios after theme change
   const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {

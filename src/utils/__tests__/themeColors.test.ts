@@ -170,9 +170,6 @@ describe('Color utility functions', () => {
     });
 
     it('should validate AAA contrast correctly', () => {
-      // For debugging - log the actual ratio calculated
-      const testRatio = getContrastRatio('hsl(0, 0%, 80%)', 'hsl(0, 0%, 20%)');
-      
       // High contrast - passes AAA
       expect(validateContrast('hsl(0, 0%, 100%)', 'hsl(0, 0%, 0%)', 'AAA')).toBe(true);
       

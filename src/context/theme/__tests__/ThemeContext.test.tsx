@@ -150,7 +150,7 @@ describe('ThemeContext', () => {
       }),
       removeEventListener: jest.fn(),
       dispatchEvent: jest.fn(),
-      handler: null as any
+      handler: null as ((event: MediaQueryListEvent) => void) | null
     };
 
     window.matchMedia = jest.fn().mockImplementation((query) => {

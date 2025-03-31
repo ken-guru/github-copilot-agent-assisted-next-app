@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './Summary.module.css';
 import { TimelineEntry } from './Timeline';
 import { useTheme } from '../hooks/useTheme';

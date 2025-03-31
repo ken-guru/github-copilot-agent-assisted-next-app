@@ -1,4 +1,4 @@
-import { render as rtlRender, screen, act } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import { renderWithTheme } from '@/test/utils/renderWithTheme';
 import Timeline, { TimelineEntry } from '../Timeline';
 
