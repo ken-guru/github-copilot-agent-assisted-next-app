@@ -1,8 +1,11 @@
+'use client';
+
 import React, { useMemo, useEffect, useState } from 'react';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
-import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
+import { useTheme } from '../hooks/useTheme';
+import { ColorSet, ThemeColorSet, themeColorSets } from '../utils/themeColors';
 
 export interface TimelineEntry {
   id: string;
@@ -48,10 +51,8 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
   
-  // Add state to track current theme mode
-  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
-    typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
-  );
+  // Use our centralized theme hook instead of individual detection
+  const { isDark } = useTheme();
   
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors?: TimelineEntry['colors']) => {
@@ -60,11 +61,11 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     // Extract hue from current color
     const hue = extractHueFromHsl(colors.background);
     
-    // Find the closest matching color set in internalActivityColors
+    // Find the closest matching color set in themeColorSets
     const closestColorSet = findClosestColorSet(hue, colors);
     
     // Return the appropriate theme version
-    return currentTheme === 'dark' ? closestColorSet.dark : closestColorSet.light;
+    return isDark ? closestColorSet.dark : closestColorSet.light;
   };
   
   // Helper to extract hue from HSL color
@@ -79,18 +80,18 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   };
   
   // Find the closest color set by hue
-  const findClosestColorSet = (hue: number, originalColors: ColorSet) => {
+  const findClosestColorSet = (hue: number, originalColors: ColorSet): ThemeColorSet => {
     // If we can't determine hue from the color, use a fallback
     if (hue === 0 && !originalColors.background.includes('hsl(0')) {
       // Default to blue if we can't determine the hue
-      return internalActivityColors[1]; // Blue color set
+      return themeColorSets[1]; // Blue color set
     }
     
     // Find the closest matching hue in our color sets
-    let closestMatch = internalActivityColors[0];
+    let closestMatch = themeColorSets[0];
     let smallestDiff = 360;
     
-    internalActivityColors.forEach(colorSet => {
+    themeColorSets.forEach(colorSet => {
       const lightColorHue = extractHueFromHsl(colorSet.light.background);
       const hueDiff = Math.abs(lightColorHue - hue);
       
@@ -105,43 +106,6 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     
     return closestMatch;
   };
-  
-  // Effect to listen for theme changes
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    // Function to handle theme changes
-    const handleThemeChange = () => {
-      setCurrentTheme(isDarkMode() ? 'dark' : 'light');
-    };
-    
-    // Initial check
-    handleThemeChange();
-    
-    // Set up MutationObserver to watch for class changes on document.documentElement
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === 'attributes' && 
-          mutation.attributeName === 'class'
-        ) {
-          handleThemeChange();
-        }
-      });
-    });
-    
-    observer.observe(document.documentElement, { attributes: true });
-    
-    // Also listen for system preference changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', handleThemeChange);
-    
-    // Clean up
-    return () => {
-      observer.disconnect();
-      mediaQuery.removeEventListener('change', handleThemeChange);
-    };
-  }, []);
   
   // Update current elapsed time when prop changes
   useEffect(() => {

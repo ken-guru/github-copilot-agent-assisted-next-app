@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import "./globals.css";
 import { UpdateNotification } from "@/components/UpdateNotification";
 import { registerServiceWorker, setUpdateHandler } from "../utils/serviceWorkerRegistration";
+import { ThemeProvider } from "@/context/theme/ThemeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,15 +58,17 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {updateMessage && (
-          <UpdateNotification
-            message={updateMessage}
-            onDismiss={() => setUpdateMessage(null)}
-          />
-        )}
-        <main>
-          {children}
-        </main>
+        <ThemeProvider>
+          {updateMessage && (
+            <UpdateNotification
+              message={updateMessage}
+              onDismiss={() => setUpdateMessage(null)}
+            />
+          )}
+          <main>
+            {children}
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   );

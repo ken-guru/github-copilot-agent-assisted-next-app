@@ -1,5 +1,6 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render as rtlRender } from '@testing-library/react';
+import { renderWithTheme } from '@/test/utils/renderWithTheme';
 import ProgressBar from '../ProgressBar';
 import { TimelineEntry } from '../Timeline';
 
@@ -35,7 +36,7 @@ describe('ProgressBar Component', () => {
   ];
 
   it('should render empty inactive progress bar when timer is not active', () => {
-    const { container } = render(
+    const { container } = renderWithTheme(
       <ProgressBar 
         entries={mockEntries}
         totalDuration={3600}
@@ -55,7 +56,7 @@ describe('ProgressBar Component', () => {
   });
 
   it('should render the progress bar with correct progress percentage', () => {
-    const { container } = render(
+    const { container } = renderWithTheme(
       <ProgressBar 
         entries={mockEntries}
         totalDuration={3600}
@@ -70,7 +71,7 @@ describe('ProgressBar Component', () => {
   });
 
   it('should have green glow when less than 50% of time is elapsed', () => {
-    const { container } = render(
+    const { container } = renderWithTheme(
       <ProgressBar 
         entries={mockEntries}
         totalDuration={3600}
@@ -87,7 +88,7 @@ describe('ProgressBar Component', () => {
   });
 
   it('should have yellow glow when between 50% and 75% of time is elapsed', () => {
-    const { container } = render(
+    const { container } = renderWithTheme(
       <ProgressBar 
         entries={mockEntries}
         totalDuration={3600}
@@ -104,7 +105,7 @@ describe('ProgressBar Component', () => {
   });
 
   it('should have orange glow when between 75% and 100% of time is elapsed', () => {
-    const { container } = render(
+    const { container } = renderWithTheme(
       <ProgressBar 
         entries={mockEntries}
         totalDuration={3600}
@@ -121,7 +122,7 @@ describe('ProgressBar Component', () => {
   });
 
   it('should have red pulse when 100% or more of time is elapsed', () => {
-    const { container } = render(
+    const { container } = renderWithTheme(
       <ProgressBar 
         entries={mockEntries}
         totalDuration={3600}
@@ -140,7 +141,7 @@ describe('ProgressBar Component', () => {
   });
 
   it('should cap at 100% width when time exceeds provided duration', () => {
-    const { container } = render(
+    const { container } = renderWithTheme(
       <ProgressBar 
         entries={mockEntries}
         totalDuration={3600}
@@ -155,7 +156,7 @@ describe('ProgressBar Component', () => {
   });
   
   it('should have appropriate aria-valuenow attribute for accessibility', () => {
-    const { container } = render(
+    const { container } = renderWithTheme(
       <ProgressBar 
         entries={mockEntries}
         totalDuration={3600}
@@ -170,7 +171,7 @@ describe('ProgressBar Component', () => {
 
   // Since testing height directly isn't reliable in Jest, we'll verify it exists and is rendered
   it('should render the progress bar component', () => {
-    const { container } = render(
+    const { container } = renderWithTheme(
       <ProgressBar 
         entries={mockEntries}
         totalDuration={3600}
@@ -197,7 +198,7 @@ describe('ProgressBar Component', () => {
       dispatchEvent: jest.fn(),
     }));
 
-    const { container } = render(
+    const { container } = renderWithTheme(
       <ProgressBar 
         entries={mockEntries}
         totalDuration={3600}

@@ -1,6 +1,7 @@
 /// <reference types="@testing-library/jest-dom" />
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import Timeline, { TimelineEntry } from '../Timeline';
+import { renderWithTheme } from '../../test/utils/renderWithTheme';
 
 describe('Timeline Component', () => {
   let dateNowSpy: jest.SpyInstance;
@@ -20,7 +21,7 @@ describe('Timeline Component', () => {
 
   // Helper function to render timeline with standard props
   const renderTimeline = (entries: TimelineEntry[], props = {}) => {
-    return render(
+    return renderWithTheme(
       <Timeline 
         entries={entries}
         totalDuration={3600}
@@ -107,21 +108,9 @@ describe('Timeline Component', () => {
       }
     ];
     
-    // Create a custom mock of the isDarkMode function that we can control
-    const mockIsDarkMode = false;
-    jest.mock('../../utils/colors', () => ({
-      ...jest.requireActual('../../utils/colors'),
-      isDarkMode: () => mockIsDarkMode,
-      internalActivityColors: jest.requireActual('../../utils/colors').internalActivityColors
-    }));
-    
-    // Render with light mode (default)
     renderTimeline(mockEntries);
     
     // Verify activity name appears (basic rendering check)
     expect(screen.getByTestId('timeline-activity-name')).toBeInTheDocument();
-    
-    // Clean up the mock to prevent affecting other tests
-    jest.unmock('../../utils/colors');
   });
 });
