@@ -1,4 +1,4 @@
-import { formatTimeHuman } from '../time';
+import { formatTimeHuman } from '../timeUtils';
 
 describe('formatTimeHuman', () => {
   it('should format time correctly for seconds', () => {

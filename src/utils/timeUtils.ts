@@ -1,6 +1,15 @@
 /**
- * Unified time utilities for formatting and converting time values.
- * Consolidates functionality from previous time.ts and timeUtils.ts files.
+ * Central time utility module for the application.
+ * Contains all time formatting, conversion, and manipulation functions.
+ * 
+ * This module serves as the single source of truth for time-related operations.
+ * It consolidates functionality previously spread across separate files.
+ *
+ * Usage Guidelines:
+ * - For displaying time to users in HH:MM:SS format, use formatTimeHuman
+ * - For displaying countdown/timer in MM:SS format, use formatTime or formatTimeFromSeconds
+ * - For high-precision measurements, use formatTimeWithMilliseconds
+ * - For conversion between time units, use the conversion utilities
  */
 
 /**
