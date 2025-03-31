@@ -87,3 +87,44 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-030: Progress Bar Conditional Visibility Fix](./logged_memories/MRTMLY-030-progress-bar-visibility.md) #debugging #tests #progress-bar #conditional-rendering
 - [MRTMLY-031: Summary Component Theme Color Updates](./logged_memories/MRTMLY-031-summary-theme-colors.md) #bug-fix #theme #dark-mode #summary #testing
 - [MRTMLY-032: Timeline Component Theme Color Update Bug](./logged_memories/MRTMLY-032-timeline-theme-colors.md) #bug-fix #theme #dark-mode #timeline #regression
+
+### Implementation: Common UI Component Library
+**Date:** 2025-03-31
+**Tags:** #refactoring #ui-components #standardization
+**Status:** Completed
+
+#### Initial State
+- UI components throughout the application used different styles and patterns for similar functionality
+- Button implementations varied across components
+- Status indicators were implemented differently in various places
+- No consistent card/container components for layout
+
+#### Implementation Process
+1. Created a common component library in src/components/common/
+   - Implemented a test-first development approach for all components
+   - Wrote comprehensive tests before implementing each component
+   - Used CSS modules for styling with consistent variables
+
+2. Created the following reusable components:
+   - `IconButton`: For icon-only button interactions
+   - `Button`: For standard button interactions with optional icons
+   - `StatusIndicator`: For displaying status states visually
+   - `Card`: For consistent content containers with various styling options
+
+3. Refactored existing components to use the common library:
+   - Updated `ActivityButton` to use IconButton
+   - Updated `OfflineIndicator` to use StatusIndicator
+   - Updated `ConfirmationDialog` to use Button
+   - Updated `TimeSetup` to use Button and Card
+
+#### Resolution
+- All 34 test suites with 272 tests are passing
+- UI components now follow consistent patterns and styling
+- Common functionality is now centralized, reducing duplication
+- Component styling is more maintainable through the common library
+
+#### Lessons Learned
+- Test-first development ensured that refactoring maintained existing functionality
+- Creating common components improved code organization and consistency
+- Using standardized components will make future development faster and more consistent
+- Maintaining backward compatibility with existing tests helped ensure quality

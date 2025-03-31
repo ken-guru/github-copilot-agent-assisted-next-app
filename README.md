@@ -74,6 +74,12 @@ When implementing or modifying features, ensure adherence to these core function
   - Offline status indication
   - Service worker caching strategies
   - Update notification system
+  
+- Common Component Library
+  - Standardized UI components for consistency
+  - Reusable Button and IconButton components
+  - StatusIndicator for visual status representation
+  - Card component for layout standardization
 ```
 
 ## Implementation Guidelines
@@ -84,6 +90,7 @@ When implementing or modifying features, ensure adherence to these core function
 - Custom React hooks for state management
 - Activity State Machine for lifecycle management
 - Theme system using CSS variables
+- Common UI component library for standardization
 ```
 
 ### Project Structure
@@ -91,6 +98,8 @@ When implementing or modifying features, ensure adherence to these core function
 src/
   ├── app/            # Next.js app directory (routes, layout)
   ├── components/     # React components
+  │   ├── common/     # Common UI component library
+  │   │   └── __tests__/ # Common component tests
   │   └── __tests__/  # Component tests
   ├── hooks/          # Custom React hooks
   │   └── __tests__/  # Hook tests
