@@ -1,4 +1,5 @@
 import { useThemeContext, type Theme } from '@/context/theme/ThemeContext';
+import { getIsDarkMode } from '@/utils/themeUtils';
 
 export interface ThemeContext {
   theme: Theme;
@@ -24,10 +25,4 @@ export const useTheme = (): ThemeContext => {
   }
 };
 
-// Utility function to check dark mode state
-export const getIsDarkMode = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  return document.documentElement.classList.contains('dark-mode') ||
-    (window.matchMedia('(prefers-color-scheme: dark)').matches &&
-     !document.documentElement.classList.contains('light-mode'));
-};
+export { getIsDarkMode };

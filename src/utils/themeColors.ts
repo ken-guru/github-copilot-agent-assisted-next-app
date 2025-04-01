@@ -1,6 +1,6 @@
 'use client';
 
-import { getIsDarkMode } from '../hooks/useTheme';
+import { getIsDarkMode } from './themeUtils';
 
 // Color set interface for typed color objects
 export interface ColorSet {
