@@ -27,11 +27,6 @@ interface TimelineProps {
   isTimeUp?: boolean;
   timerActive?: boolean;
   allActivitiesCompleted?: boolean;
-  onEdit?: (entry: TimelineEntry) => void;
-  onRemove?: (entryId: string) => void;
-  showLinkSlot?: boolean;
-  isReadOnly?: boolean;
-  tickInterval?: number;
 }
 
 function calculateTimeIntervals(duration: number): { interval: number; count: number } {
@@ -58,12 +53,7 @@ const Timeline: React.FC<TimelineProps> = ({
   elapsedTime,
   isTimeUp = false,
   timerActive = false,
-  allActivitiesCompleted = false,
-  onEdit,
-  onRemove,
-  showLinkSlot = false,
-  isReadOnly = false,
-  tickInterval
+  allActivitiesCompleted = false
 }: TimelineProps) => {
   const { isDarkMode } = useTheme();
   const [currentElapsedTime, setCurrentElapsedTime] = useState(elapsedTime);
