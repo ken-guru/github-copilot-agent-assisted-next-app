@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { render, RenderOptions, RenderResult } from '@testing-library/react';
-import { ThemeProvider } from '@/context/theme/ThemeContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 /**
  * Custom render function that wraps components with ThemeProvider

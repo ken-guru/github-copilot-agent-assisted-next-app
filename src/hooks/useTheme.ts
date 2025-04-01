@@ -1,28 +1,18 @@
-import { useThemeContext, type Theme } from '@/context/theme/ThemeContext';
-import { getIsDarkMode } from '@/utils/themeUtils';
+'use client';
 
-export interface ThemeContext {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-  isDark: boolean;
-  enableTransitions: () => void;
-  disableTransitions: () => void;
-}
+import { useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
 
-export const useTheme = (): ThemeContext => {
-  try {
-    const themeContext = useThemeContext();
-    return {
-      theme: themeContext.theme,
-      setTheme: themeContext.setTheme,
-      isDark: themeContext.isDark,
-      enableTransitions: themeContext.enableTransitions,
-      disableTransitions: themeContext.disableTransitions
-    };
-  } catch {
-    // Rethrow with our hook's name for better error messages
+/**
+ * Hook to access and control the current theme
+ * @returns Theme state and control functions
+ */
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  
+  if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
-};
-
-export { getIsDarkMode };
+  
+  return context;
+}

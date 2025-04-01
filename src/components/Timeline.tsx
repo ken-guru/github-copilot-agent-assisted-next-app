@@ -47,12 +47,17 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
   }
 }
 
-export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
+const Timeline: React.FC<TimelineProps> = ({ 
+  entries = [],
+  totalDuration,
+  elapsedTime,
+  isTimeUp = false,
+  timerActive = false,
+  allActivitiesCompleted = false
+}: TimelineProps) => {
+  const { isDarkMode } = useTheme();
+  const [currentElapsedTime, setCurrentElapsedTime] = useState(elapsedTime);
   const hasEntries = entries.length > 0;
-  const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
-  
-  // Use our centralized theme hook instead of individual detection
-  const { isDark } = useTheme();
   
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors?: TimelineEntry['colors']) => {
@@ -65,7 +70,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     const closestColorSet = findClosestColorSet(hue, colors);
     
     // Return the appropriate theme version
-    return isDark ? closestColorSet.dark : closestColorSet.light;
+    return isDarkMode ? closestColorSet.dark : closestColorSet.light;
   };
   
   // Helper to extract hue from HSL color
@@ -109,9 +114,9 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   
   // Update current elapsed time when prop changes
   useEffect(() => {
-    setCurrentElapsedTime(initialElapsedTime);
-  }, [initialElapsedTime]);
-  
+    setCurrentElapsedTime(elapsedTime);
+  }, [elapsedTime]);
+
   // Single interval effect for all time-based updates
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | null = null;
@@ -365,3 +370,5 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     </div>
   );
 }
+
+export default Timeline;

@@ -24,7 +24,7 @@ export default function Summary({
   isTimeUp = false
 }: SummaryProps) {
   // Use our centralized theme hook instead of individual detection
-  const { isDark } = useTheme();
+  const { isDarkMode } = useTheme();
 
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
@@ -37,7 +37,7 @@ export default function Summary({
     const closestColorSet = findClosestColorSet(hue, colors);
     
     // Return the appropriate theme version
-    return isDark ? closestColorSet.dark : closestColorSet.light;
+    return isDarkMode ? closestColorSet.dark : closestColorSet.light;
   };
 
   // Helper to extract hue from HSL color

@@ -1,6 +1,7 @@
 import { screen, act } from '@testing-library/react';
-import { renderWithTheme } from '@/test/utils/renderWithTheme';
+import React from 'react';
 import Timeline, { TimelineEntry } from '../Timeline';
+import { renderWithTheme } from '../../test/utils/renderWithTheme';
 
 describe('Timeline Break Visualization', () => {
   const FIXED_TIME = 1000000;

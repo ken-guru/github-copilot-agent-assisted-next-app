@@ -1,75 +1,53 @@
 .container {
   display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 4px;
-  border-radius: 0.5rem;
-  background-color: var(--background-muted);
-  margin: 0;
-  height: 100%;
-  min-height: 44px;
-}
-
-.placeholder {
-  width: 114px;
   height: 44px;
 }
 
 .toggleGroup {
   display: flex;
-  border-radius: 0.5rem;
+  background-color: var(--background-muted);
+  border-radius: 8px;
   padding: 4px;
-  gap: 8px;
+  gap: 4px;
 }
 
 .toggleButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 44px;
-  height: 44px;
-  color: var(--foreground-muted);
-  background-color: transparent;
+  height: 36px;
+  border-radius: 6px;
   border: none;
-  border-radius: 0.375rem;
+  background-color: transparent;
+  color: var(--foreground);
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   transition: all 0.2s ease;
-  padding: 10px;
 }
 
 .toggleButton:hover {
-  color: var(--foreground);
-  background-color: var(--background);
+  background-color: var(--background-hover);
 }
 
 .toggleButton.active {
-  color: var(--foreground);
-  background-color: var(--background);
-  box-shadow: var(--shadow-small);
+  background-color: var(--foreground);
+  color: var(--background);
 }
 
-/* Dark mode specific overrides */
-:global(.dark-mode) .toggleButton.active {
-  background-color: var(--background-alt);
-}
-
-/* Mobile optimizations */
+/* Mobile-specific styles */
 @media (max-width: 768px) {
   .container {
-    padding: 2px;
     height: 44px;
-  }
-
-  .toggleGroup {
-    gap: 4px;
-    padding: 2px;
   }
   
   .toggleButton {
-    padding: 8px;
+    width: 44px; /* Larger touch targets on mobile */
+    height: 36px;
   }
   
-  .toggleButton svg {
-    width: 20px;
-    height: 20px;
+  .toggleGroup {
+    gap: 4px; /* Ensure proper spacing on mobile */
   }
 }

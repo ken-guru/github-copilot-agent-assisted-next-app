@@ -1,6 +1,7 @@
 import { screen } from '@testing-library/react';
-import { renderWithTheme } from '@/test/utils/renderWithTheme';
+import React from 'react';
 import Timeline, { TimelineEntry } from '../Timeline';
+import { renderWithTheme } from '../../test/utils/renderWithTheme';
 
 describe('Timeline Component Rendering', () => {
   let dateNowSpy: jest.SpyInstance;

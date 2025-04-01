@@ -129,13 +129,13 @@ describe('ThemeContext', () => {
     );
 
     fireEvent.click(screen.getByTestId('set-dark'));
-    expect(localStorageMock.setItem).toHaveBeenCalledWith('theme', 'dark');
+    expect(localStorageMock.setItem).toHaveBeenCalledWith('theme-preference', 'dark');
 
     fireEvent.click(screen.getByTestId('set-light'));
-    expect(localStorageMock.setItem).toHaveBeenCalledWith('theme', 'light');
+    expect(localStorageMock.setItem).toHaveBeenCalledWith('theme-preference', 'light');
 
     fireEvent.click(screen.getByTestId('set-system'));
-    expect(localStorageMock.removeItem).toHaveBeenCalledWith('theme');
+    expect(localStorageMock.setItem).toHaveBeenCalledWith('theme-preference', 'system');
   });
 
   it('should respond to system preference changes', () => {

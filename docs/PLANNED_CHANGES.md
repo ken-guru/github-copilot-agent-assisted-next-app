@@ -320,14 +320,18 @@ This creates a fragmented user experience and increases development time for new
 
 To minimize dependency conflicts between these unification initiatives, follow this recommended implementation order:
 
-1. **Theme System Unification** (First)
-   - Creates the foundation for theming that other systems will build upon
-   - Establishes color utilities needed by subsequent systems
+1. **Theme System Unification** (First) - PARTIALLY COMPLETED - MUST COMPLETE BEFORE NEXT STEP
+   - ✅ Initial color utilities implemented (`colors.ts`, `themeColors.ts`)
+   - ✅ Basic theme detection functionality created (`themeUtils.ts`)
+   - ❌ React Context for global theme state not yet implemented
+   - ❌ useTheme hook not yet created
+   - ❌ Component refactoring not yet completed
 
-2. **Shared Utilities Unification** (Second)
-   - Mostly independent of visual styling
-   - Provides functionality needed by both CSS Framework and Component Library
-   - Hooks like `useMediaQuery` and `useLocalStorage` can benefit CSS implementation
+2. **Shared Utilities Unification** (Second) - BLOCKED UNTIL THEME SYSTEM COMPLETION
+   - Requires proper directory structure (`src/hooks`, organized `src/utils`)
+   - Should build upon existing utilities rather than replacing them
+   - Needs integration with fully completed theme system
+   - Will leverage the theme context components for status and data hooks
 
 3. **CSS Framework Unification** (Third)
    - Builds on the theme system to create styling approach
@@ -338,32 +342,138 @@ To minimize dependency conflicts between these unification initiatives, follow t
    - Depends on all previous systems
    - Leverages theme system, shared utilities, and CSS framework
 
-This sequence ensures each unification effort builds upon a solid foundation established by previous initiatives, reducing rework and integration challenges.
+## Detailed Plan to Complete Theme System Unification
+
+Before proceeding with Shared Utilities Unification, we must fully complete the Theme System implementation. Here's the action plan:
+
+### 1. Test Suite Development (Test-First Approach)
+
+- **Theme Context Tests**
+  - [ ] Test context creation with default values
+  - [ ] Test theme toggle functionality (light/dark/system)
+  - [ ] Test system preference detection and response
+  - [ ] Test localStorage persistence across page reloads
+  - [ ] Test context provider cleanup on unmount
+
+- **useTheme Hook Tests**
+  - [ ] Test hook returns current theme value
+  - [ ] Test theme toggle functions
+  - [ ] Test system preference change detection
+  - [ ] Test error handling when used outside provider
+  - [ ] Test proper cleanup of event listeners
+
+- **Component Integration Tests**
+  - [ ] Test existing components receive theme values
+  - [ ] Test components respond to theme changes
+  - [ ] Test backwards compatibility during migration
+
+### 2. Implementation Plan
+
+- **Directory Structure**
+  - [ ] Create `src/context` directory with ThemeContext.tsx
+  - [ ] Create `src/hooks` directory with useTheme.ts
+  - [ ] Organize existing theme utilities in `src/utils/theme/`
+  - [ ] Create proper barrel files for clean exports
+
+- **Theme Context Implementation**
+  - [ ] Create ThemeContext with proper TypeScript types
+  - [ ] Implement ThemeProvider component with:
+    - Theme state management (light/dark/system)
+    - Theme toggle functions
+    - System preference detection
+    - localStorage persistence
+    - Proper context cleanup
+
+- **useTheme Hook Development**
+  - [ ] Create hook to consume ThemeContext
+  - [ ] Add theme state and toggle functions
+  - [ ] Add system preference detection
+  - [ ] Include proper TypeScript types
+  - [ ] Add error handling for usage outside provider
+
+- **Utilities Reorganization**
+  - [ ] Move existing utilities to appropriate directories
+  - [ ] Create theme utility index exports
+  - [ ] Ensure backward compatibility
+  - [ ] Add any missing color utilities
+
+### 3. Component Integration
+
+- **Migration Strategy**
+  - [ ] Identify all components using direct theme detection
+  - [ ] Create priority list for component updates
+  - [ ] Document migration pattern for components
+
+- **Component Refactoring**
+  - [ ] Replace direct theme detection with useTheme hook
+  - [ ] Remove duplicate theme detection code
+  - [ ] Update event listeners and cleanup
+  - [ ] Verify visual consistency across all components
+
+- **Documentation**
+  - [ ] Create theme API documentation
+  - [ ] Add usage examples
+  - [ ] Document migration patterns
+  - [ ] Update any existing documentation
+
+### 4. Validation Criteria
+
+- [ ] All theme context tests passing
+- [ ] All useTheme hook tests passing
+- [ ] Components successfully migrated to use the new theme system
+- [ ] No duplicate theme detection code in components
+- [ ] Theme toggle functionality working across the application
+- [ ] System preference detection working correctly
+- [ ] Theme persistence across page reloads verified
+- [ ] Documentation for theme system completed
+
+Only after all validation criteria are met should we proceed to the Shared Utilities Unification step.
+
+## Updated Approach for Shared Utilities Unification
+
+After completing the Theme System Unification, we'll proceed with:
+
+1. **Leverage the Completed Theme System**
+   - Use the established directory structure from Theme System Unification
+   - Ensure all utilities work with the theme system
+   - Implement hooks that integrate with the theme context
+
+2. **Establish Directory Structure**
+   - Expand the `src/hooks` directory with additional hooks
+   - Further organize `src/utils` into logical subdirectories (time, data, status, etc.)
+   - Build upon the existing `src/context` directory as needed
+
+3. **Consolidate Existing Utilities**
+   - Review and extend existing time-related utilities (`time.ts`, `timeUtils.ts`)
+   - Build upon activity and status utilities rather than creating new ones
+   - Ensure backward compatibility with components already using these utilities
+
+This revised approach ensures we build on a properly completed Theme System rather than working with partial implementations, reducing technical debt and integration challenges later.
 
 ## Test-First Development Strategy
 
-Before implementing each phase, establish these test suites:
+Before implementing each remaining phase, establish these test suites:
 
-1. **Theme System Tests**:
-   - Tests for theme detection under various system preferences
-   - Tests for theme persistence across simulated page reloads
-   - Tests for theme context subscription and updates
-   - Tests for color utility edge cases
+1. **Theme System Tests** - TO BE COMPLETED FIRST:
+   - ✅ Tests for basic color utility functions
+   - [ ] Tests for theme detection under various system preferences
+   - [ ] Tests for theme context subscription and updates
+   - [ ] Tests for theme persistence across simulated page reloads
+   
+   **Next steps**:
+   - Write tests for the React Context implementation
+   - Create test cases for the useTheme hook
+   - Test theme persistence and preference saving
+   - Verify component integration with the theme system
 
-2. **Shared Utilities Tests**:
-   - Tests for time formatting with various locales and formats
-   - Tests for hook behavior during mount/unmount cycles
-   - Tests for data processing with empty/null/malformed inputs
-   - Tests for status transitions through all possible states
-
-3. **CSS Framework Tests**:
-   - Visual regression tests for token application
-   - Tests for responsive breakpoint behavior
-   - Tests for utility class application and specificity
-   - Tests for theme compatibility in both modes
-
-4. **Component Library Tests**:
-   - Accessibility tests for keyboard navigation
-   - Tests for component state transitions
-   - Tests for prop validation and default behaviors
-   - Tests for theme compatibility and responsiveness
+2. **Shared Utilities Tests** - AFTER THEME SYSTEM COMPLETION:
+   - Create tests for existing utilities first to ensure backward compatibility
+   - Write tests for new time formatting with various locales and formats
+   - Develop tests for hook behavior during mount/unmount cycles
+   - Add tests for data processing with empty/null/malformed inputs
+   - Create test cases for status transitions through all possible states
+   
+   **Combined approach**:
+   - Test theme and utility integration points
+   - Ensure each utility works with both light and dark themes
+   - Verify hooks interact correctly with theme context
