@@ -64,7 +64,7 @@ describe('ThemeToggle', () => {
     fireEvent.click(darkButton);
     
     expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
-    expect(window.localStorage.setItem).toHaveBeenCalledWith('theme', 'dark');
+    expect(window.localStorage.setItem).toHaveBeenCalledWith('theme-preference', 'dark');
   });
 
   it('applies light theme when light button is clicked', () => {
@@ -74,20 +74,20 @@ describe('ThemeToggle', () => {
     fireEvent.click(lightButton);
     
     expect(document.documentElement.classList.contains('light-mode')).toBe(true);
-    expect(window.localStorage.setItem).toHaveBeenCalledWith('theme', 'light');
+    expect(window.localStorage.setItem).toHaveBeenCalledWith('theme-preference', 'light');
   });
 
-  it('removes theme preference when system button is clicked', () => {
+  it('sets system theme when system button is clicked', () => {
     renderWithTheme(<ThemeToggle />);
     
     const systemButton = screen.getByTitle('System theme');
     fireEvent.click(systemButton);
     
-    expect(window.localStorage.removeItem).toHaveBeenCalledWith('theme');
+    expect(window.localStorage.setItem).toHaveBeenCalledWith('theme-preference', 'system');
   });
 
   it('loads saved theme from localStorage on mount', () => {
-    localStorageMock.theme = 'dark';
+    localStorageMock['theme-preference'] = 'dark';
     
     renderWithTheme(<ThemeToggle />);
     

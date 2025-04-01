@@ -89,3 +89,4 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-032: Timeline Component Theme Color Update Bug](./logged_memories/MRTMLY-032-timeline-theme-colors.md) #bug-fix #theme #dark-mode #timeline #regression
 - [MRTMLY-033: ThemeProvider Test Suite Integration](./logged_memories/MRTMLY-033-theme-provider-test-suite.md) #testing #theme #context #dark-mode
 - [MRTMLY-034: Theme System Unification ESLint Errors Blocking Deployment](./logged_memories/MRTMLY-034-eslint-deployment-failures.md) #eslint #deployment #vercel #theme-system #unused-variables
+- [MRTMLY-035: Theme Colors Test Suite Failures During Unification](./logged_memories/MRTMLY-035-theme-colors-test-failures.md) #debugging #tests #theme-system #array-length

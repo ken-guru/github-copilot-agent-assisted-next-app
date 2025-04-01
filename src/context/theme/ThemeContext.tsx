@@ -44,12 +44,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       root.classList.remove('dark-mode');
     }
 
-    // Save preference to localStorage unless it's system default
-    if (newTheme !== 'system') {
-      localStorage.setItem('theme', newTheme);
-    } else {
-      localStorage.removeItem('theme');
-    }
+    // Always save preference to localStorage, including system preference
+    localStorage.setItem('theme-preference', newTheme);
   }, []);
 
   // Set theme and handle side effects - wrapped in useCallback to stabilize reference
@@ -71,7 +67,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   // Initialize theme from localStorage or system preference
   useEffect(() => {
     setMounted(true);
-    const savedTheme = localStorage.getItem('theme') as Theme | null;
+    const savedTheme = localStorage.getItem('theme-preference') as Theme | null;
     
     if (savedTheme) {
       setTheme(savedTheme);
