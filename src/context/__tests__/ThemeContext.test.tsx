@@ -39,7 +39,8 @@ Object.defineProperty(window, 'matchMedia', {
 
 // Test component that consumes ThemeContext
 const TestComponent = () => {
-  const { theme, toggleTheme, setTheme } = React.useContext(ThemeContext);
+  // Add a non-null assertion since we know ThemeContext will be provided
+  const { theme, toggleTheme, setTheme } = React.useContext(ThemeContext)!;
   
   return (
     <div>

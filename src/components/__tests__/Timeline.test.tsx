@@ -1,5 +1,5 @@
-/// <reference types="@testing-library/jest-dom" />
-import { screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
 import Timeline, { TimelineEntry } from '../Timeline';
 import { renderWithTheme } from '../../test/utils/renderWithTheme';
 

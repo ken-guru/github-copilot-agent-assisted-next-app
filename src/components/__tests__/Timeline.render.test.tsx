@@ -1,5 +1,5 @@
-import { screen } from '@testing-library/react';
-import { renderWithTheme } from '@/test/utils/renderWithTheme';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
 import Timeline, { TimelineEntry } from '../Timeline';
 
 describe('Timeline Component Rendering', () => {
@@ -38,7 +38,7 @@ describe('Timeline Component Rendering', () => {
         }
       },
     ];
-    renderWithTheme(
+    render(
       <Timeline 
         entries={mockEntries}
         totalDuration={3600}
@@ -50,7 +50,7 @@ describe('Timeline Component Rendering', () => {
   });
   
   it('should render an empty state when no entries are present', () => {
-    renderWithTheme(
+    render(
       <Timeline 
         entries={[]}
         totalDuration={3600}
@@ -79,7 +79,7 @@ describe('Timeline Component Rendering', () => {
       }
     ];
     
-    renderWithTheme(
+    render(
       <Timeline 
         entries={mockEntries}
         totalDuration={3600}

@@ -1,5 +1,5 @@
-import { screen, act } from '@testing-library/react';
-import { renderWithTheme } from '@/test/utils/renderWithTheme';
+import { render, screen, act } from '@testing-library/react';
+import React from 'react';
 import Timeline, { TimelineEntry } from '../Timeline';
 
 describe('Timeline Break Visualization', () => {
@@ -32,7 +32,7 @@ describe('Timeline Break Visualization', () => {
       }
     }];
 
-    renderWithTheme(
+    render(
       <Timeline 
         entries={mockEntries}
         totalDuration={3600}
@@ -72,7 +72,7 @@ describe('Timeline Break Visualization', () => {
       }
     ];
 
-    renderWithTheme(
+    render(
       <Timeline 
         entries={mockEntries}
         totalDuration={7200}
@@ -115,7 +115,7 @@ describe('Timeline Break Visualization', () => {
       }
     ];
 
-    renderWithTheme(
+    render(
       <Timeline 
         entries={mockEntries}
         totalDuration={3600}
