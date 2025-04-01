@@ -1,75 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useTheme } from '../hooks/useTheme';
 import styles from './ThemeToggle.module.css';
-import { validateThemeColors } from '../utils/colors';
+import { validateThemeColors } from '../utils/themeColors';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState('system');
-  const [mounted, setMounted] = useState(false);
-
-  // Initialize theme from localStorage or system preference
-  useEffect(() => {
-    setMounted(true);
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      setTheme(savedTheme);
-      applyTheme(savedTheme);
-    } else {
-      // Apply system preference on initial load
-      const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      applyTheme(darkModePreferred ? 'dark' : 'light');
-    }
-  }, []);
-
-  // Handle system preference changes
-  useEffect(() => {
-    if (!mounted) return;
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (theme === 'system') {
-        applyTheme(e.matches ? 'dark' : 'light');
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme, mounted]);
-
-  const applyTheme = (newTheme: string) => {
-    const root = document.documentElement;
-    const isDark = newTheme === 'dark' || 
-      (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-    if (isDark) {
-      root.classList.add('dark-mode');
-      root.classList.remove('light-mode');
-    } else {
-      root.classList.add('light-mode');
-      root.classList.remove('dark-mode');
-    }
-
-    // Save preference to localStorage unless it's system default
-    if (newTheme !== 'system') {
-      localStorage.setItem('theme', newTheme);
-    } else {
-      localStorage.removeItem('theme');
-    }
-
-    // Validate contrast ratios after theme change
+  // We're extracting isDark for other components that might need it
+  // but not using it directly in this component
+  const { theme, setTheme } = useTheme();
+  
+  // Validate contrast ratios after theme change
+  const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
+    setTheme(newTheme);
+    
+    // Small delay to ensure CSS variables are updated
     setTimeout(() => {
       validateThemeColors();
-    }, 100); // Small delay to ensure CSS variables are updated
+    }, 100);
   };
-
-  const handleThemeChange = (newTheme: string) => {
-    setTheme(newTheme);
-    applyTheme(newTheme);
-  };
-
-  // Only render the toggle once mounted to avoid hydration mismatch
-  if (!mounted) return <div className={styles.placeholder} />;
 
   return (
     <div className={styles.container}>

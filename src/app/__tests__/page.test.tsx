@@ -1,6 +1,7 @@
 /// <reference types="@testing-library/jest-dom" />
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { screen, fireEvent, act } from '@testing-library/react';
+import { renderWithTheme } from '@/test/utils/renderWithTheme';
 import Home from '../page';
 import resetService, { DialogCallback } from '@/utils/resetService';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
@@ -142,13 +143,13 @@ describe('Home Page', () => {
   });
 
   it('should not show reset button in setup state', () => {
-    render(<Home />);
+    renderWithTheme(<Home />);
     
     expect(screen.queryByText('Reset')).not.toBeInTheDocument();
   });
 
   it('should show reset button after time is set', () => {
-    render(<Home />);
+    renderWithTheme(<Home />);
     
     // Find and trigger the TimeSetup component
     const timeSetupButton = screen.getByRole('button', { name: /set time/i });
@@ -158,7 +159,7 @@ describe('Home Page', () => {
   });
 
   it('should call resetService when reset is clicked', () => {
-    render(<Home />);
+    renderWithTheme(<Home />);
     
     // Set initial time to move past setup state
     const timeSetupButton = screen.getByRole('button', { name: /set time/i });
@@ -172,7 +173,7 @@ describe('Home Page', () => {
   });
 
   it('should register reset callbacks and dialog callback with resetService', () => {
-    render(<Home />);
+    renderWithTheme(<Home />);
     
     expect(mockedResetService.registerResetCallback).toHaveBeenCalled();
     expect(mockedResetService.setDialogCallback).toHaveBeenCalled();
@@ -186,7 +187,7 @@ describe('Home Page', () => {
   });
 
   it('should provide a working dialog callback to resetService', async () => {
-    render(<Home />);
+    renderWithTheme(<Home />);
 
     // Get the dialog callback that was registered
     const dialogCallback = mockedResetService.dialogCallbackFn;
@@ -242,7 +243,7 @@ describe('Home Page', () => {
     });
 
     it('should render header with compact layout on mobile', () => {
-      render(<Home />);
+      renderWithTheme(<Home />);
       
       const header = screen.getByRole('banner');
       const headerContent = header.firstElementChild;
@@ -252,7 +253,7 @@ describe('Home Page', () => {
     });
 
     it('should maintain touch-friendly sizing for buttons on mobile', () => {
-      render(<Home />);
+      renderWithTheme(<Home />);
       
       // Set initial time to show reset button
       const timeSetupButton = screen.getByRole('button', { name: /set time/i });
@@ -263,7 +264,7 @@ describe('Home Page', () => {
     });
 
     it('should render title with correct mobile styling', () => {
-      render(<Home />);
+      renderWithTheme(<Home />);
       
       const title = screen.getByText('Mr. Timely');
       expect(title).toHaveClass(styles.title);
@@ -289,7 +290,7 @@ describe('OfflineIndicator Integration', () => {
   });
 
   it('should maintain offline indicator positioning across all app states', () => {
-    const { rerender } = render(<Home />);
+    const { rerender } = renderWithTheme(<Home />);
     
     // Check setup state
     const setupOfflineIndicator = screen.getByRole('status');
@@ -350,7 +351,7 @@ describe('Progress Element Visibility', () => {
       resetActivities: mockResetActivities,
     }));
     
-    render(<Home />);
+    renderWithTheme(<Home />);
     
     // In activity state, progress container should be present
     const progressContainer = document.querySelector(`.${styles.progressContainer}`);
@@ -361,7 +362,7 @@ describe('Progress Element Visibility', () => {
     // Mock for setup state (timeSet = false)
     jest.spyOn(React, 'useState').mockImplementationOnce(() => [false, jest.fn()]);
     
-    render(<Home />);
+    renderWithTheme(<Home />);
     
     // In setup state, progress container should not be rendered
     const progressContainer = document.querySelector(`.${styles.progressContainer}`);
@@ -385,7 +386,7 @@ describe('Progress Element Visibility', () => {
       resetActivities: mockResetActivities,
     }));
     
-    render(<Home />);
+    renderWithTheme(<Home />);
     
     // In completed state, progress container should not be rendered
     const progressContainer = document.querySelector(`.${styles.progressContainer}`);

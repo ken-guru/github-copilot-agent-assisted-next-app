@@ -1,4 +1,5 @@
-import { render, screen, cleanup } from '@testing-library/react';
+import { screen, cleanup } from '@testing-library/react';
+import { renderWithTheme } from '@/test/utils/renderWithTheme';
 import Summary from '../Summary';
 import { TimelineEntry } from '../Timeline';
 
@@ -44,7 +45,7 @@ describe('Summary Component', () => {
       const totalDuration = 3600; // 1 hour planned
       const elapsedTime = 5400; // 1h 30m actually spent
       
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={totalDuration}
@@ -87,7 +88,7 @@ describe('Summary Component', () => {
         }
       }];
 
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={3600}
@@ -117,7 +118,7 @@ describe('Summary Component', () => {
         }
       }];
 
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={3600}
@@ -142,7 +143,7 @@ describe('Summary Component', () => {
         endTime: 1000000 + 1800000, // 30 minutes break
       }];
 
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={3600}
@@ -177,7 +178,7 @@ describe('Summary Component', () => {
       const totalDuration = 3600;
       const elapsedTime = 3602; // Just 2 seconds over
       
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={totalDuration}
@@ -195,7 +196,7 @@ describe('Summary Component', () => {
       const totalDuration = 3600;
       const elapsedTime = 3540; // 1 minute early
       
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={totalDuration}
@@ -213,7 +214,7 @@ describe('Summary Component', () => {
     it('should show time up message when time is up', () => {
       const entries = createMockTimelineEntries();
       
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={3600}
@@ -235,7 +236,7 @@ describe('Summary Component', () => {
         endTime: 1000000 + 3900000, // 1h 5m
       }];
       
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={3600}
@@ -268,7 +269,7 @@ describe('Summary Component', () => {
 
       const renderStart = performance.now();
       
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={360000} // 100 hours
@@ -304,7 +305,7 @@ describe('Summary Component', () => {
         endTime: maxDuration,
       }];
 
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={maxDuration}
@@ -348,7 +349,7 @@ describe('Summary Component', () => {
         }
       ];
 
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={7200}
@@ -403,7 +404,7 @@ describe('Summary Component', () => {
         }
       ];
 
-      render(
+      renderWithTheme(
         <Summary 
           entries={entries}
           totalDuration={9000}
@@ -450,7 +451,7 @@ describe('Summary Component', () => {
     }));
     
     // Render with light mode (default)
-    render(
+    renderWithTheme(
       <Summary 
         entries={mockEntries}
         totalDuration={1000}
@@ -520,7 +521,7 @@ describe('Summary Component', () => {
       }));
       
       // Render the component with the test case configuration
-      render(
+      renderWithTheme(
         <Summary 
           entries={mockEntries}
           totalDuration={testCase.totalDuration}
