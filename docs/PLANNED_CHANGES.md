@@ -320,14 +320,18 @@ This creates a fragmented user experience and increases development time for new
 
 To minimize dependency conflicts between these unification initiatives, follow this recommended implementation order:
 
-1. **Theme System Unification** (First)
-   - Creates the foundation for theming that other systems will build upon
-   - Establishes color utilities needed by subsequent systems
+1. **Theme System Unification** (First) - PARTIALLY COMPLETED
+   - ✅ Initial color utilities implemented (`colors.ts`, `themeColors.ts`)
+   - ✅ Basic theme detection functionality created (`themeUtils.ts`)
+   - ❌ React Context for global theme state not yet implemented
+   - ❌ useTheme hook not yet created
+   - ❌ Component refactoring not yet completed
 
-2. **Shared Utilities Unification** (Second)
-   - Mostly independent of visual styling
-   - Provides functionality needed by both CSS Framework and Component Library
-   - Hooks like `useMediaQuery` and `useLocalStorage` can benefit CSS implementation
+2. **Shared Utilities Unification** (Second) - NEXT STEP
+   - Requires proper directory structure (`src/hooks`, organized `src/utils`)
+   - Should build upon existing utilities rather than replacing them
+   - Needs integration with partially completed theme system
+   - Will need to implement missing theme context components alongside utility unification
 
 3. **CSS Framework Unification** (Third)
    - Builds on the theme system to create styling approach
@@ -338,23 +342,54 @@ To minimize dependency conflicts between these unification initiatives, follow t
    - Depends on all previous systems
    - Leverages theme system, shared utilities, and CSS framework
 
-This sequence ensures each unification effort builds upon a solid foundation established by previous initiatives, reducing rework and integration challenges.
+## Updated Approach for Shared Utilities Unification
+
+Before proceeding with full Shared Utilities Unification, we need to:
+
+1. **Complete Critical Theme System Components**
+   - Implement the React Context for theme management
+   - Create the useTheme hook as described in the original plan
+   - Ensure proper integration with existing theme utilities
+
+2. **Establish Directory Structure**
+   - Create `src/hooks` directory for all React hooks
+   - Organize `src/utils` into logical subdirectories (time, data, status, etc.)
+   - Set up `src/context` directory for React Context implementations
+
+3. **Consolidate Existing Utilities**
+   - Review and extend existing time-related utilities (`time.ts`, `timeUtils.ts`)
+   - Build upon activity and status utilities rather than creating new ones
+   - Ensure backward compatibility with components already using these utilities
+
+This revised approach ensures we build on what's already been implemented rather than duplicating work, while still following the test-first development strategy outlined below.
 
 ## Test-First Development Strategy
 
-Before implementing each phase, establish these test suites:
+Before implementing each remaining phase, establish these test suites:
 
-1. **Theme System Tests**:
-   - Tests for theme detection under various system preferences
-   - Tests for theme persistence across simulated page reloads
-   - Tests for theme context subscription and updates
-   - Tests for color utility edge cases
+1. **Theme System Tests** - PARTIALLY COMPLETED:
+   - ✅ Tests for basic color utility functions
+   - ❌ Tests for theme detection under various system preferences
+   - ❌ Tests for theme context subscription and updates
+   - ❌ Tests for theme persistence across simulated page reloads
+   
+   **Next steps**:
+   - Write tests for the React Context implementation
+   - Create test cases for the useTheme hook
+   - Test theme persistence and preference saving
+   - Verify component integration with the theme system
 
 2. **Shared Utilities Tests**:
-   - Tests for time formatting with various locales and formats
-   - Tests for hook behavior during mount/unmount cycles
-   - Tests for data processing with empty/null/malformed inputs
-   - Tests for status transitions through all possible states
+   - Create tests for existing utilities first to ensure backward compatibility
+   - Write tests for new time formatting with various locales and formats
+   - Develop tests for hook behavior during mount/unmount cycles
+   - Add tests for data processing with empty/null/malformed inputs
+   - Create test cases for status transitions through all possible states
+   
+   **Combined approach**:
+   - Test theme and utility integration points
+   - Ensure each utility works with both light and dark themes
+   - Verify hooks interact correctly with theme context
 
 3. **CSS Framework Tests**:
    - Visual regression tests for token application
@@ -367,3 +402,46 @@ Before implementing each phase, establish these test suites:
    - Tests for component state transitions
    - Tests for prop validation and default behaviors
    - Tests for theme compatibility and responsiveness
+
+## Directory Structure and Organization
+
+To support the updated approach, the following directory structure should be established:
+
+```
+src/
+  context/
+    ThemeContext.tsx      - Theme context implementation
+    index.ts              - Context barrel file for exports
+  hooks/
+    useTheme.ts           - Theme hook 
+    useOnlineStatus.ts    - Network status hook
+    useElapsedTime.ts     - Time tracking hook
+    useLocalStorage.ts    - Storage hook
+    useMediaQuery.ts      - Responsive behavior hook
+    index.ts              - Hook barrel file for exports
+  utils/
+    theme/                - Theme-related utilities
+      colors.ts           - Color manipulation functions
+      themeColors.ts      - Theme color definitions
+      themeUtils.ts       - Theme detection utilities
+      index.ts           - Barrel file for theme exports
+    time/                 - Time-related utilities
+      formatting.ts       - Date/time formatting
+      calculations.ts     - Duration calculations
+      timezone.ts         - Timezone handling
+      index.ts           - Barrel file for time exports
+    data/                 - Data manipulation utilities
+      array.ts            - Array helpers
+      string.ts           - String processing
+      number.ts           - Number formatting
+      validation.ts       - Data validation
+      index.ts           - Barrel file for data exports
+    status/               - Status management utilities
+      statusUtils.ts      - Status checking functions
+      statusDisplay.ts    - Status display formatting
+      transitions.ts      - Status transition helpers
+      index.ts           - Barrel file for status exports
+    index.ts             - Barrel file for all utilities
+```
+
+This structure provides clear organization of our utilities and provides a solid foundation for the remaining unification efforts.
