@@ -1,13 +1,14 @@
-import { useContext } from 'react';
-import { ThemeContext } from '@/context/theme/ThemeContext';
+import { useThemeContext, type Theme } from '@/context/theme/ThemeContext';
 
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-};
+export interface ThemeContext {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  isDark: boolean;
+  enableTransitions: () => void;
+  disableTransitions: () => void;
+}
+
+export const useTheme = (): ThemeContext => useThemeContext();
 
 // Utility function to check dark mode state
 export const getIsDarkMode = (): boolean => {

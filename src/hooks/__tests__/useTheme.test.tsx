@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
-import { useTheme } from '../../hooks/useTheme';
-import { ThemeProvider } from '../../context/theme/ThemeContext';
+import { useTheme } from '../useTheme';
+import { ThemeProvider } from '@/context/theme/ThemeContext';
 import React from 'react';
 
 // Mock localStorage
