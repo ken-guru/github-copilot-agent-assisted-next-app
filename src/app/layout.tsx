@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import "./globals.css";
 import { UpdateNotification } from "@/components/UpdateNotification";
 import { registerServiceWorker, setUpdateHandler } from "../utils/serviceWorkerRegistration";
-import { ThemeProvider } from "@/context/ThemeContext";
+import { ThemeProvider } from "@/context/theme/ThemeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

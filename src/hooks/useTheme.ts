@@ -1,18 +1,17 @@
-'use client';
-
-import { useContext } from 'react';
-import { ThemeContext } from '../context/ThemeContext';
+import { useThemeContext } from '../context/theme/ThemeContext';
+import type { Theme } from '../context/theme/ThemeContext';
 
 /**
- * Hook to access and control the current theme
- * @returns Theme state and control functions
+ * Hook to access and manipulate theme settings
  */
 export function useTheme() {
-  const context = useContext(ThemeContext);
+  const themeContext = useThemeContext();
   
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  
-  return context;
+  return {
+    theme: themeContext.theme,
+    setTheme: themeContext.setTheme,
+    isDarkMode: themeContext.isDark,
+    enableTransitions: themeContext.enableTransitions,
+    disableTransitions: themeContext.disableTransitions
+  };
 }

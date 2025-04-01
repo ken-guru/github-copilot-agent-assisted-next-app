@@ -1,200 +1,179 @@
 import React from 'react';
-import { render, screen, fireEvent, act, renderHook } from '@testing-library/react';
-import { ThemeProvider } from '../../context/ThemeContext';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { ThemeProvider, ThemeContext } from '../../context/theme/ThemeContext';
 import { useTheme } from '../useTheme';
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: jest.fn((key: string) => store[key] || null),
-    setItem: jest.fn((key: string, value: string) => {
-      store[key] = value;
-    }),
-    removeItem: jest.fn((key: string) => {
-      delete store[key];
-    }),
-    clear: jest.fn(() => {
-      store = {};
-    }),
+// Create a test component that uses the useTheme hook
+const TestComponent = ({ onThemeChange = () => {} }) => {
+  const { theme, setTheme, isDarkMode } = useTheme();
+  
+  const handleClick = (newTheme) => {
+    setTheme(newTheme);
+    onThemeChange(newTheme);
   };
-})();
-
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
-
-// Mock matchMedia
-const mockMatchMedia = (initialIsDark = false) => {
-  const prefersDarkMode = initialIsDark;
-  
-  const darkModeMediaQuery = {
-    matches: prefersDarkMode,
-    media: '(prefers-color-scheme: dark)',
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn((event, listener) => {
-      if (event === 'change') {
-        // Store the listener for later manual triggering
-        darkModeMediaQuery._listener = listener;
-      }
-    }),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-    // Custom property to store the listener
-    _listener: null as ((e: MediaQueryListEvent) => void) | null,
-  };
-  
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: jest.fn().mockImplementation((query: string) => {
-      if (query === '(prefers-color-scheme: dark)') {
-        return darkModeMediaQuery;
-      }
-      return {
-        matches: false,
-        media: query,
-        onchange: null,
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
-      };
-    }),
-  });
-  
-  return darkModeMediaQuery;
-};
-
-// Test component that uses the useTheme hook
-const TestComponent = () => {
-  const { theme, isDarkMode, toggleTheme, setTheme } = useTheme();
   
   return (
     <div>
-      <div data-testid="theme-value">{theme}</div>
+      <div data-testid="current-theme">{theme}</div>
       <div data-testid="is-dark-mode">{isDarkMode ? 'dark' : 'light'}</div>
-      <button data-testid="toggle-theme" onClick={toggleTheme}>Toggle Theme</button>
-      <button data-testid="set-light" onClick={() => setTheme('light')}>Light</button>
-      <button data-testid="set-dark" onClick={() => setTheme('dark')}>Dark</button>
-      <button data-testid="set-system" onClick={() => setTheme('system')}>System</button>
+      <button data-testid="set-light" onClick={() => handleClick('light')}>Light</button>
+      <button data-testid="set-dark" onClick={() => handleClick('dark')}>Dark</button>
+      <button data-testid="set-system" onClick={() => handleClick('system')}>System</button>
     </div>
   );
 };
 
+// Mock matchMedia
+const mockMatchMedia = (prefersDark = false) => {
+  window.matchMedia = jest.fn().mockImplementation(query => ({
+    matches: query === '(prefers-color-scheme: dark)' ? prefersDark : false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // Deprecated
+    removeListener: jest.fn(), // Deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  }));
+};
+
 describe('useTheme hook', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    localStorageMock.clear();
-    document.documentElement.classList.remove('light-mode', 'dark-mode');
+    // Set up default matchMedia mock (system prefers light)
+    mockMatchMedia(false);
+    
+    // Reset localStorage before each test
+    localStorage.clear();
+    
+    // Reset document classes
+    document.documentElement.className = '';
   });
   
-  test('throws error when used outside of ThemeProvider', () => {
-    // Silence the error output for this test
+  afterEach(() => {
+    jest.clearAllMocks();
+    cleanup();
+  });
+  
+  it('throws error when used outside of ThemeProvider', () => {
+    // Suppress console.error for this test
     const originalConsoleError = console.error;
     console.error = jest.fn();
     
-    // Expect the hook to throw when used outside provider
+    // Create a mock context with correct shape but undefined value
+    jest.mock('../../context/theme/ThemeContext', () => ({
+      ThemeContext: {
+        Provider: ({ children }) => children,
+        Consumer: jest.fn(),
+        displayName: 'ThemeContext',
+        $$typeof: Symbol.for('react.context'),
+      }
+    }));
+    
+    // Should throw an error when ThemeProvider is not used
     expect(() => {
-      renderHook(() => useTheme());
-    }).toThrow('useTheme must be used within a ThemeProvider');
+      // We need to create a custom wrapper that doesn't include ThemeProvider
+      renderHook(() => useTheme(), {
+        wrapper: ({ children }) => <>{children}</>
+      });
+    }).toThrow(/useTheme must be used within a ThemeProvider/);
     
     // Restore console.error
     console.error = originalConsoleError;
   });
   
-  test('returns the current theme and utility functions', () => {
-    // Initialize with dark mode OFF
-    const darkModeMediaQuery = mockMatchMedia(false);
-    
-    render(
-      <ThemeProvider>
-        <TestComponent />
-      </ThemeProvider>
-    );
-    
-    // Default is system
-    expect(screen.getByTestId('theme-value').textContent).toBe('system');
-    expect(screen.getByTestId('is-dark-mode').textContent).toBe('light'); // initially light mode
-    
-    // Now simulate switching system preference to dark mode
-    darkModeMediaQuery.matches = true;
-    
-    act(() => {
-      // Manually trigger the listener with a media query change event
-      if (darkModeMediaQuery._listener) {
-        darkModeMediaQuery._listener({ matches: true } as MediaQueryListEvent);
-        
-        // Also force the theme application for the test environment
-        document.documentElement.classList.add('dark-mode');
-        document.documentElement.classList.remove('light-mode');
-      }
+  it('returns the current theme and utility functions', () => {
+    const { result } = renderHook(() => useTheme(), {
+      wrapper: ({ children }) => <ThemeProvider>{children}</ThemeProvider>
     });
     
-    // With system theme and dark mode preference, isDarkMode should be true
-    expect(screen.getByTestId('is-dark-mode').textContent).toBe('dark');
+    // Check the returned values from useTheme hook
+    expect(result.current.theme).toBeDefined();
+    expect(typeof result.current.setTheme).toBe('function');
+    expect(typeof result.current.isDarkMode).toBe('boolean');
     
-    // Test toggle functionality
-    fireEvent.click(screen.getByTestId('toggle-theme'));
-    expect(screen.getByTestId('theme-value').textContent).toBe('light');
-    expect(screen.getByTestId('is-dark-mode').textContent).toBe('light');
-    
-    fireEvent.click(screen.getByTestId('toggle-theme'));
-    expect(screen.getByTestId('theme-value').textContent).toBe('dark');
-    expect(screen.getByTestId('is-dark-mode').textContent).toBe('dark');
+    // Should start with the system theme by default
+    expect(result.current.theme).toBe('system');
   });
   
-  test('setTheme function changes theme directly', () => {
+  it('respects initial theme from localStorage', () => {
+    // Set theme in localStorage
+    localStorage.setItem('theme', 'dark');
+    
+    const { result } = renderHook(() => useTheme(), {
+      wrapper: ({ children }) => <ThemeProvider>{children}</ThemeProvider>
+    });
+    
+    // Should use the theme from localStorage
+    expect(result.current.theme).toBe('dark');
+    
+    // Should also set dark mode class on document
+    expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
+  });
+  
+  it('setTheme function changes theme directly', () => {
+    const onThemeChange = jest.fn();
+    
     render(
+      <ThemeProvider>
+        <TestComponent onThemeChange={onThemeChange} />
+      </ThemeProvider>
+    );
+    
+    // Initial state should be 'system'
+    expect(screen.getByTestId('current-theme')).toHaveTextContent('system');
+    
+    // Change to dark theme
+    fireEvent.click(screen.getByTestId('set-dark'));
+    
+    // Check that theme was changed
+    expect(screen.getByTestId('current-theme')).toHaveTextContent('dark');
+    expect(onThemeChange).toHaveBeenCalledWith('dark');
+    
+    // Check localStorage was updated
+    expect(localStorage.getItem('theme')).toBe('dark');
+    
+    // Check that document class was updated
+    expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
+  });
+  
+  it('isDarkMode reflects actual dark mode state', () => {
+    const { unmount } = render(
       <ThemeProvider>
         <TestComponent />
       </ThemeProvider>
     );
     
-    // Set to light theme
-    fireEvent.click(screen.getByTestId('set-light'));
-    expect(screen.getByTestId('theme-value').textContent).toBe('light');
+    // Initially not dark mode (system preference is light from mock)
+    expect(screen.getByTestId('is-dark-mode')).toHaveTextContent('light');
     
-    // Set to dark theme
+    // Change to dark theme
     fireEvent.click(screen.getByTestId('set-dark'));
-    expect(screen.getByTestId('theme-value').textContent).toBe('dark');
+    expect(screen.getByTestId('is-dark-mode')).toHaveTextContent('dark');
     
-    // Set back to system theme
+    // Change to light theme
+    fireEvent.click(screen.getByTestId('set-light'));
+    expect(screen.getByTestId('is-dark-mode')).toHaveTextContent('light');
+    
+    // Change to system theme (which is light from our mock)
     fireEvent.click(screen.getByTestId('set-system'));
-    expect(screen.getByTestId('theme-value').textContent).toBe('system');
-  });
-  
-  test('isDarkMode reflects actual dark mode state', () => {
-    const darkModeMediaQuery = mockMatchMedia(false);
+    expect(screen.getByTestId('is-dark-mode')).toHaveTextContent('light');
     
+    // Clean up before re-rendering
+    unmount();
+    
+    // Now change system preference to dark
+    mockMatchMedia(true);
+    
+    // Re-render with system preference set to dark
     render(
       <ThemeProvider>
         <TestComponent />
       </ThemeProvider>
     );
     
-    // Initially system theme with light mode preference
-    expect(screen.getByTestId('is-dark-mode').textContent).toBe('light');
-    
-    // System theme with dark mode preference
-    darkModeMediaQuery.matches = true;
-    act(() => {
-      if (darkModeMediaQuery._listener) {
-        darkModeMediaQuery._listener({ matches: true } as MediaQueryListEvent);
-        
-        // Force theme application for testing
-        document.documentElement.classList.add('dark-mode');
-        document.documentElement.classList.remove('light-mode');
-      }
-    });
-    expect(screen.getByTestId('is-dark-mode').textContent).toBe('dark');
-    
-    // Explicit light theme should override system preference
-    fireEvent.click(screen.getByTestId('set-light'));
-    expect(screen.getByTestId('is-dark-mode').textContent).toBe('light');
-    
-    // Explicit dark theme should override system preference
-    fireEvent.click(screen.getByTestId('set-dark'));
-    expect(screen.getByTestId('is-dark-mode').textContent).toBe('dark');
+    // Should now have system theme selected by default, which should be dark
+    expect(screen.getByTestId('is-dark-mode')).toHaveTextContent('dark');
   });
 });

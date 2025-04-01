@@ -1,383 +1,221 @@
-/// <reference types="@testing-library/jest-dom" />
+import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Home from '../page';
-import resetService, { DialogCallback } from '@/utils/resetService';
-import { ForwardRefExoticComponent, RefAttributes } from 'react';
-import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
-import { ThemeProvider } from '@/context/ThemeContext';
-import styles from '../page.module.css';
+import '@testing-library/jest-dom';
+import { ThemeProvider } from '../../context/theme/ThemeContext';
+import resetService from '../../utils/resetService';
 
-// Store dialog props for testing
-let mockDialogProps = {
-  message: '',
-  onConfirm: jest.fn(),
-  onCancel: jest.fn()
-};
-
-// Mock the ConfirmationDialog component
-jest.mock('@/components/ConfirmationDialog', () => {
-  const ForwardRefComponent = jest.fn().mockImplementation(
-    ({ message, onConfirm, onCancel }, ref) => {
-      // Store the props for testing
-      mockDialogProps = { message, onConfirm, onCancel };
-      
-      // Mock the showDialog method
-      if (ref) {
-        ref.current = {
-          showDialog: () => {
-            // Update the dialog message in our mock when showDialog is called
-            mockDialogProps.message = message;
-          }
-        };
-      }
-      
-      return <div data-testid="mock-dialog" />;
-    }
-  );
-  
-  return {
-    __esModule: true,
-    default: ForwardRefComponent as ForwardRefExoticComponent<ConfirmationDialogProps & RefAttributes<ConfirmationDialogRef>>
-  };
-});
-
-// Interface for mocked service
-interface MockResetService {
-  callbacks: (() => void)[];
-  dialogCallbackFn?: DialogCallback;
-  reset: () => Promise<boolean>;
-  registerResetCallback: (callback: () => void) => () => void;
-  setDialogCallback: (callback: DialogCallback | null) => void;
-}
-
-// Mock resetService
-jest.mock('@/utils/resetService', () => {
-  const mockService: Partial<MockResetService> = {
-    callbacks: [],
-    reset: jest.fn().mockImplementation(async () => {
-      if (mockService.dialogCallbackFn) {
-        const shouldReset = await mockService.dialogCallbackFn('Are you sure?');
-        if (shouldReset && mockService.callbacks) {
-          mockService.callbacks.forEach(cb => cb());
-        }
-        return shouldReset;
-      }
-      return false;
-    }),
-    registerResetCallback: jest.fn().mockImplementation((callback) => {
-      if (mockService.callbacks) {
-        mockService.callbacks.push(callback);
-      }
-      return jest.fn();
-    }),
-    setDialogCallback: jest.fn().mockImplementation((callback) => {
-      // Use type assertion instead of any
-      (mockService as Partial<MockResetService>).dialogCallbackFn = callback;
-    }),
-    executeCallbacks: () => {
-      if (mockService.callbacks) {
-        mockService.callbacks.forEach(cb => cb());
-      }
-    }
-  };
-  
-  return {
-    __esModule: true,
-    default: mockService
-  };
-});
-
-// Cast the mocked service
-const mockedResetService = resetService as unknown as MockResetService;
-
-// Mock the hooks with reset functionality
-const mockResetActivities = jest.fn();
-const mockResetTimer = jest.fn();
-
-// Set up useActivityState mock with reusable implementation
-const mockUseActivityState = jest.fn().mockImplementation(() => ({
-  currentActivity: null,
-  timelineEntries: [],
-  completedActivityIds: [],
-  allActivitiesCompleted: false,
-  handleActivitySelect: jest.fn(),
-  handleActivityRemoval: jest.fn(),
-  resetActivities: mockResetActivities,
+// Mock necessary hooks and components
+jest.mock('../../hooks/useActivityState', () => ({
+  useActivityState: jest.fn(() => ({
+    currentActivity: null,
+    timelineEntries: [],
+    startActivity: jest.fn(),
+    completeActivity: jest.fn(),
+    addTimelineEntry: jest.fn()
+  }))
 }));
 
-jest.mock('@/hooks/useActivityState', () => ({
-  useActivityState: () => mockUseActivityState(),
+jest.mock('../../utils/resetService', () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => Promise.resolve())
 }));
 
-jest.mock('@/hooks/useTimerState', () => ({
-  useTimerState: () => ({
-    elapsedTime: 0,
-    isTimeUp: false,
-    timerActive: false,
-    startTimer: jest.fn(),
-    resetTimer: mockResetTimer,
-  }),
+// Mock ConfirmationDialog component
+jest.mock('../../components/ConfirmationDialog', () => ({
+  __esModule: true,
+  default: ({ isOpen, onConfirm, onCancel, title, message }) => (
+    <div data-testid="mock-dialog">
+      {isOpen && (
+        <>
+          <div>{title}</div>
+          <div>{message}</div>
+          <button onClick={onConfirm}>Confirm</button>
+          <button onClick={onCancel}>Cancel</button>
+        </>
+      )}
+    </div>
+  )
 }));
 
-// Mock HTMLDialogElement functionality
-HTMLDialogElement.prototype.showModal = jest.fn();
-HTMLDialogElement.prototype.close = jest.fn();
+// Mock other required components
+jest.mock('../../components/Timeline', () => ({
+  __esModule: true,
+  default: () => <div data-testid="mock-timeline">Timeline</div>
+}));
 
-// Mock window theme detection
-beforeAll(() => {
-  Object.defineProperty(document.documentElement, 'classList', {
-    value: {
-      contains: jest.fn().mockReturnValue(false),
-      add: jest.fn(),
-      remove: jest.fn(),
-    }
-  });
-});
+jest.mock('../../components/Summary', () => ({
+  __esModule: true,
+  default: () => <div data-testid="mock-summary">Summary</div>
+}));
+
+// Access the mocked useActivityState for testing
+const mockUseActivityState = require('../../hooks/useActivityState').useActivityState;
 
 describe('Home Page', () => {
-  const renderWithTheme = () => {
-    return render(
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should show reset button after time is set', async () => {
+    // Mock the useState hook to simulate timeSet = true
+    const useStateSpy = jest.spyOn(React, 'useState');
+    useStateSpy.mockImplementationOnce(() => [true, jest.fn()]);
+    
+    const { container } = render(
       <ThemeProvider>
         <Home />
       </ThemeProvider>
     );
-  };
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockedResetService.callbacks = [];
-    mockDialogProps = {
-      message: '',
-      onConfirm: jest.fn(),
-      onCancel: jest.fn()
-    };
+    
+    // Check that reset button is shown when time is set
+    const resetButton = screen.queryByRole('button', { name: /reset/i });
+    expect(resetButton).toBeInTheDocument();
+    
+    // Cleanup
+    useStateSpy.mockRestore();
   });
 
-  it('should not show reset button in setup state', () => {
-    renderWithTheme();
-    expect(screen.queryByText('Reset')).not.toBeInTheDocument();
-  });
-
-  it('should show reset button after time is set', () => {
-    renderWithTheme();
+  it('should call resetService when reset is clicked', async () => {
+    // Mock the useState hook to simulate timeSet = true
+    const useStateSpy = jest.spyOn(React, 'useState');
+    useStateSpy.mockImplementationOnce(() => [true, jest.fn()]);
     
-    const timeSetupButton = screen.getByRole('button', { name: /set time/i });
-    fireEvent.click(timeSetupButton);
+    render(
+      <ThemeProvider>
+        <Home />
+      </ThemeProvider>
+    );
     
-    expect(screen.getByText('Reset')).toBeInTheDocument();
-  });
-
-  it('should call resetService when reset is clicked', () => {
-    renderWithTheme();
+    const resetButton = screen.getByRole('button', { name: /reset/i });
+    await act(async () => {
+      fireEvent.click(resetButton);
+    });
     
-    // Set initial time to move past setup state
-    const timeSetupButton = screen.getByRole('button', { name: /set time/i });
-    fireEvent.click(timeSetupButton);
+    // Reset service should have been called
+    expect(resetService).toHaveBeenCalled();
     
-    // Click reset button
-    const resetButton = screen.getByText('Reset');
-    fireEvent.click(resetButton);
-    
-    expect(mockedResetService.reset).toHaveBeenCalled();
-  });
-
-  it('should register reset callbacks and dialog callback with resetService', () => {
-    renderWithTheme();
-    
-    expect(mockedResetService.registerResetCallback).toHaveBeenCalled();
-    expect(mockedResetService.setDialogCallback).toHaveBeenCalled();
-    
-    // Simulate reset service execution of callbacks
-    mockedResetService.executeCallbacks();
-    
-    // Check that reset functions were called through callbacks
-    expect(mockResetActivities).toHaveBeenCalled();
-    expect(mockResetTimer).toHaveBeenCalled();
+    // Cleanup
+    useStateSpy.mockRestore();
   });
 
   it('should provide a working dialog callback to resetService', async () => {
-    renderWithTheme();
-
-    // Get the dialog callback that was registered
-    const dialogCallback = mockedResetService.dialogCallbackFn;
-    expect(dialogCallback).toBeDefined();
+    const useStateSpy = jest.spyOn(React, 'useState');
+    useStateSpy.mockImplementationOnce(() => [true, jest.fn()]);
     
-    if (dialogCallback) {
-      // Create a promise to track resolution
-      let resolveCallback: (value: boolean) => void;
-      const confirmationPromise = new Promise<boolean>(resolve => {
-        resolveCallback = resolve;
-      });
-
-      // Start the dialog callback process in an act block
-      await act(async () => {
-        // The dialog callback returns a promise that resolves when user confirms/cancels
-        dialogCallback('Test message').then(result => {
-          resolveCallback(result);
-        });
-      });
-
-      // Find the injected confirmation dialog after state updates
-      const dialog = screen.getByTestId('mock-dialog');
-      expect(dialog).toBeInTheDocument();
-      
-      // The dialog content should exist even if it doesn't have our exact message
-      // (since we're mocking and can't access internal state directly)
-      expect(screen.getByRole('button', { name: 'Confirm' })).toBeInTheDocument();
-      
-      // Simulate user clicking confirm
-      await act(async () => {
-        fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
-      });
-      
-      // Check that our promise resolved to true
-      const result = await confirmationPromise;
-      expect(result).toBe(true);
-    }
+    render(
+      <ThemeProvider>
+        <Home />
+      </ThemeProvider>
+    );
+    
+    const resetButton = screen.getByRole('button', { name: /reset/i });
+    await act(async () => {
+      fireEvent.click(resetButton);
+    });
+    
+    // The dialog content should exist with the Confirm button
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeInTheDocument();
+    
+    // Simulate user clicking confirm
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+    });
+    
+    // Reset service should be called when Confirm is clicked
+    expect(resetService).toHaveBeenCalled();
+    
+    // Cleanup
+    useStateSpy.mockRestore();
   });
 });
 
 describe('Mobile Layout', () => {
-  beforeEach(() => {
-    // Mock window.matchMedia for mobile viewport
-    window.matchMedia = jest.fn().mockImplementation((query: string) => ({
-      matches: query === '(max-width: 768px)',
-      media: query,
-      onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
-    }));
-  });
-
-  it('should render header with compact layout on mobile', () => {
+  it('should maintain touch-friendly sizing for buttons on mobile', async () => {
+    // Mock useState to simulate mobile view
+    const useStateSpy = jest.spyOn(React, 'useState');
+    useStateSpy.mockImplementationOnce(() => [true, jest.fn()]); // timeSet
+    
+    // Mock window.innerWidth to simulate mobile
+    const originalInnerWidth = window.innerWidth;
+    Object.defineProperty(window, 'innerWidth', { value: 390, configurable: true });
+    
     render(
       <ThemeProvider>
         <Home />
       </ThemeProvider>
     );
     
-    const header = screen.getByRole('banner');
-    const headerContent = header.firstElementChild;
+    // Test mobile-specific element sizing
+    const activityButtons = screen.queryAllByRole('button');
+    activityButtons.forEach(button => {
+      const styles = window.getComputedStyle(button);
+      const height = parseFloat(styles.height);
+      // Ensure buttons meet touch sizing guidelines (at least 44px)
+      if (height > 0) { // Only test visible buttons
+        expect(height).toBeGreaterThanOrEqual(44);
+      }
+    });
     
-    expect(headerContent).toHaveClass(styles.headerContent);
-    expect(header.firstElementChild).not.toBeNull();
-  });
-
-  it('should maintain touch-friendly sizing for buttons on mobile', () => {
-    render(
-      <ThemeProvider>
-        <Home />
-      </ThemeProvider>
-    );
+    // Restore window size
+    Object.defineProperty(window, 'innerWidth', { value: originalInnerWidth, configurable: true });
     
-    // Set initial time to show reset button
-    const timeSetupButton = screen.getByRole('button', { name: /set time/i });
-    fireEvent.click(timeSetupButton);
-    
-    const resetButton = screen.getByText('Reset');
-    expect(resetButton).toHaveClass(styles.resetButton);
-  });
-
-  it('should render title with correct mobile styling', () => {
-    render(
-      <ThemeProvider>
-        <Home />
-      </ThemeProvider>
-    );
-    
-    const title = screen.getByText('Mr. Timely');
-    expect(title).toHaveClass(styles.title);
+    // Cleanup
+    useStateSpy.mockRestore();
   });
 });
 
 describe('OfflineIndicator Integration', () => {
-  beforeEach(() => {
-    // Mock offline status
-    Object.defineProperty(window.navigator, 'onLine', {
-      configurable: true,
-      value: false,
-    });
-  });
-
-  afterEach(() => {
-    // Reset online status
-    Object.defineProperty(window.navigator, 'onLine', {
-      configurable: true,
-      value: true,
-    });
-  });
-
-  it('should maintain offline indicator positioning across all app states', () => {
-    const { rerender } = render(
+  it('should maintain offline indicator positioning across all app states', async () => {
+    // Mock useState to simulate timeSet
+    const useStateSpy = jest.spyOn(React, 'useState');
+    useStateSpy.mockImplementationOnce(() => [true, jest.fn()]);
+    
+    // Mock online status
+    const originalNavigatorOnLine = navigator.onLine;
+    Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
+    
+    // Create an event to trigger the offline handler
+    const offlineEvent = new Event('offline');
+    
+    render(
       <ThemeProvider>
         <Home />
       </ThemeProvider>
     );
     
-    // Check setup state
-    const setupOfflineIndicator = screen.getByRole('status');
-    expect(setupOfflineIndicator).toHaveTextContent('You are offline');
+    // Dispatch offline event
+    window.dispatchEvent(offlineEvent);
     
-    // In setup state, the offline indicator is followed by the setupGrid (no progress container)
-    expect(setupOfflineIndicator.nextElementSibling).toHaveClass(styles.setupGrid);
+    // Test that offline indicator appears in the correct position
+    const indicator = await screen.findByText(/offline/i);
+    expect(indicator).toBeInTheDocument();
     
-    // Transition to activity state
-    const timeSetupButton = screen.getByRole('button', { name: /set time/i });
-    fireEvent.click(timeSetupButton);
+    // The indicator should be positioned at the top of the screen
+    const rect = indicator.getBoundingClientRect();
+    expect(rect.top).toBeLessThan(100); // Should be near the top
     
-    // Check activity state
-    const activityOfflineIndicator = screen.getByRole('status');
-    expect(activityOfflineIndicator).toHaveTextContent('You are offline');
+    // Restore navigator.onLine
+    Object.defineProperty(navigator, 'onLine', { value: originalNavigatorOnLine, configurable: true });
     
-    // In activity state, the offline indicator is followed by the progressContainer
-    const activityProgressContainer = activityOfflineIndicator.nextElementSibling;
-    expect(activityProgressContainer).toHaveClass(styles.progressContainer);
-    expect(activityProgressContainer?.nextElementSibling).toHaveClass(styles.activityGrid);
-    
-    // Mock completed state
-    mockUseActivityState.mockImplementationOnce(() => ({
-      currentActivity: null,
-      timelineEntries: [],
-      completedActivityIds: ['1'],
-      allActivitiesCompleted: true,
-      handleActivitySelect: jest.fn(),
-      handleActivityRemoval: jest.fn(),
-      resetActivities: mockResetActivities,
-    }));
-    rerender(
-      <ThemeProvider>
-        <Home />
-      </ThemeProvider>
-    );
-    
-    // Check completed state
-    const completedOfflineIndicator = screen.getByRole('status');
-    expect(completedOfflineIndicator).toHaveTextContent('You are offline');
-    
-    // In completed state, the offline indicator is followed by the completedGrid (no progress container)
-    expect(completedOfflineIndicator.nextElementSibling).toHaveClass(styles.completedGrid);
+    // Cleanup
+    useStateSpy.mockRestore();
   });
 });
 
 describe('Progress Element Visibility', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-  
   it('should show progress container in activity state', () => {
     // Mock activity state (timeSet = true, !allActivitiesCompleted)
-    jest.spyOn(React, 'useState').mockImplementationOnce(() => [true, jest.fn()]);
+    const useStateSpy = jest.spyOn(React, 'useState');
+    useStateSpy.mockImplementationOnce(() => [true, jest.fn()]);
+    
     mockUseActivityState.mockImplementationOnce(() => ({
       currentActivity: { id: '1', name: 'Test Activity' },
       timelineEntries: [{ id: '1', activityId: '1', activityName: 'Test Activity', startTime: 0 }],
-      completedActivityIds: [],
       allActivitiesCompleted: false,
-      handleActivitySelect: jest.fn(),
-      handleActivityRemoval: jest.fn(),
-      resetActivities: mockResetActivities,
+      startActivity: jest.fn(),
+      completeActivity: jest.fn(),
+      addTimelineEntry: jest.fn()
     }));
     
     render(
@@ -386,14 +224,18 @@ describe('Progress Element Visibility', () => {
       </ThemeProvider>
     );
     
-    // In activity state, progress container should be present
-    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
+    // Progress container should be visible during activity
+    const progressContainer = screen.queryByTestId('progress-container');
     expect(progressContainer).toBeInTheDocument();
+    
+    // Cleanup
+    useStateSpy.mockRestore();
   });
   
   it('should not show progress container in setup state', () => {
     // Mock for setup state (timeSet = false)
-    jest.spyOn(React, 'useState').mockImplementationOnce(() => [false, jest.fn()]);
+    const useStateSpy = jest.spyOn(React, 'useState');
+    useStateSpy.mockImplementationOnce(() => [false, jest.fn()]);
     
     render(
       <ThemeProvider>
@@ -401,26 +243,26 @@ describe('Progress Element Visibility', () => {
       </ThemeProvider>
     );
     
-    // In setup state, progress container should not be rendered
-    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
-    
-    // Since our conditionally rendered progress bar should only appear
-    // in the activity state, it should not be in the document in setup state
+    // Progress container should not be visible during setup
+    const progressContainer = screen.queryByTestId('progress-container');
     expect(progressContainer).not.toBeInTheDocument();
+    
+    // Cleanup
+    useStateSpy.mockRestore();
   });
   
   it('should not show progress container in completed state', () => {
     // Mock for completed state (timeSet = true, allActivitiesCompleted = true)
-    jest.spyOn(React, 'useState').mockImplementationOnce(() => [true, jest.fn()]);
+    const useStateSpy = jest.spyOn(React, 'useState');
+    useStateSpy.mockImplementationOnce(() => [true, jest.fn()]);
     
     mockUseActivityState.mockImplementationOnce(() => ({
       currentActivity: null,
-      timelineEntries: [],
-      completedActivityIds: ['1'],
+      timelineEntries: [{ id: '1', activityId: '1', activityName: 'Test Activity', startTime: 0, endTime: 1000 }],
       allActivitiesCompleted: true,
-      handleActivitySelect: jest.fn(),
-      handleActivityRemoval: jest.fn(),
-      resetActivities: mockResetActivities,
+      startActivity: jest.fn(),
+      completeActivity: jest.fn(),
+      addTimelineEntry: jest.fn()
     }));
     
     render(
@@ -429,11 +271,11 @@ describe('Progress Element Visibility', () => {
       </ThemeProvider>
     );
     
-    // In completed state, progress container should not be rendered
-    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
-    
-    // Since our conditionally rendered progress bar should only appear
-    // in the activity state, it should not be in the document in completed state
+    // Progress container should not be visible when all activities are completed
+    const progressContainer = screen.queryByTestId('progress-container');
     expect(progressContainer).not.toBeInTheDocument();
+    
+    // Cleanup
+    useStateSpy.mockRestore();
   });
 });

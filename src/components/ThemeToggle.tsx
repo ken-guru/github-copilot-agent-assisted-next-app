@@ -1,17 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './ThemeToggle.module.css';
-import { useTheme } from '@/context/ThemeContext';
+import { validateThemeColors } from '../utils/colors';
+import { useTheme } from '../hooks/useTheme';
 
 export default function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
+  // Use our centralized theme hook instead of direct context import
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  // Set mounted state after hydration
+  // Only render the toggle once mounted to avoid hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleThemeChange = (newTheme: string) => {
+    setTheme(newTheme as any);
+    
+    // Validate contrast ratios after theme change
+    setTimeout(() => {
+      validateThemeColors();
+    }, 100); // Small delay to ensure CSS variables are updated
+  };
 
   // Only render the toggle once mounted to avoid hydration mismatch
   if (!mounted) return <div className={styles.placeholder} />;
@@ -21,7 +32,7 @@ export default function ThemeToggle() {
       <div className={styles.toggleGroup}>
         <button
           className={`${styles.toggleButton} ${theme === 'light' ? styles.active : ''}`}
-          onClick={() => setTheme('light')}
+          onClick={() => handleThemeChange('light')}
           aria-label="Light theme"
           title="Light theme"
         >
@@ -39,7 +50,7 @@ export default function ThemeToggle() {
         </button>
         <button
           className={`${styles.toggleButton} ${theme === 'system' ? styles.active : ''}`}
-          onClick={() => setTheme('system')}
+          onClick={() => handleThemeChange('system')}
           aria-label="System theme"
           title="System theme"
         >
@@ -51,7 +62,7 @@ export default function ThemeToggle() {
         </button>
         <button
           className={`${styles.toggleButton} ${theme === 'dark' ? styles.active : ''}`}
-          onClick={() => setTheme('dark')}
+          onClick={() => handleThemeChange('dark')}
           aria-label="Dark theme"
           title="Dark theme"
         >

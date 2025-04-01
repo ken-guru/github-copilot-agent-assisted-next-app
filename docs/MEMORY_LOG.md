@@ -93,6 +93,7 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-036: Theme System TypeScript Errors Post-Unification](./logged_memories/MRTMLY-036-theme-system-typescript-errors.md) #typescript #theme-system #type-errors #interface-mismatch
 - [MRTMLY-037: Timeline Component TypeScript Errors](./logged_memories/MRTMLY-037-timeline-typescript-errors.md) #typescript #timeline #type-errors #component #exports
 - [MRTMLY-038: Timeline Tests Failing Due to Missing ThemeProvider](./logged_memories/MRTMLY-038-timeline-test-theme-provider.md) #testing #theme-system #context #timeline
+- [MRTMLY-039: Theme Hook Test Failures Due to __esModule Property Conflict](./logged_memories/MRTMLY-039-theme-hook-test-failures.md) #debugging #tests #theme-system #esmodule #test-conflicts
 
 ### Theme System Unification Summary (Resolved)
 - All theme system components now use consistent property names

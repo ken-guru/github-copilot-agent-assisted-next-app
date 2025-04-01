@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ThemeToggle from '../ThemeToggle';
-import { ThemeProvider } from '@/context/ThemeContext';
+import { ThemeProvider } from '@/context/theme/ThemeContext';
 import styles from '../ThemeToggle.module.css';
 
 // Mock window.matchMedia

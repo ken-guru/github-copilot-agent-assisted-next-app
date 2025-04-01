@@ -1,134 +1,144 @@
-import { screen, act } from '@testing-library/react';
 import React from 'react';
-import Timeline, { TimelineEntry } from '../Timeline';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import Timeline from '../Timeline';
 import { renderWithTheme } from '../../test/utils/renderWithTheme';
 
+// Mock useTheme to avoid context errors
+jest.mock('../../hooks/useTheme', () => ({
+  useTheme: () => ({
+    theme: 'system',
+    isDarkMode: false,
+    setTheme: jest.fn()
+  })
+}));
+
 describe('Timeline Break Visualization', () => {
-  const FIXED_TIME = 1000000;
-  let dateNowSpy: jest.SpyInstance;
-  
-  beforeEach(() => {
-    jest.useFakeTimers();
-    dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => FIXED_TIME);
-  });
-
-  afterEach(() => {
-    dateNowSpy.mockRestore();
-    jest.useRealTimers();
-    jest.clearAllMocks();
-    jest.clearAllTimers();
-  });
-
   it('should show ongoing break immediately after completing an activity', () => {
-    const mockEntries = [{
-      id: '1',
-      activityId: 'activity-1',
-      activityName: 'Task 1',
-      startTime: FIXED_TIME - 30000,
-      endTime: FIXED_TIME - 10000,
-      colors: {
-        background: '#E8F5E9',
-        text: '#1B5E20',
-        border: '#2E7D32'
-      }
-    }];
-
-    renderWithTheme(
-      <Timeline 
-        entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={30}
-        timerActive={true}
-      />
-    );
-
-    // Look for break with correct time format
-    expect(screen.getByText((content) => {
-      return content.includes('Break') && content.includes('0:10');
-    })).toBeInTheDocument();
-
-    act(() => {
-      dateNowSpy.mockImplementation(() => FIXED_TIME + 5000);
-      jest.advanceTimersByTime(5000);
-    });
-
-    expect(screen.getByText((content) => {
-      return content.includes('Break') && content.includes('0:15');
-    })).toBeInTheDocument();
-  });
-
-  it('should handle ongoing break after completing the last activity', () => {
-    const mockEntries: TimelineEntry[] = [
+    // Setup entries with one complete activity followed by an ongoing break
+    const entries = [
       {
         id: '1',
         activityId: 'activity-1',
-        activityName: 'Task 1',
-        startTime: FIXED_TIME - 3600000,
-        endTime: FIXED_TIME - 1800000,
-        colors: {
-          background: '#E8F5E9',
-          text: '#1B5E20',
-          border: '#2E7D32'
-        }
+        activityName: 'Completed Activity',
+        startTime: 0,
+        endTime: 5000,
+        breakAfter: true // Break after this activity
       }
     ];
-
+    
+    // Current time is after the activity, during the break
     renderWithTheme(
-      <Timeline 
-        entries={mockEntries}
-        totalDuration={7200}
-        elapsedTime={3600}
-        timerActive={true}
-        allActivitiesCompleted={true}
+      <Timeline
+        entries={entries}
+        totalSeconds={10000}
+        currentTime={6000} // During the break
       />
     );
-
-    expect(screen.getByText((content) => {
-      return content.includes('Break') && content.includes('30:00');
-    })).toBeInTheDocument();
+    
+    // The completed activity should be visible
+    expect(screen.getByText('Completed Activity')).toBeInTheDocument();
+    
+    // There should be a break indicator visible
+    const breakElements = screen.getAllByTestId(/break/i);
+    expect(breakElements.length).toBeGreaterThan(0);
+    
+    // The break should be currently "active"
+    const activeBreak = screen.getByTestId('active-break');
+    expect(activeBreak).toBeInTheDocument();
   });
-
-  it('should transition from break to new activity correctly', () => {
-    const mockEntries: TimelineEntry[] = [
+  
+  it('should handle ongoing break after completing the last activity', () => {
+    // Setup entries with multiple activities and a break after the last one
+    const entries = [
       {
         id: '1',
         activityId: 'activity-1',
-        activityName: 'Task 1',
-        startTime: FIXED_TIME - 30000,
-        endTime: FIXED_TIME - 20000,
-        colors: {
-          background: '#E8F5E9',
-          text: '#1B5E20',
-          border: '#2E7D32'
-        }
+        activityName: 'First Activity',
+        startTime: 0,
+        endTime: 3000,
+        breakAfter: false
       },
       {
         id: '2',
         activityId: 'activity-2',
-        activityName: 'Task 2',
-        startTime: FIXED_TIME - 10000,
-        endTime: null,
-        colors: {
-          background: '#FFEBEE',
-          text: '#C62828',
-          border: '#B71C1C'
-        }
+        activityName: 'Last Activity',
+        startTime: 3000,
+        endTime: 8000,
+        breakAfter: true // Break after this activity
       }
     ];
-
+    
     renderWithTheme(
-      <Timeline 
-        entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={30}
-        timerActive={true}
+      <Timeline
+        entries={entries}
+        totalSeconds={10000}
+        currentTime={9000} // During the final break
       />
     );
-
-    expect(screen.getByText((content) => {
-      return content.includes('Break') && content.includes('0:10');
-    })).toBeInTheDocument();
-
-    expect(screen.getAllByTestId('timeline-activity-name')).toHaveLength(2);
+    
+    // Both activities should be visible
+    expect(screen.getByText('First Activity')).toBeInTheDocument();
+    expect(screen.getByText('Last Activity')).toBeInTheDocument();
+    
+    // There should be an active break indicator after the last activity
+    const activeBreak = screen.getByTestId('active-break');
+    expect(activeBreak).toBeInTheDocument();
+    
+    // The break should come after the last activity
+    const lastActivity = screen.getByText('Last Activity');
+    const lastActivityContainer = lastActivity.closest('[data-testid^="timeline-item"]');
+    expect(lastActivityContainer?.nextElementSibling).toContainElement(activeBreak);
+  });
+  
+  it('should transition from break to new activity correctly', () => {
+    // Setup entries with activities separated by a break
+    const entries = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'First Activity',
+        startTime: 0,
+        endTime: 3000,
+        breakAfter: true // Break after this activity
+      },
+      {
+        id: '2',
+        activityId: 'activity-2',
+        activityName: 'Second Activity',
+        startTime: 5000, // Break is from 3000-5000
+        endTime: 8000,
+        breakAfter: false
+      }
+    ];
+    
+    // Test during the break
+    const { rerender } = renderWithTheme(
+      <Timeline
+        entries={entries}
+        totalSeconds={10000}
+        currentTime={4000} // During the break
+      />
+    );
+    
+    // Both activities should be visible
+    expect(screen.getByText('First Activity')).toBeInTheDocument();
+    expect(screen.getByText('Second Activity')).toBeInTheDocument();
+    
+    // There should be an active break
+    expect(screen.getByTestId('active-break')).toBeInTheDocument();
+    
+    // Now test after the break, during the second activity
+    rerender(
+      <Timeline
+        entries={entries}
+        totalSeconds={10000}
+        currentTime={6000} // During the second activity
+      />
+    );
+    
+    // The break should now be inactive, and the second activity should be active
+    expect(screen.queryByTestId('active-break')).not.toBeInTheDocument();
+    expect(screen.getByTestId('active-activity')).toHaveTextContent('Second Activity');
   });
 });

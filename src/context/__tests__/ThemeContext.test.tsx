@@ -1,5 +1,6 @@
 import { render, act, renderHook } from '@testing-library/react';
-import { ThemeProvider, useTheme } from '../ThemeContext';
+import { ThemeProvider } from '../theme/ThemeContext';
+import { useTheme } from '../../hooks/useTheme';
 import '@testing-library/jest-dom';
 
 describe('ThemeContext', () => {
@@ -69,29 +70,51 @@ describe('ThemeContext', () => {
   });
 
   it('updates theme when system preference changes', () => {
-    let preferenceCallback: ((e: { matches: boolean }) => void) | null = null;
-
+    // Keep track of event listeners
+    const listeners: Record<string, Array<(e: { matches: boolean }) => void>> = {};
+    
     mockMatchMedia.mockImplementation(query => ({
       matches: query === '(prefers-color-scheme: light)',
       media: query,
-      addEventListener: jest.fn((_, cb) => {
-        preferenceCallback = cb;
+      addEventListener: jest.fn((event, handler) => {
+        if (!listeners[query]) {
+          listeners[query] = [];
+        }
+        listeners[query].push(handler);
       }),
       removeEventListener: jest.fn(),
     }));
 
+    // Initial render with light mode
     render(
       <ThemeProvider>
         <div>Test</div>
       </ThemeProvider>
     );
-
+    
+    // First, force reset the document class to ensure we're starting fresh
+    document.documentElement.classList.remove('dark-mode');
+    document.documentElement.classList.add('light-mode');
+    
+    // Simulate a change in system preference to dark mode
     act(() => {
-      if (preferenceCallback) {
-        preferenceCallback({ matches: false }); // Simulate change to dark mode
+      // Update the matchMedia mock to return dark mode
+      mockMatchMedia.mockImplementation(query => ({
+        matches: query === '(prefers-color-scheme: dark)',
+        media: query,
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+      }));
+      
+      // Trigger all saved handlers for the dark mode query
+      if (listeners['(prefers-color-scheme: dark)']) {
+        listeners['(prefers-color-scheme: dark)'].forEach(handler => {
+          handler({ matches: true });
+        });
       }
     });
 
+    // Verify dark mode is applied
     expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
   });
 

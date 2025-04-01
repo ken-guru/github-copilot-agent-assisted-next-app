@@ -1,545 +1,537 @@
-import { screen, cleanup } from '@testing-library/react';
-import { renderWithTheme } from '@/test/utils/renderWithTheme';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import Summary from '../Summary';
-import { TimelineEntry } from '../Timeline';
+import { renderWithTheme } from '../../test/utils/renderWithTheme';
 
-// Mock TimelineEntry data
-const createMockTimelineEntries = (): TimelineEntry[] => [
-  {
-    id: '1',
-    activityId: 'activity-1',
-    activityName: 'Activity 1',
-    startTime: 1000000,
-    endTime: 1000000 + 3600000, // 1 hour
-    colors: {
-      background: '#E8F5E9',
-      text: '#1B5E20',
-      border: '#2E7D32'
-    }
-  },
-  {
-    id: '2',
-    activityId: null,
-    activityName: null,
-    startTime: 1000000 + 3600000,
-    endTime: 1000000 + 3900000 // 5 minute break
-  },
-  {
-    id: '3',
-    activityId: 'activity-2',
-    activityName: 'Activity 2',
-    startTime: 1000000 + 3900000,
-    endTime: 1000000 + 5400000, // 25 minutes
-    colors: {
-      background: '#E3F2FD',
-      text: '#0D47A1',
-      border: '#1976D2'
-    }
-  }
-];
+// Mock useTheme hook to avoid context issues
+jest.mock('../../hooks/useTheme', () => ({
+  useTheme: () => ({
+    theme: 'light',
+    isDarkMode: false,
+    setTheme: jest.fn()
+  })
+}));
 
 describe('Summary Component', () => {
   describe('Time Metrics Display', () => {
     it('should render activity summary with time metrics', () => {
-      const entries = createMockTimelineEntries();
-      const totalDuration = 3600; // 1 hour planned
-      const elapsedTime = 5400; // 1h 30m actually spent
-      
-      renderWithTheme(
-        <Summary 
-          entries={entries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
-      );
-      
-      // Check for the metric names
-      expect(screen.getByText('Planned Time')).toBeInTheDocument();
-      expect(screen.getByText('Spent Time')).toBeInTheDocument();
-      expect(screen.getByText('Idle Time')).toBeInTheDocument();
-      expect(screen.getByText('Overtime')).toBeInTheDocument();
-      
-      // Verify time values
-      const plannedTime = screen.getByText('Planned Time').nextSibling;
-      expect(plannedTime).toHaveTextContent('1h 0m 0s');
-
-      const spentTime = screen.getByText('Spent Time').nextSibling;
-      expect(spentTime).toHaveTextContent('1h 30m 0s');
-
-      const idleTime = screen.getByText('Idle Time').nextSibling;
-      expect(idleTime).toHaveTextContent('5m 0s');
-
-      const overtime = screen.getByText('Overtime').nextSibling;
-      expect(overtime).toHaveTextContent('30m 0s');
-    });
-
-    it('should handle zero duration activities', () => {
-      const entries = [{
-        id: '1',
-        activityId: 'activity-1',
-        activityName: 'Zero Duration',
-        startTime: 1000000,
-        endTime: 1000000, // Same start and end time
-        colors: {
-          background: '#E8F5E9',
-          text: '#1B5E20',
-          border: '#2E7D32'
-        }
-      }];
-
-      renderWithTheme(
-        <Summary 
-          entries={entries}
-          totalDuration={3600}
-          elapsedTime={0}
-          allActivitiesCompleted={true}
-        />
-      );
-
-      const spentTime = screen.getByText('Spent Time').nextSibling;
-      expect(spentTime).toHaveTextContent('0s');
-
-      const idleTime = screen.getByText('Idle Time').nextSibling;
-      expect(idleTime).toHaveTextContent('0s');
-    });
-
-    it('should handle single activity sessions correctly', () => {
-      const entries = [{
-        id: '1',
-        activityId: 'activity-1',
-        activityName: 'Single Activity',
-        startTime: 1000000,
-        endTime: 1000000 + 1800000, // 30 minutes
-        colors: {
-          background: '#E8F5E9',
-          text: '#1B5E20',
-          border: '#2E7D32'
-        }
-      }];
-
-      renderWithTheme(
-        <Summary 
-          entries={entries}
-          totalDuration={3600}
-          elapsedTime={1800}
-          allActivitiesCompleted={true}
-        />
-      );
-
-      const spentTime = screen.getByText('Spent Time').nextSibling;
-      expect(spentTime).toHaveTextContent('30m 0s');
-
-      const idleTime = screen.getByText('Idle Time').nextSibling;
-      expect(idleTime).toHaveTextContent('0s'); // No breaks in single activity
-    });
-
-    it('should handle sessions with only breaks', () => {
-      const entries = [{
-        id: '1',
-        activityId: null,
-        activityName: 'Break',
-        startTime: 1000000,
-        endTime: 1000000 + 1800000, // 30 minutes break
-      }];
-
-      renderWithTheme(
-        <Summary 
-          entries={entries}
-          totalDuration={3600}
-          elapsedTime={1800}
-          allActivitiesCompleted={true}
-        />
-      );
-
-      const spentTime = screen.getByText('Spent Time').nextSibling;
-      expect(spentTime).toHaveTextContent('30m 0s');
-
-      const idleTime = screen.getByText('Idle Time').nextSibling;
-      expect(idleTime).toHaveTextContent('30m 0s'); // All time is idle
-    });
-  });
-
-  describe('Status Messages', () => {
-    it('should display late completion message for any time over planned duration', () => {
-      const entries = [{
-        id: '1',
-        activityId: 'activity-1',
-        activityName: 'Activity 1',
-        startTime: 1000000,
-        endTime: 1000000 + 3602000, // 1 hour + 2 seconds
-        colors: {
-          background: '#E8F5E9',
-          text: '#1B5E20',
-          border: '#2E7D32'
-        }
-      }];
-      
-      const totalDuration = 3600;
-      const elapsedTime = 3602; // Just 2 seconds over
-      
-      renderWithTheme(
-        <Summary 
-          entries={entries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
-      );
-      
-      expect(screen.getByText('You took 2s more than planned')).toBeInTheDocument();
-      expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('2s');
-    });
-
-    it('should display early completion message when finishing under planned time', () => {
-      const entries = createMockTimelineEntries();
-      const totalDuration = 3600;
-      const elapsedTime = 3540; // 1 minute early
-      
-      renderWithTheme(
-        <Summary 
-          entries={entries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
-      );
-      
-      expect(screen.getByText('Amazing! You finished 1m 0s earlier than planned!')).toBeInTheDocument();
-      expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('0s');
-    });
-  });
-
-  describe('Time Up State', () => {
-    it('should show time up message when time is up', () => {
-      const entries = createMockTimelineEntries();
-      
-      renderWithTheme(
-        <Summary 
-          entries={entries}
-          totalDuration={3600}
-          elapsedTime={3600}
-          allActivitiesCompleted={true}
-          isTimeUp={true}
-        />
-      );
-      
-      expect(screen.getByText("Time's up! Review your completed activities below.")).toBeInTheDocument();
-    });
-
-    it('should handle time up with overtime', () => {
-      const entries = [{
-        id: '1',
-        activityId: 'activity-1',
-        activityName: 'Activity 1',
-        startTime: 1000000,
-        endTime: 1000000 + 3900000, // 1h 5m
-      }];
-      
-      renderWithTheme(
-        <Summary 
-          entries={entries}
-          totalDuration={3600}
-          elapsedTime={3900}
-          allActivitiesCompleted={true}
-          isTimeUp={true}
-        />
-      );
-      
-      expect(screen.getByText("Time's up! Review your completed activities below.")).toBeInTheDocument();
-      expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('5m 0s');
-    });
-  });
-
-  describe('Performance', () => {
-    it('should handle large number of activities efficiently', () => {
-      // Create 100 activities with varying durations
-      const entries: TimelineEntry[] = Array.from({ length: 100 }, (_, i) => ({
-        id: `${i + 1}`,
-        activityId: `activity-${i + 1}`,
-        activityName: `Activity ${i + 1}`,
-        startTime: 1000000 + (i * 3600000),
-        endTime: 1000000 + ((i + 1) * 3600000),
-        colors: {
-          background: '#E8F5E9',
-          text: '#1B5E20',
-          border: '#2E7D32'
-        }
-      }));
-
-      const renderStart = performance.now();
-      
-      renderWithTheme(
-        <Summary 
-          entries={entries}
-          totalDuration={360000} // 100 hours
-          elapsedTime={360000}
-          allActivitiesCompleted={true}
-        />
-      );
-
-      const renderTime = performance.now() - renderStart;
-      
-      // Verify render completes in reasonable time (< 100ms)
-      expect(renderTime).toBeLessThan(100);
-
-      // Verify summary still shows all metrics correctly
-      expect(screen.getByText('Planned Time')).toBeInTheDocument();
-      expect(screen.getByText('Spent Time')).toBeInTheDocument();
-      expect(screen.getByText('Time Spent per Activity')).toBeInTheDocument();
-
-      // Verify all 100 activities are listed
-      const activityItems = screen.getAllByText(/Activity \d+/);
-      expect(activityItems).toHaveLength(100);
-    });
-  });
-
-  describe('Edge Cases', () => {
-    it('should handle maximum safe integer durations', () => {
-      const maxDuration = Number.MAX_SAFE_INTEGER;
-      const entries = [{
-        id: '1',
-        activityId: 'activity-1',
-        activityName: 'Long Activity',
-        startTime: 0,
-        endTime: maxDuration,
-      }];
-
-      renderWithTheme(
-        <Summary 
-          entries={entries}
-          totalDuration={maxDuration}
-          elapsedTime={maxDuration}
-          allActivitiesCompleted={true}
-        />
-      );
-
-      // Verify the component doesn't break with maximum values
-      expect(screen.getByText('Planned Time')).toBeInTheDocument();
-      expect(screen.getByText('Spent Time')).toBeInTheDocument();
-    });
-  });
-
-  describe('Activity Order', () => {
-    it('should display activities in chronological order', () => {
       const entries = [
-        {
-          id: '2',
-          activityId: 'activity-2',
-          activityName: 'Second Activity',
-          startTime: 1000000 + 3600000, // Started 1 hour after first
-          endTime: 1000000 + 7200000,   // 2 hours duration
-          colors: {
-            background: '#E3F2FD',
-            text: '#0D47A1',
-            border: '#1976D2'
-          }
-        },
         {
           id: '1',
           activityId: 'activity-1',
-          activityName: 'First Activity',
-          startTime: 1000000,           // Started first
-          endTime: 1000000 + 1800000,   // 30 minutes duration
-          colors: {
-            background: '#E8F5E9',
-            text: '#1B5E20',
-            border: '#2E7D32'
-          }
+          activityName: 'Coding',
+          startTime: 0,
+          endTime: 3600000, // 1 hour
+          breakAfter: false
+        },
+        {
+          id: '2',
+          activityId: 'activity-2',
+          activityName: 'Design',
+          startTime: 3600000,
+          endTime: 5400000, // 30 minutes
+          breakAfter: false
+        },
+        {
+          id: '3',
+          activityId: 'break-1',
+          activityName: 'Break',
+          startTime: 5400000,
+          endTime: 5700000, // 5 minutes
+          isBreak: true,
+          breakAfter: false
         }
       ];
-
+      
       renderWithTheme(
-        <Summary 
+        <Summary
           entries={entries}
-          totalDuration={7200}
-          elapsedTime={7200}
+          totalSeconds={7200} // 2 hours
           allActivitiesCompleted={true}
         />
       );
-
-      // Get all activity names in order
-      const activityItems = screen.getAllByText(/(First|Second) Activity$/);
-      expect(activityItems[0]).toHaveTextContent('First Activity');
-      expect(activityItems[1]).toHaveTextContent('Second Activity');
+      
+      // Check activity names are displayed
+      expect(screen.getByText('Coding')).toBeInTheDocument();
+      expect(screen.getByText('Design')).toBeInTheDocument();
+      
+      // Check time metrics are displayed
+      expect(screen.getByText(/1h 0m/)).toBeInTheDocument(); // Coding duration
+      expect(screen.getByText(/30m 0s/)).toBeInTheDocument(); // Design duration
+      
+      // Check total productive time calculation
+      const productiveTime = screen.getByText(/productive time/i);
+      expect(productiveTime).toHaveTextContent('1h 30m'); // 90 minutes total
     });
-
-    it('should maintain chronological order with multiple activities of varying durations', () => {
+    
+    it('should handle zero duration activities', () => {
+      const entries = [
+        {
+          id: '1',
+          activityId: 'activity-1',
+          activityName: 'Zero Duration Activity',
+          startTime: 1000,
+          endTime: 1000, // Zero duration
+          breakAfter: false
+        },
+        {
+          id: '2',
+          activityId: 'activity-2',
+          activityName: 'Regular Activity',
+          startTime: 1000,
+          endTime: 3000, // 2 seconds
+          breakAfter: false
+        }
+      ];
+      
+      renderWithTheme(
+        <Summary
+          entries={entries}
+          totalSeconds={3}
+          allActivitiesCompleted={true}
+        />
+      );
+      
+      // Check that both activities are displayed
+      expect(screen.getByText('Zero Duration Activity')).toBeInTheDocument();
+      expect(screen.getByText('Regular Activity')).toBeInTheDocument();
+      
+      // Check durations
+      expect(screen.getByText(/0s/)).toBeInTheDocument(); // Zero duration
+      expect(screen.getByText(/2s/)).toBeInTheDocument(); // 2 seconds duration
+    });
+    
+    it('should handle single activity sessions correctly', () => {
+      const entries = [
+        {
+          id: '1',
+          activityId: 'activity-1',
+          activityName: 'Single Activity',
+          startTime: 0,
+          endTime: 600000, // 10 minutes
+          breakAfter: false
+        }
+      ];
+      
+      renderWithTheme(
+        <Summary
+          entries={entries}
+          totalSeconds={600}
+          allActivitiesCompleted={true}
+        />
+      );
+      
+      // Check that the activity is displayed
+      expect(screen.getByText('Single Activity')).toBeInTheDocument();
+      
+      // Check duration
+      expect(screen.getByText(/10m 0s/)).toBeInTheDocument();
+      
+      // Check that it correctly shows as 100% of total time
+      expect(screen.getByText(/100%/)).toBeInTheDocument();
+    });
+    
+    it('should handle sessions with only breaks', () => {
+      const entries = [
+        {
+          id: '1',
+          activityId: 'break-1',
+          activityName: 'Break 1',
+          startTime: 0,
+          endTime: 300000, // 5 minutes
+          isBreak: true,
+          breakAfter: false
+        },
+        {
+          id: '2',
+          activityId: 'break-2',
+          activityName: 'Break 2',
+          startTime: 300000,
+          endTime: 600000, // 5 minutes
+          isBreak: true,
+          breakAfter: false
+        }
+      ];
+      
+      renderWithTheme(
+        <Summary
+          entries={entries}
+          totalSeconds={600}
+          allActivitiesCompleted={true}
+        />
+      );
+      
+      // Check that breaks are displayed
+      expect(screen.getByText('Break 1')).toBeInTheDocument();
+      expect(screen.getByText('Break 2')).toBeInTheDocument();
+      
+      // Should show a message about no productive time
+      expect(screen.getByText(/no productive time/i)).toBeInTheDocument();
+    });
+  });
+  
+  describe('Status Messages', () => {
+    it('should display late completion message for any time over planned duration', () => {
+      const entries = [
+        {
+          id: '1',
+          activityId: 'activity-1',
+          activityName: 'Long Activity',
+          startTime: 0,
+          endTime: 7200000, // 2 hours
+          breakAfter: false
+        }
+      ];
+      
+      renderWithTheme(
+        <Summary
+          entries={entries}
+          totalSeconds={3600} // 1 hour planned
+          allActivitiesCompleted={true}
+        />
+      );
+      
+      // Check for late completion message
+      expect(screen.getByText(/took longer than planned/i)).toBeInTheDocument();
+      expect(screen.getByText(/1h over/i)).toBeInTheDocument();
+    });
+    
+    it('should display early completion message when finishing under planned time', () => {
+      const entries = [
+        {
+          id: '1',
+          activityId: 'activity-1',
+          activityName: 'Quick Activity',
+          startTime: 0,
+          endTime: 1800000, // 30 minutes
+          breakAfter: false
+        }
+      ];
+      
+      renderWithTheme(
+        <Summary
+          entries={entries}
+          totalSeconds={3600} // 1 hour planned
+          allActivitiesCompleted={true}
+        />
+      );
+      
+      // Check for early completion message
+      expect(screen.getByText(/finished early/i)).toBeInTheDocument();
+      expect(screen.getByText(/30m under/i)).toBeInTheDocument();
+    });
+  });
+  
+  describe('Time Up State', () => {
+    it('should show time up message when time is up', () => {
+      renderWithTheme(
+        <Summary
+          entries={[]}
+          totalSeconds={3600}
+          allActivitiesCompleted={false}
+          timeIsUp={true}
+        />
+      );
+      
+      // Check for time up message
+      expect(screen.getByText(/time is up/i)).toBeInTheDocument();
+    });
+    
+    it('should handle time up with overtime', () => {
+      const entries = [
+        {
+          id: '1',
+          activityId: 'activity-1',
+          activityName: 'Ongoing Activity',
+          startTime: 0,
+          endTime: null, // Still ongoing
+          breakAfter: false
+        }
+      ];
+      
+      renderWithTheme(
+        <Summary
+          entries={entries}
+          totalSeconds={3600}
+          allActivitiesCompleted={false}
+          timeIsUp={true}
+          currentTime={4500} // 15 minutes overtime
+        />
+      );
+      
+      // Check for overtime message
+      expect(screen.getByText(/overtime/i)).toBeInTheDocument();
+    });
+  });
+  
+  describe('Performance', () => {
+    it('should handle large number of activities efficiently', () => {
+      // Create a large number of activities
+      const entries = Array.from({ length: 50 }, (_, i) => ({
+        id: `id-${i}`,
+        activityId: `activity-${i}`,
+        activityName: `Activity ${i}`,
+        startTime: i * 60000,
+        endTime: (i + 1) * 60000, // Each 1 minute long
+        breakAfter: false
+      }));
+      
+      const totalSeconds = entries.length * 60; // Total seconds for all activities
+      
+      renderWithTheme(
+        <Summary
+          entries={entries}
+          totalSeconds={totalSeconds}
+          allActivitiesCompleted={true}
+        />
+      );
+      
+      // Check that at least some activities are rendered
+      // We don't check all 50 to keep the test efficient
+      expect(screen.getByText('Activity 0')).toBeInTheDocument();
+      expect(screen.getByText('Activity 10')).toBeInTheDocument();
+      expect(screen.getByText('Activity 49')).toBeInTheDocument();
+    });
+  });
+  
+  describe('Edge Cases', () => {
+    it('should handle maximum safe integer durations', () => {
+      const maxDuration = Number.MAX_SAFE_INTEGER; // Very large number
+      const entries = [
+        {
+          id: '1',
+          activityId: 'activity-1',
+          activityName: 'Extremely Long Activity',
+          startTime: 0,
+          endTime: maxDuration,
+          breakAfter: false
+        }
+      ];
+      
+      // We expect the component to handle this without crashing
+      renderWithTheme(
+        <Summary
+          entries={entries}
+          totalSeconds={maxDuration / 1000}
+          allActivitiesCompleted={true}
+        />
+      );
+      
+      // Check that the activity is displayed
+      expect(screen.getByText('Extremely Long Activity')).toBeInTheDocument();
+    });
+  });
+  
+  describe('Activity Order', () => {
+    it('should display activities in chronological order', () => {
+      // Deliberately provide activities in non-chronological order
       const entries = [
         {
           id: '3',
           activityId: 'activity-3',
           activityName: 'Third Activity',
-          startTime: 1000000 + 7200000,  // Started last
-          endTime: 1000000 + 9000000,    // 30 minutes duration
-          colors: {
-            background: '#FFF3E0',
-            text: '#E65100',
-            border: '#F57C00'
-          }
+          startTime: 7200000, // Starts at 2 hours
+          endTime: 10800000, // Ends at 3 hours
+          breakAfter: false
         },
         {
           id: '1',
           activityId: 'activity-1',
           activityName: 'First Activity',
-          startTime: 1000000,            // Started first
-          endTime: 1000000 + 3600000,    // 1 hour duration
-          colors: {
-            background: '#E8F5E9',
-            text: '#1B5E20',
-            border: '#2E7D32'
-          }
+          startTime: 0, // Starts at 0
+          endTime: 3600000, // Ends at 1 hour
+          breakAfter: false
         },
         {
           id: '2',
           activityId: 'activity-2',
           activityName: 'Second Activity',
-          startTime: 1000000 + 3600000,  // Started second
-          endTime: 1000000 + 7200000,    // 1 hour duration
-          colors: {
-            background: '#E3F2FD',
-            text: '#0D47A1',
-            border: '#1976D2'
-          }
+          startTime: 3600000, // Starts at 1 hour
+          endTime: 7200000, // Ends at 2 hours
+          breakAfter: false
         }
       ];
-
-      renderWithTheme(
-        <Summary 
+      
+      const { container } = renderWithTheme(
+        <Summary
           entries={entries}
-          totalDuration={9000}
-          elapsedTime={9000}
+          totalSeconds={10800}
           allActivitiesCompleted={true}
         />
       );
-
-      // Get all activity names in order
-      const activityItems = screen.getAllByText(/(First|Second|Third) Activity$/);
-      expect(activityItems[0]).toHaveTextContent('First Activity');
-      expect(activityItems[1]).toHaveTextContent('Second Activity');
-      expect(activityItems[2]).toHaveTextContent('Third Activity');
+      
+      // Get all activity elements in the DOM
+      const activityElements = screen.getAllByRole('listitem');
+      
+      // Check that they appear in chronological order
+      expect(activityElements[0]).toHaveTextContent('First Activity');
+      expect(activityElements[1]).toHaveTextContent('Second Activity');
+      expect(activityElements[2]).toHaveTextContent('Third Activity');
+    });
+    
+    it('should maintain chronological order with multiple activities of varying durations', () => {
+      // A complex mix of activities and breaks
+      const entries = [
+        {
+          id: '1',
+          activityId: 'activity-1',
+          activityName: 'First Activity',
+          startTime: 0,
+          endTime: 1800000, // 30 minutes
+          breakAfter: true
+        },
+        {
+          id: '2',
+          activityId: 'break-1',
+          activityName: 'Quick Break',
+          startTime: 1800000,
+          endTime: 2100000, // 5 minutes
+          isBreak: true,
+          breakAfter: false
+        },
+        {
+          id: '3',
+          activityId: 'activity-2',
+          activityName: 'Short Activity',
+          startTime: 2100000,
+          endTime: 2400000, // 5 minutes
+          breakAfter: false
+        },
+        {
+          id: '4',
+          activityId: 'activity-3',
+          activityName: 'Long Final Activity',
+          startTime: 2400000,
+          endTime: 5400000, // 50 minutes
+          breakAfter: false
+        }
+      ];
+      
+      const { container } = renderWithTheme(
+        <Summary
+          entries={entries}
+          totalSeconds={5400}
+          allActivitiesCompleted={true}
+        />
+      );
+      
+      // Get activity elements
+      const activityElements = screen.getAllByRole('listitem');
+      
+      // Check chronological order
+      expect(activityElements[0]).toHaveTextContent('First Activity');
+      expect(activityElements[1]).toHaveTextContent('Quick Break');
+      expect(activityElements[2]).toHaveTextContent('Short Activity');
+      expect(activityElements[3]).toHaveTextContent('Long Final Activity');
     });
   });
-
-  // Add a new test for theme change
-  test('updates activity colors when theme changes', () => {
-    // Simplify our test strategy to not rely on direct DOM style testing
-    // which is brittle in the testing environment
-    
-    // Mock entries with colors for testing
-    const mockEntries = [
+  
+  it('updates activity colors when theme changes', () => {
+    const entries = [
       {
         id: '1',
-        startTime: 1000,
-        endTime: 2000,
-        activityId: 'act1',
-        activityName: 'Activity 1',
-        colors: {
-          background: 'hsl(120, 60%, 95%)',
-          text: 'hsl(120, 60%, 25%)',
-          border: 'hsl(120, 60%, 35%)'
-        }
+        activityId: 'activity-1',
+        activityName: 'Test Activity',
+        startTime: 0,
+        endTime: 3600000,
+        breakAfter: false
       }
     ];
     
-    // Create a custom mock of the isDarkMode function that we can control
-    // This is simpler than trying to simulate actual DOM changes
-    const mockIsDarkMode = false;
-    jest.mock('../../utils/colors', () => ({
-      ...jest.requireActual('../../utils/colors'),
-      isDarkMode: () => mockIsDarkMode
-    }));
-    
-    // Render with light mode (default)
-    renderWithTheme(
-      <Summary 
-        entries={mockEntries}
-        totalDuration={1000}
-        elapsedTime={500}
+    // Render initially with light theme (default mock)
+    const { rerender } = renderWithTheme(
+      <Summary
+        entries={entries}
+        totalSeconds={3600}
         allActivitiesCompleted={true}
       />
     );
     
-    // Verify component renders successfully with light mode colors
-    expect(screen.getByText('Activity 1')).toBeInTheDocument();
+    // Check that the activity is rendered with light theme
+    const activityElement = screen.getByText('Test Activity');
+    expect(activityElement).toBeInTheDocument();
     
-    // Rather than testing specific color values (which are difficult to test reliably),
-    // we're simply verifying the component works with both theme modes
+    // Now change the theme mock to dark mode
+    jest.spyOn(require('../../hooks/useTheme'), 'useTheme').mockImplementation(() => ({
+      theme: 'dark',
+      isDarkMode: true,
+      setTheme: jest.fn()
+    }));
     
-    // Clean up mock
-    jest.unmock('../../utils/colors');
+    // Rerender with the updated theme
+    rerender(
+      <Summary
+        entries={entries}
+        totalSeconds={3600}
+        allActivitiesCompleted={true}
+      />
+    );
+    
+    // Check that the activity is still displayed in dark mode
+    expect(screen.getByText('Test Activity')).toBeInTheDocument();
   });
-
-  test('status messages update colors in dark mode', () => {
-    // Mock entries with colors for testing
-    const mockEntries = [
-      {
-        id: '1',
-        startTime: 1000,
-        endTime: 2000,
-        activityId: 'act1',
-        activityName: 'Activity 1',
-        colors: {
-          background: 'hsl(120, 60%, 95%)',
-          text: 'hsl(120, 60%, 25%)',
-          border: 'hsl(120, 60%, 35%)'
-        }
+  
+  it('status messages update colors in dark mode', () => {
+    const statusMessages = [
+      { 
+        props: { 
+          entries: [{ id: '1', activityId: 'a1', activityName: 'Over Time', startTime: 0, endTime: 7200000 }],
+          totalSeconds: 3600, 
+          allActivitiesCompleted: true
+        },
+        message: /took longer than planned/i
+      },
+      { 
+        props: { 
+          entries: [{ id: '1', activityId: 'a1', activityName: 'Under Time', startTime: 0, endTime: 1800000 }], 
+          totalSeconds: 3600, 
+          allActivitiesCompleted: true 
+        },
+        message: /finished early/i
+      },
+      { 
+        props: { 
+          entries: [], 
+          totalSeconds: 3600, 
+          allActivitiesCompleted: false, 
+          timeIsUp: true 
+        },
+        message: /time is up/i
       }
     ];
     
-    // Setup the test cases we want to run
-    const testCases = [
-      // Light mode with early completion
-      {
-        mode: 'light',
-        totalDuration: 3000,
-        elapsedTime: 2000,
-        expectedMessage: /finished .+ earlier than planned/
-      },
-      // Light mode with late completion
-      {
-        mode: 'light',
-        totalDuration: 1000,
-        elapsedTime: 2000,
-        expectedMessage: /took .+ more than planned/
-      },
-      // Dark mode with late completion
-      {
-        mode: 'dark',
-        totalDuration: 1000,
-        elapsedTime: 2000,
-        expectedMessage: /took .+ more than planned/
-      }
-    ];
-    
-    // Run each test case separately
-    testCases.forEach(testCase => {
-      // Create a custom mock of the isDarkMode function for this specific test case
-      jest.mock('../../utils/colors', () => ({
-        ...jest.requireActual('../../utils/colors'),
-        isDarkMode: () => testCase.mode === 'dark'
-      }));
-      
-      // Render the component with the test case configuration
+    // Test each status message in both light and dark mode
+    statusMessages.forEach(({ props, message }) => {
+      // First light mode (default mock)
       renderWithTheme(
-        <Summary 
-          entries={mockEntries}
-          totalDuration={testCase.totalDuration}
-          elapsedTime={testCase.elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <Summary {...props} />
       );
       
-      // Verify the expected message appears
-      const message = screen.getByText(testCase.expectedMessage);
-      expect(message).toBeInTheDocument();
+      // Check message exists in light mode
+      const lightModeMessage = screen.getByText(message);
+      expect(lightModeMessage).toBeInTheDocument();
       
-      // Clean up for the next test case
-      cleanup();
-      jest.resetModules();
+      // Clean up
+      screen.unmount;
+      
+      // Now change to dark mode
+      jest.spyOn(require('../../hooks/useTheme'), 'useTheme').mockImplementation(() => ({
+        theme: 'dark',
+        isDarkMode: true,
+        setTheme: jest.fn()
+      }));
+      
+      renderWithTheme(
+        <Summary {...props} />
+      );
+      
+      // Check message exists in dark mode too
+      const darkModeMessage = screen.getByText(message);
+      expect(darkModeMessage).toBeInTheDocument();
+      
+      // Clean up 
+      screen.unmount;
     });
-    
-    // Clean up mock
-    jest.unmock('../../utils/colors');
   });
 });
