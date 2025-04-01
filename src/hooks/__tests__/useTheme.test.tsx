@@ -24,7 +24,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 // Mock matchMedia
 const mockMatchMedia = (initialIsDark = false) => {
-  let prefersDarkMode = initialIsDark;
+  const prefersDarkMode = initialIsDark;
   
   const darkModeMediaQuery = {
     matches: prefersDarkMode,

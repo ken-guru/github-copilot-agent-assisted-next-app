@@ -147,7 +147,6 @@ describe('Theme Colors', () => {
       
       // The key test: verify that after detecting a cycle, the next color 
       // matches one we've already seen (proving the cycling behavior)
-      const cycleLength = firstRepeatIndex;
       const nextColor = getNextColorSet(false);
       const nextColorKey = `${nextColor.background}-${nextColor.text}-${nextColor.border}`;
       
