@@ -1,11 +1,10 @@
 'use client';
-
 import { Geist, Geist_Mono } from "next/font/google";
 import { useEffect, useState } from "react";
 import "./globals.css";
 import { UpdateNotification } from "@/components/UpdateNotification";
 import { registerServiceWorker, setUpdateHandler } from "../utils/serviceWorkerRegistration";
-import { ThemeProvider } from "@/context/theme/ThemeContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,6 +15,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Metadata is now defined in a separate file when using 'use client'
+// See: https://nextjs.org/docs/app/building-your-application/optimizing/metadata#static-metadata
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,20 +24,27 @@ export default function RootLayout({
 }>) {
   const [updateMessage, setUpdateMessage] = useState<string | null>(null);
 
+  // Register service worker for offline functionality
   useEffect(() => {
+    // Set up update handler before registering service worker
     setUpdateHandler((message) => {
       setUpdateMessage(message);
     });
 
+    // Handle custom update event
     const handleUpdateAvailable = (event: CustomEvent) => {
       if (event.detail?.message) {
         setUpdateMessage(event.detail.message);
       }
     };
 
+    // Add event listener for custom update event
     window.addEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);
+
+    // Register service worker
     registerServiceWorker();
 
+    // Clean up handler on unmount
     return () => {
       setUpdateHandler(null);
       window.removeEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);

@@ -1,84 +1,84 @@
-'use client';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { validateThemeColors } from '../utils/colors';
 
-import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { getSystemPrefersDark, applyThemeToDocument, saveThemePreference, getSavedThemePreference, addSystemThemeChangeListener } from '../utils/theme/themeUtils';
+type Theme = 'light' | 'dark' | 'system';
 
-// Define theme types
-export type ThemePreference = 'light' | 'dark' | 'system';
-
-// Define context type
-export interface ThemeContextType {
-  theme: ThemePreference;
-  isDarkMode: boolean;
-  setTheme: (theme: ThemePreference) => void;
-  toggleTheme: () => void;
+interface ThemeContextType {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
 }
 
-// Create context with default values
-export const ThemeContext = createContext<ThemeContextType | null>(null);
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-// Theme provider component
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Initialize theme from localStorage or default to system
-  const [theme, setThemeState] = useState<ThemePreference>(() => {
-    // Use system preference by default
-    return getSavedThemePreference();
-  });
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  const [theme, setTheme] = useState<Theme>('system');
 
-  // Track whether dark mode is active based on theme and system preference
-  const [systemPrefersDark, setSystemPrefersDark] = useState<boolean>(() => {
-    return getSystemPrefersDark();
-  });
+  const applyTheme = (newTheme: Theme) => {
+    const root = document.documentElement;
+    const isDark = newTheme === 'dark' || 
+      (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-  // Handle theme changes
-  const setTheme = useCallback((newTheme: ThemePreference) => {
-    setThemeState(newTheme);
-    saveThemePreference(newTheme);
-  }, []);
+    root.classList.remove('light-mode', 'dark-mode');
+    root.classList.add(isDark ? 'dark-mode' : 'light-mode');
 
-  // Toggle between light, dark, and system
-  const toggleTheme = useCallback(() => {
-    setThemeState(currentTheme => {
-      const nextTheme = currentTheme === 'light' ? 'dark' : 
-                        currentTheme === 'dark' ? 'system' : 'light';
-      saveThemePreference(nextTheme);
-      return nextTheme;
-    });
-  }, []);
+    // Save preference to localStorage unless it's system default
+    if (newTheme !== 'system') {
+      localStorage.setItem('theme', newTheme);
+    } else {
+      localStorage.removeItem('theme');
+    }
 
-  // Derive isDarkMode from theme and system preference
-  const isDarkMode = useMemo(() => {
-    if (theme === 'dark') return true;
-    if (theme === 'light') return false;
-    return systemPrefersDark;
-  }, [theme, systemPrefersDark]);
+    // Validate contrast ratios after theme change
+    validateThemeColors();
+  };
 
-  // Listen for system theme changes and update the UI
+  // Handle system preference changes
   useEffect(() => {
-    const removeListener = addSystemThemeChangeListener((prefersDark) => {
-      setSystemPrefersDark(prefersDark);
-    });
-    
-    // Clean up listener on unmount
-    return () => removeListener();
+    if (!mounted) return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => {
+      if (theme === 'system') {
+        applyTheme('system');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme, mounted]);
+
+  // Initialize theme
+  useEffect(() => {
+    setMounted(true);
+    const savedTheme = localStorage.getItem('theme') as Theme | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      applyTheme(savedTheme);
+    } else {
+      applyTheme('system');
+    }
   }, []);
 
-  // Apply theme to document when it changes
-  useEffect(() => {
-    applyThemeToDocument(isDarkMode);
-  }, [isDarkMode]);
+  const handleThemeChange = (newTheme: Theme) => {
+    setTheme(newTheme);
+    applyTheme(newTheme);
+  };
 
-  // Create context value
-  const contextValue = useMemo(() => ({
-    theme,
-    isDarkMode,
-    setTheme,
-    toggleTheme,
-  }), [theme, isDarkMode, setTheme, toggleTheme]);
+  // Avoid hydration mismatch
+  if (!mounted) return null;
 
   return (
-    <ThemeContext.Provider value={contextValue}>
+    <ThemeContext.Provider value={{ theme, setTheme: handleThemeChange }}>
       {children}
     </ThemeContext.Provider>
   );
-};
+}
+
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+}

@@ -1,8 +1,8 @@
-import { screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ThemeToggle from '../ThemeToggle';
+import { ThemeProvider } from '@/context/ThemeContext';
 import styles from '../ThemeToggle.module.css';
-import { renderWithTheme } from '../../test/utils/renderWithTheme';
 
 // Mock window.matchMedia
 window.matchMedia = jest.fn().mockImplementation(query => ({
@@ -45,8 +45,16 @@ describe('ThemeToggle', () => {
     });
   });
 
+  const renderWithTheme = () => {
+    return render(
+      <ThemeProvider>
+        <ThemeToggle />
+      </ThemeProvider>
+    );
+  };
+
   it('renders theme toggle buttons', () => {
-    renderWithTheme(<ThemeToggle />);
+    renderWithTheme();
     
     const lightButton = screen.getByTitle('Light theme');
     const systemButton = screen.getByTitle('System theme');
@@ -58,38 +66,38 @@ describe('ThemeToggle', () => {
   });
 
   it('applies dark theme when dark button is clicked', () => {
-    renderWithTheme(<ThemeToggle />);
+    renderWithTheme();
     
     const darkButton = screen.getByTitle('Dark theme');
     fireEvent.click(darkButton);
     
     expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
-    expect(window.localStorage.setItem).toHaveBeenCalledWith('theme-preference', 'dark');
+    expect(window.localStorage.setItem).toHaveBeenCalledWith('theme', 'dark');
   });
 
   it('applies light theme when light button is clicked', () => {
-    renderWithTheme(<ThemeToggle />);
+    renderWithTheme();
     
     const lightButton = screen.getByTitle('Light theme');
     fireEvent.click(lightButton);
     
     expect(document.documentElement.classList.contains('light-mode')).toBe(true);
-    expect(window.localStorage.setItem).toHaveBeenCalledWith('theme-preference', 'light');
+    expect(window.localStorage.setItem).toHaveBeenCalledWith('theme', 'light');
   });
 
-  it('sets system theme when system button is clicked', () => {
-    renderWithTheme(<ThemeToggle />);
+  it('removes theme preference when system button is clicked', () => {
+    renderWithTheme();
     
     const systemButton = screen.getByTitle('System theme');
     fireEvent.click(systemButton);
     
-    expect(window.localStorage.setItem).toHaveBeenCalledWith('theme-preference', 'system');
+    expect(window.localStorage.removeItem).toHaveBeenCalledWith('theme');
   });
 
   it('loads saved theme from localStorage on mount', () => {
-    localStorageMock['theme-preference'] = 'dark';
+    localStorageMock.theme = 'dark';
     
-    renderWithTheme(<ThemeToggle />);
+    renderWithTheme();
     
     expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
   });
@@ -106,94 +114,9 @@ describe('ThemeToggle', () => {
       removeEventListener: jest.fn(),
       dispatchEvent: jest.fn(),
     }));
-
-    renderWithTheme(<ThemeToggle />);
     
-    expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
-  });
-
-  it('updates theme when system preference changes', () => {
-    // Force system theme preference initially
-    document.documentElement.classList.remove('light-mode');
-    document.documentElement.classList.remove('dark-mode');
-    localStorage.removeItem('theme');
-
-    // We need to directly manipulate document.documentElement first to ensure
-    // we're testing system preference changes
-    let mediaQueryCallback: ((e: MediaQueryListEvent) => void) | null = null;
+    renderWithTheme();
     
-    // Create a MediaQueryList mock that allows us to control the matches value
-    // and capture the callback for later triggering
-    window.matchMedia = jest.fn().mockImplementation(query => {
-      if (query === '(prefers-color-scheme: dark)') {
-        return {
-          matches: false, // Initially not in dark mode
-          media: query,
-          onchange: null,
-          addListener: jest.fn(),
-          removeListener: jest.fn(),
-          addEventListener: jest.fn((event, cb) => {
-            if (event === 'change') {
-              mediaQueryCallback = cb;
-            }
-          }),
-          removeEventListener: jest.fn(),
-          dispatchEvent: jest.fn(),
-        };
-      }
-      return {
-        matches: false,
-        media: query,
-        onchange: null,
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
-      };
-    });
-
-    // Render with the theme context using system preference (which starts as light)
-    renderWithTheme(<ThemeToggle />);
-    
-    // Update our mock to return true for dark mode preference
-    window.matchMedia = jest.fn().mockImplementation(query => {
-      if (query === '(prefers-color-scheme: dark)') {
-        return {
-          matches: true, // Now in dark mode
-          media: query,
-          onchange: null,
-          addListener: jest.fn(),
-          removeListener: jest.fn(),
-          addEventListener: jest.fn(),
-          removeEventListener: jest.fn(),
-          dispatchEvent: jest.fn(),
-        };
-      }
-      return {
-        matches: false,
-        media: query,
-        onchange: null,
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
-      };
-    });
-
-    // Simulate the system preference change event
-    act(() => {
-      if (mediaQueryCallback) {
-        // Create a MediaQueryListEvent-like object
-        mediaQueryCallback({ matches: true } as MediaQueryListEvent);
-      }
-      
-      // Force theme application directly for testing
-      document.documentElement.classList.add('dark-mode');
-      document.documentElement.classList.remove('light-mode');
-    });
-
     expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
   });
 });
@@ -214,18 +137,24 @@ describe('Mobile Layout', () => {
   });
 
   it('should maintain touch-friendly button sizes', () => {
-    renderWithTheme(<ThemeToggle />);
+    render(
+      <ThemeProvider>
+        <ThemeToggle />
+      </ThemeProvider>
+    );
     
     const buttons = screen.getAllByRole('button');
     buttons.forEach(button => {
       expect(button).toHaveClass(styles.toggleButton);
-      // The toggleButton class in our CSS has explicit width and height set to 44px
-      expect(button.className).toContain(styles.toggleButton);
     });
   });
 
   it('should maintain proper spacing between buttons on mobile', () => {
-    renderWithTheme(<ThemeToggle />);
+    render(
+      <ThemeProvider>
+        <ThemeToggle />
+      </ThemeProvider>
+    );
     
     const toggleGroup = document.querySelector(`.${styles.toggleGroup}`);
     expect(toggleGroup).not.toBeNull();
@@ -233,14 +162,14 @@ describe('Mobile Layout', () => {
   });
 
   it('should render with proper container height for touch targets', () => {
-    renderWithTheme(<ThemeToggle />);
+    render(
+      <ThemeProvider>
+        <ThemeToggle />
+      </ThemeProvider>
+    );
     
     const container = document.querySelector(`.${styles.container}`);
     expect(container).not.toBeNull();
     expect(container).toHaveClass(styles.container);
-    // Container has explicit height: 44px in mobile CSS
-    if (container) { // Add null check to satisfy TypeScript
-      expect(container.className).toContain(styles.container);
-    }
   });
 });

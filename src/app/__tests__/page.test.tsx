@@ -1,11 +1,10 @@
 /// <reference types="@testing-library/jest-dom" />
-import React from 'react';
-import { screen, fireEvent, act } from '@testing-library/react';
-import { renderWithTheme } from '@/test/utils/renderWithTheme';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import Home from '../page';
 import resetService, { DialogCallback } from '@/utils/resetService';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
 import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
+import { ThemeProvider } from '@/context/ThemeContext';
 import styles from '../page.module.css';
 
 // Store dialog props for testing
@@ -27,44 +26,48 @@ jest.mock('@/components/ConfirmationDialog', () => {
         ref.current = {
           showDialog: () => {
             // Update the dialog message in our mock when showDialog is called
-            mockDialogProps = { ...mockDialogProps, message };
+            mockDialogProps.message = message;
           }
         };
       }
-
-      return (
-        <div data-testid="mock-dialog">
-          <p data-testid="dialog-message">{mockDialogProps.message}</p>
-          <button onClick={mockDialogProps.onConfirm}>Confirm</button>
-          <button onClick={mockDialogProps.onCancel}>Cancel</button>
-        </div>
-      );
+      
+      return <div data-testid="mock-dialog" />;
     }
-  ) as unknown as ForwardRefExoticComponent<ConfirmationDialogProps & RefAttributes<ConfirmationDialogRef>>;
+  );
   
-  ForwardRefComponent.displayName = 'MockConfirmationDialog';
-  return { __esModule: true, default: ForwardRefComponent };
+  return {
+    __esModule: true,
+    default: ForwardRefComponent as ForwardRefExoticComponent<ConfirmationDialogProps & RefAttributes<ConfirmationDialogRef>>
+  };
 });
 
-// Define a proper interface for the mock resetService
+// Interface for mocked service
 interface MockResetService {
-  reset: jest.Mock;
-  registerResetCallback: jest.Mock;
-  setDialogCallback: jest.Mock;
-  dialogCallbackFn: DialogCallback | null;
-  callbacks: Array<() => void>;
-  executeCallbacks: () => void;
+  callbacks: (() => void)[];
+  dialogCallbackFn?: DialogCallback;
+  reset: () => Promise<boolean>;
+  registerResetCallback: (callback: () => void) => () => void;
+  setDialogCallback: (callback: DialogCallback | null) => void;
 }
 
 // Mock resetService
 jest.mock('@/utils/resetService', () => {
   const mockService: Partial<MockResetService> = {
-    reset: jest.fn().mockResolvedValue(true),
-    registerResetCallback: jest.fn().mockImplementation((callback) => {
-      if (!mockService.callbacks) {
-        mockService.callbacks = [];
+    callbacks: [],
+    reset: jest.fn().mockImplementation(async () => {
+      if (mockService.dialogCallbackFn) {
+        const shouldReset = await mockService.dialogCallbackFn('Are you sure?');
+        if (shouldReset && mockService.callbacks) {
+          mockService.callbacks.forEach(cb => cb());
+        }
+        return shouldReset;
       }
-      mockService.callbacks.push(callback);
+      return false;
+    }),
+    registerResetCallback: jest.fn().mockImplementation((callback) => {
+      if (mockService.callbacks) {
+        mockService.callbacks.push(callback);
+      }
       return jest.fn();
     }),
     setDialogCallback: jest.fn().mockImplementation((callback) => {
@@ -132,6 +135,14 @@ beforeAll(() => {
 });
 
 describe('Home Page', () => {
+  const renderWithTheme = () => {
+    return render(
+      <ThemeProvider>
+        <Home />
+      </ThemeProvider>
+    );
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockedResetService.callbacks = [];
@@ -143,15 +154,13 @@ describe('Home Page', () => {
   });
 
   it('should not show reset button in setup state', () => {
-    renderWithTheme(<Home />);
-    
+    renderWithTheme();
     expect(screen.queryByText('Reset')).not.toBeInTheDocument();
   });
 
   it('should show reset button after time is set', () => {
-    renderWithTheme(<Home />);
+    renderWithTheme();
     
-    // Find and trigger the TimeSetup component
     const timeSetupButton = screen.getByRole('button', { name: /set time/i });
     fireEvent.click(timeSetupButton);
     
@@ -159,7 +168,7 @@ describe('Home Page', () => {
   });
 
   it('should call resetService when reset is clicked', () => {
-    renderWithTheme(<Home />);
+    renderWithTheme();
     
     // Set initial time to move past setup state
     const timeSetupButton = screen.getByRole('button', { name: /set time/i });
@@ -173,7 +182,7 @@ describe('Home Page', () => {
   });
 
   it('should register reset callbacks and dialog callback with resetService', () => {
-    renderWithTheme(<Home />);
+    renderWithTheme();
     
     expect(mockedResetService.registerResetCallback).toHaveBeenCalled();
     expect(mockedResetService.setDialogCallback).toHaveBeenCalled();
@@ -187,7 +196,7 @@ describe('Home Page', () => {
   });
 
   it('should provide a working dialog callback to resetService', async () => {
-    renderWithTheme(<Home />);
+    renderWithTheme();
 
     // Get the dialog callback that was registered
     const dialogCallback = mockedResetService.dialogCallbackFn;
@@ -226,49 +235,61 @@ describe('Home Page', () => {
       expect(result).toBe(true);
     }
   });
+});
 
-  describe('Mobile Header Layout', () => {
-    beforeEach(() => {
-      // Mock mobile viewport
-      window.matchMedia = jest.fn().mockImplementation(query => ({
-        matches: query === '(max-width: 768px)',
-        media: query,
-        onchange: null,
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
-      }));
-    });
+describe('Mobile Layout', () => {
+  beforeEach(() => {
+    // Mock window.matchMedia for mobile viewport
+    window.matchMedia = jest.fn().mockImplementation((query: string) => ({
+      matches: query === '(max-width: 768px)',
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    }));
+  });
 
-    it('should render header with compact layout on mobile', () => {
-      renderWithTheme(<Home />);
-      
-      const header = screen.getByRole('banner');
-      const headerContent = header.firstElementChild;
-      
-      expect(headerContent).toHaveClass(styles.headerContent);
-      expect(header.firstElementChild).not.toBeNull();
-    });
+  it('should render header with compact layout on mobile', () => {
+    render(
+      <ThemeProvider>
+        <Home />
+      </ThemeProvider>
+    );
+    
+    const header = screen.getByRole('banner');
+    const headerContent = header.firstElementChild;
+    
+    expect(headerContent).toHaveClass(styles.headerContent);
+    expect(header.firstElementChild).not.toBeNull();
+  });
 
-    it('should maintain touch-friendly sizing for buttons on mobile', () => {
-      renderWithTheme(<Home />);
-      
-      // Set initial time to show reset button
-      const timeSetupButton = screen.getByRole('button', { name: /set time/i });
-      fireEvent.click(timeSetupButton);
-      
-      const resetButton = screen.getByText('Reset');
-      expect(resetButton).toHaveClass(styles.resetButton);
-    });
+  it('should maintain touch-friendly sizing for buttons on mobile', () => {
+    render(
+      <ThemeProvider>
+        <Home />
+      </ThemeProvider>
+    );
+    
+    // Set initial time to show reset button
+    const timeSetupButton = screen.getByRole('button', { name: /set time/i });
+    fireEvent.click(timeSetupButton);
+    
+    const resetButton = screen.getByText('Reset');
+    expect(resetButton).toHaveClass(styles.resetButton);
+  });
 
-    it('should render title with correct mobile styling', () => {
-      renderWithTheme(<Home />);
-      
-      const title = screen.getByText('Mr. Timely');
-      expect(title).toHaveClass(styles.title);
-    });
+  it('should render title with correct mobile styling', () => {
+    render(
+      <ThemeProvider>
+        <Home />
+      </ThemeProvider>
+    );
+    
+    const title = screen.getByText('Mr. Timely');
+    expect(title).toHaveClass(styles.title);
   });
 });
 
@@ -290,7 +311,11 @@ describe('OfflineIndicator Integration', () => {
   });
 
   it('should maintain offline indicator positioning across all app states', () => {
-    const { rerender } = renderWithTheme(<Home />);
+    const { rerender } = render(
+      <ThemeProvider>
+        <Home />
+      </ThemeProvider>
+    );
     
     // Check setup state
     const setupOfflineIndicator = screen.getByRole('status');
@@ -322,7 +347,11 @@ describe('OfflineIndicator Integration', () => {
       handleActivityRemoval: jest.fn(),
       resetActivities: mockResetActivities,
     }));
-    rerender(<Home />);
+    rerender(
+      <ThemeProvider>
+        <Home />
+      </ThemeProvider>
+    );
     
     // Check completed state
     const completedOfflineIndicator = screen.getByRole('status');
@@ -351,7 +380,11 @@ describe('Progress Element Visibility', () => {
       resetActivities: mockResetActivities,
     }));
     
-    renderWithTheme(<Home />);
+    render(
+      <ThemeProvider>
+        <Home />
+      </ThemeProvider>
+    );
     
     // In activity state, progress container should be present
     const progressContainer = document.querySelector(`.${styles.progressContainer}`);
@@ -362,7 +395,11 @@ describe('Progress Element Visibility', () => {
     // Mock for setup state (timeSet = false)
     jest.spyOn(React, 'useState').mockImplementationOnce(() => [false, jest.fn()]);
     
-    renderWithTheme(<Home />);
+    render(
+      <ThemeProvider>
+        <Home />
+      </ThemeProvider>
+    );
     
     // In setup state, progress container should not be rendered
     const progressContainer = document.querySelector(`.${styles.progressContainer}`);
@@ -386,7 +423,11 @@ describe('Progress Element Visibility', () => {
       resetActivities: mockResetActivities,
     }));
     
-    renderWithTheme(<Home />);
+    render(
+      <ThemeProvider>
+        <Home />
+      </ThemeProvider>
+    );
     
     // In completed state, progress container should not be rendered
     const progressContainer = document.querySelector(`.${styles.progressContainer}`);

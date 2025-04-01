@@ -1,46 +1,29 @@
 'use client';
 
-import React from 'react';
-import { useTheme } from '../hooks/useTheme';
+import { useEffect, useState } from 'react';
 import styles from './ThemeToggle.module.css';
+import { useTheme } from '@/context/ThemeContext';
 
-/**
- * Theme toggle component with light/dark/system mode options
- */
-const ThemeToggle: React.FC = () => {
+export default function ThemeToggle() {
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  const handleLightClick = () => {
-    setTheme('light');
-    document.documentElement.classList.add('light-mode');
-    document.documentElement.classList.remove('dark-mode');
-    localStorage.setItem('theme', 'light');
-  };
+  // Set mounted state after hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const handleDarkClick = () => {
-    setTheme('dark');
-    document.documentElement.classList.add('dark-mode');
-    document.documentElement.classList.remove('light-mode');
-    localStorage.setItem('theme', 'dark');
-  };
-
-  const handleSystemClick = () => {
-    setTheme('system');
-    // Let the system decide the theme
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.documentElement.classList.toggle('dark-mode', prefersDark);
-    document.documentElement.classList.toggle('light-mode', !prefersDark);
-    localStorage.removeItem('theme');
-  };
+  // Only render the toggle once mounted to avoid hydration mismatch
+  if (!mounted) return <div className={styles.placeholder} />;
 
   return (
     <div className={styles.container}>
       <div className={styles.toggleGroup}>
-        <button 
-          title="Light theme"
+        <button
           className={`${styles.toggleButton} ${theme === 'light' ? styles.active : ''}`}
-          onClick={handleLightClick}
+          onClick={() => setTheme('light')}
           aria-label="Light theme"
+          title="Light theme"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="5"></circle>
@@ -54,11 +37,11 @@ const ThemeToggle: React.FC = () => {
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
         </button>
-        <button 
-          title="System theme"
+        <button
           className={`${styles.toggleButton} ${theme === 'system' ? styles.active : ''}`}
-          onClick={handleSystemClick}
+          onClick={() => setTheme('system')}
           aria-label="System theme"
+          title="System theme"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
@@ -66,11 +49,11 @@ const ThemeToggle: React.FC = () => {
             <line x1="12" y1="17" x2="12" y2="21"></line>
           </svg>
         </button>
-        <button 
-          title="Dark theme"
+        <button
           className={`${styles.toggleButton} ${theme === 'dark' ? styles.active : ''}`}
-          onClick={handleDarkClick}
+          onClick={() => setTheme('dark')}
           aria-label="Dark theme"
+          title="Dark theme"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
@@ -79,6 +62,4 @@ const ThemeToggle: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default ThemeToggle;
+}
