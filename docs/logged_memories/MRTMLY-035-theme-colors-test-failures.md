@@ -1,7 +1,7 @@
 ### Issue: MRTMLY-035: Theme Colors Test Suite Failures During Unification
 **Date:** 2023-12-02
 **Tags:** #debugging #tests #theme-system #array-length #test-resilience #eslint
-**Status:** Resolved
+**Status:** In Progress
 
 #### Initial State
 - During the Theme System Unification implementation, two tests in `src/utils/theme/__tests__/themeColors.test.ts` were consistently failing:
@@ -105,3 +105,17 @@
   1. Removed unused `Theme` import from `ThemeContext.test.tsx`
   2. Changed `let prefersDarkMode` to `const prefersDarkMode` in `useTheme.test.tsx`
   3. Removed unused `cycleLength` variable from `themeColors.test.ts`
+
+11. New test failures after ESLint fixes (2023-12-02)
+    - After fixing ESLint issues, running the tests reveals two new sets of failures:
+      - The `getNextColorSet` test in `themeColors.test.ts` is failing at the cycling verification
+      - All tests in `ThemeContext.test.tsx` are failing with `ReferenceError: ThemeContext is not defined`
+    - These issues indicate:
+      - Our fixes for the `themeColors.test.ts` need further refinement for cycling verification
+      - The `ThemeContext.test.tsx` file needs to import the actual context object, not just the provider
+    - These failures highlight the importance of running tests after even minor changes like ESLint fixes
+
+12. Final implementation approach
+    - For the `themeColors.test.ts` issue, we need to ensure better color key collection
+    - For the `ThemeContext.test.tsx` issue, we need to properly import the ThemeContext object
+    - Address each issue separately to maintain clean commit history and enable clear tracking of fixes
