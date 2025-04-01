@@ -23,7 +23,7 @@ export function renderWithTheme(
  * @param Component - The component to wrap
  * @returns The wrapped component
  */
-export function withTheme<P>(Component: React.ComponentType<P>): React.FC<P> {
+export function withTheme<P extends { [key: string]: any }>(Component: React.ComponentType<P>): React.FC<P> {
   const WithThemeComponent = (props: P) => (
     <ThemeProvider>
       <Component {...props} />

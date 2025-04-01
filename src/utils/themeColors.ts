@@ -1,6 +1,6 @@
 'use client';
 
-import { getIsDarkMode } from '../hooks/useTheme';
+import { useTheme } from '../hooks/useTheme';
 
 // Color set interface for typed color objects
 export interface ColorSet {
@@ -184,7 +184,7 @@ const usedColorIndexes = new Set<number>();
  * @returns An array of ColorSets for the current theme
  */
 export function getThemeColors(): ColorSet[] {
-  const isDark = getIsDarkMode();
+  const { isDark } = useTheme();
   
   return themeColorSets.map(colorSet => {
     return isDark ? colorSet.dark : colorSet.light;
@@ -418,7 +418,7 @@ export function validateThemeColors(): { valid: boolean, issues: string[] } {
     return { valid: true, issues: [] }; // Skip validation during SSR
   }
   
-  const isDark = getIsDarkMode();
+  const { isDark } = useTheme();
   const vars = getComputedStyle(document.documentElement);
   
   try {

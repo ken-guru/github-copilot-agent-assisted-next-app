@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { ThemeProvider, useThemeContext } from '../ThemeContext';
+import { ThemeProvider, useThemeContext } from '@/context/theme/ThemeContext';
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -140,17 +140,17 @@ describe('ThemeContext', () => {
 
   it('should respond to system preference changes', () => {
     // Mock system preference as dark
+    type Handler = (e: MediaQueryListEvent) => void;
     const darkMediaQueryList = {
       matches: true,
       media: '(prefers-color-scheme: dark)',
       onchange: null,
-      addEventListener: jest.fn((event, handler) => {
-        // Store the handler to trigger later
+      addEventListener: jest.fn((event, handler: Handler) => {
         darkMediaQueryList.handler = handler;
       }),
       removeEventListener: jest.fn(),
       dispatchEvent: jest.fn(),
-      handler: null as ((event: MediaQueryListEvent) => void) | null
+      handler: null as Handler | null
     };
 
     window.matchMedia = jest.fn().mockImplementation((query) => {
@@ -182,7 +182,9 @@ describe('ThemeContext', () => {
     // Simulate system preference change to light
     act(() => {
       darkMediaQueryList.matches = false;
-      darkMediaQueryList.handler({ matches: false } as MediaQueryListEvent);
+      if (darkMediaQueryList.handler) {
+        darkMediaQueryList.handler({ matches: false } as MediaQueryListEvent);
+      }
     });
     
     // Should now be light
@@ -191,7 +193,9 @@ describe('ThemeContext', () => {
     // Simulate system preference change back to dark
     act(() => {
       darkMediaQueryList.matches = true;
-      darkMediaQueryList.handler({ matches: true } as MediaQueryListEvent);
+      if (darkMediaQueryList.handler) {
+        darkMediaQueryList.handler({ matches: true } as MediaQueryListEvent);
+      }
     });
     
     // Should now be dark again
