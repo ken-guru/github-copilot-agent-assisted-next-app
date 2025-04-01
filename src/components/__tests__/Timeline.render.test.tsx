@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import Timeline, { TimelineEntry } from '../Timeline';
+import { renderWithTheme } from '../../test/utils/renderWithTheme';
 
 describe('Timeline Component Rendering', () => {
   let dateNowSpy: jest.SpyInstance;
@@ -38,7 +39,7 @@ describe('Timeline Component Rendering', () => {
         }
       },
     ];
-    render(
+    renderWithTheme(
       <Timeline 
         entries={mockEntries}
         totalDuration={3600}
@@ -50,7 +51,7 @@ describe('Timeline Component Rendering', () => {
   });
   
   it('should render an empty state when no entries are present', () => {
-    render(
+    renderWithTheme(
       <Timeline 
         entries={[]}
         totalDuration={3600}
@@ -79,7 +80,7 @@ describe('Timeline Component Rendering', () => {
       }
     ];
     
-    render(
+    renderWithTheme(
       <Timeline 
         entries={mockEntries}
         totalDuration={3600}

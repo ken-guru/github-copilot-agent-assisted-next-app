@@ -1,6 +1,7 @@
-import { render, screen, act } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import React from 'react';
 import Timeline, { TimelineEntry } from '../Timeline';
+import { renderWithTheme } from '../../test/utils/renderWithTheme';
 
 describe('Timeline Break Visualization', () => {
   const FIXED_TIME = 1000000;
@@ -32,7 +33,7 @@ describe('Timeline Break Visualization', () => {
       }
     }];
 
-    render(
+    renderWithTheme(
       <Timeline 
         entries={mockEntries}
         totalDuration={3600}
@@ -72,7 +73,7 @@ describe('Timeline Break Visualization', () => {
       }
     ];
 
-    render(
+    renderWithTheme(
       <Timeline 
         entries={mockEntries}
         totalDuration={7200}
@@ -115,7 +116,7 @@ describe('Timeline Break Visualization', () => {
       }
     ];
 
-    render(
+    renderWithTheme(
       <Timeline 
         entries={mockEntries}
         totalDuration={3600}
