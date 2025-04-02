@@ -90,6 +90,7 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 
 ### 2025-04
 - [MRTMLY-033: Service Worker Utils TypeScript Linting Fix](./logged_memories/MRTMLY-033-service-worker-typescript-linting.md) #typescript #linting #service-worker #testing #type-safety
+- [MRTMLY-034: Time Utils TypeScript Linting Fix](./logged_memories/MRTMLY-034-time-utils-typescript-linting.md) #typescript #linting #testing #time-utils #type-safety
 
 ### Issue: TimeDisplay and ServiceWorkerUtils Test Failures Debugging Session
 **Date:** 2023-12-05

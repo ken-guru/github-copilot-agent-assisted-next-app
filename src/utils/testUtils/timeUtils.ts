@@ -6,6 +6,11 @@
  */
 
 /**
+ * More specific type for timer callback functions
+ */
+type TimerCallback = (...args: unknown[]) => void;
+
+/**
  * Mocks the Date.now() function for testing
  * 
  * @param mockTimestamp - The timestamp to return when Date.now() is called
@@ -71,25 +76,35 @@ export function createTimerMock() {
   const originalClearTimeout = global.clearTimeout;
   
   // Create maps to track timer IDs and callbacks
-  const timeoutMap = new Map<number, { callback: Function; delay: number; startTime: number }>();
+  const timeoutMap = new Map<number, { callback: TimerCallback; delay: number; startTime: number }>();
   let nextTimerId = 1;
   
-  // Replace setTimeout
-  global.setTimeout = jest.fn((callback: Function, delay: number) => {
+  // Create the mock function with the correct signature
+  const mockedSetTimeout = (callback: TimerCallback, delay: number): NodeJS.Timeout => {
     const timerId = nextTimerId++;
     timeoutMap.set(timerId, {
       callback,
       delay,
       startTime: Date.now(),
     });
-    return timerId;
+    return timerId as unknown as NodeJS.Timeout;
+  };
+  
+  // Add __promisify__ property to match setTimeout signature
+  Object.defineProperty(mockedSetTimeout, '__promisify__', {
+    value: (): Promise<void> => Promise.resolve(),
+    configurable: true,
   });
   
-  // Replace clearTimeout
-  global.clearTimeout = jest.fn((timerId: number) => {
-    timeoutMap.delete(timerId);
-    return undefined;
-  });
+  // Replace setTimeout with our mock
+  global.setTimeout = mockedSetTimeout as typeof global.setTimeout;
+  
+  // Replace clearTimeout with a properly typed mock
+  global.clearTimeout = ((timerId: NodeJS.Timeout | number | undefined): void => {
+    if (timerId !== undefined) {
+      timeoutMap.delete(timerId as number);
+    }
+  }) as typeof global.clearTimeout;
   
   // Function to advance timers
   const advanceTimers = (timeMs: number) => {
