@@ -39,7 +39,7 @@ export function useOnlineStatus(): boolean {
  * @param delay - Time in milliseconds between calls, null to pause
  */
 export function useInterval(callback: () => void, delay: number | null) {
-  const savedCallback = useRef<() => void>();
+  const savedCallback = useRef<(() => void) | undefined>(undefined);
   
   // Remember the latest callback
   useEffect(() => {
@@ -69,7 +69,7 @@ export function useInterval(callback: () => void, delay: number | null) {
  * @param delay - Time in milliseconds to wait, null to disable
  */
 export function useTimeout(callback: () => void, delay: number | null) {
-  const savedCallback = useRef<() => void>();
+  const savedCallback = useRef<(() => void) | undefined>(undefined);
   
   // Remember the latest callback
   useEffect(() => {
@@ -101,7 +101,7 @@ export function useTimeout(callback: () => void, delay: number | null) {
 export function useWindowResize(callback: () => void, options?: { 
   throttle?: number
 }) {
-  const savedCallback = useRef<() => void>();
+  const savedCallback = useRef<(() => void) | undefined>(undefined);
   const throttleTimeout = useRef<NodeJS.Timeout | null>(null);
   
   // Remember the latest callback

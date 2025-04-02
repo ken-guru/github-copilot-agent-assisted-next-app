@@ -124,8 +124,8 @@ describe('Event Listener Utilities', () => {
       const originalSetInterval = window.setInterval;
       const originalClearInterval = window.clearInterval;
       
-      window.setInterval = jest.fn().mockReturnValue(123);
-      window.clearInterval = jest.fn();
+      window.setInterval = jest.fn().mockReturnValue(123) as unknown as typeof window.setInterval;
+      window.clearInterval = jest.fn() as unknown as typeof window.clearInterval;
       
       const callback = jest.fn();
       const { unmount } = render(<IntervalComponent callback={callback} delay={1000} />);
@@ -147,7 +147,7 @@ describe('Event Listener Utilities', () => {
     it('should not set up interval if delay is null', () => {
       // Mock setInterval
       const originalSetInterval = window.setInterval;
-      window.setInterval = jest.fn();
+      window.setInterval = jest.fn() as unknown as typeof window.setInterval;
       
       const callback = jest.fn();
       render(<IntervalComponent callback={callback} delay={null} />);
@@ -166,8 +166,8 @@ describe('Event Listener Utilities', () => {
       
       window.setInterval = jest.fn()
         .mockReturnValueOnce(123)
-        .mockReturnValueOnce(456);
-      window.clearInterval = jest.fn();
+        .mockReturnValueOnce(456) as unknown as typeof window.setInterval;
+      window.clearInterval = jest.fn() as unknown as typeof window.clearInterval;
       
       const callback = jest.fn();
       const { rerender } = render(<IntervalComponent callback={callback} delay={1000} />);
@@ -197,8 +197,8 @@ describe('Event Listener Utilities', () => {
       const originalSetTimeout = window.setTimeout;
       const originalClearTimeout = window.clearTimeout;
       
-      window.setTimeout = jest.fn().mockReturnValue(123);
-      window.clearTimeout = jest.fn();
+      window.setTimeout = jest.fn().mockReturnValue(123) as unknown as typeof window.setTimeout;
+      window.clearTimeout = jest.fn() as unknown as typeof window.clearTimeout;
       
       const callback = jest.fn();
       const { unmount } = render(<TimeoutComponent callback={callback} delay={1000} />);
@@ -220,7 +220,7 @@ describe('Event Listener Utilities', () => {
     it('should not set up timeout if delay is null', () => {
       // Mock setTimeout
       const originalSetTimeout = window.setTimeout;
-      window.setTimeout = jest.fn();
+      window.setTimeout = jest.fn() as unknown as typeof window.setTimeout;
       
       const callback = jest.fn();
       render(<TimeoutComponent callback={callback} delay={null} />);
@@ -275,8 +275,8 @@ describe('Event Listener Utilities', () => {
         // Store the callback so we can call it manually in our test
         storedCallback = callback;
         return 123;
-      });
-      window.clearTimeout = jest.fn();
+      }) as unknown as typeof window.setTimeout;
+      window.clearTimeout = jest.fn() as unknown as typeof window.clearTimeout;
       
       const callback = jest.fn();
       render(<ResizeComponent callback={callback} throttle={200} />);

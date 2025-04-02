@@ -19,7 +19,7 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
   timeFormat, 
   dateFormat 
 }) => {
-  const renderTime = (time: string): JSX.Element => {
+  const renderTime = (time: string): React.ReactElement => {
     return (
       <div className="time-display__time">
         {time}
@@ -27,7 +27,7 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
     );
   };
 
-  const renderDate = (date: string): JSX.Element => {
+  const renderDate = (date: string): React.ReactElement => {
     return (
       <div className="time-display__date">
         {date}
