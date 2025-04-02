@@ -45,6 +45,25 @@ Describe what success looks like:
 
 Note: When implementing a change, copy this template and fill it out completely. The more detailed the prompt, the better the AI assistance will be in implementation.
 
+# Development Process Guidelines
+
+## Sequential Implementation
+- Work on one change at a time - never move to the next item until the current one is complete
+- Complete all validation criteria for the current task before starting a new one
+- Avoid parallel development to prevent code conflicts and maintain focus
+- For multi-phase changes (like the Time Utilities Consolidation below), complete each phase fully before starting the next
+- Mark completed items in the validation criteria as they are finished
+
+## Testing Requirements
+- Each implementation must include appropriate tests before considering it complete
+- Tests should be written before or alongside implementation (Test-Driven Development)
+- All tests must pass before a change is considered complete
+
+## Documentation
+- Update documentation alongside code changes
+- Document all key decisions made during implementation
+- Update the Memory Log for all significant changes or bug fixes
+
 <!-- Progress Bar styling implementation has been completed and moved to IMPLEMENTED_CHANGES.md (2025-04-02) -->
 
 # Test Suite Expansion Based on Known Bugs
@@ -65,7 +84,6 @@ Our application has several known bugs documented in KNOWN_BUGS.md and historica
 
 2. Implement seven targeted test expansions
    - **Activity Order in Summary**
-     - Add tests to verify chronological ordering
      - Test edge cases with similar start times
      - Verify order is maintained after re-renders
    
@@ -128,3 +146,115 @@ Our application has several known bugs documented in KNOWN_BUGS.md and historica
 - [ ] Tests isolated to prevent cross-contamination
 - [ ] Documentation updated with test coverage information
 - [ ] Memory log updated with test development process
+
+# Time Utilities Consolidation
+
+## Context
+Our application currently has duplicate implementations of time-related utilities with overlapping functionality:
+- `/src/utils/timeUtils.ts` - Contains a `formatTime` function that formats seconds to "MM:SS" format
+- `/src/utils/testUtils/timeUtils.ts` - Contains a different `formatTime` that formats to "HH:MM:SS" format
+
+This duplication creates confusion for developers and potential maintenance issues as both utilities evolve independently.
+
+## Requirements
+1. Clarify and distinguish the purpose of each time utility module
+   - Clearly document each function's purpose and format
+   - Rename functions to explicitly indicate their formatting style
+   - Update tests to match renamed functions
+   - Maintain backward compatibility where needed
+
+2. Implement a phased consolidation approach
+   - **Phase 1: Immediate Clarification**
+     - Rename ambiguous functions to be more specific (e.g., `formatTimeHHMMSS`)
+     - Add comprehensive documentation to each utility function
+     - Update test files to use the new function names
+     - Provide compatibility exports for existing code
+
+   - **Phase 2: Comprehensive Consolidation**
+     - Create a unified time utility module with format options
+     - Move test-only utilities to appropriate locations
+     - Update imports throughout the codebase
+     - Add thorough test coverage for all functions
+
+   - **Phase 3: Maintenance Improvements**
+     - Establish guidelines for adding new utility functions
+     - Create a review process for utility additions
+     - Document best practices for testing utilities
+
+3. Ensure consistent behavior across all time-related functions
+   - Handle edge cases consistently (negative values, zero, large numbers)
+   - Apply the same rounding rules for partial seconds/milliseconds
+   - Document expected behavior for all functions
+
+## Technical Guidelines
+- Follow strict TypeScript typing for all function parameters and returns
+- Apply consistent naming conventions across all time utilities
+- Use JSDoc comments to document each function thoroughly
+- Ensure test coverage includes edge cases for all functions
+- Consider creating adapter functions for backward compatibility
+- Document format specifiers clearly for developer understanding
+
+## Expected Outcome
+- Clear distinction between production time utilities and testing-specific utilities
+- Consistent and well-documented time formatting across the application
+- No duplicate implementations of the same functionality
+- Comprehensive test coverage for all time utility functions
+- Enhanced developer experience when working with time in the application
+
+## Validation Criteria
+- [ ] Functions renamed to clearly indicate their purpose and format
+- [ ] All time utility functions thoroughly documented
+- [ ] Tests updated to use correct function names
+- [ ] Backward compatibility maintained where necessary
+- [ ] Documentation updated with utility usage examples
+- [ ] Memory log updated with consolidation process
+
+## Detailed Implementation Plan
+
+### Phase 1: Immediate Clarification
+- [x] Rename functions to be more specific (e.g., formatTimeHHMMSS)
+- [x] Add better documentation with JSDoc comments
+- [x] Update tests to match renamed functions
+- [x] Maintain compatibility with existing code via exports
+
+### Phase 2: Comprehensive Consolidation
+
+#### 1. Evaluate Core Time Functionality Needs
+- [ ] Create a unified time utility module with:
+  - [ ] Support for multiple format options (MM:SS, HH:MM:SS, custom)
+  - [ ] Consistent handling of milliseconds vs seconds inputs
+  - [ ] Clear documentation for each format option
+  - [ ] Thorough test coverage
+
+#### 2. Separate Production vs Test Utilities
+- [ ] Move all test-only utilities to a dedicated location
+- [ ] Move shared utilities to a common location
+- [ ] Update imports across the codebase
+- [ ] Document the purpose of each utility location
+
+#### 3. Update Other Files Using Time Utilities
+- [ ] Identify all files importing from timeUtils
+- [ ] Update imports and function calls as needed
+- [ ] Verify functionality remains the same
+
+#### 4. Test Coverage Verification
+- [ ] Add any missing test cases for edge cases
+- [ ] Verify all modified functions have adequate test coverage
+- [ ] Run complete test suite to ensure no regressions
+
+#### 5. Documentation
+- [ ] Update project-level documentation about time utilities
+- [ ] Add examples of using each time utility function
+- [ ] Document the rationale behind the structure changes
+
+### Phase 3: Ongoing Maintenance
+
+#### 1. Preventing Future Duplication
+- [ ] Create guidelines for adding new utility functions
+- [ ] Establish review process for utility additions
+- [ ] Add utility usage examples to developer docs
+
+#### 2. Review Testing Strategy
+- [ ] Evaluate if test utilities need their own tests
+- [ ] Consider meta-testing approach for test utilities
+- [ ] Document best practices for testing utilities
