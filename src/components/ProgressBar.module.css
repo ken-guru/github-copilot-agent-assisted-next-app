@@ -3,6 +3,18 @@
   margin-bottom: 0.5rem;
   position: relative;
   padding: 2px;
+  
+  /* Define base colors to use for transitions - moved from :root to .container */
+  --progress-green-hue: 142;
+  --progress-yellow-hue: 48;
+  --progress-orange-hue: 25;
+  --progress-red-hue: 0;
+  
+  --progress-saturation: 85%;
+  --progress-lightness: 45%;
+  
+  /* For reduced motion preferences */
+  --progress-transition-duration: 0.3s;
 }
 
 /* Mobile specific container styling */
@@ -37,20 +49,6 @@
   border-radius: 8px;
   transition: width 0.3s ease, background-color 0.5s ease;
   z-index: 1;
-}
-
-/* Define base colors to use for transitions - no more glow effects */
-:root {
-  --progress-green-hue: 142;
-  --progress-yellow-hue: 48;
-  --progress-orange-hue: 25;
-  --progress-red-hue: 0;
-  
-  --progress-saturation: 85%;
-  --progress-lightness: 45%;
-  
-  /* For reduced motion preferences */
-  --progress-transition-duration: 0.3s;
 }
 
 @media (prefers-reduced-motion: reduce) {

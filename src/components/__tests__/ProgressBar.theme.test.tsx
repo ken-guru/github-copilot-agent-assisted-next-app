@@ -4,7 +4,7 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ProgressBar from '../ProgressBar';
 import { TimelineEntry } from '../Timeline';
-import { setTestTheme, calculateContrastRatio } from '../../utils/testUtils/themeTestingUtils';
+import { setTestTheme } from '../../utils/testUtils/themeTestingUtils';
 
 // Mock the CSS module
 jest.mock('../ProgressBar.module.css', () => ({
