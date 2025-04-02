@@ -73,6 +73,8 @@
    - Add only a reference link to the main MEMORY_LOG.md file
    - Ensure the reference format matches existing entries in the memory index
    - Group memory entries by date/month in the index
+   - Always add new memory entries as the LAST item in their respective date section
+   - Never create duplicate MRTMLY-XXX IDs - always use the next available number in sequence
 
 3. **Entry Format and Structure**:
    - Follow the established template structure for all memory entries
@@ -91,6 +93,9 @@
    - Periodically check for consistent formatting across memory entries
    - Ensure all memory entries are properly referenced in the main index
    - Look for patterns across related issues and link them where appropriate
+   - Always check for and resolve any duplicate memory IDs
+   - Maintain chronological order within each date section, with newest entries at the bottom
+   - When adding a new entry with a date that doesn't have a section yet, add the new section at the bottom of the file
 
 ## Package Management
 
