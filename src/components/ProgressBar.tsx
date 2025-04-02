@@ -41,21 +41,48 @@ export default function ProgressBar({
   // Calculate the progress percentage (capped at 100%) when active
   const progressPercentage = isActive ? Math.min(100, (elapsedTime / totalDuration) * 100) : 0;
   
-  // Determine the appropriate color class based on elapsed time percentage
-  const getColorClass = () => {
+  // Calculate color based on progress percentage for smooth transition
+  const calculateProgressColor = () => {
     if (!isActive) return '';
     
     const timeRatio = elapsedTime / totalDuration;
     
+    // At or beyond 100%
     if (timeRatio >= 1) {
-      return styles.redPulse;  // 100%+ - Red pulsing
-    } else if (timeRatio >= 0.75) {
-      return styles.orangeGlow; // 75%-100% - Orange glow
-    } else if (timeRatio >= 0.5) {
-      return styles.yellowGlow; // 50%-75% - Yellow glow
-    } else {
-      return styles.greenGlow;  // <50% - Green glow
+      return `hsl(var(--progress-red-hue), var(--progress-saturation), var(--progress-lightness))`;
     }
+    
+    // Interpolate color hue based on progress
+    if (timeRatio < 0.5) {
+      // Between 0% and 50%: Green to Yellow
+      const hue = interpolateValue(
+        timeRatio / 0.5, // Normalized to 0-1 for this range
+        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-green-hue')),
+        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-yellow-hue'))
+      );
+      return `hsl(${hue}, var(--progress-saturation), var(--progress-lightness))`;
+    } else if (timeRatio < 0.75) {
+      // Between 50% and 75%: Yellow to Orange
+      const hue = interpolateValue(
+        (timeRatio - 0.5) / 0.25, // Normalized to 0-1 for this range
+        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-yellow-hue')),
+        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-orange-hue'))
+      );
+      return `hsl(${hue}, var(--progress-saturation), var(--progress-lightness))`;
+    } else {
+      // Between 75% and 100%: Orange to Red
+      const hue = interpolateValue(
+        (timeRatio - 0.75) / 0.25, // Normalized to 0-1 for this range
+        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-orange-hue')),
+        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-red-hue'))
+      );
+      return `hsl(${hue}, var(--progress-saturation), var(--progress-lightness))`;
+    }
+  };
+
+  // Helper function for color interpolation
+  const interpolateValue = (ratio: number, start: number, end: number): number => {
+    return Math.round(start + (end - start) * ratio);
   };
 
   // Render time markers component
@@ -79,8 +106,11 @@ export default function ProgressBar({
     >
       {isActive && (
         <div 
-          className={`${styles.progressFill} ${getColorClass()}`} 
-          style={{ width: `${progressPercentage}%` }}
+          className={styles.progressFill} 
+          style={{ 
+            width: `${progressPercentage}%`,
+            backgroundColor: calculateProgressColor()
+          }}
         />
       )}
     </div>
