@@ -2,6 +2,90 @@
 
 This file chronicles completed changes to the application, formatted to serve as reference prompts for similar future implementations.
 
+## Code Refactoring: Reduce Duplication and Improve Architecture
+**Date Implemented:** 2024-09-01
+
+### Context
+The application had several areas of code duplication that created maintenance challenges and increased the risk of inconsistent behavior:
+- Multiple components and tests contained duplicated logic for service worker mocking, time manipulation, and test data generation
+- Color management code was duplicated across test files
+- Event listener setup/teardown patterns were repeated in several components
+- Similar utility functions existed with slight variations
+
+### Implementation Details
+1. Service Worker Testing Utilities
+   - Created centralized utility in `src/utils/testUtils/serviceWorkerUtils.ts`
+   - Implemented standardized mock setup for navigator.serviceWorker
+   - Added helpers for simulating registration events and network status changes
+   - Ensured proper cleanup between tests to prevent leakage
+   - Documented usage patterns with examples
+   - Updated all test files to use the new utilities
+
+2. Test Data Generation Factories
+   - Implemented factory functions in `src/utils/testUtils/factories.ts`
+   - Created TimelineEntry factory with customizable properties
+   - Developed color object generators that respect theme settings
+   - Added activity state generation helpers
+   - Updated test files to use the factories
+
+3. Time Manipulation Utilities
+   - Created centralized time utility in `src/utils/testUtils/timeUtils.ts`
+   - Implemented helpers for time calculation and formatting
+   - Added test utilities for mocking Date.now() and controlling timers
+   - Ensured proper cleanup of time mocks after tests
+   - Refactored time-dependent components and tests
+
+4. Event Listener Management
+   - Developed utilities in `src/utils/testUtils/eventListenerUtils.ts`
+   - Created helper for online/offline status management
+   - Implemented standardized cleanup patterns for useEffect hooks
+   - Added utilities for managing timers and intervals
+   - Applied consistent patterns across components
+
+### Technical Approach
+- Maintained backward compatibility with existing components
+- Ensured each utility has proper TypeScript typing
+- Documented usage patterns in comments and examples
+- Followed React best practices for hooks and cleanup
+- Implemented comprehensive test coverage for all utilities
+- Used established naming conventions for consistency
+- Ensured each refactoring step resulted in working application
+
+### Testing Approach
+1. Utility Testing
+   - Created dedicated test files for each utility
+   - Verified functionality in isolation
+   - Tested edge cases and error handling
+   - Ensured proper cleanup
+
+2. Integration Testing
+   - Verified components using the utilities
+   - Confirmed backward compatibility
+   - Validated consistent behavior
+   - Tested performance impact
+
+### Benefits Achieved
+1. Technical Improvements:
+   - Reduced code duplication
+   - Improved maintainability and consistency
+   - Enhanced test reliability
+   - Better separation of concerns
+   - More consistent patterns across codebase
+
+2. Testing Improvements:
+   - More concise and consistent test setup
+   - Reduced test flakiness
+   - Improved test reliability
+   - Better isolation between test cases
+
+### Validation Results
+- ✅ All utilities properly implemented
+- ✅ Comprehensive test coverage added
+- ✅ All existing tests updated to use new utilities
+- ✅ No functional changes to application behavior
+- ✅ Documentation updated with usage examples
+- ✅ Type checking passing without errors
+
 ## Fix Premature Summary State Transition Bug (2024-08-14)
 
 ### Context
