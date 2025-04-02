@@ -88,6 +88,9 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-031: Summary Component Theme Color Updates](./logged_memories/MRTMLY-031-summary-theme-colors.md) #bug-fix #theme #dark-mode #summary #testing
 - [MRTMLY-032: Timeline Component Theme Color Update Bug](./logged_memories/MRTMLY-032-timeline-theme-colors.md) #bug-fix #theme #dark-mode #timeline #regression
 
+### 2025-04
+- [MRTMLY-033: Service Worker Utils TypeScript Linting Fix](./logged_memories/MRTMLY-033-service-worker-typescript-linting.md) #typescript #linting #service-worker #testing #type-safety
+
 ### Issue: TimeDisplay and ServiceWorkerUtils Test Failures Debugging Session
 **Date:** 2023-12-05
 **Tags:** #debugging #tests #time-formatting #service-worker

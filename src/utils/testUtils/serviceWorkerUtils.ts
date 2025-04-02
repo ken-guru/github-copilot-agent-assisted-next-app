@@ -9,6 +9,9 @@ interface MockServiceWorkerOptions {
   initialWaitingState?: boolean;
 }
 
+// Create a type for the event listeners
+type ServiceWorkerEventListener = (event?: Event) => void;
+
 /**
  * Creates a mock for navigator.serviceWorker
  * 
@@ -26,8 +29,8 @@ export function mockServiceWorker(options: MockServiceWorkerOptions = {}) {
   const postMessageMock = jest.fn();
   
   // Maps to store event listeners
-  const globalListeners = new Map<string, Function[]>();
-  const registrationListeners = new Map<string, Function[]>();
+  const globalListeners = new Map<string, ServiceWorkerEventListener[]>();
+  const registrationListeners = new Map<string, ServiceWorkerEventListener[]>();
   
   // Mock registration object
   const mockRegistration = {
@@ -57,7 +60,7 @@ export function mockServiceWorker(options: MockServiceWorkerOptions = {}) {
         eventListeners.splice(index, 1);
       }
     }),
-    onupdatefound: null,
+    onupdatefound: null as ServiceWorkerEventListener | null,
   };
   
   // Mock controller
