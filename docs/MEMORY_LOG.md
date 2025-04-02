@@ -17,7 +17,7 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 ### Issue: MRTMLY-XXX: [Brief Description]
 **Date:** YYYY-MM-DD
 **Tags:** #tag1 #tag2 #tag3
-**Status:** [In Progress|Resolved|Blocked]
+**Status:** [In Progress|Resolved]
 
 #### Initial State
 - Description of the initial problem
@@ -96,76 +96,38 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-037: Test Suite Expansion Planning Based on Known Bugs](./logged_memories/MRTMLY-037-test-suite-expansion-planning.md) #testing #planning #bugs #test-coverage #regression-testing
 
 ### Feature: Time Utilities Consolidation
-**Date:** YYYY-MM-DD
-**Tags:** #refactoring #utilities #time
+**Date:** 2023-07-01
+**Tags:** #refactoring #utilities #time #circular-reference
 **Status:** Resolved
 
 #### Initial State
-- Two duplicate implementations of time formatting in different locations:
-  - `/src/utils/timeUtils.ts` with formatTime function (MM:SS format)
-  - `/src/utils/testUtils/timeUtils.ts` with formatTime function (HH:MM:SS format)
+- Two duplicate implementations of time-related utilities with overlapping functionality:
+  - `/src/utils/timeUtils.ts` - Contains a `formatTime` function that formats seconds to "MM:SS" format
+  - `/src/utils/testUtils/timeUtils.ts` - Contains a different `formatTime` that formats to "HH:MM:SS" format
 - This duplication created confusion for developers and potential maintenance issues
 
 #### Implementation
-1. Created a unified `formatTime` function in the main timeUtils.ts that supports both formats
-   - Added options parameter to control format style (includeHours, padWithZeros)
+1. Created a unified flexible `formatTime` function with options
+   - Added TimeFormatOptions interface with includeHours and padWithZeros options
    - Implemented both MM:SS and HH:MM:SS formatting in a single function
+   - Added proper JSDoc documentation with examples
 
-2. Updated test utilities
-   - Made test utilities use the main implementation
+2. Fixed circular reference issues
+   - Renamed imported formatTime to mainFormatTime in testUtils
+   - Updated test utilities to use the main implementation
    - Added appropriate deprecation notices
-   - Re-exported common functions for backward compatibility
+   - Fixed the formatTimeFromMs function to always include hours in testUtils
 
-3. Added new tests
-   - Created comprehensive tests for the unified time formatting functions
-   - Covered edge cases like negative values and padding options
-
-#### Lessons Learned
-- Centralizing similar utilities reduces maintenance burden
-- Adding flexibility through options provides a cleaner API while maintaining compatibility
-- Good test coverage ensures refactoring preserves expected behavior
-
-Note: This change completes Phase 1 and partially completes Phase 2 of the Time Utilities Consolidation plan, as it both clarifies the API and consolidates the implementation.
-
-### Issue: Time Utilities Consolidation Debugging
-**Date:** YYYY-MM-DD
-**Tags:** #debugging #utilities #time #circular-reference
-**Status:** Resolved
-
-#### Initial State
-- After refactoring timeUtils to consolidate format functions, tests began failing
-- Two specific issues identified:
-  1. Circular reference in testUtils/timeUtils.ts causing a stack overflow
-  2. Inconsistency in formatting with `padWithZeros: false` (seconds still needed padding)
-  3. formatTimeFromMs in testUtils needed to include hours by default
-
-#### Debug Process
-1. Identified circular reference issue
-   - In testUtils/timeUtils.ts, we had:
-     ```typescript
-     import { formatTime } from '../timeUtils';
-     export function formatTimeHHMMSS(seconds) { return formatTime(seconds, { includeHours: true }); }
-     export const formatTime = formatTimeHHMMSS;
-     ```
-   - This created a circular reference since formatTimeHHMMSS called formatTime (imported) but also exported formatTime as formatTimeHHMMSS
-   - The stack overflow occurred when the exported formatTime was called, which calls formatTimeHHMMSS, which calls imported formatTime, etc.
-
-2. Fixed padding inconsistency
-   - Tests expected seconds to always be padded regardless of the padWithZeros option
-   - Modified the formatTime function to always pad seconds with zeros
-
-3. Fixed formatTimeFromMs in testUtils
-   - In testUtils, this function should always include hours for consistent behavior in tests
-   - Updated the function to use mainFormatTime with includeHours: true
-
-#### Resolution
-- Renamed the imported formatTime to mainFormatTime to avoid naming conflicts
-- Modified the formatting logic to match expected behavior in tests
-- Updated formatTimeFromMs in testUtils to always include hours
-- All tests now pass successfully
+3. Fixed padding inconsistencies
+   - Ensured seconds are always padded with zeros for consistency
+   - Modified formatTime to handle padWithZeros option correctly while keeping seconds padded
 
 #### Lessons Learned
-- Be careful with circular references when refactoring utility functions
-- When functions are used in tests, maintain consistent behavior even during refactoring
-- Always verify test expectations match implementation behavior
-- Add thorough documentation to explain differences between similar utility functions
+- Circular references can cause runtime stack overflow errors that might not be caught by TypeScript
+- When refactoring utility functions, carefully consider how they're used across the codebase
+- Including comprehensive test coverage helps catch inconsistencies in behavior
+- Keeping backward compatibility reduces the risk during refactoring
+- Using options objects makes utilities more flexible and future-proof
+
+### 2023-07
+- [MRTMLY-038: Time Utilities Consolidation](./logged_memories/MRTMLY-038-time-utilities-consolidation.md) #refactoring #utilities #time #circular-reference
