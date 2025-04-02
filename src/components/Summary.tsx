@@ -318,7 +318,7 @@ export default function Summary({
       {activityTimes.length > 0 && (
         <div className={styles.activityList}>
           <h3 className={styles.activityListHeading}>Time Spent per Activity</h3>
-          {activityTimes.map(activity => {
+          {activityTimes.map((activity, index) => {
             // Get theme-appropriate colors
             const themeColors = activity.colors ? 
               getThemeAppropriateColor(activity.colors) || activity.colors : 
@@ -328,6 +328,7 @@ export default function Summary({
               <div 
                 key={activity.id}
                 className={styles.activityItem}
+                data-testid={`activity-summary-item-${activity.id}`}
                 style={themeColors ? {
                   backgroundColor: themeColors.background,
                   borderColor: themeColors.border
@@ -335,6 +336,7 @@ export default function Summary({
               >
                 <span 
                   className={styles.activityName}
+                  data-testid={`activity-name-${activity.id}`}
                   style={themeColors ? { color: themeColors.text } : undefined}
                 >
                   {activity.name}

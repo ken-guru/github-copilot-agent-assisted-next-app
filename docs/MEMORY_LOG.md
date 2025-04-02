@@ -86,7 +86,9 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-038: Time Utilities Consolidation](./logged_memories/MRTMLY-038-time-utilities-consolidation.md) #refactoring #utilities #time #circular-reference
 - [MRTMLY-039: Idle Time Calculation Test Suite Implementation](./logged_memories/MRTMLY-039-idle-time-calculation-testing.md)
 - [MRTMLY-040: Break Visualization Test Suite Expansion](./logged_memories/MRTMLY-040-break-visualization-testing.md)
+- [MRTMLY-041: Activity Order in Summary Tests Implementation](./logged_memories/MRTMLY-041-activity-order-summary-tests.md) #testing #summary #activity-order #chronological-order
 - [MRTMLY-042: Time Utilities Documentation and Maintenance Guidelines](./logged_memories/MRTMLY-042-time-utilities-documentation.md) #documentation #utilities #time-utils #testing #best-practices
 - [MRTMLY-043: Linting Error Fix in timeUtils.ts](./logged_memories/MRTMLY-043-timeutils-linting-error-fix.md) #debugging #linting #tests #time-utils
 - [MRTMLY-044: Build Failure Due to Unused Import](./logged_memories/MRTMLY-044-build-failure-unused-import.md) #debugging #build #imports #linting #typescript
 - [MRTMLY-045: Time Utils Test Import Error Fix](./logged_memories/MRTMLY-045-timeutils-import-error-fix.md) #debugging #linting #typescript #time-utils #tests
+- [MRTMLY-046: Activity Order in Summary Test Expansion](./logged_memories/MRTMLY-046-activity-order-test-expansion.md) #testing #summary #activity-order #chronological-order #duplicate
