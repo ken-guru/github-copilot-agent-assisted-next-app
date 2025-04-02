@@ -92,3 +92,4 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-044: Build Failure Due to Unused Import](./logged_memories/MRTMLY-044-build-failure-unused-import.md) #debugging #build #imports #linting #typescript
 - [MRTMLY-045: Time Utils Test Import Error Fix](./logged_memories/MRTMLY-045-timeutils-import-error-fix.md) #debugging #linting #typescript #time-utils #tests
 - [MRTMLY-046: Activity Order in Summary Test Expansion](./logged_memories/MRTMLY-046-activity-order-test-expansion.md) #testing #summary #activity-order #chronological-order #duplicate
+- [MRTMLY-047: Unused Variable in Summary Component](./logged_memories/MRTMLY-047-unused-variable-summary-component.md)
