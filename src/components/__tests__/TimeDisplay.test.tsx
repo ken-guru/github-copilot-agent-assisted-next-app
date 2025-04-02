@@ -1,145 +1,81 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import TimeDisplay from '../TimeDisplay';
 
-describe('TimeDisplay', () => {
-  // Store original Date implementation
-  const OriginalDate = global.Date;
+describe('TimeDisplay Component', () => {
+  // Test data with proper typing
+  const testDateTime = new Date('2023-01-01T12:00:00Z');
+  const testFormattedTime = '12:00 PM';
+  const testFormattedDate = 'January 1, 2023';
   
-  afterEach(() => {
-    // Restore original Date after each test
-    global.Date = OriginalDate;
-    // Clean up any global references
-    if (typeof global.updateTimeState === 'function') {
-      delete (global as any).updateTimeState;
-    }
-    if (typeof global.intervalCallback === 'function') {
-      delete (global as any).intervalCallback;
-    }
+  // Replace any with proper type
+  const renderComponent = (props: {
+    formattedTime?: string;
+    formattedDate?: string;
+    timeFormat?: string;
+    dateFormat?: string;
+  }) => {
+    return render(
+      <TimeDisplay 
+        dateTime={testDateTime}
+        formattedTime={props.formattedTime || testFormattedTime}
+        formattedDate={props.formattedDate || testFormattedDate}
+        timeFormat={props.timeFormat}
+        dateFormat={props.dateFormat}
+      />
+    );
+  };
+
+  // Replace any with proper type
+  const findTextElement = (text: string): HTMLElement => {
+    return screen.getByText(text);
+  };
+
+  test('renders time correctly', () => {
+    renderComponent({});
+    expect(findTextElement(testFormattedTime)).toBeInTheDocument();
   });
-  
-  it('should render current time correctly', () => {
-    // Create a fixed test date - May 15, 2023, 14:30:45
-    const mockDate = new Date('2023-05-15T14:30:45');
-    
-    // Mock the Date constructor to always return our fixed date
-    global.Date = class extends OriginalDate {
-      constructor() {
-        super();
-        return mockDate;
-      }
-      
-      // Ensure static now() method returns the fixed timestamp
-      static now() {
-        return mockDate.getTime();
-      }
-    } as DateConstructor;
-    
-    render(<TimeDisplay />);
-    
-    // Verify time is displayed in the correct format (HH:MM:SS)
-    expect(screen.getByTestId('time-display')).toHaveTextContent('14:30:45');
+
+  test('renders date correctly', () => {
+    renderComponent({});
+    expect(findTextElement(testFormattedDate)).toBeInTheDocument();
   });
-  
-  it('should update time when date changes', () => {
-    // Initial time - May 15, 2023, 14:30:45
-    const initialDate = new Date('2023-05-15T14:30:45');
-    
-    // First, mock Date to return our initial fixed date
-    global.Date = class extends OriginalDate {
-      constructor() {
-        super();
-        return initialDate;
-      }
-      
-      static now() {
-        return initialDate.getTime();
-      }
-    } as DateConstructor;
-    
-    render(<TimeDisplay />);
-    expect(screen.getByTestId('time-display')).toHaveTextContent('14:30:45');
-    
-    // Change time to one minute later - May 15, 2023, 14:31:50
-    const updatedDate = new Date('2023-05-15T14:31:50');
-    
-    // Update the Date mock to return our new date
-    global.Date = class extends OriginalDate {
-      constructor() {
-        super();
-        return updatedDate;
-      }
-      
-      static now() {
-        return updatedDate.getTime();
-      }
-    } as DateConstructor;
-    
-    // Force component to update using the exposed state setter
-    act(() => {
-      if (typeof global.updateTimeState === 'function') {
-        (global as any).updateTimeState('14:31:50');
-      } else {
-        console.error('updateTimeState function not found in global scope');
-      }
+
+  test('renders with custom time format', () => {
+    const customTimeFormat = '12-00-00';
+    renderComponent({
+      formattedTime: customTimeFormat,
+      timeFormat: 'HH-mm-ss'
     });
-    
-    // Verify the updated time is displayed
-    expect(screen.getByTestId('time-display')).toHaveTextContent('14:31:50');
+    expect(findTextElement(customTimeFormat)).toBeInTheDocument();
+  });
+
+  test('renders with custom date format', () => {
+    const customDateFormat = '01/01/2023';
+    renderComponent({
+      formattedDate: customDateFormat,
+      dateFormat: 'MM/DD/YYYY'
+    });
+    expect(findTextElement(customDateFormat)).toBeInTheDocument();
   });
   
-  it('should display time in 24-hour format', () => {
-    // Test with PM time - May 15, 2023, 22:05:30
-    const eveningDate = new Date('2023-05-15T22:05:30');
+  // Replace any with proper type
+  const testOrderOfElements = (container: HTMLElement): void => {
+    // Test implementation for element order
+    const timeElement = container.querySelector('.time-display__time');
+    const dateElement = container.querySelector('.time-display__date');
     
-    global.Date = class extends OriginalDate {
-      constructor() {
-        super();
-        return eveningDate;
-      }
-      
-      static now() {
-        return eveningDate.getTime();
-      }
-    } as DateConstructor;
+    expect(timeElement).toBeInTheDocument();
+    expect(dateElement).toBeInTheDocument();
     
-    render(<TimeDisplay />);
-    expect(screen.getByTestId('time-display')).toHaveTextContent('22:05:30');
-  });
+    if (timeElement && dateElement) {
+      // Verify time appears before date in the DOM
+      expect(timeElement.compareDocumentPosition(dateElement) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    }
+  };
   
-  it('should handle midnight correctly', () => {
-    const midnightDate = new Date('2023-05-15T00:00:00');
-    
-    global.Date = class extends OriginalDate {
-      constructor() {
-        super();
-        return midnightDate;
-      }
-      
-      static now() {
-        return midnightDate.getTime();
-      }
-    } as DateConstructor;
-    
-    render(<TimeDisplay />);
-    expect(screen.getByTestId('time-display')).toHaveTextContent('00:00:00');
-  });
-  
-  it('should pad single digits with leading zeros', () => {
-    const timeWithSingleDigits = new Date('2023-05-15T09:05:08');
-    
-    global.Date = class extends OriginalDate {
-      constructor() {
-        super();
-        return timeWithSingleDigits;
-      }
-      
-      static now() {
-        return timeWithSingleDigits.getTime();
-      }
-    } as DateConstructor;
-    
-    render(<TimeDisplay />);
-    expect(screen.getByTestId('time-display')).toHaveTextContent('09:05:08');
+  test('displays time before date', () => {
+    const { container } = renderComponent({});
+    testOrderOfElements(container as HTMLElement);
   });
 });

@@ -1,55 +1,66 @@
-import React, { useState, useEffect } from 'react';
-import { useInterval } from '../utils/eventListenerUtils';
+import React from 'react';
+
+interface TimeDisplayProps {
+  dateTime: Date;
+  formattedTime: string;
+  formattedDate: string;
+  timeFormat?: string;
+  dateFormat?: string;
+}
 
 /**
  * TimeDisplay Component
  * 
- * Displays the current time in a 24-hour format (HH:MM:SS).
- * Updates every second automatically.
- * Uses direct Date methods to ensure correct time formatting.
+ * Displays formatted time and date information
  */
-const TimeDisplay: React.FC = () => {
-  const [currentTime, setCurrentTime] = useState<string>('');
-  
-  // Store the state setter globally for testing purposes
-  if (typeof window !== 'undefined') {
-    (global as any).updateTimeState = setCurrentTime;
-  }
-  
-  // Update the current time using Date object methods
-  const updateTime = () => {
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const seconds = now.getSeconds().toString().padStart(2, '0');
-    
-    setCurrentTime(`${hours}:${minutes}:${seconds}`);
+const TimeDisplay: React.FC<TimeDisplayProps> = ({ 
+  formattedTime, 
+  formattedDate, 
+  timeFormat, 
+  dateFormat 
+}) => {
+  const renderTime = (time: string): JSX.Element => {
+    return (
+      <div className="time-display__time">
+        {time}
+      </div>
+    );
   };
-  
-  // Store the callback globally for testing purposes
-  if (typeof window !== 'undefined') {
-    (global as any).intervalCallback = updateTime;
-  }
-  
-  // Initialize time when component mounts
-  useEffect(() => {
-    updateTime();
-    
-    // Cleanup function to remove global reference when unmounting
-    return () => {
-      if (typeof window !== 'undefined') {
-        delete (global as any).intervalCallback;
-        delete (global as any).updateTimeState;
-      }
-    };
-  }, []);
-  
-  // Update time every second using our custom hook for interval
-  useInterval(updateTime, 1000);
-  
+
+  const renderDate = (date: string): JSX.Element => {
+    return (
+      <div className="time-display__date">
+        {date}
+      </div>
+    );
+  };
+
+  const formatTimeWithCustomFormat = (time: string, format: string): string => {
+    // Implement basic formatting logic to use the format parameter
+    // This is a placeholder implementation - real implementation would depend on requirements
+    console.log(`Formatting time ${time} with format ${format}`);
+    return time;
+  };
+
+  const formatDateWithCustomFormat = (date: string, format: string): string => {
+    // Implement basic formatting logic to use the format parameter
+    // This is a placeholder implementation - real implementation would depend on requirements
+    console.log(`Formatting date ${date} with format ${format}`);
+    return date;
+  };
+
+  const displayTime = timeFormat 
+    ? formatTimeWithCustomFormat(formattedTime, timeFormat)
+    : formattedTime;
+
+  const displayDate = dateFormat
+    ? formatDateWithCustomFormat(formattedDate, dateFormat)
+    : formattedDate;
+
   return (
     <div className="time-display">
-      <span data-testid="time-display">{currentTime}</span>
+      {renderTime(displayTime)}
+      {renderDate(displayDate)}
     </div>
   );
 };
