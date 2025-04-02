@@ -91,14 +91,12 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 ### 2025-04
 - [MRTMLY-033: Service Worker Utils TypeScript Linting Fix](./logged_memories/MRTMLY-033-service-worker-typescript-linting.md) #typescript #linting #service-worker #testing #type-safety
 - [MRTMLY-034: Time Utils TypeScript Linting Fix](./logged_memories/MRTMLY-034-time-utils-typescript-linting.md) #typescript #linting #testing #time-utils #type-safety
-
-### 2025-04
 - [MRTMLY-035: Progress Bar Testing Failures After CSS Updates](./logged_memories/MRTMLY-035-progress-bar-testing-failures.md) #debugging #testing #css #progress-bar
 
 ### Issue: MRTMLY-035: Progress Bar Testing Failures After CSS Updates
 **Date:** 2025-04-02
 **Tags:** #debugging #testing #css #progress-bar
-**Status:** In Progress
+**Status:** Resolved
 
 #### Initial State
 - Multiple test failures in the ProgressBar component tests:
@@ -112,7 +110,26 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
    - The component is using React's style object format (`backgroundColor`) but tests are looking for CSS format (`background-color`)
    - Jest's toHaveStyle matcher handles these cases differently than standard DOM style attribute inspection
 
-2. Solution approaches
-   - Update test expectations to match the actual rendered output format
-   - Use more flexible test assertions that can handle different formats of the same CSS property
-   - Consider using React Testing Library's more resilient style assertions
+2. Solution approach
+   - Updated test expectations to match the actual rendered output format
+   - Changed assertions to use direct DOM attribute checks instead of Jest's toHaveStyle where appropriate
+   - Used string.contains() checks to make assertions more flexible and resilient to formatting differences
+
+#### Resolution
+- Modified all failing assertions to properly check for:
+  - Width percentages using string containment rather than exact style matching
+  - Background color properties using the correct CSS property format (`background-color:`)
+  - Used direct getAttribute('style') to get the raw style string for comparison
+- All tests now pass and verify the expected functionality of:
+  - Progress bar width calculation
+  - Color transitions at various thresholds
+  - Mobile layout adaptations
+
+#### Lessons Learned
+- React's style system uses camelCase properties (backgroundColor) that render as kebab-case CSS properties (background-color)
+- Jest's toHaveStyle() matcher can be sensitive to exact formatting which made tests brittle
+- When testing styles in React components:
+  - Use direct getAttribute('style') checks for more control over assertions
+  - Assert using string containment for more resilient tests
+  - Be aware of the transformation between React's style object format and actual rendered CSS
+- This approach makes tests more resilient to minor implementation changes while still validating the important functionality
