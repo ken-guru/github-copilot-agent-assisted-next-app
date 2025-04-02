@@ -729,3 +729,59 @@ This change demonstrates:
 - Creating theme-aware components
 - Testing visual elements across themes
 - Implementing proper accessibility features
+
+# Time Utilities Consolidation (2023-10-31)
+
+## Context
+Our application had duplicate implementations of time-related utilities with overlapping functionality:
+- `/src/utils/timeUtils.ts` - Contained a `formatTime` function that formats seconds to "MM:SS" format
+- `/src/utils/testUtils/timeUtils.ts` - Contained a different `formatTime` that formats to "HH:MM:SS" format
+
+This duplication created confusion for developers and potential maintenance issues as both utilities evolved independently.
+
+## Requirements Implemented
+1. Clarified and distinguished the purpose of each time utility module
+   - Clearly documented each function's purpose and format
+   - Renamed functions to explicitly indicate their formatting style
+   - Updated tests to match renamed functions
+   - Maintained backward compatibility where needed
+
+2. Implemented a phased consolidation approach
+   - **Phase 1: Immediate Clarification**
+     - Renamed ambiguous functions to be more specific (e.g., `formatTimeHHMMSS`)
+     - Added comprehensive documentation to each utility function
+     - Updated test files to use the new function names
+     - Provided compatibility exports for existing code
+
+   - **Phase 2: Comprehensive Consolidation**
+     - Created a unified time utility module with format options
+     - Moved test-only utilities to appropriate locations
+     - Updated imports throughout the codebase
+     - Added thorough test coverage for all functions
+
+   - **Phase 3: Maintenance Improvements**
+     - Established guidelines for adding new utility functions
+     - Created a review process for utility additions
+     - Documented best practices for testing utilities
+
+3. Ensured consistent behavior across all time-related functions
+   - Handled edge cases consistently (negative values, zero, large numbers)
+   - Applied the same rounding rules for partial seconds/milliseconds
+   - Documented expected behavior for all functions
+
+## Implementation Details
+- Consolidated time utilities into a single, well-organized module
+- Implemented consistent function naming conventions
+- Added comprehensive JSDoc documentation
+- Created proper type definitions for all functions
+- Ensured backward compatibility through adapter functions
+- Added extensive test coverage for all edge cases
+- Memory log updated with consolidation process (MRTMLY-038)
+
+## Validation Completed
+- ✅ Functions renamed to clearly indicate their purpose and format
+- ✅ All time utility functions thoroughly documented
+- ✅ Tests updated to use correct function names
+- ✅ Backward compatibility maintained where necessary
+- ✅ Documentation updated with utility usage examples
+- ✅ Memory log updated with consolidation process
