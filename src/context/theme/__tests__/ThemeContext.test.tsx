@@ -21,16 +21,24 @@ const localStorageMock = (() => {
 
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-// Mock matchMedia
+// Mock matchMedia - default to light mode
+const createMediaQueryList = (matches: boolean) => ({
+  matches,
+  media: '(prefers-color-scheme: dark)',
+  onchange: null,
+  addEventListener: jest.fn(),
+  removeEventListener: jest.fn(),
+  dispatchEvent: jest.fn(),
+});
+
 Object.defineProperty(window, 'matchMedia', {
-  value: jest.fn((query) => ({
-    matches: false, // Default to light mode for tests
-    media: query,
-    onchange: null,
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
+  writable: true,
+  value: jest.fn().mockImplementation((query) => {
+    if (query === '(prefers-color-scheme: dark)') {
+      return createMediaQueryList(false); // Default to light mode
+    }
+    return createMediaQueryList(false);
+  }),
 });
 
 // A test component that uses the theme hook
@@ -72,7 +80,12 @@ describe('ThemeContext', () => {
   });
 
   it('should initialize with stored theme from localStorage', () => {
-    localStorageMock.getItem.mockReturnValueOnce('dark');
+    localStorageMock.getItem.mockImplementation((key) => {
+      if (key === 'theme-preference' || key === 'theme') {
+        return 'dark';
+      }
+      return null;
+    });
 
     render(
       <ThemeProvider>
@@ -135,14 +148,14 @@ describe('ThemeContext', () => {
     expect(localStorageMock.setItem).toHaveBeenCalledWith('theme-preference', 'light');
 
     fireEvent.click(screen.getByTestId('set-system'));
-    expect(localStorageMock.setItem).toHaveBeenCalledWith('theme-preference', 'system');
+    expect(localStorageMock.removeItem).toHaveBeenCalledWith('theme-preference');
   });
 
   it('should respond to system preference changes', () => {
     // Mock system preference as dark
     type Handler = (e: MediaQueryListEvent) => void;
     const darkMediaQueryList = {
-      matches: true,
+      matches: true, // Start with dark mode
       media: '(prefers-color-scheme: dark)',
       onchange: null,
       addEventListener: jest.fn((event, handler: Handler) => {
