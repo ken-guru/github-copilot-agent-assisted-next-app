@@ -9,30 +9,21 @@
   - `/src/utils/testUtils/timeUtils.ts` - Contains a different `formatTime` that formats to "HH:MM:SS" format
 - This duplication created confusion for developers and potential maintenance issues
 
-#### Debug Process
-1. Investigated circular reference issues
-   - Found that renaming the imported formatTime from main utils prevented conflicts
-   - Resolved maximum call stack size exceeded errors
-   - Used import aliasing to maintain clear code structure
+#### Implementation
+1. Created a unified flexible `formatTime` function with options
+   - Added TimeFormatOptions interface with includeHours and padWithZeros options
+   - Implemented both MM:SS and HH:MM:SS formatting in a single function
+   - Added proper JSDoc documentation with examples
 
-2. Consolidated time utility functions
-   - Created a unified formatTime function with options parameter
-   - Added support for both MM:SS and HH:MM:SS formats
-   - Implemented consistent handling of negative values and zero
-   - Added thorough JSDoc documentation with examples
+2. Fixed circular reference issues
+   - Renamed imported formatTime to mainFormatTime in testUtils
+   - Updated test utilities to use the main implementation
+   - Added appropriate deprecation notices
+   - Fixed the formatTimeFromMs function to always include hours in testUtils
 
 3. Fixed padding inconsistencies
-   - Discovered tests expected seconds to always be padded with zeros
-   - Modified formatTime to handle padWithZeros option correctly
-   - Ensured seconds are always padded regardless of padWithZeros setting for minutes/hours
-
-#### Resolution
-- Final solution implemented:
-  - Unified time utility module with configurable formatting options
-  - Clear distinction between production and test-specific utilities
-  - Comprehensive test coverage for all time utility functions
-  - Backward compatibility maintained through deprecated exports
-  - Fixed circular reference and stack overflow issues
+   - Ensured seconds are always padded with zeros for consistency
+   - Modified formatTime to handle padWithZeros option correctly while keeping seconds padded
 
 #### Lessons Learned
 - Circular references can cause runtime stack overflow errors that might not be caught by TypeScript
@@ -40,10 +31,3 @@
 - Including comprehensive test coverage helps catch inconsistencies in behavior
 - Keeping backward compatibility reduces the risk during refactoring
 - Using options objects makes utilities more flexible and future-proof
-
-#### Guidelines for Future Time Utility Functions
-1. Use options objects for flexible configuration instead of multiple similar functions
-2. Include thorough JSDoc documentation with examples for each format option
-3. Consider backward compatibility when modifying existing functions
-4. Add explicit tests for each behavior variation and edge case
-5. Prefer a single source of truth for related functionality
