@@ -44,9 +44,46 @@
 - Consider creating more stringent tests that deliberately stress the system
 - Review the MEMORY_LOG.md and IMPLEMENTED_CHANGES.md for any previous fixes that might have resolved these issues
 
+#### Additional Issues Identified
+After reviewing the Timeline component implementation, several potential edge cases and issues were identified that our current tests might not be capturing:
+
+1. **Long Break Duration Formatting**:
+   - Current tests verify short breaks (seconds to minutes), but not extended breaks (hours)
+   - The Timeline component uses `formatTimeHuman()` which may format differently above certain thresholds
+   - Need tests for breaks spanning hours to verify correct formatting
+
+2. **Break Visualization with Theme Changes**:
+   - Timeline has theme-aware rendering but current tests don't verify break styling changes when themes switch
+   - Break styles use CSS variables like `var(--background-muted)` and `var(--foreground-muted)` which change with themes
+   - Theme transitions during ongoing breaks aren't tested
+
+3. **Multiple Simultaneous Break Updates**:
+   - Current tests don't verify behavior when multiple ongoing breaks are updating simultaneously
+   - Could lead to potential performance issues or timer conflicts
+
+4. **Component Unmounting During Break**:
+   - No tests for proper cleanup when component unmounts during an active break update
+   - Risk of memory leaks or errors from state updates after unmounting
+
+5. **Break Calculation Edge Cases**:
+   - The `calculateTimeSpans()` utility has complex logic for ongoing breaks that isn't fully tested
+   - Edge cases with very short activities and long breaks need more coverage
+   - Zero-duration breaks aren't explicitly tested
+
+6. **Break Visualization in Overtime**:
+   - Current tests don't verify how breaks are visualized when the timeline is in overtime state
+   - Break heights might be incorrectly calculated when `effectiveDuration` differs from `totalDuration`
+
+7. **Breaks Near Planned Duration Boundary**:
+   - No tests for breaks that cross the boundary between normal time and overtime
+
 #### Lessons Learned
 - Tests passing doesn't always mean the test is properly capturing the bug scenario
 - Important to understand the specific bug manifestations before writing tests
 - Time-based testing requires careful control of the JavaScript timer
 - There may be a discrepancy between documented issues and actual application state
 - Documentation needs to be kept in sync with implementation changes
+- Some edge cases require specialized test scenarios that might not be obvious from basic use cases
+- Working with time-based components requires testing at multiple timescales (seconds to hours)
+- Component behavior at boundary conditions (like crossing into overtime) deserves focused testing
+- Visual theme-dependent elements need specific tests for each theme state
