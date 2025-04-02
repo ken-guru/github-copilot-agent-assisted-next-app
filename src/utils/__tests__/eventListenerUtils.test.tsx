@@ -269,8 +269,9 @@ describe('Event Listener Utilities', () => {
       const originalSetTimeout = window.setTimeout;
       const originalClearTimeout = window.clearTimeout;
       
-      let storedCallback: Function | null = null;
-      window.setTimeout = jest.fn().mockImplementation((callback, delay) => {
+      let storedCallback: () => void = () => {};
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      window.setTimeout = jest.fn().mockImplementation((callback: () => void, timeoutDelay: number) => {
         // Store the callback so we can call it manually in our test
         storedCallback = callback;
         return 123;
@@ -300,11 +301,9 @@ describe('Event Listener Utilities', () => {
       expect(callback).not.toHaveBeenCalled();
       
       // Manually trigger the stored timeout callback
-      if (storedCallback) {
-        act(() => {
-          storedCallback();
-        });
-      }
+      act(() => {
+        storedCallback();
+      });
       
       // Now the callback should have been called
       expect(callback).toHaveBeenCalledTimes(1);

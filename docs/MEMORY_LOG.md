@@ -181,3 +181,50 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
   2. The component should be renamed for consistency
   3. A new component should be created to fulfill the test expectations
 - We chose option 3 in this case to maintain backward compatibility while ensuring test coverage
+
+### Issue: EventListenerUtils Test TypeScript Linting Issues
+**Date:** 2023-12-05
+**Tags:** #debugging #tests #typescript #linting
+**Status:** Resolved
+
+#### Initial State
+- Two linting issues in eventListenerUtils.test.tsx:
+  1. Line 272:27 - Using generic `Function` type instead of more specific function signature
+  2. Line 273:67 - Unused variable `delay` in function implementation
+
+#### Debug Process
+1. Initial investigation
+   - The `Function` type is too generic and doesn't provide proper type safety
+   - The `delay` parameter is defined in the debounce function but not used in its implementation
+   - These issues don't affect functionality but violate TypeScript best practices and linting rules
+
+2. Solution implementation
+   - Replaced generic `Function` type with properly typed function signature using generics:
+     ```typescript
+     const debounce = <T extends (...args: any[]) => void>(
+       func: T,
+       delay: number
+     ): ((...args: Parameters<T>) => void) => {
+       // implementation
+     }
+     ```
+   - Added code to properly use the `delay` parameter in the implementation:
+     ```typescript
+     timeoutId = setTimeout(() => {
+       func(...args);
+     }, delay);
+     ```
+
+#### Resolution
+- Fixed both linting issues while maintaining the functionality of the test code
+- The new implementation is type-safe as it properly:
+  - Preserves the function signature of the input function
+  - Uses TypeScript's `Parameters<T>` utility type to ensure parameter types match
+  - Returns a properly typed function with the same parameters
+  - Makes proper use of the `delay` parameter in the implementation
+
+#### Lessons Learned
+- Avoid using the generic `Function` type in TypeScript as it bypasses type safety
+- Use TypeScript generics and utility types to create more specific function types
+- Always use all parameters defined in a function signature, or remove unused ones
+- TypeScript linting rules help maintain code quality by enforcing type safety best practices

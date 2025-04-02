@@ -30,6 +30,8 @@ describe('Service Worker Utilities', () => {
       expect(mockServiceWorkerContainer).toBeDefined();
       expect(mockServiceWorkerContainer.getRegistration).toBeDefined();
       expect(mockServiceWorkerContainer.ready).toBeInstanceOf(Promise);
+      expect(mockRegistration).toBeDefined();
+      expect(mockRegistration.active).toBeDefined();
       
       cleanup();
     });
