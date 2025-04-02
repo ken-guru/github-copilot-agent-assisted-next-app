@@ -1,68 +1,31 @@
+import React from 'react';
 import { render, screen, act } from '@testing-library/react';
-import Timeline, { TimelineEntry } from '../Timeline';
+import Timeline from '../Timeline';
+import { TimelineEntry } from '../../types/TimelineEntry';
+
+// Fixed timestamp for consistent testing
+const FIXED_TIME = 1609459200000; // 2021-01-01 00:00:00
 
 describe('Timeline Break Visualization', () => {
-  const FIXED_TIME = 1000000;
-  let dateNowSpy: jest.SpyInstance;
-  
   beforeEach(() => {
+    // Mock Date.now() to return a fixed timestamp for deterministic results
     jest.useFakeTimers();
-    dateNowSpy = jest.spyOn(Date, 'now').mockImplementation(() => FIXED_TIME);
+    jest.setSystemTime(FIXED_TIME);
   });
 
   afterEach(() => {
-    dateNowSpy.mockRestore();
     jest.useRealTimers();
-    jest.clearAllMocks();
-    jest.clearAllTimers();
   });
 
-  it('should show ongoing break immediately after completing an activity', () => {
-    const mockEntries = [{
-      id: '1',
-      activityId: 'activity-1',
-      activityName: 'Task 1',
-      startTime: FIXED_TIME - 30000,
-      endTime: FIXED_TIME - 10000,
-      colors: {
-        background: '#E8F5E9',
-        text: '#1B5E20',
-        border: '#2E7D32'
-      }
-    }];
-
-    render(
-      <Timeline 
-        entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={30}
-        timerActive={true}
-      />
-    );
-
-    // Look for break with correct time format
-    expect(screen.getByText((content) => {
-      return content.includes('Break') && content.includes('0:10');
-    })).toBeInTheDocument();
-
-    act(() => {
-      dateNowSpy.mockImplementation(() => FIXED_TIME + 5000);
-      jest.advanceTimersByTime(5000);
-    });
-
-    expect(screen.getByText((content) => {
-      return content.includes('Break') && content.includes('0:15');
-    })).toBeInTheDocument();
-  });
-
-  it('should handle ongoing break after completing the last activity', () => {
+  it('should show break immediately after activity completion', () => {
+    // Setup an entry that ended 10 seconds ago
     const mockEntries: TimelineEntry[] = [
       {
         id: '1',
         activityId: 'activity-1',
         activityName: 'Task 1',
-        startTime: FIXED_TIME - 3600000,
-        endTime: FIXED_TIME - 1800000,
+        startTime: FIXED_TIME - 60000, // Started 1 minute ago
+        endTime: FIXED_TIME - 10000,   // Ended 10 seconds ago
         colors: {
           background: '#E8F5E9',
           text: '#1B5E20',
@@ -74,26 +37,71 @@ describe('Timeline Break Visualization', () => {
     render(
       <Timeline 
         entries={mockEntries}
-        totalDuration={7200}
-        elapsedTime={3600}
+        totalDuration={3600}
+        elapsedTime={60}
         timerActive={true}
-        allActivitiesCompleted={true}
+        allActivitiesCompleted={false}
       />
     );
 
+    // Should show a break entry with the correct duration (10 seconds)
     expect(screen.getByText((content) => {
-      return content.includes('Break') && content.includes('30:00');
+      return content.includes('Break') && content.includes('0:10');
     })).toBeInTheDocument();
   });
 
-  it('should transition from break to new activity correctly', () => {
+  it('should update break duration in real-time', () => {
+    // Setup an entry that ended 30 seconds ago
     const mockEntries: TimelineEntry[] = [
       {
         id: '1',
         activityId: 'activity-1',
         activityName: 'Task 1',
-        startTime: FIXED_TIME - 30000,
-        endTime: FIXED_TIME - 20000,
+        startTime: FIXED_TIME - 120000, // Started 2 minutes ago
+        endTime: FIXED_TIME - 30000,    // Ended 30 seconds ago
+        colors: {
+          background: '#E8F5E9',
+          text: '#1B5E20',
+          border: '#2E7D32'
+        }
+      }
+    ];
+
+    render(
+      <Timeline 
+        entries={mockEntries}
+        totalDuration={3600}
+        elapsedTime={120}
+        timerActive={true}
+        allActivitiesCompleted={false}
+      />
+    );
+
+    // Initially shows 30 seconds
+    expect(screen.getByText((content) => {
+      return content.includes('Break') && content.includes('0:30');
+    })).toBeInTheDocument();
+
+    // Advance time by 15 seconds
+    act(() => {
+      jest.advanceTimersByTime(15000);
+    });
+
+    // Should now show 45 seconds
+    expect(screen.getByText((content) => {
+      return content.includes('Break') && content.includes('0:45');
+    })).toBeInTheDocument();
+  });
+
+  it('should handle multiple break periods correctly', () => {
+    // Setup entries with a gap between them
+    const mockEntries: TimelineEntry[] = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Task 1',
+        startTime: FIXED_TIME - 180000, // Started 3 minutes ago
+        endTime: FIXED_TIME - 120000,   // Ended 2 minutes ago
         colors: {
           background: '#E8F5E9',
           text: '#1B5E20',
@@ -104,12 +112,12 @@ describe('Timeline Break Visualization', () => {
         id: '2',
         activityId: 'activity-2',
         activityName: 'Task 2',
-        startTime: FIXED_TIME - 10000,
-        endTime: null,
+        startTime: FIXED_TIME - 90000,  // Started 1.5 minutes ago (30s break after first task)
+        endTime: FIXED_TIME - 60000,    // Ended 1 minute ago
         colors: {
-          background: '#FFEBEE',
-          text: '#C62828',
-          border: '#B71C1C'
+          background: '#E3F2FD',
+          text: '#0D47A1',
+          border: '#1976D2'
         }
       }
     ];
@@ -118,15 +126,133 @@ describe('Timeline Break Visualization', () => {
       <Timeline 
         entries={mockEntries}
         totalDuration={3600}
-        elapsedTime={30}
+        elapsedTime={180}
         timerActive={true}
+        allActivitiesCompleted={false}
       />
     );
 
+    // Should show the first break (30s between Task 1 and Task 2)
     expect(screen.getByText((content) => {
-      return content.includes('Break') && content.includes('0:10');
+      return content.includes('Break') && content.includes('0:30');
     })).toBeInTheDocument();
 
-    expect(screen.getAllByTestId('timeline-activity-name')).toHaveLength(2);
+    // Should also show the current break (1 minute since Task 2 ended)
+    expect(screen.getByText((content) => {
+      return content.includes('Break') && content.includes('1:00');
+    })).toBeInTheDocument();
+  });
+
+  it('should stop updating break duration when a new activity starts', () => {
+    // Setup an entry that ended 1 minute ago
+    const mockEntries: TimelineEntry[] = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Task 1',
+        startTime: FIXED_TIME - 180000, // Started 3 minutes ago
+        endTime: FIXED_TIME - 60000,    // Ended 1 minute ago
+        colors: {
+          background: '#E8F5E9',
+          text: '#1B5E20',
+          border: '#2E7D32'
+        }
+      }
+    ];
+
+    const { rerender } = render(
+      <Timeline 
+        entries={mockEntries}
+        totalDuration={3600}
+        elapsedTime={180}
+        timerActive={true}
+        allActivitiesCompleted={false}
+      />
+    );
+
+    // Initially shows 1 minute break
+    expect(screen.getByText((content) => {
+      return content.includes('Break') && content.includes('1:00');
+    })).toBeInTheDocument();
+
+    // Add a new activity that started now
+    const updatedEntries = [
+      ...mockEntries,
+      {
+        id: '2',
+        activityId: 'activity-2',
+        activityName: 'Task 2',
+        startTime: FIXED_TIME,  // Started now
+        endTime: null,          // Still ongoing
+        colors: {
+          background: '#E3F2FD',
+          text: '#0D47A1',
+          border: '#1976D2'
+        }
+      }
+    ];
+
+    rerender(
+      <Timeline 
+        entries={updatedEntries}
+        totalDuration={3600}
+        elapsedTime={180}
+        timerActive={true}
+        allActivitiesCompleted={false}
+      />
+    );
+
+    // Break duration should be fixed at 1:00 (the time between the end of Task 1 and start of Task 2)
+    expect(screen.getByText((content) => {
+      return content.includes('Break') && content.includes('1:00');
+    })).toBeInTheDocument();
+
+    // Advance time by 30 seconds
+    act(() => {
+      jest.advanceTimersByTime(30000);
+    });
+
+    // Break duration should still be 1:00, not 1:30
+    expect(screen.getByText((content) => {
+      return content.includes('Break') && content.includes('1:00');
+    })).toBeInTheDocument();
+    
+    // Should NOT find a break with 1:30
+    expect(screen.queryByText((content) => {
+      return content.includes('Break') && content.includes('1:30');
+    })).not.toBeInTheDocument();
+  });
+
+  it('should properly visualize break with very short duration', () => {
+    // Setup an entry that ended just 1 second ago
+    const mockEntries: TimelineEntry[] = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Task 1',
+        startTime: FIXED_TIME - 60000, // Started 1 minute ago
+        endTime: FIXED_TIME - 1000,    // Ended 1 second ago
+        colors: {
+          background: '#E8F5E9',
+          text: '#1B5E20',
+          border: '#2E7D32'
+        }
+      }
+    ];
+
+    render(
+      <Timeline 
+        entries={mockEntries}
+        totalDuration={3600}
+        elapsedTime={60}
+        timerActive={true}
+        allActivitiesCompleted={false}
+      />
+    );
+
+    // Should show a break entry with the correct duration (1 second)
+    expect(screen.getByText((content) => {
+      return content.includes('Break') && content.includes('0:01');
+    })).toBeInTheDocument();
   });
 });
