@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import Timeline from '../Timeline';
-import { TimelineEntry } from '../../types/TimelineEntry';
+import { TimelineEntry } from '../../types';
 
 // Fixed timestamp for consistent testing
 const FIXED_TIME = 1609459200000; // 2021-01-01 00:00:00
