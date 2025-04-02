@@ -31,11 +31,7 @@ The project uses a documentation system for tracking changes:
    - Chronicles completed implementations
    - Includes timestamps and implementation details
    - Serves as reference for similar future changes
-3. docs/BACKLOG_CHANGES.md:
-   - Contains features temporarily set aside for prioritization
-   - Follows the same detailed specification format
-   - Used as a repository for future implementation ideas
-4. docs/MEMORY_LOG.md:
+3. docs/MEMORY_LOG.md:
    - Tracks solutions attempted by AI for application issues
    - Prevents repetitive solution attempts 
    - Maintains a history of approaches with outcomes and tags
@@ -98,8 +94,7 @@ src/
       └── __tests__/  # Utility tests
 docs/                 # Project documentation
   ├── PLANNED_CHANGES.md    # Upcoming changes
-  ├── IMPLEMENTED_CHANGES.md # Completed changes
-  └── BACKLOG_CHANGES.md    # Deprioritized changes
+  └── IMPLEMENTED_CHANGES.md # Completed changes
 ```
 
 ### Design System Specifications
