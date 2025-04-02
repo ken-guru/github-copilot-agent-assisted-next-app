@@ -138,3 +138,46 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
   - Ensure events propagate to all relevant handlers
   - Consider the different ways components might register for the same event
   - Test both the mock utility itself and the components using it
+
+### Issue: TimelineDisplay Test Failures Debugging Session
+**Date:** 2023-12-05
+**Tags:** #debugging #tests #components
+**Status:** Resolved
+
+#### Initial State
+- All TimelineDisplay tests are failing with the same error: `TypeError: Cannot read properties of undefined (reading 'length')`
+- Error occurs in Timeline.tsx at line 48: `const hasEntries = entries.length > 0;`
+- Tests are attempting to use a TimelineDisplay component but the implementation seems to be a Timeline component
+
+#### Debug Process
+1. Initial investigation
+   - The tests are importing and trying to render a `TimelineDisplay` component
+   - The actual component being used in the codebase appears to be named `Timeline`
+   - There seems to be a name mismatch between the test file and the component implementation
+   - The component props in the tests don't match what the Timeline component expects
+
+2. Solution implementation
+   - Created a new TimelineDisplay component that matches the interface expected by the tests
+   - The new component:
+     - Accepts `events` array with `id`, `title`, `date`, and `description` properties
+     - Supports sorting in ascending or descending order via `displayOrder` prop
+     - Allows hiding descriptions via the `showDescriptions` prop
+     - Handles the empty events array case with an appropriate message
+     - Includes proper `data-testid` attributes for test selection
+
+#### Resolution
+- Created a dedicated TimelineDisplay component that aligns with test expectations
+- The component properly implements all the expected features:
+  - Displaying events in chronological order
+  - Supporting ascending/descending sort order
+  - Conditional rendering of descriptions
+  - Empty state handling
+- This approach maintains separation of concerns, keeping the Timeline component intact for its existing use cases while providing a properly tested TimelineDisplay component
+
+#### Lessons Learned
+- Component and test naming should be consistent to avoid confusion
+- When finding mismatches between tests and components, consider whether:
+  1. The test should be updated to match the existing component
+  2. The component should be renamed for consistency
+  3. A new component should be created to fulfill the test expectations
+- We chose option 3 in this case to maintain backward compatibility while ensuring test coverage
