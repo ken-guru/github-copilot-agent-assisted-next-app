@@ -86,7 +86,10 @@ describe('ProgressBar Component', () => {
     
     const progressFill = container.querySelector('.progressFill');
     expect(progressFill).toBeInTheDocument();
-    expect(progressFill).toHaveStyle('width: 50%');
+    
+    // Updated to check for style attribute containing width: 50%
+    const style = progressFill?.getAttribute('style');
+    expect(style).toContain('width: 50%');
   });
 
   it('should have background color style when less than 50% of time is elapsed', () => {
@@ -100,7 +103,9 @@ describe('ProgressBar Component', () => {
     );
     
     const progressFill = container.querySelector('.progressFill');
-    expect(progressFill).toHaveAttribute('style', expect.stringContaining('backgroundColor:'));
+    // Updated to check for style attribute containing background-color
+    const style = progressFill?.getAttribute('style');
+    expect(style).toContain('background-color:');
   });
 
   it('should have background color style when between 50% and 75% of time is elapsed', () => {
@@ -114,7 +119,9 @@ describe('ProgressBar Component', () => {
     );
     
     const progressFill = container.querySelector('.progressFill');
-    expect(progressFill).toHaveAttribute('style', expect.stringContaining('backgroundColor:'));
+    // Updated to check for style attribute containing background-color
+    const style = progressFill?.getAttribute('style');
+    expect(style).toContain('background-color:');
   });
 
   it('should have background color style when between 75% and 100% of time is elapsed', () => {
@@ -128,7 +135,9 @@ describe('ProgressBar Component', () => {
     );
     
     const progressFill = container.querySelector('.progressFill');
-    expect(progressFill).toHaveAttribute('style', expect.stringContaining('backgroundColor:'));
+    // Updated to check for style attribute containing background-color
+    const style = progressFill?.getAttribute('style');
+    expect(style).toContain('background-color:');
   });
 
   it('should have red color when 100% or more of time is elapsed', () => {
@@ -142,7 +151,9 @@ describe('ProgressBar Component', () => {
     );
     
     const progressFill = container.querySelector('.progressFill');
-    expect(progressFill).toHaveAttribute('style', expect.stringContaining('backgroundColor'));
+    // Updated to check for style attribute containing background-color
+    const style = progressFill?.getAttribute('style');
+    expect(style).toContain('background-color:');
     // We can't test the exact color but we can verify the style attribute exists
   });
 
@@ -157,7 +168,9 @@ describe('ProgressBar Component', () => {
     );
     
     const progressFill = container.querySelector('.progressFill');
-    expect(progressFill).toHaveStyle('width: 100%');
+    // Updated to check for style attribute containing width: 100%
+    const style = progressFill?.getAttribute('style');
+    expect(style).toContain('width: 100%');
   });
   
   it('should have appropriate aria-valuenow attribute for accessibility', () => {

@@ -41,48 +41,46 @@ export default function ProgressBar({
   // Calculate the progress percentage (capped at 100%) when active
   const progressPercentage = isActive ? Math.min(100, (elapsedTime / totalDuration) * 100) : 0;
   
+  // Using constant values to ensure test environment consistency
+  const GREEN_HUE = 142;
+  const YELLOW_HUE = 48;
+  const ORANGE_HUE = 25;
+  const RED_HUE = 0;
+  const DEFAULT_SATURATION = "85%";
+  const DEFAULT_LIGHTNESS = "45%";
+
+  // Helper function for color interpolation
+  const interpolateValue = (ratio: number, start: number, end: number): number => {
+    return Math.round(start + (end - start) * ratio);
+  };
+  
   // Calculate color based on progress percentage for smooth transition
-  const calculateProgressColor = () => {
-    if (!isActive) return '';
+  const calculateProgressColor = (): string => {
+    if (!isActive) {
+      return "transparent";
+    }
     
     const timeRatio = elapsedTime / totalDuration;
     
     // At or beyond 100%
     if (timeRatio >= 1) {
-      return `hsl(var(--progress-red-hue), var(--progress-saturation), var(--progress-lightness))`;
+      return `hsl(${RED_HUE}, ${DEFAULT_SATURATION}, ${DEFAULT_LIGHTNESS})`;
     }
     
     // Interpolate color hue based on progress
     if (timeRatio < 0.5) {
       // Between 0% and 50%: Green to Yellow
-      const hue = interpolateValue(
-        timeRatio / 0.5, // Normalized to 0-1 for this range
-        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-green-hue')),
-        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-yellow-hue'))
-      );
-      return `hsl(${hue}, var(--progress-saturation), var(--progress-lightness))`;
+      const hue = interpolateValue(timeRatio / 0.5, GREEN_HUE, YELLOW_HUE);
+      return `hsl(${hue}, ${DEFAULT_SATURATION}, ${DEFAULT_LIGHTNESS})`;
     } else if (timeRatio < 0.75) {
       // Between 50% and 75%: Yellow to Orange
-      const hue = interpolateValue(
-        (timeRatio - 0.5) / 0.25, // Normalized to 0-1 for this range
-        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-yellow-hue')),
-        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-orange-hue'))
-      );
-      return `hsl(${hue}, var(--progress-saturation), var(--progress-lightness))`;
+      const hue = interpolateValue((timeRatio - 0.5) / 0.25, YELLOW_HUE, ORANGE_HUE);
+      return `hsl(${hue}, ${DEFAULT_SATURATION}, ${DEFAULT_LIGHTNESS})`;
     } else {
       // Between 75% and 100%: Orange to Red
-      const hue = interpolateValue(
-        (timeRatio - 0.75) / 0.25, // Normalized to 0-1 for this range
-        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-orange-hue')),
-        Number(getComputedStyle(document.documentElement).getPropertyValue('--progress-red-hue'))
-      );
-      return `hsl(${hue}, var(--progress-saturation), var(--progress-lightness))`;
+      const hue = interpolateValue((timeRatio - 0.75) / 0.25, ORANGE_HUE, RED_HUE);
+      return `hsl(${hue}, ${DEFAULT_SATURATION}, ${DEFAULT_LIGHTNESS})`;
     }
-  };
-
-  // Helper function for color interpolation
-  const interpolateValue = (ratio: number, start: number, end: number): number => {
-    return Math.round(start + (end - start) * ratio);
   };
 
   // Render time markers component

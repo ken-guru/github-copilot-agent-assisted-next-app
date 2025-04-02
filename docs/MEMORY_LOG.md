@@ -92,143 +92,27 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-033: Service Worker Utils TypeScript Linting Fix](./logged_memories/MRTMLY-033-service-worker-typescript-linting.md) #typescript #linting #service-worker #testing #type-safety
 - [MRTMLY-034: Time Utils TypeScript Linting Fix](./logged_memories/MRTMLY-034-time-utils-typescript-linting.md) #typescript #linting #testing #time-utils #type-safety
 
-### Issue: TimeDisplay and ServiceWorkerUtils Test Failures Debugging Session
-**Date:** 2023-12-05
-**Tags:** #debugging #tests #time-formatting #service-worker
-**Status:** Resolved
+### 2025-04
+- [MRTMLY-035: Progress Bar Testing Failures After CSS Updates](./logged_memories/MRTMLY-035-progress-bar-testing-failures.md) #debugging #testing #css #progress-bar
+
+### Issue: MRTMLY-035: Progress Bar Testing Failures After CSS Updates
+**Date:** 2025-04-02
+**Tags:** #debugging #testing #css #progress-bar
+**Status:** In Progress
 
 #### Initial State
-- Two remaining test failures after previous fixes:
-  1. TimeDisplay test - `should update time when date changes` - Time not updating correctly
-  2. ServiceWorkerUtils test - `should simulate service worker update cycle` - Event handler not being called
-
-#### Debug Process
-1. TimeDisplay test investigation
-   - The issue appears to be that although we've exposed the interval callback globally, the test isn't correctly triggering it
-   - Current approach uses `(global as any).intervalCallback`, but this may not be properly updating the component state
-   - The test expects to see "14:31:50" but is still showing "14:30:45"
-   - We need to verify that the callback is properly registered and called in the test
-
-2. ServiceWorkerUtils test investigation
-   - The `updateHandler` mock function is not registering as called when `simulateUpdate()` is executed
-   - In our `simulateUpdate` function, we're triggering event listeners from the listeners Map, but might not be correctly handling the mock registration's addEventListener
-   - Need to ensure that when `mockRegistration.addEventListener('updatefound', updateHandler)` is called, this handler is properly stored and triggered
-
-#### Resolution
-- For TimeDisplay test:
-  - Instead of trying to call the updateTime function indirectly, we exposed the component's state setter directly
-  - Added `(global as any).updateTimeState = setCurrentTime` to give tests direct control over the displayed time
-  - Modified test to use this state setter directly: `(global as any).updateTimeState('14:31:50')`
-  - Added proper cleanup to prevent test interference
-  - This approach is more reliable as it bypasses the Date mock issues and directly controls component state
-
-- For ServiceWorkerUtils test:
-  - Created separate Maps for global and registration event listeners:
-    - `globalListeners` for events on `navigator.serviceWorker`
-    - `registrationListeners` for events on the service worker registration
-  - Updated `simulateUpdate()` to trigger both types of event listeners:
-    - Registration-specific "updatefound" listeners
-    - Global "updatefound" listeners
-  - This ensures that event handlers registered via `mockRegistration.addEventListener('updatefound', handler)` are properly called
-
-#### Lessons Learned
-- When testing React components with time-based functionality:
-  - Consider exposing direct state setters for precise test control
-  - Wrap state updates in act() to avoid React test warnings
-  - Be thorough in cleaning up global mocks between tests
-
-- For custom event systems in test utilities:
-  - Maintain separate listener collections for different objects
-  - Ensure events propagate to all relevant handlers
-  - Consider the different ways components might register for the same event
-  - Test both the mock utility itself and the components using it
-
-### Issue: TimelineDisplay Test Failures Debugging Session
-**Date:** 2023-12-05
-**Tags:** #debugging #tests #components
-**Status:** Resolved
-
-#### Initial State
-- All TimelineDisplay tests are failing with the same error: `TypeError: Cannot read properties of undefined (reading 'length')`
-- Error occurs in Timeline.tsx at line 48: `const hasEntries = entries.length > 0;`
-- Tests are attempting to use a TimelineDisplay component but the implementation seems to be a Timeline component
+- Multiple test failures in the ProgressBar component tests:
+  1. Tests expecting certain style properties aren't finding them in the expected format
+  2. Tests checking for `backgroundColor:` are finding `background-color:` instead (CSS property naming format)
+  3. Test expect exact formatting like `width: 50%` but get string differences
 
 #### Debug Process
 1. Initial investigation
-   - The tests are importing and trying to render a `TimelineDisplay` component
-   - The actual component being used in the codebase appears to be named `Timeline`
-   - There seems to be a name mismatch between the test file and the component implementation
-   - The component props in the tests don't match what the Timeline component expects
+   - Looking at test failures and component code, the issue seems to be related to CSS property name differences
+   - The component is using React's style object format (`backgroundColor`) but tests are looking for CSS format (`background-color`)
+   - Jest's toHaveStyle matcher handles these cases differently than standard DOM style attribute inspection
 
-2. Solution implementation
-   - Created a new TimelineDisplay component that matches the interface expected by the tests
-   - The new component:
-     - Accepts `events` array with `id`, `title`, `date`, and `description` properties
-     - Supports sorting in ascending or descending order via `displayOrder` prop
-     - Allows hiding descriptions via the `showDescriptions` prop
-     - Handles the empty events array case with an appropriate message
-     - Includes proper `data-testid` attributes for test selection
-
-#### Resolution
-- Created a dedicated TimelineDisplay component that aligns with test expectations
-- The component properly implements all the expected features:
-  - Displaying events in chronological order
-  - Supporting ascending/descending sort order
-  - Conditional rendering of descriptions
-  - Empty state handling
-- This approach maintains separation of concerns, keeping the Timeline component intact for its existing use cases while providing a properly tested TimelineDisplay component
-
-#### Lessons Learned
-- Component and test naming should be consistent to avoid confusion
-- When finding mismatches between tests and components, consider whether:
-  1. The test should be updated to match the existing component
-  2. The component should be renamed for consistency
-  3. A new component should be created to fulfill the test expectations
-- We chose option 3 in this case to maintain backward compatibility while ensuring test coverage
-
-### Issue: EventListenerUtils Test TypeScript Linting Issues
-**Date:** 2023-12-05
-**Tags:** #debugging #tests #typescript #linting
-**Status:** Resolved
-
-#### Initial State
-- Two linting issues in eventListenerUtils.test.tsx:
-  1. Line 272:27 - Using generic `Function` type instead of more specific function signature
-  2. Line 273:67 - Unused variable `delay` in function implementation
-
-#### Debug Process
-1. Initial investigation
-   - The `Function` type is too generic and doesn't provide proper type safety
-   - The `delay` parameter is defined in the debounce function but not used in its implementation
-   - These issues don't affect functionality but violate TypeScript best practices and linting rules
-
-2. Solution implementation
-   - Replaced generic `Function` type with properly typed function signature using generics:
-     ```typescript
-     const debounce = <T extends (...args: any[]) => void>(
-       func: T,
-       delay: number
-     ): ((...args: Parameters<T>) => void) => {
-       // implementation
-     }
-     ```
-   - Added code to properly use the `delay` parameter in the implementation:
-     ```typescript
-     timeoutId = setTimeout(() => {
-       func(...args);
-     }, delay);
-     ```
-
-#### Resolution
-- Fixed both linting issues while maintaining the functionality of the test code
-- The new implementation is type-safe as it properly:
-  - Preserves the function signature of the input function
-  - Uses TypeScript's `Parameters<T>` utility type to ensure parameter types match
-  - Returns a properly typed function with the same parameters
-  - Makes proper use of the `delay` parameter in the implementation
-
-#### Lessons Learned
-- Avoid using the generic `Function` type in TypeScript as it bypasses type safety
-- Use TypeScript generics and utility types to create more specific function types
-- Always use all parameters defined in a function signature, or remove unused ones
-- TypeScript linting rules help maintain code quality by enforcing type safety best practices
+2. Solution approaches
+   - Update test expectations to match the actual rendered output format
+   - Use more flexible test assertions that can handle different formats of the same CSS property
+   - Consider using React Testing Library's more resilient style assertions
