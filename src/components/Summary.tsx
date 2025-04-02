@@ -318,7 +318,7 @@ export default function Summary({
       {activityTimes.length > 0 && (
         <div className={styles.activityList}>
           <h3 className={styles.activityListHeading}>Time Spent per Activity</h3>
-          {activityTimes.map((activity, index) => {
+          {activityTimes.map((activity) => {
             // Get theme-appropriate colors
             const themeColors = activity.colors ? 
               getThemeAppropriateColor(activity.colors) || activity.colors : 
