@@ -47,16 +47,10 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 ```
 
 ## Memory Index
-
-### 2024-01
 - [MRTMLY-001: Progress Bar Mobile Layout Enhancement](./logged_memories/MRTMLY-001-progress-bar-mobile-layout.md) #mobile #layout #progress-bar #optimization #responsive-design
-
-### 2024-02
 - [MRTMLY-002: Vercel Deployment Verification Requirements](./logged_memories/MRTMLY-002-vercel-deployment-verification.md) #deployment #vercel #type-checking #quality-assurance
 - [MRTMLY-003: Summary Component Test Suite Refactor](./logged_memories/MRTMLY-003-summary-test-refactor.md) #testing #refactoring #edge-cases #performance
 - [MRTMLY-004: Summary Component Status Message Bug Fix](./logged_memories/MRTMLY-004-summary-status-message-fix.md) #bugfix #testing #ui #state-management
-
-### 2024-11
 - [MRTMLY-005: Service Worker Update Error Debugging Session](./logged_memories/MRTMLY-005-service-worker-update-error.md) #debugging #service-worker #error-handling
 - [MRTMLY-006: Service Worker Update Retry Implementation](./logged_memories/MRTMLY-006-service-worker-retry-mechanism.md) #service-worker #retry-mechanism #error-handling #reliability
 - [MRTMLY-007: Service Worker Network-Aware Retry Enhancement](./logged_memories/MRTMLY-007-service-worker-network-aware-retry.md) #service-worker #retry-mechanism #offline #network-awareness
@@ -64,8 +58,6 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-009: Service Worker Test Mocking Problems](./logged_memories/MRTMLY-009-service-worker-test-mocking.md) #debugging #testing #service-worker #jest-mocks
 - [MRTMLY-010: Service Worker Registration Test Failures](./logged_memories/MRTMLY-010-service-worker-registration-test-failures.md) #debugging #tests #service-worker #jest-mocks
 - [MRTMLY-011: Service Worker ESLint Errors Blocking Build](./logged_memories/MRTMLY-011-service-worker-eslint-errors.md) #debugging #eslint #build #serviceworker
-
-### 2025-03
 - [MRTMLY-012: Test-Friendly Reset Functionality with Custom Dialog](./logged_memories/MRTMLY-012-test-friendly-reset-functionality.md) #testing #dialog #reset #refactoring
 - [MRTMLY-013: Service Worker Test Build Error Fix](./logged_memories/MRTMLY-013-service-worker-test-build-error.md) #debugging #tests #typescript #linting
 - [MRTMLY-014: Header Component Mobile Layout Enhancement](./logged_memories/MRTMLY-014-header-mobile-layout.md) #mobile #layout #header #accessibility #testing
@@ -87,17 +79,12 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-030: Progress Bar Conditional Visibility Fix](./logged_memories/MRTMLY-030-progress-bar-visibility.md) #debugging #tests #progress-bar #conditional-rendering
 - [MRTMLY-031: Summary Component Theme Color Updates](./logged_memories/MRTMLY-031-summary-theme-colors.md) #bug-fix #theme #dark-mode #summary #testing
 - [MRTMLY-032: Timeline Component Theme Color Update Bug](./logged_memories/MRTMLY-032-timeline-theme-colors.md) #bug-fix #theme #dark-mode #timeline #regression
-
-### 2025-04
 - [MRTMLY-033: Service Worker Utils TypeScript Linting Fix](./logged_memories/MRTMLY-033-service-worker-typescript-linting.md) #typescript #linting #service-worker #testing #type-safety
 - [MRTMLY-034: Time Utils TypeScript Linting Fix](./logged_memories/MRTMLY-034-time-utils-typescript-linting.md) #typescript #linting #testing #time-utils #type-safety
 - [MRTMLY-035: Progress Bar Testing Failures After CSS Updates](./logged_memories/MRTMLY-035-progress-bar-testing-failures.md) #debugging #testing #css #progress-bar
 - [MRTMLY-036: Progress Bar Theme Compatibility Testing](./logged_memories/MRTMLY-036-progress-bar-theme-testing.md) #testing #theme #accessibility #progress-bar
 - [MRTMLY-037: Test Suite Expansion Planning Based on Known Bugs](./logged_memories/MRTMLY-037-test-suite-expansion-planning.md) #testing #planning #bugs #test-coverage #regression-testing
-
-### 2023-07
 - [MRTMLY-038: Time Utilities Consolidation](./logged_memories/MRTMLY-038-time-utilities-consolidation.md) #refactoring #utilities #time #circular-reference
-
-### 2025-05
 - [MRTMLY-042: Time Utilities Documentation and Maintenance Guidelines](./logged_memories/MRTMLY-042-time-utilities-documentation.md) #documentation #utilities #time-utils #testing #best-practices
 - [MRTMLY-043: Linting Error Fix in timeUtils.ts](./logged_memories/MRTMLY-043-timeutils-linting-error-fix.md) #debugging #linting #tests #time-utils
+- [MRTMLY-044: Build Failure Due to Unused Import](./logged_memories/MRTMLY-044-build-failure-unused-import.md)

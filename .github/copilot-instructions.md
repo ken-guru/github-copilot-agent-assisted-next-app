@@ -74,6 +74,7 @@
    - Ensure the reference format matches existing entries in the memory index
    - Group memory entries by date/month in the index
    - Always add new memory entries as the LAST item in their respective date section
+   - Never overwrite the existing memories in the list currently in the document
    - Never create duplicate MRTMLY-XXX IDs - always use the next available number in sequence
 
 3. **Entry Format and Structure**:

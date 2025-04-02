@@ -5,7 +5,7 @@
  * operations in tests and components.
  */
 
-import { formatTime as mainFormatTime, formatTimeFromMs as mainFormatTimeFromMs, calculateDurationInSeconds as calcDuration } from '../timeUtils';
+import { formatTime as mainFormatTime, calculateDurationInSeconds as calcDuration } from '../timeUtils';
 
 /**
  * More specific type for timer callback functions
@@ -51,13 +51,6 @@ export function formatTimeHHMMSS(seconds: number): string {
  * This is kept for backward compatibility
  */
 export const formatTime = formatTimeHHMMSS;
-
-/**
- * Re-export and customize the formatTimeFromMs utility to match expected behavior in tests
- */
-export function formatTimeFromMs(milliseconds: number): string {
-  return mainFormatTime(Math.floor(milliseconds / 1000), { includeHours: true });
-}
 
 /**
  * Re-export the common time utilities
