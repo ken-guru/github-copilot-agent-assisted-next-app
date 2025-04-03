@@ -251,3 +251,81 @@
     padding: 0.5rem;
   }
 }
+
+/* Common container styling */
+.stateContainer {
+  background-color: var(--background);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Container width variations */
+.limitedWidthContainer {
+  max-width: 800px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fullWidthContainer {
+  width: 100%;
+}
+
+/* Activity state internal layout */
+.activityLayout {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: 
+    "progress"
+    "content";
+  width: 100%;
+  height: 100%;
+  gap: 1rem;
+}
+
+.activityLayout .progressSection {
+  grid-area: progress;
+  width: 100%;
+}
+
+.activityContentGrid {
+  grid-area: content;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-areas: "activities timeline";
+  gap: 1rem;
+  height: 100%;
+}
+
+.activityLayout .activitiesSection {
+  grid-area: activities;
+  height: 100%;
+}
+
+.activityLayout .timelineSection {
+  grid-area: timeline;
+  height: 100%;
+}
+
+/* Completed state styling */
+.completedLayout {
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .activityContentGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas: 
+      "activities"
+      "timeline";
+  }
+  
+  .stateContainer {
+    padding: 1rem;
+  }
+}

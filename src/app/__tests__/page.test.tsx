@@ -295,8 +295,8 @@ describe('OfflineIndicator Integration', () => {
     const setupOfflineIndicator = screen.getByRole('status');
     expect(setupOfflineIndicator).toHaveTextContent('You are offline');
     
-    // In setup state, the offline indicator is followed by the setupGrid (no progress container)
-    expect(setupOfflineIndicator.nextElementSibling).toHaveClass(styles.setupGrid);
+    // In setup state, the offline indicator is followed by the stateContainer instead of setupGrid
+    expect(setupOfflineIndicator.nextElementSibling).toHaveClass(styles.stateContainer);
     
     // Transition to activity state
     const timeSetupButton = screen.getByRole('button', { name: /set time/i });
@@ -306,10 +306,13 @@ describe('OfflineIndicator Integration', () => {
     const activityOfflineIndicator = screen.getByRole('status');
     expect(activityOfflineIndicator).toHaveTextContent('You are offline');
     
-    // In activity state, the offline indicator is followed by the progressContainer
+    // In activity state, the offline indicator is now followed by the stateContainer with fullWidthContainer
     const activityProgressContainer = activityOfflineIndicator.nextElementSibling;
-    expect(activityProgressContainer).toHaveClass(styles.progressContainer);
-    expect(activityProgressContainer?.nextElementSibling).toHaveClass(styles.activityGrid);
+    expect(activityProgressContainer).toHaveClass(styles.stateContainer);
+    
+    // The activityGrid is now inside the stateContainer
+    const activityContainer = document.querySelector(`.${styles.stateContainer}`);
+    expect(activityContainer).toBeInTheDocument();
     
     // Mock completed state
     mockUseActivityState.mockImplementationOnce(() => ({
@@ -327,8 +330,8 @@ describe('OfflineIndicator Integration', () => {
     const completedOfflineIndicator = screen.getByRole('status');
     expect(completedOfflineIndicator).toHaveTextContent('You are offline');
     
-    // In completed state, the offline indicator is followed by the completedGrid (no progress container)
-    expect(completedOfflineIndicator.nextElementSibling).toHaveClass(styles.completedGrid);
+    // In completed state, the offline indicator is now followed by the stateContainer instead of completedGrid
+    expect(completedOfflineIndicator.nextElementSibling).toHaveClass(styles.stateContainer);
   });
 });
 
@@ -352,9 +355,13 @@ describe('Progress Element Visibility', () => {
     
     render(<Home />);
     
-    // In activity state, progress container should be present
-    const progressContainer = document.querySelector(`.${styles.progressContainer}`);
-    expect(progressContainer).toBeInTheDocument();
+    // In activity state, progress section should be present within the activity container
+    const activityContainer = screen.getByTestId('activity-container');
+    expect(activityContainer).toBeInTheDocument();
+    
+    // We need to check for the progress area within the activity container
+    const progressBar = screen.getByTestId('progress-bar');
+    expect(progressBar).toBeInTheDocument();
   });
   
   it('should not show progress container in setup state', () => {

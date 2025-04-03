@@ -46,6 +46,11 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 ```
 
 ## Memory Index
+
+### April 2025
+- [MRTMLY-050: Visual Structure Consistency Implementation](./logged_memories/MRTMLY-050-visual-structure-consistency.md) #layout #refactoring #consistency #visual-structure #responsive-design
+- [MRTMLY-051: Visual Structure Test Fixes](./logged_memories/MRTMLY-051-visual-structure-test-fixes.md) #testing #layout #refactoring #structure
+
 - [MRTMLY-001: Progress Bar Mobile Layout Enhancement](./logged_memories/MRTMLY-001-progress-bar-mobile-layout.md) #mobile #layout #progress-bar #optimization #responsive-design
 - [MRTMLY-002: Vercel Deployment Verification Requirements](./logged_memories/MRTMLY-002-vercel-deployment-verification.md) #deployment #vercel #type-checking #quality-assurance
 - [MRTMLY-003: Summary Component Test Suite Refactor](./logged_memories/MRTMLY-003-summary-test-refactor.md) #testing #refactoring #edge-cases #performance
@@ -95,3 +100,5 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-047: Unused Variable in Summary Component](./logged_memories/MRTMLY-047-unused-variable-summary-component.md)
 - [MRTMLY-048: Timer Display Consistency Test Suite Implementation](./logged_memories/MRTMLY-048-timer-display-consistency-tests.md) #testing #timer #consistency #long-running-sessions #regression-testing
 - [MRTMLY-049: Time Setup Input Formats Test Suite Implementation](./logged_memories/MRTMLY-049-time-setup-input-formats-tests.md)
+- [MRTMLY-050: Visual Structure Consistency Implementation](./logged_memories/MRTMLY-050-visual-structure-consistency.md) #layout #refactoring #consistency #visual-structure #responsive-design
+- [MRTMLY-051: Visual Structure Test Fixes](./logged_memories/MRTMLY-051-visual-structure-test-fixes.md) #testing #layout #refactoring #structure

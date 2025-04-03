@@ -144,60 +144,76 @@ export default function Home() {
         </header>
         <OfflineIndicator />
         
-        {/* Progress bar only rendered for activity state */}
-        {timeSet && !allActivitiesCompleted && (
-          <div className={styles.progressContainer}>
-            <ProgressBar 
-              entries={processedEntries}
-              totalDuration={totalDuration}
-              elapsedTime={elapsedTime}
-              timerActive={timerActive}
-            />
-          </div>
-        )}
-        
+        {/* Setup State */}
         {appState === 'setup' && (
-          <div className={styles.setupGrid}>
+          <div 
+            className={`${styles.stateContainer} ${styles.limitedWidthContainer}`} 
+            data-testid="setup-container"
+          >
             <TimeSetup onTimeSet={handleTimeSet} />
           </div>
         )}
         
+        {/* Activity State */}
         {appState === 'activity' && (
-          <div className={styles.activityGrid}>
-            <div>
-              <ActivityManager 
-                onActivitySelect={handleActivitySelect} 
-                onActivityRemove={handleActivityRemoval}
-                currentActivityId={currentActivity?.id || null} 
-                completedActivityIds={completedActivityIds}
-                timelineEntries={processedEntries}
-                isTimeUp={isTimeUp}
-                elapsedTime={elapsedTime}
-              />
-            </div>
-            <div className={styles.timelineContainer}>
-              <Timeline 
-                entries={processedEntries}
-                totalDuration={totalDuration} 
-                elapsedTime={elapsedTime}
-                allActivitiesCompleted={allActivitiesCompleted}
-                timerActive={timerActive}
-                isTimeUp={isTimeUp}
-              />
+          <div 
+            className={`${styles.stateContainer} ${styles.fullWidthContainer}`} 
+            data-testid="activity-container"
+          >
+            <div className={styles.activityLayout}>
+              {/* Progress area */}
+              <div className={styles.progressArea} data-testid="progress-bar">
+                <ProgressBar 
+                  entries={processedEntries}
+                  totalDuration={totalDuration}
+                  elapsedTime={elapsedTime}
+                  timerActive={timerActive}
+                />
+              </div>
+              
+              {/* Activities and Timeline grid */}
+              <div className={styles.activityContentGrid}>
+                <div className={styles.activitiesArea} data-testid="activity-manager">
+                  <ActivityManager 
+                    onActivitySelect={handleActivitySelect} 
+                    onActivityRemove={handleActivityRemoval}
+                    currentActivityId={currentActivity?.id || null} 
+                    completedActivityIds={completedActivityIds}
+                    timelineEntries={processedEntries}
+                    isTimeUp={isTimeUp}
+                    elapsedTime={elapsedTime}
+                  />
+                </div>
+                
+                <div className={styles.timelineArea} data-testid="timeline">
+                  <Timeline 
+                    entries={processedEntries}
+                    totalDuration={totalDuration} 
+                    elapsedTime={elapsedTime}
+                    allActivitiesCompleted={allActivitiesCompleted}
+                    timerActive={timerActive}
+                    isTimeUp={isTimeUp}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )}
         
+        {/* Completed State */}
         {appState === 'completed' && (
-          <div className={styles.completedGrid}>
-            <div className={styles.summaryContainer}>
-              <Summary 
-                entries={processedEntries}
-                totalDuration={totalDuration} 
-                elapsedTime={elapsedTime}
-                allActivitiesCompleted={allActivitiesCompleted}
-              />
-            </div>
+          <div 
+            className={`${styles.stateContainer} ${styles.limitedWidthContainer}`} 
+            data-testid="completed-container"
+          >
+            <Summary 
+              data-testid="summary"
+              entries={processedEntries}
+              totalDuration={totalDuration} 
+              elapsedTime={elapsedTime}
+              allActivitiesCompleted={allActivitiesCompleted}
+              isTimeUp={isTimeUp}
+            />
           </div>
         )}
       </div>
