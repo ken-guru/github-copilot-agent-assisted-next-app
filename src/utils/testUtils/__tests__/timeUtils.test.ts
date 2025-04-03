@@ -1,7 +1,7 @@
 import { 
   mockDateNow, 
   formatTime, 
-  formatTimeFromMs,
+  formatTimeHHMMSS,
   calculateDurationInSeconds,
   createTimerMock
 } from '../timeUtils';
@@ -37,20 +37,20 @@ describe('Time Utilities', () => {
   
   describe('formatTimeFromMs', () => {
     it('should format milliseconds into HH:MM:SS format', () => {
-      expect(formatTimeFromMs(0)).toBe('00:00:00');
-      expect(formatTimeFromMs(30000)).toBe('00:00:30');
-      expect(formatTimeFromMs(90000)).toBe('00:01:30');
-      expect(formatTimeFromMs(3600000)).toBe('01:00:00');
-      expect(formatTimeFromMs(3661000)).toBe('01:01:01');
-      expect(formatTimeFromMs(36000000)).toBe('10:00:00');
-      expect(formatTimeFromMs(86399000)).toBe('23:59:59');
+      expect(formatTimeHHMMSS(Math.floor(0/1000))).toBe('00:00:00');
+      expect(formatTimeHHMMSS(Math.floor(30000/1000))).toBe('00:00:30');
+      expect(formatTimeHHMMSS(Math.floor(90000/1000))).toBe('00:01:30');
+      expect(formatTimeHHMMSS(Math.floor(3600000/1000))).toBe('01:00:00');
+      expect(formatTimeHHMMSS(Math.floor(3661000/1000))).toBe('01:01:01');
+      expect(formatTimeHHMMSS(Math.floor(36000000/1000))).toBe('10:00:00');
+      expect(formatTimeHHMMSS(Math.floor(86399000/1000))).toBe('23:59:59');
     });
     
     it('should round down to the nearest second', () => {
-      expect(formatTimeFromMs(999)).toBe('00:00:00');
-      expect(formatTimeFromMs(1000)).toBe('00:00:01');
-      expect(formatTimeFromMs(1999)).toBe('00:00:01');
-      expect(formatTimeFromMs(59999)).toBe('00:00:59');
+      expect(formatTimeHHMMSS(Math.floor(999/1000))).toBe('00:00:00');
+      expect(formatTimeHHMMSS(Math.floor(1000/1000))).toBe('00:00:01');
+      expect(formatTimeHHMMSS(Math.floor(1999/1000))).toBe('00:00:01');
+      expect(formatTimeHHMMSS(Math.floor(59999/1000))).toBe('00:00:59');
     });
   });
   

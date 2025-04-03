@@ -5,6 +5,8 @@
  * operations in tests and components.
  */
 
+import { formatTime as mainFormatTime, calculateDurationInSeconds as calcDuration } from '../timeUtils';
+
 /**
  * More specific type for timer callback functions
  */
@@ -29,41 +31,31 @@ export function mockDateNow(mockTimestamp: number): () => void {
 }
 
 /**
- * Utility to format seconds into a human-readable time string (HH:MM:SS)
+ * Formats a time in seconds to a "HH:MM:SS" string format
  * 
- * @param totalSeconds - Number of seconds to format
- * @returns Formatted time string
+ * @param seconds - The number of seconds to format
+ * @returns A string in "HH:MM:SS" format
+ * 
+ * @example
+ * formatTimeHHMMSS(65) // Returns "00:01:05"
+ * formatTimeHHMMSS(3661) // Returns "01:01:01"
+ * 
+ * @deprecated Use formatTime(seconds, { includeHours: true }) from '../timeUtils' instead
  */
-export function formatTime(totalSeconds: number): string {
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  
-  return [hours, minutes, seconds]
-    .map(v => v.toString().padStart(2, '0'))
-    .join(':');
+export function formatTimeHHMMSS(seconds: number): string {
+  return mainFormatTime(seconds, { includeHours: true });
 }
 
 /**
- * Utility to format milliseconds into a human-readable time string (HH:MM:SS)
- * 
- * @param milliseconds - Number of milliseconds to format
- * @returns Formatted time string
+ * @deprecated Use formatTime(seconds, { includeHours: true }) from '../timeUtils' instead
+ * This is kept for backward compatibility
  */
-export function formatTimeFromMs(milliseconds: number): string {
-  return formatTime(Math.floor(milliseconds / 1000));
-}
+export const formatTime = formatTimeHHMMSS;
 
 /**
- * Utility to calculate duration in seconds between two timestamps
- * 
- * @param startTime - Start timestamp in milliseconds
- * @param endTime - End timestamp in milliseconds
- * @returns Duration in seconds
+ * Re-export the common time utilities
  */
-export function calculateDurationInSeconds(startTime: number, endTime: number): number {
-  return Math.floor((endTime - startTime) / 1000);
-}
+export { calcDuration as calculateDurationInSeconds };
 
 /**
  * Creates a mock for window.setTimeout in tests

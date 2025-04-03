@@ -59,6 +59,45 @@
    - Record the debugging approach and expected outcomes before test execution
    - Maintain institutional knowledge about effective and ineffective solutions
 
+## Memory Log Management
+
+1. **File Organization**:
+   - Always store individual memory log entries in separate files under `docs/logged_memories/`
+   - Use consistent file naming: `MRTMLY-XXX-descriptive-name.md`
+   - Never add detailed memory entries directly to the main MEMORY_LOG.md file
+   - Only add reference links in MEMORY_LOG.md that point to the individual memory files
+
+2. **Memory Entry Creation Process**:
+   - Create a new file in `docs/logged_memories/` with the appropriate naming convention
+   - Add the memory entry details to this new file using the template format
+   - Add only a reference link to the main MEMORY_LOG.md file
+   - Ensure the reference format matches existing entries in the memory index
+   - Group memory entries by date/month in the index
+   - Always add new memory entries as the LAST item in their respective date section
+   - Never overwrite the existing memories in the list currently in the document
+   - Never create duplicate MRTMLY-XXX IDs - always use the next available number in sequence
+
+3. **Entry Format and Structure**:
+   - Follow the established template structure for all memory entries
+   - Include all required sections (Initial State, Debug Process or Implementation, Resolution, Lessons Learned)
+   - Use consistent heading levels and formatting
+   - Ensure appropriate tagging for easy searching
+
+4. **Memory Log Updates During Debugging**:
+   - Document each significant debugging step in the appropriate memory log file
+   - Include failed attempts and their outcomes
+   - Note any unexpected behavior or test failures
+   - Tag entries appropriately for future reference
+
+5. **Memory Log Maintenance**:
+   - When updating existing entries, edit the individual memory file, not MEMORY_LOG.md
+   - Periodically check for consistent formatting across memory entries
+   - Ensure all memory entries are properly referenced in the main index
+   - Look for patterns across related issues and link them where appropriate
+   - Always check for and resolve any duplicate memory IDs
+   - Maintain chronological order within each date section, with newest entries at the bottom
+   - When adding a new entry with a date that doesn't have a section yet, add the new section at the bottom of the file
+
 ## Package Management
 
 1. **New Package Evaluation**: Before introducing a new package, discuss:
