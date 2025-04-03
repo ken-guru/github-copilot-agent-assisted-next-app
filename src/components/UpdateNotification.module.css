@@ -1,15 +1,15 @@
 .updateNotification {
   position: fixed;
-  bottom: 1rem;
-  right: 1rem;
+  bottom: var(--space-md);
+  right: var(--space-md);
   background-color: var(--background);
   color: var(--foreground);
-  padding: 0.75rem 1rem;
+  padding: var(--space-sm) var(--space-md);
   border-radius: 0.5rem;
   box-shadow: var(--shadow-medium);
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-md);
   z-index: 1000; /* Keep high z-index to ensure it appears above all content */
   max-width: 90vw;
   border: 1px solid var(--border);
@@ -26,12 +26,12 @@
   border: none;
   color: var(--foreground-muted);
   cursor: pointer;
-  padding: 0.25rem;
+  padding: var(--space-2xs);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.25rem;
-  transition: all 0.2s ease;
+  border-radius: var(--space-2xs);
+  transition: all 0.2s;
 }
 
 .dismissButton:hover {
@@ -51,11 +51,11 @@
 }
 
 /* Add responsive styling for mobile devices */
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .updateNotification {
-    bottom: 0.5rem; /* Position within the toast area */
-    right: 0.5rem;
-    left: 0.5rem; /* On mobile, span almost full width */
-    max-width: calc(100vw - 1rem);
+    bottom: var(--space-xs);
+    right: var(--space-xs);
+    left: var(--space-xs);
+    max-width: calc(100vw - var(--space-md));
   }
 }

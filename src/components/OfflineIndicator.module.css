@@ -2,18 +2,18 @@
   width: 100%;
   background-color: var(--color-warning-background, #fff3cd);
   color: var(--color-warning-text, #856404);
-  padding: 0.5rem;
+  padding: var(--space-xs);
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   animation: slideDown 0.3s ease-out;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-md);
 }
 
 .content {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--gap-small);
   font-weight: 500;
 }
 
@@ -24,7 +24,7 @@
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-0.5rem);
+    transform: translateY(calc(-1 * var(--space-xs)));
   }
   to {
     opacity: 1;

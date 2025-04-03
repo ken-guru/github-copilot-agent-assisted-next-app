@@ -1,7 +1,7 @@
 .container {
   display: flex;
   align-items: center;
-  padding: 4px;
+  padding: var(--space-2xs);
   border-radius: 0.5rem;
   background-color: var(--background-muted);
   margin: 0;
@@ -17,8 +17,8 @@
 .toggleGroup {
   display: flex;
   border-radius: 0.5rem;
-  padding: 4px;
-  gap: 8px;
+  padding: var(--space-2xs);
+  gap: var(--gap-small);
 }
 
 .toggleButton {
@@ -33,7 +33,7 @@
   border-radius: 0.375rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  padding: 10px;
+  padding: var(--padding-small);
 }
 
 .toggleButton:hover {
@@ -60,12 +60,12 @@
   }
 
   .toggleGroup {
-    gap: 4px;
+    gap: var(--space-2xs);
     padding: 2px;
   }
   
   .toggleButton {
-    padding: 8px;
+    padding: var(--space-2xs);
   }
   
   .toggleButton svg {

@@ -7,25 +7,25 @@
 .heading {
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-md);
   color: var(--foreground);
 }
 
 .activityList {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-sm);
   flex: 1;
   overflow-y: auto;
-  padding-right: 0.5rem;
+  padding-right: var(--space-xs);
 }
 
 .activityItem, .completedActivityItem {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  grid-gap: 0.75rem;
-  padding: 0.75rem;
+  grid-gap: var(--space-sm);
+  padding: var(--space-sm);
   border-radius: 0.5rem;
   transition: all 0.2s ease;
 }
@@ -50,7 +50,7 @@
 
 /* Add gap between elements when there's more than one */
 .activityRightContent > :not(:last-child) {
-  margin-right: 0.75rem;
+  margin-right: var(--space-sm);
 }
 
 /* Title column styling */
@@ -121,7 +121,7 @@
 /* Action buttons column styling */
 .activityActions {
   display: flex;
-  gap: 0.75rem; /* Increased spacing between buttons for better touch accessibility */
+  gap: var(--space-sm); /* Increased spacing between buttons for better touch accessibility */
   align-items: center;
   justify-content: flex-end;
 }
@@ -129,7 +129,7 @@
 .startButton, .runningButton, .stopButton {
   background-color: var(--accent-color);
   color: var(--background);
-  padding: 0.25rem;
+  padding: var(--space-2xs);
   border: none;
   border-radius: 6px;
   font-size: 0.875rem;
@@ -189,7 +189,7 @@
   opacity: 0.5;
   cursor: not-allowed;
   border-color: var(--foreground-muted);
-  color: var(--foreground-muted);
+  color: var (--foreground-muted);
 }
 
 .buttonIcon {
@@ -204,8 +204,8 @@
 
 .breakMessage {
   text-align: center;
-  padding: 1rem;
-  margin-top: 1rem;
+  padding: var(--padding-medium);
+  margin-top: var(--space-md);
   background-color: var(--background-muted);
   border: 1px solid var(--border-color);
   border-radius: 0.5rem;
@@ -215,17 +215,17 @@
 
 .emptyState {
   text-align: center;
-  padding: 2rem;
+  padding: var(--space-xl);
   color: var(--foreground-muted);
   background-color: var(--background-muted);
-  border-radius: 0.25rem;
-  margin: 1rem 0;
+  border-radius: var(--space-2xs);
+  margin: var(--space-md) 0;
 }
 
 /* Media query for smaller screens */
 @media (max-width: 768px) {
   .container {
-    padding: .5rem;  
+    padding: var(--padding-small);  
   }
 }
 

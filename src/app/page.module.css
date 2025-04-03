@@ -1,7 +1,7 @@
 /* Global variables for layout spacing */
 .layout {
-  --toast-area-height: 3rem; /* Space reserved for toast messages */
-  --progress-bar-height: 2.5rem; /* Height of the progress bar component */
+  --toast-area-height: var(--space-3xl); /* Space reserved for toast messages */
+  --progress-bar-height: var(--space-2xl); /* Height of the progress bar component */
 }
 
 .container {
@@ -20,12 +20,12 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* Add gap between header, offline indicator, and content */
+  gap: var(--gap-medium); /* Add gap between header, offline indicator, and content */
   background-color: var(--background);
 }
 
 .wrapper header {
-  padding: 1rem;
+  padding: var(--padding-medium);
   position: sticky;
   top: 0;
   z-index: 10;
@@ -43,13 +43,13 @@
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 1rem;
+  gap: var(--gap-medium);
   min-height: 44px; /* Ensure minimum touch target height */
 }
 
 .headerControls {
   display: flex;
-  gap: 1rem;
+  gap: var(--gap-medium);
   align-items: center;
 }
 
@@ -97,7 +97,7 @@
 .activityGrid,
 .completedGrid {
   display: grid;
-  gap: 2rem;
+  gap: var(--space-xl);
 }
 
 .setupGrid {
@@ -111,7 +111,7 @@
   grid-template-columns: 300px 1fr;
   flex: 1;
   display: grid;
-  gap: 1rem;
+  gap: var(--space-md);
   grid-template-columns: 2fr 3fr;
   grid-template-rows: 1fr;
   min-height: 0; /* Allows grid children to properly size */
@@ -144,9 +144,9 @@
   border-radius: 0.5rem;
   background-color: var(--background-alt, white);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
-  margin: 0 1rem;
-  padding: 0.75rem;
+  box-shadow: var(--shadow-small);
+  margin: 0 var(--space-md);
+  padding: var(--space-sm);
   z-index: 5; /* Ensure it's above content but below header */
 }
 
@@ -173,19 +173,19 @@
 /* Media query for smaller screens */
 @media (max-width: 768px) {
   .wrapper header {
-    padding: 0.5rem;
+    padding: var(--padding-small);
     box-shadow: var(--shadow-small);
   }
 
   .wrapper .setupGrid,
   .wrapper .activityGrid,
   .wrapper .completedGrid {
-    padding: 0.5rem;
+    padding: var(--padding-small);
   }
 
   .headerContent {
     grid-template-columns: 1fr auto auto;
-    gap: 0.75rem;
+    gap: var(--space-sm);
   }
 
   .title {
@@ -207,7 +207,7 @@
   .activityGrid {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
-    gap: 0.5rem;
+    gap: var(--space-xs);
   }
 
   .timelineContainer {
@@ -216,9 +216,9 @@
 
   /* Mobile-specific progress container styles */
   .progressContainer {
-    margin: 0.5rem;
-    padding: 0.5rem;
-    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+    margin: var(--space-xs);
+    padding: var(--space-xs);
+    box-shadow: var(--shadow-small);
   }
 
   /* Remove the fixed positioning and associated padding */
@@ -227,7 +227,7 @@
   }
 
   .completedGrid {
-    gap: 0.5rem;
+    gap: var(--space-xs);
   }
 
   /* Ensure mobile containers have proper styling */
