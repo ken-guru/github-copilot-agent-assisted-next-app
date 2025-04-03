@@ -147,3 +147,58 @@ Our application has several known bugs documented in KNOWN_BUGS.md and historica
 - [ ] Tests isolated to prevent cross-contamination
 - [ ] Documentation updated with test coverage information
 - [ ] Memory log updated with test development process
+
+# CSS Spacing Scale Simplification
+
+## Context
+Our application currently uses a complex spacing scale (2xs to 3xl) in our global CSS variables. This level of complexity isn't necessary for the current application needs and may lead to inconsistent spacing usage.
+
+- The components affected include all components using CSS modules with spacing variables
+- Current spacing scale includes values from --space-2xs to --space-3xl
+- This change will improve maintainability and consistency across the UI
+
+## Requirements
+1. Simplify the spacing scale to a 5-point system
+   - Replace the current scale with xs, sm, md, lg, xl sizing options
+   - Map current sizes to new simplified scale
+   - Update semantic spacing variables (gap and padding) to use new scale
+   - Maintain consistent pixel values where possible
+
+2. Implement a migration strategy for all CSS files
+   - Find and replace old variable names across all CSS modules
+   - Apply consistent naming pattern across the codebase
+   - Handle edge cases where specific values may be needed
+   - Update any documentation referencing the spacing system
+
+3. Ensure theme compatibility
+   - Verify that the simplified spacing works in both light and dark themes
+   - Test responsive layouts with new spacing values
+   - Maintain existing component spacing relationships
+
+## Technical Guidelines
+- Update variables in globals.css as the single source of truth
+- Use search and replace functionality to update CSS module references
+- Follow the mapping pattern:
+  - --space-2xs → --space-xs (0.25rem/4px)
+  - --space-xs → --space-sm (0.5rem/8px)
+  - --space-sm → --space-sm (0.75rem → 0.5rem)
+  - --space-md → --space-md (1rem/16px)
+  - --space-lg → --space-lg (1.5rem/24px)
+  - --space-xl → --space-xl (2rem/32px)
+  - --space-2xl → --space-xl (2.5rem → 2rem)
+  - --space-3xl → --space-xl (3rem → 2rem)
+- Review components after changes to ensure UI consistency
+
+## Expected Outcome
+- A more intuitive and simpler spacing system
+- More consistent spacing application across the application
+- Better maintainability with fewer variables to track
+- Preserved visual hierarchy and component relationships
+
+## Validation Criteria
+- [ ] Updated globals.css with simplified scale
+- [ ] All CSS modules updated to use new spacing variables
+- [ ] Visual review of all components to ensure consistent appearance
+- [ ] Responsive layout testing across different screen sizes
+- [ ] Theme compatibility verified in both light and dark modes
+- [ ] Documentation updated to reflect new spacing system
