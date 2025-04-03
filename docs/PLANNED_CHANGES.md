@@ -64,86 +64,65 @@ Note: When implementing a change, copy this template and fill it out completely.
 - Document all key decisions made during implementation
 - Update the Memory Log for all significant changes or bug fixes
 
-<!-- Progress Bar styling implementation has been completed and moved to IMPLEMENTED_CHANGES.md (2025-04-02) -->
-<!-- Time Utilities Consolidation has been completed and moved to IMPLEMENTED_CHANGES.md (2023-10-31) -->
-
-# Test Suite Expansion Based on Known Bugs
+# Visual Structure Consistency Implementation
 
 ## Context
-Our application has several known bugs documented in KNOWN_BUGS.md and historical issues recorded in MEMORY_LOG.md. Before implementing fixes, we need to expand our test suite to properly capture these issues, ensuring they don't recur after fixes are applied.
-
-- The current test suite has good coverage but doesn't adequately test edge cases related to known bugs
-- Components involved: Summary, Timeline, TimeDisplay, TimeSetup, and related hooks
-- Issues relate to activity ordering, timer updates, break visualization, time calculations, and service worker functionality
+The application currently has inconsistent visual structure across different states (setup, activity, completed):
+- **Components Involved**: Main page layout, container components, CSS modules
+- **Current Behavior**: Each application state uses different container nesting patterns:
+  - Setup state: Single tight-fitting container with directly nested elements
+  - Activity state: Multiple separate containers for Progress, Activities, and Timeline
+  - Completed state: Single container that fills the entire available height
+- **User Need**: Create a more cohesive, consistent visual experience across all application states
 
 ## Requirements
-1. Create new test files and enhance existing ones to cover known bugs
-   - Maintain test isolation to prevent cross-test contamination
-   - Use Jest's timer mocking capabilities for time-dependent tests
-   - Create specific tests for each documented bug
-   - Test both normal and edge cases
 
-2. Implement seven targeted test expansions
-   - **Activity Order in Summary**
-     - Test edge cases with similar start times
-     - Verify order is maintained after re-renders
-   
-   - **Timer Display Consistency**
-     - Test timer updates at regular intervals
-     - Verify synchronization with elapsed time
-     - Test long-running session behavior
-   
-   - **Break Visualization**
-     - Test immediate break visualization
-     - Verify breaks appear as soon as they begin
-     - Test various timing scenarios for breaks
-   
-   - **Idle Time Calculation**
-     - Test accurate calculation with various break patterns
-     - Verify correct handling of multiple breaks
-     - Test edge cases in time accounting
+1. Create a consistent container pattern across all application states
+   - Use a single white container as the main wrapper across all states
+   - Standardize max-width behavior: limited width in setup/completed states, full width in activity state
+   - Ensure proper padding/margin consistency between states
+   - Maintain current visual aesthetics while improving structural consistency
 
-   - **Time Setup Input Formats**
-     - Test consistency between duration and time-based inputs
-     - Verify automatic break insertion works with time formats
-     - Test edge cases in time input handling
+2. Refactor activity state layout structure
+   - Nest all activity state components inside a single container
+   - Maintain the current visual division (progress on top, activities on left, timeline on right)
+   - Implement proper grid/flex layout inside the container
+   - Preserve current functionality while improving structure
+   - Convert from separate containers to internal layout divisions
 
-   - **Service Worker Testing**
-     - Improve test isolation
-     - Test network awareness and retry mechanisms
-     - Verify update notification processes
-
-   - **Resource Cleanup and Memory Leaks**
-     - Test proper component cleanup on unmount
-     - Verify all timeouts and intervals are cleared
-     - Test event listener cleanup
-
-3. Ensure theme compatibility across all tested components
-   - Test components in both light and dark themes
-   - Verify contrast ratios meet accessibility standards
-   - Test theme transitions work correctly
+3. Adjust completed state container behavior
+   - Make the container wrap tightly around contents instead of filling available height
+   - Maintain consistent padding and margin with other states
+   - Ensure responsive behavior at different screen sizes
+   - Preserve current visual styling of the summary component
 
 ## Technical Guidelines
-- Use React Testing Library for component tests
-- Implement proper async/await patterns for asynchronous tests
-- Use Jest's timer mocking (jest.useFakeTimers()) for time-dependent tests
-- Follow test isolation best practices to prevent test interference
-- Add specific data-testid attributes where needed for reliable selection
-- Create dedicated test utilities for common testing patterns
-- Implement theme testing utilities to verify theme compatibility
+- Use CSS Grid and Flexbox for internal layouts rather than nested containers
+- Ensure responsive behavior works properly at all breakpoints
+- Maintain theme compatibility for both light and dark modes
+- Preserve all accessibility attributes and structure
+- Test layout in various screen sizes and devices
+- Minimize DOM nesting depth for better performance
 
 ## Expected Outcome
-- A comprehensive test suite that captures all known bugs
-- Tests that fail initially but will pass once bugs are fixed
-- Clear documentation of expected behavior through test assertions
-- Improved developer understanding of correct component behavior
-- Foundation for implementing fixes with confidence
+
+From a user perspective:
+- More cohesive visual experience across the application
+- Consistent container styling and behavior between states
+- No noticeable functional changes, only visual improvements
+- Better responsive behavior across devices
+
+From a technical perspective:
+- Simplified DOM structure with less nesting
+- More maintainable CSS with consistent patterns
+- Improved layout structure using modern CSS techniques
+- Better separation of layout and component concerns
 
 ## Validation Criteria
-- [ ] New test files created
-- [ ] Existing tests enhanced
-- [ ] Tests specifically target known bug behaviors
-- [ ] Tests initially fail (demonstrating they capture the bug)
-- [ ] Tests isolated to prevent cross-contamination
-- [ ] Documentation updated with test coverage information
-- [ ] Memory log updated with test development process
+- [ ] Test cases updated to verify new DOM structure
+- [ ] Implementation complete for all three application states
+- [ ] Tests passing for all states after refactoring
+- [ ] Theme compatibility verified in both light and dark modes
+- [ ] Responsive behavior confirmed on mobile, tablet, and desktop
+- [ ] Documentation updated to reflect new structure
+- [ ] Memory Log updated with implementation details and lessons learned
