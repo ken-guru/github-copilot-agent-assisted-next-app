@@ -21,7 +21,7 @@
 
 .button {
   padding: var(--space-xs) var(--space-md);
-  border-radius: var(--space-2xs);
+  border-radius: var(--space-xs); /* Update from --space-2xs */
   border: none;
   cursor: pointer;
   flex-grow: 1;
@@ -95,7 +95,7 @@
   background-color: var(--accent-color);
   color: var(--background);
   border: none;
-  border-radius: var(--space-2xs);
+  border-radius: var(--space-xs); /* Update from --space-2xs */
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease, outline-offset 0.2s ease;

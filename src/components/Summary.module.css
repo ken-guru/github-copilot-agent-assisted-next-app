@@ -73,7 +73,7 @@
 .summary h3 {
   font-size: 1.125rem;
   font-weight: 600;
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--space-sm);
   color: var(--foreground);
 }
 
@@ -97,7 +97,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-xs);
+  padding: var(--space-sm); /* Updated from var(--space-xs) to improve spacing */
   border-radius: 0.375rem;
   margin-bottom: var(--space-xs);
   background-color: var(--background-muted);
@@ -137,13 +137,13 @@
 .activities {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
 }
 
 .activities > div {
   display: flex;
   justify-content: space-between;
-  padding: var(--space-2xs) 0;
+  padding: var(--space-xs) 0;
   border-bottom: 1px solid var(--border-color);
 }
 

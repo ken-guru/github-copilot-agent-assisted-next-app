@@ -1,7 +1,7 @@
 /* Global variables for layout spacing */
 .layout {
-  --toast-area-height: var(--space-3xl); /* Space reserved for toast messages */
-  --progress-bar-height: var(--space-2xl); /* Height of the progress bar component */
+  --toast-area-height: var(--space-xl); /* Update from --space-3xl */
+  --progress-bar-height: var(--space-xl); /* Update from --space-2xl */
 }
 
 .container {

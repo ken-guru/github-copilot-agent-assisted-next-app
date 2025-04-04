@@ -195,10 +195,6 @@
   transition: opacity 0.2s ease;
 }
 
-.timeGap:hover {
-  opacity: 1;
-}
-
 .entryContent {
   height: 100%;
   display: flex;

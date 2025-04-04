@@ -85,7 +85,7 @@
   font-weight: 500;
   color: var(--accent-color);
   background-color: var(--background-muted);
-  padding: 0.25rem 0.5rem;
+  padding: var(--space-xs) var(--space-sm); /* Update from --space-2xs and --space-xs */
   border-radius: 1rem;
   border: 1px solid var(--accent-color);
   display: flex;
@@ -121,7 +121,7 @@
 /* Action buttons column styling */
 .activityActions {
   display: flex;
-  gap: var(--space-sm); /* Increased spacing between buttons for better touch accessibility */
+  gap: var(--space-sm); /* Previously this was using --space-sm (0.75rem) */
   align-items: center;
   justify-content: flex-end;
 }
@@ -129,7 +129,7 @@
 .startButton, .runningButton, .stopButton {
   background-color: var(--accent-color);
   color: var(--background);
-  padding: var(--space-2xs);
+  padding: var(--space-xs); /* Update from --space-2xs */
   border: none;
   border-radius: 6px;
   font-size: 0.875rem;
