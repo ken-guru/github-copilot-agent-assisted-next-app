@@ -2,6 +2,15 @@
 
 > This component visualizes activities and breaks on a vertical timeline, showing the progression of time and activities during a session.
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [Visualization Components](./README.md#visualization-components)
+- **Related Components**:
+  - [ProgressBar](./ProgressBar.md) - Often used alongside Timeline
+  - [Summary](./Summary.md) - Uses same timeline entries data
+  - [ActivityManager](./ActivityManager.md) - Provides activity data
+
 ## Overview
 
 The Timeline component provides a visual representation of activities and the time between them (breaks). It features a time ruler with appropriate time intervals, activity blocks with duration information, and specialized handling for breaks and overtime scenarios. The component is designed to update in real-time and adapt to different theme modes.
@@ -181,6 +190,7 @@ Key tested scenarios include:
 
 - **ProgressBar**: Often used alongside Timeline to show overall progress
 - **Summary**: Uses the same timeline entries for generating summary statistics
+- **ActivityManager**: Provides activity data that Timeline visualizes
 - **useTimelineEntries**: Hook that provides timeline entries used by this component
 - **calculateTimeSpans**: Utility function that calculates the visual representation of timeline spans
 

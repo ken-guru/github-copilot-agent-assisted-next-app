@@ -61,6 +61,12 @@
    - Include code examples showing both basic and advanced usage
    - Document any known limitations or edge cases
    - Keep the Change History section updated with all significant modifications
+   - **Documentation Linking**:
+     - Add a Navigation section at the top of each component documentation
+     - Link back to the Component Documentation Index
+     - Link to related components that interact with this component
+     - Add the component to the appropriate category in the index
+     - Ensure the component is linked from the main README.md documentation section
 
 ## Change Management
 

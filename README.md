@@ -197,6 +197,26 @@ When implementing features, utilize these core technologies:
 - React Testing Library: Component testing
 ```
 
+## Documentation
+
+### Component Documentation
+
+The application is built using a collection of reusable components. Comprehensive documentation for these components is available in the [Component Documentation Index](./docs/components/README.md).
+
+Key component categories:
+
+- **Visualization Components**: [Timeline](./docs/components/Timeline.md), [ProgressBar](./docs/components/ProgressBar.md)
+- **State Management Components**: [ActivityManager](./docs/components/ActivityManager.md), [Summary](./docs/components/Summary.md)
+- **User Input Components**: [TimeSetup](./docs/components/TimeSetup.md), [ActivityButton](./docs/components/ActivityButton.md)
+- **Auxiliary Components**: [ServiceWorkerUpdater](./docs/components/ServiceWorkerUpdater.md), [ActivityForm](./docs/components/ActivityForm.md)
+- **Utility Components**: [TimeDisplay](./docs/components/TimeDisplay.md), [OfflineIndicator](./docs/components/OfflineIndicator.md), [ThemeToggle](./docs/components/ThemeToggle.md), [ErrorBoundary](./docs/components/ErrorBoundary.md)
+
+### Development Resources
+
+- [Development Process Guidelines](./docs/PLANNED_CHANGES.md#development-process-guidelines)
+- [Memory Log](./docs/MEMORY_LOG.md) - Project history and issue resolutions
+- [Time Utilities Testing Guide](./docs/dev-guides/TIME_UTILITIES_TESTING.md)
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 
