@@ -1,7 +1,7 @@
-# Spacing System Documentation
+# Design Token Documentation
 
 ## Overview
-This document outlines the spacing system used throughout the application. We use a simplified 5-point spacing scale that provides consistency and flexibility across all components.
+This document outlines the design token system used throughout the application, including spacing and border radius values. We use simplified scales that provide consistency and flexibility across all components.
 
 ## Spacing Scale
 Our application uses a simplified spacing scale with 5 key sizes:
@@ -28,52 +28,94 @@ This system replaces our previous more complex scale (2xs to 3xl). Below is the 
 | `--space-2xl` | `--space-xl` | 2.5rem | 2rem |
 | `--space-3xl` | `--space-xl` | 3rem | 2rem |
 
+## Border Radius Scale
+
+Our application uses a consistent border radius scale with 7 options:
+
+| Variable Name | Value | Pixel Equivalent | Usage |
+|---------------|-------|------------------|-------|
+| `--radius-none` | 0 | 0px | No border radius, sharp corners |
+| `--radius-xs` | 0.125rem | 2px | Subtle rounding, tooltips, small elements |
+| `--radius-sm` | 0.25rem | 4px | Slight rounding, form inputs, small buttons |
+| `--radius-md` | 0.375rem | 6px | Moderate rounding, standard buttons |
+| `--radius-lg` | 0.5rem | 8px | Noticeable rounding, cards, panels |
+| `--radius-xl` | 0.75rem | 12px | Prominent rounding, featured elements |
+| `--radius-full` | 9999px | - | Complete rounding for pills, circles, avatars |
+
+### Semantic Border Radius Variables
+
+For improved maintainability, we also provide semantic border radius variables:
+
+| Semantic Variable | Maps To | Usage |
+|-------------------|---------|-------|
+| `--radius-button` | `--radius-md` | Default button components |
+| `--radius-card` | `--radius-lg` | Cards and major container elements |
+| `--radius-input` | `--radius-sm` | Form input fields |
+| `--radius-badge` | `--radius-full` | Pills, tags, and badges |
+| `--radius-tooltip` | `--radius-xs` | Tooltips and popovers |
+| `--radius-panel` | `--radius-lg` | Panels, modals, and dialogs |
+
 ## Usage Guidelines
 
 ### Basic Implementation
 Use CSS variables in your component CSS modules:
 
 ```css
-.container {
-  padding: var(--space-md);
-  margin-bottom: var(--space-lg);
-  gap: var(--space-sm);
+.button {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-button);
+  margin-bottom: var(--space-md);
+}
+
+.card {
+  padding: var(--padding-medium);
+  border-radius: var(--radius-card);
+  gap: var(--gap-medium);
 }
 ```
 
-### Semantic Spacing
-Where possible, use semantic spacing variables that are built on the spacing scale:
+### Semantic Variables
+Where possible, use semantic variables that are built on the base scales:
 
 ```css
-.card {
-  padding: var(--padding-container);  /* Maps to var(--space-md) */
-  gap: var(--gap-standard);           /* Maps to var(--space-sm) */
+.input {
+  padding: var(--padding-small);
+  border-radius: var(--radius-input);
+}
+
+.badge {
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-badge);
 }
 ```
 
 ### Responsive Considerations
-The spacing system works across all screen sizes, but consider using smaller spacing values on mobile devices for certain UI elements:
+Consider using different spacing values on different screen sizes:
 
 ```css
 .component {
   padding: var(--space-sm);
+  border-radius: var(--radius-md);
 }
 
 @media (min-width: 768px) {
   .component {
     padding: var(--space-md);
+    border-radius: var(--radius-lg);
   }
 }
 ```
 
-## Benefits of the Simplified Scale
-- **Consistency**: Fewer options lead to more consistent usage across the application
-- **Simplicity**: Easier to remember and apply the correct spacing values
-- **Maintainability**: Simpler system is easier to update and extend
+## Benefits of the Design Token System
+- **Consistency**: Few options lead to more consistent usage across the application
+- **Simplicity**: Easier to remember and apply the correct values
+- **Maintainability**: Simple system is easier to update and extend
 - **Performance**: Reduced CSS variable footprint
+- **Theme Support**: All tokens work in both light and dark modes
 
 ## Best Practices
-1. Always use spacing variables instead of hardcoded values
-2. Maintain visual hierarchy with appropriate spacing choices
-3. Use the smallest number of different spacing values within a component
-4. Consider component relationships when choosing spacing values
+1. Always use design token variables instead of hardcoded values
+2. Use semantic variables when available for better code readability
+3. Maintain consistent visual hierarchy with appropriate token choices
+4. Consider component relationships when choosing values
+5. Use the smallest number of different values within a component

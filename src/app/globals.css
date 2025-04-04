@@ -22,6 +22,23 @@
   --padding-medium: var(--space-md); /* 1rem - 16px */
   --padding-large: var(--space-lg);  /* 1.5rem - 24px */
 
+  /* Border radius system - 5-point scale */
+  --radius-none: 0;         /* 0px - sharp corners */
+  --radius-xs: 0.125rem;    /* 2px - subtle rounding */
+  --radius-sm: 0.25rem;     /* 4px - slight rounding */
+  --radius-md: 0.375rem;    /* 6px - moderate rounding */
+  --radius-lg: 0.5rem;      /* 8px - noticeable rounding */
+  --radius-xl: 0.75rem;     /* 12px - prominent rounding */
+  --radius-full: 9999px;    /* Full rounding (for pills, avatars) */
+
+  /* Semantic border radius names */
+  --radius-button: var(--radius-md);     /* Default button rounding */
+  --radius-card: var(--radius-lg);       /* Card component rounding */
+  --radius-input: var(--radius-sm);      /* Form input rounding */
+  --radius-badge: var(--radius-full);    /* Badge/pill component */
+  --radius-tooltip: var(--radius-xs);    /* Tooltip component */
+  --radius-panel: var(--radius-lg);      /* Panel/modal rounding */
+
   /* Light theme variables using HSL */
   --background: hsl(var(--color-hue-primary), 20%, 98%);
   --background-alt: hsl(var(--color-hue-primary), 20%, 100%);
