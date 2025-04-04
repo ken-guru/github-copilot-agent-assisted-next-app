@@ -1,7 +1,7 @@
 # Design Token Documentation
 
 ## Overview
-This document outlines the design token system used throughout the application, including spacing and border radius values. We use simplified scales that provide consistency and flexibility across all components.
+This document outlines the design token system used throughout the application, including spacing, border radius, and shadow values. We use simplified scales that provide consistency and flexibility across all components.
 
 ## Spacing Scale
 Our application uses a simplified spacing scale with 5 key sizes:
@@ -93,6 +93,74 @@ The border radius scale helps establish visual hierarchy:
 
 - On smaller screens, consider reducing border radius by one step
 - Elements that take up more screen proportion on mobile may look better with slightly reduced radius
+
+## Shadow Scale
+
+Our application uses a consistent shadow scale with 6 options:
+
+| Variable Name | Value | Usage |
+|---------------|-------|-------|
+| `--shadow-none` | none | No shadow, flat appearance |
+| `--shadow-xs` | 0 1px 2px hsla(..., 0.07) | Subtle shadow, minimal elevation |
+| `--shadow-sm` | 0 1px 3px hsla(..., 0.12) | Light shadow, slight elevation |
+| `--shadow-md` | 0 4px 6px hsla(..., 0.1) | Medium shadow, moderate elevation |
+| `--shadow-lg` | 0 10px 15px hsla(..., 0.1) | Pronounced shadow, significant elevation |
+| `--shadow-xl` | 0 20px 25px hsla(..., 0.15) | Deep shadow, maximum elevation |
+
+### Semantic Shadow Variables
+
+For improved maintainability, we also provide semantic shadow variables:
+
+| Semantic Variable | Maps To | Usage |
+|-------------------|---------|-------|
+| `--shadow-card` | `--shadow-sm` | Default for cards and containers |
+| `--shadow-card-hover` | `--shadow-md` | Hover state for interactive cards |
+| `--shadow-dropdown` | `--shadow-md` | For dropdown menus and popovers |
+| `--shadow-modal` | `--shadow-lg` | For modal dialogs and overlays |
+| `--shadow-header` | `--shadow-sm` | For page headers and navigation |
+| `--shadow-button` | `--shadow-xs` | Optional subtle shadow for buttons |
+| `--shadow-focus` | Special value | Focus state for interactive elements |
+
+## Shadow Usage Guidelines
+
+### Element Nesting and Elevation Rules
+
+To maintain a consistent shadow hierarchy across the application, follow these rules:
+
+1. **Top-Level Containers** (Main sections, cards):
+   - Use `--shadow-card` (maps to `--shadow-sm`) for standard elevation
+   - Ensures subtle depth without overwhelming the UI
+
+2. **Floating Elements** (Dropdowns, popovers):
+   - Use `--shadow-dropdown` (maps to `--shadow-md`) 
+   - Creates clear separation from underlying content
+
+3. **Modal Dialogs** (Full-screen overlays):
+   - Use `--shadow-modal` (maps to `--shadow-lg`)
+   - Provides significant elevation above all other content
+
+4. **Interactive Elements**:
+   - Normal state: Usually no shadow (`--shadow-none`) or very subtle (`--shadow-xs`)
+   - Hover state: Can increase shadow by one level (e.g., from `--shadow-sm` to `--shadow-md`)
+   - Focus state: Use `--shadow-focus` with accent color
+
+5. **Nested Elements** (Cards within cards, etc.):
+   - Child elements should either use no shadow or a shadow one level lower than parent
+   - Avoid multiple layers of strong shadows that compete visually
+
+### Visual Hierarchy
+
+The shadow scale helps establish visual hierarchy:
+- Higher shadow values indicate higher elevation in the interface
+- Modals and dialogs use the strongest shadows
+- Page-level containers use moderate shadows
+- Inline elements typically use minimal or no shadows
+
+### Responsive Considerations
+
+- On mobile devices, consider using reduced shadow intensities
+- Shadows can be more subtle in dark mode to prevent eye strain
+- Ensure shadow direction is consistent (typically top-light source)
 
 ## Usage Guidelines
 

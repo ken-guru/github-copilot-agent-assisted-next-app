@@ -6,7 +6,7 @@
   background-color: var(--background-alt);
   border-left: 4px solid var(--accent-color);
   border-radius: var(--radius-card); /* Updated from hardcoded value to use semantic radius */
-  box-shadow: var(--shadow-medium);
+  box-shadow: var(--shadow-dropdown); /* Updated from var(--shadow-medium) */
   max-width: 350px;
   animation: slideIn 0.3s ease-out;
   z-index: 1000;

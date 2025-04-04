@@ -39,6 +39,23 @@
   --radius-tooltip: var(--radius-xs);    /* Tooltip component */
   --radius-panel: var(--radius-lg);      /* Panel/modal rounding */
 
+  /* Shadow system - 5-point scale */
+  --shadow-none: none;      /* No shadow */
+  --shadow-xs: 0 1px 2px hsla(var(--color-hue-primary), 10%, 5%, 0.07);  /* Subtle shadow */
+  --shadow-sm: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.12);  /* Light shadow */
+  --shadow-md: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.1);   /* Medium shadow */
+  --shadow-lg: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.1); /* Pronounced shadow */
+  --shadow-xl: 0 20px 25px hsla(var(--color-hue-primary), 10%, 5%, 0.15); /* Deep shadow */
+
+  /* Semantic shadow names */
+  --shadow-card: var(--shadow-sm);       /* Default card shadow */
+  --shadow-card-hover: var(--shadow-md); /* Card hover state */
+  --shadow-dropdown: var(--shadow-md);   /* Dropdowns and popovers */
+  --shadow-modal: var(--shadow-lg);      /* Modal dialogs */
+  --shadow-header: var(--shadow-sm);     /* Page headers */
+  --shadow-button: var(--shadow-xs);     /* Button subtle shadow */
+  --shadow-focus: 0 0 0 4px rgba(var(--accent-color-rgb), 0.35); /* Focus state */
+
   /* Light theme variables using HSL */
   --background: hsl(var(--color-hue-primary), 20%, 98%);
   --background-alt: hsl(var(--color-hue-primary), 20%, 100%);
@@ -124,6 +141,13 @@
   --shadow-medium: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.4);
   --shadow-large: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.5);
   
+  /* Shadow values - darker and more subtle for dark mode */
+  --shadow-xs: 0 1px 2px hsla(var(--color-hue-primary), 10%, 5%, 0.15);
+  --shadow-sm: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.3);
+  --shadow-md: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.4);
+  --shadow-lg: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.5);
+  --shadow-xl: 0 20px 25px hsla(var(--color-hue-primary), 10%, 5%, 0.55);
+
   /* Dark mode input styling */
   input[type="text"],
   input[type="number"],
@@ -187,6 +211,11 @@
     --shadow-small: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.3);
     --shadow-medium: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.4);
     --shadow-large: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.5);
+    --shadow-xs: 0 1px 2px hsla(var(--color-hue-primary), 10%, 5%, 0.15);
+    --shadow-sm: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.3);
+    --shadow-md: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.4);
+    --shadow-lg: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.5);
+    --shadow-xl: 0 20px 25px hsla(var(--color-hue-primary), 10%, 5%, 0.55);
   }
 }
 

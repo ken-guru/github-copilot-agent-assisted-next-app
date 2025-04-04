@@ -25,12 +25,13 @@
 }
 
 .wrapper header {
-  padding: var(--padding-medium);
+  padding: var(--padding-small);
   position: sticky;
   top: 0;
   z-index: 10;
   background-color: var(--background);
   border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-header);
 }
 
 .wrapper .setupGrid,
@@ -172,17 +173,17 @@
 
 .card {
   background-color: var(--background-alt, white);
-  border-radius: var(--radius-card); /* Updated from 0.5rem to use semantic radius */
+  border-radius: var(--radius-card);
   border: 1px solid var(--border);
   padding: var(--space-md);
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  box-shadow: var(--shadow-card);
 }
 
 /* Media query for smaller screens */
 @media (max-width: 768px) {
   .wrapper header {
     padding: var(--padding-small);
-    box-shadow: var(--shadow-small);
+    box-shadow: var(--shadow-header);
   }
 
   .wrapper .setupGrid,

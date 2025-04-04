@@ -155,7 +155,7 @@
 .startButton:focus-visible, .runningButton:focus-visible, .stopButton:focus-visible {
   outline: 2px solid var(--accent-color);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(var(--accent-color-rgb), 0.35);
+  box-shadow: var(--shadow-focus);
 }
 
 .removeButton {
@@ -292,5 +292,5 @@
 .addButton:focus-visible {
   outline: 2px solid var(--accent-color);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(var(--accent-color-rgb), 0.35);
+  box-shadow: var(--shadow-focus);
 }

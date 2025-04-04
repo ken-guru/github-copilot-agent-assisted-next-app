@@ -105,3 +105,4 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 
 - [MRTMLY-012: Border Radius Token Implementation](/docs/logged_memories/MRTMLY-012-border-radius-implementation.md) - Implementation of the border radius token system across CSS files #css #design-system #tokens #refactoring
 - [MRTMLY-013: Border Radius System Refinement](/docs/logged_memories/MRTMLY-013-border-radius-refinement.md) - Refined border radius usage guidelines for consistent application based on element nesting #css #design-system #tokens #refinement #ui
+- [MRTMLY-014: Shadow Token System Implementation](/docs/logged_memories/MRTMLY-014-shadow-token-system.md) - Created and implemented a comprehensive shadow token system with usage guidelines #css #design-system #tokens #shadows #ui

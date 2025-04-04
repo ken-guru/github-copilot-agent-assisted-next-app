@@ -2,7 +2,7 @@
   padding: var(--space-md);
   background-color: var(--background);
   border-radius: var(--radius-card); /* Added semantic radius variable */
-  box-shadow: var(--shadow-small);
+  box-shadow: var(--shadow-card);
   width: 100%;
 }
 
@@ -30,7 +30,7 @@
   padding: var(--space-md);
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-small);
+  box-shadow: var(--shadow-card);
   gap: var(--space-xs);
 }
 
