@@ -225,7 +225,7 @@
 /* Media query for smaller screens */
 @media (max-width: 768px) {
   .container {
-    padding: var(--padding-small);  
+    padding: var(--space-xs);  /* Reduced from var(--padding-small) to var(--space-xs) for mobile */
   }
 }
 
