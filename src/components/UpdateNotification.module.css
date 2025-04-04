@@ -2,18 +2,19 @@
   position: fixed;
   bottom: var(--space-md);
   right: var(--space-md);
-  background-color: var(--background);
-  color: var(--foreground);
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--space-sm); /* Updated from 0.5rem */
+  padding: var(--space-md);
+  background-color: var(--background-alt);
+  border-left: 4px solid var(--accent-color);
+  border-radius: var(--radius-card); /* Updated from hardcoded value to use semantic radius */
   box-shadow: var(--shadow-medium);
+  max-width: 350px;
+  animation: slideIn 0.3s ease-out;
+  z-index: 1000;
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  z-index: 1000; /* Keep high z-index to ensure it appears above all content */
   max-width: 90vw;
   border: 1px solid var(--border);
-  animation: slideIn 0.3s ease-out;
 }
 
 .message {
@@ -22,16 +23,17 @@
 }
 
 .dismissButton {
-  background: none;
+  background: transparent;
   border: none;
   color: var(--foreground-muted);
+  padding: var(--space-xs);
   cursor: pointer;
-  padding: var(--space-xs); /* Updated from var(--space-2xs) */
+  margin-left: var(--space-sm);
+  border-radius: var(--radius-button); /* Updated from var(--space-xs) to use semantic radius */
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--space-xs); /* Updated from var(--space-2xs) */
-  transition: all 0.2s;
 }
 
 .dismissButton:hover {

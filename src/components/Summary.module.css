@@ -1,8 +1,8 @@
 .container {
+  padding: var(--space-md);
   background-color: var(--background);
-  padding: var(--padding-medium);
-  border-radius: var(--space-sm); /* Updated from 0.5rem to use variable */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-card); /* Added semantic radius variable */
+  box-shadow: var(--shadow-small);
   width: 100%;
 }
 
@@ -25,11 +25,12 @@
 }
 
 .statCard {
-  background-color: var(--background-muted);
-  padding: var(--padding-medium);
-  border-radius: var(--space-sm); /* Updated from 0.5rem to use variable */
+  background-color: var(--background-alt);
+  border-radius: var(--radius-card); /* Added semantic radius variable */
+  padding: var(--space-md);
   display: flex;
   flex-direction: column;
+  box-shadow: var(--shadow-small);
   gap: var(--space-xs);
 }
 
@@ -45,10 +46,12 @@
 }
 
 .statusMessage {
-  padding: var(--padding-medium);
-  margin-bottom: var(--space-lg);
-  border-radius: var(--space-sm); /* Updated from 0.5rem to use variable */
+  grid-column: 1 / -1;
+  padding: var(--space-sm);
+  border-radius: var(--radius-card); /* Added semantic radius variable */
+  text-align: center;
   font-weight: 500;
+  margin-top: var(--space-md);
 }
 
 .onTime {
