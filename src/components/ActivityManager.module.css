@@ -85,12 +85,13 @@
   font-weight: 500;
   color: var(--accent-color);
   background-color: var(--background-muted);
-  padding: var(--space-xs) var(--space-sm); /* Update from --space-2xs and --space-xs */
+  padding: 0 var(--space-sm);
   border-radius: var(--space-sm); /* Updated from 1rem */
   border: 1px solid var(--accent-color);
   display: flex;
   align-items: center;
   justify-content: center;
+  height: var(--control-height-md);
 }
 
 .timerDisplay {
@@ -101,7 +102,7 @@
 .completedTag {
   display: inline-flex; /* Keep inline-flex for vertical centering */
   align-items: center; /* Keep for vertical alignment */
-  padding: 0.125rem var(--space-xs);
+  padding: 0 var(--space-xs);
   font-size: 0.75rem;
   font-weight: 500;
   color: hsl(var(--color-hue-success), 85%, 40%);
@@ -110,6 +111,9 @@
   background-color: transparent;
   line-height: 1; /* For better text alignment */
   gap: var(--space-xs); /* Added to create space between icon and text */
+  height: var(--control-height-md);
+  min-width: 28px;
+  box-sizing: border-box;
 }
 
 :global(.dark-mode) .completedTag {
@@ -128,7 +132,7 @@
 .startButton, .runningButton, .stopButton {
   background-color: var(--accent-color);
   color: var(--background);
-  padding: var(--space-xs);
+  padding: 0 var(--space-xs);
   border: none;
   border-radius: var(--radius-button); /* Updated from var(--space-xs) to use semantic radius */
   font-size: 0.875rem;
@@ -138,7 +142,7 @@
   outline: 2px solid transparent;
   outline-offset: 0;
   width: 40px; /* Increased horizontal size to emphasize importance */
-  height: 28px;
+  height: var(--control-height-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -164,7 +168,7 @@
 .removeButton {
   background-color: transparent;
   color: var(--error);
-  padding: var(--space-xs);
+  padding: 0;
   border: 1px solid var(--error);
   border-radius: var(--radius-button); /* Updated from var(--space-xs) to use semantic radius */
   font-size: 0.875rem;
@@ -172,7 +176,7 @@
   cursor: pointer;
   transition: all 0.2s;
   width: 28px;
-  height: 28px;
+  height: var(--control-height-md);
   display: flex; /* Updated to use flex for better icon centering */
   align-items: center; /* Added to center icon vertically */
   justify-content: center; /* Added to center icon horizontally */
@@ -192,15 +196,16 @@
 }
 
 .buttonIcon {
-  width: 16px;
-  height: 16px;
-  display: inline-block; /* Added to ensure proper rendering */
-  vertical-align: middle; /* Added to center vertically within button */
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  display: inline-flex; /* Added to ensure proper rendering */
+  align-items: center;
+  justify-content: center;
 }
 
 .checkIcon {
-  width: 14px; /* Reduced from 16px for better proportions */
-  height: 14px; /* Reduced from 16px for better proportions */
+  width: var(--icon-size-sm); /* Reduced from 16px for better proportions */
+  height: var(--icon-size-sm); /* Reduced from 16px for better proportions */
   display: inline-flex; /* Keep for alignment */
   align-items: center;
   justify-content: center;
@@ -300,7 +305,7 @@
 }
 
 .addButton:disabled {
-  background-color: var(--background-muted);
+  background-color: var (--background-muted);
   color: var (--foreground-muted);
   cursor: not-allowed;
 }

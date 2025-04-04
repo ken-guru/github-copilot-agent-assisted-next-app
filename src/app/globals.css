@@ -84,6 +84,15 @@
   --error: hsl(var(--color-hue-error), 85%, 45%);
   --error-bg: hsl(var(--color-hue-error), 85%, 95%);
 
+  /* Component sizing - for consistent UI elements */
+  --control-height-sm: 24px;   /* Small controls */
+  --control-height-md: 28px;   /* Standard controls */
+  --control-height-lg: 36px;   /* Large controls */
+  
+  --icon-size-sm: 14px;        /* Small icons */
+  --icon-size-md: 16px;        /* Standard icons */
+  --icon-size-lg: 20px;        /* Large icons */
+
   /* Status message colors for Summary component */
   --status-ontime-bg: #d1fae5;
   --status-ontime-text: #065f46;
