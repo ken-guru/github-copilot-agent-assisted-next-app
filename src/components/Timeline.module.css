@@ -174,7 +174,7 @@
 }
 
 .timelineEntry:hover {
-  transform: translateX(2px);
+  transform: translateX(var(--space-xs)); /* Updated from 2px to use variable */
   opacity: 0.95;
 }
 
@@ -281,5 +281,14 @@
   .container {
     padding: var(--space-xs); /* Reduced padding for mobile views */
     gap: var(--space-xs); /* Smaller gap between elements on mobile */
+  }
+  
+  .timelineEntry {
+    padding: var(--space-sm); /* Reduced from var(--space-md) for mobile */
+    min-height: 2.5rem; /* Slightly smaller for mobile */
+  }
+  
+  .timeGap {
+    min-height: 1.5rem; /* Smaller for mobile */
   }
 }

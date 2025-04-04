@@ -99,3 +99,4 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-051: CSS Spacing Scale Implementation Adjustments](./logged_memories/MRTMLY-051-css-spacing-implementation-adjustments.md) #css #refactoring #spacing-system #variables #visual-design
 - [MRTMLY-052: Mobile Padding Optimization](./logged_memories/MRTMLY-052-mobile-padding-optimization.md) #css #mobile #responsive-design #spacing-system #optimization
 - [MRTMLY-053: Additional Mobile Spacing Optimizations](./logged_memories/MRTMLY-053-additional-mobile-spacing-optimizations.md) #css #mobile #responsive-design #spacing-system #optimization
+- [MRTMLY-054: Hardcoded Spacing Values Replacement](./logged_memories/MRTMLY-054-hardcoded-spacing-values-replacement.md) #css #spacing-system #variables #consistency #refactoring
