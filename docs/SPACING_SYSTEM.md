@@ -1,7 +1,7 @@
 # Design Token Documentation
 
 ## Overview
-This document outlines the design token system used throughout the application, including spacing, border radius, and shadow values. We use simplified scales that provide consistency and flexibility across all components.
+This document outlines the design token system used throughout the application, including spacing, border radius, shadow, and component sizing values. We use simplified scales that provide consistency and flexibility across all components.
 
 ## Spacing Scale
 Our application uses a simplified spacing scale with 5 key sizes:
@@ -161,6 +161,89 @@ The shadow scale helps establish visual hierarchy:
 - On mobile devices, consider using reduced shadow intensities
 - Shadows can be more subtle in dark mode to prevent eye strain
 - Ensure shadow direction is consistent (typically top-light source)
+
+## Component Sizing Scale
+
+Our application uses a standardized sizing system for UI controls and icons:
+
+### Control Heights
+
+Consistent heights for interactive elements ensure visual harmony across the interface:
+
+| Variable Name | Value | Usage |
+|---------------|-------|-------|
+| `--control-height-sm` | 24px | Small, compact controls with minimal visual weight |
+| `--control-height-md` | 28px | Standard controls, buttons, tags, inputs |
+| `--control-height-lg` | 36px | Large, prominent controls, primary actions |
+
+### Icon Sizes
+
+Coordinated icon sizes that pair well with control heights:
+
+| Variable Name | Value | Usage |
+|---------------|-------|-------|
+| `--icon-size-sm` | 14px | Small icons, secondary indicators, compact UIs |
+| `--icon-size-md` | 16px | Standard icons for buttons and interactive elements |
+| `--icon-size-lg` | 20px | Large icons for emphasis and improved visibility |
+
+## Component Sizing Usage Guidelines
+
+### Control and Icon Pairing
+
+For visual harmony, follow these guidelines when pairing controls with icons:
+
+1. **Small Controls** (`--control-height-sm: 24px`):
+   - Use with `--icon-size-sm` (14px)
+   - Best for dense UIs, secondary actions
+   - Examples: Small tags, secondary buttons, compact indicators
+
+2. **Standard Controls** (`--control-height-md: 28px`):
+   - Use with `--icon-size-md` (16px)
+   - Our default size for most interactive elements
+   - Examples: Standard buttons, input fields, tags, badges
+
+3. **Large Controls** (`--control-height-lg: 36px`):
+   - Use with `--icon-size-lg` (20px) 
+   - Use for primary actions and improved touch targets
+   - Examples: Primary buttons, prominent interactive elements
+
+### Implementation Examples
+
+```css
+/* Standard button with icon */
+.button {
+  height: var(--control-height-md);
+  padding: 0 var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.button svg {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+}
+
+/* Tag with icon */
+.tag {
+  height: var(--control-height-md);
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-sm);
+  gap: var(--space-xs);
+}
+
+.tag svg {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+```
+
+### Responsive Considerations
+
+- On mobile devices, consider using larger control heights for better touch targets
+- Maintain consistent sizing ratios between related elements
+- Always use the sizing variables rather than hardcoded values
 
 ## Usage Guidelines
 
