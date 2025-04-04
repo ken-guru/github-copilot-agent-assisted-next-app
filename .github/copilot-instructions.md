@@ -45,6 +45,23 @@
    - Prompt for README.md updates with specific suggestions based on the changes made
    - Ensure documentation remains synchronized with the current state of the application
 
+3. **Component Documentation**:
+   - Create or update component documentation in `docs/components/` whenever:
+     - Implementing new components
+     - Making significant changes to existing components
+     - Improving component APIs or behavior
+   - Use the template at `docs/templates/COMPONENT_DOCUMENTATION_TEMPLATE.md`
+   - Ensure documentation covers:
+     - Comprehensive props documentation with types and defaults
+     - State management approach
+     - Theme compatibility details
+     - Mobile responsiveness information
+     - Accessibility considerations
+     - Test coverage summary
+   - Include code examples showing both basic and advanced usage
+   - Document any known limitations or edge cases
+   - Keep the Change History section updated with all significant modifications
+
 ## Change Management
 
 1. **Change Summary**: After implementing changes, provide a concise summary to facilitate:
