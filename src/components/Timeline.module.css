@@ -276,3 +276,10 @@
   opacity: 0.3;
   transform: translateY(-50%);
 }
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-xs); /* Reduced padding for mobile views */
+    gap: var(--space-xs); /* Smaller gap between elements on mobile */
+  }
+}

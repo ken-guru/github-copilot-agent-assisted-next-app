@@ -163,7 +163,7 @@
 /* Media query for smaller screens */
 @media (max-width: 768px) {
   .container {
-    padding: var(--padding-sm);
+    padding: var(--space-xs); /* Reduced from var(--padding-sm) for better mobile spacing */
   }
   
   .statsGrid {
