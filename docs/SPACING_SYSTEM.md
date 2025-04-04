@@ -55,6 +55,45 @@ For improved maintainability, we also provide semantic border radius variables:
 | `--radius-tooltip` | `--radius-xs` | Tooltips and popovers |
 | `--radius-panel` | `--radius-lg` | Panels, modals, and dialogs |
 
+## Border Radius Usage Guidelines
+
+### Element Nesting Rules
+
+To maintain a consistent "squircle aesthetic" across the application, follow these rules for border radius based on element nesting:
+
+1. **Container/Parent Elements** (Cards, Panels, Major Sections):
+   - Use `--radius-lg` (0.5rem/8px) for top-level containers
+   - Example: Cards, panels, major content areas
+
+2. **Interactive Elements** (Buttons, Inputs):
+   - Use `--radius-md` (0.375rem/6px) for standard interactive elements
+   - Example: Buttons, form controls, interactive cards
+
+3. **Child Elements** (Within containers):
+   - Use a border radius one step smaller than their parent
+   - Example: A button within a card would use `--radius-sm` if the card uses `--radius-md`
+
+4. **Small UI Elements** (Tags, Badges, Indicators):
+   - Use `--radius-sm` (0.25rem/4px) or `--radius-xs` (0.125rem/2px) based on size
+   - For pill-shaped items only, use `--radius-full` 
+
+5. **Nested Interactive Elements** (Buttons in form groups, etc.):
+   - Adjacent elements should use consistent radius values
+   - For grouped elements, consider using smaller radius values where they connect
+
+### Visual Hierarchy
+
+The border radius scale helps establish visual hierarchy:
+- Larger, more important elements (cards, modals) use larger radius values
+- Supporting elements use smaller, but proportional radius values
+- Maintain the "squircle aesthetic" by avoiding extremes (fully squared or fully rounded)
+- Exception: Pill-shaped elements (tags, badges) intentionally use full rounding
+
+### Responsive Considerations
+
+- On smaller screens, consider reducing border radius by one step
+- Elements that take up more screen proportion on mobile may look better with slightly reduced radius
+
 ## Usage Guidelines
 
 ### Basic Implementation

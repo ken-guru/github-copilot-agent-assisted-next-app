@@ -100,3 +100,8 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-052: Mobile Padding Optimization](./logged_memories/MRTMLY-052-mobile-padding-optimization.md) #css #mobile #responsive-design #spacing-system #optimization
 - [MRTMLY-053: Additional Mobile Spacing Optimizations](./logged_memories/MRTMLY-053-additional-mobile-spacing-optimizations.md) #css #mobile #responsive-design #spacing-system #optimization
 - [MRTMLY-054: Hardcoded Spacing Values Replacement](./logged_memories/MRTMLY-054-hardcoded-spacing-values-replacement.md) #css #spacing-system #variables #consistency #refactoring
+
+## December 2023
+
+- [MRTMLY-012: Border Radius Token Implementation](/docs/logged_memories/MRTMLY-012-border-radius-implementation.md) - Implementation of the border radius token system across CSS files #css #design-system #tokens #refactoring
+- [MRTMLY-013: Border Radius System Refinement](/docs/logged_memories/MRTMLY-013-border-radius-refinement.md) - Refined border radius usage guidelines for consistent application based on element nesting #css #design-system #tokens #refinement #ui
