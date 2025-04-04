@@ -1,19 +1,20 @@
 .updateNotification {
   position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  background-color: var(--background);
-  color: var(--foreground);
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  box-shadow: var(--shadow-medium);
+  bottom: var(--space-md);
+  right: var(--space-md);
+  padding: var(--space-md);
+  background-color: var(--background-alt);
+  border-left: 4px solid var(--accent-color);
+  border-radius: var(--radius-card); /* Updated from hardcoded value to use semantic radius */
+  box-shadow: var(--shadow-dropdown); /* Updated from var(--shadow-medium) */
+  max-width: 350px;
+  animation: slideIn 0.3s ease-out;
+  z-index: 1000;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  z-index: 1000; /* Keep high z-index to ensure it appears above all content */
+  gap: var(--space-md);
   max-width: 90vw;
   border: 1px solid var(--border);
-  animation: slideIn 0.3s ease-out;
 }
 
 .message {
@@ -22,16 +23,17 @@
 }
 
 .dismissButton {
-  background: none;
+  background: transparent;
   border: none;
   color: var(--foreground-muted);
+  padding: var(--space-xs);
   cursor: pointer;
-  padding: 0.25rem;
+  margin-left: var(--space-sm);
+  border-radius: var(--radius-button); /* Updated from var(--space-xs) to use semantic radius */
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.25rem;
-  transition: all 0.2s ease;
 }
 
 .dismissButton:hover {
@@ -51,11 +53,11 @@
 }
 
 /* Add responsive styling for mobile devices */
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .updateNotification {
-    bottom: 0.5rem; /* Position within the toast area */
-    right: 0.5rem;
-    left: 0.5rem; /* On mobile, span almost full width */
-    max-width: calc(100vw - 1rem);
+    bottom: var(--space-xs);
+    right: var(--space-xs);
+    left: var(--space-xs);
+    max-width: calc(100vw - var(--space-md));
   }
 }

@@ -95,3 +95,19 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-047: Unused Variable in Summary Component](./logged_memories/MRTMLY-047-unused-variable-summary-component.md)
 - [MRTMLY-048: Timer Display Consistency Test Suite Implementation](./logged_memories/MRTMLY-048-timer-display-consistency-tests.md) #testing #timer #consistency #long-running-sessions #regression-testing
 - [MRTMLY-049: Time Setup Input Formats Test Suite Implementation](./logged_memories/MRTMLY-049-time-setup-input-formats-tests.md)
+- [MRTMLY-050: CSS Spacing Scale Simplification Implementation](./logged_memories/MRTMLY-050-css-spacing-scale-simplification.md) #css #refactoring #spacing-system #variables
+- [MRTMLY-051: CSS Spacing Scale Implementation Adjustments](./logged_memories/MRTMLY-051-css-spacing-implementation-adjustments.md) #css #refactoring #spacing-system #variables #visual-design
+- [MRTMLY-052: Mobile Padding Optimization](./logged_memories/MRTMLY-052-mobile-padding-optimization.md) #css #mobile #responsive-design #spacing-system #optimization
+- [MRTMLY-053: Additional Mobile Spacing Optimizations](./logged_memories/MRTMLY-053-additional-mobile-spacing-optimizations.md) #css #mobile #responsive-design #spacing-system #optimization
+- [MRTMLY-054: Hardcoded Spacing Values Replacement](./logged_memories/MRTMLY-054-hardcoded-spacing-values-replacement.md) #css #spacing-system #variables #consistency #refactoring
+
+## December 2023
+
+- [MRTMLY-012: Border Radius Token Implementation](/docs/logged_memories/MRTMLY-012-border-radius-implementation.md) - Implementation of the border radius token system across CSS files #css #design-system #tokens #refactoring
+- [MRTMLY-013: Border Radius System Refinement](/docs/logged_memories/MRTMLY-013-border-radius-refinement.md) - Refined border radius usage guidelines for consistent application based on element nesting #css #design-system #tokens #refinement #ui
+- [MRTMLY-014: Shadow Token System Implementation](/docs/logged_memories/MRTMLY-014-shadow-token-system.md) - Created and implemented a comprehensive shadow token system with usage guidelines #css #design-system #tokens #shadows #ui
+- [MRTMLY-015: Icon Alignment and Tag Border Radius Fixes](/docs/logged_memories/MRTMLY-015-icon-alignment-fixes.md) - Fixed misaligned icons and updated completed tag to follow squircle aesthetic #css #ui #icons #alignment #design-system
+- [MRTMLY-016: Completed Tag Horizontal Alignment Fix](/docs/logged_memories/MRTMLY-016-completed-tag-alignment-fix.md) - Fixed horizontal spacing between icon and text in completed tag #css #ui #alignment #design-system
+- [MRTMLY-017: Consistent UI Controls Sizing](/docs/logged_memories/MRTMLY-017-consistent-ui-controls-sizing.md) - Standardized sizes across buttons and tags for visual consistency #css #ui #standardization #controls #design-system
+- [MRTMLY-018: Check Icon Horizontal Alignment Fix](/docs/logged_memories/MRTMLY-018-check-icon-alignment-fix.md) - Fixed horizontal alignment of check icon in completed tags #css #ui #alignment #icons
+- [MRTMLY-019: Component Sizing Documentation](/docs/logged_memories/MRTMLY-019-component-sizing-documentation.md) - Added comprehensive documentation for component sizing variables #documentation #design-system #components #sizing #ui

@@ -1,8 +1,6 @@
 .container {
   width: 100%;
-  margin-bottom: 0.5rem;
   position: relative;
-  padding: 2px;
   
   /* Define base colors to use for transitions - moved from :root to .container */
   --progress-green-hue: 142;
@@ -60,15 +58,15 @@
 .timeMarkers {
   display: flex;
   justify-content: space-between;
-  margin-top: 0.5rem;
-  padding: 0 4px;
+  margin-top: var(--space-xs);
+  padding: 0 var(--space-2xs);
 }
 
 /* Mobile specific time markers styling */
 .mobileContainer .timeMarkers {
   margin-top: 0;
-  margin-bottom: 0.25rem;
-  padding: 0 4px;
+  margin-bottom: var(--space-2xs);
+  padding: 0 var(--space-2xs);
   order: -1;
 }
 

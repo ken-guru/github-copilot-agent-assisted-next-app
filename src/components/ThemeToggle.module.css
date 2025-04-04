@@ -1,8 +1,8 @@
 .container {
   display: flex;
   align-items: center;
-  padding: 4px;
-  border-radius: 0.5rem;
+  padding: var(--space-xs); /* Updated from var(--space-2xs) */
+  border-radius: var(--space-sm); /* Updated from 0.5rem */
   background-color: var(--background-muted);
   margin: 0;
   height: 100%;
@@ -16,9 +16,9 @@
 
 .toggleGroup {
   display: flex;
-  border-radius: 0.5rem;
-  padding: 4px;
-  gap: 8px;
+  border-radius: var(--space-sm); /* Updated from 0.5rem */
+  padding: var(--space-xs); /* Updated from var(--space-2xs) */
+  gap: var(--gap-small);
 }
 
 .toggleButton {
@@ -30,10 +30,10 @@
   color: var(--foreground-muted);
   background-color: transparent;
   border: none;
-  border-radius: 0.375rem;
+  border-radius: var(--space-xs); /* Updated from 0.375rem */
   cursor: pointer;
   transition: all 0.2s ease;
-  padding: 10px;
+  padding: var(--padding-small);
 }
 
 .toggleButton:hover {
@@ -55,17 +55,17 @@
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .container {
-    padding: 2px;
+    padding: var(--space-xs); /* Updated from 2px */
     height: 44px;
   }
 
   .toggleGroup {
-    gap: 4px;
-    padding: 2px;
+    gap: var(--space-xs); /* Updated from var(--space-2xs) */
+    padding: var(--space-xs); /* Updated from 2px */
   }
   
   .toggleButton {
-    padding: 8px;
+    padding: var(--space-xs); /* Updated from var(--space-2xs) */
   }
   
   .toggleButton svg {
