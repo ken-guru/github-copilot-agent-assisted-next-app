@@ -99,14 +99,17 @@
 }
 
 .completedTag {
-  display: inline-block;
+  display: inline-flex; /* Keep inline-flex for vertical centering */
+  align-items: center; /* Keep for vertical alignment */
   padding: 0.125rem var(--space-xs);
   font-size: 0.75rem;
   font-weight: 500;
   color: hsl(var(--color-hue-success), 85%, 40%);
   border: 1px solid currentColor;
-  border-radius: var(--radius-badge); /* Updated from var(--space-xs) to use semantic radius */
+  border-radius: var(--radius-md); /* Using var(--radius-md) for squircle aesthetic */
   background-color: transparent;
+  line-height: 1; /* For better text alignment */
+  gap: var(--space-xs); /* Added to create space between icon and text */
 }
 
 :global(.dark-mode) .completedTag {
@@ -168,6 +171,12 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  width: 28px;
+  height: 28px;
+  display: flex; /* Updated to use flex for better icon centering */
+  align-items: center; /* Added to center icon vertically */
+  justify-content: center; /* Added to center icon horizontally */
+  flex-shrink: 0;
 }
 
 .removeButton:hover {
@@ -185,11 +194,18 @@
 .buttonIcon {
   width: 16px;
   height: 16px;
+  display: inline-block; /* Added to ensure proper rendering */
+  vertical-align: middle; /* Added to center vertically within button */
 }
 
 .checkIcon {
-  width: 16px;
-  height: 16px;
+  width: 14px; /* Reduced from 16px for better proportions */
+  height: 14px; /* Reduced from 16px for better proportions */
+  display: inline-flex; /* Keep for alignment */
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0; /* Added to prevent icon from shrinking */
+  /* Removed margin-right as we're using gap on the parent */
 }
 
 .breakMessage {
