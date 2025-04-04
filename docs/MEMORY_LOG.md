@@ -109,3 +109,4 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-015: Icon Alignment and Tag Border Radius Fixes](/docs/logged_memories/MRTMLY-015-icon-alignment-fixes.md) - Fixed misaligned icons and updated completed tag to follow squircle aesthetic #css #ui #icons #alignment #design-system
 - [MRTMLY-016: Completed Tag Horizontal Alignment Fix](/docs/logged_memories/MRTMLY-016-completed-tag-alignment-fix.md) - Fixed horizontal spacing between icon and text in completed tag #css #ui #alignment #design-system
 - [MRTMLY-017: Consistent UI Controls Sizing](/docs/logged_memories/MRTMLY-017-consistent-ui-controls-sizing.md) - Standardized sizes across buttons and tags for visual consistency #css #ui #standardization #controls #design-system
+- [MRTMLY-018: Check Icon Horizontal Alignment Fix](/docs/logged_memories/MRTMLY-018-check-icon-alignment-fix.md) - Fixed horizontal alignment of check icon in completed tags #css #ui #alignment #icons

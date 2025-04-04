@@ -114,6 +114,13 @@
   height: var(--control-height-md);
   min-width: 28px;
   box-sizing: border-box;
+  /* Ensure proper spacing of contents */
+  justify-content: center;
+}
+
+/* Ensure flex items are properly spaced within completedTag */
+.completedTag > span {
+  margin-left: var(--space-xs);
 }
 
 :global(.dark-mode) .completedTag {
@@ -211,6 +218,9 @@
   justify-content: center;
   flex-shrink: 0; /* Added to prevent icon from shrinking */
   /* Removed margin-right as we're using gap on the parent */
+  /* Position adjustment for better visual alignment */
+  position: relative;
+  top: -0.5px;
 }
 
 .breakMessage {
