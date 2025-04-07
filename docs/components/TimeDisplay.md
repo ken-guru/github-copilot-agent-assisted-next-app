@@ -1,5 +1,14 @@
 # TimeDisplay Component
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [Utility Components](./README.md#utility-components)
+- **Related Components**:
+  - [Timeline](./Timeline.md) - Uses TimeDisplay for time markers
+  - [Summary](./Summary.md) - Uses TimeDisplay for activity durations
+  - [ActivityButton](./ActivityButton.md) - Uses TimeDisplay for elapsed time
+
 ## Overview
 
 The TimeDisplay component provides a standardized way to present time and date information across the application. It handles the formatting, styling, and layout of temporal data, ensuring consistency in how time-related information is displayed to users. This component supports various display formats and adapts to different contexts and device sizes.

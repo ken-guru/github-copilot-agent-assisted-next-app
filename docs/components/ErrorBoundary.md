@@ -1,5 +1,14 @@
 # ErrorBoundary Component
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [Utility Components](./README.md#utility-components)
+- **Related Components**:
+  - All components - ErrorBoundary can wrap any component to provide error handling
+  - [ServiceWorkerUpdater](./ServiceWorkerUpdater.md) - Often used with ErrorBoundary for offline error handling
+  - [OfflineIndicator](./OfflineIndicator.md) - Complements ErrorBoundary for offline scenarios
+
 ## Overview
 
 The ErrorBoundary component provides a mechanism for catching and handling JavaScript errors that occur within its child component tree. It prevents errors in one part of the UI from breaking the entire application, allowing for graceful degradation and helpful error messages. This component is essential for application stability and user experience during unexpected errors.

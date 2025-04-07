@@ -1,5 +1,13 @@
 # ServiceWorkerUpdater Component
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [Auxiliary Components](./README.md#auxiliary-components)
+- **Related Components**:
+  - [OfflineIndicator](./OfflineIndicator.md) - Shows offline status detected by ServiceWorkerUpdater
+  - [ErrorBoundary](./ErrorBoundary.md) - Often used to handle errors during offline operation
+
 ## Overview
 
 The ServiceWorkerUpdater component manages the service worker lifecycle and provides user notifications about application updates. It enables offline functionality, handles the update detection process, and offers a consistent user interface for prompting users to refresh the application when updates are available. This component is critical for ensuring users have access to the latest application version while maintaining offline capabilities.

@@ -1,5 +1,14 @@
 # Summary Component
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [State Management Components](./README.md#state-management-components)
+- **Related Components**:
+  - [Timeline](./Timeline.md) - Provides timeline entries used by Summary
+  - [ActivityManager](./ActivityManager.md) - Manages activities shown in Summary
+  - [TimeDisplay](./TimeDisplay.md) - Used for formatting time values
+
 ## Overview
 
 The Summary component provides a comprehensive overview of a completed activity session. It displays statistics about time usage, visualizes activity durations, and presents relevant status messages. The component processes timeline entries to calculate metrics such as planned time, spent time, idle time, and overtime, offering users insight into their time management.

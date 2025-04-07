@@ -1,5 +1,14 @@
 # TimeSetup Component
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [User Input Components](./README.md#user-input-components)
+- **Related Components**:
+  - [Timeline](./Timeline.md) - Uses configured time values
+  - [ProgressBar](./ProgressBar.md) - Uses configured time values
+  - [TimeDisplay](./TimeDisplay.md) - Used for formatting time values
+
 ## Overview
 
 The TimeSetup component provides a user interface for configuring time settings in the application. It allows users to define a time boundary for activities either by setting a specific duration or by specifying a deadline. The component manages input validation, time format conversion, and handles the dual mode functionality (duration vs. deadline).

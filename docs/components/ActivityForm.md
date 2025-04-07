@@ -1,5 +1,13 @@
 # ActivityForm Component
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [Auxiliary Components](./README.md#auxiliary-components)
+- **Related Components**:
+  - [ActivityManager](./ActivityManager.md) - Parent component that renders ActivityForm
+  - [ActivityButton](./ActivityButton.md) - Used to interact with created activities
+
 ## Overview
 
 The ActivityForm component provides an interface for creating and editing activities within the application. It handles form input, validation, and submission while offering a consistent user experience for activity management. The component supports both creating new activities and editing existing ones, with appropriate validation and feedback mechanisms.

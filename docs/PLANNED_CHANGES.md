@@ -173,16 +173,16 @@ Now that we have comprehensive documentation for all key components, we need to 
 - [x] Copilot instructions updated with linking guidelines
 - [x] Timeline component documentation updated with navigation
 - [x] ProgressBar component documentation updated with navigation
-- [ ] ActivityManager component documentation updated with navigation
-- [ ] Summary component documentation updated with navigation
-- [ ] TimeSetup component documentation updated with navigation
-- [ ] ActivityButton component documentation updated with navigation
-- [ ] ServiceWorkerUpdater component documentation updated with navigation
-- [ ] ActivityForm component documentation updated with navigation
-- [ ] TimeDisplay component documentation updated with navigation
-- [ ] OfflineIndicator component documentation updated with navigation
-- [ ] ThemeToggle component documentation updated with navigation
-- [ ] ErrorBoundary component documentation updated with navigation
+- [x] ActivityManager component documentation updated with navigation
+- [x] Summary component documentation updated with navigation
+- [x] TimeSetup component documentation updated with navigation
+- [x] ActivityButton component documentation updated with navigation
+- [x] ServiceWorkerUpdater component documentation updated with navigation
+- [x] ActivityForm component documentation updated with navigation
+- [x] TimeDisplay component documentation updated with navigation
+- [x] OfflineIndicator component documentation updated with navigation
+- [x] ThemeToggle component documentation updated with navigation
+- [x] ErrorBoundary component documentation updated with navigation
 - [ ] Component relationship diagram created (if feasible)
 
 ## Notes

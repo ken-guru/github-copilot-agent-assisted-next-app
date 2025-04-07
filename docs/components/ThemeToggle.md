@@ -1,5 +1,12 @@
 # ThemeToggle Component
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [Utility Components](./README.md#utility-components)
+- **Related Components**:
+  - All components - ThemeToggle affects the appearance of the entire application
+
 ## Overview
 
 The ThemeToggle component provides a user interface for switching between light and dark themes. It offers a consistent interaction pattern for theme selection, manages theme state persistence, and ensures smooth visual transitions when changing themes. The component is essential for accessibility, allowing users to select their preferred visual mode.

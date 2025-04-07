@@ -1,5 +1,15 @@
 # ActivityManager Component
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [State Management Components](./README.md#state-management-components)
+- **Related Components**:
+  - [Timeline](./Timeline.md) - Visualizes activities managed by ActivityManager
+  - [ActivityButton](./ActivityButton.md) - Controls activity states 
+  - [ActivityForm](./ActivityForm.md) - Used for creating/editing activities
+  - [Summary](./Summary.md) - Displays activity statistics
+
 ## Overview
 
 The ActivityManager component serves as the central hub for activity management in the application. It provides a user interface for creating, selecting, and tracking activities while managing their states throughout the session. The component handles color assignment, activity state transitions, and visual representation of activity status.

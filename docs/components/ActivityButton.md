@@ -1,5 +1,13 @@
 # ActivityButton Component
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [User Input Components](./README.md#user-input-components)
+- **Related Components**:
+  - [ActivityManager](./ActivityManager.md) - Parent component that manages activity state
+  - [TimeDisplay](./TimeDisplay.md) - Used for formatting elapsed time
+
 ## Overview
 
 The ActivityButton component provides an interactive button for controlling activity states in the application. It enables users to start, pause, and complete activities while displaying real-time status information. The component adapts its appearance based on the current activity state and supports both visual and functional changes according to the application context.

@@ -1,5 +1,13 @@
 # OfflineIndicator Component
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [Utility Components](./README.md#utility-components)
+- **Related Components**:
+  - [ServiceWorkerUpdater](./ServiceWorkerUpdater.md) - Works alongside OfflineIndicator for network status
+  - [ErrorBoundary](./ErrorBoundary.md) - Often handles errors during offline operation
+
 ## Overview
 
 The OfflineIndicator component provides visual feedback to users about the application's current network status. It displays a non-intrusive indicator when the application is operating in offline mode, helping users understand why certain features might be unavailable and providing confidence that the application is still functioning despite lack of connectivity.
