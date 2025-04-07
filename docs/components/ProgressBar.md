@@ -1,5 +1,14 @@
 # ProgressBar Component
 
+## Navigation
+
+- [Component Documentation Home](./README.md)
+- **Category**: [Visualization Components](./README.md#visualization-components)
+- **Related Components**:
+  - [Timeline](./Timeline.md) - Often used alongside ProgressBar
+  - [ActivityManager](./ActivityManager.md) - Provides activity data
+  - [TimeDisplay](./TimeDisplay.md) - Used for formatting time markers
+
 ## Overview
 
 The ProgressBar component provides a visual representation of elapsed time against a total duration. It features smooth color transitions to indicate progress status, with colors shifting gradually from green to red as time elapses. The component is designed to be responsive and theme-compatible, offering clear visual feedback about the current progress of a timed session.

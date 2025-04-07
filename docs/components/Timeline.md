@@ -10,6 +10,7 @@
   - [ProgressBar](./ProgressBar.md) - Often used alongside Timeline
   - [Summary](./Summary.md) - Uses same timeline entries data
   - [ActivityManager](./ActivityManager.md) - Provides activity data
+  - [TimeDisplay](./TimeDisplay.md) - Used for time formatting
 
 ## Overview
 
