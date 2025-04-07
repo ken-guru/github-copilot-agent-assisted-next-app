@@ -1,187 +1,210 @@
 # GitHub Copilot Instructions
 
-## Testing Guidelines
+## PREAMBLE
+This document contains guidelines for GitHub Copilot to follow when assisting with this project. The instructions are organized by category with clear priorities to ensure consistent, quality assistance. Follow ALL instructions carefully.
 
-1. **Test-First Development**: 
-   - Always begin implementation of any functionality by writing tests first
-   - Write test cases that verify both basic and complex scenarios
-   - Consider edge cases and variations in the test data
-   - Ask clarifying questions about expected behavior before writing these tests
-   - When fixing failing tests, update the Memory Log before running tests
-   - For data display, explicitly test:
-     - Order of displayed items
-     - Format of displayed values
-     - Edge cases in the data
+## CORE PRINCIPLES [PRIORITY: HIGHEST]
+- Always write tests before implementing functionality
+- Maintain thorough documentation with each code change
+- Update the Memory Log for all debugging and issue resolution
+- Verify code quality through testing, linting, and type checking
+- Communicate clearly about implementation choices and alternatives
 
-2. **Test Coverage for Refactoring**: 
-   - Update all relevant tests to ensure they still work as intended
-   - When changing display order or sorting, add specific order verification tests
-   - If expected behavior in tests needs to change, ask clarifying questions
-   - Verify that existing edge cases are still covered
+## TESTING PROTOCOLS [PRIORITY: HIGHEST]
+### Test-First Development
+- ✅ REQUIRED: Write tests BEFORE implementing any functionality
+- Write tests covering basic scenarios, complex scenarios, and edge cases
+- Ask clarifying questions about expected behavior before writing tests
+- For data display, explicitly test:
+  - Order of displayed items
+  - Format of displayed values
+  - Edge cases in the data
 
-3. **Missing Test Coverage**: When working on code without test coverage, raise this concern to allow me to decide whether to:
-   - Create tests immediately before proceeding
-   - Postpone test creation for later
-   
-   If I choose to postpone, don't remind me during the current session unless I indicate completion of planned tasks.
+### Test Coverage Management
+- Update all relevant tests when refactoring code
+- Add specific order verification tests when changing display order or sorting
+- Ask clarifying questions if expected test behavior needs to change
+- Verify existing edge cases remain covered after changes
 
-4. **Test Verification**: After any code changes, always remind me to run the test suite to ensure no regressions were introduced.
+### Missing Test Coverage Protocol
+- Flag when working with code lacking test coverage
+- Present options:
+  1. Create tests immediately
+  2. Postpone test creation
+- If postponement chosen, do not remind again in current session unless requested
 
-## Code Quality and Organization
+### Test Verification
+- Remind to run test suite after ANY code changes
+- Syntax: `npm test`
 
-1. **Large File Refactoring**: When working with files exceeding 200 lines of code, suggest logical refactoring options such as:
-   - Splitting the file into smaller modules
-   - Creating new components for extracted functionality
-   - Improving code organization
+## DOCUMENTATION STANDARDS [PRIORITY: HIGH]
+### Component Documentation
+- CREATE/UPDATE in `docs/components/` when:
+  - Implementing new components
+  - Making significant changes to existing components
+  - Improving component APIs
+- USE TEMPLATE: `docs/templates/COMPONENT_DOCUMENTATION_TEMPLATE.md`
+- MUST INCLUDE:
+  - Props documentation (types, defaults)
+  - State management approach
+  - Theme compatibility
+  - Mobile responsiveness details
+  - Accessibility considerations
+  - Test coverage summary
+  - Basic and advanced usage examples
+  - Known limitations/edge cases
+  - Up-to-date Change History
 
-2. **Documentation Updates**: 
-   - If changes significantly alter functionality described in README.md, highlight this discrepancy and suggest appropriate documentation updates
-   - After completing a development cycle, always evaluate if README.md needs updates to reflect:
-     - New features or functionality added
-     - Changes to installation or setup procedures
-     - Updated usage examples
-     - Modified configuration options
-     - Revised dependencies or requirements
-   - Prompt for README.md updates with specific suggestions based on the changes made
-   - Ensure documentation remains synchronized with the current state of the application
+### Documentation Structure
+- Add Navigation section at top of component documentation
+- Link back to Component Documentation Index
+- Link to related interacting components
+- Add component to appropriate category in index
+- Ensure component is linked from README.md documentation section
 
-## Change Management
+### Documentation Enhancement Priority Order
+1. Interactive Component Diagrams
+2. Search Functionality Enhancement
+3. Code Snippet Improvements
+4. Documentation Versioning
+5. API Reference Enhancement
+6. Memory Log Integration Improvements
+7. Documentation Testing
 
-1. **Change Summary**: After implementing changes, provide a concise summary to facilitate:
-   - Understanding the reasoning behind implementation choices
-   - Asking follow-up questions
-   - Requesting alternative approaches if needed
+### README Maintenance
+- UPDATE when changes alter functionality described in README.md
+- EVALUATE after each development cycle for needed updates regarding:
+  - New features/functionality
+  - Installation/setup changes
+  - Usage examples
+  - Configuration options
+  - Dependencies/requirements
 
-2. **Memory Log Management**: Always consult and update the Memory Log (docs/MEMORY_LOG.md) when working on issues or bugs:
-   - Before attempting solutions, check for similar past issues to avoid repeating unsuccessful approaches
-   - Document all solution attempts, outcomes, and relevant tags following the established format
-   - When fixing failing tests or bugs, ALWAYS update the memory log BEFORE running the tests
-   - Record the debugging approach and expected outcomes before test execution
-   - Maintain institutional knowledge about effective and ineffective solutions
+## MEMORY LOG PROTOCOLS [PRIORITY: HIGH]
+### File Organization
+- Store individual entries in: `docs/logged_memories/`
+- Filename format: `MRTMLY-XXX-descriptive-name.md`
+- NEVER add detailed entries directly to main MEMORY_LOG.md
+- ONLY add reference links in main file pointing to individual entries
 
-## Memory Log Management
+### New Entry Creation Process
+1. Create new file in `docs/logged_memories/` with proper naming
+2. Add entry details using template format
+3. Add ONLY a reference link to MEMORY_LOG.md
+4. Match existing reference format
+5. Group by date/month in index
+6. Add as LAST item in respective date section
+7. NEVER overwrite existing entries
+8. Use next available sequential ID number
 
-1. **File Organization**:
-   - Always store individual memory log entries in separate files under `docs/logged_memories/`
-   - Use consistent file naming: `MRTMLY-XXX-descriptive-name.md`
-   - Never add detailed memory entries directly to the main MEMORY_LOG.md file
-   - Only add reference links in MEMORY_LOG.md that point to the individual memory files
+### Entry Format Requirements
+- Follow established template structure
+- Include all required sections:
+  - Initial State
+  - Debug Process/Implementation
+  - Resolution
+  - Lessons Learned
+- Use consistent heading levels
+- Apply appropriate tags for searchability
 
-2. **Memory Entry Creation Process**:
-   - Create a new file in `docs/logged_memories/` with the appropriate naming convention
-   - Add the memory entry details to this new file using the template format
-   - Add only a reference link to the main MEMORY_LOG.md file
-   - Ensure the reference format matches existing entries in the memory index
-   - Group memory entries by date/month in the index
-   - Always add new memory entries as the LAST item in their respective date section
-   - Never overwrite the existing memories in the list currently in the document
-   - Never create duplicate MRTMLY-XXX IDs - always use the next available number in sequence
+### Debugging Documentation
+- Document each debugging step in real-time
+- Include ALL solution attempts (successful AND failed)
+- Note unexpected behaviors and test failures
+- Use appropriate tags for future reference
+- Update entries as debugging progresses
 
-3. **Entry Format and Structure**:
-   - Follow the established template structure for all memory entries
-   - Include all required sections (Initial State, Debug Process or Implementation, Resolution, Lessons Learned)
-   - Use consistent heading levels and formatting
-   - Ensure appropriate tagging for easy searching
+### Memory Log Maintenance
+- Edit individual files, not MEMORY_LOG.md
+- Check for consistent formatting
+- Ensure proper referencing in main index
+- Link related issues
+- Verify unique IDs
+- Maintain chronological order within date sections
+- Add new date sections at bottom of file when needed
 
-4. **Memory Log Updates During Debugging**:
-   - Document each significant debugging step in the appropriate memory log file
-   - Include failed attempts and their outcomes
-   - Note any unexpected behavior or test failures
-   - Tag entries appropriately for future reference
+## CODE QUALITY STANDARDS [PRIORITY: HIGH]
+### Large File Refactoring
+- IDENTIFY files exceeding 200 lines
+- SUGGEST logical refactoring options:
+  - Splitting into smaller modules
+  - Creating new components for extracted functionality
+  - Improving organization
 
-5. **Memory Log Maintenance**:
-   - When updating existing entries, edit the individual memory file, not MEMORY_LOG.md
-   - Periodically check for consistent formatting across memory entries
-   - Ensure all memory entries are properly referenced in the main index
-   - Look for patterns across related issues and link them where appropriate
-   - Always check for and resolve any duplicate memory IDs
-   - Maintain chronological order within each date section, with newest entries at the bottom
-   - When adding a new entry with a date that doesn't have a section yet, add the new section at the bottom of the file
+### Package Management Evaluation
+- Before adding new packages, DISCUSS:
+  - Specific need addressed
+  - Alternative implementation approaches
+  - Security implications
+  - Added complexity
+  - Package maintenance status
 
-## Package Management
+### Deployment Verification Checklist
+- Type checking:
+  ```bash
+  npm run type-check
+  npm run tsc
+  ```
+- Linting:
+  ```bash
+  npm run lint
+  ```
+- Tests:
+  ```bash
+  npm test
+  ```
 
-1. **New Package Evaluation**: Before introducing a new package, discuss:
-   - The specific need the package addresses
-   - Alternative implementation approaches without the package
-   - Analysis of potential future consequences considering:
-     - Security implications
-     - Added complexity
-     - Maintenance status of the package
+### Verification Process
+- Run all checks before marking work as complete
+- Address ALL errors and warnings
+- Document deployment-specific considerations in Memory Log
+- Tag deployment issues with #deployment
 
-## Debugging Process Documentation
+## COMMUNICATION GUIDELINES [PRIORITY: MEDIUM]
+### Change Summary Format
+- Provide concise implementation summaries covering:
+  - Reasoning behind choices
+  - Follow-up question opportunities
+  - Alternative approach possibilities
 
-1. **Memory Log Updates During Debugging**:
-   - Document each significant debugging step in the Memory Log
-   - Include failed attempts and their outcomes
-   - Note any unexpected behavior or test failures
-   - Tag entries appropriately for future reference
+### Implementation Approach
+- Prioritize based on immediate developer needs and resources
+- Create clear implementation plans with milestones
+- Document technical requirements before implementation
+- Update Memory Log with progress and challenges
+- Review completed work against expected benefits
+- Focus on one enhancement at a time
 
-2. **Debugging Entry Format**:
-   ```markdown
-   ### Issue: [Test/Feature Name] Debugging Session
-   **Date:** YYYY-MM-DD
-   **Tags:** #debugging #tests #[relevant-area]
-   **Status:** [In Progress|Resolved|Blocked]
+## DEBUGGING TEMPLATE [REFERENCE]
+```markdown
+### Issue: [Test/Feature Name] Debugging Session
+**Date:** YYYY-MM-DD
+**Tags:** #debugging #tests #[relevant-area]
+**Status:** [In Progress|Resolved|Blocked]
 
-   #### Initial State
-   - Description of the failing tests/features
-   - Error messages or unexpected behavior
-   - Current implementation state
+#### Initial State
+- Description of the failing tests/features
+- Error messages or unexpected behavior
+- Current implementation state
 
-   #### Debug Process
-   1. First investigation step
-      - What was examined
-      - What was found
-      - Next steps determined
+#### Debug Process
+1. First investigation step
+   - What was examined
+   - What was found
+   - Next steps determined
 
-   2. Solution attempts
-      - What was tried
-      - Outcome
-      - Why it did/didn't work
+2. Solution attempts
+   - What was tried
+   - Outcome
+   - Why it did/didn't work
 
-   #### Resolution (if reached)
-   - Final solution implemented
-   - Why it worked
-   - Tests affected
+#### Resolution (if reached)
+- Final solution implemented
+- Why it worked
+- Tests affected
 
-   #### Lessons Learned
-   - Key insights gained
-   - Patterns identified
-   - Future considerations
-   ```
-
-3. **Real-Time Documentation**:
-   - Update Memory Log entries as debugging progresses
-   - Include all significant solution attempts
-   - Document both successful and failed approaches
-   - Note any patterns or recurring issues
-
-## Deployment Verification
-
-1. **Pre-deployment Checks**: Before considering any feature or change complete, verify:
-   - Type checking passes:
-     ```bash
-     npm run type-check
-     npm run tsc
-     ```
-   - Linting passes:
-     ```bash
-     npm run lint
-     ```
-   - All tests pass:
-     ```bash
-     npm test
-     ```
-
-2. **Verification Process**:
-   - Run all checks before marking work as complete
-   - Address all type errors and warnings
-   - Resolve any linting issues
-   - Fix any test failures
-   - Document any deployment-specific considerations in the Memory Log
-
-3. **Error Resolution**:
-   - Document any recurring deployment issues in the Memory Log
-   - Track patterns in type errors or linting warnings
-   - Note any workarounds needed for deployment
-   - Tag entries with #deployment for future reference
+#### Lessons Learned
+- Key insights gained
+- Patterns identified
+- Future considerations
+```
