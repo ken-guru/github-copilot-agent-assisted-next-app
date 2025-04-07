@@ -12,6 +12,24 @@
 
 The ActivityButton component provides an interactive button for controlling activity states in the application. It enables users to start, pause, and complete activities while displaying real-time status information. The component adapts its appearance based on the current activity state and supports both visual and functional changes according to the application context.
 
+## Table of Contents
+- [Features](#features)
+- [Props](#props)
+- [Types](#types)
+- [State Management](#state-management)
+- [Visual State Representations](#visual-state-representations)
+- [Theme Compatibility](#theme-compatibility)
+- [Mobile Responsiveness](#mobile-responsiveness)
+- [Accessibility](#accessibility)
+- [Example Usage](#example-usage)
+- [Interaction Patterns](#interaction-patterns)
+- [Known Limitations](#known-limitations)
+- [Test Coverage](#test-coverage)
+- [Related Components and Hooks](#related-components-and-hooks)
+- [Implementation Details](#implementation-details)
+- [Change History](#change-history)
+- [Related Memory Logs](#related-memory-logs)
+
 ## Features
 
 - **State-Based Rendering**: Adapts appearance based on activity state (pending, active, completed)
@@ -248,3 +266,15 @@ The ActivityButton implements several key patterns:
 - **2025-02-01**: Added real-time timer display
 - **2025-01-15**: Added completed state visualization
 - **2025-01-01**: Initial implementation with basic state toggling
+
+## Related Memory Logs
+
+// Add relevant memory logs if any exist
+
+---
+
+## Navigation
+
+- [Back to Component Documentation Home](./README.md)
+- **Previous Component**: [TimeSetup](./TimeSetup.md)
+- **Next Component**: [ServiceWorkerUpdater](./ServiceWorkerUpdater.md)

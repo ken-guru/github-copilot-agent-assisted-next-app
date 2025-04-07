@@ -13,6 +13,23 @@
 
 The TimeSetup component provides a user interface for configuring time settings in the application. It allows users to define a time boundary for activities either by setting a specific duration or by specifying a deadline. The component manages input validation, time format conversion, and handles the dual mode functionality (duration vs. deadline).
 
+## Table of Contents
+- [Features](#features)
+- [Props](#props)
+- [Types](#types)
+- [State Management](#state-management)
+- [Time Calculation Logic](#time-calculation-logic)
+- [Theme Compatibility](#theme-compatibility)
+- [Mobile Responsiveness](#mobile-responsiveness)
+- [Accessibility](#accessibility)
+- [Example Usage](#example-usage)
+- [Input Validation](#input-validation)
+- [Known Limitations](#known-limitations)
+- [Test Coverage](#test-coverage)
+- [Related Components and Hooks](#related-components-and-hooks)
+- [Implementation Details](#implementation-details)
+- [Change History](#change-history)
+
 ## Features
 
 - **Dual Time Setup Modes**: Supports both duration-based and deadline-based time configuration
@@ -214,3 +231,15 @@ The component implements two key algorithms:
 - **2025-02-01**: Improved mobile responsiveness
 - **2025-01-15**: Added support for initial values via props
 - **2025-01-01**: Initial implementation with basic duration and deadline modes
+
+## Related Memory Logs
+
+// Add relevant memory logs if any exist
+
+---
+
+## Navigation
+
+- [Back to Component Documentation Home](./README.md)
+- **Previous Component**: [Summary](./Summary.md)
+- **Next Component**: [ActivityButton](./ActivityButton.md)

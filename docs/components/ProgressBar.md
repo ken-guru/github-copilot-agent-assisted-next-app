@@ -13,6 +13,23 @@
 
 The ProgressBar component provides a visual representation of elapsed time against a total duration. It features smooth color transitions to indicate progress status, with colors shifting gradually from green to red as time elapses. The component is designed to be responsive and theme-compatible, offering clear visual feedback about the current progress of a timed session.
 
+## Table of Contents
+- [Features](#features)
+- [Props](#props)
+- [Types](#types)
+- [State Management](#state-management)
+- [Color Transition Logic](#color-transition-logic)
+- [Theme Compatibility](#theme-compatibility)
+- [Mobile Responsiveness](#mobile-responsiveness)
+- [Accessibility](#accessibility)
+- [Example Usage](#example-usage)
+- [Known Limitations](#known-limitations)
+- [Test Coverage](#test-coverage)
+- [Related Components](#related-components)
+- [Implementation Details](#implementation-details)
+- [Change History](#change-history)
+- [Related Memory Logs](#related-memory-logs)
+
 ## Features
 
 - **Color-Coded Progress Indication**: Visual color transitions as time progresses

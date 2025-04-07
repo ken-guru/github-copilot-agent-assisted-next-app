@@ -13,6 +13,23 @@
 
 The TimeDisplay component provides a standardized way to present time and date information across the application. It handles the formatting, styling, and layout of temporal data, ensuring consistency in how time-related information is displayed to users. This component supports various display formats and adapts to different contexts and device sizes.
 
+## Table of Contents
+- [Features](#features)
+- [Props](#props)
+- [Types](#types)
+- [State Management](#state-management)
+- [Formatting Logic](#formatting-logic)
+- [Theme Compatibility](#theme-compatibility)
+- [Mobile Responsiveness](#mobile-responsiveness)
+- [Accessibility](#accessibility)
+- [Example Usage](#example-usage)
+- [Known Limitations](#known-limitations)
+- [Test Coverage](#test-coverage)
+- [Related Components and Hooks](#related-components-and-hooks)
+- [Implementation Details](#implementation-details)
+- [Change History](#change-history)
+- [Related Memory Logs](#related-memory-logs)
+
 ## Features
 
 - **Formatted Time Display**: Shows time in a consistent, readable format
@@ -218,3 +235,15 @@ Key implementation decisions:
 - **2025-02-01**: Added theme compatibility
 - **2025-01-15**: Enhanced format customization options
 - **2025-01-01**: Initial implementation with basic time display
+
+## Related Memory Logs
+
+// Add relevant memory logs if any exist
+
+---
+
+## Navigation
+
+- [Back to Component Documentation Home](./README.md)
+- **Previous Component**: [ActivityForm](./ActivityForm.md)
+- **Next Component**: [OfflineIndicator](./OfflineIndicator.md)

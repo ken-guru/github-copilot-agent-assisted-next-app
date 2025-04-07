@@ -12,6 +12,23 @@
 
 The OfflineIndicator component provides visual feedback to users about the application's current network status. It displays a non-intrusive indicator when the application is operating in offline mode, helping users understand why certain features might be unavailable and providing confidence that the application is still functioning despite lack of connectivity.
 
+## Table of Contents
+- [Features](#features)
+- [Props](#props)
+- [Types](#types)
+- [State Management](#state-management)
+- [Theme Compatibility](#theme-compatibility)
+- [Mobile Responsiveness](#mobile-responsiveness)
+- [Accessibility](#accessibility)
+- [Example Usage](#example-usage)
+- [Status Display Variations](#status-display-variations)
+- [Known Limitations](#known-limitations)
+- [Test Coverage](#test-coverage)
+- [Related Components](#related-components)
+- [Implementation Details](#implementation-details)
+- [Change History](#change-history)
+- [Related Memory Logs](#related-memory-logs)
+
 ## Features
 
 - **Network Status Detection**: Automatically detects online/offline status
@@ -262,3 +279,17 @@ useEffect(() => {
 - **2025-02-01**: Improved theme compatibility
 - **2025-01-15**: Added configurable messaging
 - **2025-01-01**: Initial implementation with basic offline detection
+
+## Related Memory Logs
+
+This component has been discussed in the following memory logs:
+
+- [MRTMLY-015: Offline Indicator Layout and Test Optimization](../logged_memories/MRTMLY-015-offline-indicator-layout.md) - Layout improvements and testing
+
+---
+
+## Navigation
+
+- [Back to Component Documentation Home](./README.md)
+- **Previous Component**: [TimeDisplay](./TimeDisplay.md)
+- **Next Component**: [ThemeToggle](./ThemeToggle.md)

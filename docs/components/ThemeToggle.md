@@ -11,6 +11,24 @@
 
 The ThemeToggle component provides a user interface for switching between light and dark themes. It offers a consistent interaction pattern for theme selection, manages theme state persistence, and ensures smooth visual transitions when changing themes. The component is essential for accessibility, allowing users to select their preferred visual mode.
 
+## Table of Contents
+- [Features](#features)
+- [Props](#props)
+- [Types](#types)
+- [State Management](#state-management)
+- [Theme Persistence Mechanism](#theme-persistence-mechanism)
+- [Theme Application Logic](#theme-application-logic)
+- [Mobile Responsiveness](#mobile-responsiveness)
+- [Accessibility](#accessibility)
+- [Example Usage](#example-usage)
+- [Display Variations](#display-variations)
+- [Known Limitations](#known-limitations)
+- [Test Coverage](#test-coverage)
+- [Related Components and Utilities](#related-components-and-utilities)
+- [Implementation Details](#implementation-details)
+- [Change History](#change-history)
+- [Related Memory Logs](#related-memory-logs)
+
 ## Features
 
 - **Theme Switching**: Toggle between light and dark themes
@@ -325,3 +343,15 @@ The ThemeToggle implements several key algorithms:
 - **2025-02-01**: Implemented theme persistence
 - **2025-01-15**: Added system preference option
 - **2025-01-01**: Initial implementation with basic light/dark toggle
+
+## Related Memory Logs
+
+// Add relevant memory logs if any exist
+
+---
+
+## Navigation
+
+- [Back to Component Documentation Home](./README.md)
+- **Previous Component**: [OfflineIndicator](./OfflineIndicator.md)
+- **Next Component**: [ErrorBoundary](./ErrorBoundary.md)

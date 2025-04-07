@@ -13,6 +13,23 @@
 
 The Summary component provides a comprehensive overview of a completed activity session. It displays statistics about time usage, visualizes activity durations, and presents relevant status messages. The component processes timeline entries to calculate metrics such as planned time, spent time, idle time, and overtime, offering users insight into their time management.
 
+## Table of Contents
+- [Features](#features)
+- [Props](#props)
+- [Types](#types)
+- [State Management](#state-management)
+- [Calculation Logic](#calculation-logic)
+- [Theme Compatibility](#theme-compatibility)
+- [Mobile Responsiveness](#mobile-responsiveness)
+- [Accessibility](#accessibility)
+- [Example Usage](#example-usage)
+- [Known Limitations](#known-limitations)
+- [Test Coverage](#test-coverage)
+- [Related Components](#related-components)
+- [Implementation Details](#implementation-details)
+- [Change History](#change-history)
+- [Related Memory Logs](#related-memory-logs)
+
 ## Features
 
 - **Session Statistics**: Displays key time metrics for the session

@@ -12,6 +12,23 @@
 
 The ActivityForm component provides an interface for creating and editing activities within the application. It handles form input, validation, and submission while offering a consistent user experience for activity management. The component supports both creating new activities and editing existing ones, with appropriate validation and feedback mechanisms.
 
+## Table of Contents
+- [Features](#features)
+- [Props](#props)
+- [Types](#types)
+- [State Management](#state-management)
+- [Form Validation](#form-validation)
+- [Theme Compatibility](#theme-compatibility)
+- [Mobile Responsiveness](#mobile-responsiveness)
+- [Accessibility](#accessibility)
+- [Example Usage](#example-usage)
+- [Known Limitations](#known-limitations)
+- [Test Coverage](#test-coverage)
+- [Related Components](#related-components)
+- [Implementation Details](#implementation-details)
+- [Change History](#change-history)
+- [Related Memory Logs](#related-memory-logs)
+
 ## Features
 
 - **Activity Creation**: Form interface for adding new activities
@@ -344,3 +361,15 @@ The ActivityForm implements several key patterns:
 - **2025-01-20**: Added editing mode support
 - **2025-01-05**: Enhanced validation logic
 - **2025-01-01**: Initial implementation with basic form functionality
+
+## Related Memory Logs
+
+// Add relevant memory logs if any exist
+
+---
+
+## Navigation
+
+- [Back to Component Documentation Home](./README.md)
+- **Previous Component**: [ServiceWorkerUpdater](./ServiceWorkerUpdater.md)
+- **Next Component**: [TimeDisplay](./TimeDisplay.md)
