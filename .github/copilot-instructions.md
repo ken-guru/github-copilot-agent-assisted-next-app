@@ -9,6 +9,32 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Update the Memory Log for all debugging and issue resolution
 - Verify code quality through testing, linting, and type checking
 - Communicate clearly about implementation choices and alternatives
+- Create a documented plan before implementing any significant changes
+
+## PLANNING REQUIREMENTS [PRIORITY: HIGHEST]
+### Plan Creation and Management
+- ✅ REQUIRED: Document plans in the planning document before implementation
+- Include plan in the planning document below the template section
+- Move completed plans to implementation tracking after execution
+- Always link plans to relevant Memory Log entries
+
+### Plan Content Requirements
+- Structure each plan with:
+  - Overview & Goals
+  - Current State Analysis
+  - Implementation Steps (clear, numbered, detailed)
+  - Testing Strategy
+  - Documentation Requirements
+  - Risk Assessment
+  - Timeline (if applicable)
+- Use consistent formatting and appropriate tags
+
+### Plan Review & Implementation
+- Validate plan against project requirements and quality standards
+- Update plans with discovered changes during implementation
+- Reference plan status in commit messages
+- Document any implementation challenges encountered
+- Move finished plans with implementation details to completed plans section
 
 ## TESTING PROTOCOLS [PRIORITY: HIGHEST]
 ### Test-First Development
