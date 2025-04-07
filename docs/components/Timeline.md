@@ -217,3 +217,20 @@ The component architecture:
 - **2025-02-15**: Added overtime visualization
 - **2025-02-01**: Implemented theme compatibility
 - **2025-01-15**: Initial implementation with basic timeline functionality
+
+## Related Memory Logs
+
+This component has been discussed in the following memory logs:
+
+- [MRTMLY-019: Timeline Break Visualization Fix](../logged_memories/MRTMLY-019-timeline-break-visualization.md) - Fixed issues with break visualization
+- [MRTMLY-020: Timeline Component Memory Leak](../logged_memories/MRTMLY-020-timeline-memory-leak.md) - Resolved memory leak issues
+- [MRTMLY-021: Timeline Test Suite Memory Leak](../logged_memories/MRTMLY-021-timeline-test-suite-memory-leak.md) - Fixed test suite-specific issues
+- [MRTMLY-023: Timeline Calculation Test Update](../logged_memories/MRTMLY-023-timeline-calculation-test.md) - Updated calculation logic tests
+
+---
+
+## Navigation
+
+- [Back to Component Documentation Home](./README.md)
+- **Previous Component**: [ErrorBoundary](./ErrorBoundary.md)
+- **Next Component**: [ProgressBar](./ProgressBar.md)

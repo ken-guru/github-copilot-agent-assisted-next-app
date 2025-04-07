@@ -43,62 +43,53 @@ These components handle specific utility functions:
 
 ```mermaid
 graph TD
-    %% Core App Structure
-    App[App] --> TT[ThemeToggle]
-    App --> EB[ErrorBoundary]
-    App --> SWU[ServiceWorkerUpdater]
-    App --> OI[OfflineIndicator]
+    %% Main Component Groups
+    subgraph Visualization
+        TL[Timeline]
+        PB[ProgressBar]
+    end
     
-    %% Activity Flow
-    App --> AM[ActivityManager]
-    AM --> AB[ActivityButton]
-    AM --> AF[ActivityForm]
+    subgraph State
+        AM[ActivityManager]
+        SUM[Summary]
+    end
     
-    %% Time Setup Flow
-    App --> TS[TimeSetup]
+    subgraph Input
+        TS[TimeSetup]
+        AB[ActivityButton]
+        AF[ActivityForm]
+    end
     
-    %% Visualization Components
-    App --> TL[Timeline]
-    App --> PB[ProgressBar]
-    App --> SUM[Summary]
+    subgraph Utility
+        TD[TimeDisplay]
+        OI[OfflineIndicator]
+        TT[ThemeToggle]
+        EB[ErrorBoundary]
+        SWU[ServiceWorkerUpdater]
+    end
     
-    %% Component Dependencies
-    TL -.-> TD[TimeDisplay]
-    PB -.-> TD
-    AB -.-> TD
-    SUM -.-> TD
-    
-    %% Data Flow
-    TL --> |displays| entries[Timeline Entries]
-    PB --> |shows progress of| entries
-    AM --> |manages| activities[Activities]
-    SUM --> |summarizes| entries
-    AB --> |controls| activities
-    TS --> |configures| duration[Time Duration]
-    entries --> |derived from| activities
-    duration --> |affects| entries
-    
-    %% Visual Appearance
-    TT -.-> |affects appearance of| App
-    
-    %% Error Handling
-    EB -.-> |catches errors in| App
+    %% Key Relationships
+    AM --> |manages activities| TL
+    TS --> |sets duration| TL
+    TS --> |sets duration| PB
+    AM --> |provides data| SUM
+    TL --> |uses| TD
+    PB --> |uses| TD
+    SUM --> |uses| TD
+    AM --> |renders| AB
+    AM --> |renders| AF
     SWU --> |works with| OI
-    
-    %% Component Categories
-    classDef visualization fill:#c4e3f3,stroke:#337ab7
-    classDef stateManagement fill:#d9edf7,stroke:#31708f
-    classDef userInput fill:#dff0d8,stroke:#3c763d
-    classDef auxiliary fill:#fcf8e3,stroke:#8a6d3b
-    classDef utility fill:#f2dede,stroke:#a94442
-    
-    %% Apply Categories
-    class TL,PB visualization
-    class AM,SUM stateManagement
-    class TS,AB userInput
-    class SWU,AF auxiliary
-    class TD,OI,TT,EB utility
 ```
+
+### Component Interaction Summary
+
+- **ActivityManager** is the central hub that manages activities displayed in Timeline
+- **TimeSetup** configures the time duration used by both Timeline and ProgressBar
+- **TimeDisplay** is used by multiple components for consistent time formatting
+- **Timeline** and **ProgressBar** work together to visualize activity progress
+- **Summary** provides statistics based on completed activities
+- **ThemeToggle** affects the appearance of all components
+- **ErrorBoundary** can wrap any component for error handling
 
 ## Component Legend
 
