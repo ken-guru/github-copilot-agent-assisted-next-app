@@ -12,6 +12,23 @@
 
 The ServiceWorkerUpdater component manages the service worker lifecycle and provides user notifications about application updates. It enables offline functionality, handles the update detection process, and offers a consistent user interface for prompting users to refresh the application when updates are available. This component is critical for ensuring users have access to the latest application version while maintaining offline capabilities.
 
+## Table of Contents
+- [Features](#features)
+- [Props](#props)
+- [Types](#types)
+- [State Management](#state-management)
+- [Service Worker Lifecycle Management](#service-worker-lifecycle-management)
+- [Theme Compatibility](#theme-compatibility)
+- [Mobile Responsiveness](#mobile-responsiveness)
+- [Accessibility](#accessibility)
+- [Example Usage](#example-usage)
+- [Update Notification UI](#update-notification-ui)
+- [Known Limitations](#known-limitations)
+- [Test Coverage](#test-coverage)
+- [Related Components and Utilities](#related-components-and-utilities)
+- [Implementation Details](#implementation-details)
+- [Change History](#change-history)
+
 ## Features
 
 - **Update Detection**: Automatically detects when a new version of the application is available

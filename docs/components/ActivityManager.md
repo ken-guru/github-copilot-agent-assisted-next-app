@@ -14,6 +14,23 @@
 
 The ActivityManager component serves as the central hub for activity management in the application. It provides a user interface for creating, selecting, and tracking activities while managing their states throughout the session. The component handles color assignment, activity state transitions, and visual representation of activity status.
 
+## Table of Contents
+- [Features](#features)
+- [Props](#props)
+- [Types](#types)
+- [State Management](#state-management)
+- [Activity Lifecycle Management](#activity-lifecycle-management)
+- [Theme Compatibility](#theme-compatibility)
+- [Mobile Responsiveness](#mobile-responsiveness)
+- [Accessibility](#accessibility)
+- [Example Usage](#example-usage)
+- [Known Limitations](#known-limitations)
+- [Test Coverage](#test-coverage)
+- [Related Components and Hooks](#related-components-and-hooks)
+- [Implementation Details](#implementation-details)
+- [Change History](#change-history)
+- [Related Memory Logs](#related-memory-logs)
+
 ## Features
 
 - **Activity Creation**: Interface for adding new activities
@@ -264,6 +281,21 @@ The ActivityManager implements several key algorithms:
    ```
 
 3. **Activity state determination**: Determines if an activity is pending, active, or completed
+
+## Related Memory Logs
+
+This component has been referenced in the following memory logs:
+
+- [MRTMLY-025: Summary Activity Order Fix](../logged_memories/MRTMLY-025-summary-activity-order.md) - Activity ordering logic
+- [MRTMLY-041: Activity Order in Summary Tests Implementation](../logged_memories/MRTMLY-041-activity-order-summary-tests.md) - Testing chronological order
+
+---
+
+## Navigation
+
+- [Back to Component Documentation Home](./README.md)
+- **Previous Component**: [ProgressBar](./ProgressBar.md)
+- **Next Component**: [Summary](./Summary.md)
 
 ## Change History
 

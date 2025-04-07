@@ -222,3 +222,20 @@ The Summary component implements several helper functions:
 - **2025-02-15**: Added overtime visualization
 - **2025-01-20**: Implemented conditional status messages
 - **2025-01-05**: Initial implementation with basic time metrics
+
+## Related Memory Logs
+
+This component has been discussed in the following memory logs:
+
+- [MRTMLY-003: Summary Component Test Suite Refactor](../logged_memories/MRTMLY-003-summary-test-refactor.md) - Test improvements
+- [MRTMLY-004: Summary Component Status Message Bug Fix](../logged_memories/MRTMLY-004-summary-status-message-fix.md) - Fixed status message issues
+- [MRTMLY-025: Summary Activity Order Fix](../logged_memories/MRTMLY-025-summary-activity-order.md) - Activity ordering logic
+- [MRTMLY-047: Unused Variable in Summary Component](../logged_memories/MRTMLY-047-unused-variable-summary-component.md) - Code cleanup
+
+---
+
+## Navigation
+
+- [Back to Component Documentation Home](./README.md)
+- **Previous Component**: [ActivityManager](./ActivityManager.md)
+- **Next Component**: [TimeSetup](./TimeSetup.md)

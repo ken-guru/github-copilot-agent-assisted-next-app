@@ -13,6 +13,25 @@
 
 The ErrorBoundary component provides a mechanism for catching and handling JavaScript errors that occur within its child component tree. It prevents errors in one part of the UI from breaking the entire application, allowing for graceful degradation and helpful error messages. This component is essential for application stability and user experience during unexpected errors.
 
+## Table of Contents
+- [Features](#features)
+- [Props](#props)
+- [Types](#types)
+- [State Management](#state-management)
+- [Error Recovery Process](#error-recovery-process)
+- [Fallback UI System](#fallback-ui-system)
+- [Theme Compatibility](#theme-compatibility)
+- [Mobile Responsiveness](#mobile-responsiveness)
+- [Accessibility](#accessibility)
+- [Example Usage](#example-usage)
+- [Nesting and Composition](#nesting-and-composition)
+- [Known Limitations](#known-limitations)
+- [Test Coverage](#test-coverage)
+- [Related Components and Utilities](#related-components-and-utilities)
+- [Implementation Details](#implementation-details)
+- [Change History](#change-history)
+- [Related Memory Logs](#related-memory-logs)
+
 ## Features
 
 - **Error Catching**: Captures JavaScript errors in component rendering and lifecycle methods
