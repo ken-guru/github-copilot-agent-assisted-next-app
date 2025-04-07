@@ -105,6 +105,7 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 
 - [Splash Screen Test Debugging](./logged_memories/MRTMLY-001-splash-screen-test-debugging.md) - Fixed failing tests for the new splash screen component
 - [Splash Screen Implementation](./logged_memories/MRTMLY-002-splash-screen-implementation.md) - Completed implementation of application splash screen with loading state management
+- [Missing globals.css Build Error](./logged_memories/MRTMLY-003-missing-globals-css-build-error.md) - Fixed build error caused by missing global CSS file
 
 ## December 2023
 
