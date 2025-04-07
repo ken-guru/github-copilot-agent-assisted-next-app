@@ -101,6 +101,12 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-053: Additional Mobile Spacing Optimizations](./logged_memories/MRTMLY-053-additional-mobile-spacing-optimizations.md) #css #mobile #responsive-design #spacing-system #optimization
 - [MRTMLY-054: Hardcoded Spacing Values Replacement](./logged_memories/MRTMLY-054-hardcoded-spacing-values-replacement.md) #css #spacing-system #variables #consistency #refactoring
 
+## September 2023
+
+- [Splash Screen Test Debugging](./logged_memories/MRTMLY-001-splash-screen-test-debugging.md) - Fixed failing tests for the new splash screen component
+- [Splash Screen Implementation](./logged_memories/MRTMLY-002-splash-screen-implementation.md) - Completed implementation of application splash screen with loading state management
+- [Missing globals.css Build Error](./logged_memories/MRTMLY-003-missing-globals-css-build-error.md) - Fixed build error caused by missing global CSS file
+
 ## December 2023
 
 - [MRTMLY-012: Border Radius Token Implementation](/docs/logged_memories/MRTMLY-012-border-radius-implementation.md) - Implementation of the border radius token system across CSS files #css #design-system #tokens #refactoring
