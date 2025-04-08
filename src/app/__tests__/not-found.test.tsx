@@ -3,9 +3,11 @@ import NotFound from '../not-found';
 
 // Mock next/link to avoid router errors in tests
 jest.mock('next/link', () => {
-  return ({ children, href }: { children: React.ReactNode, href: string }) => {
+  const MockedLink = ({ children, href }: { children: React.ReactNode, href: string }) => {
     return <a href={href}>{children}</a>;
   };
+  MockedLink.displayName = 'MockedLink';
+  return MockedLink;
 });
 
 describe('NotFound Page', () => {
