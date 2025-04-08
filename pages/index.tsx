@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import AppRouterHome from '../src/app/page';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Head from 'next/head';
-import { LoadingProvider } from '../contexts/LoadingContext';
+import { LoadingProvider, useLoading } from '../contexts/LoadingContext';
 import { SplashScreen } from '../components/splash/SplashScreen';
 import '../src/app/globals.css';
 import '../styles/globals.css';
@@ -24,7 +24,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function HomePageBridge() {
+// Bridge content with hooks
+function BridgeContent() {
+  const { setIsLoading } = useLoading();
   const [updateMessage, setUpdateMessage] = React.useState<string | null>(null);
 
   // Register service worker for offline functionality
@@ -47,23 +49,42 @@ export default function HomePageBridge() {
     // Register service worker
     registerServiceWorker();
 
-    // Manually simulate initialization completion (replace with actual logic if needed)
-    // This is to bypass the loading screen quickly
-    const timeoutId = setTimeout(() => {
-      const loadingContext = document.querySelector('[data-loading-context]');
-      if (loadingContext) {
-        loadingContext.setAttribute('data-loading', 'false');
-      }
-    }, 500);
+    // Initialize app and hide splash screen after initialization is complete
+    const initApp = async () => {
+      // Add any actual initialization logic here
+      // For example: load user preferences, check auth state, preload critical data
+      
+      // For demo purposes, using a timeout to simulate loading
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1500);
+    };
+    
+    initApp();
 
     // Clean up handlers on unmount
     return () => {
       setUpdateHandler(null);
       window.removeEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);
-      clearTimeout(timeoutId);
     };
-  }, []);
+  }, [setIsLoading]);
 
+  return (
+    <>
+      <SplashScreen minimumDisplayTime={2000} />
+      {updateMessage && (
+        <UpdateNotification
+          message={updateMessage}
+          onDismiss={() => setUpdateMessage(null)}
+        />
+      )}
+      <AppRouterHome />
+    </>
+  );
+}
+
+// Main bridge component that sets up providers
+export default function HomePageBridge() {
   return (
     <>
       <Head>
@@ -76,15 +97,8 @@ export default function HomePageBridge() {
       </Head>
       
       <div className={`${geistSans.variable} ${geistMono.variable}`}>
-        <LoadingProvider>
-          <SplashScreen minimumDisplayTime={1000} />
-          {updateMessage && (
-            <UpdateNotification
-              message={updateMessage}
-              onDismiss={() => setUpdateMessage(null)}
-            />
-          )}
-          <AppRouterHome />
+        <LoadingProvider initialLoadingState={true}>
+          <BridgeContent />
         </LoadingProvider>
       </div>
     </>
