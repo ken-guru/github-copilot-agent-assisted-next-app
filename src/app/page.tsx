@@ -1,18 +1,18 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { LoadingProvider, useLoading } from '../../contexts/LoadingContext';
-import { SplashScreen } from '../../components/splash/SplashScreen';
-import TimeSetup from '../components/TimeSetup';
-import ActivityManager from '../components/ActivityManager';
-import Timeline from '../components/Timeline';
-import Summary from '../components/Summary';
-import ProgressBar from '../components/ProgressBar';
-import ThemeToggle from '../components/ThemeToggle';
-import { OfflineIndicator } from '../components/OfflineIndicator';
-import ConfirmationDialog, { ConfirmationDialogRef } from '../components/ConfirmationDialog';
-import { useActivityState } from '../hooks/useActivityState';
-import { useTimerState } from '../hooks/useTimerState';
-import resetService from '../utils/resetService';
+import { LoadingProvider, useLoading } from '@/contexts/LoadingContext';
+import { SplashScreen } from '@/components/splash/SplashScreen';
+import TimeSetup from '@/components/TimeSetup';
+import ActivityManager from '@/components/ActivityManager';
+import Timeline from '@/components/Timeline';
+import Summary from '@/components/Summary';
+import ProgressBar from '@/components/ProgressBar';
+import ThemeToggle from '@/components/ThemeToggle';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
+import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
+import { useActivityState } from '@/hooks/useActivityState';
+import { useTimerState } from '@/hooks/useTimerState';
+import resetService from '@/utils/resetService';
 import styles from './page.module.css';
 
 // Main application content with loading context
