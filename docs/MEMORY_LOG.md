@@ -103,6 +103,11 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-065: Next.js Routing Conflict Causing 404 Error](./logged_memories/MRTMLY-065-nextjs-routing-conflict-404-error.md) #routing #next-js #debugging #deployment
 - [MRTMLY-066: Next.js Routing Redirection Fix](./logged_memories/MRTMLY-066-nextjs-routing-redirection-fix.md) #debugging #routing #next-js #redirection #app-router #pages-router
 - [MRTMLY-067: Service Worker Registration Error After Routing Fix](./logged_memories/MRTMLY-067-service-worker-registration-error.md) #debugging #service-worker #routing #next-js #error-handling
+- [MRTMLY-068: Offline Functionality Broken After Routing Fix](./logged_memories/MRTMLY-068-offline-functionality-broken.md) #debugging #service-worker #offline #caching #pwa
+- [MRTMLY-069: Persistent Service Worker Update Error After Fix](./logged_memories/MRTMLY-069-persistent-service-worker-update-error.md) #debugging #service-worker #error-handling #offline #pwa
+- [MRTMLY-070: Next.js Configuration Errors and Browser Storage Issues](./logged_memories/MRTMLY-070-nextjs-config-and-storage-issues.md) #debugging #next-js #configuration #service-worker #browser-storage
+- [MRTMLY-071: Persistent Offline Functionality and Next.js Configuration Issues](./logged_memories/MRTMLY-071-offline-cache-and-config-errors.md) #debugging #service-worker #offline #caching #next-js #configuration
+- [MRTMLY-072: Persistent Offline Functionality Issues Despite Increased Caching](./logged_memories/MRTMLY-072-persistent-offline-functionality-issues.md) #debugging #service-worker #offline #caching #pwa #next-js
 
 ## September 2023
 

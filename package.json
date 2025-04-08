@@ -12,7 +12,9 @@
     "cypress": "cypress open",
     "cypress:run": "cypress run",
     "cypress:headless": "cypress run --headless",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "clean-build": "node scripts/clean-build.js",
+    "clean-build:full": "node scripts/clean-build.js --full"
   },
   "dependencies": {
     "next": "15.2.4",
