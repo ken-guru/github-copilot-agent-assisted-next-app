@@ -22,8 +22,13 @@ const nextConfig: NextConfig = {
         '*.md': ['raw-loader'],
       },
       resolveAlias: {
-        // Add any path aliases that match webpack configuration
-        '@': './src',
+        // Path aliases that match tsconfig.json configuration
+        '@': '.',
+        '@/contexts': './contexts',
+        '@/components': './components',
+        '@/hooks': './hooks',
+        '@/utils': './utils',
+        '@/styles': './styles'
       }
     },
   },
@@ -35,6 +40,25 @@ const nextConfig: NextConfig = {
   
   // Resolve paths properly with source directory structure
   webpack(config) {
+    // Add path aliases to webpack config to match tsconfig.json
+    if (!config.resolve) {
+      config.resolve = {};
+    }
+    
+    if (!config.resolve.alias) {
+      config.resolve.alias = {};
+    }
+    
+    // Ensure aliases match tsconfig.json
+    Object.assign(config.resolve.alias, {
+      '@': '.',
+      '@/contexts': './contexts',
+      '@/components': './components',
+      '@/hooks': './hooks',
+      '@/utils': './utils',
+      '@/styles': './styles'
+    });
+    
     return config;
   },
   
