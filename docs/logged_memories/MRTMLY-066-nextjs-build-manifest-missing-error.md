@@ -1,7 +1,7 @@
 ### Issue: Next.js Missing Build Manifest File Error
 **Date:** 2025-04-08
 **Tags:** #debugging #next-js #deployment #build-error
-**Status:** In Progress
+**Status:** Resolved
 
 #### Initial State
 - Next.js application failing with ENOENT error:
@@ -31,12 +31,20 @@
    - Deleted `.next` directory to ensure a clean build
    - Ran `npm run build` to regenerate all build artifacts
    - Verified App Router directory structure follows Next.js conventions with required files
+   - Discovered the invalid `srcDir` configuration in `next.config.ts`
 
-#### Resolution (if reached)
-- [To be completed after resolution]
+#### Resolution
+- Created a proper `not-found.tsx` component in the App Router structure
+- Fixed the `next.config.ts` file by removing the invalid `srcDir` option
+- Implemented tests for the not-found page to ensure it works correctly
+- Added appropriate styling for the not-found page with mobile responsiveness
+- Cleaned and rebuilt the application with the corrected configuration
 
 #### Lessons Learned
 - Build artifacts can become inconsistent when switching between routing systems
 - Custom error pages need special attention during Pages Router to App Router migration
 - The `_not-found` page is a required component in Next.js App Router that must be properly implemented
 - After configuration changes, a clean build is often necessary to avoid artifacts from previous configurations
+- Not all Next.js configuration options are documented equally well, and some may be removed or renamed in newer versions
+- Always verify configuration option validity against the current Next.js version being used
+- Testing custom error pages is important to ensure proper user experience during navigation errors

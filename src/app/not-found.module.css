@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 80vh;
   text-align: center;
   padding: var(--space-lg);
 }
@@ -17,13 +17,14 @@
 .message {
   margin-bottom: var(--space-lg);
   color: var(--foreground-muted);
+  max-width: 30rem;
 }
 
 .link {
   display: inline-block;
   padding: var(--space-sm) var(--space-lg);
   background-color: var(--accent-color);
-  color: var(--foreground-inverse);
+  color: white;
   text-decoration: none;
   border-radius: var(--radius-md);
   font-weight: 500;
@@ -31,5 +32,16 @@
 }
 
 .link:hover {
-  background-color: var(--accent-color-hover);
+  background-color: var(--accent-hover-color, #0056b3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+  }
+  
+  .container {
+    padding: var(--space-md);
+  }
 }
