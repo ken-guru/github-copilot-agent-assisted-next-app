@@ -15,6 +15,25 @@ let pendingRegistration: ServiceWorkerRegistration | null = null;
 let onlineEventListener: ((event: Event) => Promise<void>) | null = null;
 
 /**
+ * Check if we're in a development environment
+ * Used to conditionally disable service worker updates in development
+ */
+function isDevelopmentEnvironment(): boolean {
+  if (typeof window === 'undefined') return false;
+  
+  const isDev = process.env.NODE_ENV === 'development';
+  const isLocalhost = typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || 
+     window.location.hostname === '127.0.0.1');
+  const isDevPort = typeof window !== 'undefined' && 
+    (window.location.port === '3000' || 
+     window.location.port === '3001' || 
+     window.location.port === '8080');
+    
+  return isDev && (isLocalhost || isDevPort);
+}
+
+/**
  * Set a handler for service worker update notifications
  */
 export function setUpdateHandler(handler: UpdateHandler | null): void {
@@ -57,6 +76,15 @@ function cleanupAllPendingOperations(): void {
  */
 async function attemptServiceWorkerUpdate(registration: ServiceWorkerRegistration): Promise<void> {
   try {
+    // In development mode, skip the actual update but consider it successful
+    if (isDevelopmentEnvironment()) {
+      console.log('Development environment detected, skipping service worker update');
+      retryCount = 0;
+      pendingRegistration = null;
+      removeOnlineEventListener();
+      return;
+    }
+    
     await registration.update();
     console.log('Service worker update retry succeeded');
     // Reset retry count on success
@@ -148,11 +176,25 @@ export async function registerServiceWorker(): Promise<void> {
   }
   
   try {
-    const registration = await navigator.serviceWorker.register('/service-worker.js');
+    // Check if we're in development mode - log but continue with registration
+    if (isDevelopmentEnvironment()) {
+      console.log('Development environment detected, registering service worker but skipping updates');
+    }
+    
+    // Register service worker
+    const registration = await navigator.serviceWorker.register('/service-worker.js', {
+      // Increase scope to cover entire origin
+      scope: '/'
+    });
     console.log('Service worker registered');
     
     // Reset retry count on registration
     retryCount = 0;
+    
+    // In development mode, skip the update process to avoid errors
+    if (isDevelopmentEnvironment()) {
+      return;
+    }
     
     // Check for updates on registration with error handling
     try {
@@ -160,7 +202,18 @@ export async function registerServiceWorker(): Promise<void> {
     } catch (updateError) {
       console.error('Service worker update failed', updateError);
       
-      // Schedule retry for the update
+      // If error is related to MIME type or fetch failure, this may be due to
+      // development server issues - skip retry in that case
+      const errorMessage = updateError.message || String(updateError);
+      if (errorMessage.includes('MIME type') || 
+          errorMessage.includes('Failed to fetch') ||
+          errorMessage.includes('An unknown error occurred when fetching')) {
+        console.warn('Service worker update error appears to be related to fetch or MIME type issues.');
+        console.warn('This is common in development environments - continuing without retrying.');
+        return;
+      }
+      
+      // Schedule retry for other types of update errors
       scheduleUpdateRetry(registration);
     }
     
@@ -182,7 +235,17 @@ export async function registerServiceWorker(): Promise<void> {
     });
 
   } catch (error) {
-    console.error('Service worker registration failed', error);
+    // Check for specific error types that indicate server/development issues
+    const errorMessage = error.message || String(error);
+    
+    if (errorMessage.includes('MIME type') || errorMessage.includes('Failed to fetch')) {
+      console.warn('Service worker registration error may be related to development environment:');
+      console.warn('- Ensure service-worker.js is served with the correct MIME type');
+      console.warn('- Check that the file is accessible at the expected URL');
+      console.warn(error);
+    } else {
+      console.error('Service worker registration failed', error);
+    }
   }
 }
 
