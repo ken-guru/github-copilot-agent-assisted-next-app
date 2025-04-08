@@ -37,6 +37,12 @@ const nextConfig: NextConfig = {
   webpack(config) {
     return config;
   },
+  
+  // Enable output mode tracing for better debugging
+  output: 'standalone',
+  
+  // Set to false if you're not using the Pages Router at all
+  useFileSystemPublicRoutes: true
 };
 
 export default nextConfig;
