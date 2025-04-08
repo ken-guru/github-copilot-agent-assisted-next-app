@@ -2,22 +2,19 @@ import fs from 'fs';
 import path from 'path';
 
 describe('Next.js routing structure', () => {
-  it('should properly handle routing between Pages Router and App Router', () => {
+  it('should use a single routing system to avoid conflicts', () => {
     const appRouterPagePath = path.join(process.cwd(), 'src/app/page.tsx');
     const pagesRouterIndexPath = path.join(process.cwd(), 'pages/index.tsx');
     
     const appRouterExists = fs.existsSync(appRouterPagePath);
     const pagesRouterExists = fs.existsSync(pagesRouterIndexPath);
     
-    if (appRouterExists && pagesRouterExists) {
-      // Both routing systems are in use - verify the Pages Router is importing from the App Router
-      // to ensure they work together rather than conflict
-      const pagesContent = fs.readFileSync(pagesRouterIndexPath, 'utf8');
-      expect(
-        pagesContent.includes("../src/app/page") || 
-        pagesContent.includes("HomeContent") || 
-        pagesContent.includes("BridgeContent")
-      ).toBe(true);
+    // Only one of the files should exist to handle the root route
+    // to avoid the "Conflicting app and page file" error
+    if (appRouterExists) {
+      expect(pagesRouterExists).toBe(false);
+    } else {
+      expect(pagesRouterExists).toBe(true);
     }
     
     // At least one should exist to handle the root route
@@ -37,9 +34,11 @@ describe('Next.js routing structure', () => {
     
     // Check if using the Pages Router
     if (pagesDirExists) {
-      // Check if index.tsx exists for root route
-      const indexPage = fs.existsSync(path.join(process.cwd(), 'pages/index.tsx'));
-      expect(indexPage).toBe(true);
+      // Check if index.tsx exists for root route (only if app router doesn't exist)
+      if (!fs.existsSync(path.join(process.cwd(), 'src/app/page.tsx'))) {
+        const indexPage = fs.existsSync(path.join(process.cwd(), 'pages/index.tsx'));
+        expect(indexPage).toBe(true);
+      }
     }
     
     // At least one routing system should be in use

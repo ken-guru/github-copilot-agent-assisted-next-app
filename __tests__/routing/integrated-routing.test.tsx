@@ -1,19 +1,11 @@
 import React from 'react';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import fs from 'fs';
 import path from 'path';
 
-// Import both routing components for testing
+// Import App Router component for testing
 import AppRouterHome from '../../src/app/page';
-
-// Use dynamic import to avoid issues if the file doesn't exist yet
-let PagesRouterBridge: any;
-try {
-  PagesRouterBridge = require('../../pages/index').default;
-} catch (e) {
-  PagesRouterBridge = null;
-}
 
 // Mock necessary hooks and components
 jest.mock('../../src/hooks/useActivityState', () => ({
@@ -43,7 +35,7 @@ jest.mock('../../src/utils/serviceWorkerRegistration', () => ({
   setUpdateHandler: jest.fn()
 }));
 
-// Mock the src/app/page.tsx component
+// Mock the App Router component
 jest.mock('../../src/app/page', () => {
   return {
     __esModule: true,
@@ -82,7 +74,7 @@ jest.mock('../../components/splash/SplashScreen', () => ({
   )
 }));
 
-describe('Integrated Routing System', () => {
+describe('Next.js Routing System', () => {
   beforeEach(() => {
     // Mock window.matchMedia
     window.matchMedia = jest.fn().mockImplementation(query => ({
@@ -117,90 +109,27 @@ describe('Integrated Routing System', () => {
     jest.clearAllMocks();
   });
 
-  it('should verify App Router component renders independently', async () => {
+  it('should verify App Router component renders correctly', async () => {
     render(<AppRouterHome />);
     
     // Check for App Router component rendering
     expect(screen.getByText(/Mr. Timely/i)).toBeInTheDocument();
   });
 
-  it('should verify loading context works properly in App Router', async () => {
-    // Setup jest fake timers for timing control
-    jest.useFakeTimers();
-    
-    const { getByTestId } = render(<AppRouterHome />);
-    
-    // Loading provider should be present with initial loading state
-    const loadingProvider = getByTestId('app-router-component');
-    expect(loadingProvider).toBeInTheDocument();
-    
-    // Advance timers to simulate app initialization completing
-    act(() => {
-      jest.advanceTimersByTime(2000);
-    });
-    
-    // Return to real timers
-    jest.useRealTimers();
-  });
-
-  it('should verify Pages Router bridge integrates with App Router component', async () => {
-    // Skip if bridge doesn't exist yet
-    if (!PagesRouterBridge) {
-      console.warn('Skipping Pages Router bridge test as the component is not available');
-      return;
-    }
-    
-    render(<PagesRouterBridge />);
-    
-    // Check for App Router component rendering through the bridge
-    expect(screen.getByText(/Mr. Timely/i)).toBeInTheDocument();
-  });
-
-  it('should verify splash screen behavior in bridge implementation', async () => {
-    // Skip if bridge doesn't exist yet
-    if (!PagesRouterBridge) {
-      console.warn('Skipping splash screen test as the Pages Router bridge is not available');
-      return;
-    }
-    
-    // Setup jest fake timers for timing control
-    jest.useFakeTimers();
-    
-    render(<PagesRouterBridge />);
-    
-    // Splash screen should be visible initially
-    const splashScreen = screen.getByTestId('splash-screen');
-    expect(splashScreen).toBeInTheDocument();
-    
-    // Advance timers to simulate splash screen timing out
-    act(() => {
-      jest.advanceTimersByTime(3000);
-    });
-    
-    // Return to real timers
-    jest.useRealTimers();
-  });
-
-  it('should verify correct routing structure exists', () => {
+  it('should verify routing structure exists and is valid', () => {
     const appRouterPagePath = path.join(process.cwd(), 'src/app/page.tsx');
     const pagesRouterIndexPath = path.join(process.cwd(), 'pages/index.tsx');
+    
     const appRouterExists = fs.existsSync(appRouterPagePath);
     const pagesRouterExists = fs.existsSync(pagesRouterIndexPath);
     
-    expect(appRouterExists).toBe(true);
+    // One and only one of these should be true to avoid conflicts
+    expect(appRouterExists !== pagesRouterExists).toBe(true);
     
-    // If Pages Router bridge exists, verify its content
-    if (pagesRouterExists) {
+    // App Router should export a Home component
+    if (appRouterExists) {
       const appRouterContent = fs.readFileSync(appRouterPagePath, 'utf8');
-      const pagesRouterContent = fs.readFileSync(pagesRouterIndexPath, 'utf8');
-      
-      // App Router should export a Home component
       expect(appRouterContent).toContain('export default function Home');
-      
-      // Pages Router should import the App Router component
-      expect(pagesRouterContent).toContain('from');
-    } else {
-      console.warn('Pages Router bridge file does not exist yet. Will need to create it.');
     }
   });
 });

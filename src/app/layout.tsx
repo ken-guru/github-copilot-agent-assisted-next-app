@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import "./globals.css";
 import { UpdateNotification } from "@/components/UpdateNotification";
 import { registerServiceWorker, setUpdateHandler } from "../utils/serviceWorkerRegistration";
+import { metadata } from "./metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +15,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Metadata is now defined in a separate file when using 'use client'
-// See: https://nextjs.org/docs/app/building-your-application/optimizing/metadata#static-metadata
+// Metadata is exported from metadata.ts
+export { metadata };
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -52,10 +54,6 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#000000" />
-      </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {updateMessage && (
           <UpdateNotification
