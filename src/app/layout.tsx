@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import { LayoutClient } from "../components/LayoutClient";
 
 // Font configuration
@@ -17,12 +17,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Mr. Timely',
   description: 'Track your time and activities with Mr. Timely',
-  viewport: 'width=device-width, initial-scale=1',
   icons: {
     icon: '/favicon.ico',
   },
-  themeColor: '#000000',
   manifest: '/manifest.json',
+};
+
+// Viewport configuration
+export const viewport: Viewport = {
+  viewport: 'width=device-width, initial-scale=1',
+  themeColor: '#000000',
 };
 
 export default function RootLayout({
