@@ -292,7 +292,8 @@ describe('OfflineIndicator Integration', () => {
     const { rerender } = render(<Home />);
     
     // Check setup state
-    const setupOfflineIndicator = screen.getByRole('status');
+    // Use data-testid instead of role to avoid ambiguity with multiple status elements
+    const setupOfflineIndicator = screen.getByTestId('offline-indicator');
     expect(setupOfflineIndicator).toHaveTextContent('You are offline');
     
     // In setup state, the offline indicator is followed by the setupGrid (no progress container)
@@ -303,7 +304,7 @@ describe('OfflineIndicator Integration', () => {
     fireEvent.click(timeSetupButton);
     
     // Check activity state
-    const activityOfflineIndicator = screen.getByRole('status');
+    const activityOfflineIndicator = screen.getByTestId('offline-indicator');
     expect(activityOfflineIndicator).toHaveTextContent('You are offline');
     
     // In activity state, the offline indicator is followed by the progressContainer
@@ -324,7 +325,7 @@ describe('OfflineIndicator Integration', () => {
     rerender(<Home />);
     
     // Check completed state
-    const completedOfflineIndicator = screen.getByRole('status');
+    const completedOfflineIndicator = screen.getByTestId('offline-indicator');
     expect(completedOfflineIndicator).toHaveTextContent('You are offline');
     
     // In completed state, the offline indicator is followed by the completedGrid (no progress container)
