@@ -5,3 +5,4 @@
 ## April 2025
 
 - [MRTMLY-008: Path Import Resolution for App Router](/docs/logged_memories/MRTMLY-008-path-import-resolution.md) - Fixed import path issues in App Router component to resolve build errors
+- [MRTMLY-009: Metadata Export Fix](/docs/logged_memories/MRTMLY-009-metadata-export-fix.md) - Resolved the metadata export error by separating client and server component concerns
