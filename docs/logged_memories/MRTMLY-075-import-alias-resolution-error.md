@@ -32,3 +32,29 @@
    - Option 3: Update import statements to use relative paths
    
    Implementing Option 2 since it requires minimal changes and maintains the existing project structure
+
+#### Resolution
+- Updated tsconfig.json path aliases to correctly map to the actual file structure:
+  - Changed `@/*` to map to `./*` instead of `./src/*`
+  - Added specific path mappings for different module types (`@/contexts/*`, `@/components/*`, etc.)
+  - Included fallback paths to support both root and src directory structures
+
+- Updated next.config.ts to match the path alias configuration:
+  - Added corresponding alias mappings in the turbo.resolveAlias section
+  - Enhanced webpack configuration to use the same aliases
+  - Ensured both build systems (turbopack and webpack) have consistent path resolution
+
+- Verified solution by restarting the Next.js development server
+  - Server started successfully with no module resolution errors
+  - Application now loads correctly at http://localhost:3000
+
+#### Lessons Learned
+- Path aliases must be consistent between tsconfig.json and next.config.ts
+- When working with hybrid directory structures (some files in root, some in src/), alias configuration needs special attention
+- Next.js 15+ requires configuration in both webpack and turbopack sections for complete compatibility
+- Import paths in the codebase should follow a consistent pattern that matches the configured aliases
+- When troubleshooting module resolution errors, always check:
+  1. The actual file structure
+  2. The path alias configuration in tsconfig.json
+  3. The webpack/turbopack configuration in next.config.ts
+  4. The import statements in the code
