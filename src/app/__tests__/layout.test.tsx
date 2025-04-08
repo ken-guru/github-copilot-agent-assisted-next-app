@@ -11,9 +11,15 @@ describe('Layout Configuration', () => {
     // Metadata should NOT contain viewport or themeColor
     expect(metadata).not.toHaveProperty('viewport');
     expect(metadata).not.toHaveProperty('themeColor');
-    
-    // Viewport export should contain these properties
-    expect(viewport).toHaveProperty('viewport', 'width=device-width, initial-scale=1');
+  });
+  
+  it('correctly structures the viewport configuration according to Next.js 15 specs', () => {
+    // Verify viewport has correct properties per Next.js 15 Viewport type
+    expect(viewport).toHaveProperty('width', 'device-width');
+    expect(viewport).toHaveProperty('initialScale', 1);
     expect(viewport).toHaveProperty('themeColor', '#000000');
+    
+    // Ensure viewport doesn't have the incorrect 'viewport' property
+    expect(viewport).not.toHaveProperty('viewport');
   });
 });
