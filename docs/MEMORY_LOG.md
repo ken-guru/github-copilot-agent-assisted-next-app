@@ -100,6 +100,9 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-052: Mobile Padding Optimization](./logged_memories/MRTMLY-052-mobile-padding-optimization.md) #css #mobile #responsive-design #spacing-system #optimization
 - [MRTMLY-053: Additional Mobile Spacing Optimizations](./logged_memories/MRTMLY-053-additional-mobile-spacing-optimizations.md) #css #mobile #responsive-design #spacing-system #optimization
 - [MRTMLY-054: Hardcoded Spacing Values Replacement](./logged_memories/MRTMLY-054-hardcoded-spacing-values-replacement.md) #css #spacing-system #variables #consistency #refactoring
+- [MRTMLY-065: Next.js Routing Conflict Causing 404 Error](./logged_memories/MRTMLY-065-nextjs-routing-conflict-404-error.md) #routing #next-js #debugging #deployment
+- [MRTMLY-066: Next.js Routing Redirection Fix](./logged_memories/MRTMLY-066-nextjs-routing-redirection-fix.md) #debugging #routing #next-js #redirection #app-router #pages-router
+- [MRTMLY-067: Service Worker Registration Error After Routing Fix](./logged_memories/MRTMLY-067-service-worker-registration-error.md) #debugging #service-worker #routing #next-js #error-handling
 
 ## September 2023
 
