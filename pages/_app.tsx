@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app';
 import { LoadingProvider, useLoading } from '../contexts/LoadingContext';
 import { SplashScreen } from '../components/splash/SplashScreen';
 import '../styles/globals.css';
+import '../src/app/globals.css'; // Import the App Router's CSS to get button/input styling
 
 // AppContent separated to use hooks inside
 const AppContent = ({ Component, pageProps }: AppProps) => {
