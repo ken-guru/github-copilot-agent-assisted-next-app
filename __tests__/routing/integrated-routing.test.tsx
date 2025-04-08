@@ -106,10 +106,11 @@ describe('Integrated Routing System', () => {
       writable: true
     });
 
-    // Mock MutationObserver
+    // Mock MutationObserver with required takeRecords method
     global.MutationObserver = class {
       observe = jest.fn();
       disconnect = jest.fn();
+      takeRecords = () => [];
     };
     
     // Reset mocks
