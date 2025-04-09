@@ -72,7 +72,7 @@ describe('Service Worker Registration', () => {
     it('registers a service worker when in production and service workers are supported', async () => {
       // Test implementation
       await registerServiceWorker();
-      expect(mockNavigator.serviceWorker.register).toHaveBeenCalledWith('/service-worker.js');
+      expect(mockNavigator.serviceWorker.register).toHaveBeenCalledWith('/service-worker.js', { scope: '/' });
     });
   });
   
