@@ -12,7 +12,7 @@
   transition: opacity 0.5s ease-out;
 }
 
-:global(.dark) .splashScreen {
+:global(.dark-mode) .splashScreen {
   background-color: var(--bg-primary-dark, #121212);
 }
 
@@ -49,7 +49,7 @@
   animation: dotPulse 1.4s infinite ease-in-out both;
 }
 
-:global(.dark) .loadingDot {
+:global(.dark-mode) .loadingDot {
   background-color: var(--accent-color-dark, #30a9de);
 }
 

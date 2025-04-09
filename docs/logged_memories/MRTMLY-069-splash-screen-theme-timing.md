@@ -21,15 +21,22 @@
    - Added a new test to verify the reduced minimum display time (1000ms or less)
    - Ensured all tests pass with the expected behavior
 
-#### Resolution (in progress)
+#### Resolution
 - Testing implementation:
-  - Enhanced dark mode test by rendering the component in a container with the 'dark' class
+  - Enhanced dark mode test by rendering the component in a container with the 'dark-mode' class
   - Added specific test for the new 1000ms minimum display time
+  - Added test to verify the component avoids white flash during initial render in dark mode
 - Component changes:
   - Reduced default minimumDisplayTime from 1500ms to 1000ms
-  - No changes needed for dark mode support as it was already implemented in the CSS
+  - Fixed CSS selectors to use `.dark-mode` instead of `.dark` to match application theme implementation
+  - Added immediate theme detection during component initialization to prevent white flash
+  - Applied inline styles for immediate theme application before CSS loads
 
 #### Lessons Learned
 - When enhancing UI components, check if the CSS already supports the desired functionality
 - Theme compatibility should be explicitly tested, not just assumed based on CSS selectors
 - Setting appropriate timing for UI elements can improve perceived performance
+- Use client-side detection of theme preferences to prevent FOUC (Flash of Unstyled Content)
+- Consider inline styles for critical theme elements to ensure they apply immediately
+- Always check how themes are actually applied in the application (e.g., CSS class names)
+- Be aware of user perception during initial page load and prioritize preventing jarring visual changes

@@ -7,12 +7,98 @@ interface SplashScreenProps {
   minimumDisplayTime?: number;
 }
 
+// Helper function to detect dark mode based on system preference and localStorage
+// Safe to use on both client and server
+const isDarkTheme = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  try {
+    // First check for localStorage theme setting (highest priority)
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      return savedTheme === 'dark';
+    }
+    
+    // Then check for system preference
+    return window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+  } catch (e) {
+    // Fallback in case of errors (e.g., localStorage blocked)
+    return false;
+  }
+};
+
+// Create a script that will run as soon as possible during page load
+// This needs to be in a string so it executes before React hydration
+const earlyThemeScript = `
+  (function() {
+    try {
+      var isDark = false;
+      
+      // Check localStorage first
+      var savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        isDark = savedTheme === 'dark';
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // Then try system preference
+        isDark = true;
+      }
+      
+      // Apply theme class immediately
+      if (isDark) {
+        document.documentElement.classList.add('dark-mode');
+        document.documentElement.classList.remove('light-mode');
+      } else {
+        document.documentElement.classList.add('light-mode');
+        document.documentElement.classList.remove('dark-mode');
+      }
+      
+      // Also apply to document body background to prevent any white flash
+      document.body.style.backgroundColor = isDark ? 
+        'var(--bg-primary-dark, #121212)' : 
+        'var(--bg-primary, #ffffff)';
+    } catch(e) {
+      // Silently fail
+    }
+  })();
+`;
+
+// Try to apply theme immediately during module initialization
+// This helps with subsequent navigations in the SPA
+if (typeof document !== 'undefined') {
+  try {
+    if (isDarkTheme()) {
+      document.documentElement.classList.add('dark-mode');
+      document.documentElement.classList.remove('light-mode');
+    } else {
+      document.documentElement.classList.add('light-mode');
+      document.documentElement.classList.remove('dark-mode');
+    }
+  } catch (e) {
+    // Silently fail
+  }
+}
+
 export const SplashScreen = ({ 
   minimumDisplayTime = 1000 
 }: SplashScreenProps) => {
   const { isLoading } = useLoading();
   const [shouldDisplay, setShouldDisplay] = useState(true);
   const [displayStartTime] = useState(Date.now());
+  const [isDarkMode] = useState(isDarkTheme());
+  
+  // Inject the early theme script on first render
+  useEffect(() => {
+    // Only run once on initial mount
+    const script = document.createElement('script');
+    script.innerHTML = earlyThemeScript;
+    document.head.appendChild(script);
+    
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, []);
   
   useEffect(() => {
     if (!isLoading) {
@@ -45,6 +131,9 @@ export const SplashScreen = ({
       role="status"
       aria-live="polite"
       aria-label="Application is loading"
+      style={{
+        backgroundColor: isDarkMode ? 'var(--bg-primary-dark, #121212)' : 'var(--bg-primary, #ffffff)'
+      }}
     >
       <div className={styles.logoContainer}>
         <Image
@@ -57,9 +146,15 @@ export const SplashScreen = ({
         />
         
         <div className={styles.loadingIndicator} data-testid="loading-indicator">
-          <div className={styles.loadingDot}></div>
-          <div className={styles.loadingDot}></div>
-          <div className={styles.loadingDot}></div>
+          <div className={styles.loadingDot} style={{
+            backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
+          }}></div>
+          <div className={styles.loadingDot} style={{
+            backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
+          }}></div>
+          <div className={styles.loadingDot} style={{
+            backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
+          }}></div>
         </div>
       </div>
     </div>

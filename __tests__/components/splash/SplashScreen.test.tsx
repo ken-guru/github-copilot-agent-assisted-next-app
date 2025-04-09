@@ -99,7 +99,7 @@ describe('SplashScreen', () => {
   it('displays in both light and dark themes', () => {
     // Create a container with dark theme class to simulate dark mode
     const container = document.createElement('div');
-    container.classList.add('dark');
+    container.classList.add('dark-mode');
     document.body.appendChild(container);
     
     render(<SplashScreen minimumDisplayTime={100} />, { container });
@@ -112,6 +112,99 @@ describe('SplashScreen', () => {
     
     // Cleanup
     document.body.removeChild(container);
+  });
+  
+  it('avoids white flash by checking system preference before mount', () => {
+    // Mock media query for dark mode preference
+    window.matchMedia = jest.fn().mockImplementation((query) => ({
+      matches: query === '(prefers-color-scheme: dark)',
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    }));
+    
+    // First render with system dark preference
+    render(<SplashScreen minimumDisplayTime={100} />);
+    
+    const splashScreen = screen.getByTestId('splash-screen');
+    expect(splashScreen).toHaveClass('splashScreen');
+    expect(splashScreen).toHaveStyle('background-color: var(--bg-primary-dark, #121212)');
+    
+    // Cleanup
+    jest.restoreAllMocks();
+  });
+  
+  it('respects localStorage theme setting over system preference', () => {
+    // Mock localStorage with a saved theme
+    const originalLocalStorage = window.localStorage;
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: jest.fn().mockReturnValue('dark'),
+        setItem: jest.fn(),
+        removeItem: jest.fn()
+      },
+      writable: true
+    });
+    
+    // Mock media query to return light mode (opposite of localStorage)
+    window.matchMedia = jest.fn().mockImplementation((query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    }));
+    
+    // Render with localStorage theme setting
+    render(<SplashScreen minimumDisplayTime={100} />);
+    
+    const splashScreen = screen.getByTestId('splash-screen');
+    expect(splashScreen).toHaveStyle('background-color: var(--bg-primary-dark, #121212)');
+    
+    // Cleanup
+    Object.defineProperty(window, 'localStorage', {
+      value: originalLocalStorage,
+      writable: true
+    });
+    jest.restoreAllMocks();
+  });
+  
+  it('applies theme class to document before render when reloading the page', () => {
+    // Setup: Simulate page load with dark theme in localStorage
+    const originalLocalStorage = window.localStorage;
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: jest.fn((key) => key === 'theme' ? 'dark' : null),
+        setItem: jest.fn(),
+        removeItem: jest.fn()
+      },
+      writable: true
+    });
+    
+    // Reset document classes before test
+    document.documentElement.classList.remove('dark-mode', 'light-mode');
+    
+    // Import module again to trigger the static initialization code
+    jest.isolateModules(() => {
+      require('../../../components/splash/SplashScreen');
+    });
+    
+    // Verify HTML element has dark-mode class before any component renders
+    expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
+    expect(document.documentElement.classList.contains('light-mode')).toBe(false);
+    
+    // Cleanup
+    Object.defineProperty(window, 'localStorage', {
+      value: originalLocalStorage,
+      writable: true
+    });
   });
   
   it('respects updated minimum display time of 1000ms or less', () => {
