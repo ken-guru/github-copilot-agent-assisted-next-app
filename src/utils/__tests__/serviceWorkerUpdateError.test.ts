@@ -27,10 +27,14 @@ describe('Service Worker Update Error Handling', () => {
   let consoleLogSpy: jest.SpyInstance;
   let consoleErrorSpy: jest.SpyInstance;
   let consoleWarnSpy: jest.SpyInstance;
+  let originalNodeEnv: "development" | "production" | "test" | undefined;
+  let originalLocation: Location;
   
   beforeEach(() => {
-    // Store original navigator.serviceWorker
+    // Store original values
     originalServiceWorker = global.navigator.serviceWorker;
+    originalNodeEnv = process.env.NODE_ENV as "development" | "production" | "test" | undefined;
+    originalLocation = window.location;
     
     // Mock navigator.serviceWorker
     Object.defineProperty(global.navigator, 'serviceWorker', {
@@ -62,23 +66,47 @@ describe('Service Worker Update Error Handling', () => {
     consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     
     // Set up environment for non-development by default
-    process.env.NODE_ENV = 'production';
+    jest.replaceProperty(process.env, 'NODE_ENV', 'production');
     
-    // Mock window.location
-    delete (window as { location?: Location }).location;
-    window.location = {
+    // Mock window.location using defineProperty
+    const mockLocation = {
       hostname: 'example.com', // Not localhost
       port: '443',
       protocol: 'https:',
       href: 'https://example.com/',
-      ...window.location
-    } as Location;
+      // Include other required properties
+      search: '',
+      pathname: '/',
+      hash: '',
+      origin: 'https://example.com',
+      replace: jest.fn(),
+      assign: jest.fn(),
+      reload: jest.fn()
+    };
+    
+    Object.defineProperty(window, 'location', {
+      value: mockLocation,
+      writable: true,
+      configurable: true
+    });
   });
   
   afterEach(() => {
-    // Restore original navigator.serviceWorker
+    // Restore original values
     Object.defineProperty(global.navigator, 'serviceWorker', {
       value: originalServiceWorker,
+      configurable: true
+    });
+    
+    // Restore NODE_ENV
+    if (originalNodeEnv !== undefined) {
+      jest.replaceProperty(process.env, 'NODE_ENV', originalNodeEnv);
+    }
+    
+    // Restore window.location
+    Object.defineProperty(window, 'location', {
+      value: originalLocation,
+      writable: true,
       configurable: true
     });
     
@@ -163,16 +191,21 @@ describe('Service Worker Update Error Handling', () => {
     const originalSetTimeout = global.setTimeout;
     let timeoutCalls = 0;
     
-    global.setTimeout = jest.fn().mockImplementation((cb: () => void) => {
+    // Properly mock setTimeout with correct type signature
+    const mockSetTimeout = jest.fn().mockImplementation((cb: () => void, _timeout?: number) => {
       timeoutCalls++;
       cb(); // Execute callback immediately
-      return 123 as NodeJS.Timeout;
+      // Return a valid timeout object
+      return { ref: () => {}, unref: () => {} } as unknown as NodeJS.Timeout;
     });
+    
+    // Use jest.spyOn instead of direct assignment
+    jest.spyOn(global, 'setTimeout').mockImplementation(mockSetTimeout);
     
     await registerServiceWorker();
     
-    // Restore setTimeout to prevent affecting other tests
-    global.setTimeout = originalSetTimeout;
+    // Restore setTimeout
+    jest.spyOn(global, 'setTimeout').mockRestore();
     
     // Should call setTimeout for each retry (initial update + retry logic)
     // For our purposes, we're checking that retry logic was invoked
@@ -204,18 +237,30 @@ describe('Service Worker Update Error Handling', () => {
   });
   
   it('should skip update in development mode with development URL', async () => {
-    // Simulate development environment
-    process.env.NODE_ENV = 'development';
+    // Simulate development environment using jest.replaceProperty
+    jest.replaceProperty(process.env, 'NODE_ENV', 'development');
     
-    // Mock window.location to be localhost
-    delete (window as { location?: Location }).location;
-    window.location = {
+    // Mock window.location to be localhost using defineProperty
+    const mockDevLocation = {
       hostname: 'localhost',
       port: '3000',
       protocol: 'http:',
       href: 'http://localhost:3000/',
-      ...window.location
-    } as Location;
+      // Include other required properties
+      search: '',
+      pathname: '/',
+      hash: '',
+      origin: 'http://localhost:3000',
+      replace: jest.fn(),
+      assign: jest.fn(),
+      reload: jest.fn()
+    };
+    
+    Object.defineProperty(window, 'location', {
+      value: mockDevLocation,
+      writable: true,
+      configurable: true
+    });
     
     await registerServiceWorker();
     
