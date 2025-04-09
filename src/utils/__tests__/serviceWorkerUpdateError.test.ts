@@ -114,6 +114,46 @@ describe('Service Worker Update Error Handling', () => {
     expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('fetch or MIME type issues'));
   });
   
+  it('should handle various error types in a type-safe manner', async () => {
+    // Test case 1: Error object with message property
+    mockRegistration.update.mockImplementationOnce(() => 
+      Promise.reject(new Error('Standard error with message property'))
+    );
+    await registerServiceWorker();
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Service worker update failed', expect.any(Error));
+    
+    // Reset mocks
+    jest.clearAllMocks();
+    
+    // Test case 2: String error
+    mockRegistration.update.mockImplementationOnce(() => 
+      Promise.reject('String error without message property')
+    );
+    await registerServiceWorker();
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Service worker update failed', 'String error without message property');
+    
+    // Reset mocks
+    jest.clearAllMocks();
+    
+    // Test case 3: Object error without message property
+    const customError = { code: 123, details: 'Custom error object' };
+    mockRegistration.update.mockImplementationOnce(() => 
+      Promise.reject(customError)
+    );
+    await registerServiceWorker();
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Service worker update failed', customError);
+    
+    // Reset mocks
+    jest.clearAllMocks();
+    
+    // Test case 4: null or undefined error (edge case)
+    mockRegistration.update.mockImplementationOnce(() => 
+      Promise.reject(null)
+    );
+    await registerServiceWorker();
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Service worker update failed', null);
+  });
+  
   it('should retry failed updates for non-fetch errors', async () => {
     // Make all update attempts fail with a non-fetch related error
     const updateError = new Error('Some other error not related to fetching');

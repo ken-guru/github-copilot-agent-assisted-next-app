@@ -15,6 +15,30 @@ let pendingRegistration: ServiceWorkerRegistration | null = null;
 let onlineEventListener: ((event: Event) => Promise<void>) | null = null;
 
 /**
+ * Helper function to safely get error message from unknown error type
+ * @param error Any error value from catch block
+ * @returns A string representation of the error
+ */
+function getErrorMessage(error: unknown): string {
+  if (error === null) {
+    return 'null';
+  }
+  if (error === undefined) {
+    return 'undefined';
+  }
+  if (typeof error === 'string') {
+    return error;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === 'object' && 'message' in error && typeof error.message === 'string') {
+    return error.message;
+  }
+  return String(error);
+}
+
+/**
  * Check if we're in a development environment
  * Used to conditionally disable service worker updates in development
  */
@@ -93,7 +117,7 @@ async function attemptServiceWorkerUpdate(registration: ServiceWorkerRegistratio
     pendingRegistration = null;
     // Remove any online event listener since we succeeded
     removeOnlineEventListener();
-  } catch (retryError) {
+  } catch (retryError: unknown) {
     console.error('Service worker update retry failed', retryError);
     
     // Schedule another retry if we haven't reached max retries
@@ -199,12 +223,12 @@ export async function registerServiceWorker(): Promise<void> {
     // Check for updates on registration with error handling
     try {
       await registration.update();
-    } catch (updateError) {
+    } catch (updateError: unknown) {
       console.error('Service worker update failed', updateError);
       
       // If error is related to MIME type or fetch failure, this may be due to
       // development server issues - skip retry in that case
-      const errorMessage = updateError.message || String(updateError);
+      const errorMessage = getErrorMessage(updateError);
       if (errorMessage.includes('MIME type') || 
           errorMessage.includes('Failed to fetch') ||
           errorMessage.includes('An unknown error occurred when fetching')) {
@@ -234,9 +258,9 @@ export async function registerServiceWorker(): Promise<void> {
       }
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     // Check for specific error types that indicate server/development issues
-    const errorMessage = error.message || String(error);
+    const errorMessage = getErrorMessage(error);
     
     if (errorMessage.includes('MIME type') || errorMessage.includes('Failed to fetch')) {
       console.warn('Service worker registration error may be related to development environment:');
@@ -269,7 +293,7 @@ export async function unregisterServiceWorker(): Promise<void> {
       await registration.unregister();
       console.log('Service worker unregistered');
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Service worker unregistration failed', error);
   }
 }
