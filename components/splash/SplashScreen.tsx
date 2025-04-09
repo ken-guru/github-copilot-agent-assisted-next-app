@@ -8,7 +8,7 @@ interface SplashScreenProps {
 }
 
 export const SplashScreen = ({ 
-  minimumDisplayTime = 1500 
+  minimumDisplayTime = 1000 
 }: SplashScreenProps) => {
   const { isLoading } = useLoading();
   const [shouldDisplay, setShouldDisplay] = useState(true);
