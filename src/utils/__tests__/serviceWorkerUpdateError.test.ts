@@ -188,11 +188,11 @@ describe('Service Worker Update Error Handling', () => {
     mockRegistration.update.mockImplementation(() => Promise.reject(updateError));
     
     // Track setTimeout calls that would schedule retries
-    const originalSetTimeout = global.setTimeout;
     let timeoutCalls = 0;
     
     // Properly mock setTimeout with correct type signature
-    const mockSetTimeout = jest.fn().mockImplementation((cb: () => void, _timeout?: number) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const mockSetTimeout = jest.fn().mockImplementation((cb: () => void, timeout: number) => {
       timeoutCalls++;
       cb(); // Execute callback immediately
       // Return a valid timeout object
