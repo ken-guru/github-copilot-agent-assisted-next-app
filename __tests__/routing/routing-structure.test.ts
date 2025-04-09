@@ -2,45 +2,46 @@ import fs from 'fs';
 import path from 'path';
 
 describe('Next.js routing structure', () => {
-  it('should not have conflicting routes between Pages Router and App Router', () => {
-    // Check if app/page.tsx exists
-    const appRouterHomePage = path.join(process.cwd(), 'src/app/page.tsx');
-    const appRouterExists = fs.existsSync(appRouterHomePage);
+  it('should use a single routing system to avoid conflicts', () => {
+    const appRouterPagePath = path.join(process.cwd(), 'src/app/page.tsx');
+    const pagesRouterIndexPath = path.join(process.cwd(), 'pages/index.tsx');
     
-    // Check if pages/index.tsx exists
-    const pagesRouterHomePage = path.join(process.cwd(), 'pages/index.tsx');
-    const pagesRouterExists = fs.existsSync(pagesRouterHomePage);
+    const appRouterExists = fs.existsSync(appRouterPagePath);
+    const pagesRouterExists = fs.existsSync(pagesRouterIndexPath);
     
-    // We shouldn't have both for the same route
-    if (appRouterExists && pagesRouterExists) {
-      // If both exist, we need to either:
-      // 1. Remove one of them
-      // 2. Make sure they don't conflict (change path or use middleware)
-      fail('Conflicting routes detected: both app/page.tsx and pages/index.tsx exist');
+    // Only one of the files should exist to handle the root route
+    // to avoid the "Conflicting app and page file" error
+    if (appRouterExists) {
+      expect(pagesRouterExists).toBe(false);
+    } else {
+      expect(pagesRouterExists).toBe(true);
     }
     
     // At least one should exist to handle the root route
     expect(appRouterExists || pagesRouterExists).toBe(true);
   });
-  
-  it('should have consistent routing structure', () => {
-    // Determine which router system we're using primarily
-    const appDir = path.join(process.cwd(), 'src/app');
-    const pagesDir = path.join(process.cwd(), 'pages');
+
+  it('should use proper naming conventions for routing files', () => {
+    const appDirExists = fs.existsSync(path.join(process.cwd(), 'src/app'));
+    const pagesDirExists = fs.existsSync(path.join(process.cwd(), 'pages'));
     
-    const appDirExists = fs.existsSync(appDir);
-    const pagesDirExists = fs.existsSync(pagesDir);
-    
+    // Check if using the App Router
     if (appDirExists) {
-      // If using App Router, check for essential files
-      const appLayoutExists = fs.existsSync(path.join(appDir, 'layout.tsx'));
-      expect(appLayoutExists).toBe(true);
+      // Check if page.tsx exists for root route
+      const rootPage = fs.existsSync(path.join(process.cwd(), 'src/app/page.tsx'));
+      expect(rootPage).toBe(true);
     }
     
-    if (pagesDirExists && !appDirExists) {
-      // If only using Pages Router, check for _app.tsx
-      const appFileExists = fs.existsSync(path.join(pagesDir, '_app.tsx'));
-      expect(appFileExists).toBe(true);
+    // Check if using the Pages Router
+    if (pagesDirExists) {
+      // Check if index.tsx exists for root route (only if app router doesn't exist)
+      if (!fs.existsSync(path.join(process.cwd(), 'src/app/page.tsx'))) {
+        const indexPage = fs.existsSync(path.join(process.cwd(), 'pages/index.tsx'));
+        expect(indexPage).toBe(true);
+      }
     }
+    
+    // At least one routing system should be in use
+    expect(appDirExists || pagesDirExists).toBe(true);
   });
 });

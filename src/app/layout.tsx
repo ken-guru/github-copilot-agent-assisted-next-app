@@ -1,10 +1,9 @@
-'use client';
 import { Geist, Geist_Mono } from "next/font/google";
-import { useEffect, useState } from "react";
 import "./globals.css";
-import { UpdateNotification } from "@/components/UpdateNotification";
-import { registerServiceWorker, setUpdateHandler } from "../utils/serviceWorkerRegistration";
+import { Metadata, Viewport } from "next";
+import { LayoutClient } from "../components/LayoutClient";
 
+// Font configuration
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -14,58 +13,36 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Metadata is now defined in a separate file when using 'use client'
-// See: https://nextjs.org/docs/app/building-your-application/optimizing/metadata#static-metadata
+// Metadata configuration
+export const metadata: Metadata = {
+  title: 'Mr. Timely',
+  description: 'Track your time and activities with Mr. Timely',
+  icons: {
+    icon: '/favicon.ico',
+  },
+  manifest: '/manifest.json',
+};
+
+// Viewport configuration
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#000000',
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [updateMessage, setUpdateMessage] = useState<string | null>(null);
-
-  // Register service worker for offline functionality
-  useEffect(() => {
-    // Set up update handler before registering service worker
-    setUpdateHandler((message) => {
-      setUpdateMessage(message);
-    });
-
-    // Handle custom update event
-    const handleUpdateAvailable = (event: CustomEvent) => {
-      if (event.detail?.message) {
-        setUpdateMessage(event.detail.message);
-      }
-    };
-
-    // Add event listener for custom update event
-    window.addEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);
-
-    // Register service worker
-    registerServiceWorker();
-
-    // Clean up handler on unmount
-    return () => {
-      setUpdateHandler(null);
-      window.removeEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);
-    };
-  }, []);
-
+  const fontClasses = `${geistSans.variable} ${geistMono.variable}`;
+  
   return (
     <html lang="en">
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#000000" />
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {updateMessage && (
-          <UpdateNotification
-            message={updateMessage}
-            onDismiss={() => setUpdateMessage(null)}
-          />
-        )}
-        <main>
+      <body className={fontClasses}>
+        <LayoutClient>
           {children}
-        </main>
+        </LayoutClient>
       </body>
     </html>
   );
