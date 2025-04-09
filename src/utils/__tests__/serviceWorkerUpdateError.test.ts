@@ -2,7 +2,7 @@
  * Service Worker Update Error Test
  * Tests specific edge cases around service worker update failures
  */
-import { registerServiceWorker, unregisterServiceWorker, setUpdateHandler } from '../serviceWorkerRegistration';
+import { registerServiceWorker, setUpdateHandler } from '../serviceWorkerRegistration';
 
 // Mock for service worker registration
 const mockRegistration = {
@@ -22,7 +22,7 @@ const mockServiceWorker = {
 };
 
 describe('Service Worker Update Error Handling', () => {
-  let originalServiceWorker: any;
+  let originalServiceWorker: unknown;
   let updateHandlerMock: jest.Mock;
   let consoleLogSpy: jest.SpyInstance;
   let consoleErrorSpy: jest.SpyInstance;
@@ -65,14 +65,14 @@ describe('Service Worker Update Error Handling', () => {
     process.env.NODE_ENV = 'production';
     
     // Mock window.location
-    const originalLocation = window.location;
-    delete (window as any).location;
-    (window as any).location = {
+    delete (window as { location?: Location }).location;
+    window.location = {
       hostname: 'example.com', // Not localhost
       port: '443',
       protocol: 'https:',
-      href: 'https://example.com/'
-    };
+      href: 'https://example.com/',
+      ...window.location
+    } as Location;
   });
   
   afterEach(() => {
@@ -123,10 +123,10 @@ describe('Service Worker Update Error Handling', () => {
     const originalSetTimeout = global.setTimeout;
     let timeoutCalls = 0;
     
-    global.setTimeout = jest.fn().mockImplementation((cb: any) => {
+    global.setTimeout = jest.fn().mockImplementation((cb: () => void) => {
       timeoutCalls++;
       cb(); // Execute callback immediately
-      return 123 as any;
+      return 123 as NodeJS.Timeout;
     });
     
     await registerServiceWorker();
@@ -168,13 +168,14 @@ describe('Service Worker Update Error Handling', () => {
     process.env.NODE_ENV = 'development';
     
     // Mock window.location to be localhost
-    delete (window as any).location;
-    (window as any).location = {
+    delete (window as { location?: Location }).location;
+    window.location = {
       hostname: 'localhost',
       port: '3000',
       protocol: 'http:',
-      href: 'http://localhost:3000/'
-    };
+      href: 'http://localhost:3000/',
+      ...window.location
+    } as Location;
     
     await registerServiceWorker();
     
