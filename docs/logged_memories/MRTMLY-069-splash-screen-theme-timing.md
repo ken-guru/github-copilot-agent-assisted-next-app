@@ -31,6 +31,8 @@
   - Fixed CSS selectors to use `.dark-mode` instead of `.dark` to match application theme implementation
   - Added immediate theme detection during component initialization to prevent white flash
   - Applied inline styles for immediate theme application before CSS loads
+  - Implemented robust error handling with parameter-less catch clauses to satisfy ESLint rules
+  - Fixed build errors related to unused variables in catch blocks
 
 #### Lessons Learned
 - When enhancing UI components, check if the CSS already supports the desired functionality

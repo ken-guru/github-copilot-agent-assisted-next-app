@@ -21,7 +21,7 @@ const isDarkTheme = (): boolean => {
     
     // Then check for system preference
     return window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-  } catch (_) {
+  } catch {
     // Fallback in case of errors (e.g., localStorage blocked)
     return false;
   }
@@ -73,7 +73,7 @@ if (typeof document !== 'undefined') {
       document.documentElement.classList.add('light-mode');
       document.documentElement.classList.remove('dark-mode');
     }
-  } catch (_) {
+  } catch {
     // Silently fail
   }
 }
