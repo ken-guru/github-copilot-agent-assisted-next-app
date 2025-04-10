@@ -26,15 +26,21 @@
 3. Additional debug message investigation
    - Examined other potential sources of console logs in production
    - Identified direct console.log calls in the service worker
-   - Created an environment-aware logging function for the service worker to conditionally show logs
+   - Found multiple service worker lifecycle logs appearing in production:
+     - Installation messages ("Service worker installing...", "Cached app shell path: /", etc.)
+     - Activation messages ("Service worker activating...", "Service worker activated...")
+     - Registration confirmation ("Service worker registered")
+   - Determined these logs are helpful during development but unnecessary in production
 
 #### Resolution
 - Implemented environment-aware logging across the application:
   1. Added early return for `validateThemeColors` in production environment
   2. Created proper unit tests to verify logging behavior in different environments
-  3. Added a utility logging function for service worker to conditionally log based on environment
+  3. Created an environment-aware logging utility function for service worker to conditionally show logs
+  4. Replaced all direct console.log calls in service worker with the new logging utility
+  5. Ensured critical error messages still display even in production
 - All unwanted debug messages now suppressed in production builds
-- Critical error messages still display when necessary, even in production
+- Service worker operations continue normally but without console output in production
 
 #### Lessons Learned
 - Debug/logging code should always check for environment before execution
@@ -42,3 +48,4 @@
 - A consistent approach to environment-aware logging is beneficial across the codebase
 - Test different environments (development, test, production) to verify appropriate logging behavior
 - Consider implementing a centralized logging utility that respects environment settings
+- Service worker debugging logs are essential during development but should be hidden in production

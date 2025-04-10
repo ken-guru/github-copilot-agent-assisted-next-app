@@ -188,6 +188,21 @@ function scheduleUpdateRetry(registration: ServiceWorkerRegistration): void {
 }
 
 /**
+ * Environment-aware logging function
+ * @param message Message to log
+ * @param level Log level (log, warn, error)
+ */
+function serviceWorkerLog(message: string, level: 'log' | 'warn' | 'error' = 'log'): void {
+  // Always log errors and warnings
+  const isImportant = level === 'error' || level === 'warn';
+  
+  // Only log in development mode or if it's important
+  if (process.env.NODE_ENV !== 'production' || isImportant) {
+    console[level](message);
+  }
+}
+
+/**
  * Registers a service worker for offline functionality
  */
 export async function registerServiceWorker(): Promise<void> {
@@ -195,14 +210,14 @@ export async function registerServiceWorker(): Promise<void> {
     return; // SSR check
   }
   if (typeof navigator === 'undefined' || !navigator || !('serviceWorker' in navigator)) {
-    console.log('Service workers are not supported in this browser');
+    serviceWorkerLog('Service workers are not supported in this browser', 'warn');
     return;
   }
   
   try {
     // Check if we're in development mode - log but continue with registration
     if (isDevelopmentEnvironment()) {
-      console.log('Development environment detected, registering service worker but skipping updates');
+      serviceWorkerLog('Development environment detected, registering service worker but skipping updates');
     }
     
     // Register service worker
@@ -210,7 +225,7 @@ export async function registerServiceWorker(): Promise<void> {
       // Increase scope to cover entire origin
       scope: '/'
     });
-    console.log('Service worker registered');
+    serviceWorkerLog('Service worker registered');
     
     // Reset retry count on registration
     retryCount = 0;
