@@ -2,9 +2,6 @@ import { renderHook, act } from '@testing-library/react';
 import { useActivitiesTracking } from '../../hooks/useActivitiesTracking';
 
 describe('useActivitiesTracking Duplicate Activity Handling', () => {
-  // Helper to generate unique IDs for each test
-  const getActivityId = (prefix: string) => `${prefix}-${Date.now()}`;
-  
   it('should handle duplicate activity additions gracefully', () => {
     const { result } = renderHook(() => useActivitiesTracking());
     const id = 'duplicate-test';
