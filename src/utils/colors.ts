@@ -316,9 +316,9 @@ export function validateContrast(
 
 // Validate theme colors
 export function validateThemeColors(): void {
-  // Only validate colors in development environment
+  // Skip all validation and logging in production
   if (process.env.NODE_ENV === 'production') {
-    return; // Skip validation in production
+    return;
   }
   
   try {
@@ -332,7 +332,7 @@ export function validateThemeColors(): void {
     const backgroundMuted = computedStyle.getPropertyValue('--background-muted').trim() || '#f5f5f5';
     const foregroundMuted = computedStyle.getPropertyValue('--foreground-muted').trim() || '#6b7280';
 
-    // Validate contrast ratios
+    // Only log in development environment
     if (process.env.NODE_ENV === 'development') {
       console.group('Theme Contrast Validation (' + (isDarkMode() ? 'Dark' : 'Light') + ' Mode)');
       console.log('Main contrast ratio:', getContrastRatio(background, foreground));

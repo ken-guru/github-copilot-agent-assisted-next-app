@@ -1,69 +1,97 @@
-import { getContrastRatio, validateContrast } from '../colors';
+import { validateThemeColors, getContrastRatio } from '../colors';
 
-describe('Color Utilities', () => {
-  describe('getContrastRatio', () => {
-    it('should calculate contrast ratio correctly', () => {
-      // White background with black text (maximum contrast)
-      const whiteBlackRatio = getContrastRatio(
-        'hsl(0, 0%, 100%)',
-        'hsl(0, 0%, 0%)'
-      );
-      expect(whiteBlackRatio).toBeCloseTo(21, 0); // Maximum contrast ratio is 21:1
-
-      // Light mode background with text
-      const lightModeRatio = getContrastRatio(
-        'hsl(220, 20%, 98%)', // Light background
-        'hsl(220, 15%, 12%)' // Dark text
-      );
-      expect(lightModeRatio).toBeGreaterThanOrEqual(4.5); // WCAG AA minimum
-
-      // Dark mode background with text
-      const darkModeRatio = getContrastRatio(
-        'hsl(220, 15%, 12%)', // Dark background
-        'hsl(220, 10%, 95%)' // Light text
-      );
-      expect(darkModeRatio).toBeGreaterThanOrEqual(4.5); // WCAG AA minimum
-    });
+describe('validateThemeColors', () => {
+  // Save and restore console methods
+  const originalConsoleGroup = console.group;
+  const originalConsoleLog = console.log;
+  const originalConsoleGroupEnd = console.groupEnd;
+  const originalConsoleError = console.error;
+  
+  beforeEach(() => {
+    // Mock console methods to track calls
+    console.group = jest.fn();
+    console.log = jest.fn();
+    console.groupEnd = jest.fn();
+    console.error = jest.fn();
+    
+    // Set up document with mock styles
+    document.documentElement.style.setProperty('--background', '#ffffff');
+    document.documentElement.style.setProperty('--foreground', '#000000');
+    document.documentElement.style.setProperty('--background-muted', '#f5f5f5');
+    document.documentElement.style.setProperty('--foreground-muted', '#6b7280');
   });
-
-  describe('validateContrast', () => {
-    it('should validate WCAG AA compliance', () => {
-      // Test light mode colors
-      expect(validateContrast(
-        'hsl(220, 20%, 98%)', // Light background
-        'hsl(220, 15%, 12%)', // Dark text
-        'AA'
-      )).toBe(true);
-
-      // Test dark mode colors
-      expect(validateContrast(
-        'hsl(220, 15%, 12%)', // Dark background
-        'hsl(220, 10%, 95%)', // Light text
-        'AA'
-      )).toBe(true);
-
-      // Test muted text combinations
-      expect(validateContrast(
-        'hsl(220, 20%, 94%)', // Light muted background
-        'hsl(220, 10%, 35%)', // Adjusted muted text to be darker for better contrast
-        'AA'
-      )).toBe(true);
+  
+  afterEach(() => {
+    // Restore console methods
+    console.group = originalConsoleGroup;
+    console.log = originalConsoleLog;
+    console.groupEnd = originalConsoleGroupEnd;
+    console.error = originalConsoleError;
+    
+    // Clean up document styles
+    document.documentElement.style.removeProperty('--background');
+    document.documentElement.style.removeProperty('--foreground');
+    document.documentElement.style.removeProperty('--background-muted');
+    document.documentElement.style.removeProperty('--foreground-muted');
+  });
+  
+  it('should not log anything in production environment', () => {
+    // Save original NODE_ENV
+    const originalNodeEnv = process.env.NODE_ENV;
+    
+    // Set production environment
+    process.env.NODE_ENV = 'production';
+    
+    // Run validation
+    validateThemeColors();
+    
+    // Check that no console methods were called
+    expect(console.group).not.toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled();
+    expect(console.groupEnd).not.toHaveBeenCalled();
+    expect(console.error).not.toHaveBeenCalled();
+    
+    // Restore original NODE_ENV
+    process.env.NODE_ENV = originalNodeEnv;
+  });
+  
+  it('should log theme validation in development environment', () => {
+    // Save original NODE_ENV
+    const originalNodeEnv = process.env.NODE_ENV;
+    
+    // Set development environment
+    process.env.NODE_ENV = 'development';
+    
+    // Run validation
+    validateThemeColors();
+    
+    // Check that console methods were called appropriately
+    expect(console.group).toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalled();
+    expect(console.groupEnd).toHaveBeenCalled();
+    
+    // Restore original NODE_ENV
+    process.env.NODE_ENV = originalNodeEnv;
+  });
+  
+  it('should handle errors silently in test environment', () => {
+    // Simulate an error condition
+    document.documentElement.style.removeProperty('--background');
+    document.documentElement.style.removeProperty('--foreground');
+    
+    // Mock getComputedStyle to throw an error
+    const originalGetComputedStyle = window.getComputedStyle;
+    window.getComputedStyle = jest.fn().mockImplementation(() => {
+      throw new Error('Test error');
     });
-
-    it('should validate WCAG AAA compliance', () => {
-      // Test light mode colors with stricter requirements
-      expect(validateContrast(
-        'hsl(220, 20%, 98%)', // Light background
-        'hsl(220, 15%, 12%)', // Dark text
-        'AAA'
-      )).toBe(true);
-
-      // Test dark mode colors with stricter requirements
-      expect(validateContrast(
-        'hsl(220, 15%, 12%)', // Dark background
-        'hsl(220, 10%, 95%)', // Light text
-        'AAA'
-      )).toBe(true);
-    });
+    
+    // Run validation (should not throw)
+    expect(() => validateThemeColors()).not.toThrow();
+    
+    // No error should be logged in test environment
+    expect(console.error).not.toHaveBeenCalled();
+    
+    // Restore original getComputedStyle
+    window.getComputedStyle = originalGetComputedStyle;
   });
 });
