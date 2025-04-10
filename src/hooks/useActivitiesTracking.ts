@@ -83,17 +83,17 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
   
   const addActivity = useCallback((activityId: string) => {
     try {
-      const exists = stateMachine.getActivityState(activityId);
-      if (exists) {
-        // Activity already exists, don't add it again
-        if (!isTestEnvironment) {
-          console.warn(`Failed to add activity ${activityId}: Activity with ID ${activityId} already exists`);
-        }
-        return;
-      }
+      // Use the modified addActivity method with throwOnExisting=false in non-test environments
+      // This will prevent errors from being thrown when adding duplicate activities
+      const added = stateMachine.addActivity(
+        activityId, 
+        isTestEnvironment // Only throw errors in test environments
+      );
       
-      stateMachine.addActivity(activityId);
-      updateLocalStateFromMachine();
+      // If activity was added (wasn't a duplicate), update local state
+      if (added) {
+        updateLocalStateFromMachine();
+      }
     } catch (error) {
       if (!isTestEnvironment) {
         console.warn(`Failed to add activity ${activityId}:`, error);

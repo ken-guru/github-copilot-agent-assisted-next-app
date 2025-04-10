@@ -36,17 +36,23 @@ export class ActivityStateMachine {
   /**
    * Adds a new activity in PENDING state
    * @param id Unique identifier for the activity
-   * @throws Error if activity with this ID already exists
+   * @param throwOnExisting Whether to throw an error if activity already exists (default: true)
+   * @throws Error if activity with this ID already exists and throwOnExisting is true
+   * @returns boolean indicating if activity was added successfully
    */
-  addActivity(id: string): void {
+  addActivity(id: string, throwOnExisting: boolean = true): boolean {
     if (this.states.has(id)) {
-      throw new Error(`Activity with ID ${id} already exists`);
+      if (throwOnExisting) {
+        throw new Error(`Activity with ID ${id} already exists`);
+      }
+      return false;
     }
 
     this.states.set(id, {
       id,
       state: 'PENDING'
     });
+    return true;
   }
 
   /**
