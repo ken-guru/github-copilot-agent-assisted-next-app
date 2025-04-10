@@ -297,7 +297,7 @@ export function getContrastRatio(hsl1: string, hsl2: string): number {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-// Validate color combination meets WCAG contrast requirements
+// Validate contrast ratio between two colors
 export function validateContrast(
   background: string, 
   text: string, 
@@ -316,21 +316,25 @@ export function validateContrast(
 
 // Validate theme colors
 export function validateThemeColors(): void {
-  if (typeof window === 'undefined') return;
-
-  const isDark = document.documentElement.classList.contains('dark-mode');
-  const vars = getComputedStyle(document.documentElement);
+  // Only validate colors in development environment
+  if (process.env.NODE_ENV === 'production') {
+    return; // Skip validation in production
+  }
   
   try {
-    // Handle potentially missing or malformed CSS variables in test environment
-    const background = vars.getPropertyValue('--background').trim() || 'hsl(220, 20%, 98%)';
-    const foreground = vars.getPropertyValue('--foreground').trim() || 'hsl(220, 15%, 12%)';
-    const backgroundMuted = vars.getPropertyValue('--background-muted').trim() || 'hsl(220, 20%, 94%)';
-    const foregroundMuted = vars.getPropertyValue('--foreground-muted').trim() || 'hsl(220, 10%, 35%)';
+    // Get theme colors
+    const root = document.documentElement;
+    const computedStyle = getComputedStyle(root);
+    
+    // Get base colors
+    const background = computedStyle.getPropertyValue('--background').trim() || '#ffffff';
+    const foreground = computedStyle.getPropertyValue('--foreground').trim() || '#000000';
+    const backgroundMuted = computedStyle.getPropertyValue('--background-muted').trim() || '#f5f5f5';
+    const foregroundMuted = computedStyle.getPropertyValue('--foreground-muted').trim() || '#6b7280';
 
-    // Only log if we're in a browser environment
-    if (typeof window !== 'undefined' && process.env.NODE_ENV !== 'test') {
-      console.group(`Theme Contrast Validation (${isDark ? 'Dark' : 'Light'} Mode)`);
+    // Validate contrast ratios
+    if (process.env.NODE_ENV === 'development') {
+      console.group('Theme Contrast Validation (' + (isDarkMode() ? 'Dark' : 'Light') + ' Mode)');
       console.log('Main contrast ratio:', getContrastRatio(background, foreground));
       console.log('Muted contrast ratio:', getContrastRatio(backgroundMuted, foregroundMuted));
       console.groupEnd();
