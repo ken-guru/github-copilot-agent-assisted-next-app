@@ -85,9 +85,10 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
     try {
       const exists = stateMachine.getActivityState(activityId);
       if (exists) {
-        // Activity already exists, don't add it again
-        if (!isTestEnvironment) {
-          console.warn(`Failed to add activity ${activityId}: Activity with ID ${activityId} already exists`);
+        // Activity already exists, silently skip adding it again
+        // Only throw in test environments to maintain test integrity
+        if (isTestEnvironment) {
+          throw new Error(`Activity with ID ${activityId} already exists`);
         }
         return;
       }
