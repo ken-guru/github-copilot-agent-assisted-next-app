@@ -36,7 +36,22 @@
 - Implemented environment-aware logging across the application:
   1. Added early return for `validateThemeColors` in production environment
   2. Created proper unit tests to verify logging behavior in different environments
-  3. Created an environment-aware logging utility function for service worker to conditionally show logs
+  3. Created an environment-aware logging utility function for service worker to conditionally show logs:
+     ```javascript
+     function log(message, level = 'log') {
+       // Always log errors and warnings
+       const isImportant = level === 'error' || level === 'warn';
+       
+       // Only log in development or for important messages
+       if (isDevelopment() || isImportant) {
+         console[level]('[Service Worker] ' + message);
+       }
+     }
+     ```
+     - Enables clear prefixing of all service worker logs
+     - Automatically detects development vs. production environments
+     - Ensures critical errors and warnings still appear in production
+     - Completely suppresses regular logs in production builds
   4. Replaced all direct console.log calls in service worker with the new logging utility
   5. Ensured critical error messages still display even in production
 - All unwanted debug messages now suppressed in production builds

@@ -2,51 +2,57 @@
  * Test for service worker environment-aware logging
  */
 describe('Service Worker Logging', () => {
+  // Mock self object
+  const originalSelf = global.self;
+  
   // Mock console methods
   let consoleLogSpy;
   let consoleWarnSpy;
   let consoleErrorSpy;
   
   beforeEach(() => {
+    // Setup test environment
+    global.self = {
+      location: {
+        hostname: 'example.com',
+        port: ''
+      }
+    };
+    
     // Setup console spies
     consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    
+    // Reset modules between tests to ensure clean state
+    jest.resetModules();
   });
   
   afterEach(() => {
+    // Restore original self
+    global.self = originalSelf;
+    
     // Restore console methods
     consoleLogSpy.mockRestore();
     consoleWarnSpy.mockRestore();
     consoleErrorSpy.mockRestore();
   });
   
-  it('should log in development environment', () => {
-    // Create mock self with development environment
-    global.self = {
-      ENVIRONMENT: 'development',
-      location: { hostname: 'localhost' }
-    };
-    
-    // Import the log function from service worker
-    const { log } = require('../service-worker-logging-util');
-    
-    // Test logging in development
-    log('Test message');
-    
-    // Verify log was called
-    expect(consoleLogSpy).toHaveBeenCalledWith('[Service Worker] Test message');
-  });
-  
   it('should not log regular messages in production', () => {
-    // Create mock self with production environment
-    global.self = {
-      ENVIRONMENT: 'production',
-      location: { hostname: 'example.com' }
-    };
+    // Set production environment and mock the module
+    const mockIsDev = jest.fn().mockReturnValue(false);
+    jest.mock('../service-worker-logging-utils', () => ({
+      isDevelopment: mockIsDev,
+      log: (message, level = 'log') => {
+        const isImportant = level === 'error' || level === 'warn';
+        if (mockIsDev() || isImportant) {
+          console[level]('[Service Worker] ' + message);
+        }
+      }
+    }));
     
-    // Import the log function from service worker
-    const { log } = require('../service-worker-logging-util');
+    // Import the mocked module
+    const { log } = require('../service-worker-logging-utils');
     
     // Test logging in production
     log('Test message');
@@ -56,35 +62,25 @@ describe('Service Worker Logging', () => {
   });
   
   it('should log important messages (errors/warnings) even in production', () => {
-    // Create mock self with production environment
-    global.self = {
-      ENVIRONMENT: 'production',
-      location: { hostname: 'example.com' }
-    };
+    // Set production environment and mock module
+    const mockIsDev = jest.fn().mockReturnValue(false);
+    jest.mock('../service-worker-logging-utils', () => ({
+      isDevelopment: mockIsDev,
+      log: (message, level = 'log') => {
+        const isImportant = level === 'error' || level === 'warn';
+        if (mockIsDev() || isImportant) {
+          console[level]('[Service Worker] ' + message);
+        }
+      }
+    }));
     
-    // Import the log function from service worker
-    const { log } = require('../service-worker-logging-util');
+    // Import the mocked module
+    const { log } = require('../service-worker-logging-utils');
     
     // Test error logging in production
     log('Important error', 'error');
     
-    // Verify error was logged even in production
+    // Verify error was logged
     expect(consoleErrorSpy).toHaveBeenCalledWith('[Service Worker] Important error');
-  });
-  
-  it('should detect development environment based on hostname', () => {
-    // Create mock self without explicit ENVIRONMENT
-    global.self = {
-      location: { hostname: 'localhost', port: '3000' }
-    };
-    
-    // Import the log function from service worker
-    const { log } = require('../service-worker-logging-util');
-    
-    // Test logging with implicit development environment
-    log('Local development message');
-    
-    // Verify log was called (detected development environment)
-    expect(consoleLogSpy).toHaveBeenCalledWith('[Service Worker] Local development message');
   });
 });

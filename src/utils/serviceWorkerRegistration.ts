@@ -94,6 +94,107 @@ function cleanupAllPendingOperations(): void {
 }
 
 /**
+ * Environment-aware logging function
+ * @param message Message to log
+ * @param level Log level (log, warn, error)
+ */
+function swLog(message: string, level: 'log' | 'warn' | 'error' = 'log'): void {
+  // Always log errors and warnings
+  const isImportant = level === 'error' || level === 'warn';
+  
+  // Only log in development mode or if it's important
+  if (process.env.NODE_ENV !== 'production' || isImportant) {
+    console[level](message);
+  }
+}
+
+/**
+ * Registers a service worker for offline functionality
+ */
+export async function registerServiceWorker(): Promise<void> {
+  if (typeof window === 'undefined') {
+    return; // SSR check
+  }
+  if (typeof navigator === 'undefined' || !navigator || !('serviceWorker' in navigator)) {
+    swLog('Service workers are not supported in this browser', 'warn');
+    return;
+  }
+  
+  try {
+    // Check if we're in development mode - log but continue with registration
+    if (isDevelopmentEnvironment()) {
+      swLog('Development environment detected, registering service worker but skipping updates');
+    }
+    
+    // Register service worker
+    const registration = await navigator.serviceWorker.register('/service-worker.js', {
+      // Increase scope to cover entire origin
+      scope: '/'
+    });
+    swLog('Service worker registered');
+    
+    // Reset retry count on registration
+    retryCount = 0;
+    
+    // In development mode, skip the update process to avoid errors
+    if (isDevelopmentEnvironment()) {
+      return;
+    }
+    
+    // Check for updates on registration with error handling
+    try {
+      await registration.update();
+    } catch (updateError: unknown) {
+      swLog(`Service worker update failed: ${getErrorMessage(updateError)}`, 'error');
+      
+      // If error is related to MIME type or fetch failure, this may be due to
+      // development server issues - skip retry in that case
+      const errorMessage = getErrorMessage(updateError);
+      if (errorMessage.includes('MIME type') || 
+          errorMessage.includes('Failed to fetch') ||
+          errorMessage.includes('An unknown error occurred when fetching')) {
+        console.warn('Service worker update error appears to be related to fetch or MIME type issues.');
+        console.warn('This is common in development environments - continuing without retrying.');
+        return;
+      }
+      
+      // Schedule retry for other types of update errors
+      scheduleUpdateRetry(registration);
+    }
+    
+    // Listen for new service worker installation
+    registration.addEventListener('updatefound', () => {
+      const newWorker = registration.installing;
+      if (newWorker) {
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // New content is available
+            const message = 'A new version is available. Please refresh to update.';
+            console.log(message);
+            if (updateHandler) {
+              updateHandler(message);
+            }
+          }
+        });
+      }
+    });
+
+  } catch (error: unknown) {
+    // Check for specific error types that indicate server/development issues
+    const errorMessage = getErrorMessage(error);
+    
+    if (errorMessage.includes('MIME type') || errorMessage.includes('Failed to fetch')) {
+      swLog('Service worker registration error may be related to development environment:', 'warn');
+      swLog('- Ensure service-worker.js is served with the correct MIME type', 'warn');
+      swLog('- Check that the file is accessible at the expected URL', 'warn');
+      swLog(errorMessage, 'warn');
+    } else {
+      swLog(`Service worker registration failed: ${errorMessage}`, 'error');
+    }
+  }
+}
+
+/**
  * Attempt to update service worker
  * @param registration The ServiceWorkerRegistration to update
  * @returns Promise that resolves when update is attempted
@@ -102,7 +203,7 @@ async function attemptServiceWorkerUpdate(registration: ServiceWorkerRegistratio
   try {
     // In development mode, skip the actual update but consider it successful
     if (isDevelopmentEnvironment()) {
-      console.log('Development environment detected, skipping service worker update');
+      swLog('Development environment detected, skipping service worker update');
       retryCount = 0;
       pendingRegistration = null;
       removeOnlineEventListener();
@@ -110,7 +211,7 @@ async function attemptServiceWorkerUpdate(registration: ServiceWorkerRegistratio
     }
     
     await registration.update();
-    console.log('Service worker update retry succeeded');
+    swLog('Service worker update retry succeeded');
     // Reset retry count on success
     retryCount = 0;
     // Clear pending registration after successful update
@@ -118,7 +219,7 @@ async function attemptServiceWorkerUpdate(registration: ServiceWorkerRegistratio
     // Remove any online event listener since we succeeded
     removeOnlineEventListener();
   } catch (retryError: unknown) {
-    console.error('Service worker update retry failed', retryError);
+    swLog(`Service worker update retry failed: ${getErrorMessage(retryError)}`, 'error');
     
     // Schedule another retry if we haven't reached max retries
     if (retryCount < SW_UPDATE_RETRY_CONFIG.maxRetries) {
@@ -184,107 +285,6 @@ function scheduleUpdateRetry(registration: ServiceWorkerRegistration): void {
       
       await attemptServiceWorkerUpdate(registration);
     }, SW_UPDATE_RETRY_CONFIG.retryDelay);
-  }
-}
-
-/**
- * Environment-aware logging function
- * @param message Message to log
- * @param level Log level (log, warn, error)
- */
-function serviceWorkerLog(message: string, level: 'log' | 'warn' | 'error' = 'log'): void {
-  // Always log errors and warnings
-  const isImportant = level === 'error' || level === 'warn';
-  
-  // Only log in development mode or if it's important
-  if (process.env.NODE_ENV !== 'production' || isImportant) {
-    console[level](message);
-  }
-}
-
-/**
- * Registers a service worker for offline functionality
- */
-export async function registerServiceWorker(): Promise<void> {
-  if (typeof window === 'undefined') {
-    return; // SSR check
-  }
-  if (typeof navigator === 'undefined' || !navigator || !('serviceWorker' in navigator)) {
-    serviceWorkerLog('Service workers are not supported in this browser', 'warn');
-    return;
-  }
-  
-  try {
-    // Check if we're in development mode - log but continue with registration
-    if (isDevelopmentEnvironment()) {
-      serviceWorkerLog('Development environment detected, registering service worker but skipping updates');
-    }
-    
-    // Register service worker
-    const registration = await navigator.serviceWorker.register('/service-worker.js', {
-      // Increase scope to cover entire origin
-      scope: '/'
-    });
-    serviceWorkerLog('Service worker registered');
-    
-    // Reset retry count on registration
-    retryCount = 0;
-    
-    // In development mode, skip the update process to avoid errors
-    if (isDevelopmentEnvironment()) {
-      return;
-    }
-    
-    // Check for updates on registration with error handling
-    try {
-      await registration.update();
-    } catch (updateError: unknown) {
-      console.error('Service worker update failed', updateError);
-      
-      // If error is related to MIME type or fetch failure, this may be due to
-      // development server issues - skip retry in that case
-      const errorMessage = getErrorMessage(updateError);
-      if (errorMessage.includes('MIME type') || 
-          errorMessage.includes('Failed to fetch') ||
-          errorMessage.includes('An unknown error occurred when fetching')) {
-        console.warn('Service worker update error appears to be related to fetch or MIME type issues.');
-        console.warn('This is common in development environments - continuing without retrying.');
-        return;
-      }
-      
-      // Schedule retry for other types of update errors
-      scheduleUpdateRetry(registration);
-    }
-    
-    // Listen for new service worker installation
-    registration.addEventListener('updatefound', () => {
-      const newWorker = registration.installing;
-      if (newWorker) {
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // New content is available
-            const message = 'A new version is available. Please refresh to update.';
-            console.log(message);
-            if (updateHandler) {
-              updateHandler(message);
-            }
-          }
-        });
-      }
-    });
-
-  } catch (error: unknown) {
-    // Check for specific error types that indicate server/development issues
-    const errorMessage = getErrorMessage(error);
-    
-    if (errorMessage.includes('MIME type') || errorMessage.includes('Failed to fetch')) {
-      console.warn('Service worker registration error may be related to development environment:');
-      console.warn('- Ensure service-worker.js is served with the correct MIME type');
-      console.warn('- Check that the file is accessible at the expected URL');
-      console.warn(error);
-    } else {
-      console.error('Service worker registration failed', error);
-    }
   }
 }
 
