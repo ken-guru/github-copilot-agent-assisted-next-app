@@ -99,6 +99,9 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-051: CSS Spacing Scale Implementation Adjustments](./logged_memories/MRTMLY-051-css-spacing-implementation-adjustments.md) #css #refactoring #spacing-system #variables #visual-design
 - [MRTMLY-052: Mobile Padding Optimization](./logged_memories/MRTMLY-052-mobile-padding-optimization.md) #css #mobile #responsive-design #spacing-system #optimization
 - [MRTMLY-053: Additional Mobile Spacing Optimizations](./logged_memories/MRTMLY-053-additional-mobile-spacing-optimizations.md) #css #mobile #responsive-design #spacing-system #optimization
+
+## April 2025
+- [MRTMLY-024: Disabling Zoom and Pan on Mobile Devices](./logged_memories/MRTMLY-024-disable-mobile-zoom-pan.md) #mobile #viewport #accessibility #ux
 - [MRTMLY-054: Hardcoded Spacing Values Replacement](./logged_memories/MRTMLY-054-hardcoded-spacing-values-replacement.md) #css #spacing-system #variables #consistency #refactoring
 - [MRTMLY-065: Next.js Routing Conflict Causing 404 Error](./logged_memories/MRTMLY-065-nextjs-routing-conflict-404-error.md) #routing #next-js #debugging #deployment
 - [MRTMLY-066: Next.js Routing Redirection Fix](./logged_memories/MRTMLY-066-nextjs-routing-redirection-fix.md) #debugging #routing #next-js #redirection #app-router #pages-router
