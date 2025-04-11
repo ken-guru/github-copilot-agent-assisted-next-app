@@ -71,12 +71,16 @@ jest.mock('../page', () => {
       // Register reset callbacks in the mock component
       mockedResetService.registerResetCallback(mockResetActivities);
       mockedResetService.registerResetCallback(mockResetTimer);
-      mockedResetService.setDialogCallback((message) => {
-        return new Promise((resolve) => {
+      mockedResetService.setDialogCallback((message: string) => {
+        return new Promise<boolean>((resolve) => {
           // Create a click handler for the confirm button
-          mockDialogProps.onConfirm = () => resolve(true);
-          mockDialogProps.onCancel = () => resolve(false);
+          const confirmFn = jest.fn().mockImplementation(() => resolve(true));
+          const cancelFn = jest.fn().mockImplementation(() => resolve(false));
+          
+          mockDialogProps.onConfirm = confirmFn;
+          mockDialogProps.onCancel = cancelFn;
           mockDialogProps.message = message;
+          
           resolve(true);
         });
       });
@@ -105,7 +109,11 @@ jest.mock('../page', () => {
 });
 
 // Store dialog props for testing
-let mockDialogProps = {
+let mockDialogProps: {
+  message: string;
+  onConfirm: jest.Mock;
+  onCancel: jest.Mock;
+} = {
   message: '',
   onConfirm: jest.fn(),
   onCancel: jest.fn()

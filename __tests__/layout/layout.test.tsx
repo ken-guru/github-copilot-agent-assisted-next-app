@@ -18,7 +18,7 @@ jest.mock('geist/font/sans', () => ({
 
 // Update the mocking of LayoutClient to properly set the name property
 jest.mock('../../src/components/LayoutClient', () => {
-  const MockLayoutClient = ({ children }) => <div data-testid="mock-layout-client">{children}</div>;
+  const MockLayoutClient = ({ children }: { children: React.ReactNode }) => <div data-testid="mock-layout-client">{children}</div>;
   // Set the display name and name property to match the test expectations
   MockLayoutClient.displayName = 'LayoutClient';
   Object.defineProperty(MockLayoutClient, 'name', {

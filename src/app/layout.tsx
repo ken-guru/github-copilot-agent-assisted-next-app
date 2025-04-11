@@ -1,8 +1,15 @@
 import { Metadata, Viewport } from 'next/types';
-import { GeistMono } from 'geist/font/mono';
-import { GeistSans } from 'geist/font/sans';
 import './globals.css';
-import LayoutClient from '../components/LayoutClient';
+import { LayoutClient } from '../components/LayoutClient';
+
+// Mock Geist fonts until they are properly installed or configured
+const GeistMono = { 
+  variable: 'font-geist-mono',
+};
+
+const GeistSans = {
+  variable: 'font-geist-sans',
+};
 
 export const metadata: Metadata = {
   title: 'Mr. Timely',

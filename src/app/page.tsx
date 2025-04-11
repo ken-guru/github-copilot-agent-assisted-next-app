@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { LoadingProvider, useLoading } from '@/contexts/LoadingContext';
-import { SplashScreen } from '@/components/splash/SplashScreen';
+import SplashScreen from '@/components/splash/SplashScreen';
 import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
@@ -230,7 +230,7 @@ function AppContent() {
 // Main Home component that provides the LoadingContext
 export default function Home() {
   return (
-    <LoadingProvider initialLoadingState={true}>
+    <LoadingProvider>
       <AppContent />
     </LoadingProvider>
   );
