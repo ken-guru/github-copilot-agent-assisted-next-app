@@ -35,7 +35,10 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 
 ### Test Verification
 - Remind to run test suite after ANY code changes
-- Syntax: `npm test`
+- Use appropriate test command based on context:
+  - For regular tests: `npm test`
+  - For service worker tests: `npm run test:sw`
+  - For comprehensive testing (CI): `npm run test:ci`
 
 ## DOCUMENTATION STANDARDS [PRIORITY: HIGH]
 ### Component Documentation
