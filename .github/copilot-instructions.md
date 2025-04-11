@@ -154,7 +154,7 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
   ```
 - Tests:
   ```bash
-  npm test
+  npm run test:ci
   ```
 
 ### Verification Process
