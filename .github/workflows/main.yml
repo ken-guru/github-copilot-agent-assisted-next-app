@@ -81,8 +81,8 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           
-      - name: Run tests
-        run: npm test
+      - name: Run all tests
+        run: npm run test:ci
 
   build:
     needs: install

@@ -1,7 +1,6 @@
 const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({
-  // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
   dir: './',
 });
 
@@ -12,9 +11,12 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  maxWorkers: 1, // Run tests sequentially
-  maxConcurrency: 1,
-  workerIdleMemoryLimit: '512MB',
+  // Exclude service worker tests from the main test run
+  testPathIgnorePatterns: [
+    '<rootDir>/node_modules/',
+    '<rootDir>/.next/',
+    '<rootDir>/test/service-worker/'
+  ]
 };
 
 module.exports = createJestConfig(customJestConfig);

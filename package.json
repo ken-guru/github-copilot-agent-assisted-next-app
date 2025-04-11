@@ -9,6 +9,8 @@
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:sw": "jest --config test/service-worker/jest-sw-config.js",
+    "test:ci": "npm test && npm run test:sw",
     "cypress": "cypress open",
     "cypress:run": "cypress run",
     "cypress:headless": "cypress run --headless",

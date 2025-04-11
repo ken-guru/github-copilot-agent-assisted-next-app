@@ -1,7 +1,7 @@
 // Service Worker for offline capabilities
 // Cache name with version for cache busting
-const CACHE_NAME = 'github-copilot-agent-assisted-next-app-v4';
-const APP_SHELL_CACHE_NAME = 'app-shell-v4';
+const CACHE_NAME = 'github-copilot-agent-assisted-next-app-v5';
+const APP_SHELL_CACHE_NAME = 'app-shell-v5';
 
 // Import logging utilities or create inline implementation
 let swUtils;
@@ -57,6 +57,62 @@ const APP_SHELL = [
   '/favicon.ico',
   '/manifest.json'
 ];
+
+// Check if a request is for a CSS file
+function isCssRequest(request) {
+  const url = new URL(request.url);
+  
+  // Check common CSS file patterns
+  if (url.pathname.endsWith('.css') || url.pathname.includes('.module.css')) {
+    return true;
+  }
+  
+  // Check for Next.js chunk hash patterns that contain CSS
+  if (url.pathname.includes('/_next/static/chunks/css/')) {
+    return true;
+  }
+  
+  // Check for CSS-in-JS content based on Accept header
+  const acceptHeader = request.headers.get('accept');
+  if (acceptHeader && acceptHeader.includes('text/css')) {
+    return true;
+  }
+  
+  return false;
+}
+
+// Function to add cache-busting for development mode
+function addCacheBustForDev(request) {
+  // Only modify in development mode
+  if (!swUtils.isDevelopment()) {
+    return request;
+  }
+  
+  const url = new URL(request.url);
+  
+  // Only add cache bust for same-origin requests
+  if (url.origin !== self.location.origin) {
+    return request;
+  }
+  
+  // Add cache buster for CSS files
+  if (isCssRequest(request)) {
+    // Add or update a cache-busting query parameter
+    url.searchParams.set('_sw-cache-bust', Date.now().toString());
+    
+    // Create a new request with the modified URL
+    return new Request(url.toString(), {
+      method: request.method,
+      headers: request.headers,
+      mode: request.mode,
+      credentials: request.credentials,
+      redirect: request.redirect,
+      referrer: request.referrer
+    });
+  }
+  
+  return request;
+}
 
 // Message handler for messages from the client
 self.addEventListener('message', (event) => {
@@ -208,6 +264,48 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // SPECIAL HANDLING FOR CSS FILES IN DEVELOPMENT MODE
+  // Always fetch from network first to ensure fresh CSS during development
+  if (swUtils.isDevelopment() && isCssRequest(event.request)) {
+    log(`Development mode: Using network-first for CSS: ${url.pathname}`);
+    
+    // Use cache-busting request in development
+    const cacheBustRequest = addCacheBustForDev(event.request);
+    
+    event.respondWith(
+      fetch(cacheBustRequest)
+        .then(networkResponse => {
+          // Clone the response to cache it as a fallback
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME)
+            .then(cache => {
+              cache.put(event.request, responseToCache);
+            })
+            .catch(err => {
+              log(`Failed to cache CSS file: ${url.pathname}`, 'warn');
+            });
+          
+          return networkResponse;
+        })
+        .catch(error => {
+          log(`Network fetch for CSS failed, trying cache: ${url.pathname}`, 'warn');
+          // Only try cache as a fallback if network fails
+          return caches.match(event.request)
+            .then(cachedResponse => {
+              if (cachedResponse) {
+                return cachedResponse;
+              }
+              
+              // If no cache exists, return empty CSS
+              return new Response('/* Offline fallback stylesheet */', {
+                headers: { 'Content-Type': 'text/css' }
+              });
+            });
+        })
+    );
+    return;
+  }
+
   // Handle root path and HTML requests specially for offline support
   // This is critical for the application to work when offline
   if (url.pathname === '/' || 
@@ -221,12 +319,12 @@ self.addEventListener('fetch', (event) => {
         .then(cache => cache.match('/'))
         .then(appShellResponse => {
           if (appShellResponse) {
-            console.log('Serving from app shell cache:', url.pathname);
+            log('Serving from app shell cache: ' + url.pathname);
             
             // In the background, try to fetch from network to update the cache
             fetch(event.request)
               .then(networkResponse => {
-                console.log('Updating app shell cache with fresh content');
+                log('Updating app shell cache with fresh content');
                 // Update both caches
                 return Promise.all([
                   caches.open(APP_SHELL_CACHE_NAME).then(cache => 
@@ -238,7 +336,7 @@ self.addEventListener('fetch', (event) => {
                 ]);
               })
               .catch(() => {
-                console.log('Failed to update app shell cache, using cached version');
+                log('Failed to update app shell cache, using cached version');
               });
               
             return appShellResponse;
@@ -248,12 +346,12 @@ self.addEventListener('fetch', (event) => {
           return caches.match(event.request)
             .then(cachedResponse => {
               if (cachedResponse) {
-                console.log('Serving from regular cache:', url.pathname);
+                log('Serving from regular cache: ' + url.pathname);
                 return cachedResponse;
               }
               
               // Not in any cache, try network
-              console.log('Nothing in cache, fetching from network:', url.pathname);
+              log('Nothing in cache, fetching from network: ' + url.pathname);
               return fetch(event.request)
                 .then(networkResponse => {
                   // Cache the response for future
@@ -271,13 +369,13 @@ self.addEventListener('fetch', (event) => {
                       cache.put(event.request, responseToCache);
                     })
                   ]).catch(err => {
-                    console.warn('Failed to cache HTML response:', err);
+                    log('Failed to cache HTML response: ' + err);
                   });
                   
                   return networkResponse;
                 })
                 .catch(error => {
-                  console.error('Network fetch failed for HTML, trying root fallback:', error);
+                  log('Network fetch failed for HTML, trying root fallback: ' + error);
                   // Last resort - try the root path from regular cache
                   return caches.match('/')
                     .then(rootFallback => {
@@ -311,12 +409,12 @@ self.addEventListener('fetch', (event) => {
       caches.match(event.request)
         .then((cachedResponse) => {
           if (cachedResponse) {
-            console.log('Serving Next.js asset from cache:', url.pathname);
+            log('Serving Next.js asset from cache: ' + url.pathname);
             return cachedResponse;
           }
           
           // Not in cache, try network
-          console.log('Next.js asset not in cache, fetching from network:', url.pathname);
+          log('Next.js asset not in cache, fetching from network: ' + url.pathname);
           return fetch(event.request)
             .then((networkResponse) => {
               // Cache the network response for future
@@ -325,16 +423,16 @@ self.addEventListener('fetch', (event) => {
               caches.open(CACHE_NAME)
                 .then((cache) => {
                   cache.put(event.request, responseToCache);
-                  console.log('Cached Next.js asset:', url.pathname);
+                  log('Cached Next.js asset: ' + url.pathname);
                 })
                 .catch(err => {
-                  console.warn('Failed to cache Next.js asset:', err);
+                  log('Failed to cache Next.js asset: ' + err);
                 });
               
               return networkResponse;
             })
             .catch(error => {
-              console.error('Failed to fetch Next.js asset:', url.pathname, error);
+              log('Failed to fetch Next.js asset: ' + url.pathname + ' ' + error);
               
               // For CSS, return empty stylesheet as fallback
               if (url.pathname.endsWith('.css')) {
@@ -367,12 +465,12 @@ self.addEventListener('fetch', (event) => {
       .then((cachedResponse) => {
         // If found in cache, return it
         if (cachedResponse) {
-          console.log('Serving static asset from cache:', url.pathname);
+          log('Serving static asset from cache: ' + url.pathname);
           return cachedResponse;
         }
         
         // Otherwise fetch from network
-        console.log('Static asset not in cache, fetching from network:', url.pathname);
+        log('Static asset not in cache, fetching from network: ' + url.pathname);
         return fetch(event.request)
           .then((networkResponse) => {
             // Only cache valid responses
@@ -386,16 +484,16 @@ self.addEventListener('fetch', (event) => {
             caches.open(CACHE_NAME)
               .then((cache) => {
                 cache.put(event.request, responseToCache);
-                console.log('Cached static asset:', url.pathname);
+                log('Cached static asset: ' + url.pathname);
               })
               .catch(err => {
-                console.warn('Failed to cache static asset:', err);
+                log('Failed to cache static asset: ' + err);
               });
             
             return networkResponse;
           })
           .catch((error) => {
-            console.error('Failed to fetch static asset:', url.pathname, error);
+            log('Failed to fetch static asset: ' + url.pathname + ' ' + error);
             
             // Return a placeholder for images
             if (url.pathname.match(/\.(jpg|jpeg|png|gif|webp|svg)$/)) {

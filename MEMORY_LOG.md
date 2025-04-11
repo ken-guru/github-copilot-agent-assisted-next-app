@@ -127,8 +127,7 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-070: Next.js Configuration Errors and Browser Storage Issues](/docs/logged_memories/MRTMLY-070-nextjs-config-and-storage-issues.md) #debugging #next-js #configuration #service-worker #browser-storage
 - [MRTMLY-071: Persistent Offline Functionality and Next.js Configuration Issues](/docs/logged_memories/MRTMLY-071-offline-cache-and-config-errors.md) #debugging #service-worker #offline #caching #next-js #configuration
 - [MRTMLY-072: Persistent Offline Functionality Issues Despite Increased Caching](/docs/logged_memories/MRTMLY-072-persistent-offline-functionality-issues.md) #debugging #service-worker #offline #caching #pwa #next-js
-- [MRTMLY-080: Service Worker Test TypeScript Errors](/docs/logged_memories/MRTMLY-080-service-worker-test-typescript-errors.md) - Fixed multiple TypeScript errors in service worker update error tests by properly mocking browser APIs and environment variables
-- [MRTMLY-081: Service Worker Test ESLint Build Error](/docs/logged_memories/MRTMLY-081-service-worker-eslint-build-error.md) - Fixed ESLint errors in service worker update error tests that were causing Vercel deployment to fail
-
-## July 2024
-- [MRTMLY-082: Production Console Log Removal](/docs/logged_memories/MRTMLY-082-production-console-logs-removal.md) #debugging #production #optimization #logging
+- [MRTMLY-078: CSS Changes Not Reflected in Browser Despite Fast Refresh](/docs/logged_memories/MRTMLY-078-css-refresh-not-working.md) #debugging #service-worker #css #caching #development-experience
+- [MRTMLY-079: Service Worker Syntax Test Failing Due to Environment Issues](/docs/logged_memories/MRTMLY-079-service-worker-syntax-test-environment.md) #debugging #service-worker #testing #environment
+- [MRTMLY-080: Jest Setup Conflicts with Service Worker Test Environment](/docs/logged_memories/MRTMLY-080-jest-setup-isolation-for-service-worker-tests.md) #debugging #service-worker #testing #jest-config #test-isolation
+- [MRTMLY-081: Service Worker Tests Need Special Handling in CI Workflow](/docs/logged_memories/MRTMLY-081-ci-workflow-for-service-worker-tests.md) #ci #testing #service-worker #workflow #deployment
