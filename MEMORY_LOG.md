@@ -93,15 +93,9 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-044: Build Failure Due to Unused Import](/docs/logged_memories/MRTMLY-044-build-failure-unused-import.md) #debugging #build #imports #linting #typescript
 - [MRTMLY-045: Time Utils Test Import Error Fix](/docs/logged_memories/MRTMLY-045-timeutils-import-error-fix.md) #debugging #linting #typescript #time-utils #tests
 - [MRTMLY-046: Activity Order in Summary Test Expansion](/docs/logged_memories/MRTMLY-046-activity-order-test-expansion.md) #testing #summary #activity-order #chronological-order #duplicate
-
-## September 2023
-
 - [Splash Screen Test Debugging](/docs/logged_memories/MRTMLY-001-splash-screen-test-debugging.md) - Fixed failing tests for the new splash screen component
 - [Splash Screen Implementation](/docs/logged_memories/MRTMLY-002-splash-screen-implementation.md) - Completed implementation of application splash screen with loading state management
 - [Missing globals.css Build Error](/docs/logged_memories/MRTMLY-003-missing-globals-css-build-error.md) - Fixed build error caused by missing global CSS file
-
-## December 2023
-
 - [MRTMLY-012: Border Radius Token Implementation](/docs/logged_memories/MRTMLY-012-border-radius-implementation.md) - Implementation of the border radius token system across CSS files #css #design-system #tokens #refactoring
 - [MRTMLY-013: Border Radius System Refinement](/docs/logged_memories/MRTMLY-013-border-radius-refinement.md) - Refined border radius usage guidelines for consistent application based on element nesting #css #design-system #tokens #refinement #ui
 - [MRTMLY-014: Shadow Token System Implementation](/docs/logged_memories/MRTMLY-014-shadow-token-system.md) - Created and implemented a comprehensive shadow token system with usage guidelines #css #design-system #tokens #shadows #ui
@@ -111,9 +105,6 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-018: Check Icon Horizontal Alignment Fix](/docs/logged_memories/MRTMLY-018-check-icon-alignment-fix.md) - Fixed horizontal alignment of check icon in completed tags #css #ui #alignment #icons
 - [MRTMLY-019: Component Sizing Documentation](/docs/logged_memories/MRTMLY-019-component-sizing-documentation.md) - Added comprehensive documentation for component sizing variables #documentation #design-system #components #sizing #ui
 - [MRTMLY-057: Fixing Routing Structure Tests](/docs/logged_memories/MRTMLY-057-fixing-routing-tests.md) - Resolved issues with routing integration tests and updated tests to handle hybrid routing approach
-
-## April 2025
-
 - [MRTMLY-008: Path Import Resolution for App Router](/docs/logged_memories/MRTMLY-008-path-import-resolution.md) - Fixed import path issues in App Router component to resolve build errors
 - [MRTMLY-009: Metadata Export Fix](/docs/logged_memories/MRTMLY-009-metadata-export-fix.md) - Resolved the metadata export error by separating client and server component concerns
 - [MRTMLY-024: Disabling Zoom and Pan on Mobile Devices](/docs/logged_memories/MRTMLY-024-disable-mobile-zoom-pan.md) #mobile #viewport #accessibility #ux
@@ -132,3 +123,4 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-080: Jest Setup Conflicts with Service Worker Test Environment](/docs/logged_memories/MRTMLY-080-jest-setup-isolation-for-service-worker-tests.md) #debugging #service-worker #testing #jest-config #test-isolation
 - [MRTMLY-081: Service Worker Tests Need Special Handling in CI Workflow](/docs/logged_memories/MRTMLY-081-ci-workflow-for-service-worker-tests.md) #ci #testing #service-worker #workflow #deployment
 - [MRTMLY-082: Theme Hydration Mismatch in Next.js App](/docs/logged_memories/MRTMLY-082-theme-hydration-mismatch.md) #bug-fix #theme #hydration #ssr #nextjs
+- [MRTMLY-083: Resolved HTML Class Hydration Mismatch](/docs/logged_memories/MRTMLY-083-resolved-hydration-mismatch-html-class.md) #bug-fix #hydration #nextjs #theme #ssr
