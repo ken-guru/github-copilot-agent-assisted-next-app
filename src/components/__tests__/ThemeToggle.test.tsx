@@ -153,29 +153,22 @@ describe('ThemeToggle', () => {
     // Start with system preference (no saved theme)
     mockLocalStorage.getItem.mockReturnValue(null);
     
-    // Store the actual implementation to call directly
-    let systemPreferenceChangeHandler: (() => void) | null = null;
-    
-    // Mock the actual implementation of the theme change handler
-    // This approach avoids TypeScript errors by bypassing the MediaQueryList event handling
-    const originalAddEventListener = window.addEventListener;
-    window.addEventListener = jest.fn().mockImplementation((event, handler) => {
-      if (event === 'change-theme') {
-        systemPreferenceChangeHandler = handler as () => void;
-      }
+    // First, mock matchMedia for the initial render - light mode
+    window.matchMedia = jest.fn().mockImplementation(query => {
+      // Create a mock MediaQueryList object
+      const mockMediaQueryList = {
+        matches: false,
+        media: query,
+        onchange: null,
+        // Store the event listener so we can call it directly later
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+      };
+      return mockMediaQueryList;
     });
-    
-    // First, mock matchMedia for the initial render
-    window.matchMedia = jest.fn().mockImplementation(query => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      dispatchEvent: jest.fn(),
-    }));
     
     render(<ThemeToggle />);
     
@@ -197,8 +190,5 @@ describe('ThemeToggle', () => {
     // We're going to verify the dark mode class is applied
     // without relying on the exact implementation details of event handling
     expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
-    
-    // Restore original addEventListener
-    window.addEventListener = originalAddEventListener;
   });
 });

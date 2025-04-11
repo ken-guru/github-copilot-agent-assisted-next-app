@@ -25,7 +25,8 @@ jest.mock('../page', () => {
       setTimeSet(mockTimeSet);
       setResetButtonVisible(mockResetButtonVisible);
       setAllActivitiesCompleted(mockAllActivitiesCompleted);
-    }, [mockTimeSet, mockResetButtonVisible, mockAllActivitiesCompleted]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Empty dependency array with eslint disable to silence the warning
 
     // Update mocked DOM based on state
     const stateBasedContent = () => {
