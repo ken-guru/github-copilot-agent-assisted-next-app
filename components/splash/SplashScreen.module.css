@@ -25,6 +25,7 @@
 .logo {
   max-width: 250px;
   height: auto;
+  width: auto;
   animation: pulseAnimation 2s infinite ease-in-out;
 }
 

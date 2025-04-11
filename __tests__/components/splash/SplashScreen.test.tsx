@@ -199,11 +199,26 @@ describe('SplashScreen', () => {
     // Verify HTML element has dark-mode class before any component renders
     expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
     expect(document.documentElement.classList.contains('light-mode')).toBe(false);
+  });
+  
+  it('properly maintains image aspect ratio', () => {
+    render(<SplashScreen minimumDisplayTime={100} />);
     
-    // Cleanup
-    Object.defineProperty(window, 'localStorage', {
-      value: originalLocalStorage,
-      writable: true
+    const logoImage = screen.getByAltText('Application logo');
+    expect(logoImage).toBeInTheDocument();
+    
+    // Check that the image has proper handling of width and height
+    // for maintaining aspect ratio in responsive layouts
+    const imageStyle = window.getComputedStyle(logoImage);
+    
+    // Test that if one dimension is set in CSS, the other is set to 'auto'
+    if (imageStyle.width !== 'auto' && imageStyle.maxWidth !== 'none') {
+      expect(imageStyle.height).toBe('auto');
+    }
+    
+    if (imageStyle.height !== 'auto' && imageStyle.maxHeight !== 'none') {
+      expect(imageStyle.width).toBe('auto');
+    }
     });
   });
   
@@ -245,5 +260,4 @@ describe('SplashScreen', () => {
     
     // Now it should be gone
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
-  });
 });
