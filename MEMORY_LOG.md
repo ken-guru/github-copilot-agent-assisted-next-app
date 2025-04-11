@@ -131,3 +131,4 @@ Each issue receives a unique ID (format: MRTMLY-XXX) and includes attempted appr
 - [MRTMLY-079: Service Worker Syntax Test Failing Due to Environment Issues](/docs/logged_memories/MRTMLY-079-service-worker-syntax-test-environment.md) #debugging #service-worker #testing #environment
 - [MRTMLY-080: Jest Setup Conflicts with Service Worker Test Environment](/docs/logged_memories/MRTMLY-080-jest-setup-isolation-for-service-worker-tests.md) #debugging #service-worker #testing #jest-config #test-isolation
 - [MRTMLY-081: Service Worker Tests Need Special Handling in CI Workflow](/docs/logged_memories/MRTMLY-081-ci-workflow-for-service-worker-tests.md) #ci #testing #service-worker #workflow #deployment
+- [MRTMLY-082: Theme Hydration Mismatch in Next.js App](/docs/logged_memories/MRTMLY-082-theme-hydration-mismatch.md) #bug-fix #theme #hydration #ssr #nextjs

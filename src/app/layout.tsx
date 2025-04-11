@@ -1,17 +1,6 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Metadata, Viewport } from "next";
+import './globals.css';
+import type { Metadata } from 'next';
 import { LayoutClient } from "../components/LayoutClient";
-
-// Font configuration
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 // Metadata configuration
 export const metadata: Metadata = {
@@ -23,25 +12,45 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 };
 
-// Viewport configuration
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  themeColor: '#000000',
-  userScalable: false,
-  maximumScale: 1,
-};
-
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const fontClasses = `${geistSans.variable} ${geistMono.variable}`;
-  
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en">
-      <body className={fontClasses}>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Add script for pre-hydration theme detection */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  // Check localStorage first
+                  var savedTheme = localStorage.getItem('theme');
+                  var isDark = false;
+                  
+                  if (savedTheme) {
+                    // User has explicitly set a preference
+                    isDark = savedTheme === 'dark';
+                  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    // No saved preference, check system preference
+                    isDark = true;
+                  }
+                  
+                  // Apply theme class immediately
+                  document.documentElement.classList.remove('light-mode', 'dark-mode');
+                  document.documentElement.classList.add(isDark ? 'dark-mode' : 'light-mode');
+                } catch (e) {
+                  // Fail silently - worst case we get a light theme as default
+                  console.error('Error setting initial theme:', e);
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body>
         <LayoutClient>
           {children}
         </LayoutClient>

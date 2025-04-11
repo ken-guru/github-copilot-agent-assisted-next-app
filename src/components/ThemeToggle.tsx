@@ -5,21 +5,23 @@ import styles from './ThemeToggle.module.css';
 import { validateThemeColors } from '../utils/colors';
 
 export default function ThemeToggle() {
+  // Initialize with a default that won't conflict with SSR
   const [theme, setTheme] = useState('system');
   const [mounted, setMounted] = useState(false);
 
-  // Initialize theme from localStorage or system preference
+  // Initialize theme after mount to avoid hydration mismatch
   useEffect(() => {
+    // Mark component as mounted to enable rendering
     setMounted(true);
+    
+    // Get saved theme from localStorage
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setTheme(savedTheme);
-      applyTheme(savedTheme);
-    } else {
-      // Apply system preference on initial load
-      const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      applyTheme(darkModePreferred ? 'dark' : 'light');
     }
+    
+    // Note: The theme is already applied by the pre-hydration script,
+    // so we don't need to apply it again here, just sync state
   }, []);
 
   // Handle system preference changes
@@ -29,7 +31,7 @@ export default function ThemeToggle() {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
       if (theme === 'system') {
-        applyTheme(e.matches ? 'dark' : 'light');
+        applyTheme(e.matches ? 'dark' : 'light', true);
       }
     };
 
@@ -37,11 +39,12 @@ export default function ThemeToggle() {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme, mounted]);
 
-  const applyTheme = (newTheme: string) => {
+  const applyTheme = (newTheme: string, isSystemChange = false) => {
     const root = document.documentElement;
     const isDark = newTheme === 'dark' || 
       (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
+    // Apply theme classes
     if (isDark) {
       root.classList.add('dark-mode');
       root.classList.remove('light-mode');
@@ -50,10 +53,10 @@ export default function ThemeToggle() {
       root.classList.remove('dark-mode');
     }
 
-    // Save preference to localStorage unless it's system default
+    // Save preference to localStorage unless it's system default or a system change
     if (newTheme !== 'system') {
       localStorage.setItem('theme', newTheme);
-    } else {
+    } else if (!isSystemChange) {
       localStorage.removeItem('theme');
     }
 
