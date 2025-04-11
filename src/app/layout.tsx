@@ -1,59 +1,47 @@
+import { Metadata, Viewport } from 'next/types';
+import { GeistMono } from 'geist/font/mono';
+import { GeistSans } from 'geist/font/sans';
 import './globals.css';
-import type { Metadata } from 'next';
-import { LayoutClient } from "../components/LayoutClient";
+import LayoutClient from '../components/LayoutClient';
 
-// Metadata configuration
 export const metadata: Metadata = {
   title: 'Mr. Timely',
   description: 'Track your time and activities with Mr. Timely',
-  icons: {
-    icon: '/favicon.ico',
-  },
+  icons: [
+    {
+      rel: 'icon',
+      type: 'image/x-icon',
+      url: '/favicon.ico',
+    },
+    {
+      rel: 'apple-touch-icon',
+      url: '/apple-touch-icon.png',
+      sizes: '180x180',
+    },
+  ],
   manifest: '/manifest.json',
+};
+
+// Add required viewport configuration for Next.js 15
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#000000',
+  // Additional viewport configurations for mobile
+  userScalable: false, // Disables zoom on mobile
+  maximumScale: 1,
+  minimumScale: 1,
 };
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Add script for pre-hydration theme detection */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  // Check localStorage first
-                  var savedTheme = localStorage.getItem('theme');
-                  var isDark = false;
-                  
-                  if (savedTheme) {
-                    // User has explicitly set a preference
-                    isDark = savedTheme === 'dark';
-                  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    // No saved preference, check system preference
-                    isDark = true;
-                  }
-                  
-                  // Apply theme class immediately
-                  document.documentElement.classList.remove('light-mode', 'dark-mode');
-                  document.documentElement.classList.add(isDark ? 'dark-mode' : 'light-mode');
-                } catch (e) {
-                  // Fail silently - worst case we get a light theme as default
-                  console.error('Error setting initial theme:', e);
-                }
-              })();
-            `,
-          }}
-        />
-      </head>
-      <body>
-        <LayoutClient>
-          {children}
-        </LayoutClient>
+      <body className={`${GeistSans.variable} ${GeistMono.variable}`}>
+        <LayoutClient>{children}</LayoutClient>
       </body>
     </html>
   );

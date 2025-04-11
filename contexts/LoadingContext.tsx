@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface LoadingContextType {
   isLoading: boolean;
@@ -7,17 +7,9 @@ interface LoadingContextType {
 
 const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 
-interface LoadingProviderProps {
-  children: ReactNode;
-  initialLoadingState?: boolean;
-}
+export const LoadingProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+  const [isLoading, setIsLoading] = useState(true);
 
-export const LoadingProvider = ({ 
-  children, 
-  initialLoadingState = true 
-}: LoadingProviderProps) => {
-  const [isLoading, setIsLoading] = useState<boolean>(initialLoadingState);
-  
   return (
     <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
       {children}
@@ -27,10 +19,8 @@ export const LoadingProvider = ({
 
 export const useLoading = (): LoadingContextType => {
   const context = useContext(LoadingContext);
-  
   if (context === undefined) {
     throw new Error('useLoading must be used within a LoadingProvider');
   }
-  
   return context;
 };

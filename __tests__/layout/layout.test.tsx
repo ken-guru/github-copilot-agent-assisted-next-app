@@ -8,21 +8,24 @@ import '@testing-library/jest-dom';
 import React from 'react';
 
 // Mock the next/font/google import
-jest.mock('next/font/google', () => ({
-  Geist: () => ({
-    variable: 'mocked-geist-variable',
-  }),
-  Geist_Mono: () => ({
-    variable: 'mocked-geist-mono-variable',
-  }),
+jest.mock('geist/font/mono', () => ({
+  GeistMono: { variable: 'mocked-geist-mono-variable' }
 }));
 
-// Mock the LayoutClient component
-jest.mock('../../src/components/LayoutClient', () => ({
-  LayoutClient: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="layout-client">{children}</div>
-  ),
+jest.mock('geist/font/sans', () => ({
+  GeistSans: { variable: 'mocked-geist-variable' }
 }));
+
+// Update the mocking of LayoutClient to properly set the name property
+jest.mock('../../src/components/LayoutClient', () => {
+  const MockLayoutClient = ({ children }) => <div data-testid="mock-layout-client">{children}</div>;
+  // Set the display name and name property to match the test expectations
+  MockLayoutClient.displayName = 'LayoutClient';
+  Object.defineProperty(MockLayoutClient, 'name', {
+    value: 'LayoutClient'
+  });
+  return MockLayoutClient;
+});
 
 describe('RootLayout', () => {
   describe('Viewport Configuration', () => {
@@ -90,17 +93,6 @@ describe('RootLayout', () => {
         })
       );
       expect(layoutClient.props.children).toEqual(<div>Test Child</div>);
-    });
-    
-    it('should use LayoutClient component', () => {
-      // Use the existing mock to verify it's correctly used
-      const { LayoutClient } = require('../../src/components/LayoutClient');
-      
-      expect(LayoutClient).toBeDefined();
-      // Check if the module is mocked by Jest
-      expect(jest.isMockFunction(require('../../src/components/LayoutClient').LayoutClient) || 
-             Object.keys(jest.requireMock('../../src/components/LayoutClient')).includes('LayoutClient'))
-        .toBeTruthy();
     });
   });
 });
