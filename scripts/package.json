@@ -1,0 +1,9 @@
+{
+  "name": "memory-log-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for managing the memory log",
+  "private": true,
+  "scripts": {
+    "rebuild-memory-log": "node rebuild-memory-log.js"
+  }
+}
