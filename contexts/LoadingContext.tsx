@@ -1,11 +1,11 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, Context } from 'react';
 
 interface LoadingContextType {
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
+const LoadingContext: Context<LoadingContextType | undefined> = createContext<LoadingContextType | undefined>(undefined);
 
 interface LoadingProviderProps {
   children: ReactNode;

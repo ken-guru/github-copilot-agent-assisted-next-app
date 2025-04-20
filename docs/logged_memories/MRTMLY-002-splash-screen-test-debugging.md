@@ -42,3 +42,49 @@
 - For components that rely on context and timing behaviors, more complex mocking strategies are needed
 - When dealing with time-based tests, ensure that all timing effects are properly accounted for
 - React's state update cycle combined with setTimeout can be tricky to test - ensure proper act() wrapping and timing advancement
+
+### Issue: LoadingContext Type Error Debugging Session
+**Date:** 2023-09-20
+**Tags:** #debugging #context #typescript
+**Status:** Resolved
+
+#### Initial State
+- Deployment error due to a type error in `LoadingContext`:
+  ```
+  Type error: Type 'LoadingContextType' is missing the following properties from type 'Context<LoadingContextType | undefined>': Provider, Consumer, $$typeof
+  ```
+
+#### Debug Process
+1. Investigated the type error in `LoadingContext`
+   - The `LoadingContext` type was missing the `Provider`, `Consumer`, and `$$typeof` properties
+   - The context was not correctly typed as `Context<LoadingContextType | undefined>`
+
+2. Updated the `LoadingContext` type
+   - Added the missing properties to the `LoadingContext` type
+   - Ensured the `LoadingContext` is correctly typed as `Context<LoadingContextType | undefined>`
+
+3. Created a new `useLoading` hook
+   - Defined and exported the `useLoading` hook
+   - Ensured the hook uses the `LoadingContext` and throws an error if used outside of a `LoadingProvider`
+
+4. Updated tests for `LoadingContext` and `useLoading` hook
+   - Updated tests to ensure the `LoadingContext` is correctly typed and used
+   - Added tests for the new `useLoading` hook to ensure it throws an error when used outside of a `LoadingProvider`
+
+#### Resolution
+1. Updated `LoadingContext` type:
+   - Added `Provider`, `Consumer`, and `$$typeof` properties to the `LoadingContext` type
+   - Ensured the `LoadingContext` is correctly typed as `Context<LoadingContextType | undefined>`
+
+2. Created `useLoading` hook:
+   - Defined and exported the `useLoading` hook
+   - Ensured the hook uses the `LoadingContext` and throws an error if used outside of a `LoadingProvider`
+
+3. Updated tests:
+   - Updated tests to ensure the `LoadingContext` is correctly typed and used
+   - Added tests for the new `useLoading` hook to ensure it throws an error when used outside of a `LoadingProvider`
+
+#### Lessons Learned
+- Ensure context types include all necessary properties (`Provider`, `Consumer`, `$$typeof`)
+- When creating custom hooks that use context, ensure they throw errors if used outside of the appropriate provider
+- Update tests to cover new hooks and ensure proper context usage
