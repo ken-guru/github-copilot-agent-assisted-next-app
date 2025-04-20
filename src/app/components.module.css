@@ -1,0 +1,56 @@
+/* Component-related styles extracted from page.module.css */
+
+.button {
+  padding: var(--space-xs) var(--space-sm);
+  background-color: var(--accent-color);
+  color: var(--background);
+  border: none;
+  border-radius: var(--radius-button);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease, outline-offset 0.2s ease;
+  outline: 2px solid transparent;
+  outline-offset: 0;
+}
+
+.button:hover {
+  background-color: var(--accent-color-hover);
+}
+
+.button:disabled {
+  background-color: var(--background-muted);
+  color: var(--foreground-muted);
+  cursor: not-allowed;
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.card {
+  background-color: var(--background-alt, white);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-card);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+@media (max-width: 768px) {
+  .button {
+    padding: var(--space-xs);
+    font-size: 0.875rem;
+  }
+
+  .grid {
+    gap: var(--space-sm);
+  }
+
+  .card {
+    padding: var(--space-sm);
+  }
+}

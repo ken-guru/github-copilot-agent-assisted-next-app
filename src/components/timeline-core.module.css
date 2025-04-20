@@ -1,0 +1,278 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--space-md);
+  width: 100%;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.heading {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.timeDisplay {
+  font-size: 1.25rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  transition: all 0.2s ease;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: 0.25rem;
+  background: var(--background-muted);
+  color: var(--foreground);
+}
+
+.timeDisplayOvertime {
+  color: var(--error, #dc2626);
+  background: var(--error-bg, #fee2e2);
+}
+
+.timeDisplayInactive {
+  background-color: var(--background-muted);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.timelineContainer {
+  display: flex;
+  flex: 1;
+  min-height: 0; /* Important for flex child to respect parent's height */
+  border: 1px solid var(--border);
+  border-radius: var(--space-2xs);
+  position: relative;
+  overflow: hidden;
+  background: var(--background);
+  height: 100%; /* Allow full height growth */
+}
+
+.timelineRuler {
+  width: 60px;
+  border-right: 1px solid var(--border);
+  position: relative;
+  background: var(--background-muted);
+  flex-shrink: 0;
+  z-index: 2;
+  padding: var(--space-lg) 0; /* Increase vertical padding to match marker height */
+  overflow: hidden; /* Ensure the overtime section stays within bounds */
+}
+
+.timeMarker {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: var(--space-xs) var(--space-md);
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-top: 1px solid var(--border);
+  background: transparent; /* Make background transparent to show ruler background */
+  height: 24px;
+  transform: translateY(-50%);
+  z-index: 3; /* Above the overtime section */
+}
+
+.timeMarker:first-child {
+  transform: translateY(0); /* Prevent first marker from overflowing top */
+}
+
+.timeMarker:last-child {
+  transform: translateY(-100%); /* Prevent last marker from overflowing bottom */
+  border-bottom: 1px solid var(--border);
+}
+
+/* New styles for overtime ruler section */
+.overtimeRulerSection {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background-color: var(--error-bg, #fee2e2);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Styles for overtime markers */
+.overtimeMarker {
+  color: var(--error, #dc2626);
+  font-weight: 500;
+}
+
+.overtimeDivider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--error, #dc2626);
+  z-index: 3;
+  transform: translateY(-50%);
+}
+
+.overtimeSection {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background-color: rgba(220, 38, 38, 0.05); /* Light red background for overtime section */
+  z-index: 1;
+  pointer-events: none;
+}
+
+.overtimeGuide {
+  background-color: var(--error, #dc2626);
+  opacity: 0.2;
+}
+
+.overtimeDividerGuide {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--error, #dc2626);
+  z-index: 3;
+  transform: translateY(-50%);
+}
+
+/* Update entriesContainer to use flex for proper scaling */
+.entriesContainer {
+  flex: 1;
+  position: relative;
+  background: var(--background);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.entriesWrapper {
+  position: relative;
+  flex: 1;
+  padding: var(--space-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow-y: auto; /* Allow scrolling inside the wrapper if needed */
+}
+
+.timelineEntry {
+  margin: 0;
+  padding: var(--space-md);
+  border-radius: var(--space-xs);
+  border-width: 1px;
+  border-style: solid;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 3rem;
+}
+
+.timelineEntry:hover {
+  transform: translateX(var(--space-xs)); /* Updated from 2px to use variable */
+  opacity: 0.95;
+}
+
+.timeGap {
+  margin: 0;
+  padding: var(--space-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+  background-color: var(--background-muted);
+  border: 1px dashed var(--border);
+  border-radius: var(--space-xs);
+  opacity: 0.8;
+  min-height: 2rem;
+  font-style: italic;
+  transition: opacity 0.2s ease;
+}
+
+.entryContent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+}
+
+.entryHeader {
+  display: flex;
+  align-items: flex-start; /* Change from center to flex-start to align to top */
+  gap: var(--space-md);
+}
+
+.timeInfo {
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+  flex-shrink: 0; /* Prevent time info from wrapping */
+}
+
+.activityName {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: inherit;
+  white-space: normal; /* Allow text to wrap */
+  flex: 1; /* Take up remaining space */
+  word-break: break-word; /* Break long words if needed */
+}
+
+.breakEntry {
+  margin: var(--space-xs) 0;
+  border: 1px dashed var(--border);
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+  background-color: var(--background-muted);
+  padding: var(--space-xs);
+  border-radius: var(--space-xs);
+  min-height: 2rem;
+}
+
+.noEntries {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--foreground-muted);
+  font-style: italic;
+}
+
+.warningMessage {
+  color: var(--error, #dc2626);
+  font-size: 0.875rem;
+  padding: var(--space-xs);
+  border: 1px solid currentColor;
+  border-radius: var(--space-xs);
+  margin-top: var(--space-xs);
+  background: var(--error-bg, #fee2e2);
+}
+
+.timeGuides {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.timeGuide {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--border);
+  opacity: 0.3;
+  transform: translateY(-50%);
+}

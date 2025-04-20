@@ -1,0 +1,47 @@
+/* Responsive styles extracted from Summary.module.css */
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-xs);
+  }
+  
+  .statsGrid {
+    gap: var(--space-sm);
+  }
+  
+  .statCard {
+    padding: var(--space-sm);
+  }
+  
+  .statLabel {
+    font-size: 0.75rem;
+  }
+  
+  .statValue {
+    font-size: 1rem;
+  }
+  
+  .statusMessage {
+    padding: var(--space-xs);
+    font-size: 0.875rem;
+  }
+}
+
+/* Special handling for very small screens */
+@media (max-width: 380px) {
+  .container {
+    padding: var(--space-xs);
+  }
+  
+  .statsGrid {
+    gap: var(--space-xs);
+  }
+  
+  .statCard {
+    padding: var(--space-xs);
+  }
+  
+  .statValue {
+    font-size: 0.875rem;
+  }
+}

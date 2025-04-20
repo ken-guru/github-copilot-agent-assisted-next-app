@@ -1,0 +1,70 @@
+/* Responsive styles extracted from page.module.css */
+
+@media (max-width: 768px) {
+  .container {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .wrapper {
+    padding: var(--padding-small);
+  }
+
+  .headerContent {
+    grid-template-columns: 1fr auto auto;
+    gap: var(--space-sm);
+  }
+
+  .title {
+    font-size: 1.25rem;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .resetButton {
+    padding: 0;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .activityGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    gap: var(--space-xs);
+  }
+
+  .timelineContainer {
+    display: none;
+  }
+
+  .progressContainer {
+    margin: var(--space-xs);
+    padding: var(--space-xs);
+    box-shadow: var(--shadow-small);
+  }
+
+  .completedGrid {
+    gap: var(--space-xs);
+  }
+
+  .setupGrid > div,
+  .activityGrid > div,
+  .summaryContainer {
+    padding: var(--space-sm);
+  }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .activityGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  .progressContainer {
+    margin: var(--space-xs);
+    padding: var(--space-xs);
+  }
+}
