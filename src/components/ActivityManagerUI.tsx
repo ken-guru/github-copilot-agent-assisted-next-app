@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Activity } from './ActivityManagerCore';
 import { TimelineEntry } from '../hooks/useTimelineEntries';
 import { formatTime } from '@/utils/timeUtils';

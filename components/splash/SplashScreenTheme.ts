@@ -12,3 +12,19 @@ export const isDarkTheme = (): boolean => {
     return false;
   }
 };
+
+export const applyTheme = (isDark: boolean): void => {
+  if (typeof document === 'undefined') return;
+
+  if (isDark) {
+    document.documentElement.classList.add('dark-mode');
+    document.documentElement.classList.remove('light-mode');
+  } else {
+    document.documentElement.classList.add('light-mode');
+    document.documentElement.classList.remove('dark-mode');
+  }
+
+  document.body.style.backgroundColor = isDark
+    ? 'var(--bg-primary-dark, #121212)'
+    : 'var(--bg-primary, #ffffff)';
+};

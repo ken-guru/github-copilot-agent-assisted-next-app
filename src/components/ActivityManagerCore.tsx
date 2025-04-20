@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '../hooks/useTimelineEntries';
-import { ActivityButton } from './ActivityButton';
-import ActivityForm from './ActivityForm';
+import { ActivityButton, ActivityForm } from './ActivityManagerUI';
 import { useActivityManagerState } from '../hooks/useActivityManagerState';
+import { useActivityManagerTheme } from './ActivityManagerTheme';
 import styles from './ActivityManager.module.css';
 
 export interface Activity {
@@ -33,15 +32,9 @@ export default function ActivityManager({
   isTimeUp = false,
   elapsedTime = 0
 }: ActivityManagerProps) {
-  const { activities, setActivities, assignedColorIndices, setAssignedColorIndices, hasInitializedActivities, setHasInitializedActivities } = useActivityManagerState();
+  const { activities, setActivities, assignedColorIndices, setAssignedColorIndices, hasInitializedActivities, setHasInitializedActivities, getNextColorIndex, initializeActivities } = useActivityManagerState();
 
-  const getNextColorIndex = (): number => {
-    let index = 0;
-    while (assignedColorIndices.includes(index)) {
-      index++;
-    }
-    return index;
-  };
+  useActivityManagerTheme(activities, setActivities);
 
   useEffect(() => {
     const defaultActivities = [
@@ -51,68 +44,9 @@ export default function ActivityManager({
       { id: '4', name: 'Chores', colorIndex: 3 }
     ];
 
-    if (!hasInitializedActivities) {
-      setAssignedColorIndices(defaultActivities.map(a => a.colorIndex));
-      
-      // Add activities to the state machine in pending state
-      defaultActivities.forEach(activity => {
-        const activityWithColors = {
-          ...activity,
-          colors: getNextAvailableColorSet(activity.colorIndex || 0)
-        };
-        // Pass true as second argument to just add the activity without starting it
-        onActivitySelect(activityWithColors, true);
-      });
-      
-      setActivities(defaultActivities);
-      setHasInitializedActivities(true);
-    }
-  }, [hasInitializedActivities, onActivitySelect, setAssignedColorIndices, setActivities, setHasInitializedActivities]);
+    initializeActivities(defaultActivities, onActivitySelect);
+  }, [initializeActivities, onActivitySelect]);
   
-  useEffect(() => {
-    setActivities(currentActivities => 
-      currentActivities.map(activity => ({
-        ...activity,
-        colors: getNextAvailableColorSet(activity.colorIndex || 0)
-      }))
-    );
-  }, [setActivities]);
-
-  // Listen for theme changes
-  useEffect(() => {
-    const updateColors = () => {
-      setActivities(currentActivities => 
-        currentActivities.map(activity => ({
-          ...activity,
-          colors: getNextAvailableColorSet(activity.colorIndex)
-        }))
-      );
-    };
-
-    // Update colors when theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', updateColors);
-
-    // Update colors when manually switching themes
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'class') {
-          updateColors();
-        }
-      });
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class']
-    });
-
-    return () => {
-      mediaQuery.removeEventListener('change', updateColors);
-      observer.disconnect();
-    };
-  }, [setActivities]);
-
   const handleAddActivity = (activityName: string) => {
     const nextColorIndex = getNextColorIndex();
     

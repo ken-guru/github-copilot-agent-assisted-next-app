@@ -37,3 +37,22 @@ export const useActivityManagerTheme = (activities: Activity[], setActivities: (
     };
   }, [setActivities]);
 };
+
+export const initializeActivities = (defaultActivities: Activity[], onActivitySelect: (activity: Activity, justAdd?: boolean) => void) => {
+  if (!hasInitializedActivities) {
+    setAssignedColorIndices(defaultActivities.map(a => a.colorIndex));
+    
+    // Add activities to the state machine in pending state
+    defaultActivities.forEach(activity => {
+      const activityWithColors = {
+        ...activity,
+        colors: getNextAvailableColorSet(activity.colorIndex || 0)
+      };
+      // Pass true as second argument to just add the activity without starting it
+      onActivitySelect(activityWithColors, true);
+    });
+    
+    setActivities(defaultActivities);
+    setHasInitializedActivities(true);
+  }
+};
