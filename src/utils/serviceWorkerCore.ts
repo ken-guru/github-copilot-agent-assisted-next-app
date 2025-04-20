@@ -1,19 +1,9 @@
-import { attemptServiceWorkerUpdate, scheduleUpdateRetry } from './serviceWorkerUpdates';
+import { scheduleUpdateRetry } from './serviceWorkerUpdates';
 import { getErrorMessage, swLog } from './serviceWorkerErrors';
 
 type UpdateHandler = (message: string) => void;
 
-const SW_UPDATE_RETRY_CONFIG = {
-  maxRetries: 3,
-  retryDelay: process.env.NODE_ENV === 'test' ? 500 : 5000,
-  exponentialBackoff: false
-};
-
 let updateHandler: UpdateHandler | null = null;
-let updateRetryTimeout: ReturnType<typeof setTimeout> | null = null;
-let retryCount = 0;
-let pendingRegistration: ServiceWorkerRegistration | null = null;
-let onlineEventListener: ((event: Event) => Promise<void>) | null = null;
 
 function isDevelopmentEnvironment(): boolean {
   if (typeof window === 'undefined') return false;
@@ -21,11 +11,11 @@ function isDevelopmentEnvironment(): boolean {
   const isDev = process.env.NODE_ENV === 'development';
   const isLocalhost = typeof window !== 'undefined' &&
     (window.location.hostname === 'localhost' ||
-     window.location.hostname === '127.0.0.1');
+      window.location.hostname === '127.0.0.1');
   const isDevPort = typeof window !== 'undefined' &&
     (window.location.port === '3000' ||
-     window.location.port === '3001' ||
-     window.location.port === '8080');
+      window.location.port === '3001' ||
+      window.location.port === '8080');
 
   return isDev && (isLocalhost || isDevPort);
 }
@@ -53,8 +43,6 @@ export async function registerServiceWorker(): Promise<void> {
     });
     swLog('Service worker registered');
 
-    retryCount = 0;
-
     if (isDevelopmentEnvironment()) {
       return;
     }
@@ -66,8 +54,8 @@ export async function registerServiceWorker(): Promise<void> {
 
       const errorMessage = getErrorMessage(updateError);
       if (errorMessage.includes('MIME type') ||
-          errorMessage.includes('Failed to fetch') ||
-          errorMessage.includes('An unknown error occurred when fetching')) {
+        errorMessage.includes('Failed to fetch') ||
+        errorMessage.includes('An unknown error occurred when fetching')) {
         console.warn('Service worker update error appears to be related to fetch or MIME type issues.');
         console.warn('This is common in development environments - continuing without retrying.');
         return;

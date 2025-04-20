@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { TimelineEntry } from '../hooks/useTimelineEntries';
 import { ActivityButton, ActivityForm } from './ActivityManagerUI';
 import { useActivityManagerState } from '../hooks/useActivityManagerState';
@@ -32,7 +32,7 @@ export default function ActivityManager({
   isTimeUp = false,
   elapsedTime = 0
 }: ActivityManagerProps) {
-  const { activities, setActivities, assignedColorIndices, setAssignedColorIndices, hasInitializedActivities, setHasInitializedActivities, getNextColorIndex, initializeActivities } = useActivityManagerState();
+  const { activities, setActivities, assignedColorIndices, setAssignedColorIndices, getNextColorIndex, initializeActivities } = useActivityManagerState();
 
   useActivityManagerTheme(activities, setActivities);
 
