@@ -1,14 +1,10 @@
-// Event handler type for ServiceWorker update events
-type UpdateHandler = (message: string) => void;
-
-// Configuration for service worker update retries
 const SW_UPDATE_RETRY_CONFIG = {
   maxRetries: 3,              // Maximum number of retry attempts
   retryDelay: process.env.NODE_ENV === 'test' ? 500 : 5000,   // 500ms for tests, 5s for production
   exponentialBackoff: false   // Whether to use exponential backoff (not implemented yet)
 };
 
-let updateHandler: UpdateHandler | null = null;
+let updateHandler: ((message: string) => void) | null = null;
 let updateRetryTimeout: ReturnType<typeof setTimeout> | null = null;
 let retryCount = 0;
 let pendingRegistration: ServiceWorkerRegistration | null = null;
@@ -60,7 +56,7 @@ function isDevelopmentEnvironment(): boolean {
 /**
  * Set a handler for service worker update notifications
  */
-export function setUpdateHandler(handler: UpdateHandler | null): void {
+export function setUpdateHandler(handler: ((message: string) => void) | null): void {
   updateHandler = handler;
 }
 

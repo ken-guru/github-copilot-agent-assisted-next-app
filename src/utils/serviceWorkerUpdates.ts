@@ -1,8 +1,6 @@
 import { getErrorMessage, swLog } from './serviceWorkerErrors';
 import { isDevelopmentEnvironment, clearUpdateRetryTimeout, removeOnlineEventListener } from './serviceWorkerCore';
 
-type UpdateHandler = (message: string) => void;
-
 const SW_UPDATE_RETRY_CONFIG = {
   maxRetries: 3,
   retryDelay: process.env.NODE_ENV === 'test' ? 500 : 5000,
