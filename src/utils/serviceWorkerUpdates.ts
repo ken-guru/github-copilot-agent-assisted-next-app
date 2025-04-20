@@ -9,7 +9,6 @@ const SW_UPDATE_RETRY_CONFIG = {
   exponentialBackoff: false
 };
 
-const updateHandler: UpdateHandler | null = null;
 let retryCount = 0;
 let pendingRegistration: ServiceWorkerRegistration | null = null;
 let onlineEventListener: ((event: Event) => Promise<void>) | null = null;
