@@ -34,3 +34,5 @@ export const useLoading = (): LoadingContextType => {
   
   return context;
 };
+
+export { LoadingContext };
