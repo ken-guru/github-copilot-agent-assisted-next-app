@@ -4,13 +4,16 @@ import { getNextAvailableColorSet } from '../utils/colors';
 import { TimelineEntry } from '../hooks/useTimelineEntries';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './ActivityForm';
-import { ColorSet } from '../utils/colors';
 
 export interface Activity {
   id: string;
   name: string;
   completed?: boolean;
-  colors?: ColorSet;
+  colors?: {
+    background: string;
+    text: string;
+    border: string;
+  };
   colorIndex?: number;
 }
 

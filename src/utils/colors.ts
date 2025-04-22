@@ -346,3 +346,9 @@ export function validateThemeColors(): void {
     }
   }
 }
+
+export interface ColorSet {
+  background: string;
+  text: string;
+  border: string;
+}
