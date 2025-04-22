@@ -65,3 +65,43 @@
 - Proper typing in tests improves overall code reliability and prevents runtime errors
 
 **Status:** Resolved
+
+### Issue: TypeScript Error in ActivityManager Component
+**Date:** 2025-04-10
+**Tags:** #debugging #typescript #type-error #component
+**Status:** Resolved
+
+#### Initial State
+- Type checking failed with the following error in `src/components/ActivityManager.tsx`:
+  ```
+  Type error: Cannot find module '../contexts/LoadingContext' or its corresponding type declarations.
+  ```
+
+#### Debug Process
+1. Investigated the import statement in `ActivityManager.tsx`
+   - Found the import statement: `import { ColorSet } from '../contexts/LoadingContext';`
+   - Verified that the `LoadingContext` file exists in the specified path
+   - Checked the export statement in `LoadingContext.tsx`
+
+2. Identified the issue with the export statement
+   - The `ColorSet` type was exported using `export { ColorSet }`
+   - Realized that TypeScript requires `export type { ColorSet }` for type-only exports
+
+3. Solution implementation
+   - Updated the export statement in `LoadingContext.tsx` to use `export type { ColorSet }`
+
+4. Type checking verification
+   - Ran `npm run type-check` to verify the type error is resolved
+   - No errors found after implementing the fix
+
+#### Resolution
+- Fixed the TypeScript error in the `ActivityManager` component
+- Updated the export statement in `LoadingContext.tsx` to use `export type { ColorSet }`
+- Verified that the type error is resolved and the component works as expected
+
+#### Lessons Learned
+- Type-only exports in TypeScript should use `export type` to avoid import errors
+- Always verify the export statements when encountering module not found errors
+- Proper type checking ensures code reliability and prevents runtime issues
+
+**Status:** Resolved
