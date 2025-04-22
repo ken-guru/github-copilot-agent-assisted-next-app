@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
-import { LoadingProvider, useLoading } from '../../contexts/LoadingContext';
+import { LoadingProvider, useLoading, LoadingContext } from '../../contexts/LoadingContext';
 
 // Test component that uses the loading context
 const TestComponent = () => {
@@ -62,5 +62,11 @@ describe('LoadingContext', () => {
     
     // Restore console.error
     console.error = originalConsoleError;
+  });
+
+  it('has Provider, Consumer, and $$typeof properties', () => {
+    expect(LoadingContext).toHaveProperty('Provider');
+    expect(LoadingContext).toHaveProperty('Consumer');
+    expect(LoadingContext).toHaveProperty('$$typeof');
   });
 });

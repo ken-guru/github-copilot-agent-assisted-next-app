@@ -7,6 +7,10 @@ interface LoadingContextType {
 
 const LoadingContext: Context<LoadingContextType | undefined> = createContext<LoadingContextType | undefined>(undefined);
 
+LoadingContext.Provider = createContext<LoadingContextType | undefined>(undefined).Provider;
+LoadingContext.Consumer = createContext<LoadingContextType | undefined>(undefined).Consumer;
+LoadingContext.$$typeof = createContext<LoadingContextType | undefined>(undefined).$$typeof;
+
 interface LoadingProviderProps {
   children: ReactNode;
   initialLoadingState?: boolean;
