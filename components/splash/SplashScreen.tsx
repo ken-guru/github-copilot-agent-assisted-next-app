@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useLoading } from '../../contexts/LoadingContext';
+import { useLoading } from '../../contexts/useLoading';
 import styles from './SplashScreen.module.css';
 import { isDarkTheme } from './SplashScreenTheme';
 

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { LoadingContext } from './LoadingContext';
 
-export const useLoading = (): typeof LoadingContext => {
+export const useLoading = () => {
   const context = useContext(LoadingContext);
   
   if (context === undefined) {
