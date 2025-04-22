@@ -88,3 +88,36 @@
 - Ensure context types include all necessary properties (`Provider`, `Consumer`, `$$typeof`)
 - When creating custom hooks that use context, ensure they throw errors if used outside of the appropriate provider
 - Update tests to cover new hooks and ensure proper context usage
+
+### Issue: useLoading Import Error Debugging Session
+**Date:** 2023-09-25
+**Tags:** #debugging #context #typescript
+**Status:** Resolved
+
+#### Initial State
+- Deployment error due to an import error in `SplashScreen`:
+  ```
+  Attempted import error: 'useLoading' is not exported from '../../contexts/LoadingContext' (imported as 'useLoading').
+  ```
+
+#### Debug Process
+1. Investigated the import error in `SplashScreen`
+   - The `useLoading` hook was not exported from `LoadingContext`
+   - The import statement in `SplashScreen` was correct, but the export was missing
+
+2. Updated the `LoadingContext` to export `useLoading`
+   - Added the export statement for `useLoading` in `LoadingContext`
+
+3. Verified the import in `SplashScreen`
+   - Ensured the import statement in `SplashScreen` correctly imports `useLoading` from `LoadingContext`
+
+#### Resolution
+1. Updated `LoadingContext` to export `useLoading`:
+   - Added the export statement for `useLoading` in `LoadingContext`
+
+2. Verified the import in `SplashScreen`:
+   - Ensured the import statement in `SplashScreen` correctly imports `useLoading` from `LoadingContext`
+
+#### Lessons Learned
+- Ensure all necessary exports are included in context files
+- Verify import statements in components to match the exports in context files
