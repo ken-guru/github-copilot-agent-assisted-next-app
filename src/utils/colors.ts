@@ -1,14 +1,14 @@
-export interface ColorSet {
-  background: string;
-  text: string;
-  border: string;
-}
-
-// Internal HSL colors with dark mode consideration
-// Each color has a light and dark mode variation defined in the same group
 export const internalActivityColors: {
-  light: ColorSet;
-  dark: ColorSet;
+  light: {
+    background: string;
+    text: string;
+    border: string;
+  };
+  dark: {
+    background: string;
+    text: string;
+    border: string;
+  };
 }[] = [
   // Green - Hue: 120
   {
@@ -179,7 +179,7 @@ export const isDarkMode = () => {
 };
 
 // Export a function that returns theme-appropriate colors instead of a static array
-export function getActivityColors(): ColorSet[] {
+export function getActivityColors() {
   return internalActivityColors.map(colorSet => {
     // Check if we're in a browser environment
     if (typeof window === 'undefined') {
@@ -197,7 +197,7 @@ const usedColors = new Set<number>();
  * Get a random color set
  * @returns A random ColorSet
  */
-export function getRandomColorSet(): ColorSet {
+export function getRandomColorSet() {
   if (usedColors.size === internalActivityColors.length) {
     usedColors.clear();
   }
@@ -217,7 +217,7 @@ export function getRandomColorSet(): ColorSet {
  * @param specificIndex Optional specific index to use (overrides the next available logic)
  * @returns A ColorSet
  */
-export function getNextAvailableColorSet(specificIndex?: number): ColorSet {
+export function getNextAvailableColorSet(specificIndex?: number) {
   const colors = getActivityColors();
   
   if (specificIndex !== undefined && specificIndex >= 0 && specificIndex < colors.length) {

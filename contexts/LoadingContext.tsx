@@ -5,6 +5,12 @@ interface LoadingContextType {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+interface ColorSet {
+  background: string;
+  text: string;
+  border: string;
+}
+
 const LoadingContext: Context<LoadingContextType | undefined> = createContext<LoadingContextType | undefined>(undefined);
 
 interface LoadingProviderProps {
@@ -33,4 +39,4 @@ export const useLoading = () => {
   return context;
 };
 
-export { LoadingContext };
+export { LoadingContext, ColorSet };

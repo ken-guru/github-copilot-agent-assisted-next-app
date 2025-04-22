@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import styles from './ActivityManager.module.css';
-import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
+import { getNextAvailableColorSet } from '../utils/colors';
 import { TimelineEntry } from '../hooks/useTimelineEntries';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './ActivityForm';
+import { ColorSet } from '../contexts/LoadingContext';
 
 export interface Activity {
   id: string;

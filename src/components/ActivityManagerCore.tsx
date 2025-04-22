@@ -4,6 +4,7 @@ import { ActivityButton, ActivityForm } from './ActivityManagerUI';
 import { useActivityManagerState } from '../hooks/useActivityManagerState';
 import { useActivityManagerTheme } from './ActivityManagerTheme';
 import styles from './ActivityManager.module.css';
+import { ColorSet } from '../contexts/LoadingContext';
 
 export interface Activity {
   id: string;
