@@ -39,6 +39,11 @@
    - Updated documentation to reflect implementation details
    - Created memory log entries for debugging process
 
+5. Refactoring and optimization
+   - Refactored the `useEffect` hook to handle the loading state changes more effectively
+   - Removed the `earlyThemeScript` and its injection logic
+   - Updated the `isDarkTheme` function to handle theme changes more efficiently
+
 #### Resolution
 - Implemented a fully functional, accessible splash screen
 - Created a loading state management context for the application

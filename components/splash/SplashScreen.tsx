@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { useLoading } from '../../contexts/LoadingContext';
 import styles from './SplashScreen.module.css';
 import { isDarkTheme } from './SplashScreenTheme';
-import { earlyThemeScript } from './SplashScreenScript';
 
 interface SplashScreenProps {
   minimumDisplayTime?: number;
@@ -17,30 +16,14 @@ export const SplashScreen = ({
   const [displayStartTime] = useState(Date.now());
   const [isDarkMode] = useState(isDarkTheme());
   
-  // Inject the early theme script on first render
-  useEffect(() => {
-    // Only run once on initial mount
-    const script = document.createElement('script');
-    script.innerHTML = earlyThemeScript;
-    document.head.appendChild(script);
-    
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
-  }, []);
-  
   useEffect(() => {
     if (!isLoading) {
       const currentTime = Date.now();
       const elapsedTime = currentTime - displayStartTime;
       
       if (elapsedTime >= minimumDisplayTime) {
-        // If minimum time has passed, hide splash screen immediately
         setShouldDisplay(false);
       } else {
-        // Otherwise, wait for the remaining time
         const remainingTime = minimumDisplayTime - elapsedTime;
         const timer = setTimeout(() => {
           setShouldDisplay(false);
