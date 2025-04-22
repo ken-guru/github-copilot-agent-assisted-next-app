@@ -4,7 +4,7 @@ import { getNextAvailableColorSet } from '../utils/colors';
 import { TimelineEntry } from '../hooks/useTimelineEntries';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './ActivityForm';
-import { ColorSet } from '../contexts/LoadingContext';
+import { ColorSet } from '../utils/colors';
 
 export interface Activity {
   id: string;
