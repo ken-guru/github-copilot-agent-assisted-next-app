@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
-import { LoadingProvider, LoadingContext } from '../../contexts/LoadingContext';
-import { useLoading } from '../../contexts/useLoading';
+import { LoadingProvider, LoadingContext } from '@/contexts/LoadingContext';
+import { useLoading } from '@/contexts/LoadingContext';
 
 // Test component that uses the loading context
 const TestComponent = () => {

@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import { SplashScreen } from '../../../components/splash/SplashScreen';
-import { LoadingProvider, useLoading } from '../../../contexts/LoadingContext';
+import { LoadingProvider, useLoading } from '@/contexts/LoadingContext';
 
 // Mock the useLoading hook
-jest.mock('../../../contexts/LoadingContext', () => ({
+jest.mock('@/contexts/LoadingContext', () => ({
   useLoading: jest.fn(),
   LoadingProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));

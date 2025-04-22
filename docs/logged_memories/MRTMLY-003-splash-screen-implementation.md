@@ -64,3 +64,6 @@
 - Implement analytics to measure actual load times in production
 - Consider skeleton screens as an alternative or complement to splash screens
 - Investigate preloading critical assets during splash screen display
+
+#### Note
+- Updated the import path for `LoadingContext` to `@/contexts/LoadingContext` to resolve module not found error.

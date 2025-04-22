@@ -44,7 +44,7 @@ jest.mock('../../src/app/page', () => {
 });
 
 // Mock the LoadingContext
-jest.mock('../../contexts/LoadingContext', () => {
+jest.mock('@/contexts/LoadingContext', () => {
   let loadingState = true;
   const setIsLoading = jest.fn((value) => {
     loadingState = value;

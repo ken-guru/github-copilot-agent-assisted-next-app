@@ -159,3 +159,30 @@
 - Simplifying the implementation can often resolve issues more effectively than fixing error messages directly
 - Removing unnecessary complexity can improve both performance and maintainability
 - Efficient state handling is crucial for components that rely on timing and context changes
+
+### Note: Import Path Correction for LoadingContext
+**Date:** 2023-10-05
+**Tags:** #import #context #typescript
+**Status:** Resolved
+
+#### Initial State
+- Deployment error due to incorrect import path for `LoadingContext`:
+  ```
+  Type error: Cannot find module '../contexts/LoadingContext' or its corresponding type declarations.
+  ```
+
+#### Debug Process
+1. Investigated the import path error
+   - The import path for `LoadingContext` was incorrect in multiple files
+   - The correct import path should be `@/contexts/LoadingContext`
+
+2. Updated the import paths
+   - Corrected the import paths for `LoadingContext` in all affected files
+
+#### Resolution
+1. Updated import paths:
+   - Corrected the import paths for `LoadingContext` in all affected files
+
+#### Lessons Learned
+- Ensure import paths are correct and consistent across all files
+- Use absolute import paths to avoid issues with relative paths
