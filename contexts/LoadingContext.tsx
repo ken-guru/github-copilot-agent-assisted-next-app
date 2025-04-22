@@ -39,4 +39,5 @@ export const useLoading = () => {
   return context;
 };
 
-export { LoadingContext, ColorSet };
+export { LoadingContext };
+export type { ColorSet };
