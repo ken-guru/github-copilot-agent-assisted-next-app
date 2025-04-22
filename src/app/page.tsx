@@ -1,6 +1,7 @@
 'use client';
-import { useState, useEffect, useRef, useContext } from 'react';
-import { LoadingProvider, LoadingContext } from '@/contexts/LoadingContext';
+import { useState, useEffect, useRef } from 'react';
+import { LoadingProvider } from '@/contexts/LoadingContext';
+import { useLoading } from '@/contexts/useLoading';
 import { SplashScreen } from '@/components/splash/SplashScreen';
 import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
@@ -17,7 +18,7 @@ import styles from './page.module.css';
 
 // Main application content with loading context
 function AppContent() {
-  const { setIsLoading } = useContext(LoadingContext);
+  const { setIsLoading } = useLoading();
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
