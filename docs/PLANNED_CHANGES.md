@@ -70,22 +70,43 @@ Note: When implementing a change, copy this template and fill it out completely.
 
 To reduce AI model token consumption and improve code maintainability, we need to refactor files exceeding 200 lines. This document outlines the files that need refactoring and proposes strategies based on file types.
 
+## Refactoring Progress Tracker
+
+| File | Status | Priority | Progress | Next Steps |
+|------|--------|----------|----------|------------|
+| `/src/utils/timeUtils.ts` | ✅ COMPLETED | HIGH | 100% | N/A |
+| `/src/utils/serviceWorkerRegistration.ts` | 🔄 NEXT UP | HIGH | 0% | Analyze file structure and create test files |
+| `/public/service-worker.js` | ⏱️ PENDING | MEDIUM | 0% | Awaiting completion of serviceWorkerRegistration |
+| `/src/components/ActivityManager.tsx` | ⏱️ PENDING | MEDIUM | 0% | Awaiting completion of service worker files |
+| `/src/app/page.module.css` | ⏱️ PENDING | LOW | 0% | Awaiting completion of JS/TS refactoring |
+| `/src/components/Timeline.module.css` | ⏱️ PENDING | LOW | 0% | Awaiting completion of JS/TS refactoring |
+| `/src/components/Summary.module.css` | ⏱️ PENDING | LOW | 0% | Awaiting completion of JS/TS refactoring |
+| `/src/components/__tests__/Summary.test.tsx` | ⏱️ PENDING | MEDIUM | 0% | Awaiting component refactoring |
+| `/src/utils/__tests__/serviceWorkerRegistration.test.ts` | 🔄 NEXT UP | HIGH | 0% | Will be included with serviceWorkerRegistration refactoring |
+
 ## Files Exceeding 200 Lines
 
 ### JavaScript/TypeScript Files
 
-1. **`/src/utils/serviceWorkerRegistration.ts`** [PENDING]
+1. **`/src/utils/serviceWorkerRegistration.ts`** [NEXT UP]
    - Current concerns:
      - Service worker registration logic
      - Update handling
      - Error handling
      - Network status detection
      - Retry mechanisms
-   - Potential split:
+   - Planned split:
      - `serviceWorkerCore.ts` - Core registration functionality
      - `serviceWorkerUpdates.ts` - Update handling
      - `serviceWorkerErrors.ts` - Error handling and reporting
      - `serviceWorkerRetry.ts` - Retry mechanisms
+   - Refactoring approach:
+     1. Create comprehensive tests for current functionality
+     2. Create new directory structure in `/src/utils/serviceWorker/`
+     3. Extract code by concern into separate files
+     4. Create barrel file for backwards compatibility
+     5. Update serviceWorkerRegistration.ts to re-export from new structure
+     6. Update tests to use new structure
 
 2. **`/public/service-worker.js`** [PENDING]
    - Current concerns:
@@ -114,6 +135,14 @@ To reduce AI model token consumption and improve code maintainability, we need t
 
 4. **`/src/utils/timeUtils.ts`** [COMPLETED]
    - Successfully refactored into smaller, focused files
+   - Divided into:
+     - `/src/utils/time/types.ts`
+     - `/src/utils/time/timeFormatters.ts`
+     - `/src/utils/time/timeConversions.ts`
+     - `/src/utils/time/timeDurations.ts`
+     - `/src/utils/time/index.ts` (barrel file)
+   - Original file now re-exports from new structure with deprecation notice
+   - All tests passing with 100% backward compatibility
    - See IMPLEMENTED_CHANGES.md for details
 
 ### CSS Files
@@ -166,7 +195,7 @@ To reduce AI model token consumption and improve code maintainability, we need t
      - `Summary.events.test.tsx` - Event handling tests
      - `Summary.performance.test.tsx` - Performance tests
 
-2. **`/src/utils/__tests__/serviceWorkerRegistration.test.ts`** [PENDING]
+2. **`/src/utils/__tests__/serviceWorkerRegistration.test.ts`** [NEXT UP]
    - Current concerns:
      - Registration tests
      - Update tests
@@ -175,3 +204,39 @@ To reduce AI model token consumption and improve code maintainability, we need t
      - `serviceWorkerRegistration.core.test.ts` - Core functionality tests
      - `serviceWorkerRegistration.updates.test.ts` - Update mechanism tests
      - `serviceWorkerRegistration.errors.test.ts` - Error handling tests
+
+## Next Steps Detailed Plan
+
+For the next refactoring target (`/src/utils/serviceWorkerRegistration.ts`), we'll follow these steps:
+
+1. **Analysis Phase**
+   - [ ] Examine current file structure and identify logical separation boundaries
+   - [ ] Review existing tests to understand required behavior
+   - [ ] Document dependencies and imports
+   - [ ] Identify edge cases that need to be preserved
+
+2. **Test-First Setup**
+   - [ ] Ensure comprehensive tests exist for all functionality
+   - [ ] Create additional tests if needed
+   - [ ] Verify baseline test coverage before refactoring
+
+3. **Implementation Phase**
+   - [ ] Create directory structure `/src/utils/serviceWorker/`
+   - [ ] Create type definitions file for shared types
+   - [ ] Extract core registration functionality
+   - [ ] Extract update handling
+   - [ ] Extract error handling
+   - [ ] Extract retry mechanisms
+   - [ ] Create barrel file for exports
+
+4. **Integration Phase**
+   - [ ] Update original file to re-export from new structure
+   - [ ] Add deprecation notice with migration guidance
+   - [ ] Update tests to work with new structure
+   - [ ] Verify all tests pass
+
+5. **Documentation Phase**
+   - [ ] Create Memory Log entry documenting the refactoring
+   - [ ] Update documentation files
+   - [ ] Update IMPLEMENTED_CHANGES.md
+   - [ ] Update PLANNED_CHANGES.md with progress
