@@ -85,8 +85,9 @@ describe('Service Worker Core', () => {
         onSuccess: mockOnSuccess 
       });
       
-      // Verify register was called
-      expect(navigator.serviceWorker.register).toHaveBeenCalledWith('/test-sw.js', undefined);
+      // Verify register was called with the correct URL
+      // The implementation doesn't pass the second parameter when undefined
+      expect(navigator.serviceWorker.register).toHaveBeenCalledWith('/test-sw.js');
     });
     
     it('should handle environment variable correctly', () => {
