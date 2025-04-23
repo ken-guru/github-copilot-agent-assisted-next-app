@@ -85,6 +85,8 @@ describe('serviceWorkerRetry', () => {
       const result = await ServiceWorkerRetry.registerWithRetry(mockSwUrl, mockConfig);
       
       expect(registerWithRetrySpy).toHaveBeenCalledWith(mockSwUrl, mockConfig);
+      // Verify the result to avoid unused variable warning
+      expect(result).toBe(mockRegistration);
     });
   });
   

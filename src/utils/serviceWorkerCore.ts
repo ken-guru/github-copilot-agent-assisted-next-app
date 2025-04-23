@@ -8,7 +8,7 @@ import { handleRegistration } from './serviceWorkerUpdates';
 import { handleServiceWorkerError } from './serviceWorkerErrors';
 
 // Define missing function
-function checkValidSW(swUrl: string, config?: Config): Promise<void> {
+function checkValidSW(swUrl: string, _config?: Config): Promise<void> {
   return fetch(swUrl, {
     headers: { 'Service-Worker': 'script' }
   })

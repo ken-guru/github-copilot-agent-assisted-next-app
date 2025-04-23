@@ -128,13 +128,14 @@ describe('Service Worker Core', () => {
         handleRegistration: jest.fn()
       }), { virtual: true });
       
-      // Import and use the mocked function
-      const { handleRegistration } = require('../serviceWorkerUpdates');
+      // Import the module properly using ESM import syntax, and add a comment explaining why we need to import
+      // We need to use dynamic import to get the mocked version of the module
+      const serviceWorkerUpdates = await import('../serviceWorkerUpdates');
       
       await serviceWorkerUtils.checkForExistingSW({ onSuccess: jest.fn(), onUpdate: jest.fn() });
       expect(mockSW.getRegistration).toHaveBeenCalled();
-      // Verify that handleRegistration was called or remove the unused variable
-      expect(handleRegistration).toBeDefined();
+      // Verify that the mocked handleRegistration function exists in the imported module
+      expect(serviceWorkerUpdates.handleRegistration).toBeDefined();
     });
     
     it('should handle no registration', async () => {
