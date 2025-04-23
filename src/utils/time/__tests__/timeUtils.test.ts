@@ -2,8 +2,7 @@ import {
   formatTime, 
   formatTimeMMSS, 
   formatTimeFromMs, 
-  calculateDurationInSeconds,
-  TimeFormatOptions 
+  calculateDurationInSeconds
 } from '../index';
 
 describe('formatTime', () => {

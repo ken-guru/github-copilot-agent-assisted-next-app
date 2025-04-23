@@ -91,9 +91,11 @@ export function mockDateNow(mockTimestamp: number): () => void {
  */
 export function createTimerMock() {
   // Store timers with their creation time and callbacks
+  type TimerCallback = (...args: unknown[]) => void;
+  
   const timers: { 
     id: number; 
-    callback: Function; 
+    callback: TimerCallback; 
     delay: number; 
     createdAt: number;
   }[] = [];
@@ -107,7 +109,7 @@ export function createTimerMock() {
   let nextTimerId = 1;
   
   // Create a mock version with proper typing
-  const mockSetTimeout = function(callback: Function, delay: number): any {
+  const mockSetTimeout = function(callback: TimerCallback, delay: number): number {
     const id = nextTimerId++;
     timers.push({ 
       id, 
@@ -123,7 +125,7 @@ export function createTimerMock() {
   global.setTimeout = mockedSetTimeout;
   
   // Create a mock clearTimeout with proper typing
-  const mockClearTimeout = function(id: any): void {
+  const mockClearTimeout = function(id: number | NodeJS.Timeout): void {
     const index = timers.findIndex(timer => timer.id === id);
     if (index !== -1) {
       timers.splice(index, 1);

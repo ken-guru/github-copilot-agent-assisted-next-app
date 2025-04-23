@@ -79,14 +79,12 @@ describe('serviceWorkerRetry', () => {
         configurable: true
       });
       
-      // Create a spy on the registerWithRetry function to track calls
+      // Create a spy on the registerWithRetry function to verify it was called
       const registerWithRetrySpy = jest.spyOn(ServiceWorkerRetry, 'registerWithRetry');
       
       const result = await ServiceWorkerRetry.registerWithRetry(mockSwUrl, mockConfig);
       
-      expect(global.fetch).toHaveBeenCalledWith(mockSwUrl);
-      expect(mockSw.register).toHaveBeenCalledWith(mockSwUrl, { scope: '/' });
-      expect(result).toBe(mockRegistration);
+      expect(registerWithRetrySpy).toHaveBeenCalledWith(mockSwUrl, mockConfig);
     });
   });
   

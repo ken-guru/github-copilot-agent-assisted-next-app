@@ -2,7 +2,14 @@
  * Service Worker Update Error Test
  * Tests specific edge cases around service worker update failures
  */
-import { registerServiceWorker, setUpdateHandler } from '../serviceWorkerRegistration';
+import { registerServiceWorker } from '../serviceWorkerRegistration';
+// Importing setUpdateHandler for type reference but not directly used
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { setUpdateHandler } from '../serviceWorkerRegistration';
+
+// Define proper types for handler properties
+type UpdateHandler = EventListenerOrEventListenerObject;
+type StateChangeHandler = EventListenerOrEventListenerObject;
 
 // Mock for service worker registration
 const mockRegistration = {
@@ -10,14 +17,14 @@ const mockRegistration = {
   addEventListener: jest.fn().mockImplementation((event, handler) => {
     if (event === 'updatefound') {
       // Store handler for later triggering in tests
-      (mockRegistration as any).updateHandler = handler;
+      (mockRegistration as {updateHandler?: UpdateHandler}).updateHandler = handler;
     }
   }),
   installing: { 
     addEventListener: jest.fn().mockImplementation((event, handler) => {
       if (event === 'statechange') {
         // Store state change handler for later triggering
-        (mockRegistration as any).stateChangeHandler = handler;
+        (mockRegistration.installing as {stateChangeHandler?: StateChangeHandler}).stateChangeHandler = handler;
       }
     }),
     state: 'installed'
@@ -33,7 +40,8 @@ const mockServiceWorker = {
 
 // Mock modules before tests
 jest.mock('../serviceWorkerRetry', () => ({
-  registerWithRetry: jest.fn().mockImplementation((url, config) => {
+  registerWithRetry: jest.fn().mockImplementation((_url, _config) => {
+    // Parameters prefixed with underscore to indicate they're intentionally unused
     return Promise.resolve(mockRegistration);
   }),
   checkValidServiceWorker: jest.fn().mockResolvedValue(true)

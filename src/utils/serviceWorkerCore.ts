@@ -8,12 +8,12 @@ import { handleRegistration } from './serviceWorkerUpdates';
 import { handleServiceWorkerError } from './serviceWorkerErrors';
 
 // Define missing function
-function checkValidSW(swUrl: string, config?: any): Promise<void> {
+function checkValidSW(swUrl: string, config?: Config): Promise<void> {
   return fetch(swUrl, {
     headers: { 'Service-Worker': 'script' }
   })
-    .then(response => {
-      // Implementation details
+    .then(_response => {
+      // Implementation details - using underscore to indicate intentionally unused parameter
       return Promise.resolve();
     })
     .catch(error => {
