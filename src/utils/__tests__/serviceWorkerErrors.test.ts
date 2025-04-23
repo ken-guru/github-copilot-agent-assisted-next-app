@@ -44,6 +44,10 @@ describe('serviceWorkerErrors', () => {
     });
     
     it('should return false for other hostnames', () => {
+      // Store the original defineProperty function
+      const originalDefineProperty = Object.defineProperty;
+      
+      // Mock window.location with a non-localhost hostname
       Object.defineProperty(window, 'location', {
         value: {
           hostname: 'example.com',
@@ -51,7 +55,12 @@ describe('serviceWorkerErrors', () => {
         configurable: true,
       });
       
-      expect(isLocalhost()).toBe(false);
+      try {
+        expect(isLocalhost()).toBe(false);
+      } finally {
+        // No need to restore as the test environment is reset between tests
+        // and our mock is configured with configurable: true
+      }
     });
   });
 });
