@@ -5,6 +5,7 @@ import { useActivityManagerState } from '../hooks/useActivityManagerState';
 import { useActivityManagerTheme } from './ActivityManagerTheme';
 import styles from './ActivityManager.module.css';
 import { ColorSet } from '@/contexts/LoadingContext';
+import { getNextAvailableColorSet } from '../utils/colors';
 
 export interface Activity {
   id: string;

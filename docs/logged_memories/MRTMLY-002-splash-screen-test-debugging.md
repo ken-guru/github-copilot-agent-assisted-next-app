@@ -186,3 +186,28 @@
 #### Lessons Learned
 - Ensure import paths are correct and consistent across all files
 - Use absolute import paths to avoid issues with relative paths
+
+### Note: getNextAvailableColorSet Function Usage
+**Date:** 2023-10-10
+**Tags:** #function #typescript #color
+**Status:** Resolved
+
+#### Initial State
+- Type error in `ActivityManagerCore.tsx` due to undefined `getNextAvailableColorSet` function
+
+#### Debug Process
+1. Investigated the type error in `ActivityManagerCore.tsx`
+   - The `getNextAvailableColorSet` function was not defined or imported
+
+2. Updated the `ActivityManagerCore.tsx` file
+   - Imported the `getNextAvailableColorSet` function from `../utils/colors`
+   - Replaced the undefined `getNextAvailableColorSet` with the imported function
+
+#### Resolution
+1. Updated `ActivityManagerCore.tsx`:
+   - Imported the `getNextAvailableColorSet` function from `../utils/colors`
+   - Replaced the undefined `getNextAvailableColorSet` with the imported function
+
+#### Lessons Learned
+- Ensure all necessary functions are defined and imported correctly
+- Verify import statements in components to match the exports in utility files

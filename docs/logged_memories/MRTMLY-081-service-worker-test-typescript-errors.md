@@ -105,3 +105,42 @@
 - Proper type checking ensures code reliability and prevents runtime issues
 
 **Status:** Resolved
+
+### Issue: TypeScript Error in ActivityManagerCore Component
+**Date:** 2025-04-11
+**Tags:** #debugging #typescript #type-error #component
+**Status:** Resolved
+
+#### Initial State
+- Type checking failed with the following error in `src/components/ActivityManagerCore.tsx`:
+  ```
+  Type error: Cannot find name 'getNextAvailableColorSet'.
+  ```
+
+#### Debug Process
+1. Investigated the error in `ActivityManagerCore.tsx`
+   - Found the usage of `getNextAvailableColorSet` function
+   - Verified that the function was not imported in the file
+
+2. Identified the missing import statement
+   - The `getNextAvailableColorSet` function was defined in `src/utils/colors.ts`
+   - Realized that the function needs to be imported in `ActivityManagerCore.tsx`
+
+3. Solution implementation
+   - Added the import statement for `getNextAvailableColorSet` in `ActivityManagerCore.tsx`
+   - Updated the code to use the imported function
+
+4. Type checking verification
+   - Ran `npm run type-check` to verify the type error is resolved
+   - No errors found after implementing the fix
+
+#### Resolution
+- Fixed the TypeScript error in the `ActivityManagerCore` component
+- Added the import statement for `getNextAvailableColorSet` in `ActivityManagerCore.tsx`
+- Verified that the type error is resolved and the component works as expected
+
+#### Lessons Learned
+- Always verify that all used functions are properly imported
+- Proper type checking ensures code reliability and prevents runtime issues
+
+**Status:** Resolved

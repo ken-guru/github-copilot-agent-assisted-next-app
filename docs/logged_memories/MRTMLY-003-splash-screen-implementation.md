@@ -67,3 +67,4 @@
 
 #### Note
 - Updated the import path for `LoadingContext` to `@/contexts/LoadingContext` to resolve module not found error.
+- Added a note about the `getNextAvailableColorSet` function being used in `ActivityManagerCore.tsx`.
