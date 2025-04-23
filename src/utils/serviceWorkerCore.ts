@@ -8,11 +8,14 @@ import { handleRegistration } from './serviceWorkerUpdates';
 import { handleServiceWorkerError } from './serviceWorkerErrors';
 
 // Define missing function
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function checkValidSW(swUrl: string, _config?: Config): Promise<void> {
   return fetch(swUrl, {
     headers: { 'Service-Worker': 'script' }
   })
-    .then(_response => {
+    .then(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _response => {
       // Implementation details - using underscore to indicate intentionally unused parameter
       return Promise.resolve();
     })
