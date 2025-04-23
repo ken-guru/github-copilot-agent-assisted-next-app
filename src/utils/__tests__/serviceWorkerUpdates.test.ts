@@ -70,14 +70,29 @@ describe('Service Worker Updates', () => {
   });
 
   it('should listen for state changes on installing worker', () => {
+    // Create a proper mock ServiceWorker that implements all required properties
     const mockInstallingWorker = {
       addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
       state: 'installing',
+      scriptURL: 'http://localhost/sw.js',
+      onstatechange: null,
+      postMessage: jest.fn()
     };
+    
     const mockRegistration = {
       waiting: null,
       installing: mockInstallingWorker,
-      active: {} as ServiceWorker,
+      active: {
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+        state: 'activated',
+        scriptURL: 'http://localhost/sw.js',
+        onstatechange: null,
+        postMessage: jest.fn()
+      },
       unregister: jest.fn(),
       update: jest.fn(),
       navigationPreload: {} as NavigationPreloadManager,
@@ -90,7 +105,8 @@ describe('Service Worker Updates', () => {
       addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
       dispatchEvent: jest.fn()
-    } as ServiceWorkerRegistration;
+    } as unknown as ServiceWorkerRegistration;
+    
     const onSuccess = jest.fn();
     const onUpdate = jest.fn();
 
@@ -106,34 +122,43 @@ describe('Service Worker Updates', () => {
     const onSuccess = jest.fn();
     const onUpdate = jest.fn();
     
-    // Create a proper ServiceWorker mock with all required properties
-    const mockInstalling = {
+    // Create a complete mock ServiceWorker that implements all required interface properties
+    const createMockServiceWorker = (state: string) => ({
       addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
       dispatchEvent: jest.fn(),
+      state,
+      scriptURL: "http://localhost/sw.js",
       onstatechange: null,
-      scriptURL: 'test-script',
-      state: 'installing',
       postMessage: jest.fn()
-    };
+    });
 
-    // Cast to unknown first, then to ServiceWorkerRegistration to avoid type errors
+    // Fix the mock registration by using the proper ServiceWorker interface
     const mockRegistration = {
       waiting: null,
-      installing: mockInstalling,
-      active: {} as ServiceWorker,
+      installing: createMockServiceWorker("installing"),
+      active: createMockServiceWorker("activated"),
       unregister: jest.fn(),
       update: jest.fn(),
-      navigationPreload: {} as NavigationPreloadManager,
       onupdatefound: null,
-      pushManager: {} as PushManager,
-      scope: 'test-scope',
-      updateViaCache: 'none' as ServiceWorkerUpdateViaCache,
+      scope: "http://localhost/",
+      navigationPreload: {
+        enable: jest.fn(),
+        disable: jest.fn(),
+        getState: jest.fn(),
+        setHeaderValue: jest.fn()
+      } as unknown as NavigationPreloadManager,
+      pushManager: {
+        getSubscription: jest.fn(),
+        permissionState: jest.fn(),
+        subscribe: jest.fn()
+      } as unknown as PushManager,
       getNotifications: jest.fn(),
       showNotification: jest.fn(),
+      index: null,
+      dispatchEvent: jest.fn(),
       addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn()
+      removeEventListener: jest.fn()
     } as unknown as ServiceWorkerRegistration;
     
     handleRegistration(mockRegistration, { onSuccess, onUpdate });

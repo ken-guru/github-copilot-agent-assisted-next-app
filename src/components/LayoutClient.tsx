@@ -16,7 +16,8 @@ export function LayoutClient({ children }: LayoutClientProps) {
   useEffect(() => {
     // Set up update handler before registering service worker
     setUpdateHandler((message) => {
-      setUpdateMessage(message);
+      // Fix the type mismatch by ensuring we pass a string to setUpdateMessage
+      setUpdateMessage(message.toString());
     });
 
     // Handle custom update event
@@ -38,13 +39,6 @@ export function LayoutClient({ children }: LayoutClientProps) {
       window.removeEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);
     };
   }, []);
-
-  // Fix the type error by converting the ServiceWorkerRegistration to a string
-  const handleServiceWorkerUpdate = (registration: ServiceWorkerRegistration) => {
-    // Create a string message from the registration object instead of passing the registration itself
-    const updateMsg = `New version available (scope: ${registration.scope})`;
-    setUpdateMessage(updateMsg);
-  };
 
   return (
     <>
