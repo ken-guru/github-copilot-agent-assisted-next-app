@@ -220,3 +220,43 @@
 - Proper type checking ensures code reliability and prevents runtime issues
 
 **Status:** Resolved
+
+### Issue: TypeScript Error in ActivityManager Component
+**Date:** 2025-04-14
+**Tags:** #debugging #typescript #type-error #component
+**Status:** Resolved
+
+#### Initial State
+- Type checking failed with the following error in `src/components/ActivityManager.tsx`:
+  ```
+  Type error: Argument of type '(currentActivities: Activity[]) => { colors: { background: string; text: string; border: string; }; id: string; name: string; completed?: boolean; colorIndex?: number; }[]' is not assignable to parameter of type 'Activity[]'.
+  ```
+
+#### Debug Process
+1. Investigated the error in `ActivityManager.tsx`
+   - Found the usage of `setActivities` function with a callback function
+   - Verified that the callback function was returning an array of objects with colors
+
+2. Identified the type mismatch
+   - The callback function was returning an array of objects with colors, which was not assignable to the `Activity[]` type
+   - Realized that the `Activity` type needs to include the colors property
+
+3. Solution implementation
+   - Updated the `Activity` type to include the colors property
+   - Updated the `setActivities` function to use the correct type
+
+4. Type checking verification
+   - Ran `npm run type-check` to verify the type error is resolved
+   - No errors found after implementing the fix
+
+#### Resolution
+- Fixed the TypeScript error in the `ActivityManager` component
+- Updated the `Activity` type to include the colors property
+- Updated the `setActivities` function to use the correct type
+- Verified that the type error is resolved and the component works as expected
+
+#### Lessons Learned
+- Always verify that the types match when using callback functions
+- Proper type checking ensures code reliability and prevents runtime issues
+
+**Status:** Resolved

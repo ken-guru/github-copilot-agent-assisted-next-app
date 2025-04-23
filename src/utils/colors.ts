@@ -179,7 +179,7 @@ export const isDarkMode = () => {
 };
 
 // Export a function that returns theme-appropriate colors instead of a static array
-export function getActivityColors() {
+export function getActivityColors(): ColorSet[] {
   return internalActivityColors.map(colorSet => {
     // Check if we're in a browser environment
     if (typeof window === 'undefined') {
@@ -197,7 +197,7 @@ const usedColors = new Set<number>();
  * Get a random color set
  * @returns A random ColorSet
  */
-export function getRandomColorSet() {
+export function getRandomColorSet(): ColorSet {
   if (usedColors.size === internalActivityColors.length) {
     usedColors.clear();
   }
@@ -217,7 +217,7 @@ export function getRandomColorSet() {
  * @param specificIndex Optional specific index to use (overrides the next available logic)
  * @returns A ColorSet
  */
-export function getNextAvailableColorSet(specificIndex?: number) {
+export function getNextAvailableColorSet(specificIndex?: number): ColorSet {
   const colors = getActivityColors();
   
   if (specificIndex !== undefined && specificIndex >= 0 && specificIndex < colors.length) {
