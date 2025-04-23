@@ -144,3 +144,79 @@
 - Proper type checking ensures code reliability and prevents runtime issues
 
 **Status:** Resolved
+
+### Issue: TypeScript Error in Service Worker Test
+**Date:** 2025-04-12
+**Tags:** #debugging #typescript #type-error #service-worker #test-failures #jest
+**Status:** Resolved
+
+#### Initial State
+- Type checking failed with the following error in `src/utils/__tests__/serviceWorkerTest.ts`:
+  ```
+  Type error: Parameter 'currentActivities' implicitly has an 'any' type.
+  ```
+
+#### Debug Process
+1. Investigated the error in `serviceWorkerTest.ts`
+   - Found the usage of `currentActivities` parameter in the test function
+   - Verified that the parameter was not explicitly typed
+
+2. Identified the missing type annotation
+   - The `currentActivities` parameter was used without a type annotation
+   - Realized that the parameter needs an explicit type annotation
+
+3. Solution implementation
+   - Added the explicit type annotation for `currentActivities` parameter in `serviceWorkerTest.ts`
+
+4. Type checking verification
+   - Ran `npm run type-check` to verify the type error is resolved
+   - No errors found after implementing the fix
+
+#### Resolution
+- Fixed the TypeScript error in the `serviceWorkerTest.ts`
+- Added the explicit type annotation for `currentActivities` parameter
+- Verified that the type error is resolved and the test works as expected
+
+#### Lessons Learned
+- Always verify that all parameters are properly typed
+- Proper type checking ensures code reliability and prevents runtime issues
+
+**Status:** Resolved
+
+### Issue: TypeScript Error in useLoading Hook
+**Date:** 2025-04-13
+**Tags:** #debugging #typescript #type-error #hook
+**Status:** Resolved
+
+#### Initial State
+- Type checking failed with the following error in `src/hooks/useLoading.ts`:
+  ```
+  Type error: Parameter 'loadingState' implicitly has an 'any' type.
+  ```
+
+#### Debug Process
+1. Investigated the error in `useLoading.ts`
+   - Found the usage of `loadingState` parameter in the hook function
+   - Verified that the parameter was not explicitly typed
+
+2. Identified the missing type annotation
+   - The `loadingState` parameter was used without a type annotation
+   - Realized that the parameter needs an explicit type annotation
+
+3. Solution implementation
+   - Added the explicit type annotation for `loadingState` parameter in `useLoading.ts`
+
+4. Type checking verification
+   - Ran `npm run type-check` to verify the type error is resolved
+   - No errors found after implementing the fix
+
+#### Resolution
+- Fixed the TypeScript error in the `useLoading` hook
+- Added the explicit type annotation for `loadingState` parameter
+- Verified that the type error is resolved and the hook works as expected
+
+#### Lessons Learned
+- Always verify that all parameters are properly typed
+- Proper type checking ensures code reliability and prevents runtime issues
+
+**Status:** Resolved

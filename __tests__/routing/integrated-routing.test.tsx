@@ -9,7 +9,15 @@ import AppRouterHome from '../../src/app/page';
 
 // Mock necessary hooks and components
 jest.mock('../../src/hooks/useActivityState', () => ({
-  useActivityState: () => ({
+  useActivityState: (): {
+    currentActivity: any;
+    timelineEntries: any[];
+    completedActivityIds: any[];
+    allActivitiesCompleted: boolean;
+    handleActivitySelect: jest.Mock;
+    handleActivityRemoval: jest.Mock;
+    resetActivities: jest.Mock;
+  } => ({
     currentActivity: null,
     timelineEntries: [],
     completedActivityIds: [],
@@ -21,7 +29,13 @@ jest.mock('../../src/hooks/useActivityState', () => ({
 }));
 
 jest.mock('../../src/hooks/useTimerState', () => ({
-  useTimerState: () => ({
+  useTimerState: (): {
+    elapsedTime: number;
+    isTimeUp: boolean;
+    timerActive: boolean;
+    startTimer: jest.Mock;
+    resetTimer: jest.Mock;
+  } => ({
     elapsedTime: 0,
     isTimeUp: false,
     timerActive: false,
@@ -51,7 +65,10 @@ jest.mock('@/contexts/LoadingContext', () => {
   });
   
   return {
-    useLoading: jest.fn(() => ({
+    useLoading: jest.fn((): {
+      isLoading: boolean;
+      setIsLoading: jest.Mock;
+    } => ({
       isLoading: loadingState,
       setIsLoading
     })),

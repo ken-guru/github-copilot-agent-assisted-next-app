@@ -50,3 +50,5 @@
   - Consider state management library for complex state interactions
   - Implement automated testing for all status transitions
   - Create standard patterns for status message handling
+
+- Note: The `useLoading` hook return values are now explicitly typed.

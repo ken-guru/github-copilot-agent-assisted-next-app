@@ -18,7 +18,7 @@ jest.mock('@/hooks/useActivityState', () => ({
     handleActivitySelect: jest.fn(),
     handleActivityRemoval: jest.fn(),
     resetActivities: jest.fn(),
-  }),
+  } as ReturnType<typeof import('@/hooks/useActivityState').useActivityState>),
 }));
 
 jest.mock('@/hooks/useTimerState', () => ({
@@ -28,7 +28,7 @@ jest.mock('@/hooks/useTimerState', () => ({
     timerActive: false,
     startTimer: jest.fn(),
     resetTimer: jest.fn(),
-  }),
+  } as ReturnType<typeof import('@/hooks/useTimerState').useTimerState>),
 }));
 
 describe('Home Page (App Router)', () => {

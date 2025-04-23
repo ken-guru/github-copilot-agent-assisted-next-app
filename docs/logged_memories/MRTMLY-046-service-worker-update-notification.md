@@ -53,3 +53,5 @@
   - Create dedicated service worker testing library
   - Implement more comprehensive end-to-end testing patterns
   - Consider adding visual testing for notifications
+
+- Note: The `useLoading` hook return values are now explicitly typed.

@@ -11,7 +11,7 @@ interface SplashScreenProps {
 export const SplashScreen = ({ 
   minimumDisplayTime = 1000 
 }: SplashScreenProps) => {
-  const { isLoading } = useLoading();
+  const { isLoading }: { isLoading: boolean } = useLoading();
   const [shouldDisplay, setShouldDisplay] = useState(true);
   const [displayStartTime] = useState(Date.now());
   const [isDarkMode] = useState(isDarkTheme());
