@@ -33,8 +33,8 @@ type Config = {
  * @returns Promise that resolves when registration is complete (for testing)
  */
 export function register(config?: Config): Promise<void> {
-  // Allow registration in production or test environments
-  if ((process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') && 'serviceWorker' in navigator) {
+  // Only allow registration in production environment
+  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     // Skip URL checks in test mode to avoid URL constructor errors
     if (process.env.NODE_ENV !== 'test') {
       try {

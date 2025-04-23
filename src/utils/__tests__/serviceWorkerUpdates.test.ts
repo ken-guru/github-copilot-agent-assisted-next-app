@@ -1,12 +1,17 @@
 import { handleRegistration, checkForUpdates } from '../serviceWorkerUpdates';
 import * as serviceWorkerErrors from '../serviceWorkerErrors'; 
 
+// Mock the serviceWorkerErrors module instead of using spyOn
+jest.mock('../serviceWorkerErrors', () => ({
+  handleServiceWorkerError: jest.fn(),
+  isLocalhost: jest.fn().mockReturnValue(true)
+}));
+
 describe('Service Worker Updates', () => {
   // Create properly typed mock objects
   
   beforeEach(() => {
-    // Spy on error handling functions
-    jest.spyOn(serviceWorkerErrors, 'handleServiceWorkerError').mockImplementation(() => {});
+    // Spy on console functions only
     jest.spyOn(console, 'error').mockImplementation(() => {});
     jest.spyOn(console, 'warn').mockImplementation(() => {});
   });
@@ -133,10 +138,10 @@ describe('Service Worker Updates', () => {
       postMessage: jest.fn()
     });
 
-    // Fix the mock registration by using the proper ServiceWorker interface
+    // Fix the mock registration to properly trigger onUpdate with a waiting worker
     const mockRegistration = {
-      waiting: null,
-      installing: createMockServiceWorker("installing"),
+      waiting: createMockServiceWorker("activated"), // Set waiting to activate onUpdate
+      installing: null,
       active: createMockServiceWorker("activated"),
       unregister: jest.fn(),
       update: jest.fn(),

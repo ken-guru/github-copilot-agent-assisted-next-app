@@ -112,11 +112,13 @@ describe('Service Worker Core', () => {
         value: mockSW
       });
       
-      // Import the actual handleRegistration function for mocking
-      // instead of trying to access it from serviceWorkerUtils
+      // Mock the entire serviceWorkerUpdates module
+      jest.mock('../serviceWorkerUpdates', () => ({
+        handleRegistration: jest.fn()
+      }), { virtual: true });
+      
+      // Import after mocking to get the mocked version
       const { handleRegistration } = require('../serviceWorkerUpdates');
-      jest.spyOn(require('../serviceWorkerUpdates'), 'handleRegistration')
-        .mockImplementation(() => {});
       
       await serviceWorkerUtils.checkForExistingSW({ onSuccess: jest.fn(), onUpdate: jest.fn() });
       expect(mockSW.getRegistration).toHaveBeenCalled();
