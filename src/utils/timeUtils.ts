@@ -1,114 +1,28 @@
 /**
  * Time formatting and manipulation utilities
+ * 
+ * @deprecated This file is maintained for backward compatibility.
+ * Please import directly from the new modular structure:
+ * - import { formatTime } from './time/timeFormatters'
+ * - import { formatTimeFromMs } from './time/timeConversions'
+ * - import { calculateDurationInSeconds } from './time/timeDurations'
+ * - import type { TimeFormatOptions } from './time/types'
  */
 
-/**
- * Format options for the formatTime function
- */
-export type TimeFormatOptions = {
-  /**
-   * Include hours in the formatted output
-   * @default false
-   */
-  includeHours?: boolean;
-  
-  /**
-   * Pad numbers with leading zeros
-   * @default true
-   */
-  padWithZeros?: boolean;
+// Import and re-export the specific functions to maintain backward compatibility
+import { formatTime, formatTimeMMSS } from './time/timeFormatters';
+import { formatTimeFromMs } from './time/timeConversions';
+import { calculateDurationInSeconds } from './time/timeDurations';
+import { TimeFormatOptions } from './time/types';
+
+// Named exports to match the original API
+export {
+  formatTime,
+  formatTimeMMSS,
+  formatTimeFromMs,
+  calculateDurationInSeconds,
+  TimeFormatOptions
 };
 
-/**
- * Formats a time in seconds to a string format
- * 
- * @param seconds - The number of seconds to format
- * @param options - Formatting options
- * @returns A formatted time string - either "MM:SS" or "HH:MM:SS" based on options
- * 
- * @example
- * formatTime(65) // Returns "01:05"
- * formatTime(65, { includeHours: true }) // Returns "00:01:05"
- * formatTime(3661, { includeHours: true }) // Returns "01:01:01"
- * formatTime(3661) // Returns "61:01" (no hour limit in MM:SS format)
- * formatTime(65, { padWithZeros: false }) // Returns "1:05"
- */
-export function formatTime(
-  seconds: number,
-  options: TimeFormatOptions = {}
-): string {
-  const { includeHours = false, padWithZeros = true } = options;
-  const absSeconds = Math.abs(seconds);
-  
-  let hours = 0;
-  let minutes = 0;
-  let remainingSeconds = 0;
-  
-  if (includeHours) {
-    hours = Math.floor(absSeconds / 3600);
-    minutes = Math.floor((absSeconds % 3600) / 60);
-    remainingSeconds = absSeconds % 60;
-  } else {
-    minutes = Math.floor(absSeconds / 60);
-    remainingSeconds = absSeconds % 60;
-  }
-  
-  const format = (num: number): string => {
-    return padWithZeros ? String(num).padStart(2, '0') : String(num);
-  };
-  
-  // Always pad seconds with zeros, even when padWithZeros is false
-  // This matches the expected test behavior
-  const formattedSeconds = padWithZeros ? 
-    String(remainingSeconds).padStart(2, '0') : 
-    remainingSeconds < 10 ? 
-      `0${remainingSeconds}` : 
-      String(remainingSeconds);
-  
-  if (includeHours) {
-    return `${format(hours)}:${format(minutes)}:${formattedSeconds}`;
-  }
-  
-  return `${format(minutes)}:${formattedSeconds}`;
-}
-
-/**
- * Formats a time in seconds to a "MM:SS" string format (e.g. "05:30" for 330 seconds)
- * 
- * @param seconds - The number of seconds to format
- * @returns A string in "MM:SS" format
- * 
- * @example
- * formatTimeMMSS(65) // Returns "01:05"
- * formatTimeMMSS(3661) // Returns "61:01" (no hour limit)
- * 
- * @deprecated Use formatTime(seconds) instead
- */
-export function formatTimeMMSS(seconds: number): string {
-  return formatTime(seconds);
-}
-
-/**
- * Formats milliseconds to a formatted time string
- * 
- * @param milliseconds - Number of milliseconds to format
- * @param options - Formatting options
- * @returns Formatted time string
- */
-export function formatTimeFromMs(
-  milliseconds: number,
-  options: TimeFormatOptions = {}
-): string {
-  return formatTime(Math.floor(milliseconds / 1000), options);
-}
-
-/**
- * Utility to calculate duration in seconds between two timestamps
- * 
- * @param startTime - Start timestamp in milliseconds
- * @param endTime - End timestamp in milliseconds
- * @returns Duration in seconds
- */
-export function calculateDurationInSeconds(startTime: number, endTime: number): number {
-  return Math.floor((endTime - startTime) / 1000);
-}
+// Re-export everything else from the time module
+export * from './time';
