@@ -40,10 +40,10 @@ export default function ActivityManager({
 
   useEffect(() => {
     const defaultActivities = [
-      { id: '1', name: 'Homework', colorIndex: 0 },
-      { id: '2', name: 'Reading', colorIndex: 1 },
-      { id: '3', name: 'Play Time', colorIndex: 2 },
-      { id: '4', name: 'Chores', colorIndex: 3 }
+      { id: '1', name: 'Homework', colorIndex: 0, colors: getNextAvailableColorSet(0) },
+      { id: '2', name: 'Reading', colorIndex: 1, colors: getNextAvailableColorSet(1) },
+      { id: '3', name: 'Play Time', colorIndex: 2, colors: getNextAvailableColorSet(2) },
+      { id: '4', name: 'Chores', colorIndex: 3, colors: getNextAvailableColorSet(3) }
     ];
 
     initializeActivities(defaultActivities, onActivitySelect);
