@@ -39,6 +39,13 @@ export function LayoutClient({ children }: LayoutClientProps) {
     };
   }, []);
 
+  // Fix the type error by converting the ServiceWorkerRegistration to a string
+  const handleServiceWorkerUpdate = (registration: ServiceWorkerRegistration) => {
+    // Create a string message from the registration object instead of passing the registration itself
+    const updateMsg = `New version available (scope: ${registration.scope})`;
+    setUpdateMessage(updateMsg);
+  };
+
   return (
     <>
       {updateMessage && (

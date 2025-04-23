@@ -75,20 +75,20 @@ To reduce AI model token consumption and improve code maintainability, we need t
 | File | Status | Priority | Progress | Next Steps |
 |------|--------|----------|----------|------------|
 | `/src/utils/timeUtils.ts` | ✅ COMPLETED | HIGH | 100% | N/A |
-| `/src/utils/serviceWorkerRegistration.ts` | 🔄 NEXT UP | HIGH | 0% | Analyze file structure and create test files |
+| `/src/utils/serviceWorkerRegistration.ts` | 🔄 IN PROGRESS | HIGH | 45% | ✅ TypeScript errors fixed; Continue with file structure analysis |
 | `/public/service-worker.js` | ⏱️ PENDING | MEDIUM | 0% | Awaiting completion of serviceWorkerRegistration |
 | `/src/components/ActivityManager.tsx` | ⏱️ PENDING | MEDIUM | 0% | Awaiting completion of service worker files |
 | `/src/app/page.module.css` | ⏱️ PENDING | LOW | 0% | Awaiting completion of JS/TS refactoring |
 | `/src/components/Timeline.module.css` | ⏱️ PENDING | LOW | 0% | Awaiting completion of JS/TS refactoring |
 | `/src/components/Summary.module.css` | ⏱️ PENDING | LOW | 0% | Awaiting completion of JS/TS refactoring |
 | `/src/components/__tests__/Summary.test.tsx` | ⏱️ PENDING | MEDIUM | 0% | Awaiting component refactoring |
-| `/src/utils/__tests__/serviceWorkerRegistration.test.ts` | 🔄 NEXT UP | HIGH | 0% | Will be included with serviceWorkerRegistration refactoring |
+| `/src/utils/__tests__/serviceWorkerRegistration.test.ts` | 🔄 IN PROGRESS | HIGH | 45% | ✅ TypeScript errors fixed; Continue with test analysis |
 
 ## Files Exceeding 200 Lines
 
 ### JavaScript/TypeScript Files
 
-1. **`/src/utils/serviceWorkerRegistration.ts`** [NEXT UP]
+1. **`/src/utils/serviceWorkerRegistration.ts`** [IN PROGRESS]
    - Current concerns:
      - Service worker registration logic
      - Update handling
@@ -101,12 +101,13 @@ To reduce AI model token consumption and improve code maintainability, we need t
      - `serviceWorkerErrors.ts` - Error handling and reporting
      - `serviceWorkerRetry.ts` - Retry mechanisms
    - Refactoring approach:
-     1. Create comprehensive tests for current functionality
-     2. Create new directory structure in `/src/utils/serviceWorker/`
-     3. Extract code by concern into separate files
-     4. Create barrel file for backwards compatibility
-     5. Update serviceWorkerRegistration.ts to re-export from new structure
-     6. Update tests to use new structure
+     1. ✅ Fix TypeScript errors in related files
+     2. Create comprehensive tests for current functionality
+     3. Create new directory structure in `/src/utils/serviceWorker/`
+     4. Extract code by concern into separate files
+     5. Create barrel file for backwards compatibility
+     6. Update serviceWorkerRegistration.ts to re-export from new structure
+     7. Update tests to use new structure
 
 2. **`/public/service-worker.js`** [PENDING]
    - Current concerns:

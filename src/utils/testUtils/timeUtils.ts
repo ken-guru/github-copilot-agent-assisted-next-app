@@ -88,17 +88,11 @@ export function mockDateNow(mockTimestamp: number): () => void {
  * - advanceTimers: Advance all timers by the specified milliseconds
  * - cleanup: Restore original timer functions
  * - getRunningTimers: Get the number of currently running timers
- * 
- * @example
- * const { advanceTimers, cleanup } = createTimerMock();
- * setTimeout(() => console.log('Hello'), 1000);
- * advanceTimers(1000); // This will trigger the timeout immediately
- * cleanup(); // Restore original timer functions
  */
 export function createTimerMock() {
   // Store timers with their creation time and callbacks
   const timers: { 
-    id: NodeJS.Timeout; 
+    id: number; 
     callback: Function; 
     delay: number; 
     createdAt: number;
@@ -110,10 +104,11 @@ export function createTimerMock() {
   
   // Mock current time
   let currentTime = Date.now();
+  let nextTimerId = 1;
   
-  // Mock setTimeout
-  global.setTimeout = jest.fn((callback: Function, delay: number) => {
-    const id = {} as NodeJS.Timeout;
+  // Create a mock version with proper typing
+  const mockSetTimeout = function(callback: Function, delay: number): any {
+    const id = nextTimerId++;
     timers.push({ 
       id, 
       callback, 
@@ -121,16 +116,23 @@ export function createTimerMock() {
       createdAt: currentTime 
     });
     return id;
-  });
+  };
   
-  // Mock clearTimeout
-  global.clearTimeout = jest.fn((id: NodeJS.Timeout) => {
+  // Add mocking capabilities to our function
+  const mockedSetTimeout = jest.fn(mockSetTimeout) as unknown as typeof global.setTimeout;
+  global.setTimeout = mockedSetTimeout;
+  
+  // Create a mock clearTimeout with proper typing
+  const mockClearTimeout = function(id: any): void {
     const index = timers.findIndex(timer => timer.id === id);
     if (index !== -1) {
       timers.splice(index, 1);
     }
-    return undefined;
-  });
+  };
+  
+  // Add mocking capabilities to our function
+  const mockedClearTimeout = jest.fn(mockClearTimeout) as unknown as typeof global.clearTimeout;
+  global.clearTimeout = mockedClearTimeout;
   
   // Advance timers by specified milliseconds
   const advanceTimers = (ms: number) => {
