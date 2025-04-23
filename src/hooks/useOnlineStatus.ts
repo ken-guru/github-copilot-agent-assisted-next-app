@@ -16,12 +16,12 @@ export function useOnlineStatus(): boolean {
     setIsOnline(navigator.onLine);
 
     // Handler for online event
-    const handleOnline = () => {
+    const handleOnline = (): void => {
       setIsOnline(true);
     };
 
     // Handler for offline event
-    const handleOffline = () => {
+    const handleOffline = (): void => {
       setIsOnline(false);
     };
 

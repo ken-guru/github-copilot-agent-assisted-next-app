@@ -5,7 +5,7 @@ import { Activity } from './ActivityManagerCore';
 export const useActivityManagerTheme = (activities: Activity[], setActivities: (activities: Activity[]) => void) => {
   useEffect(() => {
     const updateColors = () => {
-      setActivities(currentActivities => 
+      setActivities((currentActivities: Activity[]) => 
         currentActivities.map(activity => ({
           ...activity,
           colors: getNextAvailableColorSet(activity.colorIndex)
