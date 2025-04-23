@@ -144,36 +144,21 @@ export function registerValidSW(
  */
 export function checkForExistingSW(config?: Config): Promise<void> {
   if ('serviceWorker' in navigator) {
-    // Create a new promise to ensure consistent Promise<void> return type
     return new Promise<void>((resolve) => {
       navigator.serviceWorker.getRegistration()
-        .then((registration): Promise<void> => {
+        .then((registration) => {
           if (!registration) {
-            return Promise.resolve();
+            resolve();
+            return;
           }
           
-          // Fix the Promise return type by ensuring consistent Promise<void> return
-          return navigator.serviceWorker.getRegistration()
-            .then((registration): Promise<void> => {
-              if (!registration) {
-                return Promise.resolve();
-              }
-              
-              // Wrap the implementation in a Promise<void> to ensure consistent return type
-              return new Promise<void>((resolve) => {
-                // Original implementation logic goes here
-                // ...
-                
-                // Make sure to call resolve() at the end of the operation
-                resolve();
-              });
-            })
-            .catch((error): void => {
-              console.error('Error during service worker getRegistration:', error);
-            });
+          // Handle the registration and ensure we return void
+          handleRegistration(registration, config);
+          resolve();
         })
-        .catch((error): void => {
+        .catch((error) => {
           console.error('Error during service worker getRegistration:', error);
+          resolve();
         });
     });
   }
@@ -191,13 +176,14 @@ export function unregister(): Promise<void> {
       return navigator.serviceWorker.getRegistration()
         .then(registration => {
           if (registration) {
-            return registration.unregister();
+            // Explicitly convert the boolean Promise to void Promise
+            return registration.unregister().then(() => undefined);
           }
-          return Promise.resolve();
+          return undefined;
         })
         .catch(error => {
           console.error(error.message);
-          return Promise.resolve(); // Ensure we always return a promise
+          return undefined; // Ensure we always return undefined to align with Promise<void>
         });
     }
   }

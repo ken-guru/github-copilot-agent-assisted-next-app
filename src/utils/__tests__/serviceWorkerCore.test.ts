@@ -139,4 +139,75 @@ describe('Service Worker Core', () => {
       expect(mockSW.getRegistration).toHaveBeenCalled();
     });
   });
+
+  describe('unregister', () => {
+    it('should unregister service worker when registration exists', async () => {
+      // Mock registration with unregister method that returns Promise<boolean>
+      const mockRegistration = createMockRegistration();
+      mockRegistration.unregister.mockResolvedValue(true);
+
+      // Create a mock with getRegistration method
+      const mockSW: MockServiceWorkerContainer = {
+        register: jest.fn(),
+        getRegistration: jest.fn().mockResolvedValue(mockRegistration)
+      };
+      
+      // Set navigator.serviceWorker safely
+      Object.defineProperty(navigator, 'serviceWorker', {
+        configurable: true,
+        value: mockSW
+      });
+      
+      // Call unregister and verify it returns void Promise
+      const result = await serviceWorkerUtils.unregister();
+      expect(mockSW.getRegistration).toHaveBeenCalled();
+      expect(mockRegistration.unregister).toHaveBeenCalled();
+      expect(result).toBeUndefined();
+    });
+    
+    it('should handle when no registration is found', async () => {
+      // Create mock with no registration
+      const mockSW: MockServiceWorkerContainer = {
+        register: jest.fn(),
+        getRegistration: jest.fn().mockResolvedValue(undefined)
+      };
+      
+      // Set navigator.serviceWorker safely
+      Object.defineProperty(navigator, 'serviceWorker', {
+        configurable: true,
+        value: mockSW
+      });
+      
+      // Call unregister and verify it returns void Promise
+      const result = await serviceWorkerUtils.unregister();
+      expect(mockSW.getRegistration).toHaveBeenCalled();
+      expect(result).toBeUndefined();
+    });
+
+    it('should handle errors during unregistration', async () => {
+      // Create mock that throws error
+      const mockSW: MockServiceWorkerContainer = {
+        register: jest.fn(),
+        getRegistration: jest.fn().mockRejectedValue(new Error('Test error'))
+      };
+      
+      // Set navigator.serviceWorker safely
+      Object.defineProperty(navigator, 'serviceWorker', {
+        configurable: true,
+        value: mockSW
+      });
+      
+      // Spy on console.error
+      const consoleErrorSpy = jest.spyOn(console, 'error');
+      
+      // Call unregister and verify it handles errors properly
+      const result = await serviceWorkerUtils.unregister();
+      expect(mockSW.getRegistration).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      expect(result).toBeUndefined();
+      
+      // Restore console.error
+      consoleErrorSpy.mockRestore();
+    });
+  });
 });
