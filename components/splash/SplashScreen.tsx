@@ -27,73 +27,75 @@ const isDarkTheme = (): boolean => {
   }
 };
 
-// Create a script that will run as soon as possible during page load
-// This needs to be in a string so it executes before React hydration
+// Create a script that will run AFTER hydration is complete
+// We DO NOT want to modify the DOM until React hydration is done
 const earlyThemeScript = `
   (function() {
-    try {
-      var isDark = false;
-      
-      // Check localStorage first
-      var savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        isDark = savedTheme === 'dark';
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        // Then try system preference
-        isDark = true;
+    // Create a function to safely apply theme after hydration
+    function applyThemeWhenSafe() {
+      try {
+        var isDark = false;
+        
+        // Check localStorage first
+        var savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+          isDark = savedTheme === 'dark';
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // Then try system preference
+          isDark = true;
+        }
+        
+        // Instead of modifying document directly, dispatch a custom event
+        // This allows React components to react appropriately
+        window.dispatchEvent(new CustomEvent('themedetected', { 
+          detail: { isDark: isDark } 
+        }));
+      } catch(e) {
+        // Silently fail
       }
-      
-      // Apply theme class immediately
-      if (isDark) {
-        document.documentElement.classList.add('dark-mode');
-        document.documentElement.classList.remove('light-mode');
-      } else {
-        document.documentElement.classList.add('light-mode');
-        document.documentElement.classList.remove('dark-mode');
-      }
-      
-      // Also apply to document body background to prevent any white flash
-      document.body.style.backgroundColor = isDark ? 
-        'var(--bg-primary-dark, #121212)' : 
-        'var(--bg-primary, #ffffff)';
-    } catch(e) {
-      // Silently fail
     }
+    
+    // Wait for next tick to ensure hydration is complete
+    setTimeout(applyThemeWhenSafe, 0);
   })();
 `;
 
-// Try to apply theme immediately during module initialization
-// This helps with subsequent navigations in the SPA
-if (typeof document !== 'undefined') {
-  try {
-    if (isDarkTheme()) {
-      document.documentElement.classList.add('dark-mode');
-      document.documentElement.classList.remove('light-mode');
-    } else {
-      document.documentElement.classList.add('light-mode');
-      document.documentElement.classList.remove('dark-mode');
-    }
-  } catch {
-    // Silently fail
-  }
-}
+// REMOVED: direct DOM manipulation during module initialization
+// We'll handle all theme changes through React's state system instead
 
 export const SplashScreen = ({ 
   minimumDisplayTime = 1000 
 }: SplashScreenProps) => {
   const { isLoading } = useLoading();
   const [shouldDisplay, setShouldDisplay] = useState(true);
-  const [displayStartTime] = useState(Date.now());
-  const [isDarkMode] = useState(isDarkTheme());
+  // Use a ref for values that don't affect rendering
+  const displayStartTimeRef = React.useRef(Date.now());
   
-  // Inject the early theme script on first render
+  // CRITICAL: Always initialize with FALSE on both server and client for consistent hydration
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  // Track if we've completed hydration
+  const hydrationComplete = React.useRef(false);
+  
+  // Handle theme change event and initialization after hydration
   useEffect(() => {
-    // Only run once on initial mount
+    // Mark hydration as complete
+    hydrationComplete.current = true;
+    
+    // Listen for theme detection from our script
+    const handleThemeDetected = (event: CustomEvent<{isDark: boolean}>) => {
+      setIsDarkMode(event.detail.isDark);
+    };
+    
+    // Add event listener with type assertion
+    window.addEventListener('themedetected', handleThemeDetected as EventListener);
+    
+    // Inject the script that will safely detect theme after hydration
     const script = document.createElement('script');
     script.innerHTML = earlyThemeScript;
     document.head.appendChild(script);
     
     return () => {
+      window.removeEventListener('themedetected', handleThemeDetected as EventListener);
       if (script.parentNode) {
         script.parentNode.removeChild(script);
       }
@@ -103,7 +105,7 @@ export const SplashScreen = ({
   useEffect(() => {
     if (!isLoading) {
       const currentTime = Date.now();
-      const elapsedTime = currentTime - displayStartTime;
+      const elapsedTime = currentTime - displayStartTimeRef.current;
       
       if (elapsedTime >= minimumDisplayTime) {
         // If minimum time has passed, hide splash screen immediately
@@ -118,7 +120,7 @@ export const SplashScreen = ({
         return () => clearTimeout(timer);
       }
     }
-  }, [isLoading, minimumDisplayTime, displayStartTime]);
+  }, [isLoading, minimumDisplayTime]);
   
   if (!shouldDisplay) {
     return null;
