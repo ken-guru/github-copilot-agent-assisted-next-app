@@ -3,6 +3,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import DisplayToggle from '../../components/ui/DisplayToggle';
 import { DisplaySettingsProvider } from '../../components/contexts/DisplaySettingsContext';
 
+// Mock @headlessui/react
+jest.mock('@headlessui/react', () => require('../mocks/headlessui-react'));
+
 // Mock the useWakeLock hook
 jest.mock('../../hooks/useWakeLock', () => ({
   __esModule: true,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styles from './SplashScreen.module.css';
+import styles from './splash/SplashScreen.module.css';
 
 interface SplashScreenProps {
   children: React.ReactNode;
@@ -40,12 +40,21 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
         aria-label="Application is loading"
         style={splashScreenStyle}
       >
-        <div className={styles.splashContent}>
+        <div className={styles.logoContainer || styles.splashContent}>
           <img src="/logo.png" alt="App Logo" className={styles.logo} />
           <div className={styles.loadingIndicator} data-testid="loading-indicator">
-            <div className={styles.loadingDot} style={loadingDotStyle}></div>
-            <div className={styles.loadingDot} style={loadingDotStyle}></div>
-            <div className={styles.loadingDot} style={loadingDotStyle}></div>
+            <div 
+              className={`SplashScreen-module__loadingDot ${styles.loadingDot}`} 
+              style={loadingDotStyle}
+            ></div>
+            <div 
+              className={`SplashScreen-module__loadingDot ${styles.loadingDot}`} 
+              style={loadingDotStyle}
+            ></div>
+            <div 
+              className={`SplashScreen-module__loadingDot ${styles.loadingDot}`} 
+              style={loadingDotStyle}
+            ></div>
           </div>
         </div>
       </div>

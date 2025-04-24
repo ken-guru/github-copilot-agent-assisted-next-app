@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { 
   DisplaySettingsProvider, 
   useDisplaySettings 
@@ -91,6 +91,9 @@ describe('DisplaySettingsContext', () => {
     
     // Clear mocks to check the retrieval
     (setItem as jest.Mock).mockClear();
+    
+    // Clean up the previous render to avoid duplicate elements
+    cleanup();
     
     // Simulate localStorage having a value
     (getItem as jest.Mock).mockReturnValueOnce('true');

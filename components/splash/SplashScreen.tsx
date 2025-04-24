@@ -27,6 +27,22 @@ const isDarkTheme = (): boolean => {
   }
 };
 
+// Static initialization to handle theme before component renders
+// This should only run once when the module is imported
+if (typeof window !== 'undefined') {
+  try {
+    const storedTheme = localStorage.getItem('theme');
+    if (storedTheme === 'dark') {
+      document.documentElement.classList.add('dark-mode');
+    } else if (storedTheme === 'light') {
+      document.documentElement.classList.add('light-mode');
+    }
+  } catch (e) {
+    // Silently fail if localStorage isn't available
+    console.error('Failed to access localStorage for theme initialization', e);
+  }
+}
+
 // Create a script that will run AFTER hydration is complete
 // We DO NOT want to modify the DOM until React hydration is done
 const earlyThemeScript = `
@@ -148,15 +164,24 @@ export const SplashScreen = ({
         />
         
         <div className={styles.loadingIndicator} data-testid="loading-indicator">
-          <div className={styles.loadingDot} style={{
-            backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
-          }}></div>
-          <div className={styles.loadingDot} style={{
-            backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
-          }}></div>
-          <div className={styles.loadingDot} style={{
-            backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
-          }}></div>
+          <div 
+            className={`SplashScreen-module__loadingDot ${styles.loadingDot}`} 
+            style={{
+              backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
+            }}
+          ></div>
+          <div 
+            className={`SplashScreen-module__loadingDot ${styles.loadingDot}`} 
+            style={{
+              backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
+            }}
+          ></div>
+          <div 
+            className={`SplashScreen-module__loadingDot ${styles.loadingDot}`} 
+            style={{
+              backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
+            }}
+          ></div>
         </div>
       </div>
     </div>

@@ -103,6 +103,9 @@ describe('ThemeProvider', () => {
   });
   
   it('loads theme preference from localStorage on client', () => {
+    // Setup Jest fake timers
+    jest.useFakeTimers();
+    
     // Set mock localStorage to return dark theme
     (window.localStorage.getItem as jest.Mock).mockReturnValueOnce('dark');
     
@@ -117,10 +120,14 @@ describe('ThemeProvider', () => {
     
     // After useEffect runs, it should update to dark
     act(() => {
-      // Simulate useEffect execution
+      // Advance timers to trigger setTimeout
       jest.runAllTimers();
     });
     
+    // Verify dark mode class was added
     expect(document.documentElement.classList.add).toHaveBeenCalledWith('dark-mode');
+    
+    // Clean up
+    jest.useRealTimers();
   });
 });

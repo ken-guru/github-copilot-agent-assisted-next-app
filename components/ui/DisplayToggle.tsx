@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Switch } from '@headlessui/react';
 import { useDisplaySettings } from '../contexts/DisplaySettingsContext';
 import useWakeLock from '../../hooks/useWakeLock';
 
@@ -29,21 +28,26 @@ const DisplayToggle: React.FC = () => {
           <span className="text-xs text-red-400">Not supported on this device</span>
         )}
       </div>
-      <Switch
-        checked={keepDisplayOn}
-        onChange={toggleKeepDisplayOn}
+      <button
+        role="switch"
+        aria-checked={keepDisplayOn}
+        onClick={toggleKeepDisplayOn}
         disabled={!isSupported}
-        className={`${
-          keepDisplayOn ? 'bg-green-600' : 'bg-gray-400'
-        } relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2`}
+        data-testid="display-toggle"
+        className={`
+          relative inline-flex h-6 w-11 items-center rounded-full transition-colors 
+          focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
+          ${keepDisplayOn ? 'bg-green-600' : 'bg-gray-400'}
+        `}
       >
         <span className="sr-only">Keep display on while in activities</span>
         <span
-          className={`${
-            keepDisplayOn ? 'translate-x-6' : 'translate-x-1'
-          } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+          className={`
+            inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+            ${keepDisplayOn ? 'translate-x-6' : 'translate-x-1'}
+          `}
         />
-      </Switch>
+      </button>
     </div>
   );
 };

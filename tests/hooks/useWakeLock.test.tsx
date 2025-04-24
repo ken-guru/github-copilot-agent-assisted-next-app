@@ -2,11 +2,28 @@ import { renderHook, act } from '@testing-library/react';
 import useWakeLock from '../../hooks/useWakeLock';
 
 describe('useWakeLock', () => {
+  // Setup fake timers for all tests
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+  
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+  
   // Setup for browser environment
   const setupBrowserEnv = (isSupported = true) => {
-    // Mock wake lock sentinel
+    // Mock release event handler
+    const releaseHandler = jest.fn();
+    
+    // Mock wake lock sentinel with addEventListener method
     const mockWakeLock = {
       release: jest.fn().mockResolvedValue(undefined),
+      addEventListener: jest.fn((event, handler) => {
+        if (event === 'release') {
+          releaseHandler.mockImplementation(handler);
+        }
+      }),
     };
 
     // Mock request function
@@ -27,7 +44,7 @@ describe('useWakeLock', () => {
       delete navigator.wakeLock;
     }
 
-    return { mockRequest, mockWakeLock };
+    return { mockRequest, mockWakeLock, releaseHandler };
   };
 
   // Teardown for each test

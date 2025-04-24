@@ -42,20 +42,20 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     if (typeof window !== 'undefined' && !initialThemeApplied.current) {
       initialThemeApplied.current = true;
       setIsClient(true);
-      const storedTheme = localStorage.getItem('theme');
-      if (storedTheme === 'dark') {
-        setIsDarkMode(true);
-        // Defer DOM manipulation until after hydration is complete
-        setTimeout(() => {
+      
+      // Add a small delay to ensure this happens after initial render
+      // This ensures SSR and initial client render match
+      setTimeout(() => {
+        const storedTheme = localStorage.getItem('theme');
+        if (storedTheme === 'dark') {
+          setIsDarkMode(true);
+          // Apply dark mode class after hydration
           document.documentElement.classList.add('dark-mode');
-        }, 0);
-      } else {
-        // Ensure dark-mode class is removed if preference is light
-        // Defer DOM manipulation until after hydration is complete
-        setTimeout(() => {
+        } else {
+          // Ensure dark-mode class is removed if preference is light
           document.documentElement.classList.remove('dark-mode');
-        }, 0);
-      }
+        }
+      }, 0);
     }
   }, []);
   
