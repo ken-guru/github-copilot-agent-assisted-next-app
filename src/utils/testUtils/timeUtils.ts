@@ -5,33 +5,30 @@
  * operations in tests and components.
  */
 
-import { formatTime as mainFormatTime, calculateDurationInSeconds as calcDuration } from '../timeUtils';
+import { 
+  formatTime as mainFormatTime, 
+  formatTimeFromMs as mainFormatTimeFromMs,
+  calculateDurationInSeconds
+} from '../timeUtils';
 
 /**
- * More specific type for timer callback functions
- */
-type TimerCallback = (...args: unknown[]) => void;
-
-/**
- * Mocks the Date.now() function for testing
+ * Formats a time in seconds to a "MM:SS" string format
+ * This is a test utility wrapper around the main formatTime function
  * 
- * @param mockTimestamp - The timestamp to return when Date.now() is called
- * @returns A cleanup function to restore original behavior
+ * @param seconds - The number of seconds to format
+ * @returns A string in "MM:SS" format
+ * 
+ * @example
+ * formatTimeMMSS(65) // Returns "01:05"
+ * formatTimeMMSS(3661) // Returns "61:01" (no hour limit)
  */
-export function mockDateNow(mockTimestamp: number): () => void {
-  const originalDateNow = Date.now;
-  
-  // Replace Date.now with a mock function
-  Date.now = jest.fn().mockReturnValue(mockTimestamp);
-  
-  // Return a cleanup function
-  return () => {
-    Date.now = originalDateNow;
-  };
+export function formatTimeMMSS(seconds: number): string {
+  return mainFormatTime(seconds);
 }
 
 /**
  * Formats a time in seconds to a "HH:MM:SS" string format
+ * This is a test utility wrapper around the main formatTime function
  * 
  * @param seconds - The number of seconds to format
  * @returns A string in "HH:MM:SS" format
@@ -39,97 +36,139 @@ export function mockDateNow(mockTimestamp: number): () => void {
  * @example
  * formatTimeHHMMSS(65) // Returns "00:01:05"
  * formatTimeHHMMSS(3661) // Returns "01:01:01"
- * 
- * @deprecated Use formatTime(seconds, { includeHours: true }) from '../timeUtils' instead
  */
 export function formatTimeHHMMSS(seconds: number): string {
   return mainFormatTime(seconds, { includeHours: true });
 }
 
 /**
- * @deprecated Use formatTime(seconds, { includeHours: true }) from '../timeUtils' instead
- * This is kept for backward compatibility
+ * Re-export formatTime from main utils
  */
-export const formatTime = formatTimeHHMMSS;
+export const formatTime = (seconds: number) => mainFormatTime(seconds, { includeHours: true });
 
 /**
- * Re-export the common time utilities
- */
-export { calcDuration as calculateDurationInSeconds };
-
-/**
- * Creates a mock for window.setTimeout in tests
+ * Formats milliseconds to a formatted time string
+ * This is a test utility re-export of the main formatTimeFromMs function
  * 
- * @returns Object containing mock control functions
+ * @param milliseconds - Number of milliseconds to format
+ * @returns Formatted time string in "MM:SS" format
+ */
+export { mainFormatTimeFromMs as formatTimeFromMs };
+
+/**
+ * Re-export calculateDurationInSeconds from main utils
+ */
+export { calculateDurationInSeconds };
+
+/**
+ * Mocks the Date.now function to return a specific timestamp
+ * Useful for testing time-dependent code with deterministic values
+ * 
+ * @param mockTimestamp - The timestamp to return from Date.now()
+ * @returns A cleanup function to restore the original Date.now
+ * 
+ * @example
+ * const cleanup = mockDateNow(1612345678000);
+ * console.log(Date.now()); // 1612345678000
+ * cleanup(); // Restores original Date.now
+ */
+export function mockDateNow(mockTimestamp: number): () => void {
+  const originalNow = Date.now;
+  Date.now = jest.fn(() => mockTimestamp);
+  
+  return () => {
+    Date.now = originalNow;
+  };
+}
+
+/**
+ * Creates a mock for timers that can be manually advanced in tests
+ * 
+ * @returns An object with functions to control the timers
+ * - advanceTimers: Advance all timers by the specified milliseconds
+ * - cleanup: Restore original timer functions
+ * - getRunningTimers: Get the number of currently running timers
  */
 export function createTimerMock() {
-  // Store original functions
+  // Store timers with their creation time and callbacks
+  type TimerCallback = (...args: unknown[]) => void;
+  
+  const timers: { 
+    id: number; 
+    callback: TimerCallback; 
+    delay: number; 
+    createdAt: number;
+  }[] = [];
+  
+  // Store original timer functions
   const originalSetTimeout = global.setTimeout;
   const originalClearTimeout = global.clearTimeout;
   
-  // Create maps to track timer IDs and callbacks
-  const timeoutMap = new Map<number, { callback: TimerCallback; delay: number; startTime: number }>();
+  // Mock current time
+  let currentTime = Date.now();
   let nextTimerId = 1;
   
-  // Create the mock function with the correct signature
-  const mockedSetTimeout = (callback: TimerCallback, delay: number): NodeJS.Timeout => {
-    const timerId = nextTimerId++;
-    timeoutMap.set(timerId, {
-      callback,
-      delay,
-      startTime: Date.now(),
+  // Create a mock version with proper typing
+  const mockSetTimeout = function(callback: TimerCallback, delay: number): number {
+    const id = nextTimerId++;
+    timers.push({ 
+      id, 
+      callback, 
+      delay, 
+      createdAt: currentTime 
     });
-    return timerId as unknown as NodeJS.Timeout;
+    return id;
   };
   
-  // Add __promisify__ property to match setTimeout signature
-  Object.defineProperty(mockedSetTimeout, '__promisify__', {
-    value: (): Promise<void> => Promise.resolve(),
-    configurable: true,
-  });
+  // Add mocking capabilities to our function
+  const mockedSetTimeout = jest.fn(mockSetTimeout) as unknown as typeof global.setTimeout;
+  global.setTimeout = mockedSetTimeout;
   
-  // Replace setTimeout with our mock
-  global.setTimeout = mockedSetTimeout as typeof global.setTimeout;
-  
-  // Replace clearTimeout with a properly typed mock
-  global.clearTimeout = ((timerId: NodeJS.Timeout | number | undefined): void => {
-    if (timerId !== undefined) {
-      timeoutMap.delete(timerId as number);
+  // Create a mock clearTimeout with proper typing
+  const mockClearTimeout = function(id: number | NodeJS.Timeout): void {
+    const index = timers.findIndex(timer => timer.id === id);
+    if (index !== -1) {
+      timers.splice(index, 1);
     }
-  }) as typeof global.clearTimeout;
+  };
   
-  // Function to advance timers
-  const advanceTimers = (timeMs: number) => {
-    const now = Date.now();
-    const newNow = now + timeMs;
+  // Add mocking capabilities to our function
+  const mockedClearTimeout = jest.fn(mockClearTimeout) as unknown as typeof global.clearTimeout;
+  global.clearTimeout = mockedClearTimeout;
+  
+  // Advance timers by specified milliseconds
+  const advanceTimers = (ms: number) => {
+    // Increment current mock time
+    currentTime += ms;
     
-    // Mock Date.now to return the advanced time
-    Date.now = jest.fn().mockReturnValue(newNow);
+    // Find timers that should be triggered
+    // Work with a copy to avoid mutation during iteration
+    const timersCopy = [...timers];
     
-    // Check which timers should fire
-    timeoutMap.forEach((timerData, timerId) => {
-      const { callback, delay, startTime } = timerData;
-      
-      // If the timer should fire by now
-      if (startTime + delay <= newNow) {
-        // Remove from the map
-        timeoutMap.delete(timerId);
-        // Execute the callback
-        callback();
+    timersCopy.forEach(timer => {
+      // Calculate if timer should fire (elapsed time >= delay)
+      if (currentTime - timer.createdAt >= timer.delay) {
+        // Find the timer in the original array and remove it
+        const index = timers.findIndex(t => t.id === timer.id);
+        if (index !== -1) {
+          const timerToExecute = timers.splice(index, 1)[0];
+          // Execute the callback
+          timerToExecute.callback();
+        }
       }
     });
   };
   
-  // Cleanup function
+  // Cleanup function to restore original timer functions
   const cleanup = () => {
     global.setTimeout = originalSetTimeout;
     global.clearTimeout = originalClearTimeout;
-    timeoutMap.clear();
   };
   
-  return {
-    advanceTimers,
-    cleanup,
-    getRunningTimers: () => timeoutMap.size,
+  // Return the number of running timers
+  const getRunningTimers = () => {
+    return timers.length;
   };
+  
+  return { advanceTimers, cleanup, getRunningTimers };
 }

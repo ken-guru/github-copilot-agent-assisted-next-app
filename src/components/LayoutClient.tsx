@@ -16,7 +16,8 @@ export function LayoutClient({ children }: LayoutClientProps) {
   useEffect(() => {
     // Set up update handler before registering service worker
     setUpdateHandler((message) => {
-      setUpdateMessage(message);
+      // Fix the type mismatch by ensuring we pass a string to setUpdateMessage
+      setUpdateMessage(message.toString());
     });
 
     // Handle custom update event
