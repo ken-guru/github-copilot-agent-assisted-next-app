@@ -1,66 +1,98 @@
-import { handleServiceWorkerError, isLocalhost } from '../serviceWorkerErrors';
+import { handleServiceWorkerError, isLocalhost, logCacheEvent } from '../serviceWorkerErrors';
 
-describe('serviceWorkerErrors', () => {
+describe('Service Worker Errors', () => {
   describe('handleServiceWorkerError', () => {
-    const originalConsoleError = console.error;
-    
-    beforeEach(() => {
-      console.error = jest.fn();
-    });
-    
-    afterEach(() => {
-      console.error = originalConsoleError;
-    });
-    
     it('should log error message to console', () => {
-      const error = new Error('Test error');
-      handleServiceWorkerError(error);
+      // Arrange
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const testError = new Error('Test service worker error');
       
-      expect(console.error).toHaveBeenCalledWith('Error during service worker registration:', error);
+      // Act
+      handleServiceWorkerError(testError);
+      
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error during service worker registration:', 
+        testError
+      );
+      
+      // Cleanup
+      consoleErrorSpy.mockRestore();
     });
   });
-  
+
   describe('isLocalhost', () => {
-    it('should return true for localhost hostname', () => {
+    it('should return true when hostname is localhost', () => {
+      // Arrange
       Object.defineProperty(window, 'location', {
-        value: {
-          hostname: 'localhost',
-        },
-        configurable: true,
+        value: { hostname: 'localhost' },
+        writable: true
       });
       
-      expect(isLocalhost()).toBe(true);
+      // Act
+      const result = isLocalhost();
+      
+      // Assert
+      expect(result).toBe(true);
     });
-    
-    it('should return true for 127.0.0.1', () => {
+
+    it('should return true when hostname is [::1]', () => {
+      // Arrange
       Object.defineProperty(window, 'location', {
-        value: {
-          hostname: '127.0.0.1',
-        },
-        configurable: true,
+        value: { hostname: '[::1]' },
+        writable: true
       });
       
-      expect(isLocalhost()).toBe(true);
+      // Act
+      const result = isLocalhost();
+      
+      // Assert
+      expect(result).toBe(true);
     });
-    
-    it('should return false for other hostnames', () => {
-      // Store the original defineProperty function
-      const originalDefineProperty = Object.defineProperty;
-      
-      // Mock window.location with a non-localhost hostname
+
+    it('should return true when hostname matches IPv4 localhost pattern', () => {
+      // Arrange
       Object.defineProperty(window, 'location', {
-        value: {
-          hostname: 'example.com',
-        },
-        configurable: true,
+        value: { hostname: '127.0.0.1' },
+        writable: true
       });
       
-      try {
-        expect(isLocalhost()).toBe(false);
-      } finally {
-        // No need to restore as the test environment is reset between tests
-        // and our mock is configured with configurable: true
-      }
+      // Act
+      const result = isLocalhost();
+      
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return false when hostname is not localhost', () => {
+      // Arrange
+      Object.defineProperty(window, 'location', {
+        value: { hostname: 'example.com' },
+        writable: true
+      });
+      
+      // Act
+      const result = isLocalhost();
+      
+      // Assert
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('logCacheEvent', () => {
+    it('should log message to console', () => {
+      // Arrange
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      const testMessage = 'Test cache event message';
+      
+      // Act
+      logCacheEvent(testMessage);
+      
+      // Assert
+      expect(consoleLogSpy).toHaveBeenCalledWith(testMessage);
+      
+      // Cleanup
+      consoleLogSpy.mockRestore();
     });
   });
 });
