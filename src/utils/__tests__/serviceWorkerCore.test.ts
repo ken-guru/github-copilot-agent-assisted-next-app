@@ -214,13 +214,13 @@ describe('Service Worker Core', () => {
         value: mockSW
       });
       
-      // Spy on console.error
-      const consoleErrorSpy = jest.spyOn(console, 'error');
+      // Spy on console.error and implement mockImplementation to prevent actual logging
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
       
       // Call unregister and verify it handles errors properly
       const result = await serviceWorkerUtils.unregister();
       expect(mockSW.getRegistration).toHaveBeenCalled();
-      expect(consoleErrorSpy).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Test error');
       expect(result).toBeUndefined();
       
       // Restore console.error
