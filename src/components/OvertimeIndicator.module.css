@@ -25,8 +25,41 @@
   font-weight: 700;
 }
 
+/* Mobile enhancements */
+.mobile {
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.7);
+  transition: all var(--transition-speed-normal);
+  z-index: var(--z-index-toast);
+}
+
+.mobileDuration {
+  font-size: var(--font-size-mobile-xl);
+  font-weight: 800;
+}
+
+/* Banner style for important notifications */
+.banner {
+  position: sticky;
+  top: var(--header-height-mobile);
+  left: 0;
+  right: 0;
+  width: 100%;
+  border-radius: 0;
+  margin: 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  z-index: var(--z-index-header);
+}
+
+/* Animation styles */
 .pulsing {
   animation: pulse 2s infinite;
+}
+
+/* More intense animation for mobile */
+.intensePulsing {
+  animation: intensePulse 1.5s infinite;
 }
 
 @keyframes pulse {
@@ -41,6 +74,24 @@
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes intensePulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.7);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.08);
+    box-shadow: 0 6px 16px rgba(229, 57, 53, 0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.7);
   }
 }
 
@@ -63,7 +114,8 @@
 
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
-  .pulsing {
+  .pulsing,
+  .intensePulsing {
     animation: none;
   }
   

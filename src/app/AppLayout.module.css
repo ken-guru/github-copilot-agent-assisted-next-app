@@ -1,0 +1,56 @@
+/* 
+ * AppLayout styles
+ * Mobile-first layout with responsive adaptations
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Mobile layout */
+.mobileContainer {
+  max-width: 100vw;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.mobileMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  min-height: calc(100vh - var(--header-height-mobile) - var(--footer-height-mobile));
+}
+
+/* Desktop layout */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  min-height: calc(100vh - var(--header-height-desktop) - var(--footer-height-desktop));
+}
+
+/* Tablet and larger screens */
+@media (min-width: 768px) {
+  .container {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+}
+
+/* Desktop screens */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+}
