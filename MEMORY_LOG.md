@@ -11,3 +11,4 @@ This file serves as an index of all logged memories across the project's develop
 - [MRTMLY-004: Mobile UI Test Debugging](./docs/logged_memories/MRTMLY-004-mobile-ui-test-debugging.md)
 - [MRTMLY-005: Mobile UI Implementation Plan](./docs/logged_memories/MRTMLY-005-mobile-ui-implementation-plan.md)
 - [MRTMLY-006: CSS Variables Implementation](./docs/logged_memories/MRTMLY-006-css-variables-implementation.md)
+- [MRTMLY-007: TouchableButton Implementation](./docs/logged_memories/MRTMLY-007-touchable-button-implementation.md)
