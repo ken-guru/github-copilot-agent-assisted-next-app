@@ -1,0 +1,95 @@
+/* Import CSS variables system */
+@import './variables.css';
+
+/* Existing global styles... */
+
+/* Add mobile-friendly base styles */
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-size: var(--font-size-mobile-md);
+  line-height: 1.5;
+}
+
+/* Make all interactive elements have proper touch target size */
+button,
+input,
+select,
+a {
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+}
+
+/* Improve button tap targets on mobile */
+button {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* Remove tap highlight color on mobile */
+a, button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Improve focus styles for accessibility */
+:focus {
+  outline: 2px solid var(--color-primary, #0070f3);
+  outline-offset: 2px;
+}
+
+/* Adjust focus styles for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Apply correct focus styles for keyboard users */
+:focus-visible {
+  outline: 2px solid var(--color-primary, #0070f3);
+  outline-offset: 2px;
+}
+
+/* Better spacing defaults */
+p, h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Adjust heading sizes for mobile-first approach */
+h1 { font-size: var(--font-size-mobile-xxl); }
+h2 { font-size: var(--font-size-mobile-xl); }
+h3 { font-size: var(--font-size-mobile-lg); }
+h4 { font-size: var(--font-size-mobile-md); }
+h5 { font-size: var(--font-size-mobile-sm); }
+
+/* Adjust heading sizes for desktop */
+@media (min-width: 1024px) {
+  h1 { font-size: var(--font-size-desktop-xxl); }
+  h2 { font-size: var(--font-size-desktop-xl); }
+  h3 { font-size: var(--font-size-desktop-lg); }
+}
+
+/* Prevent horizontal scrolling on mobile */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Support for reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ...more existing global styles... */

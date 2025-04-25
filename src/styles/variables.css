@@ -1,0 +1,124 @@
+/**
+ * Mobile-First CSS Variables System
+ * 
+ * This file defines the global CSS custom properties (variables) for consistent
+ * sizing, spacing, and interactions across the application with a mobile-first approach.
+ * 
+ * Usage:
+ * The variables follow this naming convention:
+ * --category-size-variant
+ */
+
+:root {
+  /* Spacing Variables
+  --------------------------------
+  Used for margins, paddings, and gaps
+  */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  
+  /* Border Radius
+  --------------------------------
+  Used for consistent corner rounding
+  */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 9999px;
+  
+  /* Touch Target Sizes
+  --------------------------------
+  Based on WCAG 2.1 (min 44px) and Apple HIG (min 48px) recommendations
+  */
+  --touch-target-min: 44px;
+  --touch-target-ideal: 48px;
+  --touch-target-large: 56px;
+  
+  /* Typography Scale - Mobile
+  --------------------------------
+  Smaller sizes for mobile devices
+  */
+  --font-size-mobile-xs: 0.75rem;    /* 12px */
+  --font-size-mobile-sm: 0.875rem;   /* 14px */
+  --font-size-mobile-md: 1rem;       /* 16px */
+  --font-size-mobile-lg: 1.25rem;    /* 20px */
+  --font-size-mobile-xl: 1.5rem;     /* 24px */
+  --font-size-mobile-xxl: 1.75rem;   /* 28px */
+  
+  /* Typography Scale - Desktop
+  --------------------------------
+  Adjusted scale for larger screens
+  */
+  --font-size-desktop-xs: 0.75rem;   /* 12px */
+  --font-size-desktop-sm: 0.875rem;  /* 14px */
+  --font-size-desktop-md: 1rem;      /* 16px */
+  --font-size-desktop-lg: 1.5rem;    /* 24px */
+  --font-size-desktop-xl: 2rem;      /* 32px */
+  --font-size-desktop-xxl: 2.5rem;   /* 40px */
+  
+  /* Layout Dimensions
+  --------------------------------
+  Standard heights for layout elements
+  */
+  --header-height-mobile: 56px;
+  --footer-height-mobile: 64px;
+  --header-height-desktop: 64px;
+  --footer-height-desktop: 72px;
+  
+  /* Z-Index
+  --------------------------------
+  For consistent layer management
+  */
+  --z-index-below: -1;
+  --z-index-normal: 0;
+  --z-index-above: 1;
+  --z-index-header: 10;
+  --z-index-modal: 100;
+  --z-index-toast: 1000;
+  
+  /* Animation & Transitions
+  --------------------------------
+  Consistent timing for animations and transitions
+  */
+  --transition-speed-fast: 150ms;
+  --transition-speed-normal: 300ms;
+  --transition-speed-slow: 500ms;
+  
+  /* Motion Preferences
+  --------------------------------
+  Support for reduced motion
+  */
+  --animation-none: none;
+  --transform-none: none;
+}
+
+/* Media query to detect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-speed-fast: 0ms;
+    --transition-speed-normal: 0ms;
+    --transition-speed-slow: 0ms;
+  }
+}
+
+/* Adjust variables for tablet breakpoint */
+@media (min-width: 768px) {
+  :root {
+    --spacing-md: 20px;
+    --spacing-lg: 28px;
+    --spacing-xl: 40px;
+  }
+}
+
+/* Adjust variables for desktop breakpoint */
+@media (min-width: 1024px) {
+  :root {
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+    --spacing-xxl: 64px;
+  }
+}
