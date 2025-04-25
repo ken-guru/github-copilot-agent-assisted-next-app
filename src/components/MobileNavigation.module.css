@@ -1,0 +1,170 @@
+/* Mobile Navigation Styles */
+
+.mobileNav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--footer-height-mobile, 64px);
+  background-color: var(--color-background, white);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  padding: 0;
+  margin: 0;
+  transition: transform var(--transition-speed-normal, 300ms) ease-in-out;
+  will-change: transform;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.animating {
+  animation: navPulse 0.3s ease-in-out;
+}
+
+/* Navigation button styles */
+.navButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: var(--touch-target-ideal, 48px);
+  min-width: var(--touch-target-ideal, 48px);
+  padding: var(--spacing-xs, 4px) var(--spacing-sm, 8px);
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary, #666);
+  font-size: var(--font-size-mobile-sm, 0.875rem);
+  font-weight: 500;
+  transition: color var(--transition-speed-fast, 150ms);
+  cursor: pointer;
+  flex: 1;
+  outline: none;
+  position: relative;
+}
+
+.navButton:active {
+  opacity: 0.7;
+}
+
+/* Icon container */
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-xs, 4px);
+  height: 24px;
+  width: 24px;
+  font-size: 1.2rem;
+}
+
+/* Active button state */
+.activeButton {
+  color: var(--color-primary, #0070f3);
+  font-weight: 600;
+}
+
+/* Active indicator line */
+.activeButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 3px;
+  background-color: var(--color-primary, #0070f3);
+  border-radius: 0 0 4px 4px;
+}
+
+/* Label text */
+.label {
+  font-size: 0.75rem;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Swipe indicator */
+.swipeHint {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(to right, 
+    transparent 0%, 
+    var(--color-primary-light, #e6f2ff) 20%, 
+    var(--color-primary-light, #e6f2ff) 80%, 
+    transparent 100%);
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity var(--transition-speed-normal, 300ms);
+}
+
+.showSwipeHint .swipeHint {
+  opacity: 1;
+}
+
+/* Hide navigation based on body class for welcome screen */
+:global(body.welcome-screen) .mobileNav {
+  display: none;
+}
+
+/* Animation for view change */
+@keyframes navPulse {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+  100% { transform: translateY(0); }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .mobileNav {
+    transition: none;
+  }
+  
+  .navButton {
+    transition: none;
+  }
+  
+  .animating {
+    animation: none;
+  }
+}
+
+/* Dark mode adjustments */
+:global(.dark-mode) .mobileNav {
+  background-color: var(--color-background-dark, #1a1a1a);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+:global(.dark-mode) .navButton {
+  color: var(--color-text-secondary-dark, #999);
+}
+
+:global(.dark-mode) .activeButton {
+  color: var(--color-primary-dark, #3694ff);
+}
+
+:global(.dark-mode) .activeButton::after {
+  background-color: var(--color-primary-dark, #3694ff);
+}
+
+:global(.dark-mode) .swipeHint {
+  background: linear-gradient(to right, 
+    transparent 0%, 
+    rgba(54, 148, 255, 0.2) 20%, 
+    rgba(54, 148, 255, 0.2) 80%, 
+    transparent 100%);
+}
+
+/* Fix for devices with notches */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .mobileNav {
+    height: calc(var(--footer-height-mobile, 64px) + env(safe-area-inset-bottom, 0px));
+  }
+}

@@ -3,41 +3,32 @@
 This directory contains comprehensive documentation for all key components in the application. Each component documentation includes props, state management approach, theme compatibility, mobile responsiveness, accessibility considerations, and examples.
 
 ## Visualization Components
+- [**Timeline**](./Timeline.md): Visualizes activity entries along a time axis
+- [**ProgressBar**](./ProgressBar.md): Displays current progress toward completion
 
-These components handle the visual display of activities and time information:
-
-- [**Timeline**](./Timeline.md): Visualizes activities and breaks on a vertical timeline
-- [**ProgressBar**](./ProgressBar.md): Displays progress through visual color transitions
-
-## State Management Components
-
-These components handle the core application state and data presentation:
-
-- [**ActivityManager**](./ActivityManager.md): Central hub for activity management
-- [**Summary**](./Summary.md): Provides overview of completed activity session
+## State Management Components  
+- [**ActivityManager**](./ActivityManager.md): Manages activity selection and state
+- [**Summary**](./Summary.md): Displays activity statistics and completion info
 
 ## User Input Components
-
-These components handle user interactions and input:
-
-- [**TimeSetup**](./TimeSetup.md): Configures time settings for the application
+- [**TimeSetup**](./TimeSetup.md): Controls for setting up duration
 - [**ActivityButton**](./ActivityButton.md): Controls activity states in the application
+  
+## Navigation Components
+- [**MobileNavigation**](./MobileNavigation.md): Touch-optimized navigation for mobile devices
+- [**Header**](./Header.md): App header with branding and theme toggle
+- [**Footer**](./Footer.md): App footer with primary actions
 
 ## Auxiliary Components
-
-These components provide supporting functionality:
-
-- [**ServiceWorkerUpdater**](./ServiceWorkerUpdater.md): Manages service worker lifecycle and update notifications
-- [**ActivityForm**](./ActivityForm.md): Interface for creating and editing activities
+- [**ServiceWorkerUpdater**](./ServiceWorkerUpdater.md): Handles app updates
+- [**ActivityForm**](./ActivityForm.md): Form for creating new activities
+- [**OvertimeIndicator**](./OvertimeIndicator.md): Shows when user is in overtime
 
 ## Utility Components
-
-These components handle specific utility functions:
-
-- [**TimeDisplay**](./TimeDisplay.md): Standardized time and date presentation
-- [**OfflineIndicator**](./OfflineIndicator.md): Visual feedback for offline status
-- [**ThemeToggle**](./ThemeToggle.md): Switches between light and dark themes
-- [**ErrorBoundary**](./ErrorBoundary.md): Catches and handles JavaScript errors
+- [**TimeDisplay**](./TimeDisplay.md): Formats and displays time values
+- [**OfflineIndicator**](./OfflineIndicator.md): Shows offline status
+- [**ThemeToggle**](./ThemeToggle.md): Controls theme selection
+- [**ErrorBoundary**](./ErrorBoundary.md): Catches and handles component errors
 
 ## Component Relationships
 
@@ -58,6 +49,12 @@ graph TD
         TS[TimeSetup]
         AB[ActivityButton]
         AF[ActivityForm]
+    end
+    
+    subgraph Navigation
+        MN[MobileNavigation]
+        H[Header]
+        F[Footer]
     end
     
     subgraph Utility
@@ -96,7 +93,8 @@ graph TD
 - **Visualization Components**: Timeline, ProgressBar
 - **State Management Components**: ActivityManager, Summary  
 - **User Input Components**: TimeSetup, ActivityButton
-- **Auxiliary Components**: ServiceWorkerUpdater, ActivityForm
+- **Navigation Components**: MobileNavigation, Header, Footer
+- **Auxiliary Components**: ServiceWorkerUpdater, ActivityForm, OvertimeIndicator
 - **Utility Components**: TimeDisplay, OfflineIndicator, ThemeToggle, ErrorBoundary
 
 ### Diagram Relationship Types

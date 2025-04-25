@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useViewport } from '../hooks/useViewport';
 import styles from './Summary.module.css';
+import mobileStyles from './Summary.mobile.module.css';
 import { TimelineEntry } from './Timeline';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 
@@ -18,12 +20,15 @@ export default function Summary({
   elapsedTime, 
   timerActive = false,
   allActivitiesCompleted = false,
-  isTimeUp = false // Add this prop to handle time-up state
+  isTimeUp = false 
 }: SummaryProps) {
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
   );
+  
+  // Get viewport information for responsive adaptations
+  const { isMobile, hasTouch } = useViewport();
 
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
@@ -120,7 +125,7 @@ export default function Summary({
     if (isTimeUp) {
       return {
         message: "Time's up! Review your completed activities below.",
-        className: styles.statusMessageLate
+        className: isMobile ? mobileStyles.mobileStatusMessageLate : styles.statusMessageLate
       };
     }
 
@@ -129,17 +134,17 @@ export default function Summary({
       if (remainingTime < 0) {
         return {
           message: "You've gone over the allocated time!",
-          className: styles.statusMessageLate
+          className: isMobile ? mobileStyles.mobileStatusMessageLate : styles.statusMessageLate
         };
       } else if (remainingTime === 0) {
         return {
           message: "Time's up!",
-          className: styles.statusMessageLate
+          className: isMobile ? mobileStyles.mobileStatusMessageLate : styles.statusMessageLate
         };
       } else {
         return {
           message: "You're doing great, keep going!",
-          className: styles.statusMessageEarly
+          className: isMobile ? mobileStyles.mobileStatusMessageEarly : styles.statusMessageEarly
         };
       }
     } else if (allActivitiesCompleted) {
@@ -149,13 +154,13 @@ export default function Summary({
         const laterBy = formatDuration(timeDiff);
         return {
           message: `You took ${laterBy} more than planned`,
-          className: styles.statusMessageLate
+          className: isMobile ? mobileStyles.mobileStatusMessageLate : styles.statusMessageLate
         };
       } else {
         const earlierBy = formatDuration(Math.abs(timeDiff));
         return {
           message: `Amazing! You finished ${earlierBy} earlier than planned!`,
-          className: styles.statusMessageEarly
+          className: isMobile ? mobileStyles.mobileStatusMessageEarly : styles.statusMessageEarly
         };
       }
     }
@@ -274,79 +279,163 @@ export default function Summary({
     }));
   };
 
-  const status = getStatusMessage();
+  // Sort entries chronologically for consistent display
+  const sortedEntries = [...(entries || [])].sort((a, b) => a.startTime - b.startTime);
+  
   const stats = calculateActivityStats();
-  
-  // Early return modified to handle isTimeUp case
-  if ((!allActivitiesCompleted && !isTimeUp) || !stats) {
-    return null;
-  }
-  
   const overtime = calculateOvertime();
-  const activityTimes = calculateActivityTimes();
-
+  const { activeTime = 0, idleTime = 0 } = stats || { activeTime: 0, idleTime: 0 };
+  
+  const statusMessage = getStatusMessage();
+  
+  // Get appropriate class names based on viewport
+  const getSummaryClass = () => {
+    return isMobile ? mobileStyles.mobileSummary : styles.summaryContainer;
+  };
+  
+  const getStatsClass = () => {
+    return isMobile ? mobileStyles.mobileStats : styles.statsContainer;
+  };
+  
+  const getStatItemClass = () => {
+    return isMobile ? mobileStyles.mobileStatItem : styles.statItem;
+  };
+  
+  const getStatLabelClass = () => {
+    return isMobile ? mobileStyles.mobileStatLabel : styles.statLabel;
+  };
+  
+  const getStatValueClass = () => {
+    return isMobile ? mobileStyles.mobileStatValue : styles.statValue;
+  };
+  
+  const getSectionTitleClass = () => {
+    return isMobile ? mobileStyles.mobileSectionTitle : styles.sectionTitle;
+  };
+  
+  const getActivityListClass = () => {
+    return isMobile ? mobileStyles.mobileActivityList : styles.activitiesList;
+  };
+  
+  const getActivityItemClass = () => {
+    return isMobile ? mobileStyles.mobileActivityItem : styles.activityItem;
+  };
+  
+  const getActivityNameClass = () => {
+    return isMobile ? mobileStyles.mobileActivityName : styles.activityName;
+  };
+  
+  const getActivityDetailsClass = () => {
+    return isMobile ? mobileStyles.mobileActivityDetails : styles.activityDetails;
+  };
+  
+  const getActivityTimeClass = () => {
+    return isMobile ? mobileStyles.mobileActivityTime : styles.activityTime;
+  };
+  
+  const getDurationClass = () => {
+    return isMobile ? mobileStyles.mobileDuration : styles.duration;
+  };
+  
+  const getNoActivitiesClass = () => {
+    return isMobile ? mobileStyles.mobileNoActivities : styles.noActivities;
+  };
+  
   return (
-    <div className={`${styles.container}`} data-testid="summary">
-      {status && (
-        <div className={`${styles.statusMessage} ${status.className}`}>
-          {status.message}
+    <div className={getSummaryClass()} data-testid="summary-container">
+      {statusMessage && (
+        <div 
+          className={statusMessage.className}
+          data-testid="status-message"
+        >
+          {statusMessage.message}
         </div>
       )}
       
-      <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Planned Time</div>
-          <div className={styles.statValue}>{formatDuration(totalDuration)}</div>
+      <div className={getStatsClass()} data-testid="stats-container">
+        <div className={getStatItemClass()}>
+          <div className={getStatLabelClass()}>Active Time</div>
+          <div className={getStatValueClass()} data-testid="active-time">
+            {formatDuration(activeTime)}
+          </div>
         </div>
         
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Spent Time</div>
-          <div className={styles.statValue}>{formatDuration(elapsedTime)}</div>
+        <div className={getStatItemClass()}>
+          <div className={getStatLabelClass()}>Idle Time</div>
+          <div className={getStatValueClass()} data-testid="idle-time">
+            {formatDuration(idleTime)}
+          </div>
         </div>
         
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Idle Time</div>
-          <div className={styles.statValue}>{formatDuration(stats.idleTime)}</div>
-        </div>
-        
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Overtime</div>
-          <div className={styles.statValue}>{formatDuration(overtime)}</div>
+        <div className={getStatItemClass()}>
+          <div className={getStatLabelClass()}>Overtime</div>
+          <div className={getStatValueClass()} data-testid="overtime-duration">
+            {formatDuration(overtime)}
+          </div>
         </div>
       </div>
-
-      {activityTimes.length > 0 && (
-        <div className={styles.activityList}>
-          <h3 className={styles.activityListHeading}>Time Spent per Activity</h3>
-          {activityTimes.map((activity) => {
-            // Get theme-appropriate colors
-            const themeColors = activity.colors ? 
-              getThemeAppropriateColor(activity.colors) || activity.colors : 
-              undefined;
+      
+      <h2 className={getSectionTitleClass()}>Activities</h2>
+      
+      {sortedEntries.length > 0 ? (
+        <div className={getActivityListClass()} data-testid="activity-list">
+          {sortedEntries.map((entry, index) => {
+            const themeColors = getThemeAppropriateColor(entry.colors);
+            const activityDuration = entry.endTime 
+              ? Math.round((entry.endTime - entry.startTime) / 1000)
+              : 0;
             
             return (
               <div 
-                key={activity.id}
-                className={styles.activityItem}
-                data-testid={`activity-summary-item-${activity.id}`}
-                style={themeColors ? {
-                  backgroundColor: themeColors.background,
-                  borderColor: themeColors.border
-                } : undefined}
+                key={entry.id} 
+                className={getActivityItemClass()}
+                style={{
+                  borderLeft: `4px solid ${themeColors?.border || '#ccc'}`,
+                }}
+                data-testid={`activity-item-${index}`}
               >
-                <span 
-                  className={styles.activityName}
-                  data-testid={`activity-name-${activity.id}`}
-                  style={themeColors ? { color: themeColors.text } : undefined}
-                >
-                  {activity.name}
-                </span>
-                <span className={styles.activityTime}>
-                  {formatDuration(activity.duration)}
-                </span>
+                <div className={isMobile ? mobileStyles.mobileActivityHeader : ''}>
+                  <h3 className={getActivityNameClass()}>{entry.activityName}</h3>
+                </div>
+                
+                <div className={getActivityDetailsClass()}>
+                  <div className={getActivityTimeClass()}>
+                    <span>
+                      {new Date(entry.startTime).toLocaleTimeString([], { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                      {' → '}
+                      {entry.endTime ? new Date(entry.endTime).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }) : 'In progress'}
+                    </span>
+                    
+                    <span className={getDurationClass()} data-testid={`duration-${index}`}>
+                      ({formatDuration(activityDuration)})
+                    </span>
+                  </div>
+                </div>
+                
+                {isMobile && (
+                  <div className={mobileStyles.mobileProgressIndicator}>
+                    <div 
+                      className={mobileStyles.mobileProgressFill}
+                      style={{
+                        width: `${Math.min(100, (activityDuration / totalDuration) * 100)}%`,
+                        backgroundColor: themeColors?.border || '#ccc'
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             );
           })}
+        </div>
+      ) : (
+        <div className={getNoActivitiesClass()}>
+          No activities have been recorded yet.
         </div>
       )}
     </div>
