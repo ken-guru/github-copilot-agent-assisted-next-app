@@ -1,0 +1,166 @@
+/* Mobile optimized styles for ActivityManager */
+
+.mobileContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--spacing-sm);
+}
+
+.mobileActivityList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  flex: 1;
+  overflow-y: auto;
+  padding-right: var(--spacing-xs);
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Touch-friendly heading */
+.mobileHeading {
+  font-size: var(--font-size-mobile-xl);
+  font-weight: bold;
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
+  color: var(--color-text);
+}
+
+/* Swipeable activity item container */
+.swipeContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  touch-action: pan-x; /* Enable horizontal swipe gestures */
+}
+
+/* Activity item with enhanced touch styles */
+.mobileActivityItem,
+.mobileCompletedActivityItem {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  grid-gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-speed-normal);
+  min-height: var(--touch-target-ideal);
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateX(0);
+}
+
+/* Regular activity item */
+.mobileActivityItem {
+  border-color: var(--color-border, #ddd);
+  background-color: var(--color-background, white);
+}
+
+/* Completed activity item */
+.mobileCompletedActivityItem {
+  border-color: var(--color-border, #ddd);
+  background-color: var(--color-background-alt, #f5f5f5);
+}
+
+/* Touch ripple effect for activity items */
+.touchRipple {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  transform: scale(0);
+  animation: rippleEffect 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes rippleEffect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Swipe action buttons container */
+.swipeActions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  display: flex;
+  transform: translateX(100%);
+  transition: transform var(--transition-speed-normal);
+}
+
+.actionsVisible {
+  transform: translateX(0);
+}
+
+/* Individual action buttons */
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 var(--spacing-md);
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.completeAction {
+  background-color: var(--color-success, #4caf50);
+}
+
+.deleteAction {
+  background-color: var(--color-error, #f44336);
+}
+
+/* Larger touch friendly activity name */
+.mobileActivityName {
+  font-size: var(--font-size-mobile-md);
+  font-weight: 600;
+  margin: 0;
+  padding: var(--spacing-xs) 0;
+}
+
+.mobileCompletedActivityName {
+  font-size: var(--font-size-mobile-md);
+  font-weight: 600;
+  text-decoration: line-through;
+  color: var(--color-text-secondary);
+  margin: 0;
+  padding: var(--spacing-xs) 0;
+}
+
+/* Empty state with larger text */
+.mobileEmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-mobile-md);
+  min-height: 150px;
+}
+
+/* Mobile form styles */
+.mobileForm {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .mobileActivityItem,
+  .mobileCompletedActivityItem,
+  .swipeActions {
+    transition: none;
+  }
+  
+  .touchRipple {
+    display: none;
+  }
+}

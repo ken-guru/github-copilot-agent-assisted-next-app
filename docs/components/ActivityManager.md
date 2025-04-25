@@ -1,307 +1,143 @@
 # ActivityManager Component
 
 ## Navigation
-
-- [Component Documentation Home](./README.md)
-- **Category**: [State Management Components](./README.md#state-management-components)
-- **Related Components**:
-  - [Timeline](./Timeline.md) - Visualizes activities managed by ActivityManager
+- [Component Documentation Index](../README.md#components)
+- Related: 
   - [ActivityButton](./ActivityButton.md) - Controls activity states 
-  - [ActivityForm](./ActivityForm.md) - Used for creating/editing activities
-  - [Summary](./Summary.md) - Displays activity statistics
+  - [ActivityForm](./ActivityForm.md) - Creates new activities
 
 ## Overview
-
-The ActivityManager component serves as the central hub for activity management in the application. It provides a user interface for creating, selecting, and tracking activities while managing their states throughout the session. The component handles color assignment, activity state transitions, and visual representation of activity status.
-
-## Table of Contents
-- [Features](#features)
-- [Props](#props)
-- [Types](#types)
-- [State Management](#state-management)
-- [Activity Lifecycle Management](#activity-lifecycle-management)
-- [Theme Compatibility](#theme-compatibility)
-- [Mobile Responsiveness](#mobile-responsiveness)
-- [Accessibility](#accessibility)
-- [Example Usage](#example-usage)
-- [Known Limitations](#known-limitations)
-- [Test Coverage](#test-coverage)
-- [Related Components and Hooks](#related-components-and-hooks)
-- [Implementation Details](#implementation-details)
-- [Change History](#change-history)
-- [Related Memory Logs](#related-memory-logs)
-
-## Features
-
-- **Activity Creation**: Interface for adding new activities
-- **Activity Selection**: Mechanism for selecting the current active activity
-- **Color Management**: Automatic color assignment for visual distinction between activities
-- **State Tracking**: Tracking of pending, active, and completed activities
-- **Theme Compatibility**: Dynamic color adaptation for light and dark themes
-- **Activity Removal**: Interface for removing activities from the session
-- **Timer Display**: Shows activity duration for active and completed activities
-- **Real-Time Updates**: Dynamically updates activity status and duration
+The ActivityManager component manages the creation, selection, and removal of activities. It provides a touch-optimized interface on mobile devices with swipe actions, visual feedback, and properly sized touch targets.
 
 ## Props
 
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `onActivitySelect` | `(activity: Activity \| null, justAdd?: boolean) => void` | Yes | - | Callback when an activity is selected or deselected |
-| `onActivityRemove` | `(activityId: string) => void` | Yes | - | Callback when an activity is removed |
-| `currentActivityId` | `string \| null` | Yes | - | ID of the currently active activity |
-| `completedActivityIds` | `string[]` | Yes | - | Array of IDs for completed activities |
-| `timelineEntries` | `TimelineEntry[]` | Yes | - | Timeline entries for activity history |
-| `isTimeUp` | `boolean` | No | `false` | Flag indicating if allocated time is up |
-| `elapsedTime` | `number` | No | `0` | Current elapsed time in seconds |
-
-## Types
-
-```typescript
-interface Activity {
-  id: string;
-  name: string;
-  colorIndex: number;
-  colors?: {
-    background: string;
-    text: string;
-    border: string;
-  };
-}
-
-interface TimelineEntry {
-  id: string;
-  activityId: string | null;
-  activityName: string | null;
-  startTime: number;
-  endTime: number | null;
-  colors?: {
-    background: string;
-    text: string;
-    border: string;
-  };
-}
-```
+| Prop Name | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| onActivitySelect | (activity: Activity \| null, justAdd?: boolean) => void | Yes | - | Callback for activity selection/start |
+| onActivityRemove | (activityId: string) => void | No | - | Callback for activity removal |
+| currentActivityId | string \| null | Yes | - | ID of current active activity |
+| completedActivityIds | string[] | Yes | - | Array of completed activity IDs |
+| timelineEntries | TimelineEntry[] | Yes | - | Activity timeline entries |
+| isTimeUp | boolean | No | false | Whether allocated time is up |
+| elapsedTime | number | No | 0 | Current elapsed time in seconds |
 
 ## State Management
 
-The ActivityManager component manages several pieces of state:
-
-1. **Activities list**: A collection of all activities available for selection
-   ```typescript
-   const [activities, setActivities] = useState<Activity[]>([]);
-   ```
-
-2. **Color assignment**: Tracks which color indices have been assigned
-   ```typescript
-   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
-   ```
-
-3. **Initialization state**: Tracks whether default activities have been initialized
-   ```typescript
-   const [hasInitializedActivities, setHasInitializedActivities] = useState(false);
-   ```
-
-4. **New activity input**: Manages the form input for adding new activities
-   ```typescript
-   const [newActivityName, setNewActivityName] = useState('');
-   ```
-
-The component uses several key effects:
-
-1. **Default activity initialization**: Sets up initial activities on first render
-   ```typescript
-   useEffect(() => {
-     const defaultActivities = [
-       { id: '1', name: 'Homework', colorIndex: 0 },
-       { id: '2', name: 'Reading', colorIndex: 1 },
-       { id: '3', name: 'Play Time', colorIndex: 2 },
-       { id: '4', name: 'Chores', colorIndex: 3 }
-     ];
-     
-     // Initialize default activities
-   }, [hasInitializedActivities, onActivitySelect]);
-   ```
-
-2. **Theme change detection**: Updates activity colors when theme changes
-   ```typescript
-   useEffect(() => {
-     const updateColors = () => {
-       setActivities(currentActivities => 
-         currentActivities.map(activity => ({
-           ...activity,
-           colors: getNextAvailableColorSet(activity.colorIndex)
-         }))
-       );
-     };
-     
-     // Set up theme change listeners
-   }, []);
-   ```
-
-3. **Color initialization**: Initializes activity colors on component mount
-   ```typescript
-   useEffect(() => {
-     setActivities(currentActivities => 
-       currentActivities.map(activity => ({
-         ...activity,
-         colors: getNextAvailableColorSet(activity.colorIndex || 0)
-       }))
-     );
-   }, []);
-   ```
-
-## Activity Lifecycle Management
-
-The ActivityManager handles the complete lifecycle of activities:
-
-1. **Creation**: New activities are created with a unique ID and assigned a color
-2. **Pending State**: Activities start in the pending state before being selected
-3. **Active State**: An activity becomes active when selected by the user
-4. **Completed State**: Activities are marked as completed when finished
-
-This component works closely with the ActivityState hook to maintain the state machine for activities.
+The component manages several pieces of state:
+- `activities`: List of activities with their properties
+- `assignedColorIndices`: Tracks color assignments for visual distinction
+- `hasInitializedActivities`: Flag to prevent duplicate initialization
+- `swipeState`: Tracks touch gesture states for mobile swipe actions
 
 ## Theme Compatibility
 
-The ActivityManager fully supports both light and dark themes:
-
-- **Dynamic color generation**: Activities are assigned color sets that work in both light and dark modes
-- **Theme detection**: Uses MutationObserver to detect theme changes on the document element
-- **Color refreshing**: Regenerates activity colors whenever the theme changes
-- **System preference detection**: Responds to system dark mode preference changes
-- **Visual consistency**: Ensures visual consistency of activities across theme modes
+- Uses theme variables for colors via CSS variables
+- Adapts to both light and dark themes
+- Maintains consistent look and feel across themes
+- Detects theme changes and updates colors automatically
 
 ## Mobile Responsiveness
 
-The ActivityManager component is designed to be fully responsive:
+The component implements several mobile-specific enhancements:
+- **Swipe Gestures**: Left-swipe reveals action buttons for complete/delete
+- **Touch Feedback**: Visual ripple effect provides tactile feedback
+- **Optimized Layout**: Larger touch targets and improved spacing
+- **Smooth Scrolling**: iOS-friendly scrolling with momentum
+- **Visual Hierarchy**: Enhanced typography and spacing for small screens
 
-- **Flexible layout**: Uses CSS Grid and Flexbox for adaptive layouts
-- **Touch-friendly controls**: Large touch targets for mobile interaction
-- **Responsive typography**: Text scales appropriately for different screen sizes
-- **Compact mobile view**: Optimized layout for small screens
-- **Responsive form elements**: Input fields and buttons adapt to screen width
+## Accessibility Considerations
 
-## Accessibility
-
-- **Semantic HTML**: Uses appropriate semantic elements (buttons, forms, etc.)
-- **ARIA labels**: Includes labels for interactive elements
-- **Focus management**: Proper keyboard focus handling for form elements
-- **Color contrast**: Maintains sufficient color contrast for text elements
-- **Form validation**: Provides visual and programmatic form validation feedback
-- **Screen reader support**: Important elements have appropriate text content
-
-## Example Usage
-
-### Basic Usage in App Component
-
-```tsx
-import ActivityManager from '../components/ActivityManager';
-
-// In your component
-return (
-  <ActivityManager
-    onActivitySelect={handleActivitySelect}
-    onActivityRemove={handleActivityRemoval}
-    currentActivityId={currentActivity?.id || null}
-    completedActivityIds={completedActivityIds}
-    timelineEntries={processedEntries}
-  />
-);
-```
-
-### With Time-Up State
-
-```tsx
-<ActivityManager
-  onActivitySelect={handleActivitySelect}
-  onActivityRemove={handleActivityRemoval}
-  currentActivityId={currentActivity?.id || null}
-  completedActivityIds={completedActivityIds}
-  timelineEntries={processedEntries}
-  isTimeUp={true}
-  elapsedTime={3600}
-/>
-```
-
-## Known Limitations
-
-1. **Activity count**: Performance may degrade with a very large number of activities (40+)
-2. **Long activity names**: Very long activity names may be truncated on small screens
-3. **Color differentiation**: Limited number of visually distinct colors for activities
-4. **State persistence**: Activity state is not persisted across page refreshes without additional storage
+- All interactive elements have appropriate ARIA labels
+- Respects user motion preferences with `prefers-reduced-motion`
+- Maintains keyboard navigation for non-touch devices
+- Clear visual indication of activity states
+- Sufficient color contrast for text and interactive elements
+- Focus management for swipe actions
 
 ## Test Coverage
 
-The ActivityManager component has comprehensive test coverage:
+The component has comprehensive test coverage:
+- Standard functionality tests
+- Mobile-specific enhancements tests
+- Touch gesture simulation
+- Swipe action tests
+- Visual feedback verification
+- Responsive behavior across different viewports
 
-- **ActivityManager.test.tsx**: Core functionality tests
-- **ActivityManager.theme.test.tsx**: Theme adaptation tests
-- **ActivityManager.mobile.test.tsx**: Mobile responsiveness tests
+## Usage Examples
 
-Key tested scenarios include:
-- Activity creation, selection, and removal
-- Color assignment and theme compatibility
-- Proper state management for activities
-- Form validation and input handling
-- Interaction with the activity state machine
-- Timer display accuracy
+### Basic Usage
+```tsx
+<ActivityManager
+  onActivitySelect={handleActivitySelect}
+  onActivityRemove={handleActivityRemove}
+  currentActivityId={currentActivity?.id || null}
+  completedActivityIds={completedActivities.map(a => a.id)}
+  timelineEntries={timelineEntries}
+  elapsedTime={elapsedTime}
+/>
+```
 
-## Related Components and Hooks
+### With Time-Up State
+```tsx
+<ActivityManager
+  onActivitySelect={handleActivitySelect}
+  onActivityRemove={handleActivityRemove}
+  currentActivityId={currentActivity?.id || null}
+  completedActivityIds={completedActivities.map(a => a.id)}
+  timelineEntries={timelineEntries}
+  isTimeUp={timeRemaining <= 0}
+  elapsedTime={elapsedTime}
+/>
+```
 
-- **Timeline**: Visualizes activity history and breaks
-- **Summary**: Shows activity statistics after completion
-- **useActivityState**: Hook that manages activity state transitions
-- **useTimelineEntries**: Hook that tracks activity timeline entries
+### Mobile-Optimized Interface
+The mobile interface automatically activates on touch-capable devices with small screens:
+- Activities can be swiped left to reveal action buttons
+- Touch feedback provides visual confirmation of interaction
+- Larger touch targets improve usability on small screens
+
+## Known Limitations/Edge Cases
+
+- Swipe gestures may conflict with certain browser navigation gestures
+- Performance may vary on lower-end mobile devices with many activities
+- Custom scrolling behavior might feel different from native scrolling on some devices
+- Very long activity names may need truncation on small screens
+- Touch event handling does not currently support multi-touch interactions
 
 ## Implementation Details
 
-The ActivityManager implements several key algorithms:
+### Swipe Gesture Implementation
+```typescript
+// Track touch positions and calculate swipe distance
+const handleTouchMove = (e: React.TouchEvent) => {
+  if (!swipeState.isSwiping) return;
+  
+  setSwipeState({
+    ...swipeState,
+    currentX: e.touches[0].clientX,
+  });
+};
 
-1. **Color assignment**: Ensures each activity gets a unique color
-   ```typescript
-   const getNextColorIndex = (): number => {
-     let index = 0;
-     while (assignedColorIndices.includes(index)) {
-       index++;
-     }
-     return index;
-   };
-   ```
-
-2. **Activity duration calculation**: Computes activity duration from timeline entries
-   ```typescript
-   const getActivityDuration = (activityId: string): number => {
-     return timelineEntries
-       .filter(entry => entry.activityId === activityId)
-       .reduce((total, entry) => {
-         const endTime = entry.endTime || Date.now();
-         return total + (endTime - entry.startTime);
-       }, 0);
-   };
-   ```
-
-3. **Activity state determination**: Determines if an activity is pending, active, or completed
-
-## Related Memory Logs
-
-This component has been referenced in the following memory logs:
-
-- [MRTMLY-025: Summary Activity Order Fix](../logged_memories/MRTMLY-025-summary-activity-order.md) - Activity ordering logic
-- [MRTMLY-041: Activity Order in Summary Tests Implementation](../logged_memories/MRTMLY-041-activity-order-summary-tests.md) - Testing chronological order
-
----
-
-## Navigation
-
-- [Back to Component Documentation Home](./README.md)
-- **Previous Component**: [ProgressBar](./ProgressBar.md)
-- **Next Component**: [Summary](./Summary.md)
+// Apply transformation based on swipe distance
+const getSwipeTransform = (activityId: string) => {
+  if (swipeState.activityId !== activityId || !swipeState.isSwiping) return {};
+  
+  const delta = swipeState.startX - swipeState.currentX;
+  const maxSwipe = 150; // Maximum swipe distance
+  
+  // Limit swipe distance
+  const swipeX = Math.max(0, Math.min(delta, maxSwipe));
+  
+  return {
+    transform: `translateX(-${swipeX}px)`,
+  };
+};
+```
 
 ## Change History
 
-- **2025-03-20**: Improved activity state transitions
-- **2025-03-01**: Added activity removal functionality
-- **2025-02-15**: Enhanced theme compatibility for activity colors
-- **2025-02-01**: Implemented activity duration tracking
-- **2025-01-15**: Added form validation for activity creation
-- **2025-01-01**: Initial implementation with basic activity management
+| Version | Date | Description |
+|---------|------|-------------|
+| 1.0 | 2023-06-01 | Initial implementation |
+| 1.1 | 2023-07-20 | Mobile optimization with touch gestures and feedback |
