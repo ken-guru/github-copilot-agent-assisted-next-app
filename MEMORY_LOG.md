@@ -24,3 +24,4 @@ This file serves as an index of all logged memories across the project's develop
 - [MRTMLY-017: Performance Optimization - Component Lazy Loading](./docs/logged_memories/MRTMLY-017-performance-optimization-lazy-loading.md)
 - [MRTMLY-018: Rendering Performance Optimization](./docs/logged_memories/MRTMLY-018-rendering-performance-optimization.md)
 - [MRTMLY-019: Asset Optimization for Mobile](./docs/logged_memories/MRTMLY-019-asset-optimization-for-mobile.md)
+- [MRTMLY-020: Advanced Touch Interactions Implementation](./docs/logged_memories/MRTMLY-020-advanced-touch-interactions.md)
