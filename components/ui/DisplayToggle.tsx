@@ -21,14 +21,31 @@ const DisplayToggle: React.FC = () => {
     }
   }, [keepDisplayOn, isActive, isSupported, request, release]);
   
+  // Function to handle clicks - provides feedback when not supported
+  const handleToggleClick = () => {
+    if (!isSupported && typeof window !== 'undefined') {
+      // Could show a notification or alert here if needed
+      console.warn('Wake Lock API is not supported on this device');
+      return;
+    }
+    toggleKeepDisplayOn();
+  };
+  
   return (
     <div className={styles.container}>
+      {/* Show prominent warning if not supported */}
+      {!isSupported && typeof window !== 'undefined' && (
+        <div className={styles.warningMessage} data-testid="support-warning">
+          Screen wake lock not supported on this device
+        </div>
+      )}
+      
       <button
-        className={`${styles.toggleButton} ${keepDisplayOn ? styles.active : styles.inactive}`}
-        onClick={toggleKeepDisplayOn}
+        className={`${styles.toggleButton} ${keepDisplayOn ? styles.active : styles.inactive} ${!isSupported ? styles.unsupported : ''}`}
+        onClick={handleToggleClick}
         disabled={!isSupported}
         aria-label={keepDisplayOn ? "Turn display sleep on" : "Keep display on"}
-        title={keepDisplayOn ? "Display sleep is off" : "Keep display on"}
+        title={!isSupported ? "Not supported on this device" : keepDisplayOn ? "Display sleep is off" : "Keep display on"}
         data-testid="display-toggle"
         role="switch"
         aria-checked={keepDisplayOn}
@@ -40,15 +57,15 @@ const DisplayToggle: React.FC = () => {
           <line x1="12" y1="17" x2="12" y2="21"></line>
         </svg>
         
-        {/* Status label */}
+        {/* Status label with enhanced feedback */}
         <span 
           className={styles.statusLabel} 
           data-testid="toggle-status"
         >
-          {keepDisplayOn ? "On" : "Off"}
+          {!isSupported && typeof window !== 'undefined' ? "N/A" : keepDisplayOn ? "On" : "Off"}
         </span>
         
-        {/* Show small indicator dot if not supported */}
+        {/* Show small indicator dot if not supported - keep for backwards compatibility */}
         {!isSupported && typeof window !== 'undefined' && (
           <span className={styles.unsupportedIndicator} title="Not supported on this device"></span>
         )}
