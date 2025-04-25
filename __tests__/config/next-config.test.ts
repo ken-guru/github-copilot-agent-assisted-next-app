@@ -1,15 +1,14 @@
 import nextConfig from '../../next.config';
 
 describe('Next.js Configuration', () => {
-  it('should have consistent webpack and turbo configurations', () => {
+  it('should have consistent webpack and turbopack configurations', () => {
     // Check if webpack is configured
     const hasWebpackConfig = typeof nextConfig.webpack === 'function';
     
-    // Check if turbo is configured
-    const hasTurboConfig = nextConfig.experimental && 
-                          typeof nextConfig.experimental.turbo === 'object';
+    // Check if turbopack is configured (now uses stable API)
+    const hasTurboConfig = typeof nextConfig.turbopack === 'object';
     
-    // If webpack is configured, turbo should also be configured
+    // If webpack is configured, turbopack should also be configured
     if (hasWebpackConfig) {
       expect(hasTurboConfig).toBe(true);
     }
@@ -17,13 +16,13 @@ describe('Next.js Configuration', () => {
     // If using turbopack, ensure it has the necessary configurations
     if (hasTurboConfig) {
       // Check for rules (replacing deprecated loaders)
-      expect(nextConfig.experimental?.turbo).toHaveProperty('rules');
-      expect(nextConfig.experimental?.turbo).toHaveProperty('resolveAlias');
+      expect(nextConfig.turbopack).toHaveProperty('rules');
+      expect(nextConfig.turbopack).toHaveProperty('resolveAlias');
     }
   });
 
   it('should use proper Turbopack configuration format', () => {
-    const turboConfig = nextConfig.experimental?.turbo;
+    const turboConfig = nextConfig.turbopack;
     
     if (turboConfig) {
       // Ensure we're using rules (new format) and not loaders (deprecated)
@@ -45,5 +44,8 @@ describe('Next.js Configuration', () => {
     if (nextConfig.experimental?.serverActions) {
       expect(Array.isArray(nextConfig.experimental.serverActions.allowedOrigins)).toBe(true);
     }
+    
+    // Ensure the deprecated turbo property is not present in experimental
+    expect(nextConfig.experimental).not.toHaveProperty('turbo');
   });
 });

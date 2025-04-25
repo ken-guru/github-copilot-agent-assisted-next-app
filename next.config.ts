@@ -12,25 +12,26 @@ const nextConfig: NextConfig = {
       allowedOrigins: ['localhost:3000']
     },
     
-    // Add Turbopack configuration to match webpack config
-    // https://nextjs.org/docs/app/api-reference/next-config-js/turbo
-    turbo: {
-      // Use rules with glob patterns instead of deprecated loaders with extensions
-      rules: {
-        // Define loaders for specific file patterns
-        // For example, for handling markdown files:
-        '*.md': ['raw-loader'],
-      },
-      resolveAlias: {
-        // Path aliases that match tsconfig.json configuration
-        '@': '.',
-        '@/contexts': './contexts',
-        '@/components': './components',
-        '@/hooks': './hooks',
-        '@/utils': './utils',
-        '@/styles': './styles'
-      }
+    // Turbopack moved to root level as it's now stable
+  },
+  
+  // Moved from experimental.turbo to root level turbopack (stable API)
+  turbopack: {
+    // Use rules with glob patterns instead of deprecated loaders with extensions
+    rules: {
+      // Define loaders for specific file patterns
+      // For example, for handling markdown files:
+      '*.md': ['raw-loader'],
     },
+    resolveAlias: {
+      // Path aliases that match tsconfig.json configuration
+      '@': '.',
+      '@/contexts': './contexts',
+      '@/components': './components',
+      '@/hooks': './hooks',
+      '@/utils': './utils',
+      '@/styles': './styles'
+    }
   },
   
   // Enable more detailed error information
