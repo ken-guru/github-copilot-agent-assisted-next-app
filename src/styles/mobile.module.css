@@ -1,0 +1,97 @@
+/* Mobile UI improvements */
+:root {
+  --touch-min-size: 44px;
+  --mobile-spacing: 16px;
+  --header-height: 64px;
+  --footer-height: 72px;
+}
+
+/* Top-level layout structure */
+.appContainer {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Mobile-specific styling */
+.mobileView {
+  max-width: 100vw;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.mobileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--mobile-spacing);
+  height: var(--header-height);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-background, #ffffff);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.mobileMain {
+  padding: var(--mobile-spacing);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mobile-spacing);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+}
+
+.mobileFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--mobile-spacing);
+  height: var(--footer-height);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background-color: var(--color-background, #ffffff);
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Touch-friendly elements */
+.touchFriendly {
+  min-height: var(--touch-min-size);
+  min-width: var(--touch-min-size);
+  padding: 12px 16px;
+  font-size: 1rem;
+  touch-action: manipulation;
+}
+
+.touchFriendlyButton {
+  composes: touchFriendly;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.touchFriendlyButton:active {
+  transform: scale(0.97);
+}
+
+/* Improved spacing for touch targets */
+.touchSpacing > * + * {
+  margin-top: 16px;
+}
+
+.touchSpacing button + button {
+  margin-left: 12px;
+}
+
+/* Responsive adaptations */
+@media (min-width: 768px) {
+  :root {
+    --mobile-spacing: 24px;
+  }
+  
+  .mobileMain {
+    padding: 24px;
+    gap: 24px;
+  }
+}

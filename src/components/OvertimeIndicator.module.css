@@ -1,0 +1,73 @@
+.overtimeIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-error, #e53935);
+  color: var(--color-text-inverse, white);
+  border-radius: 0.5rem;
+  font-weight: bold;
+  margin: 0.75rem 0;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  flex-direction: column;
+  box-shadow: 0 2px 10px rgba(229, 57, 53, 0.5);
+}
+
+.label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+}
+
+.duration {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.pulsing {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive styles */
+@media (min-width: 768px) {
+  .overtimeIndicator {
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+  }
+  
+  .label {
+    margin-bottom: 0;
+  }
+  
+  .duration {
+    font-size: 1.3rem;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .pulsing {
+    animation: none;
+  }
+  
+  .overtimeIndicator {
+    transition: none;
+  }
+}
