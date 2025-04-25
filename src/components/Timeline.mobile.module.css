@@ -1,0 +1,248 @@
+/* Mobile-specific styles for Timeline component */
+
+.mobileTimeline {
+  position: relative;
+  height: 100%;
+  padding: var(--spacing-sm) 0;
+  touch-action: pan-y pinch-zoom;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  user-select: none; /* Prevent text selection during touch */
+}
+
+/* Mobile timeline visualization container */
+.mobileVisualization {
+  position: relative;
+  height: calc(100% - var(--spacing-lg));
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile time markers */
+.mobileTimeMarker {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  font-size: var(--font-size-mobile-xs);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-sm);
+}
+
+/* Mobile time marker line */
+.mobileTimeMarker::before {
+  content: '';
+  height: 1px;
+  background-color: var(--color-border);
+  flex: 1;
+  margin: 0 var(--spacing-xs);
+}
+
+/* Mobile timeline entries */
+.mobileTimelineEntry {
+  position: absolute;
+  left: var(--spacing-md);
+  right: var(--spacing-md);
+  min-height: var(--touch-target-min);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+/* Mobile break entry */
+.mobileBreakEntry {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.05) 10px,
+    rgba(0, 0, 0, 0.08) 10px,
+    rgba(0, 0, 0, 0.08) 20px
+  );
+  border: 1px dashed var(--color-border);
+}
+
+/* Mobile entry label */
+.mobileLabel {
+  font-size: var(--font-size-mobile-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: var(--spacing-xs);
+}
+
+/* Mobile current time indicator */
+.mobileCurrentTimeIndicator {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary);
+  z-index: 2;
+}
+
+/* Mobile centered current time indicator */
+.mobileCentered {
+  top: 50%;
+}
+
+/* Mobile current time indicator dot */
+.mobileCurrentTimeIndicator::after {
+  content: '';
+  position: absolute;
+  right: var(--spacing-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+}
+
+/* Mobile zoom controls */
+.mobileZoomControls {
+  position: absolute;
+  bottom: var(--spacing-md);
+  right: var(--spacing-md);
+  display: flex;
+  gap: var(--spacing-xs);
+  z-index: 10;
+  opacity: 0.8;
+  transition: opacity var(--transition-speed-normal);
+}
+
+.mobileZoomControls:hover {
+  opacity: 1;
+}
+
+/* Mobile zoom buttons */
+.mobileZoomButton {
+  width: var(--touch-target-ideal);
+  height: var(--touch-target-ideal);
+  border-radius: 50%;
+  background-color: var(--color-background-alt);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: var(--font-size-mobile-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+/* Mobile activity detail overlay */
+.mobileDetailOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Mobile detail card */
+.mobileDetailCard {
+  background-color: var(--color-background);
+  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 360px;
+  padding: var(--spacing-lg);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  max-height: 80%;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Mobile detail header */
+.mobileDetailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.mobileDetailTitle {
+  font-size: var(--font-size-mobile-lg);
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+
+/* Mobile close button */
+.mobileCloseButton {
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  border-radius: 50%;
+  background-color: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-mobile-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Mobile detail content */
+.mobileDetailContent {
+  font-size: var(--font-size-mobile-md);
+}
+
+/* Mobile detail item */
+.mobileDetailItem {
+  margin-bottom: var(--spacing-md);
+}
+
+.mobileDetailLabel {
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-secondary);
+}
+
+.mobileDetailValue {
+  font-size: var(--font-size-mobile-md);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .mobileDetailOverlay,
+  .mobileDetailCard {
+    animation: none;
+  }
+}
+
+/* Dark mode adjustments */
+:global(.dark-mode) .mobileTimelineEntry {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+:global(.dark-mode) .mobileBreakEntry {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.05) 10px,
+    rgba(255, 255, 255, 0.08) 10px,
+    rgba(255, 255, 255, 0.08) 20px
+  );
+}

@@ -1,5 +1,7 @@
-import React, { useMemo, useEffect, useState } from 'react';
+import { useState, useEffect, useMemo, useRef, TouchEvent } from 'react';
+import { useViewport } from '../hooks/useViewport';
 import styles from './Timeline.module.css';
+import mobileStyles from './Timeline.mobile.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
@@ -42,6 +44,12 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
   } else {
     return { interval: 1800, count: Math.ceil(totalSeconds / 1800) }; // 30-minute intervals
   }
+}
+
+interface PinchState {
+  isPinching: boolean;
+  initialDistance: number;
+  scale: number;
 }
 
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
@@ -261,141 +269,321 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     };
   };
   
+  // Add mobile-specific state and refs
+  const { isMobile, hasTouch } = useViewport();
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const [selectedEntry, setSelectedEntry] = useState<TimelineEntry | null>(null);
+  const [pinchState, setPinchState] = useState<PinchState>({
+    isPinching: false,
+    initialDistance: 0,
+    scale: 1
+  });
+  const [showZoomControls, setShowZoomControls] = useState(false);
+  
+  // Modified scale for mobile zoom (higher values for easier viewing)
+  const [zoomScale, setZoomScale] = useState(1);
+  
+  // Handle touch events for pinch zoom
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    if (!hasTouch) return;
+    
+    // Only handle multi-touch events for pinch
+    if (e.touches.length === 2) {
+      e.preventDefault(); // Prevent default browser behavior
+      
+      // Calculate initial distance between two touch points
+      const touch1 = e.touches[0];
+      const touch2 = e.touches[1];
+      const initialDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      
+      setPinchState({
+        isPinching: true,
+        initialDistance,
+        scale: zoomScale // Start from current scale
+      });
+    }
+  };
+  
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+    if (!pinchState.isPinching || e.touches.length !== 2) return;
+    
+    e.preventDefault();
+    
+    // Calculate new distance between touch points
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+    const currentDistance = Math.hypot(
+      touch2.clientX - touch1.clientX,
+      touch2.clientY - touch1.clientY
+    );
+    
+    // Calculate new scale based on distance change
+    // Limit scale between 0.5 and 3
+    const newScale = Math.min(
+      Math.max(
+        pinchState.scale * (currentDistance / pinchState.initialDistance),
+        0.5
+      ), 
+      3
+    );
+    
+    setZoomScale(newScale);
+    setShowZoomControls(true);
+  };
+  
+  const handleTouchEnd = () => {
+    if (pinchState.isPinching) {
+      setPinchState({
+        isPinching: false,
+        initialDistance: 0,
+        scale: zoomScale
+      });
+      
+      // Hide zoom controls after a delay
+      setTimeout(() => {
+        setShowZoomControls(false);
+      }, 3000);
+    }
+  };
+  
+  // Handle zoom controls
+  const handleZoomIn = () => {
+    setZoomScale(prevScale => Math.min(prevScale + 0.2, 3));
+    setShowZoomControls(true);
+    
+    // Hide zoom controls after a delay
+    setTimeout(() => {
+      setShowZoomControls(false);
+    }, 3000);
+  };
+  
+  const handleZoomOut = () => {
+    setZoomScale(prevScale => Math.max(prevScale - 0.2, 0.5));
+    setShowZoomControls(true);
+    
+    // Hide zoom controls after a delay
+    setTimeout(() => {
+      setShowZoomControls(false);
+    }, 3000);
+  };
+  
+  // Handle showing entry details
+  const showEntryDetails = (entry: TimelineEntry) => {
+    if (isMobile) {
+      setSelectedEntry(entry);
+    }
+  };
+  
+  // Format duration for display in detail overlay
+  const formatDuration = (startTime: number, endTime: number) => {
+    const durationMs = endTime - startTime;
+    const minutes = Math.floor(durationMs / 60000);
+    const seconds = Math.floor((durationMs % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+  
+  // Get appropriate style class based on viewport
+  const getTimelineClass = () => {
+    return isMobile ? mobileStyles.mobileTimeline : styles.timeline;
+  };
+  
+  const getVisualizationClass = () => {
+    return isMobile ? mobileStyles.mobileVisualization : styles.visualization;
+  };
+  
+  const getTimeMarkerClass = (isOvertimeMarker: boolean) => {
+    return isMobile 
+      ? `${mobileStyles.mobileTimeMarker} ${isOvertimeMarker ? styles.overtimeMarker : ''}`
+      : `${styles.timeMarker} ${isOvertimeMarker ? styles.overtimeMarker : ''}`;
+  };
+  
+  const getTimelineEntryClass = (isBreak: boolean) => {
+    return isMobile
+      ? `${mobileStyles.mobileTimelineEntry} ${isBreak ? mobileStyles.mobileBreakEntry : ''}`
+      : `${styles.timelineEntry} ${isBreak ? styles.breakEntry : ''}`;
+  };
+  
+  const getLabelClass = () => {
+    return isMobile ? mobileStyles.mobileLabel : styles.label;
+  };
+  
+  const getCurrentTimeIndicatorClass = () => {
+    return isMobile
+      ? `${styles.currentTimeIndicator} ${mobileStyles.mobileCurrentTimeIndicator} ${mobileStyles.mobileCentered}`
+      : styles.currentTimeIndicator;
+  };
+  
+  // Adjust the styled component renderings to use these class getters
+  const visualEntries = useMemo(() => {
+    return timeSpansData.items.map(item => {
+      const isBreak = item.type === 'gap';
+      return {
+        id: item.entry ? item.entry.id : `gap-${item.duration}-${Math.random()}`,
+        activityName: item.entry ? item.entry.activityName : '',
+        position: item.startTime / effectiveDuration * 100,
+        height: item.duration / effectiveDuration * 100,
+        isBreak,
+        colors: isBreak ? { background: 'transparent', border: 'transparent' } : undefined,
+      };
+    });
+  }, [timeSpansData.items, effectiveDuration]);
+  
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h2 className={styles.heading}>Timeline</h2>
-        <div 
-          className={`${styles.timeDisplay} ${isTimeUp ? styles.timeDisplayOvertime : ''}`}
-          data-testid="time-display"
-        >
-          {timeDisplay}
-        </div>
-      </div>
-      
-      <div className={styles.timelineContainer}>
-        <div className={styles.timelineRuler}>
-          {/* Add overtime background to the ruler */}
-          {isOvertime && (
-            <div 
-              className={styles.overtimeRulerSection}
-              style={{ 
-                top: `${plannedDurationPosition}%`,
-                height: `${100 - plannedDurationPosition}%`
-              }}
-              data-testid="overtime-ruler-section"
-            />
-          )}
-          
-          {timeMarkers.map(({ time, position, label, isOvertimeMarker }) => (
-            <div
-              key={time}
-              className={`${styles.timeMarker} ${isOvertimeMarker ? styles.overtimeMarker : ''}`}
-              style={{ top: `${position}%` }}
-              data-testid="time-marker"
-            >
-              {label}
-            </div>
-          ))}
-          
-          {/* Overtime indicator line */}
-          {isOvertime && (
-            <div 
-              className={styles.overtimeDivider}
-              style={{ top: `${plannedDurationPosition}%` }}
-              title="Original planned duration"
-            />
-          )}
-        </div>
+    <div 
+      className={getTimelineClass()} 
+      data-testid="timeline-container"
+      ref={timelineRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      style={{ 
+        transform: isMobile ? `scale(${zoomScale})` : 'none',
+        transformOrigin: 'center center'
+      }}
+    >
+      <div className={getVisualizationClass()} data-testid="timeline-visualization">
+        {/* Time markers */}
+        {timeMarkers.map(({ time, position, label, isOvertimeMarker }) => (
+          <div
+            key={time}
+            className={getTimeMarkerClass(isOvertimeMarker)}
+            style={{ top: `${position}%` }}
+            data-testid="time-marker"
+          >
+            {label}
+          </div>
+        ))}
         
-        <div className={styles.entriesContainer}>
-          {/* Overtime background section */}
-          {isOvertime && (
-            <div 
-              className={styles.overtimeSection}
-              style={{ 
-                top: `${plannedDurationPosition}%`,
-                height: `${100 - plannedDurationPosition}%`
-              }}
-              data-testid="overtime-section"
-            />
-          )}
-          
-          <div className={styles.timeGuides}>
-            {timeMarkers.map(({ time, position, isOvertimeMarker }) => (
-              <div
-                key={time}
-                className={`${styles.timeGuide} ${isOvertimeMarker ? styles.overtimeGuide : ''}`}
-                style={{ top: `${position}%` }}
-              />
-            ))}
-            
-            {/* Overtime divider guide */}
-            {isOvertime && (
-              <div 
-                className={styles.overtimeDividerGuide}
-                style={{ top: `${plannedDurationPosition}%` }}
-              />
-            )}
+        {/* Current time indicator */}
+        {timerActive && (
+          <div 
+            className={getCurrentTimeIndicatorClass()}
+            style={{ top: `${currentTimePosition}%` }}
+            data-testid="current-time-indicator"
+          />
+        )}
+        
+        {/* Timeline entries */}
+        {visualEntries.map((entry) => (
+          <div
+            key={entry.id}
+            className={getTimelineEntryClass(!!entry.isBreak)}
+            style={{
+              top: `${entry.position}%`,
+              height: `${entry.height}%`,
+              backgroundColor: entry.isBreak ? 'transparent' : entry.colors?.background,
+              borderColor: entry.colors?.border,
+            }}
+            onClick={() => showEntryDetails(entry)}
+            data-testid={`timeline-entry-${entry.id}`}
+          >
+            <span className={getLabelClass()} data-testid={`timeline-label-${entry.id}`}>
+              {entry.activityName}
+            </span>
           </div>
-          
-          <div className={styles.entriesWrapper}>
-            {hasEntries ? (
-              timeSpansData.items.map((item, index) => {
-                const style = calculateEntryStyle(item);
-                
-                if (item.type === 'gap') {
-                  if (allActivitiesCompleted && index === timeSpansData.items.length - 1) {
-                    return (
-                      <div
-                        key="remaining"
-                        className={styles.timeGap}
-                        style={style}
-                      >
-                        <span>Time Remaining ({formatTimeHuman(item.duration)})</span>
-                      </div>
-                    );
-                  }
-                  return (
-                    <div
-                      key={`gap-${index}`}
-                      className={styles.timeGap}
-                      style={style}
-                    >
-                      <span>Break ({formatTimeHuman(item.duration)})</span>
-                    </div>
-                  );
-                }
-                return (
-                  <div key={item.entry!.id} className={styles.timelineEntry} style={style}>
-                    <div className={styles.entryContent}>
-                      <div className={styles.entryHeader}>
-                        <span
-                          className={styles.activityName}
-                          data-testid="timeline-activity-name"
-                        >
-                          {item.entry!.activityName}
-                        </span>
-                        <span className={styles.timeInfo}>
-                          {formatTimeHuman(item.duration)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <div className={styles.noEntries}>
-                No activities started yet
-              </div>
-            )}
-          </div>
-        </div>
+        ))}
+        
+        {/* Overtime section background */}
+        {isOvertime && (
+          <div 
+            className={styles.overtimeSection}
+            style={{ 
+              top: `${plannedDurationPosition}%`,
+              height: `${100 - plannedDurationPosition}%`
+            }}
+            data-testid="overtime-ruler-section"
+          />
+        )}
+        
+        {/* Overtime indicator line */}
+        {isOvertime && (
+          <div 
+            className={styles.overtimeDivider}
+            style={{ top: `${plannedDurationPosition}%` }}
+            title="Original planned duration"
+          />
+        )}
       </div>
       
-      {isTimeUp && hasEntries && (
-        <div className={styles.warningMessage} data-testid="overtime-warning">
-          <strong>Warning:</strong> You&apos;ve exceeded the planned time!
+      {/* Mobile zoom controls */}
+      {isMobile && (hasTouch || showZoomControls) && (
+        <div 
+          className={mobileStyles.mobileZoomControls}
+          data-testid="zoom-controls"
+          style={{ opacity: showZoomControls ? 1 : 0 }}
+        >
+          <button 
+            className={mobileStyles.mobileZoomButton}
+            onClick={handleZoomOut}
+            aria-label="Zoom out"
+            data-testid="zoom-out-button"
+          >
+            -
+          </button>
+          <button 
+            className={mobileStyles.mobileZoomButton}
+            onClick={handleZoomIn}
+            aria-label="Zoom in"
+            data-testid="zoom-in-button"
+          >
+            +
+          </button>
+        </div>
+      )}
+      
+      {/* Mobile entry detail overlay */}
+      {isMobile && selectedEntry && (
+        <div className={mobileStyles.mobileDetailOverlay} data-testid="detail-overlay">
+          <div className={mobileStyles.mobileDetailCard}>
+            <div className={mobileStyles.mobileDetailHeader}>
+              <h3 className={mobileStyles.mobileDetailTitle}>{selectedEntry.activityName}</h3>
+              <button 
+                className={mobileStyles.mobileCloseButton}
+                onClick={() => setSelectedEntry(null)}
+                aria-label="Close details"
+                data-testid="close-overlay-button"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className={mobileStyles.mobileDetailContent}>
+              <div className={mobileStyles.mobileDetailItem}>
+                <div className={mobileStyles.mobileDetailLabel}>Start Time</div>
+                <div className={mobileStyles.mobileDetailValue}>
+                  {new Date(selectedEntry.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+              
+              <div className={mobileStyles.mobileDetailItem}>
+                <div className={mobileStyles.mobileDetailLabel}>End Time</div>
+                <div className={mobileStyles.mobileDetailValue}>
+                  {selectedEntry.endTime 
+                    ? new Date(selectedEntry.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    : 'In progress'}
+                </div>
+              </div>
+              
+              <div className={mobileStyles.mobileDetailItem}>
+                <div className={mobileStyles.mobileDetailLabel}>Duration</div>
+                <div className={mobileStyles.mobileDetailValue}>
+                  {selectedEntry.endTime 
+                    ? formatDuration(selectedEntry.startTime, selectedEntry.endTime)
+                    : 'Ongoing'}
+                </div>
+              </div>
+              
+              {selectedEntry.isBreak && (
+                <div className={mobileStyles.mobileDetailItem}>
+                  <div className={mobileStyles.mobileDetailLabel}>Type</div>
+                  <div className={mobileStyles.mobileDetailValue}>Break Time</div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
