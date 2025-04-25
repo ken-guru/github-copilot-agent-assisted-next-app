@@ -24,7 +24,7 @@ const DisplayToggle: React.FC = () => {
   return (
     <div className={styles.container}>
       <button
-        className={`${styles.toggleButton} ${keepDisplayOn ? styles.active : ''}`}
+        className={`${styles.toggleButton} ${keepDisplayOn ? styles.active : styles.inactive}`}
         onClick={toggleKeepDisplayOn}
         disabled={!isSupported}
         aria-label={keepDisplayOn ? "Turn display sleep on" : "Keep display on"}
@@ -39,6 +39,14 @@ const DisplayToggle: React.FC = () => {
           <line x1="8" y1="21" x2="16" y2="21"></line>
           <line x1="12" y1="17" x2="12" y2="21"></line>
         </svg>
+        
+        {/* Status label */}
+        <span 
+          className={styles.statusLabel} 
+          data-testid="toggle-status"
+        >
+          {keepDisplayOn ? "On" : "Off"}
+        </span>
         
         {/* Show small indicator dot if not supported */}
         {!isSupported && typeof window !== 'undefined' && (

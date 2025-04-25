@@ -68,7 +68,7 @@ describe('DisplayToggle', () => {
     // We don't strictly compare HTML equality since client might have added behavior
   });
   
-  it('renders with default state', () => {
+  it('renders with default state (inactive)', () => {
     render(
       <DisplaySettingsProvider>
         <DisplayToggle />
@@ -79,14 +79,22 @@ describe('DisplayToggle', () => {
     expect(toggleButton).toBeInTheDocument();
     expect(toggleButton).toHaveAttribute('aria-checked', 'false');
     
-    // Check for title attribute instead of text content
+    // Check for title attribute
     expect(toggleButton).toHaveAttribute('title', 'Keep display on');
+    
+    // Verify toggle appearance shows inactive state
+    expect(toggleButton).toHaveClass('inactive');
+    expect(toggleButton).not.toHaveClass('active');
+    
+    // Verify label indicates inactive state
+    const statusLabel = screen.getByTestId('toggle-status');
+    expect(statusLabel).toHaveTextContent('Off');
     
     // Verify SVG icon is present
     expect(toggleButton.querySelector('svg')).toBeInTheDocument();
   });
   
-  it('toggles when clicked', () => {
+  it('toggles state and appearance when clicked', () => {
     render(
       <DisplaySettingsProvider>
         <DisplayToggle />
@@ -94,13 +102,26 @@ describe('DisplayToggle', () => {
     );
     
     const toggle = screen.getByTestId('display-toggle');
-    expect(toggle).toHaveAttribute('aria-checked', 'false');
+    const statusLabel = screen.getByTestId('toggle-status');
     
+    // Initial state
+    expect(toggle).toHaveAttribute('aria-checked', 'false');
+    expect(toggle).toHaveClass('inactive');
+    expect(statusLabel).toHaveTextContent('Off');
+    
+    // After clicking once - should be active
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-checked', 'true');
+    expect(toggle).toHaveClass('active');
+    expect(toggle).not.toHaveClass('inactive');
+    expect(statusLabel).toHaveTextContent('On');
     
+    // After clicking again - should be inactive
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute('aria-checked', 'false');
+    expect(toggle).toHaveClass('inactive');
+    expect(toggle).not.toHaveClass('active');
+    expect(statusLabel).toHaveTextContent('Off');
   });
   
   it('shows unsupported indicator when Wake Lock API is not supported', () => {
