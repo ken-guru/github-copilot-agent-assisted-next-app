@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import styles from './splash/SplashScreen.module.css';
 
 interface SplashScreenProps {
@@ -41,7 +42,13 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
         style={splashScreenStyle}
       >
         <div className={styles.logoContainer || styles.splashContent}>
-          <img src="/logo.png" alt="App Logo" className={styles.logo} />
+          <Image 
+            src="/splash-logo.png" 
+            alt="App Logo" 
+            width={150} 
+            height={150}
+            priority
+          />
           <div className={styles.loadingIndicator} data-testid="loading-indicator">
             <div 
               className={`SplashScreen-module__loadingDot ${styles.loadingDot}`} 

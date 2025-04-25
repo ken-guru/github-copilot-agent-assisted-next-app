@@ -7,26 +7,6 @@ interface SplashScreenProps {
   minimumDisplayTime?: number;
 }
 
-// Helper function to detect dark mode based on system preference and localStorage
-// Safe to use on both client and server
-const isDarkTheme = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  
-  try {
-    // First check for localStorage theme setting (highest priority)
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      return savedTheme === 'dark';
-    }
-    
-    // Then check for system preference
-    return window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-  } catch {
-    // Fallback in case of errors (e.g., localStorage blocked)
-    return false;
-  }
-};
-
 // Static initialization to handle theme before component renders
 // This should only run once when the module is imported
 if (typeof window !== 'undefined') {
