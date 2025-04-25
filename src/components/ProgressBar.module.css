@@ -1,89 +1,137 @@
-.container {
-  width: 100%;
-  position: relative;
-  
-  /* Define base colors to use for transitions - moved from :root to .container */
+:root {
+  /* Progress bar color variables */
+  /* Hue values for HSL color model */
   --progress-green-hue: 142;
   --progress-yellow-hue: 48;
   --progress-orange-hue: 25;
   --progress-red-hue: 0;
-  
+  /* Saturation and lightness for HSL */
   --progress-saturation: 85%;
   --progress-lightness: 45%;
   
-  /* For reduced motion preferences */
+  /* Animation timing */
   --progress-transition-duration: 0.3s;
+  
+  /* Progress bar dimensions */
+  --progress-bar-height: 12px;
+  --progress-bar-mobile-height: 16px;
+  --progress-bar-border-radius: 6px;
+  --progress-bar-mobile-border-radius: 8px;
 }
 
-/* Mobile specific container styling */
-.mobileContainer {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0;
-}
-
+/* Progress bar container */
 .progressBarContainer {
   position: relative;
   width: 100%;
-  height: 16px;
-  background-color: var(--background-muted);
-  border-radius: 8px;
+  height: var(--progress-bar-height);
+  background-color: var(--color-background-alt, #f0f0f0);
+  border-radius: var(--progress-bar-border-radius);
   overflow: hidden;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  transition: height var(--transition-speed-normal);
 }
 
 /* Style for inactive progress bar */
 .inactiveBar {
-  background-color: var(--background-muted);
-  opacity: 0.5;
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  opacity: 0.6;
 }
 
+/* Progress fill inside the container */
 .progressFill {
+  height: 100%;
+  background-color: var(--color-primary, #007bff);
+  border-radius: var(--progress-bar-border-radius);
+  transition: 
+    width var(--progress-transition-duration) ease-in-out, 
+    background-color var(--progress-transition-duration) ease-in-out;
+}
+
+/* Mobile enhancements for progress bar */
+.mobileProgressBarContainer {
+  height: var(--progress-bar-mobile-height);
+  border-radius: var(--progress-bar-mobile-border-radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin: var(--spacing-sm) 0;
+}
+
+/* Touch-friendly styles */
+.touchFriendly {
+  height: var(--progress-bar-mobile-height);
+  min-height: calc(var(--touch-target-min) / 2);
+}
+
+/* Text label for percentage display */
+.textLabel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--color-text-inverse, white);
+  font-weight: bold;
+  font-size: 0.85rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  transition: font-size var(--transition-speed-normal);
+}
+
+/* Larger text for touch devices */
+.largeIndicator {
+  font-size: var(--font-size-mobile-md);
+  font-weight: 800;
+}
+
+/* Container for labels to handle animations */
+.labelContainer {
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
   height: 100%;
-  border-radius: 8px;
-  transition: width 0.3s ease, background-color 0.5s ease;
-  z-index: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .progressFill {
-    transition-duration: 0.1s;
-  }
-}
-
-.timeMarkers {
   display: flex;
-  justify-content: space-between;
-  margin-top: var(--space-xs);
-  padding: 0 var(--space-2xs);
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
 }
 
-/* Mobile specific time markers styling */
-.mobileContainer .timeMarkers {
-  margin-top: 0;
-  margin-bottom: var(--space-2xs);
-  padding: 0 var(--space-2xs);
-  order: -1;
+/* Animation for updating percentage value */
+.fadingLabel {
+  animation: fadeInOut 1.5s ease-in-out;
 }
 
-.timeMarker {
-  font-size: 0.75rem;
-  color: var(--foreground-muted);
+@keyframes fadeInOut {
+  0% { opacity: 0.6; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0.6; }
 }
 
-/* Dark mode specific overrides */
+/* Dark mode support */
 :global(.dark-mode) .progressBarContainer {
-  background-color: var(--background-muted);
-}
-
-:global(.dark-mode) .timeMarker {
-  color: var(--foreground-muted);
+  background-color: var(--color-background-dark-alt, #333);
 }
 
 :global(.dark-mode) .progressFill {
   --progress-lightness: 55%; /* Brighter colors for dark mode */
+}
+
+/* Media queries for responsive adjustments */
+@media (max-width: 480px) {
+  .touchFriendly {
+    margin: var(--spacing-md) 0;
+  }
+  
+  .largeIndicator {
+    font-size: var(--font-size-mobile-lg);
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .progressFill {
+    transition: none;
+  }
+  
+  .fadingLabel {
+    animation: none;
+  }
 }

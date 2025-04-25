@@ -14,3 +14,4 @@ This file serves as an index of all logged memories across the project's develop
 - [MRTMLY-007: TouchableButton Implementation](./docs/logged_memories/MRTMLY-007-touchable-button-implementation.md)
 - [MRTMLY-008: App Layout Implementation](./docs/logged_memories/MRTMLY-008-app-layout-implementation.md)
 - [MRTMLY-009: Enhanced Overtime Indicator](./docs/logged_memories/MRTMLY-009-enhanced-overtime-indicator.md)
+- [MRTMLY-010: Progress Component Mobile Enhancement](./docs/logged_memories/MRTMLY-010-progress-component-mobile-enhancement.md)

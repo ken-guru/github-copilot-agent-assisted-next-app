@@ -1,133 +1,128 @@
 import React, { useState, useEffect } from 'react';
-import { TimelineEntry } from './Timeline';
+import { useViewport } from '../hooks/useViewport';
 import styles from './ProgressBar.module.css';
-import { formatTimeHuman } from '@/utils/time';
 
 interface ProgressBarProps {
-  entries: TimelineEntry[];
-  totalDuration: number; // in seconds
-  elapsedTime: number; // in seconds
-  timerActive?: boolean;
+  elapsedTime: number;
+  totalDuration: number;
+  isActive: boolean;
+  className?: string;
+  labelPosition?: 'top' | 'inside' | 'none';
+  showPercentage?: boolean;
 }
 
 export default function ProgressBar({
-  entries,
-  totalDuration,
   elapsedTime,
-  timerActive = false
+  totalDuration,
+  isActive,
+  className = '',
+  labelPosition = 'none',
+  showPercentage = false,
 }: ProgressBarProps) {
-  // State to track if the component is being viewed on mobile
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Effect to check if the device is mobile on mount and when window is resized
-  useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.matchMedia('(max-width: 768px)').matches);
-    };
-    
-    // Initial check
-    checkIsMobile();
-    
-    // Add listener for window resize
-    window.addEventListener('resize', checkIsMobile);
-    
-    // Cleanup
-    return () => window.removeEventListener('resize', checkIsMobile);
-  }, []);
-
-  // Always render the progress bar container, even if timer is inactive
-  const isActive = timerActive && entries.length > 0 && totalDuration > 0;
+  const { isMobile, hasTouch } = useViewport();
+  const [lastProgress, setLastProgress] = useState<number>(0);
+  const [showFadingAnimation, setShowFadingAnimation] = useState<boolean>(false);
   
   // Calculate the progress percentage (capped at 100%) when active
   const progressPercentage = isActive ? Math.min(100, (elapsedTime / totalDuration) * 100) : 0;
   
-  // Using constant values to ensure test environment consistency
-  const GREEN_HUE = 142;
-  const YELLOW_HUE = 48;
-  const ORANGE_HUE = 25;
-  const RED_HUE = 0;
-  const DEFAULT_SATURATION = "85%";
-  const DEFAULT_LIGHTNESS = "45%";
-
-  // Helper function for color interpolation
-  const interpolateValue = (ratio: number, start: number, end: number): number => {
-    return Math.round(start + (end - start) * ratio);
-  };
+  // Detect significant progress changes to trigger animations
+  useEffect(() => {
+    const currentProgress = Math.round(progressPercentage);
+    if (Math.abs(currentProgress - lastProgress) >= 5) {
+      // Progress changed by at least 5%, trigger animation
+      setShowFadingAnimation(true);
+      const timer = setTimeout(() => {
+        setShowFadingAnimation(false);
+      }, 1500); // Animation duration
+      
+      // Update last progress
+      setLastProgress(currentProgress);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [progressPercentage, lastProgress]);
   
   // Calculate color based on progress percentage for smooth transition
   const calculateProgressColor = (): string => {
-    if (!isActive) {
-      return "transparent";
-    }
+    // Define the color thresholds with their respective HSL hue values
+    const thresholds = [
+      { threshold: 50, hue: '--progress-green-hue' },
+      { threshold: 70, hue: '--progress-yellow-hue' },
+      { threshold: 90, hue: '--progress-orange-hue' },
+      { threshold: 100, hue: '--progress-red-hue' },
+    ];
     
-    const timeRatio = elapsedTime / totalDuration;
+    // Find the appropriate color for the current progress
+    let currentHueVar = '--progress-green-hue';
     
-    // At or beyond 100%
-    if (timeRatio >= 1) {
-      return `hsl(${RED_HUE}, ${DEFAULT_SATURATION}, ${DEFAULT_LIGHTNESS})`;
+    for (const { threshold, hue } of thresholds) {
+      if (progressPercentage >= threshold) {
+        currentHueVar = hue;
+      }
     }
     
     // Interpolate color hue based on progress
-    if (timeRatio < 0.5) {
-      // Between 0% and 50%: Green to Yellow
-      const hue = interpolateValue(timeRatio / 0.5, GREEN_HUE, YELLOW_HUE);
-      return `hsl(${hue}, ${DEFAULT_SATURATION}, ${DEFAULT_LIGHTNESS})`;
-    } else if (timeRatio < 0.75) {
-      // Between 50% and 75%: Yellow to Orange
-      const hue = interpolateValue((timeRatio - 0.5) / 0.25, YELLOW_HUE, ORANGE_HUE);
-      return `hsl(${hue}, ${DEFAULT_SATURATION}, ${DEFAULT_LIGHTNESS})`;
-    } else {
-      // Between 75% and 100%: Orange to Red
-      const hue = interpolateValue((timeRatio - 0.75) / 0.25, ORANGE_HUE, RED_HUE);
-      return `hsl(${hue}, ${DEFAULT_SATURATION}, ${DEFAULT_LIGHTNESS})`;
-    }
+    return `hsl(var(${currentHueVar}), var(--progress-saturation), var(--progress-lightness))`;
   };
-
-  // Render time markers component
-  const timeMarkersComponent = totalDuration > 0 && (
-    <div className={styles.timeMarkers}>
-      <span className={styles.timeMarker}>0:00</span>
-      <span className={styles.timeMarker}>{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
-      <span className={styles.timeMarker}>{formatTimeHuman(totalDuration * 1000)}</span>
-    </div>
-  );
-
+  
+  // Combine CSS classes based on viewport and touch capability
+  const containerClasses = [
+    styles.progressBarContainer,
+    !isActive ? styles.inactiveBar : '',
+    isMobile ? styles.mobileProgressBarContainer : '',
+    hasTouch ? styles.touchFriendly : '',
+    className,
+  ].filter(Boolean).join(' ');
+  
+  // Text label classes
+  const labelClasses = [
+    styles.textLabel,
+    hasTouch ? styles.largeIndicator : '',
+  ].filter(Boolean).join(' ');
+  
+  const labelContainerClasses = [
+    styles.labelContainer,
+    showFadingAnimation ? styles.fadingLabel : '',
+  ].filter(Boolean).join(' ');
+  
   // Render progress bar component
   const progressBarComponent = (
-    <div 
-      className={`${styles.progressBarContainer} ${!isActive ? styles.inactiveBar : ''}`}
+    <div
+      className={containerClasses}
       role="progressbar"
       aria-valuenow={Math.round(progressPercentage)}
       aria-valuemin={0}
       aria-valuemax={100}
       aria-label="Progress towards total duration"
     >
-      {isActive && (
-        <div 
-          className={styles.progressFill} 
-          style={{ 
-            width: `${progressPercentage}%`,
-            backgroundColor: calculateProgressColor()
-          }}
-        />
+      <div 
+        className={styles.progressFill} 
+        style={{
+          width: `${progressPercentage}%`,
+          backgroundColor: calculateProgressColor()
+        }}
+      />
+      
+      {showPercentage && (
+        <div className={labelContainerClasses}>
+          <span className={labelClasses}>
+            {Math.round(progressPercentage)}%
+          </span>
+        </div>
       )}
     </div>
   );
-
-  return (
-    <div className={`${styles.container} ${isMobile ? styles.mobileContainer : ''}`}>
-      {/* Render in different order based on viewport */}
-      {isMobile ? (
-        <>
-          {timeMarkersComponent}
-          {progressBarComponent}
-        </>
-      ) : (
-        <>
-          {progressBarComponent}
-          {timeMarkersComponent}
-        </>
-      )}
-    </div>
-  );
+  
+  // Return the progress bar based on label position
+  if (labelPosition === 'top') {
+    return (
+      <div className={styles.progressWithLabel}>
+        {/* Can add label component here in the future */}
+        {progressBarComponent}
+      </div>
+    );
+  } else {
+    return progressBarComponent;
+  }
 }
