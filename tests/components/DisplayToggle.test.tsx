@@ -3,14 +3,18 @@ import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import DisplayToggle from '../../components/ui/DisplayToggle';
 import { DisplaySettingsProvider } from '../../components/contexts/DisplaySettingsContext';
 
+// Create a better mock implementation for useWakeLock
+const mockWakeLockRequest = jest.fn();
+const mockWakeLockRelease = jest.fn().mockImplementation(() => Promise.resolve());
+
 // Mock the useWakeLock hook
 jest.mock('../../hooks/useWakeLock', () => ({
   __esModule: true,
   default: jest.fn(() => ({
     isSupported: true,
     isActive: false,
-    request: jest.fn(),
-    release: jest.fn(),
+    request: mockWakeLockRequest,
+    release: mockWakeLockRelease,
   })),
 }));
 
@@ -31,7 +35,7 @@ describe('DisplayToggle', () => {
       isSupported: false, // On server, this should be false
       isActive: false,
       request: jest.fn(),
-      release: jest.fn(),
+      release: jest.fn().mockImplementation(() => Promise.resolve()),
     }));
     
     const { container: serverContainer } = render(
@@ -102,7 +106,7 @@ describe('DisplayToggle', () => {
       isSupported: false,
       isActive: false,
       request: jest.fn(),
-      release: jest.fn(),
+      release: jest.fn().mockImplementation(() => Promise.resolve()),
     }));
     
     const { queryByText } = render(

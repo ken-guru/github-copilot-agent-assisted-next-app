@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface WakeLockResult {
   isSupported: boolean;
@@ -16,7 +16,7 @@ export default function useWakeLock(): WakeLockResult {
   // Safely check if the Wake Lock API is supported
   const [isSupported, setIsSupported] = useState<boolean>(false);
   const [isActive, setIsActive] = useState<boolean>(false);
-  const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
   
   // Check for API support only on client side
   useEffect(() => {
@@ -37,51 +37,63 @@ export default function useWakeLock(): WakeLockResult {
       // Safely access navigator only on client side
       if (typeof navigator !== 'undefined' && navigator.wakeLock) {
         const sentinel = await navigator.wakeLock.request('screen');
-        setWakeLock(sentinel);
+        wakeLockRef.current = sentinel;
         setIsActive(true);
         
         // Add event listener for when the wake lock is released
         sentinel.addEventListener('release', () => {
           setIsActive(false);
-          setWakeLock(null);
+          wakeLockRef.current = null;
         });
       }
     } catch (error) {
       console.error('Failed to request wake lock:', error);
       setIsActive(false);
-      setWakeLock(null);
+      wakeLockRef.current = null;
     }
   }, [isSupported]);
   
   // Function to release the wake lock
   const release = useCallback(async (): Promise<void> => {
-    if (wakeLock) {
+    if (wakeLockRef.current) {
       try {
-        await wakeLock.release();
+        await wakeLockRef.current.release();
         setIsActive(false);
-        setWakeLock(null);
+        wakeLockRef.current = null;
       } catch (error) {
         console.error('Failed to release wake lock:', error);
       }
     }
-  }, [wakeLock]);
+  }, [wakeLockRef]);
   
   // Clean up on unmount
   useEffect(() => {
     return () => {
-      if (wakeLock && typeof wakeLock.release === 'function') {
+      if (wakeLockRef.current) {
         try {
-          // Ensure release() is properly awaited or handled in a try/catch instead of using .catch()
-          // This prevents the "Cannot read properties of undefined (reading 'catch')" error
-          wakeLock.release().catch(error => {
-            console.error('Error releasing wake lock during cleanup:', error);
-          });
+          // Instead of trying to chain promises, simply call release and handle it synchronously
+          // This avoids the issue with .then() on undefined
+          if (typeof wakeLockRef.current.release === 'function') {
+            try {
+              // Call release but don't try to chain .then()
+              wakeLockRef.current.release();
+            } catch (releaseError) {
+              // Just log any synchronous errors
+              console.error('Error releasing wake lock:', releaseError);
+            }
+          }
+          
+          // Always clean up the ref and state, regardless of promise success
+          setIsActive(false);
+          wakeLockRef.current = null;
         } catch (error) {
           console.error('Failed to release wake lock during cleanup:', error);
+          // Ensure ref is cleared even if there's an error
+          wakeLockRef.current = null;
         }
       }
     };
-  }, [wakeLock]);
+  }, []);
   
   return {
     isSupported,
