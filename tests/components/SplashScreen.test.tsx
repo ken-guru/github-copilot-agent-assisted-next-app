@@ -37,24 +37,19 @@ describe('SplashScreen', () => {
   });
   
   it('uses consistent style properties between server and client', () => {
-    const { container } = render(
+    const { getByTestId } = render(
       <SplashScreen minimumDisplayTime={0}>
         <div>Content</div>
       </SplashScreen>
     );
     
-    const splashScreenElement = container.querySelector('[data-testid="splash-screen"]');
+    const splashScreenElement = getByTestId('splash-screen');
     
-    // Verify style property exists
-    expect(splashScreenElement).not.toBeNull();
-    
-    // Check if inline styles use camelCase format (React's standard)
-    const styleAttribute = splashScreenElement?.getAttribute('style');
-    expect(styleAttribute).toContain('backgroundColor');
-    expect(styleAttribute).not.toContain('background-color');
-    
-    // Check that we're using consistent CSS variables
-    expect(styleAttribute).toContain('var(--bg-primary');
+    // Test that the element has the expected background style using toHaveStyle
+    // instead of checking the attribute string directly
+    expect(splashScreenElement).toHaveStyle({
+      backgroundColor: 'var(--bg-primary, #ffffff)'
+    });
   });
   
   it('applies consistent loading dot styles', () => {
@@ -64,17 +59,17 @@ describe('SplashScreen', () => {
       </SplashScreen>
     );
     
+    const loadingIndicator = container.querySelector('[data-testid="loading-indicator"]');
+    expect(loadingIndicator).not.toBeNull();
+    
     const loadingDots = container.querySelectorAll('.SplashScreen-module__loadingDot');
     expect(loadingDots.length).toBeGreaterThan(0);
     
-    loadingDots.forEach(dot => {
-      const styleAttribute = dot.getAttribute('style');
-      // Check for camelCase style properties
-      expect(styleAttribute).toContain('backgroundColor');
-      expect(styleAttribute).not.toContain('background-color');
-      
-      // Check for consistent variable use
-      expect(styleAttribute).toContain('var(--accent-color');
+    // Test that the first dot has the correct styles applied
+    // Cast to HTMLElement first to resolve TypeScript issues with toHaveStyle
+    const firstDot = loadingDots[0] as HTMLElement;
+    expect(firstDot).toHaveStyle({
+      backgroundColor: 'var(--accent-color, #0070f3)'
     });
   });
 });

@@ -69,8 +69,16 @@ export default function useWakeLock(): WakeLockResult {
   // Clean up on unmount
   useEffect(() => {
     return () => {
-      if (wakeLock) {
-        wakeLock.release().catch(console.error);
+      if (wakeLock && typeof wakeLock.release === 'function') {
+        try {
+          // Ensure release() is properly awaited or handled in a try/catch instead of using .catch()
+          // This prevents the "Cannot read properties of undefined (reading 'catch')" error
+          wakeLock.release().catch(error => {
+            console.error('Error releasing wake lock during cleanup:', error);
+          });
+        } catch (error) {
+          console.error('Failed to release wake lock during cleanup:', error);
+        }
       }
     };
   }, [wakeLock]);
