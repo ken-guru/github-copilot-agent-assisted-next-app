@@ -1,0 +1,190 @@
+/* Mobile-specific styles for Summary component */
+
+.mobileSummary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  width: 100%;
+}
+
+/* Mobile status message */
+.mobileStatusMessage {
+  font-size: var(--font-size-mobile-lg);
+  font-weight: 600;
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.mobileStatusMessageEarly {
+  background-color: var(--color-success-light, #e6f7ea);
+  color: var(--color-success, #2e7d32);
+  border-left: 4px solid var(--color-success, #2e7d32);
+}
+
+.mobileStatusMessageLate {
+  background-color: var(--color-error-light, #fff2f0);
+  color: var(--color-error, #d32f2f);
+  border-left: 4px solid var(--color-error, #d32f2f);
+}
+
+/* Mobile stats layout */
+.mobileStats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 0;
+  width: 100%;
+}
+
+.mobileStatItem {
+  background-color: var(--color-background-alt, #f5f5f5);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-height: var(--touch-target-ideal);
+}
+
+.mobileStatLabel {
+  font-size: var(--font-size-mobile-sm);
+  color: var(--color-text-secondary, #666);
+  margin-bottom: var(--spacing-xs);
+}
+
+.mobileStatValue {
+  font-size: var(--font-size-mobile-lg);
+  font-weight: 600;
+  color: var(--color-text, #000);
+}
+
+/* Mobile section title */
+.mobileSectionTitle {
+  font-size: var(--font-size-mobile-lg);
+  font-weight: 600;
+  margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid var(--color-border, #ddd);
+}
+
+/* Mobile activity list */
+.mobileActivityList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.mobileActivityItem {
+  background-color: var(--color-background, white);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  border: 1px solid var(--color-border, #ddd);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  min-height: var(--touch-target-ideal);
+  position: relative;
+}
+
+/* Activity header with name and drag handle */
+.mobileActivityHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.mobileActivityName {
+  font-size: var(--font-size-mobile-md);
+  font-weight: 600;
+  flex: 1;
+  margin: 0;
+}
+
+/* Activity details row */
+.mobileActivityDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-xs);
+}
+
+.mobileActivityTime {
+  font-size: var(--font-size-mobile-sm);
+  color: var(--color-text-secondary, #666);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.mobileDuration {
+  font-weight: 600;
+  color: var(--color-text, #000);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-mobile-md);
+}
+
+/* Progress indicator */
+.mobileProgressIndicator {
+  height: 8px;
+  background-color: var(--color-border, #e0e0e0);
+  border-radius: var(--radius-full);
+  margin-top: var(--spacing-xs);
+  overflow: hidden;
+}
+
+.mobileProgressFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+
+/* No activities message */
+.mobileNoActivities {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--color-text-secondary, #888);
+  font-size: var(--font-size-mobile-md);
+}
+
+/* Dark mode adjustments */
+:global(.dark-mode) .mobileStatusMessageEarly {
+  background-color: rgba(46, 125, 50, 0.15);
+  color: #66bb6a;
+}
+
+:global(.dark-mode) .mobileStatusMessageLate {
+  background-color: rgba(211, 47, 47, 0.15);
+  color: #ef5350;
+}
+
+:global(.dark-mode) .mobileStatItem {
+  background-color: var(--color-background-dark-alt, #272727);
+}
+
+:global(.dark-mode) .mobileActivityItem {
+  background-color: var(--color-background-dark, #1e1e1e);
+  border-color: var(--color-border-dark, #444);
+}
+
+/* Media query for extremely small screens */
+@media (max-width: 320px) {
+  .mobileSummary {
+    padding: var(--spacing-sm);
+  }
+  
+  .mobileStatValue {
+    font-size: var(--font-size-mobile-md);
+  }
+  
+  .mobileActivityItem {
+    padding: var(--spacing-sm);
+  }
+}
