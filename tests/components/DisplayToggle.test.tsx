@@ -75,11 +75,15 @@ describe('DisplayToggle', () => {
       </DisplaySettingsProvider>
     );
     
-    expect(screen.getByRole('switch')).toBeInTheDocument();
-    expect(screen.getByRole('switch')).not.toBeChecked();
+    const toggleButton = screen.getByTestId('display-toggle');
+    expect(toggleButton).toBeInTheDocument();
+    expect(toggleButton).toHaveAttribute('aria-checked', 'false');
     
-    // Use a more specific selector to avoid ambiguity with multiple text matches
-    expect(screen.getByText(/Keep Display On/i, { selector: '.text-sm' })).toBeInTheDocument();
+    // Check for title attribute instead of text content
+    expect(toggleButton).toHaveAttribute('title', 'Keep display on');
+    
+    // Verify SVG icon is present
+    expect(toggleButton.querySelector('svg')).toBeInTheDocument();
   });
   
   it('toggles when clicked', () => {
@@ -89,17 +93,17 @@ describe('DisplayToggle', () => {
       </DisplaySettingsProvider>
     );
     
-    const toggle = screen.getByRole('switch');
-    expect(toggle).not.toBeChecked();
+    const toggle = screen.getByTestId('display-toggle');
+    expect(toggle).toHaveAttribute('aria-checked', 'false');
     
     fireEvent.click(toggle);
-    expect(toggle).toBeChecked();
+    expect(toggle).toHaveAttribute('aria-checked', 'true');
     
     fireEvent.click(toggle);
-    expect(toggle).not.toBeChecked();
+    expect(toggle).toHaveAttribute('aria-checked', 'false');
   });
   
-  it('shows unsupported message only on client when Wake Lock API is not supported', () => {
+  it('shows unsupported indicator when Wake Lock API is not supported', () => {
     // Test client-side behavior with Wake Lock not supported
     const useWakeLockMock = require('../../hooks/useWakeLock').default;
     useWakeLockMock.mockImplementationOnce(() => ({
@@ -109,46 +113,47 @@ describe('DisplayToggle', () => {
       release: jest.fn().mockImplementation(() => Promise.resolve()),
     }));
     
-    const { queryByText } = render(
+    const { container } = render(
       <DisplaySettingsProvider>
         <DisplayToggle />
       </DisplaySettingsProvider>
     );
     
-    // Should show the unsupported message on client
-    expect(queryByText(/not supported/i)).toBeInTheDocument();
-    expect(screen.getByRole('switch')).toBeDisabled();
+    // Should show the unsupported indicator on client
+    const unsupportedIndicator = container.querySelector('.unsupportedIndicator');
+    expect(unsupportedIndicator).toBeInTheDocument();
+    expect(screen.getByTestId('display-toggle')).toHaveAttribute('disabled');
   });
   
   // Separate test specifically for server-side rendering behavior
   it('renders appropriately on server-side without checking support', async () => {
-    // Using a different strategy to test SSR behavior
-    
     // Create a mock component that simulates SSR behavior
     function ServerDisplayToggle() {
       // In SSR, we'd just render the basic UI without client-side checks
       return (
-        <div className="flex items-center space-x-2">
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input 
-              type="checkbox" 
-              className="sr-only peer"
-              role="switch"
-            />
-            <div className="toggle-bg"></div>
-          </label>
-          <span className="text-sm">Keep Display On</span>
+        <div className="container">
+          <button 
+            className="toggleButton" 
+            role="switch" 
+            aria-checked="false"
+            title="Keep display on"
+            data-testid="display-toggle"
+          >
+            {/* Icon placeholder */}
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"></svg>
+          </button>
         </div>
       );
     }
     
     // Render our SSR-simulated component
-    const { queryByText } = render(<ServerDisplayToggle />);
+    const { container } = render(<ServerDisplayToggle />);
     
-    // Verify the "not supported" message isn't shown in SSR
-    expect(queryByText(/not supported/i)).not.toBeInTheDocument();
+    // Verify the unsupported indicator isn't shown in SSR
+    expect(container.querySelector('.unsupportedIndicator')).not.toBeInTheDocument();
     
-    // But verify the basic toggle is present
-    expect(queryByText(/Keep Display On/i)).toBeInTheDocument();
+    // But verify the basic toggle button is present with an icon
+    expect(screen.getByTestId('display-toggle')).toBeInTheDocument();
+    expect(container.querySelector('svg')).toBeInTheDocument();
   });
 });
