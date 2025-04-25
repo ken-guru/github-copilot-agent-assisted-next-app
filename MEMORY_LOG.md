@@ -19,3 +19,4 @@ This file serves as an index of all logged memories across the project's develop
 - [MRTMLY-012: Timeline Mobile Optimization](./docs/logged_memories/MRTMLY-012-timeline-mobile-optimization.md)
 - [MRTMLY-013: Summary Mobile Optimization](./docs/logged_memories/MRTMLY-013-summary-mobile-optimization.md)
 - [MRTMLY-014: Mobile Navigation Pattern Implementation](./docs/logged_memories/MRTMLY-014-mobile-navigation-pattern.md)
+- [MRTMLY-015: Pull-to-Refresh and Swipe Gestures Implementation](./docs/logged_memories/MRTMLY-015-pull-to-refresh-and-swipe-gestures.md)

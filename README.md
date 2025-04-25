@@ -1,224 +1,118 @@
-# Activity Timer and Tracker
+# Next.js Application with Mobile UI Optimization
 
-## Project Context
-You are working on a time management and activity tracking application built with Next.js. This documentation serves as both a guide for developers and a prompt for AI assistance in development.
+This project demonstrates a Next.js application with comprehensive mobile UI optimizations. It includes various components optimized for touch interactions, responsive layouts, and enhanced mobile user experience.
 
-## Project Scope and Limitations
-```markdown
-This is a hobby project with the following characteristics:
-- Created for learning and experimentation purposes
-- Not intended for production use
-- May contain experimental features
-- Built with AI assistance (primarily GitHub Copilot)
-```
+## Features
 
-## Development Philosophy
-The application is developed using AI-assisted techniques with these principles:
-- Test-Driven Development (TDD)
-- Component-based architecture
-- Responsive design
-- Theme-aware styling
-- Accessibility considerations
+- **Mobile-First Design**: All components designed with mobile devices as the primary target
+- **Responsive Layout**: Adapts to different screen sizes from small mobile to large desktop
+- **Touch Optimized**: Large touch targets and intuitive gesture controls
+- **Performance Focused**: Optimized for smooth performance on mobile devices
+- **Accessibility**: Follows WCAG 2.1 AA standards for all components
 
-### Change Management Approach
-```markdown
-The project uses a documentation system for tracking changes:
-1. docs/PLANNED_CHANGES.md: 
-   - Contains upcoming feature specifications
-   - Written in a prompt-friendly format
-   - Used as input for AI-assisted implementation
-2. docs/IMPLEMENTED_CHANGES.md:
-   - Chronicles completed implementations
-   - Includes timestamps and implementation details
-   - Serves as reference for similar future changes
-3. docs/MEMORY_LOG.md:
-   - Tracks solutions attempted by AI for application issues
-   - Prevents repetitive solution attempts 
-   - Maintains a history of approaches with outcomes and tags
-   - Documents debugging processes in a structured format
-   - Records test implementation strategies and lessons learned
-   - Preserves institutional knowledge about effective approaches
-   - Should be consulted before addressing recurring issues
-```
+### Mobile UI Components
 
-## Core Features
-When implementing or modifying features, ensure adherence to these core functionalities:
-```markdown
-- Time Management
-  - Duration setting for work sessions
-  - Deadline tracking capabilities
-  
-- Activity Management
-  - Creation and tracking of multiple activities
-  - State machine-based activity lifecycle (PENDING → RUNNING → COMPLETED)
-  - Validated state transitions
-  - Real-time status monitoring
-  
-- Visual Feedback
-  - Progress bar for ongoing activities
-  - Timeline visualization
-  - Color-coded activity identification
-  - Break visualization between activities
-  
-- Theme System
-  - Light/Dark/System theme modes
-  - HSL-based color system
-  - Persistent theme preferences
+- **TouchableButton**: Enhanced buttons with proper sizing for touch devices
+- **OvertimeIndicator**: Mobile-friendly overtime status display
+- **ActivityManager**: Touch-optimized activity management with swipe gestures
+- **Timeline**: Mobile visualization with pinch-to-zoom and touch details
+- **Summary**: Responsive summary component with optimized mobile layout
+- **MobileNavigation**: Touch-friendly navigation pattern for switching views
+- **PullToRefresh**: Native-feeling pull-to-refresh functionality for content areas
+- **SwipeActions**: Swipe gestures for revealing actions on list items
 
-- Offline Support
-  - Full functionality without network connectivity
-  - Offline status indication
-  - Service worker caching strategies
-  - Update notification system
-```
+## Getting Started
 
-## Implementation Guidelines
+### Prerequisites
 
-### Architecture Patterns
-```markdown
-- Component-based UI architecture
-- Custom React hooks for state management
-- Activity State Machine for lifecycle management
-- Theme system using CSS variables
-```
+- Node.js 14.x or later
+- npm 7.x or later
 
-### Project Structure
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/github-copilot-agent-assisted-next-app.git
+   cd github-copilot-agent-assisted-next-app
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## Mobile UI Testing
+
+To effectively test the mobile UI features:
+
+1. Use browser developer tools to simulate mobile devices:
+   - Chrome: Press F12, then click "Toggle device toolbar" or press Ctrl+Shift+M
+   - Firefox: Press F12, then click "Responsive Design Mode" or press Ctrl+Shift+M
+
+2. Test on actual mobile devices:
+   - Ensure your development machine and mobile device are on the same network
+   - Find your computer's IP address
+   - Navigate to http://[your-ip-address]:3000 on your mobile device
+
+3. Test touch gestures:
+   - Pull down to refresh content
+   - Swipe list items to reveal actions
+   - Use pinch gestures to zoom the timeline
+   - Swipe horizontally to navigate between views
+
+## Project Structure
+
 ```
 src/
-  ├── app/            # Next.js app directory (routes, layout)
-  ├── components/     # React components
-  │   └── __tests__/  # Component tests
-  ├── hooks/          # Custom React hooks
-  │   └── __tests__/  # Hook tests
-  └── utils/          # Utility functions
-      └── __tests__/  # Utility tests
-docs/                 # Project documentation
-  ├── PLANNED_CHANGES.md    # Upcoming changes
-  └── IMPLEMENTED_CHANGES.md # Completed changes
-```
-
-### Design System Specifications
-
-#### Color System Requirements
-```markdown
-- Use HSL color format exclusively
-- Maintain consistent hue values across themes
-- Adjust saturation/lightness for theme variants
-- Implement via CSS variables
-- Ensure WCAG compliance for contrast ratios
-```
-
-#### Theme Implementation Requirements
-```markdown
-- Support three modes: Light/Dark/System
-- Use CSS variables for theme values
-- Implement smooth transitions
-- Persist user preferences
-- Handle system preference changes
-```
-
-## Development Setup
-
-### Environment Requirements
-```bash
-Node.js (Latest LTS)
-npm or yarn
-```
-
-### Installation Commands
-```bash
-# Install dependencies
-npm install
-# or
-yarn install
-
-# Start development server
-npm run dev
-# or
-yarn dev
-
-# Run tests
-npm test
-# or
-yarn test
-
-# Watch mode for tests
-npm run test:watch
-# or
-yarn test:watch
-```
-
-### Deployment Verification
-Before considering any feature or change complete, run these verification steps:
-```markdown
-1. Type checking:
-   ```bash
-   npm run type-check
-   npm run tsc
-   ```
-2. Linting:
-   ```bash
-   npm run lint
-   ```
-3. Ensure all tests pass:
-   ```bash
-   npm test
-   ```
-
-All steps must pass without errors before deploying to Vercel. Address any warnings or errors that could impact deployment.
-
-### Testing Requirements
-When implementing new features or modifying existing ones:
-```markdown
-1. Write tests first (TDD approach)
-2. Ensure full coverage of new functionality
-3. Update existing tests when changing behavior
-4. Validate both light and dark theme scenarios
-5. Test system theme preference handling
-6. For complex browser APIs:
-   - Use module-level mock functions for consistency
-   - Properly restore original methods in afterEach blocks
-   - Clear mock call counts between tests when needed
-   - Document all testing approaches in Memory Log
-7. For service worker tests:
-   - Provide explicit mocks for navigator.serviceWorker
-   - Handle event timing with appropriate test patterns
-   - Test network-awareness functionality
-   - Test update mechanisms and user notifications
-```
-
-## Technology Stack
-When implementing features, utilize these core technologies:
-```markdown
-- Next.js: Application framework
-- React: UI component library
-- TypeScript: Type safety
-- Jest: Testing framework
-- React Testing Library: Component testing
+├── app/                      # Next.js app router files
+├── components/               # React components
+│   ├── ActivityManager.tsx   # Activity management component
+│   ├── MobileNavigation.tsx  # Mobile navigation component
+│   ├── OvertimeIndicator.tsx # Overtime status display
+│   ├── ProgressBar.tsx       # Progress visualization
+│   ├── PullToRefresh.tsx     # Pull-to-refresh implementation
+│   ├── SwipeActions.tsx      # Swipe gesture component
+│   ├── Timeline.tsx          # Timeline visualization
+│   └── TouchableButton.tsx   # Touch-friendly button
+├── context/                  # React context providers
+├── hooks/                    # Custom React hooks
+│   └── useViewport.ts        # Viewport detection hook
+├── styles/                   # Global styles and CSS variables
+└── utils/                    # Utility functions
 ```
 
 ## Documentation
 
-### Component Documentation
+Comprehensive documentation is available in the `docs` folder:
 
-The application is built using a collection of reusable components. Comprehensive documentation for these components is available in the [Component Documentation Index](./docs/components/README.md).
+- [Component Documentation](./docs/components/)
+- [Mobile UI Implementation Plan](./docs/PLANNED_CHANGES.md)
+- [Memory Log](./MEMORY_LOG.md) - Development history and decisions
+- [Gesture Components Integration Guide](./docs/GESTURE_COMPONENTS_INTEGRATION.md)
+- [Refinement Phase Plan](./docs/REFINEMENT_PHASE_PLAN.md)
 
-Key component categories:
+## Running Tests
 
-- **Visualization Components**: [Timeline](./docs/components/Timeline.md), [ProgressBar](./docs/components/ProgressBar.md)
-- **State Management Components**: [ActivityManager](./docs/components/ActivityManager.md), [Summary](./docs/components/Summary.md)
-- **User Input Components**: [TimeSetup](./docs/components/TimeSetup.md), [ActivityButton](./docs/components/ActivityButton.md)
-- **Auxiliary Components**: [ServiceWorkerUpdater](./docs/components/ServiceWorkerUpdater.md), [ActivityForm](./docs/components/ActivityForm.md)
-- **Utility Components**: [TimeDisplay](./docs/components/TimeDisplay.md), [OfflineIndicator](./docs/components/OfflineIndicator.md), [ThemeToggle](./docs/components/ThemeToggle.md), [ErrorBoundary](./docs/components/ErrorBoundary.md)
+```bash
+npm test                 # Run all tests
+npm test -- --watch      # Run tests in watch mode
+npm run test:coverage    # Run tests with coverage report
+```
 
-### Development Resources
+## Built With
 
-- [Development Process Guidelines](./docs/PLANNED_CHANGES.md#development-process-guidelines)
-- [Memory Log](./docs/MEMORY_LOG.md) - Project history and issue resolutions
-- [Time Utilities Testing Guide](./docs/dev-guides/TIME_UTILITIES_TESTING.md)
+- [Next.js](https://nextjs.org/) - The React framework
+- [React](https://reactjs.org/) - UI library
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [CSS Modules](https://github.com/css-modules/css-modules) - Component styling
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
 
----
-Note: When using this document as a prompt for AI assistance, ensure to provide specific context about which section or feature you're working on to receive more targeted and relevant responses.
+This project is licensed under the MIT License - see the LICENSE file for details.

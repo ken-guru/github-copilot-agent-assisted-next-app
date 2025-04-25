@@ -1,0 +1,109 @@
+.container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.swipeContainer {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  transition: transform var(--transition-speed-normal, 300ms) cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  background-color: var(--color-background, #fff);
+}
+
+/* Action styles */
+.actionsContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.actionLeft, .actionRight {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  height: 100%;
+  width: 80px;
+  transition: opacity var(--transition-speed-normal, 300ms);
+}
+
+.actionIcon {
+  margin-bottom: var(--spacing-xs, 4px);
+  font-size: 1.25rem;
+}
+
+.actionLabel {
+  font-size: var(--font-size-mobile-sm, 0.75rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Accessibility buttons */
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacing-xs, 4px);
+  background-color: var(--color-background-alt, #f5f5f5);
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-md, 0.25rem);
+  padding: var(--spacing-xs, 4px) var(--spacing-sm, 8px);
+  font-size: var(--font-size-mobile-sm, 0.875rem);
+  min-height: var(--touch-target-min, 44px);
+  min-width: var(--touch-target-min, 44px);
+  color: white;
+  cursor: pointer;
+  transition: opacity var(--transition-speed-normal, 300ms);
+}
+
+.actionButton:hover {
+  opacity: 0.9;
+}
+
+.actionButton:active {
+  opacity: 0.8;
+}
+
+.leftButton {
+  margin-right: auto;
+}
+
+.rightButton {
+  margin-left: auto;
+}
+
+/* Reduced motion */
+.reduceMotion .content {
+  transition: none;
+}
+
+/* Dark mode adjustments */
+:global(.dark-mode) .content {
+  background-color: var(--color-background-dark, #1a1a1a);
+}
+
+:global(.dark-mode) .buttonContainer {
+  background-color: var(--color-background-dark-alt, #2a2a2a);
+}
