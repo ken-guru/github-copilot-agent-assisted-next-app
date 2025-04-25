@@ -8,6 +8,7 @@ import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import ProgressBar from '@/components/ProgressBar';
 import ThemeToggle from '@/components/ThemeToggle';
+import DisplayToggle from '../../components/ui/DisplayToggle';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import { useActivityState } from '@/hooks/useActivityState';
@@ -150,7 +151,10 @@ function AppContent() {
           <header className={styles.header}>
             <div className={styles.headerContent}>
               <h1 className={styles.title}>Mr. Timely</h1>
-              <ThemeToggle />
+              <div className={styles.headerControls}>
+                <DisplayToggle />
+                <ThemeToggle />
+              </div>
               <div className={styles.resetButtonContainer}>
                 {appState !== 'setup' && (
                   <button 

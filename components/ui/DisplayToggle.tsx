@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDisplaySettings } from '../contexts/DisplaySettingsContext';
 import useWakeLock from '../../hooks/useWakeLock';
+import styles from './DisplayToggle.module.css';
 
 const DisplayToggle: React.FC = () => {
   const { keepDisplayOn, toggleKeepDisplayOn } = useDisplaySettings();
@@ -21,32 +22,28 @@ const DisplayToggle: React.FC = () => {
   }, [keepDisplayOn, isActive, isSupported, request, release]);
   
   return (
-    <div className="flex items-center justify-between p-2 mt-2 bg-gray-700 rounded-md">
-      <div className="flex flex-col">
-        <span className="text-sm font-medium text-white">Keep Display On</span>
-        {!isSupported && typeof window !== 'undefined' && (
-          <span className="text-xs text-red-400">Not supported on this device</span>
-        )}
-      </div>
+    <div className={styles.container}>
       <button
-        role="switch"
-        aria-checked={keepDisplayOn}
+        className={`${styles.toggleButton} ${keepDisplayOn ? styles.active : ''}`}
         onClick={toggleKeepDisplayOn}
         disabled={!isSupported}
+        aria-label={keepDisplayOn ? "Turn display sleep on" : "Keep display on"}
+        title={keepDisplayOn ? "Display sleep is off" : "Keep display on"}
         data-testid="display-toggle"
-        className={`
-          relative inline-flex h-6 w-11 items-center rounded-full transition-colors 
-          focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-          ${keepDisplayOn ? 'bg-green-600' : 'bg-gray-400'}
-        `}
+        role="switch"
+        aria-checked={keepDisplayOn}
       >
-        <span className="sr-only">Keep display on while in activities</span>
-        <span
-          className={`
-            inline-block h-4 w-4 transform rounded-full bg-white transition-transform
-            ${keepDisplayOn ? 'translate-x-6' : 'translate-x-1'}
-          `}
-        />
+        {/* Screen/Display icon */}
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+        
+        {/* Show small indicator dot if not supported */}
+        {!isSupported && typeof window !== 'undefined' && (
+          <span className={styles.unsupportedIndicator} title="Not supported on this device"></span>
+        )}
       </button>
     </div>
   );
