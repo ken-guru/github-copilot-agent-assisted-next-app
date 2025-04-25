@@ -21,3 +21,4 @@ This file serves as an index of all logged memories across the project's develop
 - [MRTMLY-014: Mobile Navigation Pattern Implementation](./docs/logged_memories/MRTMLY-014-mobile-navigation-pattern.md)
 - [MRTMLY-015: Pull-to-Refresh and Swipe Gestures Implementation](./docs/logged_memories/MRTMLY-015-pull-to-refresh-and-swipe-gestures.md)
 - [MRTMLY-016: Hydration Mismatch Debugging for Theme Variables](./docs/logged_memories/MRTMLY-016-hydration-mismatch-debugging.md)
+- [MRTMLY-017: Performance Optimization - Component Lazy Loading](./docs/logged_memories/MRTMLY-017-performance-optimization-lazy-loading.md)
