@@ -12,25 +12,27 @@ const nextConfig: NextConfig = {
       allowedOrigins: ['localhost:3000']
     },
     
-    // Add Turbopack configuration to match webpack config
-    // https://nextjs.org/docs/app/api-reference/next-config-js/turbo
-    turbo: {
-      // Use rules with glob patterns instead of deprecated loaders with extensions
-      rules: {
-        // Define loaders for specific file patterns
-        // For example, for handling markdown files:
-        '*.md': ['raw-loader'],
-      },
-      resolveAlias: {
-        // Path aliases that match tsconfig.json configuration
-        '@': '.',
-        '@/contexts': './contexts',
-        '@/components': './components',
-        '@/hooks': './hooks',
-        '@/utils': './utils',
-        '@/styles': './styles'
-      }
+    // Turbopack moved out of experimental to a top-level config
+  },
+  
+  // Turbopack configuration moved from experimental.turbo to top-level turbopack
+  // as it's now stable
+  turbopack: {
+    // Use rules with glob patterns
+    rules: {
+      // Define loaders for specific file patterns
+      // For example, for handling markdown files:
+      '*.md': ['raw-loader'],
     },
+    resolveAlias: {
+      // Path aliases that match tsconfig.json configuration
+      '@': '.',
+      '@/contexts': './contexts',
+      '@/components': './components',
+      '@/hooks': './hooks',
+      '@/utils': './utils',
+      '@/styles': './styles'
+    }
   },
   
   // Enable more detailed error information
@@ -62,7 +64,7 @@ const nextConfig: NextConfig = {
     return config;
   },
   
-  // Enable output mode tracing for better debugging
+  // Output mode tracing for better debugging
   output: 'standalone',
   
   // Set to false if you're not using the Pages Router at all

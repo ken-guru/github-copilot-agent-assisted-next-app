@@ -2,10 +2,11 @@
 
 This file contains references to detailed memory entries about important development decisions, debugging sessions, and implementations.
 
-## 2023
+## 2023-11
 
 ### June 2023
 
 - [MRTMLY-001: Cypress Tests CI Integration](./logged_memories/MRTMLY-001-cypress-ci-integration.md)
 - [MRTMLY-002: Cypress Basic Test Failures Debugging](./logged_memories/MRTMLY-002-cypress-test-fixes.md)
+- [MRTMLY-079: Turbopack Configuration Moved from Experimental to Stable](./logged_memories/MRTMLY-079-turbopack-moved-to-stable-configuration.md)
 

@@ -46,4 +46,12 @@ describe('Next.js Configuration', () => {
       expect(Array.isArray(nextConfig.experimental.serverActions.allowedOrigins)).toBe(true);
     }
   });
+
+  // Replace the check for experimental.turbo with a check for turbopack
+  test('Next.js config uses stable turbopack configuration', () => {
+    expect(nextConfig.turbopack).toBeDefined();
+    expect(typeof nextConfig.turbopack).toBe('object');
+    expect(nextConfig.turbopack.rules).toBeDefined();
+    expect(nextConfig.turbopack.resolveAlias).toBeDefined();
+  });
 });
