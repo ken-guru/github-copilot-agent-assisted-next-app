@@ -44,7 +44,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           
       - name: Type check
-        run: npm run type-check || npm run tsc
+        run: npm run type-check
 
   lint:
     needs: install
