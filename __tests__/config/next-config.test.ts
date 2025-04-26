@@ -49,16 +49,14 @@ describe('Next.js Config', () => {
     });
   });
 
-  // Find the test case that's causing the error and fix the type checking
+  // Fix the TypeScript errors by adding proper type checking for the turbopack property
   describe('turbopack configuration', () => {
     test('should have proper turbopack configuration', () => {
-      // Use type assertion to tell TypeScript that turbopack exists
+      // Add optional chaining to fix TS18048 errors
+      expect(nextConfig.turbopack?.rules).toBeDefined();
+      expect(nextConfig.turbopack?.resolveAlias).toBeDefined();
       expect((nextConfig.turbopack as any).loaders).toBeDefined();
       expect((nextConfig.turbopack as any).loaders['*.svg']).toBeDefined();
-      expect(nextConfig.turbopack.rules).toBeDefined();
-      expect(nextConfig.turbopack.resolveAlias).toBeDefined();
     });
-
-
-});  });  });
-});
+  }); // End of turbopack configuration describe block
+}); // End of Next.js Config describe block
