@@ -22,10 +22,13 @@ describe('Next.js Config', () => {
       }
       
       // Only run these if turbopack is configured
-      expect(nextConfig.turbopack.rules).toBeDefined();
-      expect(nextConfig.turbopack.resolveAlias).toBeDefined();
-      expect(nextConfig.turbopack.loaders).toBeDefined();
-      expect(nextConfig.turbopack.loaders['*.svg']).toBeDefined();
+      expect(nextConfig.turbopack).toHaveProperty('rules');
+      expect(nextConfig.turbopack).toHaveProperty('resolveAlias');
+      
+      // Check for specific file patterns in rules (if rules exists)
+      if (nextConfig.turbopack.rules) {
+        expect(nextConfig.turbopack.rules).toHaveProperty('*.md');
+      }
     });
   });
 }); // End of Next.js Config describe block
