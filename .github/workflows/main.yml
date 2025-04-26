@@ -103,7 +103,7 @@ jobs:
       - name: Build
         run: npm run build
 
-  # New Cypress E2E test job
+  # Cypress E2E test job
   cypress:
     needs: install
     runs-on: ubuntu-latest
@@ -126,10 +126,14 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000'
           browser: chrome
+          config-file: cypress.config.ts
+          # Remove duplicate build command as it's already run above
+          # Increase timeout for slower CI environments
+          wait-on-timeout: 120
+        continue-on-error: false # Make the workflow fail if Cypress tests fail
           
       - name: Upload Cypress screenshots
         uses: actions/upload-artifact@v4
