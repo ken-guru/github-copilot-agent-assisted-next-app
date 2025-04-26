@@ -137,7 +137,7 @@ jobs:
           
       - name: Upload Cypress screenshots
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: always() && hashFiles('cypress/screenshots/**') != ''
         with:
           name: cypress-screenshots
           path: cypress/screenshots
