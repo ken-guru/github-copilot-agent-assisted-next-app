@@ -13,6 +13,18 @@ export default defineConfig({
     // Increase default timeout for service worker operations
     defaultCommandTimeout: 10000,
     // Add configuration for handling uncaught exceptions
-    uncaughtExceptionHandler: false
+    uncaughtExceptionHandler: false,
+    
+    // Video recording configuration
+    video: true,
+    videosFolder: 'cypress/videos',
+    videoCompression: 32, // Lower compression value (15-40 is good for CI)
+    
+    // Screenshot configuration
+    screenshotsFolder: 'cypress/screenshots',
+    screenshotOnRunFailure: true,
+    
+    // Clean before runs to avoid stale artifacts
+    trashAssetsBeforeRuns: true,
   },
 })

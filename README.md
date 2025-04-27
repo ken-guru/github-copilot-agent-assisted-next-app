@@ -222,3 +222,28 @@ Key component categories:
 
 ---
 Note: When using this document as a prompt for AI assistance, ensure to provide specific context about which section or feature you're working on to receive more targeted and relevant responses.
+
+## Testing
+
+### Unit Testing
+Tests are run using Jest:
+
+```bash
+npm test           # Run all tests
+npm run test:watch # Run tests in watch mode
+```
+
+### End-to-End Testing
+This project uses Cypress for end-to-end testing:
+
+```bash
+npm run cypress       # Open Cypress Test Runner
+npm run cypress:run   # Run Cypress tests in headless mode
+```
+
+### CI/CD Integration
+All tests (including Cypress E2E tests) are automatically run in our GitHub Actions CI/CD pipeline:
+- On push to main branch
+- On pull requests to main branch
+
+Test artifacts (screenshots and videos) for failed Cypress tests are available in the GitHub Actions workflow.

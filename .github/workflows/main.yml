@@ -22,7 +22,7 @@ jobs:
         run: npm ci
 
       - name: Cache node_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -38,13 +38,13 @@ jobs:
           cache: 'npm'
       
       - name: Restore node_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           
       - name: Type check
-        run: npm run type-check || npm run tsc
+        run: npm run type-check
 
   lint:
     needs: install
@@ -57,7 +57,7 @@ jobs:
           cache: 'npm'
       
       - name: Restore node_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -76,7 +76,7 @@ jobs:
           cache: 'npm'
       
       - name: Restore node_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -95,10 +95,87 @@ jobs:
           cache: 'npm'
       
       - name: Restore node_modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      
+      - name: Restore Next.js cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
           
       - name: Build
         run: npm run build
+        
+      - name: Save Next.js cache
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-build-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+
+  # Cypress E2E test job
+  cypress:
+    # Keeping parallel execution
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Restore node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      
+      - name: Restore Next.js cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          # Modified to use both build and cypress cache keys in restore
+          key: ${{ runner.os }}-nextjs-build-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-build-${{ hashFiles('**/package-lock.json') }}-
+      
+      - name: Build application for testing
+        run: npm run build
+      
+      - name: Save Next.js cache
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          # Modified to use a different key than the build job
+          key: ${{ runner.os }}-nextjs-cypress-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          start: npm start
+          wait-on: 'http://localhost:3000'
+          browser: chrome
+          config-file: cypress.config.ts
+          wait-on-timeout: 120
+        continue-on-error: false
+          
+      - name: Upload Cypress screenshots
+        uses: actions/upload-artifact@v4
+        if: failure() && hashFiles('cypress/screenshots/**') != ''
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          retention-days: 7
+          
+      - name: Upload Cypress videos
+        uses: actions/upload-artifact@v4
+        if: always() && hashFiles('cypress/videos/**') != ''
+        with:
+          name: cypress-videos
+          path: cypress/videos
+          retention-days: 7

@@ -134,7 +134,7 @@ function AppContent() {
   
   return (
     <>
-      <SplashScreen minimumDisplayTime={2000} />
+      <SplashScreen minimumDisplayTime={500} />
       <div className={`${styles.layout} ${styles.container}`}>
         {/* Confirmation Dialog */}
         <ConfirmationDialog
