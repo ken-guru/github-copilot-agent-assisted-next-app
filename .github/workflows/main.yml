@@ -119,7 +119,8 @@ jobs:
 
   # Cypress E2E test job
   cypress:
-    needs: build
+    # Removing dependency on build job to run in parallel
+    needs: install
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
