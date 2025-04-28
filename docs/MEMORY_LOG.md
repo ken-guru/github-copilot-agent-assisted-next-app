@@ -4,6 +4,10 @@ This file contains a chronological index of detailed memory log entries about im
 
 ## 2023 December
 
+- [MRTMLY-065: Service Worker Test IIFE Syntax Fix](./logged_memories/MRTMLY-065-service-worker-test-iife-syntax-fix.md)
+- [MRTMLY-064: Service Worker JSON Parsing Fix](./logged_memories/MRTMLY-064-service-worker-json-parsing-fix.md)
+- [MRTMLY-063: Service Worker Testing Environment Setup](./logged_memories/MRTMLY-063-service-worker-test-environment.md)
+- [MRTMLY-062: Service Worker Structure Analysis](./logged_memories/MRTMLY-062-service-worker-analysis.md)
 - [MRTMLY-061: Next.js Config Turbopack Test Fix](./logged_memories/MRTMLY-061-next-config-turbopack-test-fix.md)
 - [MRTMLY-060: Next.js Config Server Actions Fix](./logged_memories/MRTMLY-060-next-config-server-actions-fix.md)
 - [MRTMLY-059: Next.js Config Turbopack Fix](./logged_memories/MRTMLY-059-next-config-turbopack-fix.md)
