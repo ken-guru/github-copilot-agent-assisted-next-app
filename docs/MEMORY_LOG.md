@@ -4,6 +4,7 @@ This file contains a chronological index of detailed memory log entries about im
 
 ## 2023 December
 
+- [MRTMLY-053: Service Worker TypeScript Error Fixes](./logged_memories/MRTMLY-053-service-worker-typescript-errors.md)
 - [MRTMLY-052: Service Worker Refactoring Completion](./logged_memories/MRTMLY-052-service-worker-refactoring-completion.md)
 - [MRTMLY-051: Service Worker Test Mock Implementation](./logged_memories/MRTMLY-051-service-worker-test-mock-implementation.md)
 

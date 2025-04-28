@@ -4,36 +4,47 @@ import {
   setUpdateHandler 
 } from '../serviceWorkerRegistration';
 
+// Define types for our mocks to improve type safety
+interface MockListeners {
+  [key: string]: EventListener;
+}
+
+interface MockInstallingWorker {
+  state: string;
+  addEventListener: jest.Mock;
+  _listeners: MockListeners;
+}
+
 // Create a proper mock for ServiceWorkerRegistration
 class MockServiceWorkerRegistration {
   // Required properties
   scope = '/';
-  installing = {
+  installing: MockInstallingWorker = {
     state: 'installed',
-    addEventListener: jest.fn((event, listener) => {
+    addEventListener: jest.fn((event: string, listener: EventListener) => {
       if (event === 'statechange') {
         // Store listener for direct access in tests
         this.installing._listeners[event] = listener;
         // Call it immediately for tests
-        setTimeout(() => listener(), 0);
+        setTimeout(() => listener(new Event('statechange')), 0);
       }
     }),
     _listeners: {}
   };
-  waiting = null;
+  waiting: { state: string } | null = null;
   active = { state: 'activated' };
   
   // Required methods
-  addEventListener = jest.fn((event, listener) => {
+  _listeners: MockListeners = {};
+  addEventListener = jest.fn((event: string, listener: EventListener) => {
     // Store listener for direct access in tests
     this._listeners[event] = listener;
     // Call it immediately for tests
     if (event === 'updatefound') {
-      setTimeout(() => listener(), 0);
+      setTimeout(() => listener(new Event('updatefound')), 0);
     }
   });
   
-  _listeners = {};
   update = jest.fn().mockResolvedValue(undefined);
   unregister = jest.fn().mockResolvedValue(true);
 }
@@ -49,19 +60,20 @@ const mockServiceWorkerContainer = {
     return Promise.resolve(registration);
   }),
   ready: Promise.resolve(new MockServiceWorkerRegistration()),
-  controller: { state: 'activated' }
+  controller: { state: 'activated' } as ServiceWorkerContainer['controller']
 };
 
 // Mock the serviceWorker module
 jest.mock('../serviceWorker', () => {
-  let updateHandlerValue = null;
+  // Proper type for the update handler
+  let updateHandlerValue: ((registration: ServiceWorkerRegistration) => void) | null = null;
   
   return {
     // Service worker functions
     register: jest.fn(),
     unregister: jest.fn(),
     checkForUpdates: jest.fn(),
-    handleRegistration: jest.fn((reg, config) => {
+    handleRegistration: jest.fn((reg: ServiceWorkerRegistration, config?: any) => {
       // Call the callbacks directly for testing
       if (reg.waiting) {
         if (config?.onUpdate) {
@@ -86,7 +98,7 @@ jest.mock('../serviceWorker', () => {
     checkServiceWorkerValidity: jest.fn().mockResolvedValue(true),
     
     // Update handler functions
-    setUpdateHandler: jest.fn(handler => {
+    setUpdateHandler: jest.fn((handler: ((registration: ServiceWorkerRegistration) => void) | null) => {
       updateHandlerValue = handler;
     }),
     getUpdateHandler: jest.fn(() => updateHandlerValue),
@@ -123,8 +135,11 @@ describe('Service Worker Registration', () => {
       writable: true
     });
     
-    // Set NODE_ENV for tests
-    process.env.NODE_ENV = 'test';
+    // Set NODE_ENV for tests - using defineProperty to handle the readonly property
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: 'test',
+      writable: true
+    });
     
     // Reset all mocks
     jest.clearAllMocks();
@@ -142,7 +157,11 @@ describe('Service Worker Registration', () => {
       writable: true
     });
     
-    process.env.NODE_ENV = originalNodeEnv;
+    // Restore original NODE_ENV - using defineProperty to handle the readonly property
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: originalNodeEnv,
+      writable: true
+    });
     
     // Clear update handler
     setUpdateHandler(null);
@@ -165,9 +184,9 @@ describe('Service Worker Registration', () => {
       // Create a mock success callback
       const onSuccess = jest.fn();
       
-      // Remove controller to simulate first install
+      // Remove controller to simulate first install using a proper type cast
       const originalController = mockServiceWorkerContainer.controller;
-      mockServiceWorkerContainer.controller = null;
+      mockServiceWorkerContainer.controller = null as unknown as ServiceWorkerContainer['controller'];
       
       // Call registerServiceWorker with the callback
       await registerServiceWorker({ onSuccess });
@@ -189,7 +208,8 @@ describe('Service Worker Registration', () => {
       // Set up a waiting service worker to simulate an update
       mockServiceWorkerContainer.register.mockImplementationOnce(() => {
         const registration = new MockServiceWorkerRegistration();
-        registration.waiting = { state: 'waiting' };
+        // Type cast to avoid error - the mock registration can have a waiting property
+        (registration.waiting as any) = { state: 'waiting' };
         return Promise.resolve(registration);
       });
       
@@ -211,7 +231,8 @@ describe('Service Worker Registration', () => {
       // Set up a waiting service worker to simulate an update
       mockServiceWorkerContainer.register.mockImplementationOnce(() => {
         const registration = new MockServiceWorkerRegistration();
-        registration.waiting = { state: 'waiting' };
+        // Type cast to avoid error - the mock registration can have a waiting property
+        (registration.waiting as any) = { state: 'waiting' };
         return Promise.resolve(registration);
       });
       

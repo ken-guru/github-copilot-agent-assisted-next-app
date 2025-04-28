@@ -4,6 +4,28 @@ This file contains a record of changes that have been implemented in the applica
 
 ## 2023 December
 
+### Service Worker TypeScript Error Fixes (2023-12-02)
+
+**Files Modified:**
+- `/src/utils/__tests__/serviceWorkerRegistration.test.ts`
+
+**Changes:**
+- Added explicit type definitions for mock objects
+- Fixed improper property indexing by using typed objects
+- Added proper typing for the update handler value
+- Fixed read-only property assignments using Object.defineProperty
+- Fixed type incompatibilities with appropriate type casting
+- Enhanced overall type safety in test files
+
+**Technical Notes:**
+- Used interface definitions to improve type safety in tests
+- Added event typing to properly handle event listeners
+- Used controlled type assertions where necessary
+- Fixed NODE_ENV assignment with Object.defineProperty
+
+**Memory Log References:**
+- [MRTMLY-053: Service Worker TypeScript Error Fixes](./logged_memories/MRTMLY-053-service-worker-typescript-errors.md)
+
 ### Service Worker Registration Refactoring Complete (2023-12-01)
 
 **Files Modified/Created:**
