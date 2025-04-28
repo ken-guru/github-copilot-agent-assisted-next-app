@@ -1,31 +1,35 @@
-/** @type {import('next').NextConfig} */
+/**
+ * @type {import('next').NextConfig}
+ */
 const nextConfig = {
-  // ...existing code...
+  // Transpile specific packages if needed
+  transpilePackages: [],
   
-  // Add webpack configuration if it exists
-  webpack: (config, { isServer }) => {
-    // ...existing webpack configuration...
-    
-    return config;
+  // Enable React strict mode for better development practices
+  reactStrictMode: true,
+  
+  // Configure output handling
+  output: 'standalone',
+  
+  // Configure Turbopack
+  // Empty turbopack object with no invalid properties
+  turbopack: {},
+  
+  // Image optimization configuration
+  images: {
+    domains: ['localhost'],
+    // Configure other image options as needed
   },
   
-  // Add corresponding turbopack configuration
-  turbopack: {
-    // Match the structure expected by the tests
-    rules: {
-      // Add necessary rules
-    },
-    resolveAlias: {
-      // Add aliases that match webpack configuration
-    },
-    loaders: {
-      '*.svg': {
-        // SVG loader configuration
-      }
+  // Experimental features
+  experimental: {
+    // Fix: serverActions should be an object, not a boolean
+    serverActions: {
+      // Add server actions configuration options
+      bodySizeLimit: '2mb',
+      allowedOrigins: ['localhost:3000']
     }
-  },
-  
-  // ...existing code...
-};
+  }
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
