@@ -1,6 +1,7 @@
 # Memory Log
 
 ## 2025 April
+- [MRTMLY-095 Hydration Mismatch Theme Attributes](./docs/logged_memories/MRTMLY-095-hydration-mismatch-theme-attributes.md) - Fixed React hydration mismatch caused by theme attributes being added client-side but missing in server-rendered HTML
 - [MRTMLY-001 ESLint and TypeScript Build Fixes](./docs/logged_memories/MRTMLY-001-eslint-build-fixes.md) - Fixed various ESLint and TypeScript errors that were preventing successful builds
 - [MRTMLY-411 Build Process Cypress Exclusion](./docs/logged_memories/MRTMLY-411-build-process-cypress-exclusion.md) - Created a custom build process that excludes Cypress tests to prevent TypeScript errors
 - [MRTMLY-410 Cypress TypeScript Errors](./docs/logged_memories/MRTMLY-410-cypress-typescript-errors.md) - Comprehensive fix for TypeScript errors in Cypress tests including commands and configuration

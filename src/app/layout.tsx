@@ -59,7 +59,7 @@ export default function RootLayout({
   const fontClasses = `${geistSans.variable} ${geistMono.variable}`;
   
   return (
-    <html lang="en">
+    <html lang="en" className="light-mode" data-theme="light">
       <head>
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -92,18 +92,17 @@ export default function RootLayout({
                   
                   const root = document.documentElement;
                   
-                  // Clear any existing classes/attributes
-                  root.classList.remove('dark-mode', 'light-mode', 'dark');
-                  
-                  // Set consistent classes/attributes
+                  // Only make changes if we need to switch from the default light theme
+                  // This prevents hydration mismatches by not modifying the DOM during initial render
                   if (theme === 'dark' || (theme === 'system' && prefersDark)) {
+                    // Switch to dark theme
+                    root.classList.remove('light-mode');
                     root.classList.add('dark-mode');
                     root.classList.add('dark');
                     root.setAttribute('data-theme', 'dark');
-                  } else {
-                    root.classList.add('light-mode');
-                    root.setAttribute('data-theme', 'light');
                   }
+                  // For light theme, we don't need to do anything as it's the default
+                  // and already set in the server-rendered HTML
                 } catch (e) {
                   console.error('Error applying theme:', e);
                 }

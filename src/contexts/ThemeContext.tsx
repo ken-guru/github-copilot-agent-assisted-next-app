@@ -21,33 +21,43 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   
   // Initialize theme from localStorage on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
-      setTheme(savedTheme);
-      applyThemeToDOM(savedTheme);
-    } else {
-      // Check for system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const initialTheme = prefersDark ? 'dark' : 'light';
-      setTheme(initialTheme);
-      applyThemeToDOM(initialTheme);
-    }
+    // Add a slight delay to avoid hydration mismatch
+    // This ensures the component is fully hydrated before we make any DOM changes
+    const timer = setTimeout(() => {
+      const savedTheme = localStorage.getItem('theme') as Theme;
+      if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+        setTheme(savedTheme);
+        applyThemeToDOM(savedTheme);
+      } else {
+        // Check for system preference
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = prefersDark ? 'dark' : 'light';
+        setTheme(initialTheme);
+        applyThemeToDOM(initialTheme);
+      }
+    }, 0);
+    
+    return () => clearTimeout(timer);
   }, []);
   
   // Helper function to apply theme consistently across the app
   const applyThemeToDOM = (themeValue: Theme) => {
     const root = document.documentElement;
+    const currentTheme = root.getAttribute('data-theme');
     
-    if (themeValue === 'dark') {
-      root.classList.add('dark-mode');
-      root.classList.add('dark');
-      root.classList.remove('light-mode');
-      root.setAttribute('data-theme', 'dark');
-    } else {
-      root.classList.add('light-mode');
-      root.classList.remove('dark-mode');
-      root.classList.remove('dark');
-      root.setAttribute('data-theme', 'light');
+    // Only update if the theme is actually changing
+    if (themeValue !== currentTheme) {
+      if (themeValue === 'dark') {
+        root.classList.add('dark-mode');
+        root.classList.add('dark');
+        root.classList.remove('light-mode');
+        root.setAttribute('data-theme', 'dark');
+      } else {
+        root.classList.add('light-mode');
+        root.classList.remove('dark-mode');
+        root.classList.remove('dark');
+        root.setAttribute('data-theme', 'light');
+      }
     }
   };
 
