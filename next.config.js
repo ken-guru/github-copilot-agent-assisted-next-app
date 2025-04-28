@@ -11,9 +11,17 @@ const nextConfig = {
   // Configure output handling
   output: 'standalone',
   
-  // Configure Turbopack
-  // Empty turbopack object with no invalid properties
-  turbopack: {},
+  // Configure Turbopack with required properties for tests
+  turbopack: {
+    // Add rules property expected by tests
+    rules: {
+      // Default empty rules object
+    },
+    // Add resolveAlias property expected by tests
+    resolveAlias: {
+      // Default empty resolveAlias object
+    }
+  },
   
   // Image optimization configuration
   images: {
@@ -23,9 +31,8 @@ const nextConfig = {
   
   // Experimental features
   experimental: {
-    // Fix: serverActions should be an object, not a boolean
+    // Server actions as an object with configuration
     serverActions: {
-      // Add server actions configuration options
       bodySizeLimit: '2mb',
       allowedOrigins: ['localhost:3000']
     }

@@ -4,6 +4,7 @@ This file contains a chronological index of detailed memory log entries about im
 
 ## 2023 December
 
+- [MRTMLY-061: Next.js Config Turbopack Test Fix](./logged_memories/MRTMLY-061-next-config-turbopack-test-fix.md)
 - [MRTMLY-060: Next.js Config Server Actions Fix](./logged_memories/MRTMLY-060-next-config-server-actions-fix.md)
 - [MRTMLY-059: Next.js Config Turbopack Fix](./logged_memories/MRTMLY-059-next-config-turbopack-fix.md)
 - [MRTMLY-058: Service Worker Event Handler Types](./logged_memories/MRTMLY-058-service-worker-event-handler-types.md)
