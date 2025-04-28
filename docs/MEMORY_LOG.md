@@ -4,6 +4,7 @@ This file contains a chronological index of detailed memory log entries about im
 
 ## 2023 December
 
+- [MRTMLY-088: Service Worker Tests Complete](./logged_memories/MRTMLY-088-service-worker-tests-complete.md)
 - [MRTMLY-087: Service Worker Lifecycle Error Handling Fix](./logged_memories/MRTMLY-087-service-worker-lifecycle-error-handling-fix.md)
 - [MRTMLY-086: Service Worker Lifecycle Test Direct Approach](./logged_memories/MRTMLY-086-service-worker-lifecycle-test-direct-approach.md)
 - [MRTMLY-085: Service Worker Lifecycle Test IIFE Pattern](./logged_memories/MRTMLY-085-service-worker-lifecycle-test-iife-pattern.md)
