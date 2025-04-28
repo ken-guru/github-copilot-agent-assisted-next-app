@@ -359,12 +359,12 @@ Based on the completion of the service worker refactoring, we are now moving to:
 - [ ] Document current behavior and test coverage
 - [ ] Create detailed test plan for new structure
 
-#### 2. Testing Preparation - ETA: 2 days
+#### 2. Testing Preparation - ETA: 2 days [PENDING]
 - [ ] Enhance existing tests for ActivityManager
 - [ ] Create additional tests for specific functionality that will be extracted
 - [ ] Document baseline performance metrics
 
-#### 3. Implementation Phase - ETA: 3 days
+#### 3. Implementation Phase - ETA: 3 days [PENDING]
 - [ ] Create the first extracted file:
   ```
   /src/components/ActivityManagerCore.tsx
@@ -379,13 +379,55 @@ Based on the completion of the service worker refactoring, we are now moving to:
   ```
 - [ ] Update the main ActivityManager.tsx to use the new structure
 
-#### 4. Testing and Documentation - ETA: 2 days
+#### 4. Testing and Documentation - ETA: 2 days [PENDING]
 - [ ] Verify all functionality works as expected
 - [ ] Document the new component structure
 - [ ] Update Memory Log with implementation details
 
-## CSS Refactoring - ETA: To be determined
+## CSS Refactoring - ETA: To be determined [DEFERRED]
 
 Lower priority task to be scheduled after component refactoring
 - Will focus on improving modularity and reducing CSS duplication
 - Will coordinate with the UI team on the best approach
+
+## Session Summary and Next Steps
+
+### Completed Items
+- ✅ Service Worker Registration refactoring (`/src/utils/serviceWorkerRegistration.ts`)
+- ✅ Service Worker file refactoring (`/public/service-worker.js`)
+- ✅ NextJS Configuration updates (`/next.config.js`)
+- ✅ Time Utilities refactoring (`/src/utils/timeUtils.ts`)
+
+### Current Progress
+- 🔄 ActivityManager refactoring - Analysis phase (30% complete)
+
+### Next Session Tasks
+When resuming this refactoring work, the following steps should be taken:
+
+1. **Complete ActivityManager Analysis**
+   - Document current behavior and test coverage
+   - Create detailed test plan for the new structure
+   - Identify all components and hooks that will interact with the refactored code
+
+2. **Test Creation**
+   - Begin with the testing preparation phase
+   - Create comprehensive tests for both existing and new functionality
+   - Ensure tests are isolated from implementation details
+
+3. **Implementation Strategy**
+   - Start with the `useActivityManagerState.ts` hook for state management
+   - Then implement the `ActivityManagerCore.tsx` component
+   - Follow with UI components that use the hook and core component
+   - Finally update the main `ActivityManager.tsx` to use the new structure
+
+4. **Scheduling Recommendation**
+   - Allocate 1-2 hour sessions to tackle one phase at a time
+   - Schedule separate sessions for test creation and implementation
+   - Plan for documentation updates after implementation is complete
+
+### Reference Information for Next Session
+- The original `ActivityManager.tsx` contains approximately 250 lines of code
+- Primary concerns are state management, UI rendering, and event handling
+- Several component-specific hooks may need to be created or refactored
+- Theme integration spans multiple aspects of the component
+- Existing tests will need to be updated to reflect the new structure
