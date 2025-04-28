@@ -1,3 +1,4 @@
+// filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/src/tests/serviceWorkerCache.test.ts
 describe('Service Worker Cache', () => {
   // Define types for our mocks to make TypeScript happy
   type MockResponse = Partial<Response> & { 
@@ -5,8 +6,8 @@ describe('Service Worker Cache', () => {
   };
   
   type MockCache = {
-    put: jest.Mock;
-    match: jest.Mock;
+    put: jest.Mock<Promise<void>, [Request, Response]>;
+    match: jest.Mock<Promise<Response | null>, [Request]>;
   };
   
   type MockCaches = {
@@ -21,6 +22,10 @@ describe('Service Worker Cache', () => {
       get: jest.Mock;
     };
   };
+
+  interface MockRequestConstructor {
+    new(url: string): MockRequest;
+  }
   
   // Mock service worker cache
   const mockCache: MockCache = {
@@ -35,7 +40,7 @@ describe('Service Worker Cache', () => {
   
   // Mock fetch response
   const mockResponse: MockResponse = { 
-    clone: jest.fn().mockReturnValue('cloned response' as any),
+    clone: jest.fn().mockReturnValue('cloned response' as unknown as Response),
     status: 200,
     headers: new Headers(),
     ok: true,
@@ -56,7 +61,7 @@ describe('Service Worker Cache', () => {
     originalRequest = global.Request;
     
     // Define Request constructor for test environment
-    (global as any).Request = class MockRequest {
+    (global as unknown as Record<string, MockRequestConstructor>).Request = class MockRequest {
       url: string;
       method: string;
       headers: { get: jest.Mock };
@@ -69,7 +74,7 @@ describe('Service Worker Cache', () => {
     };
     
     // Mock global caches
-    (global as any).caches = mockCaches;
+    (global as unknown as Record<string, unknown>).caches = mockCaches;
     
     // Mock global fetch
     global.fetch = jest.fn().mockResolvedValue(mockResponse as unknown as Response);
@@ -79,7 +84,7 @@ describe('Service Worker Cache', () => {
     // Restore original globals
     global.caches = originalCaches;
     global.fetch = originalFetch;
-    (global as any).Request = originalRequest;
+    (global as unknown as Record<string, unknown>).Request = originalRequest;
   });
   
   beforeEach(() => {
@@ -89,7 +94,7 @@ describe('Service Worker Cache', () => {
   
   test('should handle caching operations correctly', async () => {
     // This test verifies basic caching operations without relying on service worker fetch events
-    const request = new (global as any).Request('http://localhost:3000/') as MockRequest;
+    const request = new (global as unknown as Record<string, unknown>).Request('http://localhost:3000/') as MockRequest;
     const response = { 
       status: 200, 
       clone: () => ({}),
@@ -120,13 +125,16 @@ describe('Service Worker Cache', () => {
   
   test('should handle fetch events with proper error handling', () => {
     // Test cache handling with error conditions
-    const request = new (global as any).Request('http://localhost:3000/') as MockRequest;
+    const mockGlobal = global as unknown as { Request: new (url: string) => MockRequest };
+    const request = new mockGlobal.Request('http://localhost:3000/');
     
     // Test cache miss scenario
     mockCache.match.mockResolvedValueOnce(null);
     
-    return mockCache.match(request as unknown as Request).then((result) => {
+    const handleResult = (result: Response | null): void => {
       expect(result).toBeNull();
-    });
+    };
+    
+    return mockCache.match(request as unknown as Request).then(handleResult);
   });
 });
