@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { ThemeProvider } from '../contexts/ThemeContext';
+import ServiceWorkerUpdater from './ServiceWorkerUpdater';
 
 interface LayoutClientProps {
   children: React.ReactNode;
@@ -49,6 +50,10 @@ export function LayoutClient({ children }: LayoutClientProps) {
 
   return (
     <ThemeProvider>
+      {/* Include the ServiceWorkerUpdater component */}
+      <ServiceWorkerUpdater />
+      
+      {/* Legacy update notification - can eventually be removed once tests are updated */}
       {updateAvailable && (
         <div style={{
           position: 'fixed',

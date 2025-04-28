@@ -19,8 +19,7 @@ describe('Service Worker Functionality', () => {
     });
   });
 
-  // Skip this test for now as it's having issues with promises that never resolve
-  it.skip('should register the service worker', () => {
+  it('should register the service worker', () => {
     cy.visit('/');
     cy.get('body').should('be.visible');
     
@@ -80,45 +79,64 @@ describe('Service Worker Functionality', () => {
     cy.get('[data-testid="offline-indicator"]').should('not.exist');
   });
 
-  // Skip this test for now as the notification component may not be implemented correctly
-  it.skip('should show update notification when a new service worker is available', () => {
+  it('should show update notification when a new service worker is available', () => {
     cy.visit('/');
     cy.get('body').should('be.visible');
     
+    // Wait to ensure component is fully mounted
+    cy.wait(1000);
+    
     cy.window().then((win) => {
-      // Add mock controller if needed
-      if (!win.navigator.serviceWorker.controller) {
-        Object.defineProperty(win.navigator.serviceWorker, 'controller', {
-          value: { state: 'activated' },
-          configurable: true
-        });
+      // Use the API to set update available
+      if (win.ServiceWorkerUpdaterAPI) {
+        win.ServiceWorkerUpdaterAPI.setUpdateAvailable(true);
+        cy.log('Set update available via ServiceWorkerUpdaterAPI');
+      } else {
+        // Fallback to dispatching event in case API is not available
+        cy.log('ServiceWorkerUpdaterAPI not found, using custom event fallback');
+        win.dispatchEvent(new CustomEvent('serviceWorkerUpdateAvailable', {
+          detail: { message: 'A new version is available. Please refresh to update.' }
+        }));
       }
-      
-      // Simulate update event
-      win.dispatchEvent(new CustomEvent('serviceWorkerUpdateAvailable', {
-        detail: { message: 'A new version is available. Please refresh to update.' }
-      }));
     });
+    
+    // Verify update notification appears
+    cy.get('[data-testid="update-notification"]', { timeout: 5000 }).should('be.visible');
+    cy.get('[data-testid="update-notification"]').contains('Update available').should('exist');
   });
 
-  // Skip this test for now as the notification component may not be implemented correctly
-  it.skip('should handle service worker update and reload', () => {
+  it('should handle service worker update and reload', () => {
     cy.visit('/');
     cy.get('body').should('be.visible');
     
+    // Wait to ensure component is fully mounted
+    cy.wait(1000);
+    
+    // Listen for our custom event that replaces the actual reload in tests
+    const appReloadSpy = cy.spy().as('appReloadSpy');
     cy.window().then((win) => {
-      // Add mock controller if needed
-      if (!win.navigator.serviceWorker.controller) {
-        Object.defineProperty(win.navigator.serviceWorker, 'controller', {
-          value: { state: 'activated' },
-          configurable: true
-        });
-      }
+      win.addEventListener('appReloadTriggered', appReloadSpy);
       
-      // Simulate update event
-      win.dispatchEvent(new CustomEvent('serviceWorkerUpdateAvailable', {
-        detail: { message: 'A new version is available. Please refresh to update.' }
-      }));
+      // Use the API to set update available
+      if (win.ServiceWorkerUpdaterAPI) {
+        win.ServiceWorkerUpdaterAPI.setUpdateAvailable(true);
+        cy.log('Set update available via ServiceWorkerUpdaterAPI');
+      } else {
+        // Fallback to dispatching event in case API is not available
+        cy.log('ServiceWorkerUpdaterAPI not found, using custom event fallback');
+        win.dispatchEvent(new CustomEvent('serviceWorkerUpdateAvailable', {
+          detail: { message: 'A new version is available. Please refresh to update.' }
+        }));
+      }
     });
+    
+    // Verify update notification appears
+    cy.get('[data-testid="update-notification"]', { timeout: 5000 }).should('be.visible');
+    
+    // Click the update button
+    cy.get('[data-testid="update-button"]').click();
+    
+    // Verify our custom reload event was triggered
+    cy.get('@appReloadSpy').should('have.been.called');
   });
 });

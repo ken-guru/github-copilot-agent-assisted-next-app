@@ -21,3 +21,11 @@ declare namespace Cypress {
     waitForServiceWorkerRegistration(timeoutMs?: number): Chainable<void>;
   }
 }
+
+// Add window.ServiceWorkerUpdaterAPI for Cypress tests
+interface Window {
+  ServiceWorkerUpdaterAPI?: {
+    setUpdateAvailable: (value: boolean) => void;
+  };
+  Cypress?: unknown;
+}
