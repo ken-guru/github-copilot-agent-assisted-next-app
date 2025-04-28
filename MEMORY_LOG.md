@@ -1,6 +1,8 @@
 # Memory Log
 
 ## 2025 April
+- [MRTMLY-413 Service Worker Test Implementation](./docs/logged_memories/MRTMLY-413-service-worker-test-implementation.md) - In-progress fixes for service worker tests in Cypress
+- [MRTMLY-412 Cypress Missing E2E Config](./docs/logged_memories/MRTMLY-412-cypress-missing-e2e-config.md) - Fixed Cypress E2E testing configuration that was preventing tests from running
 - [MRTMLY-095 Hydration Mismatch Theme Attributes](./docs/logged_memories/MRTMLY-095-hydration-mismatch-theme-attributes.md) - Fixed React hydration mismatch caused by theme attributes being added client-side but missing in server-rendered HTML
 - [MRTMLY-001 ESLint and TypeScript Build Fixes](./docs/logged_memories/MRTMLY-001-eslint-build-fixes.md) - Fixed various ESLint and TypeScript errors that were preventing successful builds
 - [MRTMLY-411 Build Process Cypress Exclusion](./docs/logged_memories/MRTMLY-411-build-process-cypress-exclusion.md) - Created a custom build process that excludes Cypress tests to prevent TypeScript errors
