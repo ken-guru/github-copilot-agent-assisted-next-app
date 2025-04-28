@@ -4,6 +4,24 @@ This file contains a record of changes that have been implemented in the applica
 
 ## 2023 December
 
+### Service Worker Event Handler Types (2023-12-03)
+
+**Files Modified:**
+- `/src/utils/__tests__/serviceWorkerRegistration.test.ts`
+
+**Changes:**
+- Fixed ESLint errors related to event handler types in MockServiceWorker class
+- Changed event handler return types from `any` to `void`
+- Maintained compatibility with browser interfaces while improving type safety
+
+**Technical Notes:**
+- Used `void` return type for event handlers instead of `any`
+- Ensured compatibility with ServiceWorker and AbstractWorker interfaces
+- Aligned with project ESLint rules prohibiting `any` types
+
+**Memory Log References:**
+- [MRTMLY-058: Service Worker Event Handler Types](./logged_memories/MRTMLY-058-service-worker-event-handler-types.md)
+
 ### Service Worker State Type Fix (2023-12-03)
 
 **Files Modified:**

@@ -4,6 +4,7 @@ This file contains a chronological index of detailed memory log entries about im
 
 ## 2023 December
 
+- [MRTMLY-058: Service Worker Event Handler Types](./logged_memories/MRTMLY-058-service-worker-event-handler-types.md)
 - [MRTMLY-057: Service Worker State Type Fix](./logged_memories/MRTMLY-057-service-worker-state-type-fix.md)
 - [MRTMLY-056: Service Worker Interface Compliance Fixes](./logged_memories/MRTMLY-056-service-worker-interface-compliance.md)
 - [MRTMLY-055: Service Worker ServiceWorker Type Issue](./logged_memories/MRTMLY-055-service-worker-serviceworker-type-issue.md)

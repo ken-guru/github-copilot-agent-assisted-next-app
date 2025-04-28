@@ -17,15 +17,13 @@ interface MockInstallingWorker {
 
 // Define a proper ServiceWorker mock to fix type errors
 class MockServiceWorker implements Partial<ServiceWorker> {
-  // Use the correct literal type for ServiceWorkerState
-  // Correct values are: "installing", "installed", "activating", "activated", "redundant"
+  // Use the correct type for state
   state: ServiceWorkerState = 'installed';
   
-  // Required properties from AbstractWorker
-  onerror: ((this: AbstractWorker, ev: ErrorEvent) => any) | null = null;
+  // Use proper function types for event handlers
+  onerror: ((this: AbstractWorker, ev: ErrorEvent) => void) | null = null;
+  onstatechange: ((this: ServiceWorker, ev: Event) => void) | null = null;
   
-  // Required properties from ServiceWorker
-  onstatechange: ((this: ServiceWorker, ev: Event) => any) | null = null;
   scriptURL = 'http://localhost:3000/service-worker.js';
   
   // Add minimum required methods
