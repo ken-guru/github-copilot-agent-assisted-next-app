@@ -28,23 +28,20 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "types": ["node", "jest", "@testing-library/jest-dom", "cypress"]
   },
   "include": [
     "next-env.d.ts",
+    "src/types/jest.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "cypress/**/*.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "cypress",
+    "cypress/e2e/**/*.ts",
     "**/*.cy.ts",
     "**/*.cy.tsx"
-  ],
-  "types": [
-    "cypress",
-    "node"
   ]
 }

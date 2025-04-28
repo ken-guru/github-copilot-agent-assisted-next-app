@@ -94,7 +94,7 @@ describe('Service Worker Cache', () => {
   
   test('should handle caching operations correctly', async () => {
     // This test verifies basic caching operations without relying on service worker fetch events
-    const request = new (global as unknown as Record<string, unknown>).Request('http://localhost:3000/') as MockRequest;
+    const request = new (global as any).Request('http://localhost:3000/') as MockRequest;
     const response = { 
       status: 200, 
       clone: () => ({}),
