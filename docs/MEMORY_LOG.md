@@ -4,6 +4,23 @@ This file contains a chronological index of detailed memory log entries about im
 
 ## 2023 December
 
+- [MRTMLY-087: Service Worker Lifecycle Error Handling Fix](./logged_memories/MRTMLY-087-service-worker-lifecycle-error-handling-fix.md)
+- [MRTMLY-086: Service Worker Lifecycle Test Direct Approach](./logged_memories/MRTMLY-086-service-worker-lifecycle-test-direct-approach.md)
+- [MRTMLY-085: Service Worker Lifecycle Test IIFE Pattern](./logged_memories/MRTMLY-085-service-worker-lifecycle-test-iife-pattern.md)
+- [MRTMLY-084: Service Worker Lifecycle Test Intercept Approach](./logged_memories/MRTMLY-084-service-worker-lifecycle-test-intercept-approach.md)
+- [MRTMLY-083: Service Worker Lifecycle Test Direct Mocks](./logged_memories/MRTMLY-083-service-worker-lifecycle-test-direct-mocks.md)
+- [MRTMLY-082: Service Worker Lifecycle Test Spy Function Fix](./logged_memories/MRTMLY-082-service-worker-lifecycle-test-spy-function-fix.md)
+- [MRTMLY-081: Service Worker Lifecycle Test Spy Approach](./logged_memories/MRTMLY-081-service-worker-lifecycle-test-spy-approach.md)
+- [MRTMLY-080: Service Worker Lifecycle Test Mocking Approach](./logged_memories/MRTMLY-080-service-worker-lifecycle-test-mocking-approach.md)
+- [MRTMLY-079: Service Worker Lifecycle Test Promise Capture Fix](./logged_memories/MRTMLY-079-service-worker-lifecycle-test-promise-capture.md)
+- [MRTMLY-078: Service Worker Lifecycle Tests Simplified](./logged_memories/MRTMLY-078-service-worker-lifecycle-tests-simplified.md)
+- [MRTMLY-077: Service Worker Lifecycle Test waitUntil Fix](./logged_memories/MRTMLY-077-service-worker-lifecycle-test-waituntil-fix.md)
+- [MRTMLY-076: Service Worker Lifecycle Test Revised Approach](./logged_memories/MRTMLY-076-service-worker-lifecycle-test-revised-approach.md)
+- [MRTMLY-075: Service Worker Lifecycle Test Execution Fix](./logged_memories/MRTMLY-075-service-worker-lifecycle-test-execution-fix.md)
+- [MRTMLY-074: Service Worker Lifecycle Tests Update](./logged_memories/MRTMLY-074-service-worker-lifecycle-tests-update.md)
+- [MRTMLY-073: Service Worker Lifecycle Tests Fix](./logged_memories/MRTMLY-073-service-worker-lifecycle-tests-fix.md)
+- [MRTMLY-072: Service Worker Lifecycle Implementation](./logged_memories/MRTMLY-072-service-worker-lifecycle-implementation.md)
+- [MRTMLY-071: Service Worker Lifecycle Tests](./logged_memories/MRTMLY-071-service-worker-lifecycle-tests.md)
 - [MRTMLY-070: Service Worker Fetch Handlers Routing Fix](./logged_memories/MRTMLY-070-service-worker-fetch-handlers-fix.md)
 - [MRTMLY-069: Service Worker Fetch Handlers Implementation](./logged_memories/MRTMLY-069-service-worker-fetch-handlers-implementation.md)
 - [MRTMLY-068: Service Worker Fetch Handlers Tests](./logged_memories/MRTMLY-068-service-worker-fetch-handlers-tests.md)
