@@ -4,6 +4,9 @@ This file contains a chronological index of detailed memory log entries about im
 
 ## 2023 December
 
+- [MRTMLY-057: Service Worker State Type Fix](./logged_memories/MRTMLY-057-service-worker-state-type-fix.md)
+- [MRTMLY-056: Service Worker Interface Compliance Fixes](./logged_memories/MRTMLY-056-service-worker-interface-compliance.md)
+- [MRTMLY-055: Service Worker ServiceWorker Type Issue](./logged_memories/MRTMLY-055-service-worker-serviceworker-type-issue.md)
 - [MRTMLY-054: Service Worker ESLint Error Fixes](./logged_memories/MRTMLY-054-service-worker-eslint-fixes.md)
 - [MRTMLY-053: Service Worker TypeScript Error Fixes](./logged_memories/MRTMLY-053-service-worker-typescript-errors.md)
 - [MRTMLY-052: Service Worker Refactoring Completion](./logged_memories/MRTMLY-052-service-worker-refactoring-completion.md)

@@ -15,6 +15,26 @@ interface MockInstallingWorker {
   _listeners: MockListeners;
 }
 
+// Define a proper ServiceWorker mock to fix type errors
+class MockServiceWorker implements Partial<ServiceWorker> {
+  // Use the correct literal type for ServiceWorkerState
+  // Correct values are: "installing", "installed", "activating", "activated", "redundant"
+  state: ServiceWorkerState = 'installed';
+  
+  // Required properties from AbstractWorker
+  onerror: ((this: AbstractWorker, ev: ErrorEvent) => any) | null = null;
+  
+  // Required properties from ServiceWorker
+  onstatechange: ((this: ServiceWorker, ev: Event) => any) | null = null;
+  scriptURL = 'http://localhost:3000/service-worker.js';
+  
+  // Add minimum required methods
+  addEventListener = jest.fn();
+  removeEventListener = jest.fn();
+  dispatchEvent = jest.fn(() => true);
+  postMessage = jest.fn();
+}
+
 // Define proper config interface to avoid using 'any'
 interface ServiceWorkerConfig {
   onSuccess?: (registration: ServiceWorkerRegistration) => void;
@@ -37,7 +57,7 @@ class MockServiceWorkerRegistration {
     }),
     _listeners: {}
   };
-  waiting: { state: string } | null = null;
+  waiting: ServiceWorker | null = null;
   active = { state: 'activated' };
   
   // Required methods
@@ -214,8 +234,8 @@ describe('Service Worker Registration', () => {
       // Set up a waiting service worker to simulate an update
       mockServiceWorkerContainer.register.mockImplementationOnce(() => {
         const registration = new MockServiceWorkerRegistration();
-        // Type cast to avoid 'any' - create a compatible object with the waiting property
-        registration.waiting = { state: 'waiting' } as ServiceWorkerRegistration['waiting'];
+        // Use a proper ServiceWorker mock instance
+        registration.waiting = new MockServiceWorker();
         return Promise.resolve(registration);
       });
       
@@ -237,8 +257,8 @@ describe('Service Worker Registration', () => {
       // Set up a waiting service worker to simulate an update
       mockServiceWorkerContainer.register.mockImplementationOnce(() => {
         const registration = new MockServiceWorkerRegistration();
-        // Type cast to avoid 'any' - create a compatible object with the waiting property
-        registration.waiting = { state: 'waiting' } as ServiceWorkerRegistration['waiting'];
+        // Use a proper ServiceWorker mock instance
+        registration.waiting = new MockServiceWorker();
         return Promise.resolve(registration);
       });
       
