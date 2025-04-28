@@ -15,6 +15,93 @@
   --text-secondary-dark: #b3b3b3;
   --accent-color-dark: #30a9de;
   --border-color-dark: #333333;
+  
+  /* Spacing Scale */
+  --space-xs: 0.25rem;  /* 4px */
+  --space-sm: 0.5rem;   /* 8px */
+  --space-md: 1rem;     /* 16px */
+  --space-lg: 1.5rem;   /* 24px */
+  --space-xl: 2rem;     /* 32px */
+  
+  /* Semantic Spacing Variables */
+  --padding-small: var(--space-sm);
+  --padding-medium: var(--space-md);
+  --padding-large: var(--space-lg);
+  --gap-small: var(--space-xs);
+  --gap-medium: var(--space-sm);
+  --gap-large: var(--space-md);
+  
+  /* Border Radius Scale */
+  --radius-none: 0;
+  --radius-xs: 0.125rem;  /* 2px */
+  --radius-sm: 0.25rem;   /* 4px */
+  --radius-md: 0.375rem;  /* 6px */
+  --radius-lg: 0.5rem;    /* 8px */
+  --radius-xl: 0.75rem;   /* 12px */
+  --radius-full: 9999px;
+  
+  /* Semantic Border Radius Variables */
+  --radius-button: var(--radius-md);
+  --radius-card: var(--radius-lg);
+  --radius-input: var(--radius-sm);
+  --radius-badge: var(--radius-full);
+  --radius-tooltip: var(--radius-xs);
+  --radius-panel: var(--radius-lg);
+  
+  /* Shadow Scale */
+  --shadow-none: none;
+  --shadow-xs: 0 1px 2px hsla(0, 0%, 0%, 0.07);
+  --shadow-sm: 0 1px 3px hsla(0, 0%, 0%, 0.12);
+  --shadow-md: 0 4px 6px hsla(0, 0%, 0%, 0.1);
+  --shadow-lg: 0 10px 15px hsla(0, 0%, 0%, 0.1);
+  --shadow-xl: 0 20px 25px hsla(0, 0%, 0%, 0.15);
+  
+  /* Semantic Shadow Variables */
+  --shadow-card: var(--shadow-sm);
+  --shadow-card-hover: var(--shadow-md);
+  --shadow-dropdown: var(--shadow-md);
+  --shadow-modal: var(--shadow-lg);
+  --shadow-header: var(--shadow-sm);
+  --shadow-button: var(--shadow-xs);
+  --shadow-focus: 0 0 0 4px rgba(0, 112, 243, 0.35);
+  --shadow-small: var(--shadow-xs);
+  
+  /* Component Sizing Scale */
+  --control-height-sm: 24px;
+  --control-height-md: 28px;
+  --control-height-lg: 36px;
+  --icon-size-sm: 14px;
+  --icon-size-md: 16px;
+  --icon-size-lg: 20px;
+  
+  /* Generic UI Variables */
+  --background: var(--bg-primary);
+  --background-alt: var(--bg-secondary);
+  --background-muted: rgba(0, 0, 0, 0.05);
+  --foreground: var(--text-primary);
+  --foreground-muted: var(--text-secondary);
+  --border: var(--border-color);
+  --border-hover: #b3b3b3;
+  --accent-color-rgb: 0, 112, 243;
+  --accent-color-hover: #0060d1;
+  
+  /* Status Colors */
+  --error: #dc2626;
+  --error-bg: #fee2e2;
+  --success: #16a34a;
+  --success-bg: #dcfce7;
+  --warning: #ca8a04;
+  --warning-bg: #fef3c7;
+  --info: #2563eb;
+  --info-bg: #dbeafe;
+  
+  /* Status Message Colors */
+  --status-ontime-bg: #dcfce7;
+  --status-ontime-text: #16a34a;
+  --status-early-bg: #dbeafe;
+  --status-early-text: #2563eb;
+  --status-late-bg: #fee2e2;
+  --status-late-text: #dc2626;
 }
 
 /* Apply dark theme values when any dark mode class/attribute is present */
@@ -29,6 +116,43 @@
   --text-secondary: var(--text-secondary-dark);
   --accent-color: var(--accent-color-dark);
   --border-color: var(--border-color-dark);
+  
+  /* Dark theme overrides for generic UI variables */
+  --background: var(--bg-primary-dark);
+  --background-alt: var(--bg-secondary-dark);
+  --background-muted: rgba(255, 255, 255, 0.1);
+  --foreground: var(--text-primary-dark);
+  --foreground-muted: var(--text-secondary-dark);
+  --border: var(--border-color-dark);
+  --border-hover: #666666;
+  --accent-color-rgb: 48, 169, 222;
+  --accent-color-hover: #4db6e5;
+  
+  /* Dark theme overrides for status colors */
+  --error: #f87171;
+  --error-bg: rgba(220, 38, 38, 0.2);
+  --success: #4ade80;
+  --success-bg: rgba(22, 163, 74, 0.2);
+  --warning: #fcd34d;
+  --warning-bg: rgba(202, 138, 4, 0.2);
+  --info: #60a5fa;
+  --info-bg: rgba(37, 99, 235, 0.2);
+  
+  /* Dark theme overrides for status message colors */
+  --status-ontime-bg: rgba(22, 163, 74, 0.2);
+  --status-ontime-text: #4ade80;
+  --status-early-bg: rgba(37, 99, 235, 0.2);
+  --status-early-text: #60a5fa;
+  --status-late-bg: rgba(220, 38, 38, 0.2);
+  --status-late-text: #f87171;
+  
+  /* Shadow adjustments for dark theme */
+  --shadow-xs: 0 1px 2px hsla(0, 0%, 0%, 0.15);
+  --shadow-sm: 0 1px 3px hsla(0, 0%, 0%, 0.2);
+  --shadow-md: 0 4px 6px hsla(0, 0%, 0%, 0.18);
+  --shadow-lg: 0 10px 15px hsla(0, 0%, 0%, 0.18);
+  --shadow-xl: 0 20px 25px hsla(0, 0%, 0%, 0.25);
+  --shadow-focus: 0 0 0 4px rgba(48, 169, 222, 0.35);
 }
 
 /* Apply dark theme based on system preference unless explicitly overridden */
@@ -40,6 +164,43 @@
     --text-secondary: var(--text-secondary-dark);
     --accent-color: var(--accent-color-dark);
     --border-color: var(--border-color-dark);
+    
+    /* Dark theme overrides for generic UI variables */
+    --background: var(--bg-primary-dark);
+    --background-alt: var(--bg-secondary-dark);
+    --background-muted: rgba(255, 255, 255, 0.1);
+    --foreground: var(--text-primary-dark);
+    --foreground-muted: var(--text-secondary-dark);
+    --border: var(--border-color-dark);
+    --border-hover: #666666;
+    --accent-color-rgb: 48, 169, 222;
+    --accent-color-hover: #4db6e5;
+    
+    /* Dark theme overrides for status colors */
+    --error: #f87171;
+    --error-bg: rgba(220, 38, 38, 0.2);
+    --success: #4ade80;
+    --success-bg: rgba(22, 163, 74, 0.2);
+    --warning: #fcd34d;
+    --warning-bg: rgba(202, 138, 4, 0.2);
+    --info: #60a5fa;
+    --info-bg: rgba(37, 99, 235, 0.2);
+    
+    /* Dark theme overrides for status message colors */
+    --status-ontime-bg: rgba(22, 163, 74, 0.2);
+    --status-ontime-text: #4ade80;
+    --status-early-bg: rgba(37, 99, 235, 0.2);
+    --status-early-text: #60a5fa;
+    --status-late-bg: rgba(220, 38, 38, 0.2);
+    --status-late-text: #f87171;
+    
+    /* Shadow adjustments for dark theme */
+    --shadow-xs: 0 1px 2px hsla(0, 0%, 0%, 0.15);
+    --shadow-sm: 0 1px 3px hsla(0, 0%, 0%, 0.2);
+    --shadow-md: 0 4px 6px hsla(0, 0%, 0%, 0.18);
+    --shadow-lg: 0 10px 15px hsla(0, 0%, 0%, 0.18);
+    --shadow-xl: 0 20px 25px hsla(0, 0%, 0%, 0.25);
+    --shadow-focus: 0 0 0 4px rgba(48, 169, 222, 0.35);
   }
 }
 
