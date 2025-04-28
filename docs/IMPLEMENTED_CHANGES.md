@@ -4,6 +4,25 @@ This file contains a record of changes that have been implemented in the applica
 
 ## 2023 December
 
+### Service Worker ESLint Error Fixes (2023-12-02)
+
+**Files Modified:**
+- `/src/utils/__tests__/serviceWorkerRegistration.test.ts`
+
+**Changes:**
+- Removed all instances of the `any` type to comply with ESLint rules
+- Added proper interface definition for the service worker config
+- Fixed type assertions using indexed access types
+- Maintained functionality while improving type safety
+
+**Technical Notes:**
+- Used TypeScript's indexed access types to avoid explicit `any` casts
+- Added explicit interfaces for configuration objects
+- Fixed test mocks to better match the expected API interfaces
+
+**Memory Log References:**
+- [MRTMLY-054: Service Worker ESLint Error Fixes](./logged_memories/MRTMLY-054-service-worker-eslint-fixes.md)
+
 ### Service Worker TypeScript Error Fixes (2023-12-02)
 
 **Files Modified:**

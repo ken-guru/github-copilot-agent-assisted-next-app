@@ -15,6 +15,12 @@ interface MockInstallingWorker {
   _listeners: MockListeners;
 }
 
+// Define proper config interface to avoid using 'any'
+interface ServiceWorkerConfig {
+  onSuccess?: (registration: ServiceWorkerRegistration) => void;
+  onUpdate?: (registration: ServiceWorkerRegistration) => void;
+}
+
 // Create a proper mock for ServiceWorkerRegistration
 class MockServiceWorkerRegistration {
   // Required properties
@@ -73,7 +79,7 @@ jest.mock('../serviceWorker', () => {
     register: jest.fn(),
     unregister: jest.fn(),
     checkForUpdates: jest.fn(),
-    handleRegistration: jest.fn((reg: ServiceWorkerRegistration, config?: any) => {
+    handleRegistration: jest.fn((reg: ServiceWorkerRegistration, config?: ServiceWorkerConfig) => {
       // Call the callbacks directly for testing
       if (reg.waiting) {
         if (config?.onUpdate) {
@@ -208,8 +214,8 @@ describe('Service Worker Registration', () => {
       // Set up a waiting service worker to simulate an update
       mockServiceWorkerContainer.register.mockImplementationOnce(() => {
         const registration = new MockServiceWorkerRegistration();
-        // Type cast to avoid error - the mock registration can have a waiting property
-        (registration.waiting as any) = { state: 'waiting' };
+        // Type cast to avoid 'any' - create a compatible object with the waiting property
+        registration.waiting = { state: 'waiting' } as ServiceWorkerRegistration['waiting'];
         return Promise.resolve(registration);
       });
       
@@ -231,8 +237,8 @@ describe('Service Worker Registration', () => {
       // Set up a waiting service worker to simulate an update
       mockServiceWorkerContainer.register.mockImplementationOnce(() => {
         const registration = new MockServiceWorkerRegistration();
-        // Type cast to avoid error - the mock registration can have a waiting property
-        (registration.waiting as any) = { state: 'waiting' };
+        // Type cast to avoid 'any' - create a compatible object with the waiting property
+        registration.waiting = { state: 'waiting' } as ServiceWorkerRegistration['waiting'];
         return Promise.resolve(registration);
       });
       
