@@ -31,6 +31,13 @@ export {
   checkValidServiceWorker
 };
 
+// Detect test environment
+const isTestEnv = process.env.NODE_ENV === 'test';
+
+// Helper function for logging that's quiet during tests
+const log = isTestEnv ? () => {} : console.log;
+const errorLog = isTestEnv ? () => {} : console.error;
+
 /**
  * Set a custom handler for service worker updates
  * @deprecated Use direct import from serviceWorker instead
@@ -53,23 +60,23 @@ export function registerServiceWorker(config?: ServiceWorkerConfig): Promise<Ser
                       window.location.hostname === '[::1]';
                       
   // Log development environment detection for tests
-  if (isDevelopment && isLocalhostEnv) {
-    console.log('Development environment detected, service worker updates may be limited');
+  if (isDevelopment && isLocalhostEnv && !isTestEnv) {
+    log('Development environment detected, service worker updates may be limited');
   }
   
   // Skip calling register() directly in tests to avoid URL constructor errors
-  if (process.env.NODE_ENV !== 'test') {
+  if (!isTestEnv) {
     register(config);
   }
   
   // Return a Promise for compatibility with tests
   if ('serviceWorker' in navigator) {
     // For tests, use a simplified approach that bypasses URL checks
-    const swUrl = process.env.NODE_ENV === 'test' ? '/service-worker.js' : `${process.env.PUBLIC_URL || ''}/service-worker.js`;
+    const swUrl = isTestEnv ? '/service-worker.js' : `${process.env.PUBLIC_URL || ''}/service-worker.js`;
     
     try {
       // In test mode, we need to ensure this returns a proper registration
-      if (process.env.NODE_ENV === 'test') {
+      if (isTestEnv) {
         // For tests, register directly without going through retry
         return navigator.serviceWorker.register(swUrl, { scope: '/' })
           .then(reg => {
@@ -82,7 +89,7 @@ export function registerServiceWorker(config?: ServiceWorkerConfig): Promise<Ser
               if (installingWorker) {
                 installingWorker.addEventListener('statechange', () => {
                   if (installingWorker.state === 'installed') {
-                    console.log('New content is available and will be used when all tabs for this page are closed.');
+                    log('New content is available and will be used when all tabs for this page are closed.');
                     
                     // Manually trigger callbacks in test environment
                     if (navigator.serviceWorker.controller) {
@@ -107,14 +114,14 @@ export function registerServiceWorker(config?: ServiceWorkerConfig): Promise<Ser
             
             // Trigger update check
             reg.update().catch(err => {
-              console.error('Service worker update failed:', err);
+              errorLog('Service worker update failed:', err);
             });
             
-            console.log('Service worker registered');
+            log('Service worker registered');
             return reg;
           })
           .catch(error => {
-            console.error('Error during service worker registration:', error);
+            errorLog('Error during service worker registration:', error);
             return undefined;
           });
       }
@@ -123,7 +130,7 @@ export function registerServiceWorker(config?: ServiceWorkerConfig): Promise<Ser
       return registerWithRetry(swUrl, config);
     }
     catch (error) {
-      console.error('Error during service worker registration setup:', error);
+      errorLog('Error during service worker registration setup:', error);
       return Promise.resolve(undefined);
     }
   }
@@ -145,7 +152,10 @@ export function unregisterServiceWorker(): Promise<void> {
         }
         return undefined;
       })
-      .catch(() => {
+      .catch((error) => {
+        if (!isTestEnv) {
+          errorLog(error.message);
+        }
         // Ensure we always return a resolved promise
         return undefined;
       });

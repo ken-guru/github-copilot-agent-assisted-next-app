@@ -4,6 +4,10 @@ This file contains a chronological index of detailed memory log entries about im
 
 ## 2023 December
 
+- [MRTMLY-070: Service Worker Fetch Handlers Routing Fix](./logged_memories/MRTMLY-070-service-worker-fetch-handlers-fix.md)
+- [MRTMLY-069: Service Worker Fetch Handlers Implementation](./logged_memories/MRTMLY-069-service-worker-fetch-handlers-implementation.md)
+- [MRTMLY-068: Service Worker Fetch Handlers Tests](./logged_memories/MRTMLY-068-service-worker-fetch-handlers-tests.md)
+- [MRTMLY-067: Service Worker Registration Test Logs Cleanup](./logged_memories/MRTMLY-067-serviceWorkerRegistration-test-logging.md)
 - [MRTMLY-066: Service Worker Test Logs Cleanup](./logged_memories/MRTMLY-066-service-worker-test-logs-cleanup.md)
 - [MRTMLY-065: Service Worker Test IIFE Syntax Fix](./logged_memories/MRTMLY-065-service-worker-test-iife-syntax-fix.md)
 - [MRTMLY-064: Service Worker JSON Parsing Fix](./logged_memories/MRTMLY-064-service-worker-json-parsing-fix.md)
