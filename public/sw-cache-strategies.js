@@ -3,6 +3,13 @@
  * Contains various caching strategies used throughout the service worker
  */
 
+// Detect test environment
+const isTestEnv = typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'test';
+
+// Helper function for logging that's quiet during tests
+const log = isTestEnv ? () => {} : console.log;
+const errorLog = isTestEnv ? () => {} : console.error;
+
 /**
  * Network First strategy
  * Tries to fetch from network first, falling back to cache if network fails
@@ -23,7 +30,7 @@ async function networkFirst(request, cacheName) {
     
     return networkResponse;
   } catch (error) {
-    console.log('Network request failed, falling back to cache', error);
+    log('Network request failed, falling back to cache', error);
     
     // If network fails, try cache
     const cachedResponse = await cache.match(request);
@@ -62,7 +69,7 @@ async function cacheFirst(request, cacheName) {
     
     return networkResponse;
   } catch (error) {
-    console.error('Cache miss and network failed', error);
+    errorLog('Cache miss and network failed', error);
     throw new Error('CacheFirst: Both cache miss and network failed');
   }
 }
@@ -88,7 +95,7 @@ async function staleWhileRevalidate(request, cacheName) {
       return networkResponse;
     })
     .catch(error => {
-      console.error('Background fetch failed', error);
+      errorLog('Background fetch failed', error);
       // Don't block the response on background fetch errors
     });
     
@@ -130,7 +137,7 @@ async function networkOnly(request) {
   try {
     return await fetch(request);
   } catch (error) {
-    console.error('Network request failed', error);
+    errorLog('Network request failed', error);
     throw new Error('NetworkOnly: Network error');
   }
 }
@@ -157,7 +164,7 @@ async function deleteOldCaches(validCacheNames) {
   
   return Promise.all(
     cachesToDelete.map(name => {
-      console.log('Deleting old cache:', name);
+      log('Deleting old cache:', name);
       return caches.delete(name);
     })
   );

@@ -4,6 +4,7 @@ This file contains a chronological index of detailed memory log entries about im
 
 ## 2023 December
 
+- [MRTMLY-066: Service Worker Test Logs Cleanup](./logged_memories/MRTMLY-066-service-worker-test-logs-cleanup.md)
 - [MRTMLY-065: Service Worker Test IIFE Syntax Fix](./logged_memories/MRTMLY-065-service-worker-test-iife-syntax-fix.md)
 - [MRTMLY-064: Service Worker JSON Parsing Fix](./logged_memories/MRTMLY-064-service-worker-json-parsing-fix.md)
 - [MRTMLY-063: Service Worker Testing Environment Setup](./logged_memories/MRTMLY-063-service-worker-test-environment.md)
