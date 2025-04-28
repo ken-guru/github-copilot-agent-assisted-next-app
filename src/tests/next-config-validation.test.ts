@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 describe('Next.js Configuration Validation', () => {
-  let nextConfigContent;
+  let nextConfigContent: string | undefined;
 
   beforeAll(() => {
     const configPath = path.join(process.cwd(), 'next.config.js');

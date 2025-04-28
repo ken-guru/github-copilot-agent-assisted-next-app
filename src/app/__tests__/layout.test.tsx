@@ -15,7 +15,7 @@ jest.mock('next/font/google', () => ({
 jest.mock('next/script', () => {
   return {
     __esModule: true,
-    default: ({ id, dangerouslySetInnerHTML }) => (
+    default: ({ id, dangerouslySetInnerHTML }: { id?: string; dangerouslySetInnerHTML?: { __html: string } }) => (
       <script data-testid={id}>{dangerouslySetInnerHTML?.__html}</script>
     ),
   };
@@ -23,11 +23,11 @@ jest.mock('next/script', () => {
 
 // Mock LayoutClient component
 jest.mock('../../components/LayoutClient', () => ({
-  LayoutClient: ({ children }) => <div data-testid="layout-client">{children}</div>,
+  LayoutClient: ({ children }: { children: React.ReactNode }) => <div data-testid="layout-client">{children}</div>,
 }));
 
 // Create a simplified mock of the RootLayout component
-function MockRootLayout({ children }) {
+function MockRootLayout({ children }: { children: React.ReactNode }) {
   return (
     <div data-testid="html-element" lang="en">
       <div data-testid="head-element">

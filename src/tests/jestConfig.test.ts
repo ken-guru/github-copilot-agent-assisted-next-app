@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 describe('Jest Configuration', () => {
-  let jestConfigContent;
+  let jestConfigContent: string;
 
   beforeAll(() => {
     const jestConfigPath = path.join(process.cwd(), 'jest.config.js');

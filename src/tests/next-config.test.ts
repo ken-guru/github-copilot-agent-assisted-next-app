@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 describe('Next.js Configuration', () => {
-  let nextConfig;
+  let nextConfig: string | undefined;
   
   beforeAll(() => {
     // Load the Next.js config

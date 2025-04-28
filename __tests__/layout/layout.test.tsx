@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 
 // Mock RootLayout component with proper casing for React components
-const MockRootLayout = ({ children }) => (
+const MockRootLayout = ({ children }: { children: React.ReactNode }) => (
   <div data-testid="mock-layout-wrapper">
     <div data-testid="mock-html" lang="en">
       <div data-testid="mock-body" className="mocked-geist-variable mocked-geist-mono-variable">
