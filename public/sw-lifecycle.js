@@ -1,85 +1,87 @@
 /**
- * Service Worker Lifecycle Events
- * Handles installation and activation of service workers
+ * Service worker lifecycle event handlers
  */
-
-import { precache, deleteOldCaches } from './sw-cache-strategies';
-
-// Define cache names
-export const CACHE_NAMES = {
-  STATIC: 'static-assets-v1',
-  DYNAMIC: 'dynamic-content-v1',
-  PAGES: 'pages-cache-v1',
-  IMAGES: 'images-cache-v1'
-};
+const { precache, deleteOldCaches, CACHE_NAMES } = require('./caching-strategies');
 
 /**
- * Handle service worker installation
- * - Precaches static assets
- * - Activates immediately with skipWaiting
+ * Returns a list of URLs to precache
+ * @returns {Array<string>} List of URLs to precache
  */
-export function handleInstall(event) {
-  event.waitUntil(
-    (async () => {
-      try {
-        await precache(CACHE_NAMES.STATIC, getPrecacheList());
-      } catch (error) {
-        console.error('Error during precaching:', error);
-      }
-      // Always call skipWaiting, even if precaching fails
-      await self.skipWaiting();
-    })()
-  );
-}
-
-/**
- * Handle service worker activation
- * - Deletes old caches
- * - Claims all clients
- */
-export function handleActivate(event) {
-  event.waitUntil(
-    (async () => {
-      try {
-        await deleteOldCaches(getValidCacheNames());
-      } catch (error) {
-        console.error('Error during cache cleanup:', error);
-      }
-      // Always claim clients, even if cache deletion fails
-      await self.clients.claim();
-    })()
-  );
-}
-
-/**
- * Register lifecycle event listeners
- */
-export function registerLifecycleEvents() {
-  self.addEventListener('install', handleInstall);
-  self.addEventListener('activate', handleActivate);
-}
-
-/**
- * Get list of URLs to precache
- * @returns {string[]} Array of URLs to precache
- */
-export function getPrecacheList() {
+function getPrecacheList() {
   return [
     '/',
     '/index.html',
-    '/static/css/main.css',
-    '/static/js/main.js',
-    // Add other important assets here
+    '/offline.html',
     '/manifest.json',
     '/favicon.ico',
-    '/offline.html'
+    '/logo192.png',
+    '/logo512.png',
+    '/static/js/main.js',
+    '/static/css/main.css'
   ];
 }
 
 /**
- * Get list of valid cache names
- * @returns {string[]} Array of valid cache names
+ * Returns a list of valid cache names
+ * @returns {Array<string>} List of valid cache names
  */
-export function getValidCacheNames() {
-  return Object.values(CACHE_NAMES);
+function getValidCacheNames() {
+  return [CACHE_NAMES.PRECACHE, CACHE_NAMES.RUNTIME];
 }
+
+/**
+ * Handles the install event
+ * @param {ExtendableEvent} event - The install event
+ */
+function handleInstall(event) {
+  console.log('[Service Worker] Install');
+  
+  // Use waitUntil to signal install completion
+  event.waitUntil(
+    Promise.resolve()
+      .then(() => precache(getPrecacheList()))
+      .then(() => self.skipWaiting())
+      .catch(err => {
+        console.error('[Service Worker] Install error:', err);
+        // Even if precache fails, skip waiting to activate the service worker
+        return self.skipWaiting();
+      })
+  );
+}
+
+/**
+ * Handles the activate event
+ * @param {ExtendableEvent} event - The activate event
+ */
+function handleActivate(event) {
+  console.log('[Service Worker] Activate');
+  
+  // Use waitUntil to signal activation completion
+  event.waitUntil(
+    Promise.resolve()
+      .then(() => deleteOldCaches(getValidCacheNames()))
+      .then(() => self.clients.claim())
+      .catch(err => {
+        console.error('[Service Worker] Activation error:', err);
+        // Even if cache cleanup fails, claim clients
+        return self.clients.claim();
+      })
+  );
+}
+
+/**
+ * Registers all lifecycle event handlers
+ */
+function registerLifecycleEvents() {
+  self.addEventListener('install', handleInstall);
+  self.addEventListener('activate', handleActivate);
+}
+
+module.exports = {
+  handleInstall,
+  handleActivate,
+  registerLifecycleEvents,
+  getPrecacheList,
+  getValidCacheNames,
+  CACHE_NAMES
+};

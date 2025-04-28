@@ -1,9 +1,20 @@
 # Memory Log
 
-This file contains references to detailed memory entries for this project.
+## 2025 April
+- [MRTMLY-404 Page Error on Application Load](./docs/logged_memories/MRTMLY-404-page-on-application-load.md) - Fixed 404 error when loading application by resolving Next.js configuration and directory structure conflicts
 
-## 2023
+## 2023 October
+- [MRTMLY-001 Service Worker Implementation](./docs/logged_memories/MRTMLY-001-service-worker-implementation.md) - Implemented service worker for offline support and caching
+- [MRTMLY-002 Service Worker 404 Fix](./docs/logged_memories/MRTMLY-002-service-worker-404-fix.md) - Fixed 404 errors with service worker to support SPA routing
+- [MRTMLY-003 PWA Configuration Fix](./docs/logged_memories/MRTMLY-003-pwa-configuration-fix.md) - Fixed PWA configuration including manifest, icons, and service worker registration
+- [MRTMLY-004 Next.js Root Route 404 Fix](./docs/logged_memories/MRTMLY-004-nextjs-404-root-fix.md) - Fixed 404 error at root route by correcting Next.js app router configuration
+- [MRTMLY-005 Test Failures Resolution](./docs/logged_memories/MRTMLY-005-test-failures-resolution.md) - Fixed multiple test failures related to accessibility, modules, and service worker
+- [MRTMLY-006 Test Framework Fixes](./docs/logged_memories/MRTMLY-006-test-framework-fixes.md) - Comprehensive fixes for Jest testing framework configuration and component tests
+- [MRTMLY-007 Jest Config WatchPlugins Fix](./docs/logged_memories/MRTMLY-007-jest-config-watchplugins-fix.md) - Fixed Jest configuration by removing non-existent watch plugins
 
-### November
+## 2023 October 31
+- [MRTMLY-008 Component Naming And Test Fixes](./docs/logged_memories/MRTMLY-008-component-naming-and-test-fixes.md) - Fixed React component naming conventions and simplified test mocks
 
-- [MRTMLY-001: TypeScript Path Resolution Configuration](./docs/logged_memories/MRTMLY-001-tsconfig-paths-baseurl-fix.md) - Fixed tsconfig-paths baseUrl configuration
+## 2023 November
+- [MRTMLY-009 Next.js 404 Root Route Fix](./docs/logged_memories/MRTMLY-009-next-js-404-root-route-fix.md) - Fixed 404 at root route by properly configuring Next.js app directory
+- [MRTMLY-010 Next.js Configuration Revert](./docs/logged_memories/MRTMLY-010-nextjs-configuration-revert.md) - Reverted invalid Next.js configuration changes causing Turbopack and Babel warnings

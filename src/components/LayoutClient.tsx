@@ -1,56 +1,86 @@
 'use client';
-
-import { ReactNode, useEffect, useState } from "react";
-import { UpdateNotification } from "./UpdateNotification";
-import { registerServiceWorker, setUpdateHandler } from "../utils/serviceWorkerRegistration";
+import { useState, useEffect } from 'react';
+import { ThemeProvider } from '../contexts/ThemeContext';
 
 interface LayoutClientProps {
-  children: ReactNode;
-  fontClasses?: string; // Made optional since we're not using it directly
+  children: React.ReactNode;
 }
 
 export function LayoutClient({ children }: LayoutClientProps) {
-  const [updateMessage, setUpdateMessage] = useState<string | null>(null);
-
-  // Register service worker for offline functionality
+  const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
+  
+  // Handle service worker updates
   useEffect(() => {
-    // Set up update handler before registering service worker
-    setUpdateHandler((message) => {
-      // Fix the type mismatch by ensuring we pass a string to setUpdateMessage
-      setUpdateMessage(message.toString());
-    });
-
-    // Handle custom update event
-    const handleUpdateAvailable = (event: CustomEvent) => {
-      if (event.detail?.message) {
-        setUpdateMessage(event.detail.message);
-      }
-    };
-
-    // Add event listener for custom update event
-    window.addEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);
-
-    // Register service worker
-    registerServiceWorker();
-
-    // Clean up handler on unmount
-    return () => {
-      setUpdateHandler(null);
-      window.removeEventListener('serviceWorkerUpdateAvailable', handleUpdateAvailable as EventListener);
-    };
+    if ('serviceWorker' in navigator) {
+      // Listen for service worker updates
+      navigator.serviceWorker.ready.then((registration) => {
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // New content is available, show update prompt
+                setUpdateAvailable(true);
+              }
+            });
+          }
+        });
+      });
+    }
   }, []);
+  
+  // Handle updating the service worker
+  const handleUpdate = () => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then(registration => {
+        if (registration.waiting) {
+          // Send message to waiting service worker
+          registration.waiting.postMessage('skipWaiting');
+          
+          // Reload page when the new service worker takes over
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+          });
+        }
+      });
+    }
+  };
 
   return (
-    <>
-      {updateMessage && (
-        <UpdateNotification
-          message={updateMessage}
-          onDismiss={() => setUpdateMessage(null)}
-        />
+    <ThemeProvider>
+      {updateAvailable && (
+        <div style={{
+          position: 'fixed',
+          bottom: '20px',
+          left: '20px',
+          right: '20px',
+          backgroundColor: '#333',
+          color: 'white',
+          padding: '10px',
+          borderRadius: '5px',
+          zIndex: 1000,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <span>A new version is available</span>
+          <button 
+            onClick={handleUpdate}
+            style={{
+              backgroundColor: '#007bff',
+              border: 'none',
+              color: 'white',
+              padding: '5px 10px',
+              borderRadius: '3px',
+              cursor: 'pointer'
+            }}
+          >
+            Update
+          </button>
+        </div>
       )}
-      <main>
-        {children}
-      </main>
-    </>
+      {children}
+    </ThemeProvider>
   );
 }

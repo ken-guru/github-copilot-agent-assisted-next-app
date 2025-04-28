@@ -1,246 +1,18 @@
 :root {
-  /* Base HSL colors - these define our color palette */
-  --color-hue-primary: 220; /* Blue-ish base for UI */
-  --color-hue-accent: 215; /* Slightly different blue for accent elements */
-  --color-hue-success: 145; /* Green */
-  --color-hue-warning: 38; /* Orange/Amber */
-  --color-hue-error: 360; /* Red */
+  --max-width: 1100px;
+  --border-radius: 12px;
+  --font-geist-sans: var(--font-geist-sans);
+  --font-geist-mono: var(--font-geist-mono);
 
-  /* Simplified spacing system - 5-point scale */
-  --space-xs: 0.25rem; /* 4px - for minimal spacing */
-  --space-sm: 0.5rem;  /* 8px - for tight spacing */
-  --space-md: 1rem;    /* 16px - standard spacing */
-  --space-lg: 1.5rem;  /* 24px - generous spacing */
-  --space-xl: 2rem;    /* 32px - large spacing */
-  
-  /* Specific semantic spacing names */
-  --gap-small: var(--space-sm);  /* 0.5rem - 8px */
-  --gap-medium: var(--space-md); /* 1rem - 16px */
-  --gap-large: var(--space-lg);  /* 1.5rem - 24px */
-  
-  --padding-small: var(--space-sm);  /* 0.5rem - 8px */
-  --padding-medium: var(--space-md); /* 1rem - 16px */
-  --padding-large: var(--space-lg);  /* 1.5rem - 24px */
-
-  /* Border radius system - 5-point scale */
-  --radius-none: 0;         /* 0px - sharp corners */
-  --radius-xs: 0.125rem;    /* 2px - subtle rounding */
-  --radius-sm: 0.25rem;     /* 4px - slight rounding */
-  --radius-md: 0.375rem;    /* 6px - moderate rounding */
-  --radius-lg: 0.5rem;      /* 8px - noticeable rounding */
-  --radius-xl: 0.75rem;     /* 12px - prominent rounding */
-  --radius-full: 9999px;    /* Full rounding (for pills, avatars) */
-
-  /* Semantic border radius names */
-  --radius-button: var(--radius-md);     /* Default button rounding */
-  --radius-card: var(--radius-lg);       /* Card component rounding */
-  --radius-input: var(--radius-sm);      /* Form input rounding */
-  --radius-badge: var(--radius-full);    /* Badge/pill component */
-  --radius-tooltip: var(--radius-xs);    /* Tooltip component */
-  --radius-panel: var(--radius-lg);      /* Panel/modal rounding */
-
-  /* Shadow system - 5-point scale */
-  --shadow-none: none;      /* No shadow */
-  --shadow-xs: 0 1px 2px hsla(var(--color-hue-primary), 10%, 5%, 0.07);  /* Subtle shadow */
-  --shadow-sm: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.12);  /* Light shadow */
-  --shadow-md: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.1);   /* Medium shadow */
-  --shadow-lg: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.1); /* Pronounced shadow */
-  --shadow-xl: 0 20px 25px hsla(var(--color-hue-primary), 10%, 5%, 0.15); /* Deep shadow */
-
-  /* Semantic shadow names */
-  --shadow-card: var(--shadow-sm);       /* Default card shadow */
-  --shadow-card-hover: var(--shadow-md); /* Card hover state */
-  --shadow-dropdown: var(--shadow-md);   /* Dropdowns and popovers */
-  --shadow-modal: var(--shadow-lg);      /* Modal dialogs */
-  --shadow-header: var(--shadow-sm);     /* Page headers */
-  --shadow-button: var(--shadow-xs);     /* Button subtle shadow */
-  --shadow-focus: 0 0 0 4px rgba(var(--accent-color-rgb), 0.35); /* Focus state */
-
-  /* Light theme variables using HSL */
-  --background: hsl(var(--color-hue-primary), 20%, 98%);
-  --background-alt: hsl(var(--color-hue-primary), 20%, 100%);
-  --foreground: hsl(var(--color-hue-primary), 15%, 12%);
-  --background-muted: hsl(var(--color-hue-primary), 20%, 94%);
-  --foreground-muted: hsl(var(--color-hue-primary), 10%, 35%);
-  --border-color: hsl(var(--color-hue-primary), 20%, 88%);
-  --border-hover: hsl(var(--color-hue-primary), 20%, 70%);
-  --break-background: hsl(var(--color-hue-primary), 10%, 96%);
-  --break-text: hsl(var(--color-hue-primary), 10%, 35%);
-  --segment-separator: hsl(var(--color-hue-primary), 0%, 100%);
-  --segment-outline: hsla(var(--color-hue-primary), 10%, 10%, 0.05);
-  --text-default: hsla(var(--color-hue-primary), 10%, 10%, 0.7);
-  --text-muted: hsl(var(--color-hue-primary), 10%, 35%);
-  
-  /* Accent colors */
-  --accent-color: hsl(var(--color-hue-accent), 85%, 55%);
-  --accent-color-rgb: 59, 130, 246; /* RGB equivalent for rgba() usage */
-  --accent-color-hover: hsl(var(--color-hue-accent), 85%, 45%);
-  
-  /* Status colors */
-  --success: hsl(var(--color-hue-success), 85%, 40%);
-  --success-bg: hsl(var(--color-hue-success), 85%, 95%);
-  --warning: hsl(var(--color-hue-warning), 85%, 40%);
-  --warning-bg: hsl(var(--color-hue-warning), 85%, 95%);
-  --error: hsl(var(--color-hue-error), 85%, 45%);
-  --error-bg: hsl(var(--color-hue-error), 85%, 95%);
-
-  /* Component sizing - for consistent UI elements */
-  --control-height-sm: 24px;   /* Small controls */
-  --control-height-md: 28px;   /* Standard controls */
-  --control-height-lg: 36px;   /* Large controls */
-  
-  --icon-size-sm: 14px;        /* Small icons */
-  --icon-size-md: 16px;        /* Standard icons */
-  --icon-size-lg: 20px;        /* Large icons */
-
-  /* Status message colors for Summary component */
-  --status-ontime-bg: #d1fae5;
-  --status-ontime-text: #065f46;
-  --status-early-bg: #dbeafe;
-  --status-early-text: #1e40af;
-  --status-late-bg: #fee2e2;
-  --status-late-text: #991b1b;
-
-  /* Shadow values */
-  --shadow-small: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.12);
-  --shadow-medium: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.1);
-  --shadow-large: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.1);
-}
-
-/* Dark theme styles */
-.dark-mode {
-  /* Dark theme variables using HSL */
-  --background: hsl(var(--color-hue-primary), 15%, 12%);
-  --background-alt: hsl(var(--color-hue-primary), 15%, 15%);
-  --foreground: hsl(var(--color-hue-primary), 10%, 95%);
-  --background-muted: hsl(var(--color-hue-primary), 15%, 18%);
-  --foreground-muted: hsl(var(--color-hue-primary), 10%, 75%);
-  --border-color: hsl(var(--color-hue-primary), 15%, 25%);
-  --border-hover: hsl(var(--color-hue-primary), 15%, 40%);
-  --break-background: hsl(var(--color-hue-primary), 15%, 22%);
-  --break-text: hsl(var(--color-hue-primary), 10%, 75%);
-  --segment-separator: hsl(var(--color-hue-primary), 15%, 20%);
-  --segment-outline: hsla(var(--color-hue-primary), 10%, 90%, 0.1);
-  --text-default: hsla(var(--color-hue-primary), 10%, 90%, 0.9);
-  --text-muted: hsl(var(--color-hue-primary), 10%, 65%);
-  
-  /* Accent colors - adjusted for dark mode */
-  --accent-color: hsl(var(--color-hue-accent), 90%, 65%);
-  --accent-color-rgb: 96, 165, 250; /* RGB equivalent for rgba() usage - brighter for dark mode */
-  --accent-color-hover: hsl(var(--color-hue-accent), 90%, 70%);
-  
-  /* Status colors - adjusted for dark mode */
-  --success: hsl(var(--color-hue-success), 70%, 45%);
-  --success-bg: hsla(var(--color-hue-success), 70%, 35%, 0.2);
-  --warning: hsl(var(--color-hue-warning), 70%, 50%);
-  --warning-bg: hsla(var(--color-hue-warning), 70%, 35%, 0.2);
-  --error: hsl(var(--color-hue-error), 70%, 55%);
-  --error-bg: hsla(var(--color-hue-error), 70%, 40%, 0.2);
-    
-  /* Status message colors for Summary component - adjusted for dark mode */
-  --status-ontime-bg: hsla(var(--color-hue-success), 70%, 35%, 0.2);
-  --status-ontime-text: hsl(var(--color-hue-success), 70%, 60%);
-  --status-early-bg: hsla(var(--color-hue-accent), 70%, 30%, 0.3);
-  --status-early-text: hsl(var(--color-hue-accent), 70%, 75%);
-  --status-late-bg: hsla(var(--color-hue-error), 70%, 40%, 0.2);
-  --status-late-text: hsl(var(--color-hue-error), 70%, 75%);
-
-  /* Shadow values - darker and more subtle for dark mode */
-  --shadow-small: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.3);
-  --shadow-medium: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.4);
-  --shadow-large: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.5);
-  
-  /* Shadow values - darker and more subtle for dark mode */
-  --shadow-xs: 0 1px 2px hsla(var(--color-hue-primary), 10%, 5%, 0.15);
-  --shadow-sm: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.3);
-  --shadow-md: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.4);
-  --shadow-lg: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.5);
-  --shadow-xl: 0 20px 25px hsla(var(--color-hue-primary), 10%, 5%, 0.55);
-
-  /* Dark mode input styling */
-  input[type="text"],
-  input[type="number"],
-  input[type="email"],
-  input[type="password"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="url"],
-  input[type="time"],
-  textarea {
-    background-color: var(--background);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
-  }
-
-  input::placeholder,
-  textarea::placeholder {
-    color: var(--foreground-muted);
-    opacity: 0.5;
-  }
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not(.light-mode) {
-    /* Apply dark theme variables when the user's system preference is dark */
-    --background: hsl(var(--color-hue-primary), 15%, 12%);
-    --background-alt: hsl(var(--color-hue-primary), 15%, 15%);
-    --foreground: hsl(var(--color-hue-primary), 10%, 95%);
-    --background-muted: hsl(var(--color-hue-primary), 15%, 18%);
-    --foreground-muted: hsl(var(--color-hue-primary), 10%, 75%);
-    --border-color: hsl(var(--color-hue-primary), 15%, 25%);
-    --border-hover: hsl(var(--color-hue-primary), 15%, 40%);
-    --break-background: hsl(var(--color-hue-primary), 15%, 22%);
-    --break-text: hsl(var(--color-hue-primary), 10%, 75%);
-    --segment-separator: hsl(var(--color-hue-primary), 15%, 20%);
-    --segment-outline: hsla(var(--color-hue-primary), 10%, 90%, 0.1);
-    --text-default: hsla(var(--color-hue-primary), 10%, 90%, 0.9);
-    --text-muted: hsl(var(--color-hue-primary), 10%, 65%);
-    
-    /* Accent colors - adjusted for dark mode */
-    --accent-color: hsl(var(--color-hue-accent), 90%, 65%);
-    --accent-color-rgb: 96, 165, 250;
-    --accent-color-hover: hsl(var(--color-hue-accent), 90%, 70%);
-    
-    /* Status colors - adjusted for dark mode */
-    --success: hsl(var(--color-hue-success), 70%, 45%);
-    --success-bg: hsla(var(--color-hue-success), 70%, 35%, 0.2);
-    --warning: hsl(var(--color-hue-warning), 70%, 50%);
-    --warning-bg: hsla(var(--color-hue-warning), 70%, 35%, 0.2);
-    --error: hsl(var(--color-hue-error), 70%, 55%);
-    --error-bg: hsla(var(--color-hue-error), 70%, 40%, 0.2);
-    
-    /* Status message colors for Summary component - adjusted for dark mode */
-    --status-ontime-bg: hsla(var(--color-hue-success), 70%, 35%, 0.2);
-    --status-ontime-text: hsl(var(--color-hue-success), 70%, 60%);
-    --status-early-bg: hsla(var(--color-hue-accent), 70%, 30%, 0.3);
-    --status-early-text: hsl(var(--color-hue-accent), 70%, 75%);
-    --status-late-bg: hsla(var(--color-hue-error), 70%, 40%, 0.2);
-    --status-late-text: hsl(var(--color-hue-error), 70%, 75%);
-
-    /* Shadow values - darker and more subtle for dark mode */
-    --shadow-small: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.3);
-    --shadow-medium: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.4);
-    --shadow-large: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.5);
-    --shadow-xs: 0 1px 2px hsla(var(--color-hue-primary), 10%, 5%, 0.15);
-    --shadow-sm: 0 1px 3px hsla(var(--color-hue-primary), 10%, 5%, 0.3);
-    --shadow-md: 0 4px 6px hsla(var(--color-hue-primary), 10%, 5%, 0.4);
-    --shadow-lg: 0 10px 15px hsla(var(--color-hue-primary), 10%, 5%, 0.5);
-    --shadow-xl: 0 20px 25px hsla(var(--color-hue-primary), 10%, 5%, 0.55);
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-rgb: 0, 0, 0;
   }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: color 0.3s ease, background-color 0.3s ease;
-}
-
-body {
-  color: var(--foreground);
 }
 
 * {
@@ -249,7 +21,30 @@ body {
   margin: 0;
 }
 
+html,
+body {
+  max-width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: var(--font-geist-sans);
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
 a {
   color: inherit;
   text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
 }

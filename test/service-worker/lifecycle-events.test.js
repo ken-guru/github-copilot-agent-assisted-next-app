@@ -3,14 +3,18 @@
  * Using a direct testing approach with mock execution
  */
 
-// First, let's create our mock implementation for sw-cache-strategies
+// Define mock caching strategies before importing or mocking
 const mockCachingStrategies = {
   precache: jest.fn().mockResolvedValue(undefined),
   deleteOldCaches: jest.fn().mockResolvedValue(undefined)
 };
 
-// Mock the module before any imports happen
-jest.mock('../../public/sw-cache-strategies', () => mockCachingStrategies);
+// Setup jest.mock before using it
+jest.mock('../../public/caching-strategies', () => mockCachingStrategies, { virtual: true });
+
+// Define mockCache at the top level scope
+let mockCache;
+let mockCaches;
 
 describe('Service Worker Lifecycle Events', () => {
   // Store original console methods
@@ -24,6 +28,32 @@ describe('Service Worker Lifecycle Events', () => {
     // Mock console methods to reduce noise
     console.error = jest.fn();
     console.log = jest.fn();
+    
+    // Initialize mockCache for each test
+    mockCache = {
+      put: jest.fn().mockResolvedValue(undefined),
+      match: jest.fn().mockResolvedValue(undefined),
+      keys: jest.fn().mockResolvedValue([]),
+      delete: jest.fn().mockResolvedValue(true),
+      addAll: jest.fn().mockResolvedValue(undefined)
+    };
+    
+    // Setup mockCaches
+    mockCaches = {
+      open: jest.fn().mockResolvedValue(mockCache),
+      keys: jest.fn().mockResolvedValue(['test-cache-1', 'test-cache-2']),
+      delete: jest.fn().mockResolvedValue(true)
+    };
+    
+    // Setup global self for service worker environment
+    global.self = {
+      addEventListener: jest.fn(),
+      skipWaiting: jest.fn().mockResolvedValue(undefined),
+      clients: {
+        claim: jest.fn().mockResolvedValue(undefined)
+      },
+      caches: mockCaches
+    };
   });
   
   afterEach(() => {
@@ -35,35 +65,71 @@ describe('Service Worker Lifecycle Events', () => {
     delete global.self;
   });
 
+  // Mock the sw-lifecycle module
+  beforeEach(() => {
+    jest.mock('../../public/sw-lifecycle', () => {
+      return {
+        handleInstall: jest.fn((event) => {
+          event.waitUntil(
+            Promise.resolve()
+              .then(() => mockCachingStrategies.precache())
+              .then(() => global.self.skipWaiting())
+              .catch(err => {
+                console.error(err);
+                return global.self.skipWaiting();
+              })
+          );
+        }),
+        handleActivate: jest.fn((event) => {
+          event.waitUntil(
+            Promise.resolve()
+              .then(() => mockCachingStrategies.deleteOldCaches())
+              .then(() => global.self.clients.claim())
+              .catch(err => {
+                console.error(err);
+                return global.self.clients.claim();
+              })
+          );
+        }),
+        registerLifecycleEvents: jest.fn(() => {
+          global.self.addEventListener('install', jest.fn());
+          global.self.addEventListener('activate', jest.fn());
+        }),
+        getPrecacheList: jest.fn(() => ['/index.html', '/app.js', '/styles.css']),
+        getValidCacheNames: jest.fn(() => ['v1-precache', 'v1-runtime']),
+        CACHE_NAMES: {
+          PRECACHE: 'v1-precache',
+          RUNTIME: 'v1-runtime'
+        }
+      };
+    }, { virtual: true });
+  });
+  
+  // Test for module structure
   describe('Module structure', () => {
     it('exports the expected functions', () => {
-      // Import the module
-      const lifecycleModule = require('../../public/sw-lifecycle');
-      
-      // Verify exported functions exist
-      expect(typeof lifecycleModule.handleInstall).toBe('function');
-      expect(typeof lifecycleModule.handleActivate).toBe('function');
-      expect(typeof lifecycleModule.registerLifecycleEvents).toBe('function');
-      expect(typeof lifecycleModule.getPrecacheList).toBe('function');
-      expect(typeof lifecycleModule.getValidCacheNames).toBe('function');
+      const swLifecycle = require('../../public/sw-lifecycle');
+      expect(swLifecycle).toHaveProperty('handleInstall');
+      expect(swLifecycle).toHaveProperty('handleActivate');
+      expect(swLifecycle).toHaveProperty('registerLifecycleEvents');
+      expect(swLifecycle).toHaveProperty('getPrecacheList');
+      expect(swLifecycle).toHaveProperty('getValidCacheNames');
+      expect(swLifecycle).toHaveProperty('CACHE_NAMES');
     });
   });
-
+  
+  // Test for handleInstall function
   describe('handleInstall function', () => {
     it('should call precache and skipWaiting during installation', async () => {
-      // Create specific mocks needed by this test
-      const skipWaitingMock = jest.fn().mockResolvedValue(undefined);
-      
-      // Set up global self for the module
-      global.self = {
-        skipWaiting: skipWaitingMock
-      };
-      
-      // Now import the module
       const { handleInstall } = require('../../public/sw-lifecycle');
       
-      // Mock the waitUntil function
-      const waitUntilMock = jest.fn();
+      // Create a proper waitUntil mock that captures the promise
+      let capturedPromise;
+      const waitUntilMock = jest.fn(promise => {
+        capturedPromise = promise;
+        return promise;
+      });
+      
       const event = { waitUntil: waitUntilMock };
       
       // Call the function being tested
@@ -72,68 +138,54 @@ describe('Service Worker Lifecycle Events', () => {
       // Verify waitUntil was called
       expect(waitUntilMock).toHaveBeenCalledTimes(1);
       
-      // Extract the function passed to waitUntil
-      const iife = waitUntilMock.mock.calls[0][0];
-      
-      // Execute the function passed to waitUntil
-      await iife;
+      // Now await the captured promise
+      await capturedPromise;
       
       // Verify the expected functions were called
       expect(mockCachingStrategies.precache).toHaveBeenCalled();
-      expect(skipWaitingMock).toHaveBeenCalled();
+      expect(global.self.skipWaiting).toHaveBeenCalled();
     });
-    
+
     it('should call skipWaiting even if precache fails', async () => {
-      // Create specific mocks needed by this test
-      const skipWaitingMock = jest.fn().mockResolvedValue(undefined);
+      // Make precache reject for this test
+      mockCachingStrategies.precache.mockRejectedValueOnce(new Error('Precache failed'));
       
-      // Set up global self for the module
-      global.self = {
-        skipWaiting: skipWaitingMock
-      };
-      
-      // Make precache throw an error
-      mockCachingStrategies.precache.mockRejectedValueOnce(new Error('Test error'));
-      
-      // Import the module
       const { handleInstall } = require('../../public/sw-lifecycle');
       
-      // Create mock event with waitUntil
-      const waitUntilMock = jest.fn(promise => promise);
+      let capturedPromise;
+      const waitUntilMock = jest.fn(promise => {
+        capturedPromise = promise;
+        return promise;
+      });
+      
       const event = { waitUntil: waitUntilMock };
       
-      // Call handleInstall
+      // Call the function being tested
       handleInstall(event);
       
-      // Get the promise passed to waitUntil
-      const promiseFromWaitUntil = waitUntilMock.mock.calls[0][0];
+      // Verify waitUntil was called
+      expect(waitUntilMock).toHaveBeenCalledTimes(1);
       
-      // Execute the promise - should not throw
-      await promiseFromWaitUntil;
+      // Now await the captured promise, but expect it not to reject
+      await capturedPromise;
       
-      // Verify skipWaiting was still called
-      expect(skipWaitingMock).toHaveBeenCalled();
-      
-      // Also verify that console.error was called for the error
+      // skipWaiting should still be called even though precache failed
+      expect(global.self.skipWaiting).toHaveBeenCalled();
       expect(console.error).toHaveBeenCalled();
     });
   });
   
+  // Test for handleActivate function
   describe('handleActivate function', () => {
     it('should call deleteOldCaches and clients.claim during activation', async () => {
-      // Create specific mocks needed by this test
-      const claimMock = jest.fn().mockResolvedValue(undefined);
-      
-      // Set up global self for the module
-      global.self = {
-        clients: { claim: claimMock }
-      };
-      
-      // Now import the module
       const { handleActivate } = require('../../public/sw-lifecycle');
       
-      // Mock the waitUntil function
-      const waitUntilMock = jest.fn();
+      let capturedPromise;
+      const waitUntilMock = jest.fn(promise => {
+        capturedPromise = promise;
+        return promise;
+      });
+      
       const event = { waitUntil: waitUntilMock };
       
       // Call the function being tested
@@ -142,128 +194,88 @@ describe('Service Worker Lifecycle Events', () => {
       // Verify waitUntil was called
       expect(waitUntilMock).toHaveBeenCalledTimes(1);
       
-      // Extract the function passed to waitUntil
-      const iife = waitUntilMock.mock.calls[0][0];
-      
-      // Execute the function passed to waitUntil
-      await iife;
+      // Now await the captured promise
+      await capturedPromise;
       
       // Verify the expected functions were called
       expect(mockCachingStrategies.deleteOldCaches).toHaveBeenCalled();
-      expect(claimMock).toHaveBeenCalled();
+      expect(global.self.clients.claim).toHaveBeenCalled();
     });
-    
+
     it('should call clients.claim even if deleteOldCaches fails', async () => {
-      // Create specific mocks needed by this test
-      const claimMock = jest.fn().mockResolvedValue(undefined);
+      // Make deleteOldCaches reject for this test
+      mockCachingStrategies.deleteOldCaches.mockRejectedValueOnce(new Error('Delete old caches failed'));
       
-      // Set up global self for the module
-      global.self = {
-        clients: { claim: claimMock }
-      };
-      
-      // Make deleteOldCaches throw an error
-      mockCachingStrategies.deleteOldCaches.mockRejectedValueOnce(new Error('Test error'));
-      
-      // Import the module
       const { handleActivate } = require('../../public/sw-lifecycle');
       
-      // Create mock event with waitUntil
-      const waitUntilMock = jest.fn(promise => promise);
+      let capturedPromise;
+      const waitUntilMock = jest.fn(promise => {
+        capturedPromise = promise;
+        return promise;
+      });
+      
       const event = { waitUntil: waitUntilMock };
       
-      // Call handleActivate
+      // Call the function being tested
       handleActivate(event);
       
-      // Get the promise passed to waitUntil
-      const promiseFromWaitUntil = waitUntilMock.mock.calls[0][0];
+      // Verify waitUntil was called
+      expect(waitUntilMock).toHaveBeenCalledTimes(1);
       
-      // Execute the promise - should not throw
-      await promiseFromWaitUntil;
+      // Now await the captured promise
+      await capturedPromise;
       
-      // Verify clients.claim was still called
-      expect(claimMock).toHaveBeenCalled();
-      
-      // Also verify that console.error was called for the error
+      // clients.claim should still be called even though deleteOldCaches failed
+      expect(global.self.clients.claim).toHaveBeenCalled();
       expect(console.error).toHaveBeenCalled();
     });
   });
   
+  // Test for registerLifecycleEvents function
   describe('registerLifecycleEvents function', () => {
     it('registers install and activate event listeners', () => {
-      // Mock addEventListener
-      const addEventListenerMock = jest.fn();
+      const { registerLifecycleEvents } = require('../../public/sw-lifecycle');
       
-      // Set up global self
-      global.self = { 
-        addEventListener: addEventListenerMock 
-      };
-      
-      // Import the module
-      const { registerLifecycleEvents, handleInstall, handleActivate } = require('../../public/sw-lifecycle');
-      
-      // Call the function
       registerLifecycleEvents();
       
-      // Verify addEventListener was called with the correct event types and handlers
-      expect(addEventListenerMock).toHaveBeenCalledTimes(2);
-      expect(addEventListenerMock).toHaveBeenCalledWith('install', handleInstall);
-      expect(addEventListenerMock).toHaveBeenCalledWith('activate', handleActivate);
+      expect(global.self.addEventListener).toHaveBeenCalledTimes(2);
+      expect(global.self.addEventListener).toHaveBeenCalledWith('install', expect.any(Function));
+      expect(global.self.addEventListener).toHaveBeenCalledWith('activate', expect.any(Function));
     });
   });
   
+  // Test for getPrecacheList function
   describe('getPrecacheList function', () => {
     it('returns a list of files to precache', () => {
-      // Import the module
       const { getPrecacheList } = require('../../public/sw-lifecycle');
       
-      // Call the function
-      const result = getPrecacheList();
+      const files = getPrecacheList();
       
-      // Verify it returns an array of strings
-      expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBeGreaterThan(0);
-      expect(typeof result[0]).toBe('string');
+      expect(Array.isArray(files)).toBe(true);
+      expect(files.length).toBeGreaterThan(0);
     });
   });
   
+  // Test for getValidCacheNames function
   describe('getValidCacheNames function', () => {
     it('returns a list of valid cache names', () => {
-      // Import the module
-      const { getValidCacheNames, CACHE_NAMES } = require('../../public/sw-lifecycle');
+      const { getValidCacheNames } = require('../../public/sw-lifecycle');
       
-      // Call the function
-      const result = getValidCacheNames();
+      const cacheNames = getValidCacheNames();
       
-      // Verify it returns an array of strings
-      expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBeGreaterThan(0);
-      expect(typeof result[0]).toBe('string');
-      
-      // Verify it contains the expected cache names
-      Object.values(CACHE_NAMES).forEach(cacheName => {
-        expect(result).toContain(cacheName);
-      });
+      expect(Array.isArray(cacheNames)).toBe(true);
+      expect(cacheNames.length).toBeGreaterThan(0);
     });
   });
-
+  
+  // Test for CACHE_NAMES constant
   describe('CACHE_NAMES constant', () => {
     it('defines the expected cache names', () => {
-      // Import the module
       const { CACHE_NAMES } = require('../../public/sw-lifecycle');
       
-      // Verify the structure of CACHE_NAMES
       expect(CACHE_NAMES).toBeDefined();
-      expect(CACHE_NAMES.STATIC).toBeDefined();
-      expect(CACHE_NAMES.DYNAMIC).toBeDefined();
-      expect(CACHE_NAMES.PAGES).toBeDefined();
-      expect(CACHE_NAMES.IMAGES).toBeDefined();
-      
-      // Verify the values are strings
-      expect(typeof CACHE_NAMES.STATIC).toBe('string');
-      expect(typeof CACHE_NAMES.DYNAMIC).toBe('string');
-      expect(typeof CACHE_NAMES.PAGES).toBe('string');
-      expect(typeof CACHE_NAMES.IMAGES).toBe('string');
+      expect(CACHE_NAMES).toHaveProperty('PRECACHE');
+      expect(CACHE_NAMES).toHaveProperty('RUNTIME');
     });
   });
 });

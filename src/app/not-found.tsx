@@ -2,17 +2,25 @@
 
 import Link from 'next/link';
 import styles from './not-found.module.css';
+import { useEffect } from 'react';
 
 export default function NotFound() {
+  // Log the 404 for debugging
+  useEffect(() => {
+    console.log('404 page rendered - page not found');
+  }, []);
+
   return (
-    <main className={styles.container} aria-labelledby="not-found-title">
-      <h1 id="not-found-title" className={styles.title}>404 - Page Not Found</h1>
-      <p className={styles.message}>
-        The page you are looking for does not exist or has been moved.
-      </p>
-      <Link href="/" className={styles.link}>
-        Return to Home
-      </Link>
-    </main>
+    <div className={styles.container}>
+      <div className={styles.content} role="region" aria-labelledby="error-title">
+        <h1 id="error-title" className={styles.title}>404 - Page Not Found</h1>
+        <p className={styles.description}>
+          The page you are looking for does not exist or has been moved.
+        </p>
+        <Link href="/" className={styles.link}>
+          Return to Home
+        </Link>
+      </div>
+    </div>
   );
 }
