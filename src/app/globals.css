@@ -1,17 +1,32 @@
 :root {
+  /* App-specific layout variables */
   --max-width: 1100px;
   --border-radius: 12px;
   --font-geist-sans: var(--font-geist-sans);
   --font-geist-mono: var(--font-geist-mono);
 
+  /* App color variables - will use light theme by default */
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 255, 255, 255;
+  
+  /* Note: Theme variables like --bg-primary are imported from styles/globals.css */
 }
 
+/* Dark theme overrides for app-specific colors */
+:root.dark-mode, :root[data-theme="dark"], .dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 0, 0, 0;
+  
+  /* Note: Other theme variables are automatically applied via styles/globals.css */
+}
+
+/* System preference fallback - only apply to app-specific variables */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]):not(.light-mode) {
     --foreground-rgb: 255, 255, 255;
     --background-rgb: 0, 0, 0;
+    
+    /* Other theme variables are handled by styles/globals.css media query */
   }
 }
 

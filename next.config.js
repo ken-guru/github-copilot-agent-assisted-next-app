@@ -2,9 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   
-  // Explicitly set the directory for the App Router
+  // App Router is enabled by default in Next.js 15+
   experimental: {
-    appDir: true
+    // Add any experimental features here if needed
   },
   
   // Add path aliases that match tsconfig.json

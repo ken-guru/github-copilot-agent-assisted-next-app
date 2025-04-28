@@ -42,12 +42,17 @@ export default function ThemeToggle() {
     const isDark = newTheme === 'dark' || 
       (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
+    // Apply appropriate classes for different styling mechanisms
     if (isDark) {
       root.classList.add('dark-mode');
+      root.classList.add('dark'); // For styles/globals.css
       root.classList.remove('light-mode');
+      root.setAttribute('data-theme', 'dark'); // For ThemeContext
     } else {
       root.classList.add('light-mode');
       root.classList.remove('dark-mode');
+      root.classList.remove('dark');
+      root.setAttribute('data-theme', 'light'); // For ThemeContext
     }
 
     // Save preference to localStorage unless it's system default

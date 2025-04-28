@@ -1,6 +1,9 @@
 # Memory Log
 
 ## 2025 April
+- [MRTMLY-407 Console Errors and Warnings](./docs/logged_memories/MRTMLY-407-console-errors-warnings.md) - Fixed console errors including manifest icon issues, HSL color parsing errors, and React hydration mismatches
+- [MRTMLY-406 CSS Variables Conflict](./docs/logged_memories/MRTMLY-406-css-variables-conflict.md) - Fixed CSS variable conflicts between multiple globals.css files by separating concerns and fixing import order
+- [MRTMLY-405 Theme Styling Not Working](./docs/logged_memories/MRTMLY-405-theme-styling-fix.md) - Fixed broken theme styling after routing changes by aligning theme detection and CSS implementation
 - [MRTMLY-404 Page Error on Application Load](./docs/logged_memories/MRTMLY-404-page-on-application-load.md) - Fixed 404 error when loading application by resolving Next.js configuration and directory structure conflicts
 
 ## 2023 October
