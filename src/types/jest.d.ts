@@ -4,6 +4,8 @@ import '@testing-library/jest-dom';
 
 // Fix for Jest assertion methods in TypeScript
 // Override the global Chai.Assertion interface to add Jest methods
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Disabling no-explicit-any for Jest type definitions as they need to be generic for testing purposes
 declare global {
   export namespace Chai {
     interface Assertion {
@@ -77,4 +79,5 @@ declare global {
   }
 }
 
+/* eslint-enable @typescript-eslint/no-explicit-any */
 // No export needed as this is a global declaration file

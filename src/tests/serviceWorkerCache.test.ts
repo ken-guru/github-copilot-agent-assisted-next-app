@@ -94,7 +94,9 @@ describe('Service Worker Cache', () => {
   
   test('should handle caching operations correctly', async () => {
     // This test verifies basic caching operations without relying on service worker fetch events
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const request = new (global as any).Request('http://localhost:3000/') as MockRequest;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
     const response = { 
       status: 200, 
       clone: () => ({}),
