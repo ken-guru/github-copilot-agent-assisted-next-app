@@ -4,6 +4,8 @@ This file contains a chronological index of detailed memory log entries about im
 
 ## 2023 December
 
+- [MRTMLY-090: ActivityManager Refactoring Analysis](./logged_memories/MRTMLY-090-activity-manager-refactoring-analysis.md)
+- [MRTMLY-089: Service Worker Refactoring Complete](./logged_memories/MRTMLY-089-service-worker-refactoring-complete.md)
 - [MRTMLY-088: Service Worker Tests Complete](./logged_memories/MRTMLY-088-service-worker-tests-complete.md)
 - [MRTMLY-087: Service Worker Lifecycle Error Handling Fix](./logged_memories/MRTMLY-087-service-worker-lifecycle-error-handling-fix.md)
 - [MRTMLY-086: Service Worker Lifecycle Test Direct Approach](./logged_memories/MRTMLY-086-service-worker-lifecycle-test-direct-approach.md)
