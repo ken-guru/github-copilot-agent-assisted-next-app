@@ -1,6 +1,11 @@
 # Memory Log
 
 ## 2025 April
+- [MRTMLY-001 ESLint and TypeScript Build Fixes](./docs/logged_memories/MRTMLY-001-eslint-build-fixes.md) - Fixed various ESLint and TypeScript errors that were preventing successful builds
+- [MRTMLY-411 Build Process Cypress Exclusion](./docs/logged_memories/MRTMLY-411-build-process-cypress-exclusion.md) - Created a custom build process that excludes Cypress tests to prevent TypeScript errors
+- [MRTMLY-410 Cypress TypeScript Errors](./docs/logged_memories/MRTMLY-410-cypress-typescript-errors.md) - Comprehensive fix for TypeScript errors in Cypress tests including commands and configuration
+- [MRTMLY-409 Cypress Service Worker Typing](./docs/logged_memories/MRTMLY-409-cypress-service-worker-typing.md) - Fixed TypeScript errors in Cypress tests related to service worker registration handling
+- [MRTMLY-408 Cypress Configuration Error](./docs/logged_memories/MRTMLY-408-cypress-config-error.md) - Fixed invalid property in Cypress configuration that was causing build failures
 - [MRTMLY-407 Console Errors and Warnings](./docs/logged_memories/MRTMLY-407-console-errors-warnings.md) - Fixed console errors including manifest icon issues, HSL color parsing errors, and React hydration mismatches
 - [MRTMLY-406 CSS Variables Conflict](./docs/logged_memories/MRTMLY-406-css-variables-conflict.md) - Fixed CSS variable conflicts between multiple globals.css files by separating concerns and fixing import order
 - [MRTMLY-405 Theme Styling Not Working](./docs/logged_memories/MRTMLY-405-theme-styling-fix.md) - Fixed broken theme styling after routing changes by aligning theme detection and CSS implementation

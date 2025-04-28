@@ -1,15 +1,33 @@
 import fs from 'fs';
 import path from 'path';
 
+interface ManifestIcon {
+  src: string;
+  sizes: string;
+  type: string;
+  purpose?: string;
+}
+
+interface WebManifest {
+  name: string;
+  short_name: string;
+  start_url: string;
+  display: string;
+  background_color: string;
+  theme_color: string;
+  icons: ManifestIcon[];
+  [key: string]: unknown;
+}
+
 describe('Web App Manifest', () => {
-  let manifestContent: any;
+  let manifestContent: WebManifest | null = null;
   
   beforeAll(() => {
     try {
       // Try to read the manifest file
       const manifestPath = path.join(process.cwd(), 'public', 'manifest.json');
       const fileContent = fs.readFileSync(manifestPath, 'utf8');
-      manifestContent = JSON.parse(fileContent);
+      manifestContent = JSON.parse(fileContent) as WebManifest;
     } catch (error) {
       console.error('Error reading manifest file:', error);
       manifestContent = null;

@@ -1,8 +1,8 @@
 /**
  * Test for Next.js configuration
  */
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 describe('Next.js Configuration', () => {
   let nextConfig;

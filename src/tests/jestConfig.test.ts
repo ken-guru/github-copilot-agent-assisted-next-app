@@ -1,8 +1,8 @@
 /**
  * Test to verify Jest configuration is valid
  */
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 describe('Jest Configuration', () => {
   let jestConfigContent;

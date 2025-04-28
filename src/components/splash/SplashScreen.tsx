@@ -16,11 +16,8 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    let splashTimer: NodeJS.Timeout;
     let fadeTimer: NodeJS.Timeout;
-
-    // Ensure the splash screen is displayed for at least the minimum time
-    splashTimer = setTimeout(() => {
+    const splashTimer: NodeJS.Timeout = setTimeout(() => {
       // If the app is no longer loading, begin fade out
       if (!isLoading) {
         setFadeOut(true);

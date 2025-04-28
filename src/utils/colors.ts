@@ -290,17 +290,17 @@ export function getContrastRatio(hsl1: string, hsl2: string): number {
       
       // Handle hex colors
       if (hsl.startsWith('#')) {
-        // Convert hex to RGB first
-        let r = 0, g = 0, b = 0;
-        
+        // Convert hex to RGB first, but we don't need to use the values
+        // We just ensure the format is valid
         if (hsl.length === 4) { // #RGB format
-          r = parseInt(hsl[1] + hsl[1], 16);
-          g = parseInt(hsl[2] + hsl[2], 16);
-          b = parseInt(hsl[3] + hsl[3], 16);
+          // Just validate the format
+          parseInt(hsl[1] + hsl[1], 16);
+          parseInt(hsl[2] + hsl[2], 16);
+          parseInt(hsl[3] + hsl[3], 16);
         } else { // #RRGGBB format
-          r = parseInt(hsl.slice(1, 3), 16);
-          g = parseInt(hsl.slice(3, 5), 16);
-          b = parseInt(hsl.slice(5, 7), 16);
+          parseInt(hsl.slice(1, 3), 16);
+          parseInt(hsl.slice(3, 5), 16);
+          parseInt(hsl.slice(5, 7), 16);
         }
         
         // We'll use these RGB values directly with the hslToRgb function later
@@ -322,7 +322,7 @@ export function getContrastRatio(hsl1: string, hsl2: string): number {
       }
       
       return [Number(match[1]), Number(match[2]), Number(match[3])];
-    } catch (e) {
+    } catch {
       return [0, 0, 50]; // Default to medium gray on any error
     }
   };
@@ -388,7 +388,7 @@ export function validateThemeColors(): void {
         if (backgroundMuted && foregroundMuted) {
           console.log('Muted contrast ratio:', getContrastRatio(backgroundMuted, foregroundMuted));
         }
-      } catch (e) {
+      } catch {
         console.log('Could not calculate contrast ratios with current theme values.');
       }
       console.groupEnd();

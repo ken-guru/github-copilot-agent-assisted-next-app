@@ -1,8 +1,8 @@
 /**
  * Test for Next.js app route configuration
  */
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 describe('Next.js App Router Configuration', () => {
   test('should have proper page.tsx file in app directory', () => {

@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Create icons directory if it doesn't exist
 const iconsDir = path.join(process.cwd(), 'public', 'icons');
@@ -8,7 +8,7 @@ if (!fs.existsSync(iconsDir)) {
 }
 
 // Create a simple SVG icon with the specified size
-function createSVGIcon(size, outputPath) {
+function createSVGIcon(size: number, outputPath: string): void {
   const svg = `<svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
   <rect width="100%" height="100%" fill="#000"/>
   <text x="50%" y="50%" font-family="Arial" font-size="${size / 10}" fill="#fff" text-anchor="middle" dominant-baseline="middle">Mr. Timely</text>

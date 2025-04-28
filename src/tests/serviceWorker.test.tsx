@@ -8,7 +8,7 @@ const ServiceWorkerTest = () => {
 
 describe('Service Worker Registration', () => {
   // Store original values
-  const originalNavigator = global.navigator;
+  // Removed unused variable
   const originalConsoleLog = console.log;
   
   beforeEach(() => {

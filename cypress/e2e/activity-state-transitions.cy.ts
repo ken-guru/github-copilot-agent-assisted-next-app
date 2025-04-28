@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe('Activity State Transitions', () => {
   beforeEach(() => {
     cy.visit('/')
