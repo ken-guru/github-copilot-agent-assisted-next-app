@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 declare namespace Cypress {
-  interface Chainable {
+  interface Chainable<Subject> {
     /**
      * Set browser to online mode
      * @example cy.setOnline()
@@ -18,6 +18,6 @@ declare namespace Cypress {
      * Wait for service worker registration to complete
      * @example cy.waitForServiceWorkerRegistration()
      */
-    waitForServiceWorkerRegistration(): Chainable<void>;
+    waitForServiceWorkerRegistration(timeoutMs?: number): Chainable<void>;
   }
 }
