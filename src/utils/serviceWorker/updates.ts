@@ -1,16 +1,25 @@
 /**
  * Service Worker update handling functionality
  */
-// Import error handling directly to avoid circular dependencies
-import { handleServiceWorkerError } from './serviceWorkerErrors';
+import { ServiceWorkerConfig, UpdateHandlerFn } from './types';
+import { handleServiceWorkerError } from './errors';
 
-// Import getUpdateHandler directly
-import { getUpdateHandler } from './serviceWorker';
+// Store the custom update handler
+let updateHandler: UpdateHandlerFn | null = null;
 
-// Define config type locally to avoid circular imports
-interface Config {
-  onSuccess?: (registration: ServiceWorkerRegistration) => void;
-  onUpdate?: (registration: ServiceWorkerRegistration) => void;
+/**
+ * Set a custom handler for service worker updates
+ */
+export function setUpdateHandler(handler: UpdateHandlerFn | null): void {
+  updateHandler = handler;
+}
+
+/**
+ * Get the current update handler
+ * @internal For testing purposes
+ */
+export function getUpdateHandler(): UpdateHandlerFn | null {
+  return updateHandler;
 }
 
 /**
@@ -18,11 +27,8 @@ interface Config {
  */
 export function handleRegistration(
   registration: ServiceWorkerRegistration,
-  config?: Config
+  config?: ServiceWorkerConfig
 ): void {
-  // Get the update handler from the serviceWorker directory
-  const updateHandler = getUpdateHandler();
-
   // When the service worker is first installed
   if (registration.waiting) {
     if (config && config.onUpdate) {
@@ -48,13 +54,10 @@ export function handleRegistration(
  */
 function trackInstallation(
   registration: ServiceWorkerRegistration,
-  config?: Config
+  config?: ServiceWorkerConfig
 ): void {
   const installingWorker = registration.installing;
   if (!installingWorker) return;
-
-  // Get the update handler from the serviceWorker directory
-  const updateHandler = getUpdateHandler();
 
   installingWorker.addEventListener('statechange', () => {
     if (installingWorker.state === 'installed') {

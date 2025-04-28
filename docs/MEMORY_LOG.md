@@ -1,8 +1,19 @@
 # Memory Log
 
-This file contains references to detailed memory entries about important development decisions, debugging sessions, and implementations.
+This file contains a chronological index of detailed memory log entries about important development decisions, debugging sessions, and implementation notes.
 
-## 2023-11
+## 2023 December
+
+- [MRTMLY-051: Service Worker Test Mock Implementation](./logged_memories/MRTMLY-051-service-worker-test-mock-implementation.md)
+
+## 2023 November
+
+- [MRTMLY-050: Service Worker Test Final Fixes](./logged_memories/MRTMLY-050-service-worker-test-final-fixes.md)
+- [MRTMLY-049: Service Worker Test Promise Handling](./logged_memories/MRTMLY-049-service-worker-test-promise-handling.md)
+- [MRTMLY-048: Service Worker Circular Dependencies Resolution](./logged_memories/MRTMLY-048-service-worker-circular-deps.md)
+- [MRTMLY-047: Service Worker Test Mocking Improvements](./logged_memories/MRTMLY-047-service-worker-test-mocking.md)
+- [MRTMLY-046: Service Worker Test Fixes](./logged_memories/MRTMLY-046-service-worker-test-fixes.md)
+- [MRTMLY-045: Service Worker Refactoring](./logged_memories/MRTMLY-045-service-worker-refactoring.md)
 
 ### June 2023
 

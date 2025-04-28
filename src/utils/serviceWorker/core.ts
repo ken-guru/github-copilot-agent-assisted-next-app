@@ -1,36 +1,10 @@
 /**
  * Core Service Worker registration functionality
  */
-
-// Import directly from error file to avoid circular dependencies
-import { isLocalhost, handleServiceWorkerError } from './serviceWorkerErrors';
-
-// Define config type locally to avoid circular imports
-interface ServiceWorkerConfig {
-  onSuccess?: (registration: ServiceWorkerRegistration) => void;
-  onUpdate?: (registration: ServiceWorkerRegistration) => void;
-}
-
-// Import specific functions directly to avoid circular dependencies
-import { handleRegistration } from './serviceWorkerUpdates';
-
-// Define missing function
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function checkValidSW(swUrl: string, _config?: ServiceWorkerConfig): Promise<void> {
-  return fetch(swUrl, {
-    headers: { 'Service-Worker': 'script' }
-  })
-    .then(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _response => {
-      // Implementation details - using underscore to indicate intentionally unused parameter
-      return Promise.resolve();
-    })
-    .catch(error => {
-      handleServiceWorkerError(error);
-      return Promise.resolve();
-    });
-}
+import { ServiceWorkerConfig } from './types';
+import { isLocalhost } from './errors';
+import { handleRegistration } from './updates';
+import { checkValidServiceWorker } from './retry';
 
 /**
  * Register service worker for production environments
@@ -78,10 +52,10 @@ export function register(config?: ServiceWorkerConfig): Promise<void> {
 
           if (isLocalhost()) {
             // This is running on localhost. Let's check if a service worker still exists or not.
-            checkValidServiceWorker(swUrl, config).then(resolve);
+            checkValidServiceWorker(swUrl).then(() => resolve());
           } else {
             // Is not localhost. Just register service worker
-            registerValidSW(swUrl, config).then(resolve);
+            registerValidSW(swUrl, config).then(() => resolve());
           }
         });
       }
@@ -89,35 +63,6 @@ export function register(config?: ServiceWorkerConfig): Promise<void> {
   }
   
   return Promise.resolve();
-}
-
-/**
- * Check if a service worker needs to be registered or updated
- */
-export function checkValidServiceWorker(
-  swUrl: string,
-  config?: ServiceWorkerConfig
-): Promise<void> {
-  return fetch(swUrl, {
-    headers: { 'Service-Worker': 'script' }
-  })
-    .then(response => {
-      // Ensure service worker exists and is valid
-      if (
-        response.status === 404 ||
-        response.headers.get('content-type')?.indexOf('javascript') === -1
-      ) {
-        // No service worker found. Probably a different path, ignore.
-        return Promise.resolve();
-      }
-
-      // Service worker found, register it
-      return registerValidSW(swUrl, config);
-    })
-    .catch(error => {
-      console.error('Error during service worker registration:', error);
-      return Promise.resolve();
-    });
 }
 
 /**
@@ -139,7 +84,6 @@ export function registerValidSW(
     })
     .catch(error => {
       console.error('Error during service worker registration:', error);
-      return Promise.resolve();
     });
 }
 
