@@ -92,10 +92,9 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 2. Add entry details using template format
 3. Add ONLY a reference link to MEMORY_LOG.md
 4. Match existing reference format
-5. Group by date/month in index
-6. Add as LAST item
-7. NEVER overwrite existing entries
-8. Use next available sequential ID number
+5. Add as LAST item
+6. NEVER overwrite existing entries
+7. Use next available sequential ID number
 
 ### Entry Format Requirements
 - Follow established template structure
