@@ -1,12 +1,243 @@
+<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/MEMORY_LOG.md -->
 # Memory Log
 
-## April 2025
+This file serves as an index to all memory log entries. Each entry documents debugging sessions, 
+implementations, and issues encountered during the development of this project.
 
-- [MRTMLY-003: Additional Cleanup Candidates](./logged_memories/MRTMLY-003-additional-cleanup-candidates.md) - Analysis and migration planning for additional cleanup candidates
-- [MRTMLY-004: Removal of Additional One-Off Scripts](./logged_memories/MRTMLY-004-removal-of-additional-one-off-scripts.md) - Identification and removal of additional one-off scripts
+Memory logs are organized by category and listed in sequential ID order.
 
-## November 2023
+## Table of Contents
 
-- [MRTMLY-001: One-Off Scripts Analysis](./logged_memories/MRTMLY-001-one-off-scripts-analysis.md) - Analysis of scripts that appear to be one-off solutions to now-resolved problems
-- [MRTMLY-002: Removal of One-Off Scripts](./logged_memories/MRTMLY-002-removal-of-one-off-scripts.md) - Step-by-step removal of one-off scripts with verification testing
+- [Service Worker Entries](#service-worker-entries)
+- [Testing Entries](#testing-entries)
+- [Ui Layout Entries](#ui-layout-entries)
+- [Dark Mode Entries](#dark-mode-entries)
+- [Typescript Entries](#typescript-entries)
+- [Eslint Entries](#eslint-entries)
+- [Deployment Entries](#deployment-entries)
+- [Miscellaneous Entries](#miscellaneous-entries)
 
+## Service Worker Entries {#service-worker-entries}
+
+- [MRTMLY-001: Service Worker Cypress Tests](./logged_memories/MRTMLY-001-service-worker-cypress-tests.md)
+- [MRTMLY-002: Service Worker Implementation](./logged_memories/MRTMLY-002-service-worker-implementation.md)
+- [MRTMLY-003: Service Worker Registration Fix](./logged_memories/MRTMLY-003-service-worker-registration-fix.md)
+- [MRTMLY-004: Service Worker 404 Fix](./logged_memories/MRTMLY-004-service-worker-404-fix.md)
+- [MRTMLY-007: Service Worker Retry Mechanism](./logged_memories/MRTMLY-007-service-worker-retry-mechanism.md)
+- [MRTMLY-008: Service Worker Network Aware Retry](./logged_memories/MRTMLY-008-service-worker-network-aware-retry.md)
+- [MRTMLY-009: Service Worker Retry Test Failures](./logged_memories/MRTMLY-009-service-worker-retry-test-failures.md)
+- [MRTMLY-010: Service Worker Test Mocks](./logged_memories/MRTMLY-010-service-worker-test-mocks.md)
+- [MRTMLY-013: Service Worker Registration Test Failures](./logged_memories/MRTMLY-013-service-worker-registration-test-failures.md)
+- [MRTMLY-014: Service Worker Eslint Errors](./logged_memories/MRTMLY-014-service-worker-eslint-errors.md)
+- [MRTMLY-015: Service Worker Test Build Error](./logged_memories/MRTMLY-015-service-worker-test-build-error.md)
+- [MRTMLY-016: Service Worker Css Caching](./logged_memories/MRTMLY-016-service-worker-css-caching.md)
+- [MRTMLY-017: Service Worker Dev Caching](./logged_memories/MRTMLY-017-service-worker-dev-caching.md)
+- [MRTMLY-018: Service Worker Test Fixes Original](./logged_memories/MRTMLY-018-service-worker-test-fixes-original.md)
+- [MRTMLY-018: Service Worker Refactoring](./logged_memories/MRTMLY-018-service-worker-refactoring.md)
+- [MRTMLY-019: Service Worker Test Fixes](./logged_memories/MRTMLY-019-service-worker-test-fixes-variation-1.md)
+- [MRTMLY-020: Service Worker Test Mocking Original](./logged_memories/MRTMLY-020-service-worker-test-mocking-original.md)
+- [MRTMLY-020: Service Worker Update Notification](./logged_memories/MRTMLY-020-service-worker-update-notification.md)
+- [MRTMLY-021: Service Worker Test Mocking](./logged_memories/MRTMLY-021-service-worker-test-mocking-variation-1.md)
+- [MRTMLY-022: Service Worker Circular Deps](./logged_memories/MRTMLY-022-service-worker-circular-deps.md)
+- [MRTMLY-023: Service Worker Registration Test](./logged_memories/MRTMLY-023-service-worker-registration-test.md)
+- [MRTMLY-024: Service Worker Test Promise Handling](./logged_memories/MRTMLY-024-service-worker-test-promise-handling.md)
+- [MRTMLY-025: Service Worker Test Final Fixes](./logged_memories/MRTMLY-025-service-worker-test-final-fixes.md)
+- [MRTMLY-026: Service Worker Test Mock Implementation](./logged_memories/MRTMLY-026-service-worker-test-mock-implementation.md)
+- [MRTMLY-027: Service Worker Refactoring Completion](./logged_memories/MRTMLY-027-service-worker-refactoring-completion.md)
+- [MRTMLY-028: Service Worker Typescript Errors Original](./logged_memories/MRTMLY-028-service-worker-typescript-errors-original.md)
+- [MRTMLY-028: Service Worker Typescript Linting](./logged_memories/MRTMLY-028-service-worker-typescript-linting.md)
+- [MRTMLY-029: Service Worker Typescript Errors](./logged_memories/MRTMLY-029-service-worker-typescript-errors-variation-1.md)
+- [MRTMLY-030: Service Worker Eslint Fixes](./logged_memories/MRTMLY-030-service-worker-eslint-fixes.md)
+- [MRTMLY-031: Service Worker Serviceworker Type Issue](./logged_memories/MRTMLY-031-service-worker-serviceworker-type-issue.md)
+- [MRTMLY-032: Service Worker Interface Compliance](./logged_memories/MRTMLY-032-service-worker-interface-compliance.md)
+- [MRTMLY-033: Service Worker State Type Fix](./logged_memories/MRTMLY-033-service-worker-state-type-fix.md)
+- [MRTMLY-034: Service Worker Event Handler Types](./logged_memories/MRTMLY-034-service-worker-event-handler-types.md)
+- [MRTMLY-035: Service Worker Analysis](./logged_memories/MRTMLY-035-service-worker-analysis.md)
+- [MRTMLY-036: Service Worker Test Environment](./logged_memories/MRTMLY-036-service-worker-test-environment.md)
+- [MRTMLY-037: Service Worker Json Parsing Fix](./logged_memories/MRTMLY-037-service-worker-json-parsing-fix.md)
+- [MRTMLY-038: Service Worker Test Iife Syntax Fix](./logged_memories/MRTMLY-038-service-worker-test-iife-syntax-fix.md)
+- [MRTMLY-039: Service Worker Test Logs Cleanup](./logged_memories/MRTMLY-039-service-worker-test-logs-cleanup.md)
+- [MRTMLY-040: Service Worker Registration Error](./logged_memories/MRTMLY-040-service-worker-registration-error.md)
+- [MRTMLY-041: Service Worker Fetch Handlers Tests](./logged_memories/MRTMLY-041-service-worker-fetch-handlers-tests.md)
+- [MRTMLY-042: Persistent Service Worker Update Error](./logged_memories/MRTMLY-042-persistent-service-worker-update-error.md)
+- [MRTMLY-043: Service Worker Fetch Handlers Implementation](./logged_memories/MRTMLY-043-service-worker-fetch-handlers-implementation.md)
+- [MRTMLY-044: Service Worker Fetch Handlers Fix](./logged_memories/MRTMLY-044-service-worker-fetch-handlers-fix.md)
+- [MRTMLY-045: Service Worker Lifecycle Tests](./logged_memories/MRTMLY-045-service-worker-lifecycle-tests.md)
+- [MRTMLY-046: Service Worker Lifecycle Implementation](./logged_memories/MRTMLY-046-service-worker-lifecycle-implementation.md)
+- [MRTMLY-047: Service Worker Lifecycle Tests Fix](./logged_memories/MRTMLY-047-service-worker-lifecycle-tests-fix.md)
+- [MRTMLY-048: Service Worker Lifecycle Tests Update](./logged_memories/MRTMLY-048-service-worker-lifecycle-tests-update.md)
+- [MRTMLY-049: Service Worker Lifecycle Test Execution Fix](./logged_memories/MRTMLY-049-service-worker-lifecycle-test-execution-fix.md)
+- [MRTMLY-050: Service Worker Lifecycle Test Revised Approach](./logged_memories/MRTMLY-050-service-worker-lifecycle-test-revised-approach.md)
+- [MRTMLY-051: Service Worker Update Error Original](./logged_memories/MRTMLY-051-service-worker-update-error-original.md)
+- [MRTMLY-051: Service Worker Lifecycle Test Waituntil Fix](./logged_memories/MRTMLY-051-service-worker-lifecycle-test-waituntil-fix.md)
+- [MRTMLY-052: Service Worker Update Error](./logged_memories/MRTMLY-052-service-worker-update-error-variation-1.md)
+- [MRTMLY-053: Service Worker Lifecycle Tests Simplified](./logged_memories/MRTMLY-053-service-worker-lifecycle-tests-simplified.md)
+- [MRTMLY-054: Service Worker Lifecycle Test Promise Capture](./logged_memories/MRTMLY-054-service-worker-lifecycle-test-promise-capture.md)
+- [MRTMLY-055: Service Worker Lifecycle Test Mocking Approach](./logged_memories/MRTMLY-055-service-worker-lifecycle-test-mocking-approach.md)
+- [MRTMLY-056: Service Worker Typescript Error](./logged_memories/MRTMLY-056-service-worker-typescript-error.md)
+- [MRTMLY-057: Service Worker Lifecycle Test Spy Approach](./logged_memories/MRTMLY-057-service-worker-lifecycle-test-spy-approach.md)
+- [MRTMLY-058: Service Worker Test Typescript Errors](./logged_memories/MRTMLY-058-service-worker-test-typescript-errors.md)
+- [MRTMLY-059: Service Worker Eslint Build Error](./logged_memories/MRTMLY-059-service-worker-eslint-build-error.md)
+- [MRTMLY-060: Service Worker Lifecycle Test Spy Function Fix](./logged_memories/MRTMLY-060-service-worker-lifecycle-test-spy-function-fix.md)
+- [MRTMLY-061: Service Worker Lifecycle Test Direct Mocks](./logged_memories/MRTMLY-061-service-worker-lifecycle-test-direct-mocks.md)
+- [MRTMLY-062: Service Worker Lifecycle Test Intercept Approach](./logged_memories/MRTMLY-062-service-worker-lifecycle-test-intercept-approach.md)
+- [MRTMLY-063: Service Worker Lifecycle Test Iife Pattern](./logged_memories/MRTMLY-063-service-worker-lifecycle-test-iife-pattern.md)
+- [MRTMLY-064: Service Worker Lifecycle Test Direct Approach](./logged_memories/MRTMLY-064-service-worker-lifecycle-test-direct-approach.md)
+- [MRTMLY-065: Service Worker Lifecycle Error Handling Fix](./logged_memories/MRTMLY-065-service-worker-lifecycle-error-handling-fix.md)
+- [MRTMLY-066: Service Worker Tests Complete](./logged_memories/MRTMLY-066-service-worker-tests-complete.md)
+- [MRTMLY-067: Service Worker Refactoring Complete](./logged_memories/MRTMLY-067-service-worker-refactoring-complete.md)
+- [MRTMLY-068: Service Worker Registration Refactoring](./logged_memories/MRTMLY-068-service-worker-registration-refactoring.md)
+- [MRTMLY-069: Cypress Service Worker Typing](./logged_memories/MRTMLY-069-cypress-service-worker-typing.md)
+- [MRTMLY-070: Service Worker Test Implementation](./logged_memories/MRTMLY-070-service-worker-test-implementation.md)
+- [MRTMLY-071: MRTMLY XXX Service Worker Typescript Errors](./logged_memories/MRTMLY-071-MRTMLY-XXX-service-worker-typescript-errors.md)
+
+## Testing Entries {#testing-entries}
+
+- [MRTMLY-072: Cypress Ci Integration](./logged_memories/MRTMLY-072-cypress-ci-integration.md)
+- [MRTMLY-073: Cypress React Error 418](./logged_memories/MRTMLY-073-cypress-react-error-418.md)
+- [MRTMLY-074: Cypress Video Screenshot Config](./logged_memories/MRTMLY-074-cypress-video-screenshot-config.md)
+- [MRTMLY-075: Cypress Videos Upload Fix](./logged_memories/MRTMLY-075-cypress-videos-upload-fix.md)
+- [MRTMLY-076: Splash Screen Test Fixes](./logged_memories/MRTMLY-076-splash-screen-test-fixes.md)
+- [MRTMLY-077: Cypress Test Fixes](./logged_memories/MRTMLY-077-cypress-test-fixes.md)
+- [MRTMLY-078: Splash Screen Test Debugging](./logged_memories/MRTMLY-078-splash-screen-test-debugging.md)
+- [MRTMLY-079: Splashscreen Test Fixes](./logged_memories/MRTMLY-079-splashscreen-test-fixes.md)
+- [MRTMLY-080: Test Failures Resolution](./logged_memories/MRTMLY-080-test-failures-resolution.md)
+- [MRTMLY-081: Test Framework Fixes](./logged_memories/MRTMLY-081-test-framework-fixes.md)
+- [MRTMLY-082: Jest Config Watchplugins Fix](./logged_memories/MRTMLY-082-jest-config-watchplugins-fix.md)
+- [MRTMLY-083: Component Naming And Test Fixes](./logged_memories/MRTMLY-083-component-naming-and-test-fixes.md)
+- [MRTMLY-084: Timer Display Consistency Tests](./logged_memories/MRTMLY-084-timer-display-consistency-tests.md)
+- [MRTMLY-085: Time Setup Input Formats Tests](./logged_memories/MRTMLY-085-time-setup-input-formats-tests.md)
+- [MRTMLY-086: Fixing Routing Tests](./logged_memories/MRTMLY-086-fixing-routing-tests.md)
+- [MRTMLY-087: Summary Test Refactor](./logged_memories/MRTMLY-087-summary-test-refactor.md)
+- [MRTMLY-088: Layout Test Html Rendering Fix](./logged_memories/MRTMLY-088-layout-test-html-rendering-fix.md)
+- [MRTMLY-089: Test Friendly Reset Functionality](./logged_memories/MRTMLY-089-test-friendly-reset-functionality.md)
+- [MRTMLY-090: Timeline Test Suite Memory Leak](./logged_memories/MRTMLY-090-timeline-test-suite-memory-leak.md)
+- [MRTMLY-091: Contrast Ratio Theme Testing](./logged_memories/MRTMLY-091-contrast-ratio-theme-testing.md)
+- [MRTMLY-092: Timeline Calculation Test](./logged_memories/MRTMLY-092-timeline-calculation-test.md)
+- [MRTMLY-093: Progress Bar Theme Testing](./logged_memories/MRTMLY-093-progress-bar-theme-testing.md)
+- [MRTMLY-094: Test Suite Expansion Planning](./logged_memories/MRTMLY-094-test-suite-expansion-planning.md)
+- [MRTMLY-095: Idle Time Calculation Testing](./logged_memories/MRTMLY-095-idle-time-calculation-testing.md)
+- [MRTMLY-096: Break Visualization Testing](./logged_memories/MRTMLY-096-break-visualization-testing.md)
+- [MRTMLY-097: Activity Order Summary Tests](./logged_memories/MRTMLY-097-activity-order-summary-tests.md)
+- [MRTMLY-098: Activity Order Test Expansion](./logged_memories/MRTMLY-098-activity-order-test-expansion.md)
+- [MRTMLY-099: Next Config Turbopack Test Fix](./logged_memories/MRTMLY-099-next-config-turbopack-test-fix.md)
+- [MRTMLY-100: ServiceWorkerRegistration Test Logging](./logged_memories/MRTMLY-100-serviceWorkerRegistration-test-logging.md)
+- [MRTMLY-101: Layout Testing Hydration Error Fix](./logged_memories/MRTMLY-101-layout-testing-hydration-error-fix.md)
+- [MRTMLY-102: Typescript Jest Assertion Errors Fix](./logged_memories/MRTMLY-102-typescript-jest-assertion-errors-fix.md)
+- [MRTMLY-103: Cypress Config Error](./logged_memories/MRTMLY-103-cypress-config-error.md)
+- [MRTMLY-104: Cypress Typescript Errors](./logged_memories/MRTMLY-104-cypress-typescript-errors.md)
+- [MRTMLY-105: Build Process Cypress Exclusion](./logged_memories/MRTMLY-105-build-process-cypress-exclusion.md)
+- [MRTMLY-106: Cypress Missing E2e Config](./logged_memories/MRTMLY-106-cypress-missing-e2e-config.md)
+
+## Ui Layout Entries {#ui-layout-entries}
+
+- [MRTMLY-107: Eslint Build Fixes](./logged_memories/MRTMLY-107-eslint-build-fixes.md)
+- [MRTMLY-108: Missing Globals Css Build Error](./logged_memories/MRTMLY-108-missing-globals-css-build-error.md)
+- [MRTMLY-109: Build Failure Unused Import](./logged_memories/MRTMLY-109-build-failure-unused-import.md)
+- [MRTMLY-110: Icon Alignment Fixes](./logged_memories/MRTMLY-110-icon-alignment-fixes.md)
+- [MRTMLY-111: Consistent Ui Controls Sizing](./logged_memories/MRTMLY-111-consistent-ui-controls-sizing.md)
+- [MRTMLY-112: Check Icon Alignment Fix](./logged_memories/MRTMLY-112-check-icon-alignment-fix.md)
+- [MRTMLY-113: Progress Bar Mobile Layout](./logged_memories/MRTMLY-113-progress-bar-mobile-layout.md)
+- [MRTMLY-114: Header Mobile Layout](./logged_memories/MRTMLY-114-header-mobile-layout.md)
+- [MRTMLY-115: Offline Indicator Layout](./logged_memories/MRTMLY-115-offline-indicator-layout.md)
+- [MRTMLY-116: Deployment Build Commonjs Require](./logged_memories/MRTMLY-116-deployment-build-commonjs-require.md)
+- [MRTMLY-117: Progress Bar Visibility](./logged_memories/MRTMLY-117-progress-bar-visibility.md)
+- [MRTMLY-118: Nextjs Build Manifest Missing Error](./logged_memories/MRTMLY-118-nextjs-build-manifest-missing-error.md)
+
+## Dark Mode Entries {#dark-mode-entries}
+
+- [MRTMLY-119: Dark Mode Predeployment](./logged_memories/MRTMLY-119-dark-mode-predeployment.md)
+- [MRTMLY-120: Summary Theme Colors](./logged_memories/MRTMLY-120-summary-theme-colors.md)
+- [MRTMLY-121: Timeline Theme Colors](./logged_memories/MRTMLY-121-timeline-theme-colors.md)
+- [MRTMLY-122: Splash Screen Theme Timing](./logged_memories/MRTMLY-122-splash-screen-theme-timing.md)
+- [MRTMLY-123: Hydration Mismatch Theme Attributes](./logged_memories/MRTMLY-123-hydration-mismatch-theme-attributes.md)
+- [MRTMLY-124: Theme Styling Fix](./logged_memories/MRTMLY-124-theme-styling-fix.md)
+
+## Typescript Entries {#typescript-entries}
+
+- [MRTMLY-125: Typescript Error Fixes](./logged_memories/MRTMLY-125-typescript-error-fixes.md)
+- [MRTMLY-126: Additional Typescript Fixes](./logged_memories/MRTMLY-126-additional-typescript-fixes.md)
+- [MRTMLY-127: Final Typescript Fixes](./logged_memories/MRTMLY-127-final-typescript-fixes.md)
+- [MRTMLY-128: Typescript Fixes Completion](./logged_memories/MRTMLY-128-typescript-fixes-completion.md)
+- [MRTMLY-129: Time Utils Typescript Linting](./logged_memories/MRTMLY-129-time-utils-typescript-linting.md)
+- [MRTMLY-130: Viewport Type Definition Fix](./logged_memories/MRTMLY-130-viewport-type-definition-fix.md)
+- [MRTMLY-131: Eslint Typescript Any Deployment Fix](./logged_memories/MRTMLY-131-eslint-typescript-any-deployment-fix.md)
+- [MRTMLY-132: MRTMLY XXX One Off Scripts Analysis](./logged_memories/MRTMLY-132-MRTMLY-XXX-one-off-scripts-analysis.md)
+
+## Eslint Entries {#eslint-entries}
+
+- [MRTMLY-133: Linting Error Fix](./logged_memories/MRTMLY-133-linting-error-fix.md)
+- [MRTMLY-134: Timeutils Linting Error Fix](./logged_memories/MRTMLY-134-timeutils-linting-error-fix.md)
+
+## Deployment Entries {#deployment-entries}
+
+- [MRTMLY-135: Vercel Deployment Verification](./logged_memories/MRTMLY-135-vercel-deployment-verification.md)
+
+## Miscellaneous Entries {#miscellaneous-entries}
+
+- [MRTMLY-136: Time Utilities Consolidation](./logged_memories/MRTMLY-136-time-utilities-consolidation.md)
+- [MRTMLY-137: Timeutils Refactoring](./logged_memories/MRTMLY-137-timeutils-refactoring.md)
+- [MRTMLY-138: Tsconfig Paths Baseurl Fix](./logged_memories/MRTMLY-138-tsconfig-paths-baseurl-fix.md)
+- [MRTMLY-139: Removal Of One Off Scripts](./logged_memories/MRTMLY-139-removal-of-one-off-scripts.md)
+- [MRTMLY-140: Additional Cleanup Candidates](./logged_memories/MRTMLY-140-additional-cleanup-candidates.md)
+- [MRTMLY-141: Pwa Configuration Fix](./logged_memories/MRTMLY-141-pwa-configuration-fix.md)
+- [MRTMLY-142: Splash Screen Implementation](./logged_memories/MRTMLY-142-splash-screen-implementation.md)
+- [MRTMLY-143: Nextjs 404 Root Fix](./logged_memories/MRTMLY-143-nextjs-404-root-fix.md)
+- [MRTMLY-144: Removal Of Additional One Off Scripts](./logged_memories/MRTMLY-144-removal-of-additional-one-off-scripts.md)
+- [MRTMLY-145: Next Js 404 Root Route Fix](./logged_memories/MRTMLY-145-next-js-404-root-route-fix.md)
+- [MRTMLY-146: Nextjs Configuration Revert](./logged_memories/MRTMLY-146-nextjs-configuration-revert.md)
+- [MRTMLY-147: Border Radius Refinement](./logged_memories/MRTMLY-147-border-radius-refinement.md)
+- [MRTMLY-148: Shadow Token System](./logged_memories/MRTMLY-148-shadow-token-system.md)
+- [MRTMLY-149: Completed Tag Alignment Fix](./logged_memories/MRTMLY-149-completed-tag-alignment-fix.md)
+- [MRTMLY-150: Component Sizing Documentation](./logged_memories/MRTMLY-150-component-sizing-documentation.md)
+- [MRTMLY-151: Summary Status Message Fix](./logged_memories/MRTMLY-151-summary-status-message-fix.md)
+- [MRTMLY-152: Production Console Logs Removal](./logged_memories/MRTMLY-152-production-console-logs-removal.md)
+- [MRTMLY-153: Timeline Break Visualization](./logged_memories/MRTMLY-153-timeline-break-visualization.md)
+- [MRTMLY-154: Timeline Memory Leak](./logged_memories/MRTMLY-154-timeline-memory-leak.md)
+- [MRTMLY-155: Summary Activity Order](./logged_memories/MRTMLY-155-summary-activity-order.md)
+- [MRTMLY-156: Timeline Countdown Timer](./logged_memories/MRTMLY-156-timeline-countdown-timer.md)
+- [MRTMLY-157: Progress Element Repositioning](./logged_memories/MRTMLY-157-progress-element-repositioning.md)
+- [MRTMLY-158: Next Config Turbopack Fix](./logged_memories/MRTMLY-158-next-config-turbopack-fix.md)
+- [MRTMLY-159: Next Config Server Actions Fix](./logged_memories/MRTMLY-159-next-config-server-actions-fix.md)
+- [MRTMLY-160: Unused Variable Summary Component](./logged_memories/MRTMLY-160-unused-variable-summary-component.md)
+- [MRTMLY-161: Nextjs Routing Conflict 404 Error](./logged_memories/MRTMLY-161-nextjs-routing-conflict-404-error.md)
+- [MRTMLY-162: Path Import Resolution](./logged_memories/MRTMLY-162-path-import-resolution.md)
+- [MRTMLY-163: Metadata Export Fix](./logged_memories/MRTMLY-163-metadata-export-fix.md)
+- [MRTMLY-164: Nextjs Routing Hybrid Structure Fix](./logged_memories/MRTMLY-164-nextjs-routing-hybrid-structure-fix.md)
+- [MRTMLY-165: Nextjs Routing Redirection Fix](./logged_memories/MRTMLY-165-nextjs-routing-redirection-fix.md)
+- [MRTMLY-166: Offline Functionality Broken](./logged_memories/MRTMLY-166-offline-functionality-broken.md)
+- [MRTMLY-167: Nextjs Config And Storage Issues](./logged_memories/MRTMLY-167-nextjs-config-and-storage-issues.md)
+- [MRTMLY-168: Offline Cache And Config Errors](./logged_memories/MRTMLY-168-offline-cache-and-config-errors.md)
+- [MRTMLY-169: Persistent Offline Functionality Issues](./logged_memories/MRTMLY-169-persistent-offline-functionality-issues.md)
+- [MRTMLY-170: App Directory Routing Conflict 404](./logged_memories/MRTMLY-170-app-directory-routing-conflict-404.md)
+- [MRTMLY-171: Import Alias Resolution Error](./logged_memories/MRTMLY-171-import-alias-resolution-error.md)
+- [MRTMLY-172: Metadata Viewport Configuration](./logged_memories/MRTMLY-172-metadata-viewport-configuration.md)
+- [MRTMLY-173: Turbopack Webpack Configuration Mismatch](./logged_memories/MRTMLY-173-turbopack-webpack-configuration-mismatch.md)
+- [MRTMLY-174: Turbopack Moved To Stable Configuration](./logged_memories/MRTMLY-174-turbopack-moved-to-stable-configuration.md)
+- [MRTMLY-175: Disable Mobile Zoom Pan](./logged_memories/MRTMLY-175-disable-mobile-zoom-pan.md)
+- [MRTMLY-176: Duplicate Activity Add Error](./logged_memories/MRTMLY-176-duplicate-activity-add-error.md)
+- [MRTMLY-177: Routing Conflict Between App And Pages Router](./logged_memories/MRTMLY-177-routing-conflict-between-app-and-pages-router.md)
+- [MRTMLY-178: Splash Screen Stuck Hybrid Routing Fix](./logged_memories/MRTMLY-178-splash-screen-stuck-hybrid-routing-fix.md)
+- [MRTMLY-179: Css Spacing Scale Simplification](./logged_memories/MRTMLY-179-css-spacing-scale-simplification.md)
+- [MRTMLY-180: Css Spacing Implementation Adjustments](./logged_memories/MRTMLY-180-css-spacing-implementation-adjustments.md)
+- [MRTMLY-181: Activity Manager Refactoring Analysis](./logged_memories/MRTMLY-181-activity-manager-refactoring-analysis.md)
+- [MRTMLY-182: Mobile Padding Optimization](./logged_memories/MRTMLY-182-mobile-padding-optimization.md)
+- [MRTMLY-183: Additional Mobile Spacing Optimizations](./logged_memories/MRTMLY-183-additional-mobile-spacing-optimizations.md)
+- [MRTMLY-184: Hardcoded Spacing Values Replacement](./logged_memories/MRTMLY-184-hardcoded-spacing-values-replacement.md)
+- [MRTMLY-185: Time Utilities Documentation](./logged_memories/MRTMLY-185-time-utilities-documentation.md)
+- [MRTMLY-186: Timeutils Import Error Fix](./logged_memories/MRTMLY-186-timeutils-import-error-fix.md)
+- [MRTMLY-187: Page On Application Load](./logged_memories/MRTMLY-187-page-on-application-load.md)
+- [MRTMLY-188: Css Variables Conflict](./logged_memories/MRTMLY-188-css-variables-conflict.md)
+- [MRTMLY-189: Console Errors Warnings](./logged_memories/MRTMLY-189-console-errors-warnings.md)
+
+## About Memory Logs
+
+Memory logs provide detailed records of debugging sessions, implementation decisions, and issue resolutions.
+Each log follows a standard format including:
+
+- Initial State
+- Debug Process/Implementation
+- Resolution
+- Lessons Learned
+
+These logs serve as historical context to understand why certain decisions were made and how issues were resolved.
