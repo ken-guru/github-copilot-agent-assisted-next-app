@@ -1,157 +1,80 @@
 /// <reference types="cypress" />
+// Import the type definitions
+/// <reference path="./index.d.ts" />
 
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-
-declare global {
-  namespace Cypress {
-    interface Chainable {
-      /**
-       * Check if a service worker is registered
-       * @example cy.isServiceWorkerRegistered()
-       */
-      isServiceWorkerRegistered(): Chainable<boolean>;
-
-      /**
-       * Wait for service worker to be registered
-       * @example cy.waitForServiceWorkerRegistration()
-       */
-      waitForServiceWorkerRegistration(): Chainable<void>;
-
-      /**
-       * Set the network condition to offline
-       * @example cy.setOffline()
-       */
-      setOffline(): Chainable<void>;
-
-      /**
-       * Set the network condition to online
-       * @example cy.setOnline()
-       */
-      setOnline(): Chainable<void>;
-
-      /**
-       * Unregister all service workers
-       * @example cy.unregisterServiceWorkers()
-       */
-      unregisterServiceWorkers(): Chainable<void>;
-    }
-  }
-}
-
-// Command to check if service worker is registered
-Cypress.Commands.add('isServiceWorkerRegistered', () => {
-  return cy.window().then(win => {
-    return !!win.navigator.serviceWorker.controller;
+/**
+ * Sets the navigator.onLine property to true and triggers an online event
+ */
+Cypress.Commands.add('setOnline', () => {
+  cy.log('Setting browser to online mode');
+  cy.window().then((win) => {
+    Object.defineProperty(win.navigator, 'onLine', { value: true });
+    win.dispatchEvent(new win.Event('online'));
   });
 });
 
-// Command to wait for service worker to be registered
-Cypress.Commands.add('waitForServiceWorkerRegistration', () => {
-  return cy.window().then(win => {
-    return new Cypress.Promise((resolve) => {
+/**
+ * Sets the navigator.onLine property to false and triggers an offline event
+ */
+Cypress.Commands.add('setOffline', () => {
+  cy.log('Setting browser to offline mode');
+  cy.window().then((win) => {
+    Object.defineProperty(win.navigator, 'onLine', { value: false });
+    win.dispatchEvent(new win.Event('offline'));
+  });
+});
+
+/**
+ * Waits for the service worker to be registered and controlling the page
+ * with a configurable timeout
+ */
+Cypress.Commands.add('waitForServiceWorkerRegistration', (timeoutMs = 10000) => {
+  cy.log('Waiting for service worker registration');
+  
+  // Define the timeout for service worker registration
+  const startTime = Date.now();
+  
+  cy.window().then((win) => {
+    return new Promise((resolve, reject) => {
+      // If service worker already controlling the page
       if (win.navigator.serviceWorker.controller) {
-        resolve();
-      } else {
-        const checkInterval = setInterval(() => {
-          if (win.navigator.serviceWorker.controller) {
-            clearInterval(checkInterval);
-            resolve();
-          }
-        }, 500);
-        
-        // Set a timeout to prevent infinite loops
-        setTimeout(() => {
-          clearInterval(checkInterval);
-          resolve(); // Resolve anyway to prevent test hanging
-        }, 10000);
+        cy.log('Service worker already controlling the page');
+        resolve(win.navigator.serviceWorker.controller);
+        return;
       }
+      
+      // Setup listener for controllerchange event
+      const onControllerChange = () => {
+        cy.log('Service worker controller changed');
+        win.navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+        resolve(win.navigator.serviceWorker.controller);
+      };
+      
+      win.navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+      
+      // Set up timeout to avoid hanging
+      const checkInterval = setInterval(() => {
+        if (win.navigator.serviceWorker.controller) {
+          clearInterval(checkInterval);
+          clearTimeout(timeoutId);
+          cy.log('Service worker controller detected during interval check');
+          win.navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+          resolve(win.navigator.serviceWorker.controller);
+        } else if (Date.now() - startTime > timeoutMs) {
+          clearInterval(checkInterval);
+          cy.log('Service worker registration timed out - forcing resolve');
+          win.navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+          resolve(null); // Resolve with null to indicate timeout
+        }
+      }, 500);
+      
+      // Also set an explicit timeout
+      const timeoutId = setTimeout(() => {
+        clearInterval(checkInterval);
+        cy.log('Service worker registration timed out - forcing resolve');
+        win.navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+        resolve(null); // Resolve with null to indicate timeout
+      }, timeoutMs);
     });
   });
 });
-
-// Command to set network to offline
-Cypress.Commands.add('setOffline', () => {
-  return cy.window().then(win => {
-    // Use Chrome DevTools Protocol if available (in Chrome)
-    if (Cypress.isBrowser('chrome')) {
-      // @ts-ignore - Using undocumented Cypress API
-      return Cypress.automation('remote:debugger:protocol', {
-        command: 'Network.enable'
-      }).then(() => {
-        // @ts-ignore
-        return Cypress.automation('remote:debugger:protocol', {
-          command: 'Network.emulateNetworkConditions',
-          params: {
-            offline: true,
-            latency: 0,
-            downloadThroughput: 0,
-            uploadThroughput: 0
-          }
-        });
-      });
-    } else {
-      // Fallback - override navigator.onLine (less reliable)
-      cy.log('Using fallback offline mode - not in Chrome');
-      Object.defineProperty(win.navigator, 'onLine', {
-        get: () => false,
-        configurable: true
-      });
-      win.dispatchEvent(new win.Event('offline'));
-    }
-  });
-});
-
-// Command to set network to online
-Cypress.Commands.add('setOnline', () => {
-  return cy.window().then(win => {
-    // Use Chrome DevTools Protocol if available (in Chrome)
-    if (Cypress.isBrowser('chrome')) {
-      // @ts-ignore - Using undocumented Cypress API
-      return Cypress.automation('remote:debugger:protocol', {
-        command: 'Network.enable'
-      }).then(() => {
-        // @ts-ignore
-        return Cypress.automation('remote:debugger:protocol', {
-          command: 'Network.emulateNetworkConditions',
-          params: {
-            offline: false,
-            latency: 0,
-            downloadThroughput: -1,
-            uploadThroughput: -1
-          }
-        });
-      });
-    } else {
-      // Fallback - override navigator.onLine
-      cy.log('Using fallback online mode - not in Chrome');
-      Object.defineProperty(win.navigator, 'onLine', {
-        get: () => true,
-        configurable: true
-      });
-      win.dispatchEvent(new win.Event('online'));
-    }
-  });
-});
-
-// Command to unregister all service workers
-Cypress.Commands.add('unregisterServiceWorkers', () => {
-  return cy.window().then(async win => {
-    const registrations = await win.navigator.serviceWorker.getRegistrations();
-    
-    for (const registration of registrations) {
-      await registration.unregister();
-    }
-    
-    return registrations.length;
-  });
-});
-
-export {}

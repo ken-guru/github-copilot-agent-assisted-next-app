@@ -1,12 +1,17 @@
 /**
  * Service Worker update handling functionality
  */
+// Import error handling directly to avoid circular dependencies
 import { handleServiceWorkerError } from './serviceWorkerErrors';
 
-type Config = {
+// Import getUpdateHandler directly
+import { getUpdateHandler } from './serviceWorker';
+
+// Define config type locally to avoid circular imports
+interface Config {
   onSuccess?: (registration: ServiceWorkerRegistration) => void;
   onUpdate?: (registration: ServiceWorkerRegistration) => void;
-};
+}
 
 /**
  * Handle service worker registration status
@@ -15,10 +20,18 @@ export function handleRegistration(
   registration: ServiceWorkerRegistration,
   config?: Config
 ): void {
+  // Get the update handler from the serviceWorker directory
+  const updateHandler = getUpdateHandler();
+
   // When the service worker is first installed
   if (registration.waiting) {
     if (config && config.onUpdate) {
       config.onUpdate(registration);
+    }
+    
+    // Call custom update handler if set
+    if (updateHandler) {
+      updateHandler(registration);
     }
   } else if (registration.installing) {
     trackInstallation(registration, config);
@@ -40,6 +53,9 @@ function trackInstallation(
   const installingWorker = registration.installing;
   if (!installingWorker) return;
 
+  // Get the update handler from the serviceWorker directory
+  const updateHandler = getUpdateHandler();
+
   installingWorker.addEventListener('statechange', () => {
     if (installingWorker.state === 'installed') {
       if (navigator.serviceWorker.controller) {
@@ -53,6 +69,11 @@ function trackInstallation(
         // Execute callback
         if (config && config.onUpdate) {
           config.onUpdate(registration);
+        }
+        
+        // Call custom update handler if set
+        if (updateHandler) {
+          updateHandler(registration);
         }
       } else {
         // At this point, everything has been precached.

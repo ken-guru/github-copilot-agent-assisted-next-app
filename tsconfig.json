@@ -1,33 +1,47 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "es2015",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": ".",
     "plugins": [
       {
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/contexts/*": ["./contexts/*"],
-      "@/components/*": ["./components/*", "./src/components/*"],
-      "@/hooks/*": ["./hooks/*", "./src/hooks/*"],
-      "@/utils/*": ["./utils/*", "./src/utils/*"],
-      "@/styles/*": ["./styles/*", "./src/styles/*"]
-    }
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "types": ["node", "jest", "@testing-library/jest-dom", "cypress"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "cypress.config.ts", "cypress/**/*"]
+  "include": [
+    "next-env.d.ts",
+    "src/types/jest.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "cypress/e2e/**/*.ts",
+    "**/*.cy.ts",
+    "**/*.cy.tsx"
+  ]
 }

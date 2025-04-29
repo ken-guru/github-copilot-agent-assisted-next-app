@@ -1,414 +1,246 @@
-// Service Worker for offline capabilities
-// Cache name with version for cache busting
-const CACHE_NAME = 'github-copilot-agent-assisted-next-app-v4';
-const APP_SHELL_CACHE_NAME = 'app-shell-v4';
+// Service Worker for Mr. Timely
 
-// Import logging utilities or create inline implementation
-let swUtils;
+const CACHE_NAME = 'mr-timely-cache-v1';
+const OFFLINE_URL = '/index.html';
+const APP_SHELL_CACHE = 'app-shell-cache';
 
-try {
-  // Try to import the utility script - this will fail in tests
-  importScripts('./service-worker-logging-utils.js');
-  swUtils = self.swUtils || {
-    isDevelopment: () => {
-      // Default implementation as fallback
-      const hostname = self.location.hostname;
-      return hostname === 'localhost' || hostname === '127.0.0.1';
-    },
-    log: (msg, level = 'log') => {
-      const isDev = swUtils.isDevelopment();
-      const isImportant = level === 'error' || level === 'warn';
-      if (isDev || isImportant) {
-        console[level](`[Service Worker] ${msg}`);
-      }
-    }
-  };
-} catch (e) {
-  // Define locally if import fails
-  swUtils = {
-    isDevelopment: () => {
-      // Check hostname specifically, to make tests pass correctly
-      if (self.location.hostname === 'example.com' ||
-          self.location.hostname === 'myapp.com') {
-        return false;
-      }
-      const hostname = self.location.hostname;
-      const port = self.location.port;
-      return hostname === 'localhost' || hostname === '127.0.0.1' ||
-             port === '3000' || port === '8080';
-    },
-    log: (message, level = 'log') => {
-      const isImportant = level === 'error' || level === 'warn';
-      // This ensures tests pass by conditionally logging
-      if (swUtils.isDevelopment() || isImportant) {
-        console[level](`[Service Worker] ${message}`);
-      }
-    }
-  };
-}
-
-// Use the log function from swUtils
-const { log } = swUtils;
-
-// Core files to cache for offline use - the minimal application shell
-const APP_SHELL = [
+// Assets to cache immediately on install
+const PRECACHE_ASSETS = [
   '/',
-  '/index.html',  // Just in case the server responds with index.html
+  '/manifest.json',
   '/favicon.ico',
-  '/manifest.json'
+  '/icons/icon-192x192.png',
+  '/icons/icon-512x512.png',
+  '/icons/apple-touch-icon.png',
+  // Add CSS/JS files as needed
 ];
 
-// Message handler for messages from the client
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-    log('Service worker skipping waiting phase');
-  }
-});
+// Next.js specific assets to cache
+const NEXT_ASSETS = [
+  '/_next/static/',
+  '/_next/image',
+];
 
-// Enhanced fetch response function that tries multiple sources
-async function fetchAndCache(request) {
-  try {
-    // Try network first
-    const networkResponse = await fetch(request);
-    
-    // Clone the response to cache it
-    const responseToCache = networkResponse.clone();
-    const cache = await caches.open(CACHE_NAME);
-    await cache.put(request, responseToCache);
-    
-    return networkResponse;
-  } catch (error) {
-    // Network failed, try cache
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
-    
-    // If it's an HTML request, try returning the app shell
-    if (request.headers.get('accept')?.includes('text/html')) {
-      const appShellCache = await caches.open(APP_SHELL_CACHE_NAME);
-      const appShellResponse = await appShellCache.match('/');
-      if (appShellResponse) {
-        return appShellResponse;
-      }
-    }
-    
-    // Everything failed
-    throw error;
-  }
-}
-
-// Cache the app shell for offline access
-async function cacheAppShell() {
-  log('Caching app shell resources');
-  
-  const cache = await caches.open(APP_SHELL_CACHE_NAME);
-  
-  // Cache each app shell resource
-  for (const resource of APP_SHELL) {
-    try {
-      // Attempt to fetch and cache the resource
-      const response = await fetch(resource);
-      await cache.put(resource, response);
-      log(`Cached app shell path: ${resource}`);
-    } catch (err) {
-      log(`Failed to cache app shell resource: ${resource}`, 'warn');
-    }
-  }
-  
-  // For root path, cache an additional entry as /index for easier matching
-  try {
-    const rootResponse = await fetch('/');
-    await cache.put('/index', rootResponse.clone());
-    log('Cached root path as /index');
-  } catch (err) {
-    log('Failed to cache root path as /index', 'warn');
-  }
-}
-
-// Lifecycle event: Install
+// Install event handler
 self.addEventListener('install', (event) => {
-  log('Service worker installing...');
+  console.log('[ServiceWorker] Install');
+  
+  // Skip waiting to activate immediately
+  self.skipWaiting();
   
   event.waitUntil(
-    Promise.all([
-      // Cache the app shell (critical resources)
-      cacheAppShell(),
-      
-      // Skip waiting to activate immediately
-      self.skipWaiting()
-    ])
-    .then(() => {
-      log('Service worker installation complete');
-    })
-    .catch(error => {
-      log(`Service worker installation failed: ${error}`, 'error');
-      // Continue with installation even if caching fails
-      return self.skipWaiting();
-    })
+    (async () => {
+      try {
+        const cache = await caches.open(CACHE_NAME);
+        console.log('[ServiceWorker] Caching app shell');
+        await cache.addAll(PRECACHE_ASSETS);
+        console.log('[ServiceWorker] All assets cached');
+      } catch (error) {
+        console.error('[ServiceWorker] Cache setup failed:', error);
+      }
+    })()
   );
 });
 
-// Clean up old caches when a new service worker activates
+// Activate event handler
 self.addEventListener('activate', (event) => {
-  log('Service worker activating...');
+  console.log('[ServiceWorker] Activate');
   
-  const cacheWhitelist = [CACHE_NAME, APP_SHELL_CACHE_NAME];
-  
+  // Take over control immediately
   event.waitUntil(
-    caches.keys()
-      .then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (cacheWhitelist.indexOf(cacheName) === -1) {
-              log(`Deleting old cache: ${cacheName}`);
-              return caches.delete(cacheName);
-            }
-            return null;
-          })
-        );
-      })
-      .then(() => {
-        log('Service worker activated and claiming clients');
-        return self.clients.claim();
-      })
-      .then(() => {
-        // After activation and claiming, notify clients
-        return self.clients.matchAll()
-          .then(clients => {
-            clients.forEach(client => {
-              client.postMessage({ 
-                type: 'SERVICE_WORKER_ACTIVATED',
-                message: 'Service worker activated and in control'
-              });
-            });
-          });
-      })
+    (async () => {
+      // Clean up old caches
+      const cacheKeys = await caches.keys();
+      const oldCaches = cacheKeys.filter(key => key !== CACHE_NAME && key !== APP_SHELL_CACHE);
+      await Promise.all(oldCaches.map(key => caches.delete(key)));
+      
+      // Take control of all clients
+      await clients.claim();
+      console.log('[ServiceWorker] Claimed clients');
+    })()
   );
 });
 
-// Serve cached content when offline
-self.addEventListener('fetch', (event) => {
-  // Only handle GET requests
-  if (event.request.method !== 'GET') {
-    return;
-  }
-  
-  // Parse URL for decision making
-  const url = new URL(event.request.url);
-  
-  // Skip some URLs that shouldn't be cached
-  if (url.origin !== self.location.origin) {
-    return; // Skip non-same-origin resources
-  }
-  
-  // Skip Chrome extension requests and other browser-specific URLs
-  if (url.protocol === 'chrome-extension:') {
-    return;
-  }
+// Helper: Should we bypass cache for this request?
+function shouldBypassCache(url) {
+  // Skip caching for:
+  // - Chrome extensions
+  // - DevTools
+  // - Debug endpoints
+  return (
+    url.startsWith('chrome-extension://') ||
+    url.includes('/devtools/') ||
+    url.includes('__/') ||
+    url.includes('debug') ||
+    url.includes('sourcemap') ||
+    url.includes('webpack-hmr') || // Skip HMR for development
+    url.includes('webpack-internal:')
+  );
+}
 
-  // Handle root path and HTML requests specially for offline support
-  // This is critical for the application to work when offline
-  if (url.pathname === '/' || 
-      url.pathname === '/index' || 
-      url.pathname === '/index.html' || 
-      event.request.headers.get('accept')?.includes('text/html')) {
-    
+// Helper: Is this a navigation request?
+function isNavigationRequest(request) {
+  return (
+    request.mode === 'navigate' ||
+    (request.method === 'GET' && 
+     request.headers.get('accept')?.includes('text/html'))
+  );
+}
+
+// Helper: Is this a Next.js asset request?
+function isNextAsset(url) {
+  return NEXT_ASSETS.some(asset => url.includes(asset));
+}
+
+// Fetch event handler
+self.addEventListener('fetch', (event) => {
+  const request = event.request;
+  const url = new URL(request.url);
+  
+  // Skip non-GET requests and those that should bypass cache
+  if (request.method !== 'GET' || shouldBypassCache(url.href)) {
+    return;
+  }
+  
+  // Skip cross-origin requests
+  if (url.origin !== location.origin) {
+    return;
+  }
+  
+  // For HTML navigation requests (app shell)
+  if (isNavigationRequest(request)) {
     event.respondWith(
-      // Try app shell cache first for HTML requests
-      caches.open(APP_SHELL_CACHE_NAME)
-        .then(cache => cache.match('/'))
-        .then(appShellResponse => {
-          if (appShellResponse) {
-            console.log('Serving from app shell cache:', url.pathname);
-            
-            // In the background, try to fetch from network to update the cache
-            fetch(event.request)
-              .then(networkResponse => {
-                console.log('Updating app shell cache with fresh content');
-                // Update both caches
-                return Promise.all([
-                  caches.open(APP_SHELL_CACHE_NAME).then(cache => 
-                    cache.put('/', networkResponse.clone())
-                  ),
-                  caches.open(CACHE_NAME).then(cache => 
-                    cache.put(event.request, networkResponse.clone())
-                  )
-                ]);
-              })
-              .catch(() => {
-                console.log('Failed to update app shell cache, using cached version');
-              });
-              
-            return appShellResponse;
+      (async () => {
+        try {
+          // First try to get the response from the network
+          const networkResponse = await fetch(request);
+          
+          // Cache successful responses
+          if (networkResponse.ok) {
+            const clone = networkResponse.clone();
+            const cache = await caches.open(APP_SHELL_CACHE);
+            await cache.put(request, clone);
           }
           
-          // App shell cache miss, try normal cache
-          return caches.match(event.request)
-            .then(cachedResponse => {
-              if (cachedResponse) {
-                console.log('Serving from regular cache:', url.pathname);
-                return cachedResponse;
-              }
-              
-              // Not in any cache, try network
-              console.log('Nothing in cache, fetching from network:', url.pathname);
-              return fetch(event.request)
-                .then(networkResponse => {
-                  // Cache the response for future
-                  const responseToCache = networkResponse.clone();
-                  
-                  // Save in both caches for HTML requests
-                  Promise.all([
-                    caches.open(APP_SHELL_CACHE_NAME).then(cache => {
-                      // For HTML responses, also cache under root path for app shell
-                      if (url.pathname === '/' || url.pathname === '/index' || url.pathname === '/index.html') {
-                        cache.put('/', responseToCache.clone());
-                      }
-                    }),
-                    caches.open(CACHE_NAME).then(cache => {
-                      cache.put(event.request, responseToCache);
-                    })
-                  ]).catch(err => {
-                    console.warn('Failed to cache HTML response:', err);
-                  });
-                  
-                  return networkResponse;
-                })
-                .catch(error => {
-                  console.error('Network fetch failed for HTML, trying root fallback:', error);
-                  // Last resort - try the root path from regular cache
-                  return caches.match('/')
-                    .then(rootFallback => {
-                      if (rootFallback) return rootFallback;
-                      
-                      // Nothing worked, return a simple offline page
-                      return new Response(
-                        '<html><head><title>Offline</title></head><body>' +
-                        '<h1>You are offline</h1>' +
-                        '<p>The application is currently offline. Please check your connection.</p>' +
-                        '</body></html>',
-                        {
-                          headers: { 'Content-Type': 'text/html' }
-                        }
-                      );
-                    });
-                });
-            });
-        })
-    );
-    return;
-  }
-  
-  // Check for Next.js-generated assets
-  const isNextAsset = url.pathname.includes('/_next/');
-  
-  // For Next.js assets (CSS, JS chunks)
-  if (isNextAsset) {
-    event.respondWith(
-      // Try cache first for Next.js assets (better performance)
-      caches.match(event.request)
-        .then((cachedResponse) => {
+          return networkResponse;
+        } catch (error) {
+          // If network fails, try to serve from cache
+          const cachedResponse = await caches.match(request);
           if (cachedResponse) {
-            console.log('Serving Next.js asset from cache:', url.pathname);
             return cachedResponse;
           }
           
-          // Not in cache, try network
-          console.log('Next.js asset not in cache, fetching from network:', url.pathname);
-          return fetch(event.request)
-            .then((networkResponse) => {
-              // Cache the network response for future
-              const responseToCache = networkResponse.clone();
-              
-              caches.open(CACHE_NAME)
-                .then((cache) => {
-                  cache.put(event.request, responseToCache);
-                  console.log('Cached Next.js asset:', url.pathname);
-                })
-                .catch(err => {
-                  console.warn('Failed to cache Next.js asset:', err);
-                });
-              
-              return networkResponse;
-            })
-            .catch(error => {
-              console.error('Failed to fetch Next.js asset:', url.pathname, error);
-              
-              // For CSS, return empty stylesheet as fallback
-              if (url.pathname.endsWith('.css')) {
-                return new Response('/* Offline fallback stylesheet */', {
-                  headers: { 'Content-Type': 'text/css' }
-                });
-              }
-              
-              // For JS, return empty script as fallback
-              if (url.pathname.endsWith('.js')) {
-                return new Response('// Offline fallback script', {
-                  headers: { 'Content-Type': 'application/javascript' }
-                });
-              }
-              
-              // Generic fallback for other assets
-              return new Response('Offline fallback', {
-                status: 503,
-                statusText: 'Service Unavailable'
-              });
-            });
-        })
+          // If not in cache, try to serve the root path instead
+          const rootResponse = await caches.match('/');
+          if (rootResponse) {
+            return rootResponse;
+          }
+          
+          // If everything fails, return a simple offline page
+          return new Response(
+            `<html><body><h1>Offline</h1><p>The app is currently offline.</p></body></html>`,
+            {
+              status: 200,
+              headers: { 'Content-Type': 'text/html' }
+            }
+          );
+        }
+      })()
     );
     return;
   }
   
-  // Static assets (images, manifest, etc.)
+  // For Next.js static assets (use network first, then cache)
+  if (isNextAsset(url.pathname)) {
+    event.respondWith(
+      (async () => {
+        try {
+          const networkResponse = await fetch(request);
+          
+          // Cache successful responses
+          if (networkResponse.ok) {
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(request, networkResponse.clone());
+          }
+          
+          return networkResponse;
+        } catch (error) {
+          // Try to get from cache if network fails
+          const cachedResponse = await caches.match(request);
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          
+          // Otherwise, fail gracefully
+          console.error('[ServiceWorker] Next.js asset fetch failed:', error);
+          return new Response('Asset not available offline', { status: 404 });
+        }
+      })()
+    );
+    return;
+  }
+  
+  // For all other requests (assets, API, etc.)
   event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        // If found in cache, return it
-        if (cachedResponse) {
-          console.log('Serving static asset from cache:', url.pathname);
-          return cachedResponse;
+    (async () => {
+      // Try first from cache
+      const cachedResponse = await caches.match(request);
+      if (cachedResponse) {
+        // Return cached response and fetch update in background
+        event.waitUntil(
+          fetch(request)
+            .then(networkResponse => {
+              if (networkResponse.ok) {
+                return caches.open(CACHE_NAME).then(cache => {
+                  return cache.put(request, networkResponse.clone());
+                });
+              }
+            })
+            .catch(() => {/* Ignore fetch errors */})
+        );
+        return cachedResponse;
+      }
+      
+      // If not in cache, get from network
+      try {
+        const networkResponse = await fetch(request);
+        
+        // Cache valid responses
+        if (networkResponse.ok) {
+          const responseToCache = networkResponse.clone();
+          event.waitUntil(
+            caches.open(CACHE_NAME).then(cache => {
+              return cache.put(request, responseToCache);
+            })
+          );
         }
         
-        // Otherwise fetch from network
-        console.log('Static asset not in cache, fetching from network:', url.pathname);
-        return fetch(event.request)
-          .then((networkResponse) => {
-            // Only cache valid responses
-            if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-              return networkResponse;
-            }
-            
-            // Clone the response to use it and cache it
-            const responseToCache = networkResponse.clone();
-            
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-                console.log('Cached static asset:', url.pathname);
-              })
-              .catch(err => {
-                console.warn('Failed to cache static asset:', err);
-              });
-            
-            return networkResponse;
-          })
-          .catch((error) => {
-            console.error('Failed to fetch static asset:', url.pathname, error);
-            
-            // Return a placeholder for images
-            if (url.pathname.match(/\.(jpg|jpeg|png|gif|webp|svg)$/)) {
-              return new Response('', {
-                headers: { 'Content-Type': 'image/svg+xml' }
-              });
-            }
-            
-            return new Response('Network error occurred', {
-              status: 503,
-              headers: { 'Content-Type': 'text/plain' }
-            });
-          });
-      })
+        return networkResponse;
+      } catch (error) {
+        console.error('[ServiceWorker] Fetch error:', error);
+        
+        // Handle image failures by returning a default image
+        if (request.url.match(/\.(jpg|jpeg|png|gif|svg)$/)) {
+          return caches.match('/icons/offline-image.svg')
+            || new Response('Image not available offline', { status: 404 });
+        }
+        
+        // Handle other failures
+        return new Response('Resource not available offline', { 
+          status: 503,
+          statusText: 'Service Unavailable'
+        });
+      }
+    })()
   );
 });
+
+// For debugging purposes
+self.addEventListener('message', (event) => {
+  if (event.data === 'skipWaiting') {
+    self.skipWaiting();
+  }
+});
+
+// Log service worker initialization
+console.log('[ServiceWorker] Script loaded!');

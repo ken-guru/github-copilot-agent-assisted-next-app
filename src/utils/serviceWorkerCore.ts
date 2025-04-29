@@ -1,15 +1,22 @@
 /**
  * Core Service Worker registration functionality
  */
-import { isLocalhost } from './serviceWorkerErrors';
 
-// Import needed functions
+// Import directly from error file to avoid circular dependencies
+import { isLocalhost, handleServiceWorkerError } from './serviceWorkerErrors';
+
+// Define config type locally to avoid circular imports
+interface ServiceWorkerConfig {
+  onSuccess?: (registration: ServiceWorkerRegistration) => void;
+  onUpdate?: (registration: ServiceWorkerRegistration) => void;
+}
+
+// Import specific functions directly to avoid circular dependencies
 import { handleRegistration } from './serviceWorkerUpdates';
-import { handleServiceWorkerError } from './serviceWorkerErrors';
 
 // Define missing function
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function checkValidSW(swUrl: string, _config?: Config): Promise<void> {
+function checkValidSW(swUrl: string, _config?: ServiceWorkerConfig): Promise<void> {
   return fetch(swUrl, {
     headers: { 'Service-Worker': 'script' }
   })
@@ -25,17 +32,12 @@ function checkValidSW(swUrl: string, _config?: Config): Promise<void> {
     });
 }
 
-type Config = {
-  onSuccess?: (registration: ServiceWorkerRegistration) => void;
-  onUpdate?: (registration: ServiceWorkerRegistration) => void;
-};
-
 /**
  * Register service worker for production environments
  * @param config Configuration options
  * @returns Promise that resolves when registration is complete (for testing)
  */
-export function register(config?: Config): Promise<void> {
+export function register(config?: ServiceWorkerConfig): Promise<void> {
   // Only allow registration in production environment
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     try {
@@ -76,7 +78,7 @@ export function register(config?: Config): Promise<void> {
 
           if (isLocalhost()) {
             // This is running on localhost. Let's check if a service worker still exists or not.
-            checkValidSW(swUrl, config).then(resolve);
+            checkValidServiceWorker(swUrl, config).then(resolve);
           } else {
             // Is not localhost. Just register service worker
             registerValidSW(swUrl, config).then(resolve);
@@ -94,7 +96,7 @@ export function register(config?: Config): Promise<void> {
  */
 export function checkValidServiceWorker(
   swUrl: string,
-  config?: Config
+  config?: ServiceWorkerConfig
 ): Promise<void> {
   return fetch(swUrl, {
     headers: { 'Service-Worker': 'script' }
@@ -114,6 +116,7 @@ export function checkValidServiceWorker(
     })
     .catch(error => {
       console.error('Error during service worker registration:', error);
+      return Promise.resolve();
     });
 }
 
@@ -122,7 +125,7 @@ export function checkValidServiceWorker(
  */
 export function registerValidSW(
   swUrl: string,
-  config?: Config
+  config?: ServiceWorkerConfig
 ): Promise<void> {
   return navigator.serviceWorker
     .register(swUrl)
@@ -136,13 +139,14 @@ export function registerValidSW(
     })
     .catch(error => {
       console.error('Error during service worker registration:', error);
+      return Promise.resolve();
     });
 }
 
 /**
  * Check for existing service worker registration and handle updates
  */
-export function checkForExistingSW(config?: Config): Promise<void> {
+export function checkForExistingSW(config?: ServiceWorkerConfig): Promise<void> {
   if ('serviceWorker' in navigator) {
     return new Promise<void>((resolve) => {
       navigator.serviceWorker.getRegistration()

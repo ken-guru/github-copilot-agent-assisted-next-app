@@ -1,31 +1,58 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ...existing code...
+  reactStrictMode: true,
   
-  // Add webpack configuration if it exists
+  // App Router is enabled by default in Next.js 15+
+  experimental: {
+    // Add any experimental features here if needed
+  },
+  
+  // Add path aliases that match tsconfig.json
   webpack: (config, { isServer }) => {
-    // ...existing webpack configuration...
+    // Client-side module fallbacks
+    if (!isServer) {
+      config.resolve.fallback = {
+        fs: false,
+        path: false,
+      };
+    }
+    
+    // Add aliases that match tsconfig.json
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': '/Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/src'
+    };
     
     return config;
   },
   
-  // Add corresponding turbopack configuration
-  turbopack: {
-    // Match the structure expected by the tests
-    rules: {
-      // Add necessary rules
-    },
-    resolveAlias: {
-      // Add aliases that match webpack configuration
-    },
-    loaders: {
-      '*.svg': {
-        // SVG loader configuration
-      }
-    }
+  // Ensure proper handling of PWA assets
+  async headers() {
+    return [
+      {
+        source: '/service-worker.js',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+          {
+            key: 'Service-Worker-Allowed',
+            value: '/',
+          },
+        ],
+      },
+      {
+        source: '/manifest.json',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
+    ];
   },
-  
-  // ...existing code...
 };
 
 module.exports = nextConfig;

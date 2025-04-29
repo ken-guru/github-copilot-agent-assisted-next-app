@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe('Basic page functionality', () => {
   beforeEach(() => {
     // Visit the homepage before each test
