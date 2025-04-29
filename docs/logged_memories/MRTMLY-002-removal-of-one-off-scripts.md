@@ -1,7 +1,7 @@
 ### Issue: Removal of One-Off Scripts
 **Date:** 2023-11-30
 **Tags:** #maintenance #cleanup #scripts #testing
-**Status:** In Progress
+**Status:** Completed
 
 #### Initial State
 - Previous analysis (MRTMLY-001) identified several scripts that appear to be one-off solutions:
