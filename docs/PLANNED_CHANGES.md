@@ -63,3 +63,170 @@ Note: When implementing a change, copy this template and fill it out completely.
 - Update documentation alongside code changes
 - Document all key decisions made during implementation
 - Update the Memory Log for all significant changes or bug fixes
+
+# Feature/Change Title: Project Restructuring for Next.js Best Practices
+
+## Context
+The project needs to be restructured to better align with Next.js best practices as outlined in the official Next.js documentation. This will improve:
+- Code organization and discoverability
+- Team collaboration efficiency
+- Adherence to framework conventions
+- Long-term maintainability
+- Developer onboarding experience
+
+## Requirements
+
+### Phase 1: Initial Analysis and Planning
+1. Project structure audit
+   - Create inventory of current project structure
+   - Identify components, utilities, and other code assets
+   - Document current routing structure
+   - Map out dependencies between components/modules
+
+2. Gap analysis
+   - Compare current structure with Next.js recommendations
+   - Identify specific structural changes needed
+   - Prioritize changes based on impact and complexity
+
+### Phase 2: Top-Level Directory Restructuring
+1. App Router implementation/verification
+   - Ensure `/app` directory exists and follows Next.js routing conventions
+   - Verify or implement proper layout and page structure
+   - Validate route groups and dynamic routes follow best practices
+
+2. Public assets organization
+   - Ensure `public` directory contains only static assets
+   - Verify proper referencing of assets throughout the application
+
+3. Source organization
+   - Consider moving application code into a `src` directory
+   - Organize components, utilities, and other shared code within appropriate directories
+
+### Phase 3: Route Structure Implementation
+1. Route segment organization
+   - Implement folder structure that properly maps to URL paths
+   - Organize nested routes according to application hierarchy
+   - Apply route groups where appropriate to improve code organization
+
+2. Special files implementation
+   - Add/verify required special files (`layout.js`, `page.js`, etc.)
+   - Implement proper error handling with `error.js` files
+   - Add loading states with `loading.js` files where appropriate
+
+3. Metadata implementation
+   - Organize metadata files according to Next.js conventions
+   - Implement proper SEO files (sitemap, robots, etc.)
+   - Set up appropriate Open Graph and app icon files
+
+### Phase 4: Component and Code Organization
+1. Component organization
+   - Implement consistent component hierarchy
+   - Organize components using either colocation or centralized approaches
+   - Consider using private folders (`_folderName`) for internal components
+
+2. Shared code organization
+   - Establish consistent patterns for utilities, hooks, and contexts
+   - Consider organization by feature vs. type based on project needs
+   - Implement proper import/export patterns
+
+3. Type definitions organization
+   - Organize TypeScript interfaces and types
+   - Consider central type definitions vs. colocated types
+
+### Phase 5: Configuration and Documentation
+1. Configuration file organization
+   - Verify proper setup of Next.js configuration files
+   - Organize environment variables according to best practices
+   - Ensure proper ESLint and TypeScript configuration
+
+2. Documentation updates
+   - Update README.md with new project structure information
+   - Document organization patterns and conventions
+   - Create folder/file structure visualization
+   - Update GitHub Copilot instructions to reflect new structure
+   - Update any component documentation to reflect new file paths
+   - Update Memory Log references if needed
+
+3. Project-specific documentation updates
+   - Update copilot-instructions.md to include guidance about the new structure
+   - Add information about directory conventions to relevant documentation
+   - Create or update contributing guidelines to reflect structural standards
+   - Document folder naming conventions and their significance
+
+## Technical Guidelines
+- Ensure backwards compatibility during migration
+- Use route groups and private folders to better organize code without affecting URLs
+- Consider colocation of related files when appropriate
+- Implement proper component hierarchy with layouts and pages
+- Follow naming conventions for special files
+- Use route groups to organize routes by site section or team
+- Apply private folders for implementation details not part of routing
+- Create explicit mappings between old paths and new paths for reference
+- Document any naming convention changes clearly
+- Maintain detailed logs of each structural change for rollback capability
+
+## Expected Outcome
+- A project structure that follows Next.js best practices
+- Improved developer experience with intuitive code organization
+- Better separation of concerns between different parts of the application
+- More maintainable and scalable codebase
+- Improved build performance through better code organization
+
+## AI Agent Execution Guidelines
+1. Step-by-step execution approach
+   - Complete each step in sequence before proceeding
+   - Document all changes made, including file paths and content modifications
+   - Create checkpoints after each major change to enable rollbacks if needed
+   - Run tests after each significant restructuring step
+
+2. Error handling process
+   - If an error occurs during restructuring, document it completely
+   - Include the full error message, context, and the operation being performed
+   - Propose solutions based on error analysis
+   - Document successful resolution approaches
+
+3. Path management
+   - Create a mapping document between old and new file paths
+   - Update import statements methodically, one component at a time
+   - Verify each updated import works before proceeding
+   - Maintain a list of any complex path transformations
+
+4. Progress tracking
+   - Report completion status for each phase clearly
+   - Identify any blockers or challenges encountered
+   - Document any decisions made or assumptions followed
+   - Flag areas that may need human review
+
+## Validation Criteria for Each Phase
+
+### Phase 1: Initial Analysis and Planning
+- [ ] Complete inventory of current project structure
+- [ ] Gap analysis document created
+- [ ] Migration strategy approved by team
+
+### Phase 2: Top-Level Directory Restructuring
+- [ ] App Router properly implemented/verified
+- [ ] Public assets correctly organized
+- [ ] Source organization implemented
+- [ ] Build and tests pass after restructuring
+
+### Phase 3: Route Structure Implementation
+- [ ] Routes properly organized and functioning
+- [ ] Special files implemented in appropriate locations
+- [ ] Metadata files correctly configured
+- [ ] All routes accessible and functioning as before
+
+### Phase 4: Component and Code Organization
+- [ ] Components organized according to chosen strategy
+- [ ] Shared code properly structured
+- [ ] Type definitions organized
+- [ ] No regression in functionality
+
+### Phase 5: Configuration and Documentation
+- [ ] Configuration files properly set up
+- [ ] Documentation updated
+- [ ] GitHub Copilot instructions updated to reflect new structure
+- [ ] Component documentation reflects new file paths
+- [ ] Contributing guidelines updated with structural standards
+- [ ] Team briefed on new structure
+- [ ] Final testing complete with no regressions

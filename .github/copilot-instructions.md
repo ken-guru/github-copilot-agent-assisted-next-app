@@ -123,6 +123,36 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Maintain chronological order within date sections
 - Add new date sections at bottom of file when needed
 
+## PROJECT STRUCTURE STANDARDS [PRIORITY: HIGH]
+### Next.js File Organization
+- Follow Next.js App Router conventions strictly
+- Place all routing components in the `app` directory
+- Use the following folder structure:
+  - `app/` - For all route-related components and files
+  - `components/` - For shared UI components
+  - `lib/` or `utils/` - For utility functions and shared logic
+  - `public/` - For static assets only
+  - `styles/` - For global styles and theme definitions
+  - `types/` - For TypeScript type definitions
+
+### Naming Conventions
+- Use kebab-case for folders within the app router
+- Use PascalCase for component files
+- Use camelCase for utility files
+- Follow Next.js special file conventions exactly:
+  - `page.tsx` - For route pages
+  - `layout.tsx` - For layout components
+  - `loading.tsx` - For loading states
+  - `error.tsx` - For error boundaries
+
+### File Organization Principles
+- Colocate related files when appropriate
+- Use route groups (parentheses folders) to organize related routes
+- Use private folders (underscore prefix) for implementation details
+- Keep components focused on single responsibilities
+- Extract complex logic to separate utility functions
+- Document component hierarchy in comments
+
 ## CODE QUALITY STANDARDS [PRIORITY: HIGH]
 ### Large File Refactoring
 - IDENTIFY files exceeding 200 lines
