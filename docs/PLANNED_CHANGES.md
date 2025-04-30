@@ -197,6 +197,16 @@ The project needs to be restructured to better align with Next.js best practices
    - Document any decisions made or assumptions followed
    - Flag areas that may need human review
 
+5. Structure Analysis Tool Usage
+   - Run the improved analyze-structure.js script at key milestones:
+     - Before beginning each phase to establish a baseline
+     - After completing each major restructuring step
+     - After completing each phase to verify progress
+     - Before final verification to ensure compliance
+   - Use the compliance recommendations to identify remaining issues
+   - Compare structure snapshots to track changes over time
+   - Include snapshot comparisons in the memory logs for documentation
+
 ## Validation Criteria for Each Phase
 
 ### Phase 1: Initial Analysis and Planning
