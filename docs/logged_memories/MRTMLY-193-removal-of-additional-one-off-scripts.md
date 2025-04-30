@@ -5,7 +5,7 @@
 **Status:** Completed
 
 #### Initial State
-After our initial cleanup of one-off scripts documented in [MRTMLY-002](./MRTMLY-002-removal-of-one-off-scripts.md), a more thorough code review identified additional one-off scripts that should be considered for removal. These scripts are:
+After our initial cleanup of one-off scripts documented in [MRTMLY-191](./MRTMLY-191-removal-of-one-off-scripts.md), a more thorough code review identified additional one-off scripts that should be considered for removal. These scripts are:
 
 1. **`scripts/extended-build.js`**: A build script that clears Next.js cache and temporarily modifies tsconfig.json to exclude Cypress files.
 2. **`verify-fix.js`**: A simple verification script for testing ActivityStateMachine, likely used once to verify a bug fix.

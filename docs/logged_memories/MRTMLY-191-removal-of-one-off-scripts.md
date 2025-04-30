@@ -4,7 +4,7 @@
 **Status:** Completed
 
 #### Initial State
-- Previous analysis (MRTMLY-001) identified several scripts that appear to be one-off solutions:
+- Previous analysis (MRTMLY-190) identified several scripts that appear to be one-off solutions:
   - `convert-test-files.js`
   - `test-duplicate-activity-handling.js`
   - `clean-config.sh`
@@ -126,7 +126,7 @@ During this cleanup process, several other files were identified as potential ca
 ##### Phase 1: Analysis and Documentation (To be executed by AI agent or developer)
 
 1. **Create memory log entry**: 
-   - Create a new memory log entry file named `MRTMLY-003-additional-cleanup-candidates.md`
+   - Create a new memory log entry file named `MRTMLY-192-additional-cleanup-candidates.md`
    - Add reference to main memory log
    - Tag with `#maintenance` `#cleanup` `#code-quality`
 

@@ -5,7 +5,7 @@
 **Status:** In Progress
 
 #### Initial State
-During the previous cleanup process (MRTMLY-002), several additional files were identified as candidates for future pruning:
+During the previous cleanup process (MRTMLY-191), several additional files were identified as candidates for future pruning:
 
 1. **`deprecated-utils/`**
    - Location: `/src/utils/deprecated-utils/`
@@ -29,7 +29,7 @@ During the previous cleanup process (MRTMLY-002), several additional files were 
 
 #### Implementation Plan
 
-Following the detailed plan outlined in MRTMLY-002, this cleanup effort will be executed in four phases:
+Following the detailed plan outlined in MRTMLY-191, this cleanup effort will be executed in four phases:
 
 1. **Phase 1**: Analysis and Documentation
 2. **Phase 2**: Migration Planning

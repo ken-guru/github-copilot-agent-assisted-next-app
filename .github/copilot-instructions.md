@@ -84,13 +84,13 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 ### File Organization
 - Store individual entries in: `docs/logged_memories/`
 - Filename format: `MRTMLY-XXX-descriptive-name.md`
-- NEVER add detailed entries directly to main MEMORY_LOG.md
+- NEVER add detailed entries directly to main `docs/MEMORY_LOG.md`
 - ONLY add reference links in main file pointing to individual entries
 
 ### New Entry Creation Process
 1. Create new file in `docs/logged_memories/` with proper naming
 2. Add entry details using template format
-3. Add ONLY a reference link to MEMORY_LOG.md
+3. Add ONLY a reference link to `docs/MEMORY_LOG.md`
 4. Match existing reference format
 5. Group by date/month in index
 6. Add as LAST item in respective date section
@@ -115,7 +115,7 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Update entries as debugging progresses
 
 ### Memory Log Maintenance
-- Edit individual files, not MEMORY_LOG.md
+- Edit individual files, not `docs/MEMORY_LOG.md`
 - Check for consistent formatting
 - Ensure proper referencing in main index
 - Link related issues
