@@ -153,7 +153,7 @@ function isFontRequest(request) {
   // Check for common font paths
   if (url.pathname.startsWith('/fonts/') || 
       url.pathname.includes('/assets/fonts/') || 
-      url.hostname.includes('fonts.googleapis.com')) {
+      url.hostname === 'fonts.googleapis.com') {
     return true;
   }
   
