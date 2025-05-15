@@ -5,7 +5,112 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
       interval: "weekly"
+      day: "monday" # Specify day for more predictable updates
+      time: "09:00" # Optional: Set specific time (UTC)
+    open-pull-requests-limit: 10
+    target-branch: "main" # Specify target branch explicitly
+    reviewers:
+      - "ken-guru"
+    assignees:
+      - "ken-guru" # Add assignees for better tracking
+
+    # Improved grouping strategy
+    groups:
+      dev-dependencies:
+        patterns:
+          - "*eslint*"
+          - "*jest*"
+          - "*test*"
+          - "*prettier*"
+          - "*babel*"
+          - "*webpack*"
+          - "*storybook*"
+        update-types:
+          - "minor"
+          - "patch"
+      react-ecosystem:
+        patterns:
+          - "react*"
+          - "@types/react*"
+        update-types:
+          - "minor"
+          - "patch"
+      next-ecosystem:
+        patterns:
+          - "next*"
+          - "@next*"
+        update-types:
+          - "minor"
+          - "patch"
+      types:
+        patterns:
+          - "@types/*"
+        exclude-patterns:
+          - "@types/react*"
+        update-types:
+          - "minor"
+          - "patch"
+
+    # Ignore certain dependencies or patterns
+    ignore:
+      # Example: Ignore major version updates for specific packages
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+
+    labels:
+      - "dependencies"
+      - "automerge"
+    
+    # Configure automerge behavior
+    automerge: true
+    versioning-strategy: auto
+    
+    # Improved commit message format
+    commit-message:
+      prefix: "deps"
+      prefix-development: "chore"
+      include: "scope"
+
+  # Add GitHub Actions ecosystem updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    labels:
+      - "ci-cd"
+      - "dependencies"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+
+  # Enable security updates
+  - package-ecosystem: "npm" 
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 15
+    target-branch: "main"
+    labels:
+      - "security"
+      - "dependencies"
+      - "priority-high"
+    commit-message:
+      prefix: "fix"
+      prefix-development: "fix"
+      include: "scope"
+    reviewers:
+      - "ken-guru"
+    pull-request-branch-name:
+      separator: "-"
+      prefix: "security"
+    # Only handle security updates
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch", "version-update:semver-minor", "version-update:semver-major"]
