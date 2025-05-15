@@ -2,6 +2,7 @@
 # package ecosystems to update and where the package manifests are located.
 # Please see the documentation for all configuration options:
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# Configuration docs: /docs/dependabot-configuration.md
 
 version: 2
 updates:
@@ -15,13 +16,14 @@ updates:
     target-branch: "main" # Specify target branch explicitly
     reviewers:
       - "ken-guru"
+      - "team:frontend-devs" # Optional team reviewer
     assignees:
       - "ken-guru" # Add assignees for better tracking
     # Enabled security updates  
     allow:
       - dependency-type: "all"
-    vulnerability-alerts: true
-
+    # Note: We monitor vulnerabilities and security alerts with priority
+    
     # Improved grouping strategy
     groups:
       dev-dependencies:
@@ -33,6 +35,49 @@ updates:
           - "*babel*"
           - "*webpack*"
           - "*storybook*"
+        update-types:
+          - "minor"
+          - "patch"
+      typescript-ecosystem:
+        patterns:
+          - "typescript"
+          - "ts-*"
+          - "*-typescript-*"
+          - "tsconfig-*"
+          - "@typescript-eslint/*"
+        update-types:
+          - "minor"
+          - "patch"
+      linting-tools:
+        patterns:
+          - "*lint*"
+          - "*prettier*"
+          - "eslint-config-*"
+          - "eslint-plugin-*"
+        update-types:
+          - "minor"
+          - "patch"
+      testing-tools:
+        patterns:
+          - "jest*"
+          - "@testing-library/*"
+          - "cypress*"
+          - "vitest*"
+          - "*test*"
+          - "*mock*"
+          - "*msw*"
+        update-types:
+          - "minor"
+          - "patch"
+      bundlers-and-build:
+        patterns:
+          - "*webpack*"
+          - "*rollup*"
+          - "*babel*"
+          - "*esbuild*"
+          - "*vite*"
+          - "*parcel*"
+          - "*swc*"
         update-types:
           - "minor"
           - "patch"
@@ -62,7 +107,10 @@ updates:
         patterns:
           - "*"
         update-types:
-          - "security"
+          - "major"
+          - "minor"
+          - "patch"
+        # Note: We aim to address security alerts from the past 30 days with priority
 
     # Ignore certain dependencies or patterns
     ignore:
@@ -74,10 +122,9 @@ updates:
 
     labels:
       - "dependencies"
-      - "automerge"
+      - "security:review" # Added for security-related updates
     
-    # Configure automerge behavior
-    automerge: true
+    # Configure versioning strategy
     versioning-strategy: auto
     
     # Improved commit message format
@@ -85,16 +132,30 @@ updates:
       prefix: "deps"
       prefix-development: "chore"
       include: "scope"
+      # Format examples:
+      # - deps(next): Update next.js dependencies from 13.1.0 to 13.2.0
+      # - chore(eslint): Update eslint-config-next from 12.0.0 to 13.0.0
 
-  # Add GitHub Actions ecosystem updates
+  # Add GitHub Actions ecosystem updates with enhanced configuration
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "wednesday"
+      day: "wednesday" # Staggered from npm updates
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "ken-guru"
     labels:
       - "ci-cd"
       - "dependencies"
     commit-message:
       prefix: "ci"
       include: "scope"
+    groups:
+      github-actions:
+        patterns:
+          - "actions/*"
+        update-types:
+          - "minor"
+          - "patch"
