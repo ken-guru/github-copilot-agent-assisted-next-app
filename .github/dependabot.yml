@@ -11,12 +11,16 @@ updates:
       interval: "weekly"
       day: "monday" # Specify day for more predictable updates
       time: "09:00" # Optional: Set specific time (UTC)
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 15 # Increased from 10 to accommodate security updates
     target-branch: "main" # Specify target branch explicitly
     reviewers:
       - "ken-guru"
     assignees:
       - "ken-guru" # Add assignees for better tracking
+    # Enabled security updates  
+    allow:
+      - dependency-type: "all"
+    vulnerability-alerts: true
 
     # Improved grouping strategy
     groups:
@@ -54,6 +58,11 @@ updates:
         update-types:
           - "minor"
           - "patch"
+      security-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "security"
 
     # Ignore certain dependencies or patterns
     ignore:
@@ -89,28 +98,3 @@ updates:
     commit-message:
       prefix: "ci"
       include: "scope"
-
-  # Enable security updates
-  - package-ecosystem: "npm" 
-    directory: "/"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 15
-    target-branch: "main"
-    labels:
-      - "security"
-      - "dependencies"
-      - "priority-high"
-    commit-message:
-      prefix: "fix"
-      prefix-development: "fix"
-      include: "scope"
-    reviewers:
-      - "ken-guru"
-    pull-request-branch-name:
-      separator: "-"
-      prefix: "security"
-    # Only handle security updates
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-patch", "version-update:semver-minor", "version-update:semver-major"]
