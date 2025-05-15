@@ -43,6 +43,8 @@ updates:
           - "typescript"
           - "ts-*"
           - "*-typescript-*"
+          - "tsconfig-*"
+          - "@typescript-eslint/*"
         update-types:
           - "minor"
           - "patch"
@@ -52,6 +54,30 @@ updates:
           - "*prettier*"
           - "eslint-config-*"
           - "eslint-plugin-*"
+        update-types:
+          - "minor"
+          - "patch"
+      testing-tools:
+        patterns:
+          - "jest*"
+          - "@testing-library/*"
+          - "cypress*"
+          - "vitest*"
+          - "*test*"
+          - "*mock*"
+          - "*msw*"
+        update-types:
+          - "minor"
+          - "patch"
+      bundlers-and-build:
+        patterns:
+          - "*webpack*"
+          - "*rollup*"
+          - "*babel*"
+          - "*esbuild*"
+          - "*vite*"
+          - "*parcel*"
+          - "*swc*"
         update-types:
           - "minor"
           - "patch"
@@ -85,6 +111,7 @@ updates:
           - "version-update:semver-major"
           - "version-update:semver-minor"
           - "version-update:semver-patch"
+        alert-lookback-days: 30  # Check security alerts from the past 30 days
 
     # Ignore certain dependencies or patterns
     ignore:
