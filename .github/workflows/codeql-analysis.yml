@@ -36,10 +36,8 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         # Customize queries as needed
-        # queries: ./path/to/custom-queries,security-and-quality
-        # Enable specific query packs for better analysis
-        packs: security-and-quality
-        # Add debug mode to help diagnose issues
+        queries: security-extended,security-and-quality
+        # Debug mode to help diagnose issues
         debug: true
 
     # Autobuild attempts to build any compiled languages
