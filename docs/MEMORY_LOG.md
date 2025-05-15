@@ -229,6 +229,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-187: Page On Application Load](./logged_memories/MRTMLY-187-page-on-application-load.md)
 - [MRTMLY-188: Css Variables Conflict](./logged_memories/MRTMLY-188-css-variables-conflict.md)
 - [MRTMLY-189: Console Errors Warnings](./logged_memories/MRTMLY-189-console-errors-warnings.md)
+- [MRTMLY-190: Dependabot Automated Pull Request Configuration](./logged_memories/MRTMLY-190-dependabot-automated-pull-request-configuration.md)
 
 ## About Memory Logs
 
