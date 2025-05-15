@@ -2,6 +2,7 @@
 # package ecosystems to update and where the package manifests are located.
 # Please see the documentation for all configuration options:
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# Configuration docs: /docs/dependabot-configuration.md
 
 version: 2
 updates:
@@ -15,6 +16,7 @@ updates:
     target-branch: "main" # Specify target branch explicitly
     reviewers:
       - "ken-guru"
+      - "team:frontend-devs" # Optional team reviewer
     assignees:
       - "ken-guru" # Add assignees for better tracking
     # Enabled security updates  
@@ -33,6 +35,23 @@ updates:
           - "*babel*"
           - "*webpack*"
           - "*storybook*"
+        update-types:
+          - "minor"
+          - "patch"
+      typescript-ecosystem:
+        patterns:
+          - "typescript"
+          - "ts-*"
+          - "*-typescript-*"
+        update-types:
+          - "minor"
+          - "patch"
+      linting-tools:
+        patterns:
+          - "*lint*"
+          - "*prettier*"
+          - "eslint-config-*"
+          - "eslint-plugin-*"
         update-types:
           - "minor"
           - "patch"
@@ -63,6 +82,9 @@ updates:
           - "*"
         update-types:
           - "security"
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
 
     # Ignore certain dependencies or patterns
     ignore:
@@ -75,9 +97,14 @@ updates:
     labels:
       - "dependencies"
       - "automerge"
+      - "security:review" # Added for security-related updates
     
-    # Configure automerge behavior
+    # Configure refined automerge behavior
     automerge: true
+    automerge-conditions:
+      # Don't auto-merge critical dependencies
+      - dependency-name: "!(react|next|react-dom)"
+        update-type: "!(version-update:semver-major)"
     versioning-strategy: auto
     
     # Improved commit message format
@@ -85,16 +112,32 @@ updates:
       prefix: "deps"
       prefix-development: "chore"
       include: "scope"
+      # Format examples:
+      # - deps(next): Update next.js dependencies from 13.1.0 to 13.2.0
+      # - chore(eslint): Update eslint-config-next from 12.0.0 to 13.0.0
 
-  # Add GitHub Actions ecosystem updates
+  # Add GitHub Actions ecosystem updates with enhanced configuration
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "wednesday"
+      day: "wednesday" # Staggered from npm updates
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "ken-guru"
     labels:
       - "ci-cd"
       - "dependencies"
+      - "automerge"
     commit-message:
       prefix: "ci"
       include: "scope"
+    groups:
+      github-actions:
+        patterns:
+          - "actions/*"
+        update-types:
+          - "minor"
+          - "patch"
+    automerge: true
