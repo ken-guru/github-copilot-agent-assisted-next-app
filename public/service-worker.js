@@ -236,7 +236,14 @@ self.addEventListener('fetch', (event) => {
 });
 
 // For debugging purposes
+const TRUSTED_ORIGIN = 'https://www.example.com';
+
 self.addEventListener('message', (event) => {
+  if (event.origin !== TRUSTED_ORIGIN) {
+    console.warn('[ServiceWorker] Ignored message from untrusted origin:', event.origin);
+    return;
+  }
+
   if (event.data === 'skipWaiting') {
     self.skipWaiting();
   }
