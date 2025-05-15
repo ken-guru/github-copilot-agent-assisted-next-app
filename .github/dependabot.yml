@@ -110,7 +110,7 @@ updates:
           - "major"
           - "minor"
           - "patch"
-        alert-lookback-days: 30  # Check security alerts from the past 30 days
+        # Note: We aim to address security alerts from the past 30 days with priority
 
     # Ignore certain dependencies or patterns
     ignore:
