@@ -22,8 +22,8 @@ updates:
     # Enabled security updates  
     allow:
       - dependency-type: "all"
-    vulnerability-alerts: true
-
+    # Note: We monitor vulnerabilities and security alerts with priority
+    
     # Improved grouping strategy
     groups:
       dev-dependencies:
@@ -122,15 +122,9 @@ updates:
 
     labels:
       - "dependencies"
-      - "automerge"
       - "security:review" # Added for security-related updates
     
-    # Configure refined automerge behavior
-    automerge: true
-    automerge-conditions:
-      # Don't auto-merge critical dependencies
-      - dependency-name: "!(react|next|react-dom)"
-        update-type: "!(version-update:semver-major)"
+    # Configure versioning strategy
     versioning-strategy: auto
     
     # Improved commit message format
@@ -155,7 +149,6 @@ updates:
     labels:
       - "ci-cd"
       - "dependencies"
-      - "automerge"
     commit-message:
       prefix: "ci"
       include: "scope"
@@ -166,4 +159,3 @@ updates:
         update-types:
           - "minor"
           - "patch"
-    automerge: true
