@@ -107,10 +107,9 @@ updates:
         patterns:
           - "*"
         update-types:
-          - "security"
-          - "version-update:semver-major"
-          - "version-update:semver-minor"
-          - "version-update:semver-patch"
+          - "major"
+          - "minor"
+          - "patch"
         alert-lookback-days: 30  # Check security alerts from the past 30 days
 
     # Ignore certain dependencies or patterns

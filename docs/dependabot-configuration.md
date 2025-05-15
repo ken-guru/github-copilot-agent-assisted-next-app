@@ -24,7 +24,7 @@ We've organized dependencies into logical groups to reduce the number of pull re
 | react-ecosystem | React and related libraries | minor, patch |
 | next-ecosystem | Next.js and related libraries | minor, patch |
 | types | TypeScript type definitions | minor, patch |
-| security-updates | Security-related updates | all |
+| security-updates | All dependencies with security implications | major, minor, patch |
 
 ## Auto-merge Policy
 
@@ -46,7 +46,18 @@ Dependencies that don't qualify for auto-merge require manual review:
 Security updates are prioritized and include:
 - All severity levels (critical, high, medium, low)
 - All update types (major, minor, patch)
-- Special labeling for easier identification
+- Special labeling (`security:review`) for easier identification
+- Automatic opening of pull requests when vulnerabilities are detected
+
+For critical security vulnerabilities, consider manually updating the dependency immediately rather than waiting for the scheduled Dependabot run:
+
+```bash
+# Update a vulnerable package to latest secure version
+npm update vulnerable-package
+
+# Or explicitly install a specific secure version
+npm install vulnerable-package@x.y.z
+```
 
 ## Manual Override
 
