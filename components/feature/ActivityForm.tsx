@@ -7,7 +7,7 @@ interface ActivityFormProps {
   isDisabled?: boolean;
 }
 
-export default function ActivityForm({ onSubmit, onCancel, isDisabled = false }: ActivityFormProps) {
+export default function ActivityForm({ onSubmit, onCancel: _onCancel, isDisabled = false }: ActivityFormProps) {
   const [activityName, setActivityName] = useState('');
   
   const handleSubmit = (e: React.FormEvent) => {

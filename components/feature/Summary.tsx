@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './Summary.module.css';
 import type { TimelineEntry } from './Timeline';
 import { isDarkMode } from '@lib/utils/colors';
+// ColorSet is imported for type definitions but not directly used
 import type { ColorSet } from '@lib/utils/colors';
 
 interface SummaryProps {

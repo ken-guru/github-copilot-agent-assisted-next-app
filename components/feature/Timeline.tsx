@@ -3,7 +3,6 @@ import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@lib/time/timelineCalculations';
 import { formatTimeHuman } from '@lib/time';
 import { isDarkMode } from '@lib/utils/colors';
-import type { ColorSet } from '@lib/utils/colors';
 
 export interface TimelineEntry {
   id: string;
@@ -15,6 +14,9 @@ export interface TimelineEntry {
     background: string;
     text: string;
     border: string;
+  } | {
+    light: { background: string, text: string, border: string },
+    dark: { background: string, text: string, border: string }
   };
 }
 
@@ -48,16 +50,22 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
   }
 }
 
-function getThemeAppropriateColor(colors: any) {
+function getThemeAppropriateColor(colors: {
+  light?: { background: string, text: string, border: string },
+  dark?: { background: string, text: string, border: string }
+} | { background: string, text: string, border: string }): { background: string, text: string, border: string } {
   // If colors is already in the final format, return it directly
   if (colors && typeof colors === 'object' && 'background' in colors) {
     return colors;
   }
   
-  // Otherwise, check if it's a ColorSet with light/dark variants
+  // Otherwise, check if it's a color set with light/dark variants
   if (colors && typeof colors === 'object' && 'light' in colors && 'dark' in colors) {
     const isDark = typeof window !== 'undefined' && isDarkMode();
-    return isDark ? colors.dark : colors.light;
+    const theme = isDark ? colors.dark : colors.light;
+    if (theme) {
+      return theme;
+    }
   }
   
   // Default fallback
@@ -77,7 +85,8 @@ export default function Timeline({
   allActivitiesCompleted = false 
 }: TimelineProps) {
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
-  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
+  // We're not using this state directly, but it's needed for theme detection in the component
+  const [, setCurrentTheme] = useState<'light' | 'dark'>(
     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
   );
   
@@ -318,7 +327,7 @@ export default function Timeline({
           
           <div className={styles.entriesWrapper}>
             {hasEntries ? (
-              timeSpansData.items.map((item, index) => {
+              timeSpansData.items.map((item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number }, index: number) => {
                 const style = calculateEntryStyle(item);
                 
                 if (item.type === 'gap') {

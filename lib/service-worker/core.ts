@@ -18,7 +18,7 @@ export const SERVICE_WORKER_EVENTS = {
 
 export interface ServiceWorkerEvent {
   type: string;
-  payload?: any;
+  payload?: unknown;
 }
 
 export type ServiceWorkerListener = (event: ServiceWorkerEvent) => void;

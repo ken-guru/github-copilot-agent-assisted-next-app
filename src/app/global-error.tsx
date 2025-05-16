@@ -1,7 +1,8 @@
 'use client';
 
 export default function GlobalError({
-  error,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  error,  // Error parameter is required by Next.js but not used here
   reset,
 }: {
   error: Error;

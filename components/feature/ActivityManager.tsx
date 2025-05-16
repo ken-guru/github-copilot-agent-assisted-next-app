@@ -29,9 +29,9 @@ export default function ActivityManager({
   onActivityRemove,
   currentActivityId, 
   completedActivityIds,
-  timelineEntries,
+  timelineEntries: _timelineEntries,
   isTimeUp = false,
-  elapsedTime = 0 
+  elapsedTime: _elapsedTime = 0 
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [showForm, setShowForm] = useState(false);

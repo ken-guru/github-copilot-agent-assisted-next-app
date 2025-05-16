@@ -1,5 +1,3 @@
-import { SW_STATUS, SERVICE_WORKER_EVENTS, ServiceWorkerListener } from './core';
-
 /**
  * Register a service worker in the browser
  * @param scriptURL The URL of the service worker script

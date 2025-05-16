@@ -14,7 +14,7 @@ export default function ProgressBar({
   entries,
   totalDuration,
   elapsedTime,
-  timerActive = false
+  timerActive: _timerActive = false
 }: ProgressBarProps) {
   // State to track if the component is being viewed on mobile
   const [isMobile, setIsMobile] = useState(false);

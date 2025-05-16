@@ -1,4 +1,4 @@
-import { SW_STATUS, SERVICE_WORKER_EVENTS, ServiceWorkerListener } from './core';
+import { SERVICE_WORKER_EVENTS, ServiceWorkerListener } from './core';
 
 /**
  * Check for service worker updates

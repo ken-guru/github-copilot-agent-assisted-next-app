@@ -22,7 +22,8 @@ export function ActivityButton({
   onRemove,
   disabled,
   timelineEntries = [],
-  elapsedTime = 0
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  elapsedTime = 0  // Parameter kept for API compatibility but not used
 }: ActivityButtonProps) {
   // Calculate the duration of this activity from timeline entries
   const getDuration = () => {

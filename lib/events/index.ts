@@ -5,7 +5,7 @@
  * with proper cleanup for React components.
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * Hook to detect online/offline status with proper cleanup
@@ -60,21 +60,21 @@ export function addEventListenerWithCleanup<K extends keyof WindowEventMap>(
  * @param delay Debounce delay in milliseconds
  * @returns Debounced function
  */
-export function debounce<T extends (...args: any[]) => void>(
+export function debounce<T extends (...args: Array<unknown>) => void>(
   func: T,
   delay: number
 ): (...args: Parameters<T>) => void {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
   
-  return function(this: any, ...args: Parameters<T>) {
-    const context = this;
+  return function(this: unknown, ...args: Parameters<T>) {
+    // Use the function directly without aliasing 'this'
     
     if (timeoutId !== null) {
       clearTimeout(timeoutId);
     }
     
     timeoutId = setTimeout(() => {
-      func.apply(context, args);
+      func.apply(this, args);
       timeoutId = null;
     }, delay);
   };
@@ -87,15 +87,15 @@ export function debounce<T extends (...args: any[]) => void>(
  * @param limit Minimum time between function calls in milliseconds
  * @returns Throttled function
  */
-export function throttle<T extends (...args: any[]) => void>(
+export function throttle<T extends (...args: Array<unknown>) => void>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
   let lastRun = 0;
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
   
-  return function(this: any, ...args: Parameters<T>) {
-    const context = this;
+  return function(this: unknown, ...args: Parameters<T>) {
+    // Use the function directly without aliasing 'this'
     const now = Date.now();
     
     if (now - lastRun >= limit) {
@@ -105,12 +105,12 @@ export function throttle<T extends (...args: any[]) => void>(
       }
       
       lastRun = now;
-      func.apply(context, args);
+      func.apply(this, args);
     } else if (timeoutId === null) {
       timeoutId = setTimeout(() => {
         lastRun = Date.now();
         timeoutId = null;
-        func.apply(context, args);
+        func.apply(this, args);
       }, limit - (now - lastRun));
     }
   };

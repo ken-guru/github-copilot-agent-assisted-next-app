@@ -1,4 +1,4 @@
-import { ActivityStateMachine } from './activity-state-machine';
+// ActivityStateMachine import removed as it's not used in this file
 
 /**
  * @deprecated Use ActivityStateMachine.isCompleted() instead.
@@ -25,9 +25,6 @@ export function isActivitiesCompleted(params: {
     completedActivityIds,
     removedActivityIds
   } = params;
-  
-  // Create a temporary state machine to evaluate completion state
-  const stateMachine = new ActivityStateMachine();
   
   // If any activity is running, not completed
   if (currentActivityRunning) {
