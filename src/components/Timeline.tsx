@@ -63,15 +63,30 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     // Find the closest matching color set in internalActivityColors
     const closestColorSet = findClosestColorSet(hue, colors);
     
-    // Return the appropriate theme version
-    return currentTheme === 'dark' ? closestColorSet.dark : closestColorSet.light;
+    // Return the appropriate theme version with null checks
+    if (!closestColorSet) {
+      return {
+        background: 'var(--background-muted)',
+        text: 'var(--foreground)',
+        border: 'var(--border-color)'
+      };
+    }
+    
+    return currentTheme === 'dark' 
+      ? closestColorSet.dark 
+      : closestColorSet.light;
   };
   
   // Helper to extract hue from HSL color
-  const extractHueFromHsl = (hslColor: string): number => {
+  const extractHueFromHsl = (hslColor: string | undefined): number => {
+    if (!hslColor) return 0;
+    
     try {
       const hueMatch = hslColor.match(/hsl\(\s*(\d+)/);
-      return hueMatch ? parseInt(hueMatch[1], 10) : 0;
+      if (hueMatch && hueMatch[1]) {
+        return parseInt(hueMatch[1], 10);
+      }
+      return 0;
     } catch {
       // Fallback for non-HSL colors or parsing errors
       return 0;
@@ -153,9 +168,12 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     let timeoutId: NodeJS.Timeout | null = null;
     
     const updateTime = () => {
-      if (hasEntries) {
-        const elapsed = Math.floor((Date.now() - entries[0].startTime) / 1000);
-        setCurrentElapsedTime(elapsed);
+      if (hasEntries && entries.length > 0 && entries[0]) {
+        const firstEntry = entries[0];
+        if (firstEntry.startTime) {
+          const elapsed = Math.floor((Date.now() - firstEntry.startTime) / 1000);
+          setCurrentElapsedTime(elapsed);
+        }
       }
     };
 
@@ -218,7 +236,10 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   }, [totalDuration, effectiveDuration, isOvertime]);
   
   // Calculate data for timeline entries
-  const currentTimeLeft = totalDuration * 1000 - (hasEntries && entries[0].startTime ? Date.now() - entries[0].startTime : 0);
+  const firstEntry = hasEntries && entries.length > 0 ? entries[0] : undefined;
+  const firstEntryStartTime = firstEntry ? firstEntry.startTime : undefined;
+  const currentTimeLeft = totalDuration * 1000 - (firstEntryStartTime ? Date.now() - firstEntryStartTime : 0);
+  
   const timeSpansData = calculateTimeSpans({
     entries,
     totalDuration: effectiveDuration,
@@ -226,10 +247,17 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     timeLeft: currentTimeLeft,
   });
   
-  const calculateEntryStyle = (item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number }) => {
+  const calculateEntryStyle = (item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number } | undefined) => {
+    if (!item) {
+      return {
+        height: '0%',
+        backgroundColor: 'transparent',
+      };
+    }
+    
     const style: React.CSSProperties = {
-      height: `${item.height}%`,
-      minHeight: item.height < 5 ? '2rem' : undefined // Minimum height for very short entries
+      height: `${item.height ?? 0}%`,
+      minHeight: (item.height ?? 0) < 5 ? '2rem' : undefined // Minimum height for very short entries
     };
     
     if (item.type === 'gap') {

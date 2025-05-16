@@ -155,6 +155,7 @@ Memory logs are organized by category and listed in sequential ID order.
 
 ## Typescript Entries {#typescript-entries}
 
+- [MRTMLY-001: TypeScript Strict Mode Fixes](./logged_memories/MRTMLY-001-typescript-strict-mode-fixes.md)
 - [MRTMLY-125: Typescript Error Fixes](./logged_memories/MRTMLY-125-typescript-error-fixes.md)
 - [MRTMLY-126: Additional Typescript Fixes](./logged_memories/MRTMLY-126-additional-typescript-fixes.md)
 - [MRTMLY-127: Final Typescript Fixes](./logged_memories/MRTMLY-127-final-typescript-fixes.md)
@@ -230,6 +231,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-188: Css Variables Conflict](./logged_memories/MRTMLY-188-css-variables-conflict.md)
 - [MRTMLY-189: Console Errors Warnings](./logged_memories/MRTMLY-189-console-errors-warnings.md)
 - [MRTMLY-190: Dependabot Automated Pull Request Configuration](./logged_memories/MRTMLY-190-dependabot-automated-pull-request-configuration.md)
+- [MRTMLY-082: Next.js App Router Migration](./logged_memories/MRTMLY-082-next-js-app-router-migration.md)
 
 ## About Memory Logs
 

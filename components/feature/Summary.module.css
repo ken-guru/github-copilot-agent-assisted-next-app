@@ -1,0 +1,140 @@
+.container {
+  padding: var(--space-md);
+  background-color: var(--background);
+  border-radius: var(--radius-card); /* Added semantic radius variable */
+  box-shadow: var(--shadow-card);
+  width: 100%;
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: var(--space-md);
+  color: var(--foreground);
+}
+
+.darkContainer {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap-medium);
+  margin-bottom: var(--space-lg);
+}
+
+.statCard {
+  background-color: var(--background-alt);
+  border-radius: var(--radius-card); /* Added semantic radius variable */
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: var(--space-xs);
+  text-align: center;
+  color: var(--foreground-muted);
+}
+
+.statValue {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--foreground);
+}
+
+.activityList {
+  margin-top: var(--space-md);
+}
+
+.activityListHeading {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  color: var(--foreground);
+}
+
+.activityItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm);
+  margin-bottom: var(--space-xs);
+  border-radius: var(--radius-card); /* Added semantic radius variable */
+  background-color: var(--background-alt);
+  transition: background-color 0.2s ease;
+  border-left: 4px solid var(--border-color);
+}
+
+.activityName {
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.activityTime {
+  font-size: 0.875rem;
+  color: var(--foreground-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.statusMessage {
+  padding: var(--space-sm);
+  margin-bottom: var(--space-md);
+  border-radius: var(--radius-card); /* Added semantic radius variable */
+  text-align: center;
+  font-weight: 500;
+}
+
+.statusMessageEarly {
+  background-color: var(--success-background);
+  color: var(--success-foreground);
+}
+
+.statusMessageOnTime {
+  background-color: var(--info-background);
+  color: var(--info-foreground);
+}
+
+.statusMessageLate {
+  background-color: var(--error-background);
+  color: var(--error-foreground);
+}
+
+.emptyState {
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--foreground-muted);
+  font-style: italic;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--gap-small);
+  }
+  
+  .statCard {
+    padding: var(--space-sm);
+  }
+  
+  .statValue {
+    font-size: 1.125rem;
+  }
+  
+  .activityItem {
+    padding: var(--space-xs);
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .activityName {
+    margin-bottom: var(--space-xxs);
+  }
+}

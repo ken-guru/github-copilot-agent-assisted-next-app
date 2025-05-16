@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 // Define paths to check
-const paths = [
+const paths: [string, string][] = [
   ['src/app', 'Directory for app router'],
   ['src/app/page.tsx', 'Root route component'],
   ['src/app/layout.tsx', 'Root layout component'],
@@ -17,6 +17,11 @@ console.log('-------------------------------');
 // Check if each path exists
 let allValid = true;
 paths.forEach(([filePath, description]) => {
+  if (typeof filePath !== 'string') {
+    console.log(`✗ Invalid file path provided`);
+    allValid = false;
+    return;
+  }
   const fullPath = path.join(process.cwd(), filePath);
   const exists = fs.existsSync(fullPath);
   

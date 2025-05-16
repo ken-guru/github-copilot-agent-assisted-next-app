@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { ThemeProvider } from '../contexts/ThemeContext';
+import { ThemeProvider } from '@contexts/theme';
 import ServiceWorkerUpdater from './ServiceWorkerUpdater';
 
 interface LayoutClientProps {

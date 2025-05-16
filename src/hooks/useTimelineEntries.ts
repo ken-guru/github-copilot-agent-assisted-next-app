@@ -46,13 +46,21 @@ export function useTimelineEntries(): UseTimelineEntriesResult {
     if (timelineEntries.length === 0) return;
 
     const lastEntry = timelineEntries[timelineEntries.length - 1];
-    if (!lastEntry.endTime) {
+    // Check if lastEntry exists and has no endTime
+    if (lastEntry && !lastEntry.endTime) {
       setTimelineEntries(prev => {
         const updatedEntries = [...prev];
-        updatedEntries[prev.length - 1] = {
-          ...lastEntry,
-          endTime: Date.now()
-        };
+        if (prev.length > 0) {
+          updatedEntries[prev.length - 1] = {
+            ...lastEntry,
+            endTime: Date.now(),
+            // Ensure required fields are present
+            id: lastEntry.id || `entry-${Date.now()}`,
+            startTime: lastEntry.startTime,
+            activityId: lastEntry.activityId || null,
+            activityName: lastEntry.activityName || null
+          };
+        }
         return updatedEntries;
       });
     }
