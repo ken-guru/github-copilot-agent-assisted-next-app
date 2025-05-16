@@ -171,17 +171,18 @@ Based on Next.js documentation, our target structure will be:
 
 ```
 github-copilot-agent-assisted-next-app/
-├── app/                   # App Router implementation
-│   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Root page (homepage)
-│   ├── global-error.tsx   # Global error handling
-│   ├── not-found.tsx      # 404 page
-│   ├── _components/       # App-specific components (private, non-routable)
-│   │   └── ...
-│   └── [routes]/          # Route segments
-│       ├── layout.tsx     # Route layout
-│       ├── page.tsx       # Route page
-│       └── ...
+├── src/                   # Source directory
+│   ├── app/               # App Router implementation
+│   │   ├── layout.tsx     # Root layout
+│   │   ├── page.tsx       # Root page (homepage)
+│   │   ├── global-error.tsx # Global error handling
+│   │   ├── not-found.tsx  # 404 page
+│   │   ├── _components/   # App-specific components (private, non-routable)
+│   │   │   └── ...
+│   │   └── [routes]/      # Route segments
+│   │       ├── layout.tsx # Route layout
+│   │       ├── page.tsx   # Route page
+│   │       └── ...
 ├── components/            # Shared UI components
 │   ├── ui/                # Basic UI elements
 │   └── feature/           # Complex feature components
@@ -222,7 +223,7 @@ Files that need to be relocated:
      - `/src/components/TimeSetup.tsx`
      - `/src/components/TimelineDisplay.tsx`
      
-   - App-specific Components (move to `/app/_components/`)
+   - App-specific Components (move to `/src/app/_components/`)
      - `/components/splash/SplashScreen.tsx`
      - `/src/components/LayoutClient.tsx` (adapted for app router)
    
@@ -268,7 +269,7 @@ Files that need to be relocated:
 6. **App Router Pages**:
    - `/src/app/layout.tsx` → maintain in place but update imports
    - `/src/app/page.tsx` → maintain in place but update imports
-   - Create `/app/global-error.tsx` and `/app/not-found.tsx`
+   - Create `/src/app/global-error.tsx` (not-found.tsx already exists)
 
 7. **Service Worker**:
    - `/public/service-worker.js` → maintain in public but update references
@@ -282,9 +283,9 @@ Files that need to be relocated:
 
 #### Step 1: Set Up Basic App Router Structure
 - The app router structure (`/src/app`) already exists
-- Create placeholder files:
+- Created placeholder file:
   ```tsx
-  // /app/global-error.tsx
+  // /src/app/global-error.tsx
   'use client';
   
   export default function GlobalError({
@@ -304,18 +305,7 @@ Files that need to be relocated:
     );
   }
   ```
-
-  ```tsx
-  // /app/not-found.tsx
-  export default function NotFound() {
-    return (
-      <div>
-        <h1>404 - Page Not Found</h1>
-        <p>The page you're looking for doesn't exist.</p>
-      </div>
-    );
-  }
-  ```
+- The not-found.tsx file already exists in `/src/app/not-found.tsx`
 
 #### Step 2: Create New Directory Structure
 - Create `/components/ui/` and `/components/feature/` directories
@@ -326,20 +316,30 @@ Files that need to be relocated:
   - `/lib/reset/`
   - `/lib/test-utils/`
   - `/lib/events/` (if needed)
-- Create `/app/_components/` directory for app-specific components
+- Create `/src/app/_components/` directory for app-specific components
 
 #### Step 3: Migrate Context Providers
 - **Move and Refactor LoadingContext**
-  - Create `/contexts/loading/` directory
-  - Move `/contexts/LoadingContext.tsx` to `/contexts/loading/index.tsx`
+  - Create `/contexts/loading/` directory ✅
+  - Copy `/src/contexts/LoadingContext.tsx` to `/contexts/loading/index.tsx` ✅
   - Update imports throughout the codebase
   - Run tests to validate functionality
   
 - **Move and Refactor ThemeContext**
-  - Create `/contexts/theme/` directory
-  - Move `/src/contexts/ThemeContext.tsx` to `/contexts/theme/index.tsx`
+  - Create `/contexts/theme/` directory ✅
+  - Copy `/src/contexts/ThemeContext.tsx` to `/contexts/theme/index.tsx` ✅
   - Update imports throughout the codebase
   - Run tests to validate functionality
+
+- **Update Path Aliases in tsconfig.json** ✅
+  - Add path aliases for new directories:
+    ```json
+    "@components/*": ["./components/*"],
+    "@lib/*": ["./lib/*"],
+    "@hooks/*": ["./hooks/*"],
+    "@contexts/*": ["./contexts/*"]
+    ```
+  - This allows for a gradual migration without breaking existing imports
 
 #### Step 4: Migrate Utility Functions
 - **Move Time Utilities**
@@ -410,10 +410,10 @@ Files that need to be relocated:
   - Run tests to validate functionality
 
 - **Move App-Specific Components**
-  - Create `/app/_components/splash/` directory
-  - Move `/components/splash/SplashScreen.tsx` to `/app/_components/splash/SplashScreen.tsx`
-  - Move `/components/splash/SplashScreen.module.css` to `/app/_components/splash/SplashScreen.module.css`
-  - Adapt `/src/components/LayoutClient.tsx` for app router and place in `/app/_components/`
+  - Create `/src/app/_components/splash/` directory
+  - Move `/components/splash/SplashScreen.tsx` to `/src/app/_components/splash/SplashScreen.tsx`
+  - Move `/components/splash/SplashScreen.module.css` to `/src/app/_components/splash/SplashScreen.module.css`
+  - Adapt `/src/components/LayoutClient.tsx` for app router and place in `/src/app/_components/`
   - Update imports throughout the codebase
   - Run tests to validate functionality
 
@@ -437,4 +437,37 @@ Files that need to be relocated:
 ### Current Progress
 - [x] Phase 1: Desired Folder Structure - Planned
 - [x] Phase 2: File Mapping - Planned
-- [ ] Phase 3: Migration Steps - Not Started
+- [x] Phase 3: Migration Steps - In Progress
+  - [x] Step 1: Set Up Basic App Router Structure - Completed
+  - [x] Step 2: Create New Directory Structure - Completed
+  - [x] Step 3: Migrate Context Providers - Completed
+  - [x] Step 4: Migrate Utility Functions - Completed
+  - [x] Step 5: Migrate Custom Hooks - Completed
+  - [x] Step 6: Migrate Components - Completed
+    - [x] UI Components: ThemeToggle, TimeDisplay, OfflineIndicator, ServiceWorkerUpdater
+    - [x] Feature Components: ActivityManager, Timeline, TimelineDisplay, ProgressBar, Summary, TimeSetup
+    - [x] App-specific Components: SplashScreen, LayoutClient
+  - [x] Step 7: Update Test Files - Fixed typings and import paths
+  - [x] Step 8: Update Configuration - Completed path aliases
+  - [ ] Step 9: Final Verification - In Progress
+
+#### Progress Summary
+We have successfully:
+1. Set up the basic App Router structure under `/src/app/`
+2. Created new directory structure following Next.js best practices
+3. Migrated context providers from `/src/contexts/` to `/contexts/`
+4. Migrated utility functions to appropriate lib directories by category
+5. Migrated custom hooks from camelCase to kebab-case naming and updated imports
+6. Migrated UI components to `/components/ui/`
+7. Migrated app-specific components to `/src/app/_components/`
+8. Migrated feature components to `/components/feature/`
+9. Fixed type errors across the codebase
+10. Created type definition for third-party libraries when needed without installing extra packages
+11. Updated component interfaces to fix TypeScript errors
+
+#### Next Steps
+1. Run final verification tests with `npm test` to ensure all tests pass
+2. Build the application with `npm run build` to check for build errors
+3. Start the application with `npm run dev` and test in browser
+4. Document any needed follow-up tasks for edge cases
+5. Update any remaining import references that might have been missed

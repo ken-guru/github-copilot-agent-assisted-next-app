@@ -27,6 +27,18 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@components/*": [
+        "./components/*"
+      ],
+      "@lib/*": [
+        "./lib/*"
+      ],
+      "@hooks/*": [
+        "./hooks/*"
+      ],
+      "@contexts/*": [
+        "./contexts/*"
       ]
     },
     "types": ["node", "jest", "@testing-library/jest-dom", "cypress"]
