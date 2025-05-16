@@ -3,8 +3,6 @@
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import SplashScreen from '@/app/_components/splash/SplashScreen';
-import { LoadingProvider } from '@contexts/loading';
-import styles from '@/app/_components/splash/SplashScreen.module.css';
 
 // Mock the loading context
 const mockUseLoading = jest.fn().mockReturnValue({
