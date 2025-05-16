@@ -116,3 +116,325 @@ Note: When implementing a change, copy this template and fill it out completely.
 - Update documentation alongside code changes
 - Document all key decisions made during implementation
 - Update the Memory Log for all significant changes or bug fixes
+
+# Next.js App Structure Reorganization
+
+## Context
+Our application needs to be restructured to follow the best practices for a Next.js application according to the official Next.js documentation. The current structure has components, contexts, and utilities spread across various directories, which doesn't align with the recommended Next.js project organization.
+
+- This change affects the entire application structure
+- We need to relocate files to their proper locations while maintaining functionality
+- This reorganization will improve maintainability and align with Next.js conventions
+
+## Requirements
+
+1. Implement a proper Next.js folder structure
+   - Organize the application using the App Router approach
+   - Follow the recommended conventions for routing and file naming
+   - Ensure all special files (layout, page, etc.) are in their correct locations
+
+2. Relocate existing files to appropriate locations
+   - Move components, contexts, and utilities to recommended locations
+   - Update all import statements to reflect new file paths
+   - Ensure all tests continue to pass after relocation
+
+3. Maintain application functionality throughout the process
+   - Implement changes incrementally, one component or section at a time
+   - Verify functionality after each relocation step
+   - Ensure all tests pass after each change
+
+## Technical Guidelines
+- Follow Next.js App Router project structure conventions
+- Ensure proper separation between routing elements and UI components
+- Maintain test coverage and functionality throughout the process
+- Update all import paths and references across the codebase
+
+## Expected Outcome
+- A well-organized codebase that follows Next.js best practices
+- Improved maintainability and developer experience
+- Cleaner separation between routing and application logic
+- Better alignment with Next.js documentation and examples
+
+## Validation Criteria
+- [ ] All files properly organized in the recommended structure
+- [ ] All tests passing after reorganization
+- [ ] Application functionality maintained
+- [ ] Import paths updated throughout the codebase
+- [ ] Documentation updated to reflect new structure
+
+## Migration Plan
+
+### Phase 1: Desired Folder Structure
+
+#### Target Structure
+Based on Next.js documentation, our target structure will be:
+
+```
+github-copilot-agent-assisted-next-app/
+├── app/                   # App Router implementation
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Root page (homepage)
+│   ├── global-error.tsx   # Global error handling
+│   ├── not-found.tsx      # 404 page
+│   ├── _components/       # App-specific components (private, non-routable)
+│   │   └── ...
+│   └── [routes]/          # Route segments
+│       ├── layout.tsx     # Route layout
+│       ├── page.tsx       # Route page
+│       └── ...
+├── components/            # Shared UI components
+│   ├── ui/                # Basic UI elements
+│   └── feature/           # Complex feature components
+├── lib/                   # Shared utility functions
+│   ├── utils.ts           # General utilities 
+│   └── ...
+├── hooks/                 # Custom React hooks
+│   └── ...
+├── contexts/              # React contexts
+│   └── ...
+├── styles/                # Global styles
+│   └── globals.css
+├── public/                # Static assets
+│   └── ...
+├── __tests__/             # Test files (can mirror the src structure)
+│   └── ...
+└── [config files]         # Next.js and other config files
+```
+
+### Phase 2: File Mapping
+
+#### Current Structure Analysis
+Files that need to be relocated:
+
+1. **Components**:
+   - UI Components (move to `/components/ui/`)
+     - `/src/components/ThemeToggle.tsx`
+     - `/src/components/TimeDisplay.tsx`
+     - `/src/components/OfflineIndicator.tsx`
+     - `/src/components/ConfirmationDialog.tsx`
+     - `/src/components/UpdateNotification.tsx`
+     
+   - Feature Components (move to `/components/feature/`)
+     - `/src/components/ActivityManager.tsx`
+     - `/src/components/Timeline.tsx`
+     - `/src/components/ProgressBar.tsx`
+     - `/src/components/Summary.tsx`
+     - `/src/components/TimeSetup.tsx`
+     - `/src/components/TimelineDisplay.tsx`
+     
+   - App-specific Components (move to `/app/_components/`)
+     - `/components/splash/SplashScreen.tsx`
+     - `/src/components/LayoutClient.tsx` (adapted for app router)
+   
+2. **Contexts**:
+   - `/contexts/LoadingContext.tsx` → `/contexts/loading/index.tsx`
+   - `/src/contexts/ThemeContext.tsx` → `/contexts/theme/index.tsx`
+   
+3. **Hooks**:
+   - `/src/hooks/useServiceWorker.ts` → `/hooks/use-service-worker.ts`
+   - `/src/hooks/useTimeDisplay.ts` → `/hooks/use-time-display.ts`
+   - `/src/hooks/useActivitiesTracking.ts` → `/hooks/use-activities-tracking.ts`
+   - `/src/hooks/useTimelineEntries.ts` → `/hooks/use-timeline-entries.ts`
+   - `/src/hooks/useActivityState.ts` → `/hooks/use-activity-state.ts` (if present)
+   - `/src/hooks/useTimerState.ts` → `/hooks/use-timer-state.ts` (if present)
+
+4. **Utilities**:
+   - Time Utilities (move to `/lib/time/`)
+     - `/src/utils/time/` (entire directory)
+     - Any other time-related utilities
+   
+   - Service Worker Utilities (move to `/lib/service-worker/`)
+     - `/src/utils/serviceWorkerCore.ts`
+     - `/src/utils/serviceWorkerErrors.ts`
+     - Any other service worker related utilities
+   
+   - Activity Utilities (move to `/lib/activity/`)
+     - `/src/utils/activityUtils.ts`
+     - Any other activity-related utilities
+   
+   - Reset Service (move to `/lib/reset/`)
+     - `/src/utils/resetService.ts`
+   
+   - Test Utilities (move to `/lib/test-utils/`)
+     - `/src/utils/testUtils/` (entire directory)
+   
+   - Event Listener Utilities (move to `/lib/events/`)
+     - `/src/utils/eventListenerUtils.ts` (if present)
+
+5. **Styles**:
+   - `/styles/globals.css` → maintain in place
+   - Module CSS files → co-locate with respective components
+
+6. **App Router Pages**:
+   - `/src/app/layout.tsx` → maintain in place but update imports
+   - `/src/app/page.tsx` → maintain in place but update imports
+   - Create `/app/global-error.tsx` and `/app/not-found.tsx`
+
+7. **Service Worker**:
+   - `/public/service-worker.js` → maintain in public but update references
+   - `/public/sw-*.js` files → maintain in public but update references
+
+8. **Test Files**:
+   - `/__tests__/*` → maintain structure but update imports
+   - Component tests → consider co-locating with components
+
+### Phase 3: Migration Steps (Detailed Plan)
+
+#### Step 1: Set Up Basic App Router Structure
+- The app router structure (`/src/app`) already exists
+- Create placeholder files:
+  ```tsx
+  // /app/global-error.tsx
+  'use client';
+  
+  export default function GlobalError({
+    error,
+    reset,
+  }: {
+    error: Error;
+    reset: () => void;
+  }) {
+    return (
+      <html>
+        <body>
+          <h1>Something went wrong!</h1>
+          <button onClick={() => reset()}>Try again</button>
+        </body>
+      </html>
+    );
+  }
+  ```
+
+  ```tsx
+  // /app/not-found.tsx
+  export default function NotFound() {
+    return (
+      <div>
+        <h1>404 - Page Not Found</h1>
+        <p>The page you're looking for doesn't exist.</p>
+      </div>
+    );
+  }
+  ```
+
+#### Step 2: Create New Directory Structure
+- Create `/components/ui/` and `/components/feature/` directories
+- Create `/lib/` directory with subfolders:
+  - `/lib/time/`
+  - `/lib/service-worker/`
+  - `/lib/activity/`
+  - `/lib/reset/`
+  - `/lib/test-utils/`
+  - `/lib/events/` (if needed)
+- Create `/app/_components/` directory for app-specific components
+
+#### Step 3: Migrate Context Providers
+- **Move and Refactor LoadingContext**
+  - Create `/contexts/loading/` directory
+  - Move `/contexts/LoadingContext.tsx` to `/contexts/loading/index.tsx`
+  - Update imports throughout the codebase
+  - Run tests to validate functionality
+  
+- **Move and Refactor ThemeContext**
+  - Create `/contexts/theme/` directory
+  - Move `/src/contexts/ThemeContext.tsx` to `/contexts/theme/index.tsx`
+  - Update imports throughout the codebase
+  - Run tests to validate functionality
+
+#### Step 4: Migrate Utility Functions
+- **Move Time Utilities**
+  - Move `/src/utils/time/` folder to `/lib/time/`
+  - Update imports throughout the codebase
+  - Run tests to validate functionality
+
+- **Move Service Worker Utilities**
+  - Move `/src/utils/serviceWorker*.ts` files to `/lib/service-worker/`
+  - Create an `index.ts` file for re-exports
+  - Update imports throughout the codebase
+  - Run tests to validate functionality
+
+- **Move Activity Utilities**
+  - Move `/src/utils/activity*.ts` files to `/lib/activity/`
+  - Create an `index.ts` file for re-exports
+  - Update imports throughout the codebase
+  - Run tests to validate functionality
+
+- **Move Reset Service**
+  - Move `/src/utils/resetService.ts` to `/lib/reset/index.ts`
+  - Update imports throughout the codebase
+  - Run tests to validate functionality
+
+- **Move Test Utilities**
+  - Move `/src/utils/testUtils/` to `/lib/test-utils/`
+  - Update imports throughout the codebase
+  - Run tests to validate functionality
+  
+- **Move Event Listener Utilities** (if present)
+  - Move `/src/utils/eventListenerUtils.ts` to `/lib/events/index.ts`
+  - Update imports throughout the codebase
+  - Run tests to validate functionality
+
+#### Step 5: Migrate Custom Hooks
+- Create new hook files with kebab-case naming convention:
+  - `/hooks/use-service-worker.ts` from `/src/hooks/useServiceWorker.ts`
+  - `/hooks/use-time-display.ts` from `/src/hooks/useTimeDisplay.ts`
+  - `/hooks/use-activities-tracking.ts` from `/src/hooks/useActivitiesTracking.ts`
+  - `/hooks/use-timeline-entries.ts` from `/src/hooks/useTimelineEntries.ts`
+  - `/hooks/use-activity-state.ts` from `/src/hooks/useActivityState.ts` (if present)
+  - `/hooks/use-timer-state.ts` from `/src/hooks/useTimerState.ts` (if present)
+
+- Update each hook to use the new import paths
+- Update imports throughout the codebase
+- Run tests to validate functionality
+
+#### Step 6: Migrate Components
+- **Move UI Components**
+  - Create component files in `/components/ui/`:
+    - `ThemeToggle.tsx` + `ThemeToggle.module.css`
+    - `TimeDisplay.tsx` + `TimeDisplay.module.css`
+    - `OfflineIndicator.tsx` + `OfflineIndicator.module.css`
+    - `ConfirmationDialog.tsx` + `ConfirmationDialog.module.css`
+    - `UpdateNotification.tsx` + `UpdateNotification.module.css`
+  - Update imports and ensure components work with new utility paths
+  - Run tests to validate functionality
+
+- **Move Feature Components**
+  - Create component files in `/components/feature/`:
+    - `ActivityManager.tsx` + `ActivityManager.module.css`
+    - `Timeline.tsx` + `Timeline.module.css`
+    - `ProgressBar.tsx` + `ProgressBar.module.css`
+    - `Summary.tsx` + `Summary.module.css`
+    - `TimeSetup.tsx` + `TimeSetup.module.css`
+    - `TimelineDisplay.tsx` + `TimelineDisplay.module.css`
+  - Update imports and ensure components work with new utility paths
+  - Run tests to validate functionality
+
+- **Move App-Specific Components**
+  - Create `/app/_components/splash/` directory
+  - Move `/components/splash/SplashScreen.tsx` to `/app/_components/splash/SplashScreen.tsx`
+  - Move `/components/splash/SplashScreen.module.css` to `/app/_components/splash/SplashScreen.module.css`
+  - Adapt `/src/components/LayoutClient.tsx` for app router and place in `/app/_components/`
+  - Update imports throughout the codebase
+  - Run tests to validate functionality
+
+#### Step 7: Update Test Files
+- Update imports in all test files to match new file locations
+- If co-locating component tests, move test files alongside components
+- Run the full test suite to validate functionality
+
+#### Step 8: Update Configuration
+- Update path mappings in `tsconfig.json`
+- Update module resolution in `next.config.js`
+- Update test configuration in `jest.config.js`
+- Update any other config files as needed
+
+#### Step 9: Final Verification
+- Run the full test suite: `npm test`
+- Build the application: `npm run build`
+- Start the application: `npm run dev`
+- Verify functionality in the browser
+
+### Current Progress
+- [x] Phase 1: Desired Folder Structure - Planned
+- [x] Phase 2: File Mapping - Planned
+- [ ] Phase 3: Migration Steps - Not Started
