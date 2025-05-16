@@ -471,3 +471,149 @@ We have successfully:
 3. Start the application with `npm run dev` and test in browser
 4. Document any needed follow-up tasks for edge cases
 5. Update any remaining import references that might have been missed
+
+# Post-Migration Code Quality Improvements
+
+## Context
+After successfully completing the Next.js App Router migration, several minor issues were identified that could be addressed to further improve code quality, maintainability, and adherence to best practices.
+
+- The codebase contains ESLint warnings related to unused variables and explicit `any` types
+- There are duplicate test files in the old structure that could be cleaned up
+- The project could benefit from stricter TypeScript checking
+- Component props interfaces could be optimized for better type safety
+- Tests could be co-located with their components for better organization
+
+## Requirements
+
+1. Address ESLint warnings
+   - Fix unused variables across the codebase
+   - Replace explicit `any` types with proper type definitions
+   - Create a standardized approach for handling intentional unused variables
+
+2. Implement stricter TypeScript checking
+   - Update tsconfig.json with stricter type checking options
+   - Address any new type errors that emerge
+   - Add missing type definitions where needed
+
+3. Optimize component props interfaces
+   - Review and standardize component prop interfaces
+   - Add proper documentation for props
+   - Ensure consistent naming conventions across interfaces
+
+4. Improve test organization
+   - Consider co-locating tests with their components
+   - Clean up any remaining duplicate test files from the migration
+   - Ensure consistent test naming conventions
+
+## Technical Guidelines
+- Make incremental changes to avoid breaking functionality
+- Run the test suite after each significant change
+- Document decisions in the Memory Log
+- Follow consistent patterns for each category of changes
+- Use ESLint disable comments judiciously and only when absolutely necessary
+
+## Expected Outcome
+- Zero ESLint warnings in the codebase
+- Stricter TypeScript checking providing better development experience
+- Well-documented and consistent component interfaces
+- Better organized tests with clear relationship to the components they test
+- Improved maintainability for future development
+
+## Validation Criteria
+- [ ] All ESLint warnings addressed
+- [ ] Stricter TypeScript configuration implemented
+- [ ] Component prop interfaces optimized and documented
+- [ ] Test organization improved
+- [ ] All tests passing with the new changes
+- [ ] Documentation updated to reflect the changes
+
+## Implementation Plan
+
+### Phase 1: ESLint Warning Cleanup
+
+#### Step 1: Configure ESLint Rules
+- Create or update `.eslintrc.json` to better handle unused variables:
+  ```json
+  {
+    "extends": "next/core-web-vitals",
+    "rules": {
+      "@typescript-eslint/no-unused-vars": ["warn", { 
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }],
+      "@typescript-eslint/no-explicit-any": "warn"
+    }
+  }
+  ```
+- This configuration will allow for intentional unused variables to be prefixed with underscore
+
+#### Step 2: Address Unused Variables
+- Systematically address each unused variable warning:
+  - Remove truly unused variables
+  - Prefix intentionally unused variables with underscore (e.g., `_props`)
+  - Document cases where variables are kept for future use
+
+#### Step 3: Replace Explicit `any` Types
+- Identify all instances of explicit `any` types
+- Replace with appropriate type definitions
+- When exact type is unknown, use more specific types like `unknown` or create interface
+
+### Phase 2: TypeScript Configuration Enhancement
+
+#### Step 1: Update tsconfig.json
+- Add stricter type checking options:
+  ```json
+  {
+    "compilerOptions": {
+      "strict": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "strictFunctionTypes": true,
+      "strictBindCallApply": true,
+      "strictPropertyInitialization": true,
+      "noImplicitThis": true,
+      "alwaysStrict": true,
+      "noUncheckedIndexedAccess": true
+    }
+  }
+  ```
+
+#### Step 2: Address New Type Errors
+- Systematically fix type errors that emerge from stricter checking
+- Create missing type definitions
+- Document complex type decisions in code comments
+
+### Phase 3: Component Props Interface Optimization
+
+#### Step 1: Standardize Interface Naming
+- Ensure consistent naming convention (e.g., `ComponentNameProps`)
+- Add appropriate JSDoc comments for each interface
+- Document required vs optional props
+
+#### Step 2: Review and Optimize Props
+- Remove unused props
+- Ensure proper typing for all props
+- Consider using more specific types instead of general ones
+- Add examples in JSDoc comments where appropriate
+
+### Phase 4: Test Organization Improvement
+
+#### Step 1: Clean Up Duplicate Tests
+- Identify and remove any remaining duplicate test files
+- Ensure all functionality is still covered by the remaining tests
+
+#### Step 2: Evaluate Test Co-location
+- Consider moving component tests closer to their components
+- Create a strategy for test file naming and organization
+- Update test imports as needed
+
+#### Step 3: Standardize Test Patterns
+- Ensure consistent test naming conventions
+- Standardize test setup and teardown
+- Optimize test coverage
+
+### Current Progress
+- [ ] Phase 1: ESLint Warning Cleanup - Planned
+- [ ] Phase 2: TypeScript Configuration Enhancement - Planned
+- [ ] Phase 3: Component Props Interface Optimization - Planned
+- [ ] Phase 4: Test Organization Improvement - Planned
