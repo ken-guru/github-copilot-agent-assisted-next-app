@@ -31,18 +31,33 @@ export default function Summary({
   const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
     if (!colors) return undefined;
     
-    // Return the appropriate color set based on the current theme
-    return currentTheme === 'dark' 
-      ? { 
-          background: colors.background, 
-          text: colors.text, 
-          border: colors.border 
-        }
-      : { 
-          background: colors.background, 
-          text: colors.text, 
-          border: colors.border 
+    // If colors is already in the format with background/text/border directly
+    if ('background' in colors && 'text' in colors && 'border' in colors) {
+      return {
+        background: colors.background,
+        text: colors.text,
+        border: colors.border
+      };
+    }
+    
+    // If colors has light/dark variants
+    if ('light' in colors && 'dark' in colors) {
+      const themeColors = currentTheme === 'dark' ? colors.dark : colors.light;
+      if (themeColors) {
+        return {
+          background: themeColors.background,
+          text: themeColors.text,
+          border: themeColors.border
         };
+      }
+    }
+    
+    // Default fallback
+    return {
+      background: 'var(--background-muted)',
+      text: 'var(--foreground)',
+      border: 'var(--border-color)'
+    };
   };
   
   // Effect to listen for theme changes
@@ -157,6 +172,8 @@ export default function Summary({
     
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i];
+      if (!entry) continue; // Skip undefined entries
+      
       const endTime = entry.endTime ?? Date.now();
       
       // Calculate break time between activities
@@ -275,7 +292,7 @@ export default function Summary({
           {activityTimes.map((activity) => {
             // Get theme-appropriate colors
             const themeColors = activity.colors ? 
-              getThemeAppropriateColor(activity.colors) || activity.colors : 
+              getThemeAppropriateColor(activity.colors) : 
               undefined;
             
             return (

@@ -139,9 +139,12 @@ export default function Timeline({
     let timeoutId: NodeJS.Timeout | null = null;
     
     const updateTime = () => {
-      if (hasEntries) {
-        const elapsed = Math.floor((Date.now() - entries[0].startTime) / 1000);
-        setCurrentElapsedTime(elapsed);
+      if (hasEntries && entries.length > 0) {
+        const firstEntry = entries[0];
+        if (firstEntry) {
+          const elapsed = Math.floor((Date.now() - firstEntry.startTime) / 1000);
+          setCurrentElapsedTime(elapsed);
+        }
       }
     };
 
@@ -204,7 +207,8 @@ export default function Timeline({
   }, [totalDuration, effectiveDuration, isOvertime]);
   
   // Calculate data for timeline entries
-  const currentTimeLeft = totalDuration * 1000 - (hasEntries && entries[0].startTime ? Date.now() - entries[0].startTime : 0);
+  const firstEntryStartTime = hasEntries && entries.length > 0 ? entries[0]?.startTime : undefined;
+  const currentTimeLeft = totalDuration * 1000 - (firstEntryStartTime ? Date.now() - firstEntryStartTime : 0);
   const timeSpansData = calculateTimeSpans({
     entries,
     totalDuration: effectiveDuration,

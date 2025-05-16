@@ -31,6 +31,8 @@ function calculateTimeSpans({
 
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
+    if (!entry) continue;
+    
     const currentStartTime = entry.startTime;
     const currentEndTime = entry.endTime;
 

@@ -35,15 +35,30 @@ export default function Summary({
     // Find the closest matching color set in internalActivityColors
     const closestColorSet = findClosestColorSet(hue, colors);
     
-    // Return the appropriate theme version
-    return currentTheme === 'dark' ? closestColorSet.dark : closestColorSet.light;
+    // Return the appropriate theme version with null checks
+    if (!closestColorSet) {
+      return {
+        background: 'var(--background-muted)',
+        text: 'var(--foreground)',
+        border: 'var(--border-color)'
+      };
+    }
+    
+    return currentTheme === 'dark' 
+      ? closestColorSet.dark 
+      : closestColorSet.light;
   };
 
   // Helper to extract hue from HSL color
-  const extractHueFromHsl = (hslColor: string): number => {
+  const extractHueFromHsl = (hslColor: string | undefined): number => {
+    if (!hslColor) return 0;
+    
     try {
       const hueMatch = hslColor.match(/hsl\(\s*(\d+)/);
-      return hueMatch ? parseInt(hueMatch[1], 10) : 0;
+      if (hueMatch && hueMatch[1]) {
+        return parseInt(hueMatch[1], 10);
+      }
+      return 0;
     } catch {
       // Fallback for non-HSL colors or parsing errors
       return 0;
@@ -190,6 +205,9 @@ export default function Summary({
     
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i];
+      // Skip if entry is undefined
+      if (!entry) continue;
+      
       const endTime = entry.endTime ?? Date.now();
       
       // Calculate break time between activities

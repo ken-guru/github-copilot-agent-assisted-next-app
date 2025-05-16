@@ -146,9 +146,31 @@ export function isDarkMode(): boolean {
 export function getNextAvailableColorSet(index: number): { colors: ColorSet; index: number } {
   // Use modulo to ensure we always have a valid index even if we run out of colors
   const colorIndex = index % internalActivityColors.length;
+  const colorSet = internalActivityColors[colorIndex];
+  
+  // Ensure we have a valid ColorSet to return
+  if (colorSet) {
+    return {
+      colors: colorSet,
+      index: colorIndex
+    };
+  }
+  
+  // Fallback to the first color or default if nothing is available
   return {
-    colors: internalActivityColors[colorIndex],
-    index: colorIndex
+    colors: internalActivityColors[0] || {
+      light: {
+        background: '#f0f0f0',
+        text: '#000000',
+        border: '#cccccc'
+      },
+      dark: {
+        background: '#303030',
+        text: '#ffffff',
+        border: '#505050'
+      }
+    },
+    index: 0
   };
 }
 
