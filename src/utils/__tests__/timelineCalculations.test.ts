@@ -57,14 +57,14 @@ describe('calculateTimeSpans', () => {
     expect(result.items.length).toBe(2);
     
     // Verify activity item
-    expect(result.items[0].type).toBe('activity');
-    expect(result.items[0].duration).toBe(endTime - startTime);
-    expect(result.items[0].height).toBeCloseTo(((endTime - startTime) / totalDuration) * 100);
+    expect(result.items[0]?.type).toBe('activity');
+    expect(result.items[0]?.duration).toBe(endTime - startTime);
+    expect(result.items[0]?.height).toBeCloseTo(((endTime - startTime) / totalDuration) * 100);
     
     // Verify break item
-    expect(result.items[1].type).toBe('gap');
-    expect(result.items[1].duration).toBe(FIXED_TIME - endTime);
-    expect(result.items[1].height).toBeCloseTo(((FIXED_TIME - endTime) / totalDuration) * 100);
+    expect(result.items[1]?.type).toBe('gap');
+    expect(result.items[1]?.duration).toBe(FIXED_TIME - endTime);
+    expect(result.items[1]?.height).toBeCloseTo(((FIXED_TIME - endTime) / totalDuration) * 100);
   });
 
   it('should return multiple activity items with the correct durations and heights', () => {
@@ -102,13 +102,13 @@ describe('calculateTimeSpans', () => {
 
     expect(result.items.length).toBe(2);
 
-    expect(result.items[0].type).toBe('activity');
-    expect(result.items[0].duration).toBe(endTime1 - startTime1);
-    expect(result.items[0].height).toBeCloseTo(((endTime1 - startTime1) / (totalDuration)) * 100);
+    expect(result.items[0]?.type).toBe('activity');
+    expect(result.items[0]?.duration).toBe(endTime1 - startTime1);
+    expect(result.items[0]?.height).toBeCloseTo(((endTime1 - startTime1) / (totalDuration)) * 100);
 
-    expect(result.items[1].type).toBe('activity');
-    expect(result.items[1].duration).toBe(endTime2 - startTime2);
-    expect(result.items[1].height).toBeCloseTo(((endTime2 - startTime2) / (totalDuration)) * 100);
+    expect(result.items[1]?.type).toBe('activity');
+    expect(result.items[1]?.duration).toBe(endTime2 - startTime2);
+    expect(result.items[1]?.height).toBeCloseTo(((endTime2 - startTime2) / (totalDuration)) * 100);
   });
 
   it('should return multiple activity items with gaps', () => {
@@ -146,12 +146,12 @@ describe('calculateTimeSpans', () => {
 
     expect(result.items.length).toBe(3);
 
-    expect(result.items[0].type).toBe('activity');
-    expect(result.items[1].type).toBe('gap');
-    expect(result.items[2].type).toBe('activity');
+    expect(result.items[0]?.type).toBe('activity');
+    expect(result.items[1]?.type).toBe('gap');
+    expect(result.items[2]?.type).toBe('activity');
 
-    expect(result.items[1].duration).toBe(startTime2 - endTime1);
-    expect(result.items[1].height).toBeCloseTo(((startTime2 - endTime1) / (totalDuration)) * 100);
+    expect(result.items[1]?.duration).toBe(startTime2 - endTime1);
+    expect(result.items[1]?.height).toBeCloseTo(((startTime2 - endTime1) / (totalDuration)) * 100);
   });
 
   it('should include a gap item for the remaining time when all activities are completed', () => {
@@ -183,15 +183,15 @@ describe('calculateTimeSpans', () => {
     // 2. The ongoing break since activity completion (10 seconds)
     // 3. The remaining time gap (10 seconds)
     expect(result.items.length).toBe(3);
-    expect(result.items[0].type).toBe('activity');
-    expect(result.items[0].duration).toBe(10000); // Activity lasted 10 seconds
+    expect(result.items[0]?.type).toBe('activity');
+    expect(result.items[0]?.duration).toBe(10000); // Activity lasted 10 seconds
     
-    expect(result.items[1].type).toBe('gap'); // Ongoing break
-    expect(result.items[1].duration).toBe(10000); // Break is 10 seconds
+    expect(result.items[1]?.type).toBe('gap'); // Ongoing break
+    expect(result.items[1]?.duration).toBe(10000); // Break is 10 seconds
     
-    expect(result.items[2].type).toBe('gap'); // Remaining time
-    expect(result.items[2].duration).toBe(timeLeft);
-    expect(result.items[2].height).toBeCloseTo((timeLeft / totalDuration) * 100);
+    expect(result.items[2]?.type).toBe('gap'); // Remaining time
+    expect(result.items[2]?.duration).toBe(timeLeft);
+    expect(result.items[2]?.height).toBeCloseTo((timeLeft / totalDuration) * 100);
   });
 
   it('should use Date.now() to calculate the duration for entries with `endTime` undefined', () => {
@@ -217,8 +217,8 @@ describe('calculateTimeSpans', () => {
     });
 
     expect(result.items.length).toBe(1);
-    expect(result.items[0].type).toBe('activity');
-    expect(result.items[0].duration).toBeCloseTo(Date.now() - startTime, -1);
-    expect(result.items[0].height).toBeCloseTo(((Date.now() - startTime) / (totalDuration)) * 100);
+    expect(result.items[0]?.type).toBe('activity');
+    expect(result.items[0]?.duration).toBeCloseTo(Date.now() - startTime, -1);
+    expect(result.items[0]?.height).toBeCloseTo(((Date.now() - startTime) / (totalDuration)) * 100);
   });
 });

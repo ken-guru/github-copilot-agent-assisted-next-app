@@ -186,7 +186,9 @@ describe('ActivityManager Component', () => {
     
     // Find all remove buttons and click the first one
     const removeButtons = await screen.findAllByRole('button', { name: 'Remove' });
-    fireEvent.click(removeButtons[0]);
+    expect(removeButtons.length).toBeGreaterThan(0);
+    const firstRemoveButton = removeButtons[0] as HTMLElement;
+    fireEvent.click(firstRemoveButton);
     
     // Should call onActivityRemove
     expect(mockOnActivityRemove).toHaveBeenCalledTimes(1);

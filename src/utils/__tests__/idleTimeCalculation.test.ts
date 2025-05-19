@@ -12,10 +12,12 @@ function calculateIdleTime(entries: TimelineEntry[]): number {
   
   for (let i = 0; i < sortedEntries.length; i++) {
     const entry = sortedEntries[i];
+    if (!entry) continue;
+    
     const endTime = entry.endTime ?? Date.now();
     
     // Calculate break time between activities
-    if (lastEndTime && entry.startTime > lastEndTime) {
+    if (lastEndTime && entry.startTime !== undefined && entry.startTime > lastEndTime) {
       idleTime += Math.round((entry.startTime - lastEndTime) / 1000);
     }
     

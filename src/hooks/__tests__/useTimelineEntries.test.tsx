@@ -59,7 +59,26 @@ describe('useTimelineEntries', () => {
       result.current.completeCurrentTimelineEntry();
     });
 
-    expect(result.current.timelineEntries[0].endTime).toBe(startTime + 1000);
+    const firstEntry = result.current.timelineEntries[0];
+    expect(firstEntry?.endTime).toBe(startTime + 1000);
+  });
+
+  it('should add and complete timeline entries', () => {
+    const { result } = renderHook(() => useTimelineEntries());
+    const startTime = Date.now();
+
+    act(() => {
+      result.current.addTimelineEntry(mockActivity);
+    });
+
+    jest.advanceTimersByTime(1000); // Advance 1 second
+    
+    act(() => {
+      result.current.completeCurrentTimelineEntry();
+    });
+
+    const firstEntry = result.current.timelineEntries[0];
+    expect(firstEntry?.endTime).toBe(startTime + 1000);
   });
 
   it('should not modify completed entries when completing current entry', () => {
@@ -70,8 +89,8 @@ describe('useTimelineEntries', () => {
     act(() => {
       result.current.addTimelineEntry(mockActivity);
     });
-    
-    jest.advanceTimersByTime(1000);
+
+    jest.advanceTimersByTime(1000); // Advance 1 second
     
     act(() => {
       result.current.completeCurrentTimelineEntry();
@@ -79,21 +98,20 @@ describe('useTimelineEntries', () => {
 
     const firstEntryEndTime = startTime + 1000;
 
-    // Add and complete second entry
-    jest.advanceTimersByTime(1000);
-    
+    // Add second entry and complete it
     act(() => {
       result.current.addTimelineEntry(mockActivity);
     });
     
-    jest.advanceTimersByTime(1000);
+    jest.advanceTimersByTime(2000); // Advance 2 seconds
     
     act(() => {
       result.current.completeCurrentTimelineEntry();
     });
 
     // Verify first entry's end time hasn't changed
-    expect(result.current.timelineEntries[0].endTime).toBe(firstEntryEndTime);
+    const firstEntry = result.current.timelineEntries[0];
+    expect(firstEntry?.endTime).toBe(firstEntryEndTime);
   });
 
   it('should do nothing when completing entry with no timeline entries', () => {
@@ -128,7 +146,8 @@ describe('useTimelineEntries', () => {
       result.current.completeCurrentTimelineEntry();
     });
 
-    expect(result.current.timelineEntries[0].endTime).toBe(endTime);
+    const firstEntry = result.current.timelineEntries[0];
+    expect(firstEntry?.endTime).toBe(endTime);
   });
 
   it('should reset timeline entries', () => {

@@ -94,7 +94,8 @@ describe('Timeline Component Rendering', () => {
     const timeMarkers = screen.getAllByTestId('time-marker');
     expect(timeMarkers.length).toBeGreaterThan(0);
     
-    const lastMarkerTime = timeMarkers[timeMarkers.length - 1].textContent;
+    const lastMarker = timeMarkers[timeMarkers.length - 1];
+    const lastMarkerTime = lastMarker ? lastMarker.textContent : '';
     expect(lastMarkerTime).not.toBe('1:00:00');
   });
 });
