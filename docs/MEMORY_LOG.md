@@ -130,6 +130,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-106: Cypress Missing E2e Config](./logged_memories/MRTMLY-106-cypress-missing-e2e-config.md)
 - [MRTMLY-212: Timeline Entry Interface Consolidation](./logged_memories/MRTMLY-212-timeline-entry-interface-consolidation.md)
 - [MRTMLY-213: Page Test Offline Indicator Fix](./logged_memories/MRTMLY-213-page-test-offline-indicator-fix.md)
+- [MRTMLY-077: Summary Component Performance Test Fix](./logged_memories/MRTMLY-077-summary-performance-test-fix.md) - Fixed failing CI/CD test by increasing performance test threshold
 
 ## Ui Layout Entries {#ui-layout-entries}
 
