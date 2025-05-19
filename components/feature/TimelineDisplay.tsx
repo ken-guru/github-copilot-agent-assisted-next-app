@@ -1,15 +1,51 @@
 import React from 'react';
 
+/**
+ * Represents an event to be displayed in the timeline
+ */
 interface Event {
+  /**
+   * Unique identifier for the event
+   */
   id: string;
+  
+  /**
+   * Title/heading of the event
+   */
   title: string;
+  
+  /**
+   * Date when the event occurred
+   */
   date: Date;
+  
+  /**
+   * Detailed description of the event
+   */
   description: string;
 }
 
+/**
+ * Props for the TimelineDisplay component
+ */
 interface TimelineDisplayProps {
+  /**
+   * Array of events to display in the timeline
+   */
   events: Event[];
+  
+  /**
+   * Order in which to display events
+   * - 'asc': Chronological order (oldest first)
+   * - 'desc': Reverse chronological order (newest first)
+   * @default 'asc'
+   */
   displayOrder?: 'asc' | 'desc';
+  
+  /**
+   * Whether to show event descriptions
+   * @default true
+   */
   showDescriptions?: boolean;
 }
 

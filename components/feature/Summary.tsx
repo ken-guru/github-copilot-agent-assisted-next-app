@@ -5,12 +5,41 @@ import { isDarkMode } from '@lib/utils/colors';
 // ColorSet is imported for type definitions but not directly used
 import type { ColorSet } from '@lib/utils/colors';
 
+/**
+ * Props interface for the Summary component
+ */
 interface SummaryProps {
+  /**
+   * Timeline entries to analyze and display in the summary
+   */
   entries?: TimelineEntry[];
+  
+  /**
+   * Total planned duration in seconds
+   */
   totalDuration: number;
+  
+  /**
+   * Elapsed time in seconds since the timer started
+   */
   elapsedTime: number;
+  
+  /**
+   * Whether the timer is currently active
+   * @default false
+   */
   timerActive?: boolean;
+  
+  /**
+   * Whether all planned activities have been completed
+   * @default false
+   */
   allActivitiesCompleted?: boolean;
+  
+  /**
+   * Whether the allocated time has been fully used
+   * @default false
+   */
   isTimeUp?: boolean;
 }
 

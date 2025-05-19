@@ -4,12 +4,39 @@ import { calculateTimeSpans } from '@lib/time/timelineCalculations';
 import { formatTimeHuman } from '@lib/time';
 import { isDarkMode } from '@lib/utils/colors';
 
+/**
+ * Represents an entry in the timeline
+ */
 export interface TimelineEntry {
+  /**
+   * Unique identifier for the timeline entry
+   */
   id: string;
+  
+  /**
+   * The ID of the associated activity, or null if this is a break
+   */
   activityId: string | null;
+  
+  /**
+   * The name of the associated activity, or null if this is a break
+   */
   activityName: string | null;
+  
+  /**
+   * Timestamp when this activity/break started (in milliseconds)
+   */
   startTime: number;
+  
+  /**
+   * Timestamp when this activity/break ended (in milliseconds), or null if ongoing
+   */
   endTime?: number | null;
+  
+  /**
+   * Color scheme for the timeline entry visualization, can be a direct color set
+   * or a theme-aware color set with light and dark variants
+   */
   colors?: {
     background: string;
     text: string;
@@ -20,12 +47,41 @@ export interface TimelineEntry {
   };
 }
 
+/**
+ * Props for the Timeline component
+ */
 interface TimelineProps {
+  /**
+   * Array of timeline entries to visualize
+   */
   entries: TimelineEntry[];
+  
+  /**
+   * Total planned duration in seconds
+   */
   totalDuration: number;
+  
+  /**
+   * Time elapsed since the first activity started (in seconds)
+   */
   elapsedTime: number;
+  
+  /**
+   * Whether the allocated time has been fully used
+   * @default false
+   */
   isTimeUp?: boolean;
+  
+  /**
+   * Whether the timer is currently active
+   * @default false
+   */
   timerActive?: boolean;
+  
+  /**
+   * Whether all planned activities have been completed
+   * @default false
+   */
   allActivitiesCompleted?: boolean;
 }
 

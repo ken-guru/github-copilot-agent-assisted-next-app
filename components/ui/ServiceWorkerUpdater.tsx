@@ -1,8 +1,20 @@
 import React, { useEffect } from 'react';
 import styles from './ServiceWorkerUpdater.module.css';
 
+/**
+ * Props for the ServiceWorkerUpdater component
+ */
 interface ServiceWorkerUpdaterProps {
+  /**
+   * Callback function triggered when the user clicks the update button
+   * This should handle the service worker update process
+   */
   onUpdate: () => void;
+  
+  /**
+   * Callback function triggered when the user dismisses the update notification
+   * This should handle hiding the notification or setting a delay for the reminder
+   */
   onDismiss: () => void;
 }
 

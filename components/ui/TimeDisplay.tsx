@@ -1,11 +1,35 @@
 import React from 'react';
 import styles from './TimeDisplay.module.css';
 
+/**
+ * Props for the TimeDisplay component
+ */
 interface TimeDisplayProps {
+  /**
+   * The date and time to display
+   */
   dateTime: Date;
+  
+  /**
+   * Pre-formatted time string to display
+   */
   formattedTime: string;
+  
+  /**
+   * Pre-formatted date string to display
+   */
   formattedDate: string;
+  
+  /**
+   * The format used for the time (for display purposes only)
+   * Example: "HH:mm:ss"
+   */
   timeFormat?: string;
+  
+  /**
+   * The format used for the date (for display purposes only)
+   * Example: "YYYY-MM-DD"
+   */
   dateFormat?: string;
 }
 

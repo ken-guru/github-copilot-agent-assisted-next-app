@@ -3,9 +3,16 @@ import { useOnlineStatus } from '@hooks/use-online-status';
 import styles from './OfflineIndicator.module.css';
 
 /**
+ * Props for the OfflineIndicator component
+ * This component currently doesn't accept any props, but the interface is defined
+ * for future extensibility and consistency
+ */
+export interface OfflineIndicatorProps {}
+
+/**
  * Component that displays an offline indicator when the user loses network connectivity
  */
-export function OfflineIndicator(): React.ReactElement | null {
+export function OfflineIndicator({}: OfflineIndicatorProps): React.ReactElement | null {
   const isOnline = useOnlineStatus();
   const [mounted, setMounted] = useState(false);
 
