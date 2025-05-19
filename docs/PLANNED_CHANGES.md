@@ -119,35 +119,12 @@ Note: When implementing a change, copy this template and fill it out completely.
 
 # Next.js App Structure Reorganization
 
-## Context
-Our application needs to be restructured to follow the best practices for a Next.js application according to the official Next.js documentation. The current structure has components, contexts, and utilities spread across various directories, which doesn't align with the recommended Next.js project organization.
+**COMPLETED: May 19, 2025** - This plan has been successfully implemented and moved to [IMPLEMENTED_CHANGES.md](./IMPLEMENTED_CHANGES.md).
 
-- This change affects the entire application structure
-- We need to relocate files to their proper locations while maintaining functionality
-- This reorganization will improve maintainability and align with Next.js conventions
+See "Next.js App Structure Reorganization (2025-05-19)" in the IMPLEMENTED_CHANGES.md document for the full implementation details and completion status.
 
-## Requirements
-
-1. Implement a proper Next.js folder structure
-   - Organize the application using the App Router approach
-   - Follow the recommended conventions for routing and file naming
-   - Ensure all special files (layout, page, etc.) are in their correct locations
-
-2. Relocate existing files to appropriate locations
-   - Move components, contexts, and utilities to recommended locations
-   - Update all import statements to reflect new file paths
-   - Ensure all tests continue to pass after relocation
-
-3. Maintain application functionality throughout the process
-   - Implement changes incrementally, one component or section at a time
-   - Verify functionality after each relocation step
-   - Ensure all tests pass after each change
-
-## Technical Guidelines
-- Follow Next.js App Router project structure conventions
-- Ensure proper separation between routing elements and UI components
-- Maintain test coverage and functionality throughout the process
-- Update all import paths and references across the codebase
+**Memory Log References:**
+- [MRTMLY-214: TypeScript and ESLint Compliance Fixes](./logged_memories/MRTMLY-214-typescript-eslint-fixes.md)
 
 ## Expected Outcome
 - A well-organized codebase that follows Next.js best practices
@@ -156,11 +133,11 @@ Our application needs to be restructured to follow the best practices for a Next
 - Better alignment with Next.js documentation and examples
 
 ## Validation Criteria
-- [ ] All files properly organized in the recommended structure
-- [ ] All tests passing after reorganization
-- [ ] Application functionality maintained
-- [ ] Import paths updated throughout the codebase
-- [ ] Documentation updated to reflect new structure
+- [x] All files properly organized in the recommended structure (2025-05-19)
+- [x] All tests passing after reorganization (2025-05-19)
+- [x] Application functionality maintained (2025-05-19)
+- [x] Import paths updated throughout the codebase (2025-05-19)
+- [x] Documentation updated to reflect new structure (2025-05-19)
 
 ## Migration Plan
 
@@ -435,9 +412,9 @@ Files that need to be relocated:
 - Verify functionality in the browser
 
 ### Current Progress
-- [x] Phase 1: Desired Folder Structure - Planned
-- [x] Phase 2: File Mapping - Planned
-- [x] Phase 3: Migration Steps - In Progress
+- [x] Phase 1: Desired Folder Structure - Completed
+- [x] Phase 2: File Mapping - Completed
+- [x] Phase 3: Migration Steps - Completed
   - [x] Step 1: Set Up Basic App Router Structure - Completed
   - [x] Step 2: Create New Directory Structure - Completed
   - [x] Step 3: Migrate Context Providers - Completed
@@ -451,210 +428,18 @@ Files that need to be relocated:
   - [x] Step 8: Update Configuration - Completed
   - [x] Step 9: Final Verification - Completed
 
-#### Progress Summary
-We have successfully:
-1. Set up the basic App Router structure under `/src/app/`
-2. Created new directory structure following Next.js best practices
-3. Migrated context providers from `/src/contexts/` to `/contexts/`
-4. Migrated utility functions to appropriate lib directories by category
-5. Migrated custom hooks from camelCase to kebab-case naming and updated imports
-6. Migrated UI components to `/components/ui/`
-7. Migrated app-specific components to `/src/app/_components/`
-8. Migrated feature components to `/components/feature/`
-9. Fixed type errors across the codebase
-10. Created type definition for third-party libraries when needed without installing extra packages
-11. Updated component interfaces to fix TypeScript errors
+**COMPLETED: May 19, 2025** - This plan has been successfully implemented and moved to [IMPLEMENTED_CHANGES.md](./IMPLEMENTED_CHANGES.md).
 
-#### Next Steps
-1. Run final verification tests with `npm test` to ensure all tests pass
-2. Build the application with `npm run build` to check for build errors
-3. Start the application with `npm run dev` and test in browser
-4. Document any needed follow-up tasks for edge cases
-5. Update any remaining import references that might have been missed
+See "Next.js App Structure Reorganization (2025-05-19)" in the IMPLEMENTED_CHANGES.md document for the full implementation details and completion status.
+
+**Memory Log References:**
+- [MRTMLY-214: TypeScript and ESLint Compliance Fixes](./logged_memories/MRTMLY-214-typescript-eslint-fixes.md)
 
 # Post-Migration Code Quality Improvements
 
-## Context
-After successfully completing the Next.js App Router migration, several minor issues were identified that could be addressed to further improve code quality, maintainability, and adherence to best practices.
+**COMPLETED: May 19, 2025** - This plan has been successfully implemented and moved to [IMPLEMENTED_CHANGES.md](./IMPLEMENTED_CHANGES.md).
 
-- The codebase contains ESLint warnings related to unused variables and explicit `any` types
-- There are duplicate test files in the old structure that could be cleaned up
-- The project could benefit from stricter TypeScript checking
-- Component props interfaces could be optimized for better type safety
-- Tests could be co-located with their components for better organization
+See "Post-Migration Code Quality Improvements (2025-05-19)" in the IMPLEMENTED_CHANGES.md document for the full implementation details and completion status.
 
-## Requirements
-
-1. Address ESLint warnings
-   - Fix unused variables across the codebase
-   - Replace explicit `any` types with proper type definitions
-   - Create a standardized approach for handling intentional unused variables
-
-2. Implement stricter TypeScript checking
-   - Update tsconfig.json with stricter type checking options
-   - Address any new type errors that emerge
-   - Add missing type definitions where needed
-
-3. Optimize component props interfaces
-   - Review and standardize component prop interfaces
-   - Add proper documentation for props
-   - Ensure consistent naming conventions across interfaces
-
-4. Improve test organization
-   - Consider co-locating tests with their components
-   - Clean up any remaining duplicate test files from the migration
-   - Ensure consistent test naming conventions
-
-## Technical Guidelines
-- Make incremental changes to avoid breaking functionality
-- Run the test suite after each significant change
-- Document decisions in the Memory Log
-- Follow consistent patterns for each category of changes
-- Use ESLint disable comments judiciously and only when absolutely necessary
-
-## Expected Outcome
-- Zero ESLint warnings in the codebase
-- Stricter TypeScript checking providing better development experience
-- Well-documented and consistent component interfaces
-- Better organized tests with clear relationship to the components they test
-- Improved maintainability for future development
-
-## Validation Criteria
-- [x] All ESLint warnings addressed (2025-05-19)
-- [x] Stricter TypeScript configuration implemented (2025-05-19)
-- [x] Component prop interfaces optimized and documented (2025-05-19)
-- [x] Test organization improved (2025-05-19)
-- [x] All tests passing with the new changes (466 tests across 74 test suites) (2025-05-19)
-- [x] Documentation updated to reflect the changes (MRTMLY-214) (2025-05-19)
-
-## Implementation Plan
-
-### Phase 1: ESLint Warning Cleanup
-
-#### Step 1: Configure ESLint Rules
-- Create or update `.eslintrc.json` to better handle unused variables:
-  ```json
-  {
-    "extends": "next/core-web-vitals",
-    "rules": {
-      "@typescript-eslint/no-unused-vars": ["warn", { 
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_"
-      }],
-      "@typescript-eslint/no-explicit-any": "warn"
-    }
-  }
-  ```
-- This configuration will allow for intentional unused variables to be prefixed with underscore
-
-#### Step 2: Address Unused Variables
-- Systematically address each unused variable warning:
-  - Remove truly unused variables
-  - Prefix intentionally unused variables with underscore (e.g., `_props`)
-  - Document cases where variables are kept for future use
-
-#### Step 3: Replace Explicit `any` Types
-- Identify all instances of explicit `any` types
-- Replace with appropriate type definitions
-- When exact type is unknown, use more specific types like `unknown` or create interface
-
-### Phase 2: TypeScript Configuration Enhancement
-
-#### Step 1: Update tsconfig.json
-- Add stricter type checking options:
-  ```json
-  {
-    "compilerOptions": {
-      "strict": true,
-      "noImplicitAny": true,
-      "strictNullChecks": true,
-      "strictFunctionTypes": true,
-      "strictBindCallApply": true,
-      "strictPropertyInitialization": true,
-      "noImplicitThis": true,
-      "alwaysStrict": true,
-      "noUncheckedIndexedAccess": true
-    }
-  }
-  ```
-
-#### Step 2: Address New Type Errors
-- Systematically fix type errors that emerge from stricter checking
-- Create missing type definitions
-- Document complex type decisions in code comments
-
-### Phase 3: Component Props Interface Optimization (IN PROGRESS)
-
-#### Step 1: Test Component Props Interfaces
-- ✅ Create test file for component props interface validation
-- ✅ Implement tests for required vs optional props
-- ✅ Ensure tests maintain backward compatibility
-
-#### Step 2: Standardize Interface Naming
-- ✅ Ensure consistent naming convention (e.g., `ComponentNameProps`)
-- ✅ Add appropriate JSDoc comments for each interface
-- ✅ Document required vs optional props
-
-#### Step 3: Review and Optimize Props
-- ✅ Standardize component interfaces across feature components
-- ✅ Standardize component interfaces across UI components
-- ✅ Ensure proper typing for all props
-- ✅ Add detailed JSDoc comments with descriptions
-- ✅ Complete optimization for all components
-
-#### Implementation Progress
-- ✅ Created Memory Log entry (MRTMLY-003) to document the process
-- ✅ Added comprehensive JSDoc comments to UI components:
-  - ✅ ActivityButton interface (`ActivityButtonProps`)
-  - ✅ ThemeToggle interface (`ThemeToggleProps` added where none existed)
-  - ✅ OfflineIndicator interface (`OfflineIndicatorProps` added where none existed)
-  - ✅ ServiceWorkerUpdater interface (`ServiceWorkerUpdaterProps`)
-  - ✅ TimeDisplay interface (`TimeDisplayProps`)
-- ✅ Added comprehensive JSDoc comments to feature components:
-  - ✅ ActivityManager interface (`ActivityManagerProps` and `Activity`)
-  - ✅ ProgressBar interface (`ProgressBarProps`)
-  - ✅ TimeSetup interface (`TimeSetupProps`)
-  - ✅ Summary interface (`SummaryProps`)
-  - ✅ Timeline interface (`TimelineProps` and `TimelineEntry`)
-  - ✅ TimelineDisplay interface (`TimelineDisplayProps` and `Event`)
-- ✅ Verified all tests pass for optimized components
-- ✅ Documented challenges with multiple TimelineEntry types
-
-### Phase 4: Test Organization Improvement
-
-#### Step 1: Clean Up Duplicate Tests
-- Identify and remove any remaining duplicate test files
-- Ensure all functionality is still covered by the remaining tests
-
-#### Step 2: Evaluate Test Co-location
-- Consider moving component tests closer to their components
-- Create a strategy for test file naming and organization
-- Update test imports as needed
-
-#### Step 3: Standardize Test Patterns
-- Ensure consistent test naming conventions
-- Standardize test setup and teardown
-- Optimize test coverage
-
-### Current Progress
-- [x] Phase 1: ESLint Warning Cleanup - Completed
-- [x] Phase 2: TypeScript Configuration Enhancement - Completed
-- [x] Phase 3: Component Props Interface Optimization - Completed (2025-05-19)
-- [x] Phase 4: Test Organization Improvement - Completed (2025-05-19)
-  - [x] Step 1: Update tsconfig.json with stricter type checking options - Completed
-  - [x] Step 2: Address New Type Errors - Completed (All implementation and test files fixed)
-- [x] Phase 3: Component Props Interface Optimization - Completed
-  - [x] Step 1: Test Component Props Interfaces - Completed
-  - [x] Step 2: Standardize Interface Naming - Completed
-  - [x] Step 3: Review and Optimize Props - Completed
-    - [x] ActivityButton interface optimized with JSDoc comments
-    - [x] ActivityManager interface optimized with JSDoc comments
-    - [x] ProgressBar interface optimized with JSDoc comments
-    - [x] ThemeToggle interface created and optimized
-    - [x] TimeSetup interface optimized with JSDoc comments
-    - [x] Summary interface optimized with proper type assertions
-    - [x] Timeline interface optimized with proper type guards
-    - [x] OfflineIndicator interface optimized with ESLint comments
-    - [x] All remaining components optimized and documented (2025-05-19)
-  - [x] Tests passing for optimized components
-- [x] Phase 4: Test Organization Improvement - Completed
+**Memory Log References:**
+- [MRTMLY-214: TypeScript and ESLint Compliance Fixes](./logged_memories/MRTMLY-214-typescript-eslint-fixes.md)
