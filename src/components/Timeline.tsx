@@ -45,11 +45,18 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   const getThemeAppropriateColor = (colors?: TimelineEntry['colors']) => {
     if (!colors) return undefined;
     
-    // Extract hue from current color
-    const hue = extractHueFromHsl(colors.background);
+    // If we already have theme-specific colors, use those directly
+    if (colors && 'light' in colors && 'dark' in colors) {
+      return currentTheme === 'dark' ? colors.dark : colors.light;
+    }
+    
+    // Otherwise, extract hue from current color and find closest theme-aware color
+    // Type assertion needed for TypeScript since we've confirmed it's a ColorSet
+    const colorSet = colors as ColorSet;
+    const hue = extractHueFromHsl(colorSet.background);
     
     // Find the closest matching color set in internalActivityColors
-    const closestColorSet = findClosestColorSet(hue, colors);
+    const closestColorSet = findClosestColorSet(hue, colorSet);
     
     // Return the appropriate theme version with null checks
     if (!closestColorSet) {

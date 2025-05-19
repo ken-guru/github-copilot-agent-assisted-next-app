@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Summary.module.css';
-import type { TimelineEntry } from './Timeline';
+import type { TimelineEntry } from '@/types';
 import { isDarkMode } from '@lib/utils/colors';
-// ColorSet is imported for type definitions but not directly used
-import type { ColorSet } from '@lib/utils/colors';
 
 /**
  * Props interface for the Summary component

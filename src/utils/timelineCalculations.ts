@@ -1,4 +1,4 @@
-import { TimelineEntry } from '@/components/Timeline';
+import { TimelineEntry } from '@/types';
 
 interface CalculateTimeSpansProps {
   entries: TimelineEntry[];

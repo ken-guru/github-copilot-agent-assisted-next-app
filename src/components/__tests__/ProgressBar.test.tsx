@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import ProgressBar from '../ProgressBar';
-import { TimelineEntry } from '../Timeline';
+import { TimelineEntry } from '@/types';
 
 // Mock the CSS module
 jest.mock('../ProgressBar.module.css', () => ({

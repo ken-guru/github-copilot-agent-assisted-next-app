@@ -1,5 +1,5 @@
 import { calculateTimeSpans } from '../timelineCalculations';
-import { TimelineEntry } from '@/components/Timeline';
+import { TimelineEntry } from '@/types';
 
 describe('calculateTimeSpans', () => {
   let dateNowSpy: jest.SpyInstance;

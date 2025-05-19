@@ -11,6 +11,7 @@ import { validateThemeColors } from '@lib/utils/colors';  // Updated import path
  * 
  * @interface ThemeToggleProps
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ThemeToggleProps {}
 
 /**

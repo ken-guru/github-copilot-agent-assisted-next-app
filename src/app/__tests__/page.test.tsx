@@ -326,10 +326,8 @@ describe('OfflineIndicator Integration', () => {
       safelyCheckClass(activitySibling, styles.activityGrid);
     }
     
-    // First, find the start button for homework
-    const startButton = screen.getByTestId('start-activity-homework');
-    
     // Before clicking, let's manually update the currentActivity to simulate selection
+    // Note: We don't need to find the start button anymore since we're updating the mock directly
     mockCurrentActivity = { id: '1', name: 'Homework', colors: {} };
     
     // Re-render the component with the updated state

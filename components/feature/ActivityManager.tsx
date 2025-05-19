@@ -74,9 +74,12 @@ export default function ActivityManager({
   onActivityRemove,
   currentActivityId, 
   completedActivityIds,
-  timelineEntries: _timelineEntries,
+  // These props are unused but kept in the interface for future use
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  timelineEntries,
   isTimeUp = false,
-  elapsedTime: _elapsedTime = 0 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  elapsedTime = 0 
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [showForm, setShowForm] = useState(false);

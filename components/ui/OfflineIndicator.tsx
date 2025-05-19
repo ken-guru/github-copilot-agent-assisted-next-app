@@ -7,6 +7,7 @@ import styles from './OfflineIndicator.module.css';
  * This component currently doesn't accept any props, but the interface is defined
  * for future extensibility and consistency
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface OfflineIndicatorProps {}
 
 /**

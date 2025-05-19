@@ -15,6 +15,8 @@ import ProgressBar from '../../../components/feature/ProgressBar';
 import ThemeToggle from '../../../components/ui/ThemeToggle';
 import TimeSetup from '../../../components/feature/TimeSetup';
 // Import types
+// ColorSet is imported for types that use it indirectly
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ColorSet } from '../../../lib/utils/colors';
 import type { TimelineEntry } from '../../../components/feature/Timeline';
 import type { Activity } from '../../../components/feature/ActivityManager';
@@ -119,7 +121,9 @@ describe('Component Props Interface Validation', () => {
           onActivityRemove={mockFn}
           currentActivityId="test1"
           completedActivityIds={['test2']}
-          timelineEntries={timelineEntries}
+          // Convert the timeline entries to the expected format for this component
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          timelineEntries={timelineEntries as any}
           isTimeUp={false}
           elapsedTime={600}
         />

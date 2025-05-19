@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TimelineEntry } from './Timeline';
+import { TimelineEntry } from '@/types';
 import styles from './ProgressBar.module.css';
 import { formatTimeHuman } from '@/utils/time';
 

@@ -211,23 +211,16 @@ export function getRandomColorSet(): ColorSet {
     .filter(index => !usedColors.has(index));
   
   // Make sure we always have a valid index
-  let randomIndex = 0;
-  if (availableIndices.length > 0) {
-    const safeArrayIndex = Math.floor(Math.random() * availableIndices.length);
-    const selectedIndex = availableIndices[safeArrayIndex];
-    if (selectedIndex !== undefined) {
-      randomIndex = selectedIndex;
-    }
-  }
+  const randomIndex = availableIndices.length > 0 
+    ? availableIndices[Math.floor(Math.random() * availableIndices.length)] ?? 0
+    : 0;
     
   usedColors.add(randomIndex);
   
   const colors = getActivityColors();
   // Get the color at index or fallback  
-  let colorAtIndex: ColorSet | undefined = undefined;
-  if (randomIndex >= 0 && randomIndex < colors.length) {
-    colorAtIndex = colors[randomIndex];
-  }
+  const colorAtIndex: ColorSet | undefined = 
+    (randomIndex >= 0 && randomIndex < colors.length) ? colors[randomIndex] : undefined;
   
   // Provide default if undefined
   return colorAtIndex || (colors[0] || {
@@ -259,21 +252,14 @@ export function getNextAvailableColorSet(specificIndex?: number): ColorSet {
   }
   
   // Find the next available index
-  let availableIndex = 0;
-  for (let i = 0; i < colors.length; i++) {
-    if (!usedColors.has(i)) {
-      availableIndex = i;
-      break;
-    }
-  }
+  const availableIndex = Array.from({ length: colors.length }, (_, i) => i)
+    .find(i => !usedColors.has(i)) || 0;
   
   usedColors.add(availableIndex);
   
   // Get the color at the available index
-  let colorAtIndex: ColorSet | undefined = undefined;
-  if (availableIndex >= 0 && availableIndex < colors.length) {
-    colorAtIndex = colors[availableIndex];
-  }
+  const colorAtIndex: ColorSet | undefined = 
+    (availableIndex >= 0 && availableIndex < colors.length) ? colors[availableIndex] : undefined;
   
   // Provide default if undefined
   return colorAtIndex || (colors[0] || {
@@ -340,6 +326,8 @@ export function getContrastRatio(hsl1: string, hsl2: string): number {
       // Handle hex colors
       if (hsl.startsWith('#')) {
         // Safely process the hex color
+        // We need to initialize these variables here, but they will be reassigned based on parsing
+        // This must remain a `let` declaration as the values are modified
         let r = 0, g = 0, b = 0;
         
         if (hsl.length === 4) { // #RGB format
@@ -372,6 +360,8 @@ export function getContrastRatio(hsl1: string, hsl2: string): number {
         
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
+        // These values will be reassigned in the conditional logic below, so they must remain `let`
+        // eslint-disable-next-line prefer-const
         let h = 0, s = 0, l = (max + min) / 2;
         
         if (max !== min) {
@@ -402,6 +392,8 @@ export function getContrastRatio(hsl1: string, hsl2: string): number {
           
           const max = Math.max(r, g, b);
           const min = Math.min(r, g, b);
+          // These values will be reassigned in the conditional logic below, so they must remain `let`
+          // eslint-disable-next-line prefer-const
           let h = 0, s = 0, l = (max + min) / 2;
           
           if (max !== min) {

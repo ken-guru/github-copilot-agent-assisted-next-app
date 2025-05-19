@@ -7,7 +7,12 @@ interface ActivityFormProps {
   isDisabled?: boolean;
 }
 
-export default function ActivityForm({ onSubmit, onCancel: _onCancel, isDisabled = false }: ActivityFormProps) {
+export default function ActivityForm({ 
+  onSubmit, 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onCancel, 
+  isDisabled = false 
+}: ActivityFormProps) {
   const [activityName, setActivityName] = useState('');
   
   const handleSubmit = (e: React.FormEvent) => {

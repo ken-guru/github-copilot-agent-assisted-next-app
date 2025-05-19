@@ -1,6 +1,7 @@
 /// <reference types="@testing-library/jest-dom" />
 import { render, screen } from '@testing-library/react';
-import Timeline, { TimelineEntry } from '../Timeline';
+import Timeline from '../Timeline';
+import { TimelineEntry } from '@/types';
 
 describe('Timeline Component', () => {
   let dateNowSpy: jest.SpyInstance;

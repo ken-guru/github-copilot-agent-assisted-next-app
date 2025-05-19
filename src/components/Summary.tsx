@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Summary.module.css';
-import { TimelineEntry } from './Timeline';
+import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 
 interface SummaryProps {
@@ -29,11 +29,18 @@ export default function Summary({
   const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
     if (!colors) return undefined;
 
-    // Extract hue from current color
-    const hue = extractHueFromHsl(colors.background);
+    // If we already have theme-specific colors, use those directly
+    if (colors && 'light' in colors && 'dark' in colors) {
+      return currentTheme === 'dark' ? colors.dark : colors.light;
+    }
+    
+    // Otherwise, extract hue from current color and find closest theme-aware color
+    // Type assertion needed for TypeScript since we've confirmed it's a ColorSet
+    const colorSet = colors as ColorSet;
+    const hue = extractHueFromHsl(colorSet.background);
     
     // Find the closest matching color set in internalActivityColors
-    const closestColorSet = findClosestColorSet(hue, colors);
+    const closestColorSet = findClosestColorSet(hue, colorSet);
     
     // Return the appropriate theme version with null checks
     if (!closestColorSet) {
@@ -348,14 +355,14 @@ export default function Summary({
                 className={styles.activityItem}
                 data-testid={`activity-summary-item-${activity.id}`}
                 style={themeColors ? {
-                  backgroundColor: themeColors.background,
-                  borderColor: themeColors.border
+                  backgroundColor: (themeColors as ColorSet).background,
+                  borderColor: (themeColors as ColorSet).border
                 } : undefined}
               >
                 <span 
                   className={styles.activityName}
                   data-testid={`activity-name-${activity.id}`}
-                  style={themeColors ? { color: themeColors.text } : undefined}
+                  style={themeColors ? { color: (themeColors as ColorSet).text } : undefined}
                 >
                   {activity.name}
                 </span>

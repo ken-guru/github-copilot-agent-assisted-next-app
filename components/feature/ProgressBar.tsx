@@ -35,7 +35,9 @@ export default function ProgressBar({
   entries,
   totalDuration,
   elapsedTime,
-  timerActive: _timerActive = false
+  // This prop is currently unused but kept for future features
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  timerActive = false
 }: ProgressBarProps) {
   // State to track if the component is being viewed on mobile
   const [isMobile, setIsMobile] = useState(false);
