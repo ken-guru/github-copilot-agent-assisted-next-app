@@ -1,12 +1,48 @@
 import { useState } from 'react';
 import styles from './TimeSetup.module.css';
 
-interface TimeSetupProps {
+/**
+ * Props for the TimeSetup component
+ * 
+ * @interface TimeSetupProps
+ */
+export interface TimeSetupProps {
+  /**
+   * Callback when a time has been set
+   * 
+   * @param durationInSeconds - The selected duration in seconds
+   * @returns {void}
+   */
   onTimeSet: (durationInSeconds: number) => void;
+  
+  /**
+   * Initial mode for time input
+   * @default 'duration'
+   */
   initialMode?: 'duration' | 'deadline';
+  
+  /**
+   * Initial value for hours
+   * @default 0
+   */
   initialHours?: number;
+  
+  /**
+   * Initial value for minutes
+   * @default 0
+   */
   initialMinutes?: number;
+  
+  /**
+   * Initial value for seconds
+   * @default 0
+   */
   initialSeconds?: number;
+  
+  /**
+   * Initial value for deadline in format "HH:MM"
+   * @default Current time
+   */
   initialDeadlineTime?: string;
 }
 

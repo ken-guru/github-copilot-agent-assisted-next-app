@@ -67,11 +67,11 @@ Following the test-first development principle, we will:
 ## Progress
 
 - [x] Created test file for component props interface validation
-- [ ] Optimized ActivityButton interface
-- [ ] Optimized ActivityManager interface
-- [ ] Optimized ProgressBar interface
-- [ ] Optimized ThemeToggle interface
-- [ ] Optimized TimeSetup interface
+- [x] Optimized ActivityButton interface
+- [x] Optimized ActivityManager interface
+- [x] Optimized ProgressBar interface
+- [x] Optimized ThemeToggle interface
+- [x] Optimized TimeSetup interface
 - [ ] Optimized Summary interface
 - [ ] Optimized Timeline interface
 - [ ] Optimized TimelineDisplay interface
@@ -79,8 +79,31 @@ Following the test-first development principle, we will:
 - [ ] Optimized ServiceWorkerUpdater interface
 - [ ] Optimized TimeDisplay interface
 - [ ] Updated documentation to reflect the changes
-- [ ] Verify all tests pass
+- [x] Verify all tests pass for optimized components
 
 ## Lessons Learned
 
-(To be filled in as we progress through the optimization process)
+1. **Better Interface Documentation Improves Developer Experience**
+   - Adding comprehensive JSDoc comments makes component usage clearer
+   - Documenting default values helps developers understand behavior without reading implementation
+   - Standardized interface naming makes the codebase more consistent
+
+2. **Type Specificity Enhances Safety**
+   - Using more specific prop types helps catch potential issues at compile-time
+   - Explicitly documenting function parameter and return types clarifies expectations
+   - Making required vs optional props clear helps prevent runtime errors
+
+3. **Component Interface Design Considerations**
+   - Props that are purely for API compatibility should be marked as such
+   - Using consistent naming patterns across similar components improves maintainability
+   - Exposing interfaces even for components without props provides consistency and future-proofs the code
+
+4. **Challenges with Multiple TimelineEntry Types**
+   - We discovered two different TimelineEntry interfaces being used in the codebase
+   - The two interfaces have incompatible requirements (one requires activityName, another title/description)
+   - This highlights a need for future consolidation work to reduce confusion
+
+5. **Test Coverage Important During Interface Optimization**
+   - Existing tests provide a safety net when optimizing interfaces
+   - Adding specific interface validation tests helps ensure backward compatibility
+   - Testing with both required and optional props ensures flexibility is preserved

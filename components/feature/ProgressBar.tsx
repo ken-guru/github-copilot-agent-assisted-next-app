@@ -3,10 +3,31 @@ import styles from './ProgressBar.module.css';
 import { formatTimeHuman } from '@lib/time';
 import type { TimelineEntry } from './Timeline';
 
-interface ProgressBarProps {
+/**
+ * Props for the ProgressBar component
+ * 
+ * @interface ProgressBarProps
+ */
+export interface ProgressBarProps {
+  /**
+   * Timeline entries to visualize in the progress bar
+   */
   entries: TimelineEntry[];
-  totalDuration: number; // in seconds
-  elapsedTime: number; // in seconds
+  
+  /**
+   * Total duration in seconds for the progress bar
+   */
+  totalDuration: number;
+  
+  /**
+   * Current elapsed time in seconds
+   */
+  elapsedTime: number;
+  
+  /**
+   * Whether the timer is currently active
+   * @default false
+   */
   timerActive?: boolean;
 }
 

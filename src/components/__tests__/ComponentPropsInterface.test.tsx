@@ -8,32 +8,62 @@
 
 import { render } from '@testing-library/react';
 import { jest } from '@jest/globals';
-import { ActivityButton } from '@components/ui/ActivityButton';
-import ActivityManager from '@components/feature/ActivityManager';
-import ProgressBar from '@components/feature/ProgressBar';
-import ThemeToggle from '@components/ui/ThemeToggle';
-import TimeSetup from '@components/feature/TimeSetup';
+// Import from relative paths to match the project structure
+import { ActivityButton } from '../../../components/ui/ActivityButton';
+import ActivityManager from '../../../components/feature/ActivityManager';
+import ProgressBar from '../../../components/feature/ProgressBar';
+import ThemeToggle from '../../../components/ui/ThemeToggle';
+import TimeSetup from '../../../components/feature/TimeSetup';
+// Import types
+import type { ColorSet } from '../../../lib/utils/colors';
+import type { TimelineEntry } from '../../../components/feature/Timeline';
+import type { Activity } from '../../../components/feature/ActivityManager';
 
 describe('Component Props Interface Validation', () => {
   // Mock functions and data for testing
   const mockFn = jest.fn();
-  const mockActivity = {
+  
+  // Create a properly formatted Activity object with ColorSet
+  const mockActivity: Activity = {
     id: 'test1',
     name: 'Test Activity',
+    description: 'Test activity description',
+    completed: false,
     colors: {
-      background: '#ffffff',
-      text: '#000000',
-      border: '#cccccc'
-    }
+      light: {
+        background: '#ffffff',
+        text: '#000000',
+        border: '#cccccc'
+      },
+      dark: {
+        background: '#333333',
+        text: '#ffffff',
+        border: '#666666'
+      }
+    },
+    colorIndex: 0
   };
   
-  const timelineEntries = [
+  // Create properly formatted TimelineEntry objects
+  const timelineEntries: TimelineEntry[] = [
     {
       id: '1',
       activityId: 'test1',
       activityName: 'Test Activity',
       startTime: 0,
-      endTime: 300
+      endTime: 300,
+      colors: {
+        light: {
+          background: '#ffffff',
+          text: '#000000',
+          border: '#cccccc'
+        },
+        dark: {
+          background: '#333333',
+          text: '#ffffff',
+          border: '#666666'
+        }
+      }
     }
   ];
 
@@ -134,8 +164,7 @@ describe('Component Props Interface Validation', () => {
     it('renders with required props only', () => {
       const { container } = render(
         <TimeSetup
-          onTimeConfirmed={mockFn}
-          onCancel={mockFn}
+          onTimeSet={mockFn}
         />
       );
       expect(container).toBeInTheDocument();
@@ -144,10 +173,12 @@ describe('Component Props Interface Validation', () => {
     it('renders with all props', () => {
       const { container } = render(
         <TimeSetup
-          onTimeConfirmed={mockFn}
-          onCancel={mockFn}
+          onTimeSet={mockFn}
+          initialMode="duration"
           initialHours={2}
           initialMinutes={30}
+          initialSeconds={0}
+          initialDeadlineTime="14:30"
         />
       );
       expect(container).toBeInTheDocument();

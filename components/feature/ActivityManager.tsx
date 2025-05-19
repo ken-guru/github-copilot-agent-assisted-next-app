@@ -5,22 +5,67 @@ import { TimelineEntry } from '@hooks/use-timeline-entries';
 import { ActivityButton } from '@components/ui/ActivityButton';
 import ActivityForm from './ActivityForm';
 
+/**
+ * Represents an activity that can be tracked in the application
+ * 
+ * @interface Activity
+ */
 export interface Activity {
+  /** Unique identifier for the activity */
   id: string;
+  
+  /** The name of the activity */
   name: string;
+  
+  /** Optional description of the activity */
   description?: string;
+  
+  /** Whether the activity has been completed */
   completed?: boolean;
+  
+  /** Color scheme for the activity in light and dark mode */
   colors?: ColorSet;
+  
+  /** Index of the color in the color palette, used for color rotation */
   colorIndex?: number;
 }
 
-interface ActivityManagerProps {
+/**
+ * Props for the ActivityManager component
+ * 
+ * @interface ActivityManagerProps
+ */
+export interface ActivityManagerProps {
+  /**
+   * Callback when an activity is selected
+   * 
+   * @param activity - The selected activity or null if deselecting
+   * @param justAdd - If true, the activity was just added but not selected
+   * @returns {void}
+   */
   onActivitySelect: (activity: Activity | null, justAdd?: boolean) => void;
+  
+  /**
+   * Optional callback when an activity is removed
+   * 
+   * @param activityId - ID of the activity to remove
+   * @returns {void}
+   */
   onActivityRemove?: (activityId: string) => void;
+  
+  /** ID of the currently selected activity, or null if none selected */
   currentActivityId: string | null;
+  
+  /** Array of IDs for completed activities */
   completedActivityIds: string[];
+  
+  /** Array of timeline entries to calculate activity duration */
   timelineEntries: TimelineEntry[];
+  
+  /** Whether the time limit has been reached */
   isTimeUp?: boolean;
+  
+  /** Current elapsed time in seconds */
   elapsedTime?: number;
 }
 

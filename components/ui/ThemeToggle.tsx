@@ -4,7 +4,20 @@ import { useState, useEffect } from 'react';
 import styles from './ThemeToggle.module.css';
 import { validateThemeColors } from '@lib/utils/colors';  // Updated import path
 
-export default function ThemeToggle() {
+/**
+ * Props for the ThemeToggle component
+ * Currently, this component doesn't accept any props but we define the interface
+ * for consistency and future extensibility
+ * 
+ * @interface ThemeToggleProps
+ */
+export interface ThemeToggleProps {}
+
+/**
+ * ThemeToggle component allows users to switch between light, dark, and system themes
+ * The selected theme is stored in localStorage and applied to the document
+ */
+export default function ThemeToggle({}: ThemeToggleProps) {
   const [theme, setTheme] = useState('system');
   const [mounted, setMounted] = useState(false);
 

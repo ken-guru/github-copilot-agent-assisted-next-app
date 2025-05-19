@@ -3,14 +3,45 @@ import styles from './ActivityButton.module.css';
 import type { Activity } from '@components/feature/ActivityManager';
 import type { TimelineEntry } from '@components/feature/Timeline';
 
+/**
+ * Props for the ActivityButton component
+ * 
+ * @interface ActivityButtonProps
+ */
 export interface ActivityButtonProps {
+  /** The activity to display in this button */
   activity: Activity;
+  
+  /** Whether this activity has been completed */
   isCompleted: boolean;
+  
+  /** Whether this activity is currently active/selected */
   isActive: boolean;
+  
+  /** 
+   * Handler for when the activity button is clicked
+   * 
+   * @returns {void}
+   */
   onClick: () => void;
+  
+  /**
+   * Handler for when the remove button is clicked
+   * 
+   * @returns {void}
+   */
   onRemove: () => void;
+  
+  /** Whether the button is disabled */
   disabled: boolean;
+  
+  /** Array of timeline entries to calculate activity duration */
   timelineEntries?: TimelineEntry[];
+  
+  /** 
+   * Current elapsed time in seconds (not used directly in the component but 
+   * kept for API compatibility) 
+   */
   elapsedTime?: number;
 }
 
