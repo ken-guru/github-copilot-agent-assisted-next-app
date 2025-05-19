@@ -77,7 +77,7 @@ export default function ThemeToggle() {
   if (!mounted) return <div className={styles.placeholder} />;
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} role="group" aria-label="Theme selection">
       <div className={styles.toggleGroup}>
         <button
           className={`${styles.toggleButton} ${theme === 'light' ? styles.active : ''}`}

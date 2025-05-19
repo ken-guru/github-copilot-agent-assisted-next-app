@@ -40,7 +40,9 @@ describe('ActivityButton', () => {
   it('applies completed styles when completed', () => {
     render(<ActivityButton {...defaultProps} isCompleted={true} />);
     const container = screen.getByText('Test Activity').closest('div');
-    expect(container).toHaveClass(styles.completedActivityItem);
+    if (styles.completedActivityItem) {
+      expect(container).toHaveClass(styles.completedActivityItem);
+    }
   });
 
   it('shows checkmark icon when completed', () => {

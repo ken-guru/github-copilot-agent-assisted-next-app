@@ -3,7 +3,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ProgressBar from '../ProgressBar';
-import { TimelineEntry } from '../Timeline';
+import { TimelineEntry } from '@/types';
 import { setTestTheme } from '../../utils/testUtils/themeTestingUtils';
 
 // Mock the CSS module

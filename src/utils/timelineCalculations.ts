@@ -1,4 +1,4 @@
-import { TimelineEntry } from '@/components/Timeline';
+import { TimelineEntry } from '@/types';
 
 interface CalculateTimeSpansProps {
   entries: TimelineEntry[];
@@ -31,6 +31,8 @@ function calculateTimeSpans({
 
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
+    if (!entry) continue; // Skip undefined entries
+    
     const currentStartTime = entry.startTime;
     const currentEndTime = entry.endTime;
 
@@ -75,7 +77,7 @@ function calculateTimeSpans({
   // Add ongoing break if last activity is completed
   if (entries.length > 0) {
     const lastEntry = entries[entries.length - 1];
-    if (lastEntry.endTime) {
+    if (lastEntry && lastEntry.endTime) {
       const ongoingBreakDuration = Date.now() - lastEntry.endTime;
       if (ongoingBreakDuration > 0) {
         const breakHeight = (ongoingBreakDuration / totalDuration) * 100;

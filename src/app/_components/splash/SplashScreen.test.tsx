@@ -1,14 +1,17 @@
+'use client';
+
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
-import { SplashScreen } from '@/components/splash/SplashScreen';
-import { LoadingProvider } from '@/contexts/LoadingContext';
+import SplashScreen from '@/app/_components/splash/SplashScreen';
 
 // Mock the loading context
-jest.mock('@/contexts/LoadingContext', () => ({
-  useLoading: jest.fn().mockReturnValue({ 
-    isLoading: false,
-    setIsLoading: jest.fn()
-  }),
+const mockUseLoading = jest.fn().mockReturnValue({
+  isLoading: false,
+  setIsLoading: jest.fn()
+});
+
+jest.mock('@contexts/loading', () => ({
+  useLoading: () => mockUseLoading(),
   LoadingProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>
 }));
 
@@ -17,8 +20,7 @@ describe('SplashScreen Component', () => {
     jest.useFakeTimers();
     
     // Reset the mock
-    const { useLoading } = require('@/contexts/LoadingContext');
-    useLoading.mockReturnValue({
+    mockUseLoading.mockReturnValue({
       isLoading: true,
       setIsLoading: jest.fn()
     });
@@ -31,13 +33,12 @@ describe('SplashScreen Component', () => {
   it('renders the splash screen', () => {
     render(<SplashScreen />);
     
-    expect(screen.getByText('Mr. Timely')).toBeInTheDocument();
-    expect(document.querySelector('.loadingIndicator')).toBeInTheDocument();
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(document.querySelector('.loadingIndicator')).not.toBeNull();
   });
 
   it('hides after minimum display time when not loading', () => {
-    const { useLoading } = require('@/contexts/LoadingContext');
-    useLoading.mockReturnValue({
+    mockUseLoading.mockReturnValue({
       isLoading: false,
       setIsLoading: jest.fn()
     });
@@ -45,7 +46,7 @@ describe('SplashScreen Component', () => {
     const { container } = render(<SplashScreen minimumDisplayTime={500} />);
     
     // Splash should be visible initially
-    expect(container.firstChild).toBeInTheDocument();
+    expect(container.firstChild).not.toBeNull();
     
     // Advance time to trigger minimum display timeout
     act(() => {
@@ -55,7 +56,7 @@ describe('SplashScreen Component', () => {
     // If the element still exists, it should have the fadeOut class
     // If it doesn't exist anymore, the test should pass too
     if (container.firstChild) {
-      expect(container.firstChild).toHaveClass('fadeOut');
+      expect(container.firstChild).toHaveClass('fading');
     } else {
       // Test passes if element is removed - no assertion needed
       // We're just preventing the test from failing
@@ -64,6 +65,11 @@ describe('SplashScreen Component', () => {
   });
 
   it('stays visible while loading, even after minimum time', () => {
+    mockUseLoading.mockReturnValue({
+      isLoading: true,
+      setIsLoading: jest.fn()
+    });
+    
     const { container } = render(<SplashScreen minimumDisplayTime={500} />);
     
     // Advance time past minimum display time
@@ -72,16 +78,15 @@ describe('SplashScreen Component', () => {
     });
     
     // Splash should still be visible because loading is true
-    expect(container.firstChild).toBeInTheDocument();
-    expect(container.firstChild).not.toHaveClass('fadeOut');
+    expect(container.firstChild).not.toBeNull();
+    expect(container.firstChild).not.toHaveClass('fading');
   });
 
   it('starts fade out when loading changes to false', () => {
-    const { useLoading } = require('@/contexts/LoadingContext');
     const setIsLoadingMock = jest.fn();
     
     // Start with loading=true
-    useLoading.mockReturnValue({
+    mockUseLoading.mockReturnValue({
       isLoading: true,
       setIsLoading: setIsLoadingMock
     });
@@ -94,10 +99,10 @@ describe('SplashScreen Component', () => {
     });
     
     // Splash should still be visible
-    expect(container.firstChild).toBeInTheDocument();
+    expect(container.firstChild).not.toBeNull();
     
     // Now change loading to false and rerender
-    useLoading.mockReturnValue({
+    mockUseLoading.mockReturnValue({
       isLoading: false,
       setIsLoading: setIsLoadingMock
     });
@@ -105,9 +110,17 @@ describe('SplashScreen Component', () => {
     rerender(<SplashScreen minimumDisplayTime={500} />);
     
     // Check if it started fading out
-    // If firstChild exists, it should have fadeOut class
+    // If firstChild exists, it should have fading class
     if (container.firstChild) {
-      expect(container.firstChild).toHaveClass('fadeOut');
+      // Allow time for the fade animation to start
+      act(() => {
+        jest.advanceTimersByTime(100);
+      });
+      
+      // Instead of checking for the exact class name which might be hashed in CSS modules,
+      // check if the className contains the word "fading"
+      const className = (container.firstChild as HTMLElement).className;
+      expect(className).toMatch(/fading/);
     } else {
       // If element was removed, test still passes
       expect(true).toBe(true);

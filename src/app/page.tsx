@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { LoadingProvider, useLoading } from '@/contexts/LoadingContext';
+import { LoadingProvider, useLoading } from '@contexts/loading';
 import { SplashScreen } from '@/components/splash/SplashScreen';
 import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
@@ -167,7 +167,7 @@ function AppContent() {
           
           {/* Progress bar only rendered for activity state */}
           {timeSet && !allActivitiesCompleted && (
-            <div className={styles.progressContainer}>
+            <div className={styles.progressContainer} data-testid="progress-container">
               <ProgressBar 
                 entries={processedEntries}
                 totalDuration={totalDuration}

@@ -244,16 +244,16 @@ describe('ActivityStateMachine', () => {
       const removed = stateMachine.getActivitiesByState('REMOVED');
       
       expect(pending.length).toBe(1);
-      expect(pending[0].id).toBe('activity4');
+      expect(pending[0]?.id).toBe('activity4');
       
       expect(running.length).toBe(1);
-      expect(running[0].id).toBe('activity2');
+      expect(running[0]?.id).toBe('activity2');
       
       expect(completed.length).toBe(1);
-      expect(completed[0].id).toBe('activity1');
+      expect(completed[0]?.id).toBe('activity1');
       
       expect(removed.length).toBe(1);
-      expect(removed[0].id).toBe('activity3');
+      expect(removed[0]?.id).toBe('activity3');
     });
   });
 

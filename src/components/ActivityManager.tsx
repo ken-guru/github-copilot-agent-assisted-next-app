@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import styles from './ActivityManager.module.css';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
-import { TimelineEntry } from '../hooks/useTimelineEntries';
+import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './ActivityForm';
 

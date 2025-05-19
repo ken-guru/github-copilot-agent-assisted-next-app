@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, within, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Summary from '../Summary';
-import { TimelineEntry } from '../Timeline';
+import { TimelineEntry } from '@/types';
 
 // Create timeline entries for testing chronological order
 const createTestTimelineEntries = (configs: Array<{name: string, startTime: number, duration: number}>): TimelineEntry[] => {

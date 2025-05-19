@@ -62,13 +62,13 @@ function parseColorToRGB(colorStr: string): [number, number, number] | null {
   const rgbMatch = computedColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/i);
   const rgbaMatch = computedColor.match(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/i);
   
-  if (rgbMatch) {
+  if (rgbMatch && rgbMatch[1] && rgbMatch[2] && rgbMatch[3]) {
     return [
       parseInt(rgbMatch[1], 10),
       parseInt(rgbMatch[2], 10),
       parseInt(rgbMatch[3], 10)
     ];
-  } else if (rgbaMatch) {
+  } else if (rgbaMatch && rgbaMatch[1] && rgbaMatch[2] && rgbaMatch[3]) {
     return [
       parseInt(rgbaMatch[1], 10),
       parseInt(rgbaMatch[2], 10),
@@ -91,9 +91,10 @@ function calculateRelativeLuminance(rgb: [number, number, number]): number {
   const [r, g, b] = rgb.map(val => val / 255);
   
   // Calculate R, G, B components using WCAG formula
-  const rComp = r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
-  const gComp = g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
-  const bComp = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
+  // Using non-null assertion as we've validated RGB values in the parseColorToRGB function
+  const rComp = r !== undefined && r <= 0.03928 ? r / 12.92 : Math.pow(((r ?? 0) + 0.055) / 1.055, 2.4);
+  const gComp = g !== undefined && g <= 0.03928 ? g / 12.92 : Math.pow(((g ?? 0) + 0.055) / 1.055, 2.4);
+  const bComp = b !== undefined && b <= 0.03928 ? b / 12.92 : Math.pow(((b ?? 0) + 0.055) / 1.055, 2.4);
   
   // Calculate relative luminance
   return 0.2126 * rComp + 0.7152 * gComp + 0.0722 * bComp;

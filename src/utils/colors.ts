@@ -209,12 +209,25 @@ export function getRandomColorSet(): ColorSet {
   
   const availableIndices = Array.from({ length: internalActivityColors.length }, (_, i) => i)
     .filter(index => !usedColors.has(index));
+  
+  // Make sure we always have a valid index
+  const randomIndex = availableIndices.length > 0 
+    ? availableIndices[Math.floor(Math.random() * availableIndices.length)] ?? 0
+    : 0;
     
-  const randomIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
   usedColors.add(randomIndex);
   
   const colors = getActivityColors();
-  return colors[randomIndex];
+  // Get the color at index or fallback  
+  const colorAtIndex: ColorSet | undefined = 
+    (randomIndex >= 0 && randomIndex < colors.length) ? colors[randomIndex] : undefined;
+  
+  // Provide default if undefined
+  return colorAtIndex || (colors[0] || {
+    background: '#f0f0f0',
+    text: '#000000',
+    border: '#cccccc'
+  });
 }
 
 /**
@@ -225,20 +238,35 @@ export function getRandomColorSet(): ColorSet {
 export function getNextAvailableColorSet(specificIndex?: number): ColorSet {
   const colors = getActivityColors();
   
+  // Try to get specific index if provided
   if (specificIndex !== undefined && specificIndex >= 0 && specificIndex < colors.length) {
-    // Return the specific color index requested
-    return colors[specificIndex];
+    const specificColor = colors[specificIndex];
+    if (specificColor) {
+      return specificColor;
+    }
   }
   
+  // Reset used colors if all are used
   if (usedColors.size === colors.length) {
     usedColors.clear();
   }
   
+  // Find the next available index
   const availableIndex = Array.from({ length: colors.length }, (_, i) => i)
-    .find(index => !usedColors.has(index)) || 0;
+    .find(i => !usedColors.has(i)) || 0;
+  
   usedColors.add(availableIndex);
   
-  return colors[availableIndex];
+  // Get the color at the available index
+  const colorAtIndex: ColorSet | undefined = 
+    (availableIndex >= 0 && availableIndex < colors.length) ? colors[availableIndex] : undefined;
+  
+  // Provide default if undefined
+  return colorAtIndex || (colors[0] || {
+    background: '#f0f0f0',
+    text: '#000000',
+    border: '#cccccc'
+  });
 }
 
 // Convert colorPalette to HSL
@@ -272,10 +300,17 @@ function hslToRgb(h: number, s: number, l: number): [number, number, number] {
 
 // Calculate relative luminance for RGB values
 function getLuminance(r: number, g: number, b: number): number {
-  const [rs, gs, bs] = [r, g, b].map(c => {
-    c = c / 255;
-    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  // Convert RGB values to sRGB
+  const srgb = [r, g, b].map(c => {
+    const value = c / 255;
+    return value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
   });
+  
+  // Ensure sRGB values are always numbers
+  const rs = srgb[0] || 0;
+  const gs = srgb[1] || 0;
+  const bs = srgb[2] || 0;
+  
   return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
 }
 
@@ -290,34 +325,99 @@ export function getContrastRatio(hsl1: string, hsl2: string): number {
       
       // Handle hex colors
       if (hsl.startsWith('#')) {
-        // Convert hex to RGB first, but we don't need to use the values
-        // We just ensure the format is valid
+        // Safely process the hex color
+        // We need to initialize these variables here, but they will be reassigned based on parsing
+        // This must remain a `let` declaration as the values are modified
+        let r = 0, g = 0, b = 0;
+        
         if (hsl.length === 4) { // #RGB format
-          // Just validate the format
-          parseInt(hsl[1] + hsl[1], 16);
-          parseInt(hsl[2] + hsl[2], 16);
-          parseInt(hsl[3] + hsl[3], 16);
+          // Extract and duplicate each hex digit
+          const hexR = hsl.charAt(1);
+          const hexG = hsl.charAt(2);
+          const hexB = hsl.charAt(3);
+          
+          if (hexR && hexG && hexB) {
+            r = parseInt(hexR + hexR, 16);
+            g = parseInt(hexG + hexG, 16);
+            b = parseInt(hexB + hexB, 16);
+          }
         } else { // #RRGGBB format
-          parseInt(hsl.slice(1, 3), 16);
-          parseInt(hsl.slice(3, 5), 16);
-          parseInt(hsl.slice(5, 7), 16);
+          const hexR = hsl.substring(1, 3);
+          const hexG = hsl.substring(3, 5); 
+          const hexB = hsl.substring(5, 7);
+          
+          if (hexR && hexG && hexB) {
+            r = parseInt(hexR, 16);
+            g = parseInt(hexG, 16);
+            b = parseInt(hexB, 16);
+          }
         }
         
-        // We'll use these RGB values directly with the hslToRgb function later
-        return [0, 0, 50]; // Dummy HSL values - we'll handle these specially
+        // Convert RGB to HSL (approximation)
+        r /= 255;
+        g /= 255;
+        b /= 255;
+        
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        // These values will be reassigned in the conditional logic below, so they must remain `let`
+        // eslint-disable-next-line prefer-const
+        let h = 0, s = 0, l = (max + min) / 2;
+        
+        if (max !== min) {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          
+          if (max === r) {
+            h = (g - b) / d + (g < b ? 6 : 0);
+          } else if (max === g) {
+            h = (b - r) / d + 2;
+          } else if (max === b) {
+            h = (r - g) / d + 4;
+          }
+          
+          h *= 60;
+        }
+        
+        return [h, s * 100, l * 100];
       }
       
       // Handle rgb/rgba format
       if (hsl.startsWith('rgb')) {
         const rgbMatch = hsl.match(/rgba?\((\d+)[,\s]+(\d+)[,\s]+(\d+)/);
-        if (rgbMatch) {
-          return [0, 0, 50]; // We'll handle RGB conversion separately
+        if (rgbMatch && rgbMatch[1] && rgbMatch[2] && rgbMatch[3]) {
+          const r = parseInt(rgbMatch[1], 10) / 255;
+          const g = parseInt(rgbMatch[2], 10) / 255;
+          const b = parseInt(rgbMatch[3], 10) / 255;
+          
+          const max = Math.max(r, g, b);
+          const min = Math.min(r, g, b);
+          // These values will be reassigned in the conditional logic below, so they must remain `let`
+          // eslint-disable-next-line prefer-const
+          let h = 0, s = 0, l = (max + min) / 2;
+          
+          if (max !== min) {
+            const d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            
+            if (max === r) {
+              h = (g - b) / d + (g < b ? 6 : 0);
+            } else if (max === g) {
+              h = (b - r) / d + 2;
+            } else if (max === b) {
+              h = (r - g) / d + 4;
+            }
+            
+            h *= 60;
+          }
+          
+          return [h, s * 100, l * 100];
         }
       }
       
       // Support multiple HSL formats: hsl(120, 60%, 95%), hsl(120,60%,95%), hsl(120 60% 95%)
       const match = hsl.match(/hsl\((\d+)[,\s]+(\d+)%[,\s]+(\d+)%\)/);
-      if (!match) {
+      if (!match || !match[1] || !match[2] || !match[3]) {
         return [0, 0, 50]; // Default to medium gray
       }
       

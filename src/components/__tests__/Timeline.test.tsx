@@ -1,6 +1,7 @@
 /// <reference types="@testing-library/jest-dom" />
 import { render, screen } from '@testing-library/react';
-import Timeline, { TimelineEntry } from '../Timeline';
+import Timeline from '../Timeline';
+import { TimelineEntry } from '@/types';
 
 describe('Timeline Component', () => {
   let dateNowSpy: jest.SpyInstance;
@@ -85,7 +86,8 @@ describe('Timeline Component', () => {
     const timeMarkers = screen.getAllByTestId('time-marker');
     expect(timeMarkers.length).toBeGreaterThan(0);
     
-    const lastMarkerTime = timeMarkers[timeMarkers.length - 1].textContent;
+    const lastMarker = timeMarkers[timeMarkers.length - 1];
+    const lastMarkerTime = lastMarker ? lastMarker.textContent : '';
     expect(lastMarkerTime).not.toBe('1:00:00');
   });
 

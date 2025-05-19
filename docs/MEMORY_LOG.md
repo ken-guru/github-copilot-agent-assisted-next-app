@@ -128,6 +128,9 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-104: Cypress Typescript Errors](./logged_memories/MRTMLY-104-cypress-typescript-errors.md)
 - [MRTMLY-105: Build Process Cypress Exclusion](./logged_memories/MRTMLY-105-build-process-cypress-exclusion.md)
 - [MRTMLY-106: Cypress Missing E2e Config](./logged_memories/MRTMLY-106-cypress-missing-e2e-config.md)
+- [MRTMLY-212: Timeline Entry Interface Consolidation](./logged_memories/MRTMLY-212-timeline-entry-interface-consolidation.md)
+- [MRTMLY-213: Page Test Offline Indicator Fix](./logged_memories/MRTMLY-213-page-test-offline-indicator-fix.md)
+- [MRTMLY-077: Summary Component Performance Test Fix](./logged_memories/MRTMLY-077-summary-performance-test-fix.md) - Fixed failing CI/CD test by increasing performance test threshold
 
 ## Ui Layout Entries {#ui-layout-entries}
 
@@ -143,6 +146,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-116: Deployment Build Commonjs Require](./logged_memories/MRTMLY-116-deployment-build-commonjs-require.md)
 - [MRTMLY-117: Progress Bar Visibility](./logged_memories/MRTMLY-117-progress-bar-visibility.md)
 - [MRTMLY-118: Nextjs Build Manifest Missing Error](./logged_memories/MRTMLY-118-nextjs-build-manifest-missing-error.md)
+- [MRTMLY-215: Input Field Contrast Improvement](./logged_memories/MRTMLY-215-input-field-contrast-improvement.md)
 
 ## Dark Mode Entries {#dark-mode-entries}
 
@@ -155,6 +159,10 @@ Memory logs are organized by category and listed in sequential ID order.
 
 ## Typescript Entries {#typescript-entries}
 
+- [MRTMLY-001: TypeScript Strict Mode Fixes](./logged_memories/MRTMLY-001-typescript-strict-mode-fixes.md)
+- [MRTMLY-002: TypeScript Strict Mode Test File Fixes](./logged_memories/MRTMLY-002-typescript-strict-mode-test-file-fixes.md)
+- [MRTMLY-214: TypeScript and ESLint Compliance Fixes](./logged_memories/MRTMLY-214-typescript-eslint-fixes.md)
+- [MRTMLY-003: Component Props Interface Optimization](./logged_memories/MRTMLY-003-component-props-interface-optimization.md)
 - [MRTMLY-125: Typescript Error Fixes](./logged_memories/MRTMLY-125-typescript-error-fixes.md)
 - [MRTMLY-126: Additional Typescript Fixes](./logged_memories/MRTMLY-126-additional-typescript-fixes.md)
 - [MRTMLY-127: Final Typescript Fixes](./logged_memories/MRTMLY-127-final-typescript-fixes.md)
@@ -230,6 +238,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-188: Css Variables Conflict](./logged_memories/MRTMLY-188-css-variables-conflict.md)
 - [MRTMLY-189: Console Errors Warnings](./logged_memories/MRTMLY-189-console-errors-warnings.md)
 - [MRTMLY-190: Dependabot Automated Pull Request Configuration](./logged_memories/MRTMLY-190-dependabot-automated-pull-request-configuration.md)
+- [MRTMLY-082: Next.js App Router Migration](./logged_memories/MRTMLY-082-next-js-app-router-migration.md)
 
 ## About Memory Logs
 

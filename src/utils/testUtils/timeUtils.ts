@@ -152,8 +152,10 @@ export function createTimerMock() {
         const index = timers.findIndex(t => t.id === timer.id);
         if (index !== -1) {
           const timerToExecute = timers.splice(index, 1)[0];
-          // Execute the callback
-          timerToExecute.callback();
+          // Execute the callback if it exists
+          if (timerToExecute && typeof timerToExecute.callback === 'function') {
+            timerToExecute.callback();
+          }
         }
       }
     });

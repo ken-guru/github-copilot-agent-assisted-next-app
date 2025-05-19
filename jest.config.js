@@ -29,6 +29,11 @@ const customJestConfig = {
     '^@/styles/(.*)$': '<rootDir>/src/styles/$1',
     '^@/public/(.*)$': '<rootDir>/public/$1',
     '^@/test/(.*)$': '<rootDir>/test/$1',
+    // New module aliases for restructuring
+    '^@contexts/(.*)$': '<rootDir>/contexts/$1',
+    '^@components/(.*)$': '<rootDir>/components/$1',
+    '^@lib/(.*)$': '<rootDir>/lib/$1',
+    '^@hooks/(.*)$': '<rootDir>/hooks/$1',
     // Handle relative imports from src/app/page.tsx
     '\\.\\./contexts/LoadingContext': '<rootDir>/src/contexts/LoadingContext',
     '\\.\\./components/splash/SplashScreen': '<rootDir>/src/components/splash/SplashScreen',

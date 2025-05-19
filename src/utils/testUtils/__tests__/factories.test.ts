@@ -56,9 +56,9 @@ describe('Test Factory Utilities', () => {
       const entries = createTimelineEntries(3);
       
       expect(entries).toHaveLength(3);
-      expect(entries[0].id).toBe('test-entry-1');
-      expect(entries[1].id).toBe('test-entry-2');
-      expect(entries[2].id).toBe('test-entry-3');
+      expect(entries[0]?.id).toBe('test-entry-1');
+      expect(entries[1]?.id).toBe('test-entry-2');
+      expect(entries[2]?.id).toBe('test-entry-3');
     });
     
     it('should apply the overrides function to each entry', () => {
@@ -70,16 +70,16 @@ describe('Test Factory Utilities', () => {
       expect(entries).toHaveLength(3);
       
       // First entry
-      expect(entries[0].startTime).toBe(1000000);
-      expect(entries[0].endTime).toBe(1000000 + 3600000);
+      expect(entries[0]?.startTime).toBe(1000000);
+      expect(entries[0]?.endTime).toBe(1000000 + 3600000);
       
       // Second entry
-      expect(entries[1].startTime).toBe(1000000 + 3600000);
-      expect(entries[1].endTime).toBe(1000000 + 2 * 3600000);
+      expect(entries[1]?.startTime).toBe(1000000 + 3600000);
+      expect(entries[1]?.endTime).toBe(1000000 + 2 * 3600000);
       
       // Third entry
-      expect(entries[2].startTime).toBe(1000000 + 2 * 3600000);
-      expect(entries[2].endTime).toBe(1000000 + 3 * 3600000);
+      expect(entries[2]?.startTime).toBe(1000000 + 2 * 3600000);
+      expect(entries[2]?.endTime).toBe(1000000 + 3 * 3600000);
     });
     
     it('should provide unique IDs and activity IDs by default', () => {
