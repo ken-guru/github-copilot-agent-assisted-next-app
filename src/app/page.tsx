@@ -167,7 +167,7 @@ function AppContent() {
           
           {/* Progress bar only rendered for activity state */}
           {timeSet && !allActivitiesCompleted && (
-            <div className={styles.progressContainer}>
+            <div className={styles.progressContainer} data-testid="progress-container">
               <ProgressBar 
                 entries={processedEntries}
                 totalDuration={totalDuration}

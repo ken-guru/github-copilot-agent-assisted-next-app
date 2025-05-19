@@ -128,6 +128,8 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-104: Cypress Typescript Errors](./logged_memories/MRTMLY-104-cypress-typescript-errors.md)
 - [MRTMLY-105: Build Process Cypress Exclusion](./logged_memories/MRTMLY-105-build-process-cypress-exclusion.md)
 - [MRTMLY-106: Cypress Missing E2e Config](./logged_memories/MRTMLY-106-cypress-missing-e2e-config.md)
+- [MRTMLY-212: Timeline Entry Interface Consolidation](./logged_memories/MRTMLY-212-timeline-entry-interface-consolidation.md)
+- [MRTMLY-213: Page Test Offline Indicator Fix](./logged_memories/MRTMLY-213-page-test-offline-indicator-fix.md)
 
 ## Ui Layout Entries {#ui-layout-entries}
 

@@ -3,19 +3,7 @@ import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
-
-export interface TimelineEntry {
-  id: string;
-  activityId: string | null;
-  activityName: string | null;
-  startTime: number;
-  endTime?: number | null;
-  colors?: {
-    background: string;
-    text: string;
-    border: string;
-  };
-}
+import { TimelineEntry } from '@/types';
 
 interface TimelineProps {
   entries: TimelineEntry[];

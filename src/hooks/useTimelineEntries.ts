@@ -1,19 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Activity } from '@/components/ActivityManager';
 import { getNextAvailableColorSet } from '@/utils/colors';
-
-export interface TimelineEntry {
-  id: string;
-  activityId: string | null;
-  activityName: string | null;
-  startTime: number;
-  endTime: number | null;
-  colors?: {
-    background: string;
-    border: string;
-    text: string;
-  };
-}
+import { TimelineEntry } from '@/types';
 
 export interface UseTimelineEntriesResult {
   timelineEntries: TimelineEntry[];

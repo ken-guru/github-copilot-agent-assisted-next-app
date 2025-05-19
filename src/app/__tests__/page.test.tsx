@@ -268,6 +268,33 @@ describe('OfflineIndicator Integration', () => {
   });
 
   it('should maintain offline indicator positioning across all app states', () => {
+    // Create a mock implementer that will update currentActivity when handleActivitySelect is called
+    // Define a type for Activity that matches the one used in the component
+    interface MockActivity {
+      id: string;
+      name: string;
+      colors?: {
+        background?: string;
+        text?: string;
+        border?: string;
+      };
+    }
+    
+    let mockCurrentActivity: MockActivity | null = null;
+    const mockHandleActivitySelect = jest.fn().mockImplementation((activity: MockActivity | null) => {
+      mockCurrentActivity = activity;
+    });
+    
+    mockUseActivityState.mockImplementation(() => ({
+      currentActivity: mockCurrentActivity,
+      timelineEntries: [],
+      completedActivityIds: [],
+      allActivitiesCompleted: false,
+      handleActivitySelect: mockHandleActivitySelect,
+      handleActivityRemoval: jest.fn(),
+      resetActivities: mockResetActivities,
+    }));
+    
     const { rerender } = render(<Home />);
     
     // Check setup state
@@ -299,9 +326,32 @@ describe('OfflineIndicator Integration', () => {
       safelyCheckClass(activitySibling, styles.activityGrid);
     }
     
-    // Mock completed state
-    const completeButton = screen.getByRole('button', { name: /complete/i });
+    // First, find the start button for homework
+    const startButton = screen.getByTestId('start-activity-homework');
+    
+    // Before clicking, let's manually update the currentActivity to simulate selection
+    mockCurrentActivity = { id: '1', name: 'Homework', colors: {} };
+    
+    // Re-render the component with the updated state
+    rerender(<Home />);
+    
+    // Now we should have a complete button
+    const completeButton = screen.getByTestId('complete-activity-homework');
     fireEvent.click(completeButton);
+    
+    // Update the state to simulate completion
+    mockUseActivityState.mockImplementation(() => ({
+      currentActivity: null,
+      timelineEntries: [],
+      completedActivityIds: ['1'],
+      allActivitiesCompleted: true,
+      handleActivitySelect: mockHandleActivitySelect,
+      handleActivityRemoval: jest.fn(),
+      resetActivities: mockResetActivities,
+    }));
+    
+    // Re-render to reflect the updated state
+    rerender(<Home />);
     
     // In completed state, there should be an offline indicator with specific text
     const completedOfflineIndicator = screen.getByTestId('offline-indicator');
