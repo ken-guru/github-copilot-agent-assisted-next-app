@@ -157,6 +157,7 @@ Memory logs are organized by category and listed in sequential ID order.
 
 - [MRTMLY-001: TypeScript Strict Mode Fixes](./logged_memories/MRTMLY-001-typescript-strict-mode-fixes.md)
 - [MRTMLY-002: TypeScript Strict Mode Test File Fixes](./logged_memories/MRTMLY-002-typescript-strict-mode-test-file-fixes.md)
+- [MRTMLY-003: Component Props Interface Optimization](./logged_memories/MRTMLY-003-component-props-interface-optimization.md)
 - [MRTMLY-125: Typescript Error Fixes](./logged_memories/MRTMLY-125-typescript-error-fixes.md)
 - [MRTMLY-126: Additional Typescript Fixes](./logged_memories/MRTMLY-126-additional-typescript-fixes.md)
 - [MRTMLY-127: Final Typescript Fixes](./logged_memories/MRTMLY-127-final-typescript-fixes.md)
