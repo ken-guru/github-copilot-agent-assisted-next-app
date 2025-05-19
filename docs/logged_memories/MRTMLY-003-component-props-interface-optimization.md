@@ -1,8 +1,8 @@
 # MRTMLY-003: Component Props Interface Optimization
 
-**Date:** 2023-11-22  
+**Date:** 2025-05-19  
 **Tags:** #typescript #components #interfaces #documentation  
-**Status:** In Progress
+**Status:** Completed
 
 ## Initial State
 
@@ -72,13 +72,13 @@ Following the test-first development principle, we will:
 - [x] Optimized ProgressBar interface
 - [x] Optimized ThemeToggle interface
 - [x] Optimized TimeSetup interface
-- [ ] Optimized Summary interface
-- [ ] Optimized Timeline interface
-- [ ] Optimized TimelineDisplay interface
-- [ ] Optimized OfflineIndicator interface
-- [ ] Optimized ServiceWorkerUpdater interface
-- [ ] Optimized TimeDisplay interface
-- [ ] Updated documentation to reflect the changes
+- [x] Optimized Summary interface
+- [x] Optimized Timeline interface
+- [x] Optimized TimelineDisplay interface
+- [x] Optimized OfflineIndicator interface
+- [x] Optimized ServiceWorkerUpdater interface
+- [x] Optimized TimeDisplay interface
+- [x] Updated documentation to reflect the changes
 - [x] Verify all tests pass for optimized components
 
 ## Lessons Learned
@@ -99,6 +99,16 @@ Following the test-first development principle, we will:
    - Exposing interfaces even for components without props provides consistency and future-proofs the code
 
 4. **Challenges with Multiple TimelineEntry Types**
+   - The TimelineEntry interface is used across multiple components (Timeline, ProgressBar, Summary)
+   - Each component has slightly different requirements for the TimelineEntry fields
+   - We decided to maintain a single comprehensive TimelineEntry interface with optional fields
+   - This ensures consistency and reduces maintenance overhead at the cost of some type precision
+
+5. **Empty Props Interface Pattern**
+   - For components like OfflineIndicator that currently accept no props, we created empty interfaces
+   - This establishes consistency in our component API pattern
+   - It provides a place to add props in the future without breaking changes
+   - It makes the component's interface explicit rather than implicit
    - We discovered two different TimelineEntry interfaces being used in the codebase
    - The two interfaces have incompatible requirements (one requires activityName, another title/description)
    - This highlights a need for future consolidation work to reduce confusion
