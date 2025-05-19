@@ -109,15 +109,23 @@
 .addActivityInput {
   padding: var(--space-sm);
   border-radius: var(--space-sm); /* Updated from 0.25rem */
-  border: 1px solid var(--border-color);
-  background-color: var(--background);
-  color: var(--foreground);
+  border: 2px solid #d0d0d0; /* Lighter, more visible border for light mode */
+  background-color: #ffffff; /* Pure white in light mode */
+  color: var(--text-primary);
+}
+
+.dark .addActivityInput,
+[data-theme="dark"] .addActivityInput,
+.dark-mode .addActivityInput {
+  background-color: #383838; /* Much lighter gray for dark mode */
+  border-color: #555555; /* More visible border in dark mode */
+  color: var(--text-primary-dark);
 }
 
 .addActivityInput:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px var(--primary-alpha);
+  border-color: var(--accent-color);
+  background-color: #f9f9f9; /* Very slight gray to indicate focus in light mode */
 }
 
 .addButton {

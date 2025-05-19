@@ -146,6 +146,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-116: Deployment Build Commonjs Require](./logged_memories/MRTMLY-116-deployment-build-commonjs-require.md)
 - [MRTMLY-117: Progress Bar Visibility](./logged_memories/MRTMLY-117-progress-bar-visibility.md)
 - [MRTMLY-118: Nextjs Build Manifest Missing Error](./logged_memories/MRTMLY-118-nextjs-build-manifest-missing-error.md)
+- [MRTMLY-215: Input Field Contrast Improvement](./logged_memories/MRTMLY-215-input-field-contrast-improvement.md)
 
 ## Dark Mode Entries {#dark-mode-entries}
 

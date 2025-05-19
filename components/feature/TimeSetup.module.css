@@ -80,14 +80,23 @@
 .input {
   padding: var(--space-sm);
   border-radius: var(--radius-input); /* Updated from var(--space-xs) to use semantic radius */
-  border: 1px solid var(--border-color);
-  background-color: var(--background);
-  color: var(--foreground);
+  border: 2px solid #d0d0d0; /* Lighter, more visible border for light mode */
+  background-color: #ffffff; /* Pure white in light mode */
+  color: var(--text-primary);
+}
+
+.dark .input,
+[data-theme="dark"] .input,
+.dark-mode .input {
+  background-color: #383838; /* Much lighter gray for dark mode */
+  border-color: #555555; /* More visible border in dark mode */
+  color: var(--text-primary-dark);
 }
 
 .input:focus {
-  outline: 2px solid var(--primary);
-  border-color: var(--primary);
+  outline: none;
+  border-color: var(--accent-color);
+  background-color: #f9f9f9; /* Very slight gray to indicate focus in light mode */
 }
 
 .submitButton {
