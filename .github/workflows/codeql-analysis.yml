@@ -16,11 +16,15 @@ jobs:
       actions: read
       contents: read
       security-events: write
+      # Required for upload-sarif action
+      security-events: write
 
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript', 'typescript' ]
+        language: [ 'javascript' ]
+        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby', 'swift' ]
+        # Use only 'javascript' which includes TypeScript instead of both 'javascript' and 'typescript'
 
     steps:
     - name: Checkout repository
@@ -31,9 +35,14 @@ jobs:
       with:
         languages: ${{ matrix.language }}
         config-file: ./.github/codeql/codeql-config.yml
+        # Add queries for Actions if needed
+        queries: security-and-quality
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{ matrix.language }}"
+        upload: true
