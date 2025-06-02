@@ -24,8 +24,10 @@ jobs:
         include:
           - language: actions
             build-mode: none
+            os: ubuntu-latest
           - language: javascript-typescript
             build-mode: none
+            os: ubuntu-latest
           # Add other languages as needed
 
     steps:
@@ -39,7 +41,8 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
-          config-file: ./.github/codeql/codeql-config.yml # keep your custom config
+          config-file: ./.github/codeql/codeql-config.yml
+          queries: security-and-quality
 
       - if: matrix.build-mode == 'manual'
         shell: bash
@@ -51,7 +54,12 @@ jobs:
           echo '  make release'
           exit 1
 
+      - if: matrix.build-mode == 'none' || matrix.build-mode == ''
+        name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "/language:${{matrix.language}}"
+          category: "/language:${{ matrix.language }}"
+          upload: true
