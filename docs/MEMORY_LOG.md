@@ -90,6 +90,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-069: Cypress Service Worker Typing](./logged_memories/MRTMLY-069-cypress-service-worker-typing.md)
 - [MRTMLY-070: Service Worker Test Implementation](./logged_memories/MRTMLY-070-service-worker-test-implementation.md)
 - [MRTMLY-071: MRTMLY XXX Service Worker Typescript Errors](./logged_memories/MRTMLY-071-MRTMLY-XXX-service-worker-typescript-errors.md)
+- [MRTMLY-217: Service Worker Unused Variable Removal](./logged_memories/MRTMLY-217-service-worker-unused-variable-removal.md)
 
 ## Testing Entries {#testing-entries}
 
