@@ -16,7 +16,6 @@ updates:
     target-branch: "main" # Specify target branch explicitly
     reviewers:
       - "ken-guru"
-      - "team:frontend-devs" # Optional team reviewer
     assignees:
       - "ken-guru" # Add assignees for better tracking
     # Enabled security updates  
@@ -122,7 +121,6 @@ updates:
 
     labels:
       - "dependencies"
-      - "security:review" # Added for security-related updates
     
     # Configure versioning strategy
     versioning-strategy: auto
