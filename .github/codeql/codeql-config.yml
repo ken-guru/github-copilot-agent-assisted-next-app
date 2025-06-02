@@ -1,0 +1,49 @@
+name: "Next.js CodeQL Configuration"
+
+queries:
+  - uses: security-and-quality
+  - uses: security-extended
+
+query-filters:
+  - exclude:
+      # Exclude alerts in node_modules directory
+      path-pattern: node_modules
+
+paths:
+  - 'app'
+  - 'components'
+  - 'lib'
+  - 'pages'
+  - 'public'
+  - 'styles'
+  - 'utils'
+  
+paths-ignore:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
+  - 'cypress/**'
+  - '**/node_modules/**'
+  - '.next/**'
+  - 'out/**'
+
+# Options for JavaScript and TypeScript analysis
+javascript:
+  # Specify the directories to extract
+  extraction:
+    # The paths section specifies extraction scope
+    paths:
+      - app
+      - components
+      - lib
+      - pages
+      - public
+      - styles
+      - utils
+  # Additional customization for JS/TS analysis
+  database:
+    # Scan test files, but don't include results from them
+    include-test-files: false
+    # Extract TypeScript type information for more precise analysis
+    extract-typescript-type-information: true
