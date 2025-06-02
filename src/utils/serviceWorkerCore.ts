@@ -14,23 +14,7 @@ interface ServiceWorkerConfig {
 // Import specific functions directly to avoid circular dependencies
 import { handleRegistration } from './serviceWorkerUpdates';
 
-// Define missing function
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function checkValidSW(swUrl: string, _config?: ServiceWorkerConfig): Promise<void> {
-  return fetch(swUrl, {
-    headers: { 'Service-Worker': 'script' }
-  })
-    .then(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      _response => {
-      // Implementation details - using underscore to indicate intentionally unused parameter
-      return Promise.resolve();
-    })
-    .catch(error => {
-      handleServiceWorkerError(error);
-      return Promise.resolve();
-    });
-}
+
 
 /**
  * Register service worker for production environments
