@@ -30,7 +30,7 @@ export default function Summary({
     if (!colors) return undefined;
 
     // If we already have theme-specific colors, use those directly
-    if (colors && 'light' in colors && 'dark' in colors) {
+    if ('light' in colors && 'dark' in colors) {
       return currentTheme === 'dark' ? colors.dark : colors.light;
     }
     
