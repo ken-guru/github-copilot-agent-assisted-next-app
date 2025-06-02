@@ -18,19 +18,25 @@
 2. Solution attempts
    - Changed language identifier from "javascript-typescript" to "javascript" to match GitHub's expected configuration
    - Confirmed that this change maintains full TypeScript analysis support
-   - Added support for custom query packs from the codeql-custom-queries-javascript directory
    - Added explicit output directory for SARIF results
+
+3. Custom queries evaluation
+   - Initially attempted to include a custom query pack, but discovered it was just a placeholder with no actual query files
+   - Removed the custom pack reference as it wasn't needed and contained only placeholder configuration
 
 #### Resolution
 - Updated the language configuration in the matrix to use "javascript" (which properly analyzes both JavaScript and TypeScript)
-- Added proper integration with the custom query pack
+- Removed references to a placeholder custom query pack that contained no actual queries
 - Enhanced the analysis configuration with proper output settings
 - Fixed the category identifier to match GitHub's expected pattern "/language:javascript"
 - Maintained full TypeScript code analysis support
+- Focused on using the standard security-and-quality query suite
 
 #### Lessons Learned
 - CodeQL analysis uses "javascript" as the language identifier that covers BOTH JavaScript and TypeScript code
 - The identifier "javascript-typescript" is not a valid CodeQL language identifier
 - Using the correct language identifier is crucial for successful code scanning
-- Custom query packs need to be explicitly included in the workflow configuration
+- It's important to verify that custom query packs contain actual query files before referencing them
+- Removing unnecessary configurations can simplify workflows and reduce potential points of failure
+- The standard security-and-quality query suite provides comprehensive analysis without requiring custom packs
 - Regular testing of security scanning workflows is important to ensure they remain functional

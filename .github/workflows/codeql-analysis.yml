@@ -43,7 +43,6 @@ jobs:
           build-mode: ${{ matrix.build-mode }}
           config-file: ./.github/codeql/codeql-config.yml
           queries: +security-and-quality
-          packs: +./codeql-custom-queries-javascript
 
       - if: matrix.build-mode == 'manual'
         shell: bash
