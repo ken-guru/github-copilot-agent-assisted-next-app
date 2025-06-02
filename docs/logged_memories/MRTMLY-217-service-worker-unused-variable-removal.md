@@ -20,13 +20,20 @@
    - Decided instead to remove the entire function since it was not being used anywhere in the codebase
    - Verified that no imports or references to this function existed in other files using grep search
 
+3. Follow-up fix
+   - After removing the `checkValidSW` function, discovered that the `handleServiceWorkerError` import was now unused
+   - Removed the unused import from the import statement while keeping the `isLocalhost` import
+   - Verified that the `handleServiceWorkerError` function was not used elsewhere in the file
+
 #### Resolution
 - Removed the entire `checkValidSW` function from `serviceWorkerCore.ts`
-- Ran the service worker tests to ensure the change didn't break any functionality
-- All tests passed, confirming the function was not being used
+- Removed the unused `handleServiceWorkerError` import
+- Ran the service worker tests to ensure the changes didn't break any functionality
+- All tests passed, confirming the function and import were not being used
 
 #### Lessons Learned
 - Unused code should be removed promptly during refactoring to prevent security alerts
 - Code with underscored parameters often indicates temporary or incomplete implementations
 - When removing unused code, it's important to verify with tests that no unexpected dependencies exist
+- Remember to clean up imports when removing functions that used those imports
 - Security scanning tools like GitHub Code Scanning are valuable for identifying potential issues beyond just security vulnerabilities

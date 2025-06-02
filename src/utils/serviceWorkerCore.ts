@@ -3,7 +3,7 @@
  */
 
 // Import directly from error file to avoid circular dependencies
-import { isLocalhost, handleServiceWorkerError } from './serviceWorkerErrors';
+import { isLocalhost } from './serviceWorkerErrors';
 
 // Define config type locally to avoid circular imports
 interface ServiceWorkerConfig {
