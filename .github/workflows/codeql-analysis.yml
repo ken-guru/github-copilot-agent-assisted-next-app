@@ -25,7 +25,7 @@ jobs:
           - language: actions
             build-mode: none
             os: ubuntu-latest
-          - language: javascript-typescript
+          - language: javascript
             build-mode: none
             os: ubuntu-latest
           # Add other languages as needed
@@ -42,7 +42,8 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
           config-file: ./.github/codeql/codeql-config.yml
-          queries: security-and-quality
+          queries: +security-and-quality
+          packs: +./codeql-custom-queries-javascript
 
       - if: matrix.build-mode == 'manual'
         shell: bash
@@ -63,3 +64,4 @@ jobs:
         with:
           category: "/language:${{ matrix.language }}"
           upload: true
+          output: sarif-results
