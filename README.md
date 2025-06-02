@@ -1,5 +1,7 @@
 # Activity Timer and Tracker
 
+[![CodeQL Security Scan](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/codeql.yml)
+
 ## Project Context
 You are working on a time management and activity tracking application built with Next.js. This documentation serves as both a guide for developers and a prompt for AI assistance in development.
 
