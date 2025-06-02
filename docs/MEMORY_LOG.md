@@ -241,6 +241,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-189: Console Errors Warnings](./logged_memories/MRTMLY-189-console-errors-warnings.md)
 - [MRTMLY-190: Dependabot Automated Pull Request Configuration](./logged_memories/MRTMLY-190-dependabot-automated-pull-request-configuration.md)
 - [MRTMLY-082: Next.js App Router Migration](./logged_memories/MRTMLY-082-next-js-app-router-migration.md)
+- [MRTMLY-001: CodeQL Configuration Path Mismatch](./logged_memories/MRTMLY-001-codeql-configuration-mismatch.md) - Fixed code scanning configuration issue with custom queries path
 
 ## About Memory Logs
 

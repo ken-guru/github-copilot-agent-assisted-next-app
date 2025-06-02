@@ -4,7 +4,7 @@ queries:
   - name: JavaScript and TypeScript Security and Quality
     uses: security-and-quality
   - name: Custom Queries
-    uses: ./.github/codeql/custom-queries
+    uses: ./codeql-custom-queries-javascript
 paths:
   - src
   - app
