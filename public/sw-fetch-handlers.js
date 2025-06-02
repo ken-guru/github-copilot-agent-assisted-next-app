@@ -52,7 +52,7 @@ async function handleFetch(request) {
     // Default to network-only for unmatched requests
     return await networkOnly(request);
   } catch (error) {
-    log('Fetch handler error:', error);
+    errorLog('Fetch handler error:', error);
     
     // Provide offline fallback for navigation requests
     if (isNavigationRequest(request)) {
