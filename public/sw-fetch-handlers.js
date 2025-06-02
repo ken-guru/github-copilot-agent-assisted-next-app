@@ -15,7 +15,6 @@ const {
 const isTestEnv = typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'test';
 
 // Helper function for logging that's quiet during tests
-const log = isTestEnv ? () => {} : console.log;
 const errorLog = isTestEnv ? () => {} : console.error;
 
 // Cache names for different types of resources
