@@ -180,6 +180,7 @@ Memory logs are organized by category and listed in sequential ID order.
 ## Deployment Entries {#deployment-entries}
 
 - [MRTMLY-135: Vercel Deployment Verification](./logged_memories/MRTMLY-135-vercel-deployment-verification.md)
+- [MRTMLY-216: CodeQL JavaScript Analysis Configuration Fix](./logged_memories/MRTMLY-216-codeql-javascript-analysis-config.md)
 
 ## Miscellaneous Entries {#miscellaneous-entries}
 
