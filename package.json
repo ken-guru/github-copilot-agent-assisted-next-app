@@ -17,7 +17,7 @@
     "clean-build:full": "node scripts/clean-build.js --full"
   },
   "dependencies": {
-    "next": "15.3.2",
+    "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.1.0"
   },
@@ -29,9 +29,9 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "cypress": "^14.3.3",
+    "cypress": "^14.4.0",
     "eslint": "^9",
-    "eslint-config-next": "15.3.2",
+    "eslint-config-next": "15.3.3",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "typescript": "^5"
