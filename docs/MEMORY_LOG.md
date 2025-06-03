@@ -244,6 +244,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-201: Phase 1 Complete - React Vite Foundation with Theme System and UI Components](./logged_memories/MRTMLY-201-phase1-complete-foundation-theme-ui-components.md)
 - [MRTMLY-202: ThemeContext Refactoring and Phase 2 Preparation](./logged_memories/MRTMLY-202-themcontext-refactoring-phase2-prep.md)
 - [MRTMLY-203: Project Scope Correction - Widget Removal](./logged_memories/MRTMLY-203-project-scope-correction-widget-removal.md)
+- [MRTMLY-204: Tailwind CSS PostCSS Configuration Fix](./logged_memories/MRTMLY-204-tailwind-postcss-configuration-fix.md)
 - [MRTMLY-082: Next.js App Router Migration](./logged_memories/MRTMLY-082-next-js-app-router-migration.md)
 - [MRTMLY-001: CodeQL Configuration Path Mismatch](./logged_memories/MRTMLY-001-codeql-configuration-mismatch.md) - Fixed code scanning configuration issue with custom queries path
 
