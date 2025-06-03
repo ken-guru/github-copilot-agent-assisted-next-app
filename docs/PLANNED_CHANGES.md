@@ -59,12 +59,12 @@ Note: When implementing a change, copy this template and fill it out completely.
 **Key Principle**: Write everything from scratch - components, tests, styling, utilities, and configuration. Use modern best practices and patterns throughout.
 
 **Current Application Reference Points**:
-- Custom theme system with light/dark mode switching
-- Interactive components: TaskManager, WeatherWidget, Calculator, Timer
-- Dashboard layout with component organization
-- Responsive design and mobile compatibility
-- TypeScript implementation
-- Comprehensive test coverage patterns
+- Custom theme system with light/dark/system mode switching
+- Activity management components: ActivityForm, ActivityManager, Timeline
+- Progress tracking: ProgressBar, Summary components
+- Time management: TimeSetup, Timer functionality
+- Visual feedback and responsive design
+- TypeScript implementation with comprehensive test coverage
 
 ## Requirements
 
@@ -124,38 +124,45 @@ Note: When implementing a change, copy this template and fill it out completely.
    - **Layout System**: Grid, Container, Responsive utilities
    - **Error Handling**: ErrorBoundary, error states
 
-   #### Phase 2: Utility Components  
-   - **Calculator**: Rewrite with modern state management
-     - Mathematical operations logic
-     - Display formatting and validation
-     - Keyboard input handling
-     - Error state management
-   - **Timer Widget**: Fresh implementation
-     - Timer logic with hooks
-     - Start/stop/reset functionality
-     - Visual countdown display
-     - Notification system
-   - **Loading States**: Modern loading patterns and spinners
+   #### Phase 2: Activity Management Components  
+   - **ActivityForm**: Component for creating/editing activities
+     - Form validation and state management
+     - Duration and deadline input handling
+     - Activity type selection
+     - Form submission and error handling
+   - **ActivityManager**: Main activity control component
+     - Activity lifecycle state management (PENDING → RUNNING → COMPLETED)
+     - Real-time activity monitoring
+     - Activity status controls (start, pause, complete)
+   - **Timeline Components**: Activity timeline visualization
+     - TimelineDisplay for showing activity history
+     - Timeline component for structured timeline data
+     - Real-time updates and visual feedback
 
-   #### Phase 3: Data Components
-   - **Weather Widget**: Complete rewrite
-     - API integration patterns
-     - Data fetching with modern hooks
-     - Error handling and loading states
-     - Responsive weather display
-   - **Task Manager**: Full CRUD implementation
-     - Task state management
-     - Local storage persistence
-     - Task filtering and sorting
-     - Drag and drop functionality
+   #### Phase 3: Progress and Visualization Components
+   - **ProgressBar**: Visual progress tracking
+     - Real-time progress calculation
+     - Visual progress indicators
+     - Color-coded progress states
+     - Animation and smooth transitions
+   - **Summary Component**: Activity summary and statistics
+     - Activity completion summaries
+     - Time tracking analytics
+     - Visual data presentation
+   - **TimeSetup Component**: Time configuration interface
+     - Duration setting interface
+     - Deadline management
+     - Time validation and formatting
    
-   #### Phase 4: Layout and Navigation
-   - **Dashboard**: Modern layout implementation
-     - Grid-based responsive layout
+   #### Phase 4: Layout and Integration
+   - **Main Layout**: Activity timer application layout
+     - Responsive grid layout for activity components
      - Component composition patterns
-     - State coordination between widgets
-   - **Navigation**: Simple routing setup
-   - **Header/Footer**: Clean layout components
+     - State coordination between activity components
+   - **App Integration**: Complete application assembly
+     - Activity state management integration
+     - Theme system integration
+     - Offline support and service worker integration
 
 ### 6. Modern React Patterns Implementation
    - **React 18 Features**: Concurrent rendering, automatic batching
@@ -213,11 +220,12 @@ Note: When implementing a change, copy this template and fill it out completely.
 ```
 src/
 ├── components/          # Reusable UI components
-│   ├── ui/             # Base components (Button, Input, etc.)
-│   ├── widgets/        # Feature components (Calculator, Weather, etc.)
+│   ├── ui/             # Base components (Button, Input, Card, etc.)
+│   ├── feature/        # Activity components (ActivityForm, ActivityManager, etc.)
 │   └── layout/         # Layout components
-├── hooks/              # Custom React hooks
-├── contexts/           # React contexts
+├── hooks/              # Custom React hooks for activity management
+├── contexts/           # React contexts (Theme, Activity state)
+├── lib/                # Core business logic (activity state machine, time utils)
 ├── utils/              # Utility functions
 ├── types/              # TypeScript type definitions
 ├── styles/             # Global styles and Tailwind config
@@ -264,23 +272,24 @@ src/
 - [ ] Error boundaries and error handling
 - [ ] All foundation tests passing
 
-### Phase 3: Feature Components
-- [ ] Calculator component fully implemented and tested
-- [ ] Timer widget complete with all functionality
-- [ ] Weather widget with API integration
-- [ ] All feature components responsive and theme-compatible
+### Phase 3: Activity Management Components
+- [ ] ActivityForm component fully implemented and tested
+- [ ] ActivityManager with complete state machine logic
+- [ ] Timeline components with real-time updates
+- [ ] All activity components responsive and theme-compatible
 
-### Phase 4: Complex Features
-- [ ] Task Manager with full CRUD operations
-- [ ] Dashboard layout with component integration
-- [ ] Navigation and routing (if applicable)
-- [ ] All complex features tested and working
+### Phase 4: Progress and Integration Components
+- [ ] ProgressBar with real-time tracking
+- [ ] Summary component with analytics
+- [ ] TimeSetup component complete
+- [ ] Complete application integration with state coordination
 
 ### Phase 5: Polish and Integration
 - [ ] Full application integration testing
 - [ ] Performance optimization complete
 - [ ] Accessibility verification
 - [ ] Cross-browser compatibility confirmed
+- [ ] Service worker and offline support integration
 - [ ] Documentation complete
 - [ ] Ready for deployment
 

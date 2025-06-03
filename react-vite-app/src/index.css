@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Custom Properties for Theme System */
+:root {
+  /* Color System - Light Mode */
+  --color-background: 0 0% 100%;
+  --color-background-alt: 0 0% 98%;
+  --color-background-muted: 0 0% 96%;
+  --color-foreground: 0 0% 9%;
+  --color-foreground-muted: 0 0% 45%;
+  
+  --color-primary: 214 100% 58%;
+  --color-primary-foreground: 0 0% 100%;
+  
+  --color-accent: 214 100% 58%;
+  --color-accent-foreground: 0 0% 100%;
+  
+  --color-border: 0 0% 89%;
+  --color-input: 0 0% 96%;
+  --color-ring: 214 100% 58%;
+  
+  /* Success colors */
+  --color-success: 142 76% 36%;
+  --color-success-foreground: 0 0% 100%;
+  --color-success-background: 142 76% 95%;
+  --color-success-border: 142 76% 85%;
+  
+  /* Warning colors */
+  --color-warning: 38 92% 50%;
+  --color-warning-foreground: 0 0% 100%;
+  --color-warning-background: 38 92% 95%;
+  --color-warning-border: 38 92% 85%;
+  
+  /* Error colors */
+  --color-error: 0 84% 60%;
+  --color-error-foreground: 0 0% 100%;
+  --color-error-background: 0 84% 95%;
+  --color-error-border: 0 84% 85%;
+  
+  /* Info colors */
+  --color-info: 214 100% 58%;
+  --color-info-foreground: 0 0% 100%;
+  --color-info-background: 214 100% 95%;
+  --color-info-border: 214 100% 85%;
+  
+  /* Spacing System */
+  --space-xs: 0.25rem;   /* 4px */
+  --space-sm: 0.5rem;    /* 8px */
+  --space-md: 1rem;      /* 16px */
+  --space-lg: 1.5rem;    /* 24px */
+  --space-xl: 2rem;      /* 32px */
+  --space-xxl: 3rem;     /* 48px */
+  
+  /* Border Radius */
+  --radius-card: 0.5rem;
+  --radius-button: 0.375rem;
+  
+  /* Component Heights */
+  --control-height-sm: 2rem;
+  --control-height-md: 2.5rem;
+  --control-height-lg: 3rem;
+}
+
+/* Dark Mode */
+.dark {
+  --color-background: 222 84% 5%;
+  --color-background-alt: 222 84% 7%;
+  --color-background-muted: 222 84% 9%;
+  --color-foreground: 210 40% 98%;
+  --color-foreground-muted: 215 20% 65%;
+  
+  --color-primary: 214 100% 58%;
+  --color-primary-foreground: 222 84% 5%;
+  
+  --color-accent: 214 100% 58%;
+  --color-accent-foreground: 222 84% 5%;
+  
+  --color-border: 217 32% 17%;
+  --color-input: 217 32% 17%;
+  --color-ring: 214 100% 58%;
+  
+  /* Success colors - dark mode */
+  --color-success: 142 76% 45%;
+  --color-success-foreground: 222 84% 5%;
+  --color-success-background: 142 76% 15%;
+  --color-success-border: 142 76% 25%;
+  
+  /* Warning colors - dark mode */
+  --color-warning: 38 92% 55%;
+  --color-warning-foreground: 222 84% 5%;
+  --color-warning-background: 38 92% 15%;
+  --color-warning-border: 38 92% 25%;
+  
+  /* Error colors - dark mode */
+  --color-error: 0 84% 65%;
+  --color-error-foreground: 222 84% 5%;
+  --color-error-background: 0 84% 15%;
+  --color-error-border: 0 84% 25%;
+  
+  /* Info colors - dark mode */
+  --color-info: 214 100% 58%;
+  --color-info-foreground: 222 84% 5%;
+  --color-info-background: 214 100% 15%;
+  --color-info-border: 214 100% 25%;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: hsl(var(--color-background));
+  color: hsl(var(--color-foreground));
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#root {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Utility Classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid hsl(var(--color-ring));
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for theme changes */
+*,
+*::before,
+*::after {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
