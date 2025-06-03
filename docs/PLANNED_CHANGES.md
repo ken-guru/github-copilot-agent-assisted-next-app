@@ -191,13 +191,53 @@ Note: When implementing a change, copy this template and fill it out completely.
 ## Technical Guidelines
 
 ### Development Workflow
+**IMPORTANT: Incremental Development with Git Tracking**
+
+**Core Principle**: Implement each component incrementally with regular git commits to track progress and enable easy rollback if needed.
+
+#### Per-Component Development Cycle:
 1. **Analyze current feature** - understand user experience and behavior
-2. **Design component API** - props, state, interactions
+2. **Design component API** - props, state, interactions  
 3. **Write comprehensive tests** - define expected behavior
+   - 🔄 **COMMIT**: "Add tests for [ComponentName] - [brief description]"
 4. **Implement component** - satisfy tests with modern patterns
+   - 🔄 **COMMIT**: "Implement [ComponentName] basic functionality"
 5. **Style with Tailwind** - responsive, theme-aware design
+   - 🔄 **COMMIT**: "Add styling to [ComponentName] - responsive + theme support"
 6. **Document component** - usage examples and API
+   - 🔄 **COMMIT**: "Document [ComponentName] - API and usage examples"
 7. **Integrate and test** - verify with other components
+   - 🔄 **COMMIT**: "Integrate [ComponentName] with [related components]"
+
+#### Git Commit Strategy:
+- **Frequency**: Commit after each major step (tests, implementation, styling, integration)
+- **Granularity**: One logical change per commit (easier to track and revert)
+- **Messages**: Clear, descriptive commit messages following pattern:
+  ```
+  [Action] [Component/Feature] - [Brief description]
+  
+  Examples:
+  - "Add tests for ActivityForm - form validation and state management"
+  - "Implement ActivityManager - basic state machine logic" 
+  - "Fix ActivityForm validation - handle edge cases"
+  - "Integrate ActivityManager with Timeline - real-time updates"
+  ```
+- **Verification**: Run tests before each commit to ensure stability
+- **Documentation**: Update memory logs at component completion milestones
+
+#### Break Points for Review:
+- After completing each component's test suite
+- After implementing core component functionality
+- After styling and theme integration
+- After full component integration
+- Before moving to next phase
+
+#### Benefits of Incremental Approach:
+- **Change Tracking**: Easy to see what changed when
+- **Rollback Safety**: Can revert specific changes without losing other work
+- **Progress Visibility**: Clear milestones and achievements  
+- **Debugging**: Easier to identify when issues were introduced
+- **Collaboration**: Better history for team understanding
 
 ### Technology Stack
 - **Build Tool**: Vite with SWC for fastest builds
@@ -257,53 +297,183 @@ src/
 
 ## Validation Criteria
 
-### Phase 1: Foundation
-- [ ] Vite + React + TypeScript project setup complete
-- [ ] Tailwind CSS configured with custom theme
-- [ ] Vitest + React Testing Library working
-- [ ] ESLint + Prettier + TypeScript configured
-- [ ] File structure and development workflow established
-- [ ] Basic component templates and patterns defined
+**Implementation Approach**: Each phase should be completed incrementally with regular git commits and verification checkpoints.
 
-### Phase 2: Core Components
-- [ ] Theme system implemented and tested
-- [ ] Base UI components created (Button, Input, Card, etc.)
-- [ ] Layout system implemented
-- [ ] Error boundaries and error handling
-- [ ] All foundation tests passing
+### Phase 1: Foundation ✅ **COMPLETED**
+- [x] Vite + React + TypeScript project setup complete
+- [x] Tailwind CSS configured with custom theme  
+- [x] Vitest + React Testing Library working
+- [x] ESLint + Prettier + TypeScript configured
+- [x] File structure and development workflow established
+- [x] Basic component templates and patterns defined
+- **Git Milestone**: `Phase 1 Complete - Foundation Ready`
 
-### Phase 3: Activity Management Components
-- [ ] ActivityForm component fully implemented and tested
-- [ ] ActivityManager with complete state machine logic
-- [ ] Timeline components with real-time updates
-- [ ] All activity components responsive and theme-compatible
+### Phase 2: Core Components ✅ **COMPLETED**
+- [x] Theme system implemented and tested
+- [x] Base UI components created (Button, Input, Card, etc.)
+- [x] Layout system implemented  
+- [x] Error boundaries and error handling
+- [x] All foundation tests passing
+- **Git Milestone**: `Phase 2 Complete - Core UI Components Ready`
+- **Current Status**: 166/167 tests passing (99.4% success rate)
 
-### Phase 4: Progress and Integration Components
-- [ ] ProgressBar with real-time tracking
-- [ ] Summary component with analytics
-- [ ] TimeSetup component complete
-- [ ] Complete application integration with state coordination
+### Phase 3: Activity Management Components 🔄 **NEXT PHASE**
 
-### Phase 5: Polish and Integration
-- [ ] Full application integration testing
-- [ ] Performance optimization complete
-- [ ] Accessibility verification
-- [ ] Cross-browser compatibility confirmed
-- [ ] Service worker and offline support integration
-- [ ] Documentation complete
-- [ ] Ready for deployment
+#### 3.1 ActivityForm Component
+- [ ] **Tests**: Write comprehensive test suite for ActivityForm
+  - [ ] Form validation tests
+  - [ ] State management tests  
+  - [ ] Error handling tests
+  - [ ] Accessibility tests
+  - 🔄 **Commit Checkpoint**: "Add ActivityForm test suite"
+- [ ] **Implementation**: Core ActivityForm functionality
+  - [ ] Basic form structure and validation
+  - [ ] State management with hooks
+  - [ ] Error handling and edge cases
+  - 🔄 **Commit Checkpoint**: "Implement ActivityForm core functionality"
+- [ ] **Styling**: Theme-aware responsive design
+  - [ ] Tailwind styling implementation
+  - [ ] Dark/light theme compatibility
+  - [ ] Mobile responsiveness
+  - 🔄 **Commit Checkpoint**: "Add ActivityForm styling and themes"
+- [ ] **Integration**: Connect with app state
+  - [ ] Integration with activity state management
+  - [ ] Real-time updates and feedback
+  - 🔄 **Commit Checkpoint**: "Integrate ActivityForm with app state"
 
-## Implementation Phases
+#### 3.2 ActivityManager Component  
+- [ ] **Tests**: State machine and control logic tests
+  - [ ] Activity lifecycle tests (PENDING → RUNNING → COMPLETED)
+  - [ ] State transition validation tests
+  - [ ] Real-time update tests
+  - 🔄 **Commit Checkpoint**: "Add ActivityManager test suite"
+- [ ] **Implementation**: Activity state machine logic
+  - [ ] Core state machine implementation
+  - [ ] Activity control methods (start, pause, complete)
+  - [ ] Status monitoring and updates
+  - 🔄 **Commit Checkpoint**: "Implement ActivityManager state machine"
+- [ ] **Styling**: Control interface design
+  - [ ] Activity control UI components
+  - [ ] Status indicators and feedback
+  - [ ] Theme integration
+  - 🔄 **Commit Checkpoint**: "Add ActivityManager styling and controls"
+- [ ] **Integration**: Connect with ActivityForm and Timeline
+  - [ ] Form-to-manager data flow
+  - [ ] Real-time timeline updates
+  - [ ] Cross-component state synchronization
+  - 🔄 **Commit Checkpoint**: "Integrate ActivityManager with other components"
 
-### Phase 1: Project Setup (Day 1)
-- Create new Vite + React + TypeScript project
-- Configure Tailwind CSS with custom theme
-- Set up testing framework and tooling
-- Design file structure and development workflow
-- Create basic component templates
+#### 3.3 Timeline Components
+- [ ] **Tests**: Timeline display and update tests
+  - [ ] Timeline data rendering tests
+  - [ ] Real-time update tests  
+  - [ ] Visual feedback tests
+  - 🔄 **Commit Checkpoint**: "Add Timeline component test suite"
+- [ ] **Implementation**: Timeline visualization
+  - [ ] TimelineDisplay component implementation
+  - [ ] Timeline data management
+  - [ ] Real-time update mechanisms
+  - 🔄 **Commit Checkpoint**: "Implement Timeline core functionality"  
+- [ ] **Styling**: Timeline visual design
+  - [ ] Activity timeline visual layout
+  - [ ] Color-coded activity indicators
+  - [ ] Responsive timeline display
+  - 🔄 **Commit Checkpoint**: "Add Timeline styling and visualization"
+- [ ] **Integration**: Complete activity management integration
+  - [ ] Full activity workflow integration
+  - [ ] Cross-component state coordination
+  - [ ] End-to-end functionality verification
+  - 🔄 **Commit Checkpoint**: "Complete Timeline integration"
 
-### Phase 2: Design System (Day 2)
-- Implement theme system and context
+**Phase 3 Git Milestone**: `Phase 3 Complete - Activity Management Ready`
+
+### Phase 4: Progress and Integration Components 🔄 **FUTURE**
+
+#### 4.1 ProgressBar Component
+- [ ] **Tests**: Real-time tracking and visual feedback tests
+- [ ] **Implementation**: Progress calculation and display logic
+- [ ] **Styling**: Visual progress indicators with theme support
+- [ ] **Integration**: Connect with activity state for real-time updates
+- 🔄 **Commit Checkpoint**: "Complete ProgressBar component"
+
+#### 4.2 Summary Component  
+- [ ] **Tests**: Analytics and data presentation tests
+- [ ] **Implementation**: Activity summary and statistics logic
+- [ ] **Styling**: Data visualization and responsive layout
+- [ ] **Integration**: Connect with activity history and analytics
+- 🔄 **Commit Checkpoint**: "Complete Summary component"
+
+#### 4.3 TimeSetup Component
+- [ ] **Tests**: Time configuration and validation tests
+- [ ] **Implementation**: Duration setting and deadline management
+- [ ] **Styling**: Time input interface with theme support
+- [ ] **Integration**: Connect with activity creation workflow
+- 🔄 **Commit Checkpoint**: "Complete TimeSetup component"
+
+**Phase 4 Git Milestone**: `Phase 4 Complete - Progress Components Ready`
+
+### Phase 5: Polish and Integration 🔄 **FINAL**
+
+#### 5.1 Integration Testing
+- [ ] **Full application integration testing**
+- [ ] **Cross-component state coordination verification**
+- [ ] **End-to-end user workflow testing**
+- 🔄 **Commit Checkpoint**: "Complete integration testing"
+
+#### 5.2 Performance and Accessibility
+- [ ] **Performance optimization complete**
+- [ ] **Accessibility verification (WCAG compliance)**
+- [ ] **Cross-browser compatibility confirmed**
+- 🔄 **Commit Checkpoint**: "Complete performance and accessibility"
+
+#### 5.3 Final Features
+- [ ] **Service worker and offline support integration**
+- [ ] **Documentation complete**
+- [ ] **Deployment preparation**
+- 🔄 **Commit Checkpoint**: "Ready for deployment"
+
+**Phase 5 Git Milestone**: `Application Complete - Ready for Deployment`
+
+## Git Workflow Summary
+
+### Repository Management
+- **Branch Strategy**: Work on main branch with frequent commits  
+- **Commit Frequency**: After each major development step
+- **Commit Messages**: Descriptive and following established patterns
+- **Tag Strategy**: Tag major phase completions for easy reference
+
+### Commit Message Patterns
+```bash
+# Component Development
+"Add tests for [Component] - [test focus]"
+"Implement [Component] - [functionality]" 
+"Style [Component] - [styling focus]"
+"Integrate [Component] - [integration details]"
+
+# Bug Fixes  
+"Fix [Component] [issue] - [solution]"
+"Debug [Component] [problem] - [resolution]"
+
+# Documentation
+"Document [Component] - [documentation type]"
+"Update [Component] docs - [changes]"
+
+# Phase Milestones
+"Phase [N] Complete - [phase name]"
+```
+
+### Development Checkpoints
+- **After Each Component**: Test, implement, style, integrate
+- **After Each Phase**: Full verification and milestone commit
+- **Before Major Changes**: Ensure clean working state
+- **Regular Verification**: Run test suite before commits
+
+This incremental approach ensures:
+✅ **Change Tracking**: Every step is documented in git history  
+✅ **Rollback Safety**: Can revert to any stable checkpoint  
+✅ **Progress Visibility**: Clear milestones show development progress  
+✅ **Debugging**: Easy to identify when issues were introduced  
+✅ **Documentation**: Git history serves as development log
 - Create base UI components
 - Set up layout and responsive utilities
 - Establish styling patterns and standards
