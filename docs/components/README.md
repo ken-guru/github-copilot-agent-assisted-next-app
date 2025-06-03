@@ -108,5 +108,4 @@ graph TD
 ## Related Documentation
 
 - [Main README](../../README.md)
-- [Development Process Guidelines](../PLANNED_CHANGES.md#development-process-guidelines)
 - [Memory Log](../MEMORY_LOG.md) - Project history and issue resolutions

@@ -29,6 +29,7 @@ The project uses a documentation system for tracking changes:
    - Contains upcoming feature specifications
    - Written in a prompt-friendly format
    - Used as input for AI-assisted implementation
+   - Based on template in docs/templates/PLANNED_CHANGES_TEMPLATE.md
 2. docs/IMPLEMENTED_CHANGES.md:
    - Chronicles completed implementations
    - Includes timestamps and implementation details
@@ -215,7 +216,6 @@ Key component categories:
 
 ### Development Resources
 
-- [Development Process Guidelines](./docs/PLANNED_CHANGES.md#development-process-guidelines)
 - [Memory Log](./docs/MEMORY_LOG.md) - Project history and issue resolutions
 - [Time Utilities Testing Guide](./docs/dev-guides/TIME_UTILITIES_TESTING.md)
 
