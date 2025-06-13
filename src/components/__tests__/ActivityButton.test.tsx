@@ -1,4 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } f  it('applies completed styling when activity is completed', () => {
+    render(<ActivityButton {...defaultProps} isCompleted={true} />);
+    const container = screen.getByText('Test Activity').closest('div');
+    expect(container).toBeInTheDocument();
+  });@testing-library/react';
 import { ActivityButton } from '../ActivityButton';
 import { jest } from '@jest/globals';
 

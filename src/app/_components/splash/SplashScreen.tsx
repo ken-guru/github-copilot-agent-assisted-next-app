@@ -61,7 +61,6 @@ export default function SplashScreen({
 }: SplashScreenProps) {
   const { isLoading, setIsLoading } = useLoading();
   const [shouldRender, setShouldRender] = useState(true);
-  const [isFading, setIsFading] = useState(false);
   const [scriptIncluded, setScriptIncluded] = useState(false);
   
   // Load timestamp when component mounts
@@ -75,8 +74,6 @@ export default function SplashScreen({
       
       // Start fade out animation after minimum display time
       setTimeout(() => {
-        setIsFading(true);
-        
         // Remove from DOM after animation completes
         setTimeout(() => {
           setShouldRender(false);

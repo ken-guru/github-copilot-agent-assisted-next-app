@@ -328,7 +328,7 @@ export default function Timeline({
             />
           )}
           
-          {timeMarkers.map(({ time, position, label, isOvertimeMarker }) => (
+          {timeMarkers.map(({ time, position, label }) => (
             <div key={time}
               style={{ top: `${position}%` }}
               data-testid="time-marker"
@@ -357,7 +357,7 @@ export default function Timeline({
           )}
           
           <div>
-            {timeMarkers.map(({ time, position, isOvertimeMarker }) => (
+            {timeMarkers.map(({ time, position }) => (
               <div key={time}
                 style={{ top: `${position}%` }}
               />

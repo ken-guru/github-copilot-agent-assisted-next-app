@@ -38,32 +38,8 @@ export default function ProgressBar({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   timerActive = false
 }: ProgressBarProps) {
-  // State to track if the component is being viewed on mobile
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Effect to check if the device is mobile on mount and when window is resized
-  useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.matchMedia('(max-width: 768px)').matches);
-    };
-    
-    // Initial check
-    checkIsMobile();
-    
-    // Add listener for window resize
-    window.addEventListener('resize', checkIsMobile);
-    
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', checkIsMobile);
-    };
-  }, []);
-
   // Calculate progress percentage
   const progressPercentage = Math.min(100, (elapsedTime / totalDuration) * 100);
-  
-  // Is the progress bar active?
-  const isActive = entries.length > 0;
   
   // Calculate progress color based on percentage
   const progressColor = useMemo(() => {

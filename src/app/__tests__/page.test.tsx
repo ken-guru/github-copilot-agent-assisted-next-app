@@ -242,7 +242,7 @@ describe('Home Page', () => {
       
       // Update this line to be more specific about which title we want
       const title = screen.getByText('Mr. Timely', { selector: 'header h1.title' });
-      }
+      expect(title).toBeInTheDocument();
     });
   });
 });
@@ -373,8 +373,9 @@ describe('Progress Element Visibility', () => {
     
     render(<Home />);
     
-    // In activity state, progress container should be present
-    expect(progressContainer).toBeInTheDocument();
+    // In activity state, check that some progress-related content exists
+    const progressElement = screen.getByTestId('progress-container');
+    expect(progressElement).toBeInTheDocument();
   });
   
   it('should not show progress container in setup state', () => {
@@ -384,10 +385,8 @@ describe('Progress Element Visibility', () => {
     render(<Home />);
     
     // In setup state, progress container should not be rendered
-    
-    // Since our conditionally rendered progress bar should only appear
-    // in the activity state, it should not be in the document in setup state
-    expect(progressContainer).not.toBeInTheDocument();
+    const progressElement = screen.queryByTestId('progress-container');
+    expect(progressElement).not.toBeInTheDocument();
   });
   
   it('should not show progress container in completed state', () => {
@@ -407,9 +406,7 @@ describe('Progress Element Visibility', () => {
     render(<Home />);
     
     // In completed state, progress container should not be rendered
-    
-    // Since our conditionally rendered progress bar should only appear
-    // in the activity state, it should not be in the document in completed state
-    expect(progressContainer).not.toBeInTheDocument();
+    const progressElement = screen.queryByTestId('progress-container');
+    expect(progressElement).not.toBeInTheDocument();
   });
 });
