@@ -1,0 +1,67 @@
+/* Typography Design Tokens */
+/* Mobile-first type scale with fluid typography */
+
+:root {
+  /* Base font configuration */
+  --font-family-base: system-ui, -apple-system, "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-family-mono: ui-monospace, "SFMono-Regular", "SF Mono", "Cascadia Code", "Roboto Mono", "Consolas", "Liberation Mono", "Menlo", "Courier", monospace;
+
+  /* Mobile-first type scale */
+  --text-scale-xs: 0.75rem;    /* 12px */
+  --text-scale-sm: 0.875rem;   /* 14px */
+  --text-scale-base: 1rem;     /* 16px */
+  --text-scale-lg: 1.125rem;   /* 18px */
+  --text-scale-xl: 1.25rem;    /* 20px */
+  --text-scale-2xl: 1.5rem;    /* 24px */
+  --text-scale-3xl: 1.875rem;  /* 30px */
+  --text-scale-4xl: 2.25rem;   /* 36px */
+
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Semantic typography tokens */
+  --text-body: var(--text-scale-base);
+  --text-body-sm: var(--text-scale-sm);
+  --text-caption: var(--text-scale-xs);
+  --text-heading-1: var(--text-scale-3xl);
+  --text-heading-2: var(--text-scale-2xl);
+  --text-heading-3: var(--text-scale-xl);
+  --text-heading-4: var(--text-scale-lg);
+  --text-button: var(--text-scale-base);
+  --text-label: var(--text-scale-sm);
+}
+
+/* Responsive typography adjustments */
+@media (min-width: 768px) {
+  :root {
+    --text-scale-xs: 0.8125rem;  /* 13px */
+    --text-scale-sm: 0.9375rem;  /* 15px */
+    --text-scale-base: 1.0625rem; /* 17px */
+    --text-scale-lg: 1.1875rem;  /* 19px */
+    --text-scale-xl: 1.375rem;   /* 22px */
+    --text-scale-2xl: 1.625rem;  /* 26px */
+    --text-scale-3xl: 2rem;      /* 32px */
+    --text-scale-4xl: 2.5rem;    /* 40px */
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --text-scale-xs: 0.875rem;   /* 14px */
+    --text-scale-sm: 1rem;       /* 16px */
+    --text-scale-base: 1.125rem; /* 18px */
+    --text-scale-lg: 1.25rem;    /* 20px */
+    --text-scale-xl: 1.5rem;     /* 24px */
+    --text-scale-2xl: 1.875rem;  /* 30px */
+    --text-scale-3xl: 2.25rem;   /* 36px */
+    --text-scale-4xl: 3rem;      /* 48px */
+  }
+}
