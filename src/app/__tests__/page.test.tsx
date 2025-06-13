@@ -6,13 +6,6 @@ import resetService, { DialogCallback } from '@/utils/resetService';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
 import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 
-// Create a helper function to safely check CSS classes that might be undefined
-const safelyCheckClass = (element: HTMLElement, className?: string) => {
-  if (className) {
-    expect(element).toHaveClass(className);
-  }
-};
-
 // Store dialog props for testing
 let mockDialogProps = {
   message: '',

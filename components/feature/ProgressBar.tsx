@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { formatTimeHuman } from '@lib/time';
 import type { TimelineEntry } from './Timeline';
 
@@ -31,7 +31,7 @@ export interface ProgressBarProps {
 }
 
 export default function ProgressBar({
-  entries,
+  // entries, // Unused after CSS removal experiment
   totalDuration,
   elapsedTime,
   // This prop is currently unused but kept for future features

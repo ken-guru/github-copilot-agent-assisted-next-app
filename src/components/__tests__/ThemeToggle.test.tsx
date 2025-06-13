@@ -14,13 +14,6 @@ window.matchMedia = jest.fn().mockImplementation(query => ({
   dispatchEvent: jest.fn(),
 }));
 
-// Create a helper function to safely check CSS classes that might be undefined
-const safelyCheckClass = (element: HTMLElement, className?: string) => {
-  if (className) {
-    expect(element).toHaveClass(className);
-  }
-};
-
 describe('ThemeToggle', () => {
   const originalLocalStorage = window.localStorage;
   let localStorageMock: { [key: string]: string };
