@@ -2,7 +2,7 @@ import React from 'react';
 import { Activity } from './ActivityManager';
 import { TimelineEntry } from '@/types';
 import { formatTime } from '@/utils/timeUtils';
-import styles from './ActivityManager.module.css';
+import styles from './ActivityButton.module.css';
 
 interface ActivityButtonProps {
   activity: Activity;
@@ -40,34 +40,41 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
     }
   };
 
+  // Build CSS classes
+  const buttonClasses = [
+    styles.activityButton,
+    isRunning && styles.isRunning,
+    isCompleted && styles.isCompleted
+  ].filter(Boolean).join(' ');
+
   return (
     <div 
-      className={isCompleted ? styles.completedActivityItem : styles.activityItem}
+      className={buttonClasses}
       style={colors ? {
         backgroundColor: colors.background,
         borderColor: colors.border
       } : undefined}
     >
-      {/* Title */}
+      {/* Activity name */}
       <span 
-        className={isCompleted ? styles.completedActivityName : styles.activityName}
+        className={styles.activityName}
         style={colors ? { color: colors.text } : undefined}
       >
         {name}
       </span>
 
       {/* Right side content grouped together */}
-      <div className={styles.activityRightContent}>
-        {/* Status */}
-        <div className={styles.activityStatus}>
+      <div className={styles.rightContent}>
+        {/* Status section */}
+        <div className={styles.status}>
           {isRunning && (
-            <span className={styles.runningIndicator}>
-              <span className={styles.timerDisplay}>{formatTime(elapsedTime)}</span>
+            <span className={styles.timer}>
+              {formatTime(elapsedTime)}
             </span>
           )}
           {isCompleted && (
             <span 
-              className={styles.completedTag}
+              className={styles.completedIcon}
               style={colors ? {
                 color: colors.text,
                 borderColor: colors.border
@@ -75,7 +82,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
               title="Completed"
               aria-label="Completed"
             >
-              <svg className={styles.checkIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
               </svg>
             </span>
@@ -84,35 +91,35 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
         
         {/* Action buttons */}
         {!isCompleted && (
-        <div className={styles.activityActions}>
-            <button
+          <div className={styles.actions}>
+            <button 
+              className={isRunning ? styles.completeButton : styles.startButton}
               onClick={handleClick}
-              className={isRunning ? styles.stopButton : styles.startButton}
               disabled={isCompleted}
               title={isRunning ? "Complete" : "Start"}
               aria-label={isRunning ? "Complete" : "Start"}
               data-testid={`${isRunning ? 'complete' : 'start'}-activity-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
             >
               {isRunning ? (
-                <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg>
               ) : (
-                <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               )}
             </button>
             {onRemove && (
-              <button
-                onClick={handleRemove}
+              <button 
                 className={styles.removeButton}
+                onClick={handleRemove}
                 disabled={isInUse}
                 title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
                 aria-label="Remove"
                 data-testid={`remove-activity-${name.toLowerCase().replace(/\s+/g, '-')}`}
               >
-                <svg className={styles.buttonIcon} viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                   <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                 </svg>
               </button>

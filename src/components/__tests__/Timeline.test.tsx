@@ -22,8 +22,7 @@ describe('Timeline Component', () => {
   // Helper function to render timeline with standard props
   const renderTimeline = (entries: TimelineEntry[], props = {}) => {
     return render(
-      <Timeline 
-        entries={entries}
+      <Timeline entries={entries}
         totalDuration={3600}
         elapsedTime={30}
         timerActive={true}

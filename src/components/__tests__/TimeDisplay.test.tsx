@@ -16,8 +16,7 @@ describe('TimeDisplay Component', () => {
     dateFormat?: string;
   }) => {
     return render(
-      <TimeDisplay 
-        dateTime={testDateTime}
+      <TimeDisplay dateTime={testDateTime}
         formattedTime={props.formattedTime || testFormattedTime}
         formattedDate={props.formattedDate || testFormattedDate}
         timeFormat={props.timeFormat}

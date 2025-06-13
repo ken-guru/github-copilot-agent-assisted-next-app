@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import styles from './TimeSetup.module.css';
 
 /**
  * Props for the TimeSetup component
@@ -136,85 +135,72 @@ export default function TimeSetup({
   };
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.heading}>Set Up Time</h2>
+    <div>
+      <h2>Set Up Time</h2>
       
-      <div className={styles.modeSelector}>
-        <button
-          type="button"
-          className={`${styles.button} ${styles.modeButton} ${setupMode === 'duration' ? styles.modeButtonActive : ''}`}
+      <div>
+        <button type="button"
           onClick={() => handleModeChange('duration')}
         >
           Duration
         </button>
-        <button
-          type="button"
-          className={`${styles.button} ${styles.modeButton} ${setupMode === 'deadline' ? styles.modeButtonActive : ''}`}
+        <button type="button"
           onClick={() => handleModeChange('deadline')}
         >
           Deadline
         </button>
       </div>
       
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form onSubmit={handleSubmit} >
         {setupMode === 'duration' ? (
-          <div className={styles.inputGroup}>
-            <div className={styles.timeInput}>
-              <label htmlFor="hours" className={styles.label}>Hours</label>
-              <input
-                type="number"
+          <div>
+            <div>
+              <label htmlFor="hours" >Hours</label>
+              <input type="number"
                 id="hours"
                 min="0"
                 value={hours}
                 onChange={(e) => handleNumberInput(e.target.value, setHours)}
-                className={`${styles.input} ${hasError ? styles.inputError : ''}`}
               />
             </div>
             
-            <div className={styles.timeInput}>
-              <label htmlFor="minutes" className={styles.label}>Minutes</label>
-              <input
-                type="number"
+            <div>
+              <label htmlFor="minutes" >Minutes</label>
+              <input type="number"
                 id="minutes"
                 min="0"
                 max="59"
                 value={minutes}
                 onChange={(e) => handleNumberInput(e.target.value, setMinutes)}
-                className={`${styles.input} ${hasError ? styles.inputError : ''}`}
               />
             </div>
             
-            <div className={styles.timeInput}>
-              <label htmlFor="seconds" className={styles.label}>Seconds</label>
-              <input
-                type="number"
+            <div>
+              <label htmlFor="seconds" >Seconds</label>
+              <input type="number"
                 id="seconds"
                 min="0"
                 max="59"
                 value={seconds}
                 onChange={(e) => handleNumberInput(e.target.value, setSeconds)}
-                className={`${styles.input} ${hasError ? styles.inputError : ''}`}
               />
             </div>
           </div>
         ) : (
-          <div className={styles.timeInput}>
-            <label htmlFor="deadlineTime" className={styles.label}>Time (24-hour format)</label>
-            <input
-              type="time"
+          <div>
+            <label htmlFor="deadlineTime" >Time (24-hour format)</label>
+            <input type="time"
               id="deadlineTime"
               value={deadlineTime}
               onChange={(e) => setDeadlineTime(e.target.value)}
-              className={`${styles.input} ${styles.deadlineInput} ${hasError ? styles.inputError : ''}`}
             />
           </div>
         )}
         
-        {hasError && <div className={styles.error}>{errorMessage}</div>}
+        {hasError && <div>{errorMessage}</div>}
         
-        <button 
-          type="submit" 
-          className={styles.submitButton}
+        <button type="submit" 
+          
           disabled={setupMode === 'duration' && hours === 0 && minutes === 0 && seconds === 0}
         >
           Start Timer

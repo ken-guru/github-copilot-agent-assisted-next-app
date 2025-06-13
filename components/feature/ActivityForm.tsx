@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import styles from './ActivityForm.module.css';
 
 interface ActivityFormProps {
   onSubmit: (name: string, description?: string) => void;
@@ -25,19 +24,17 @@ export default function ActivityForm({
   };
   
   return (
-    <form className={styles.addActivityForm} onSubmit={handleSubmit}>
-      <input
-        type="text"
+    <form onSubmit={handleSubmit}>
+      <input type="text"
         value={activityName}
         onChange={(e) => setActivityName(e.target.value)}
         placeholder="Add new activity..."
-        className={styles.addActivityInput}
+        
         disabled={isDisabled}
         data-testid="activity-name-input"
       />
-      <button
-        type="submit"
-        className={styles.addButton}
+      <button type="submit"
+        
         disabled={!activityName.trim() || isDisabled}
         data-testid="add-activity-button"
       >

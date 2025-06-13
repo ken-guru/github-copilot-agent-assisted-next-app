@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useLoading } from '@contexts/loading';
-import styles from './SplashScreen.module.css';
 
 interface SplashScreenProps {
   minimumDisplayTime?: number;
@@ -62,7 +61,6 @@ export default function SplashScreen({
 }: SplashScreenProps) {
   const { isLoading, setIsLoading } = useLoading();
   const [shouldRender, setShouldRender] = useState(true);
-  const [isFading, setIsFading] = useState(false);
   const [scriptIncluded, setScriptIncluded] = useState(false);
   
   // Load timestamp when component mounts
@@ -76,8 +74,6 @@ export default function SplashScreen({
       
       // Start fade out animation after minimum display time
       setTimeout(() => {
-        setIsFading(true);
-        
         // Remove from DOM after animation completes
         setTimeout(() => {
           setShouldRender(false);
@@ -112,22 +108,21 @@ export default function SplashScreen({
   const logoSrc = isDarkTheme() ? '/images/logo-dark.svg' : '/images/logo-light.svg';
   
   return (
-    <div className={`${styles.splashScreen} ${isFading ? styles.fading : ''}`}>
-      <div className={styles.logoContainer}>
-        <Image
-          src={logoSrc}
+    <div>
+      <div>
+        <Image src={logoSrc}
           alt="Application Logo"
           width={250}
           height={250}
-          className={styles.logo}
+          
           priority
         />
-        <div className={styles.loadingIndicator}>
-          <div className={styles.loadingDot}></div>
-          <div className={styles.loadingDot}></div>
-          <div className={styles.loadingDot}></div>
+        <div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
-        <p className={styles.loadingText}>Loading...</p>
+        <p>Loading...</p>
       </div>
     </div>
   );

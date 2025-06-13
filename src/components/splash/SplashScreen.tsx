@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useLoading } from '@contexts/loading';
-import styles from './SplashScreen.module.css';
 
 interface SplashScreenProps {
   minimumDisplayTime?: number;
@@ -55,13 +54,13 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   }
 
   return (
-    <div className={`${styles.splashScreen} ${fadeOut ? styles.fadeOut : ''}`} data-testid="splash-screen">
-      <div className={styles.content}>
-        <h1 className={styles.title}>Mr. Timely</h1>
-        <div className={styles.loadingIndicator}>
-          <div className={styles.dot}></div>
-          <div className={styles.dot}></div>
-          <div className={styles.dot}></div>
+    <div data-testid="splash-screen">
+      <div>
+        <h1>Mr. Timely</h1>
+        <div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
       </div>
     </div>

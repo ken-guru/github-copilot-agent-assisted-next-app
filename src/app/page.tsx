@@ -13,7 +13,6 @@ import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/Confirma
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import resetService from '@/utils/resetService';
-import styles from './page.module.css';
 
 // Main application content with loading context
 function AppContent() {
@@ -133,97 +132,110 @@ function AppContent() {
   }));
   
   return (
-    <>
+    <div className="app-root">
       <SplashScreen minimumDisplayTime={500} />
-      <div className={`${styles.layout} ${styles.container}`}>
-        {/* Confirmation Dialog */}
-        <ConfirmationDialog
-          ref={resetDialogRef}
-          message={dialogActions.message}
-          confirmText="Reset"
-          cancelText="Cancel"
-          onConfirm={dialogActions.onConfirm}
-          onCancel={dialogActions.onCancel}
-        />
-        
-        <div className={styles.wrapper}>
-          <header className={styles.header}>
-            <div className={styles.headerContent}>
-              <h1 className={styles.title}>Mr. Timely</h1>
+      
+      {/* Skip navigation link for accessibility */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog ref={resetDialogRef}
+        message={dialogActions.message}
+        confirmText="Reset"
+        cancelText="Cancel"
+        onConfirm={dialogActions.onConfirm}
+        onCancel={dialogActions.onCancel}
+      />
+      
+      <div className="app-wrapper">
+        {/* Application Header - Persistent across all states */}
+        <header className="app-header">
+          <div className="header-content">
+            <h1 className="app-title">Mr. Timely</h1>
+            <div></div> {/* Spacer for grid layout */}
+            <div className="header-controls">
               <ThemeToggle />
-              <div className={styles.resetButtonContainer}>
-                {appState !== 'setup' && (
-                  <button 
-                    className={styles.resetButton} 
-                    onClick={handleReset}
-                  >
-                    Reset
-                  </button>
-                )}
-              </div>
+              {appState !== 'setup' && (
+                <button onClick={handleReset}>
+                  Reset
+                </button>
+              )}
             </div>
-          </header>
-          <OfflineIndicator />
-          
-          {/* Progress bar only rendered for activity state */}
-          {timeSet && !allActivitiesCompleted && (
-            <div className={styles.progressContainer} data-testid="progress-container">
-              <ProgressBar 
-                entries={processedEntries}
-                totalDuration={totalDuration}
-                elapsedTime={elapsedTime}
-                timerActive={timerActive}
-              />
-            </div>
-          )}
-          
+          </div>
+        </header>
+        
+        {/* Offline Indicator - Conditional */}
+        <OfflineIndicator />
+        
+        {/* Main content area with id for skip link */}
+        <main id="main-content">
+          {/* Setup State Layout */}
           {appState === 'setup' && (
-            <div className={styles.setupGrid}>
-              <TimeSetup onTimeSet={handleTimeSet} />
+            <div className="setup-layout">
+              <div className="setup-container">
+                <div className="setup-content">
+                  <TimeSetup onTimeSet={handleTimeSet} />
+                </div>
+              </div>
             </div>
           )}
           
+          {/* Activity State Layout */}
           {appState === 'activity' && (
-            <div className={styles.activityGrid}>
-              <div>
-                <ActivityManager 
-                  onActivitySelect={handleActivitySelect} 
-                  onActivityRemove={handleActivityRemoval}
-                  currentActivityId={currentActivity?.id || null} 
-                  completedActivityIds={completedActivityIds}
-                  timelineEntries={processedEntries}
-                  isTimeUp={isTimeUp}
+            <div className="activity-layout">
+              {/* Progress bar area - conditional visibility */}
+              <div className="progress-area" data-testid="progress-container">
+                <ProgressBar entries={processedEntries}
+                  totalDuration={totalDuration}
                   elapsedTime={elapsedTime}
+                  timerActive={timerActive}
                 />
               </div>
-              <div className={styles.timelineContainer}>
-                <Timeline 
-                  entries={processedEntries}
-                  totalDuration={totalDuration} 
-                  elapsedTime={elapsedTime}
-                  allActivitiesCompleted={allActivitiesCompleted}
-                  timerActive={timerActive}
-                  isTimeUp={isTimeUp}
-                />
+              
+              {/* Main activity content area */}
+              <div className="activity-content">
+                <div className="activity-manager-area">
+                  <ActivityManager onActivitySelect={handleActivitySelect} 
+                    onActivityRemove={handleActivityRemoval}
+                    currentActivityId={currentActivity?.id || null} 
+                    completedActivityIds={completedActivityIds}
+                    timelineEntries={processedEntries}
+                    isTimeUp={isTimeUp}
+                    elapsedTime={elapsedTime}
+                  />
+                </div>
+                <div className="timeline-area">
+                  <Timeline entries={processedEntries}
+                    totalDuration={totalDuration} 
+                    elapsedTime={elapsedTime}
+                    allActivitiesCompleted={allActivitiesCompleted}
+                    timerActive={timerActive}
+                    isTimeUp={isTimeUp}
+                  />
+                </div>
               </div>
             </div>
           )}
           
+          {/* Completed State Layout */}
           {appState === 'completed' && (
-            <div className={styles.completedGrid}>
-              <div className={styles.summaryContainer}>
-                <Summary 
-                  entries={processedEntries}
-                  totalDuration={totalDuration} 
-                  elapsedTime={elapsedTime}
-                  allActivitiesCompleted={allActivitiesCompleted}
-                />
+            <div className="completed-layout">
+              <div className="completed-container">
+                <div className="completed-content">
+                  <Summary entries={processedEntries}
+                    totalDuration={totalDuration} 
+                    elapsedTime={elapsedTime}
+                    allActivitiesCompleted={allActivitiesCompleted}
+                  />
+                </div>
               </div>
             </div>
           )}
-        </div>
+        </main>
       </div>
-    </>
+    </div>
   );
 }
 

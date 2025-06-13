@@ -1,0 +1,176 @@
+/* Application State Layouts */
+/* Layout containers for the three main application states */
+
+/* Setup State Layout */
+.setup-layout {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) 0;
+  min-height: 60vh; /* Ensure adequate height on short screens */
+}
+
+.setup-container {
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 500px;
+  margin: 0 var(--space-4);
+}
+
+.setup-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+/* Activity State Layout */
+.activity-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+  min-height: 0; /* Allows grid children to properly size */
+  padding-bottom: var(--space-4);
+}
+
+/* Progress bar area - conditional visibility */
+.progress-area {
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Main activity content area */
+.activity-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: var(--gap-lg);
+  min-height: 0;
+  align-items: start;
+}
+
+.activity-manager-area {
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-md);
+  overflow: auto;
+  min-height: 400px;
+}
+
+.timeline-area {
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+  overflow: auto;
+}
+
+/* Completed State Layout */
+.completed-layout {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: var(--space-6) 0;
+  min-height: 60vh;
+}
+
+.completed-container {
+  width: 100%;
+  max-width: 800px;
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-lg);
+  margin: 0 var(--space-4);
+}
+
+.completed-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+/* Tablet layout adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .activity-content {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Mobile layout adjustments */
+@media (max-width: 767px) {
+  .setup-layout,
+  .completed-layout {
+    padding: var(--space-4) 0;
+  }
+  
+  .setup-container,
+  .completed-container {
+    padding: var(--space-4);
+    margin: 0 var(--space-3);
+  }
+  
+  .activity-layout {
+    gap: var(--gap-md);
+  }
+  
+  .activity-content {
+    grid-template-columns: 1fr;
+    gap: var(--gap-md);
+  }
+  
+  /* Hide timeline on mobile to focus on activity management */
+  .timeline-area {
+    display: none;
+  }
+  
+  .activity-manager-area {
+    padding: var(--space-3);
+    min-height: 300px;
+  }
+  
+  .progress-area {
+    padding: var(--space-2);
+  }
+}
+
+/* Large mobile adjustments */
+@media (max-width: 640px) {
+  .setup-container,
+  .completed-container {
+    margin: 0 var(--space-2);
+  }
+}
+
+/* State transition animations */
+.setup-layout,
+.activity-layout,
+.completed-layout {
+  animation: fade-in var(--transition-slow) var(--ease-out);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-2));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

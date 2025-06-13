@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './TimeDisplay.module.css';
 
 /**
  * Props for the TimeDisplay component
@@ -46,7 +45,7 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
 }) => {
   const renderTime = (time: string): React.ReactElement => {
     return (
-      <div className={styles.time}>
+      <div>
         {time}
       </div>
     );
@@ -54,30 +53,29 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
 
   const renderDate = (date: string): React.ReactElement => {
     return (
-      <div className={styles.date}>
+      <div>
         {date}
       </div>
     );
   };
 
   return (
-    <div className={styles.container}>
-      <time 
-        dateTime={new Date().toISOString()}
-        className={styles.timeWrapper}
+    <div>
+      <time dateTime={new Date().toISOString()}
+        
       >
         {renderTime(formattedTime)}
         {renderDate(formattedDate)}
       </time>
       {(timeFormat || dateFormat) && (
-        <div className={styles.formatInfo}>
+        <div>
           {timeFormat && (
-            <span className={styles.formatTime}>
+            <span>
               Format: {timeFormat}
             </span>
           )}
           {dateFormat && (
-            <span className={styles.formatDate}>
+            <span>
               Format: {dateFormat}
             </span>
           )}

@@ -26,9 +26,8 @@ describe('Next.js App Router Configuration', () => {
     expect(fs.existsSync(appDir)).toBe(true);
     expect(fs.statSync(appDir).isDirectory()).toBe(true);
     
-    // Check for critical files
+    // Check for critical files (globals.css removed as part of styling experiment)
     expect(fs.existsSync(path.join(appDir, 'page.tsx'))).toBe(true);
     expect(fs.existsSync(path.join(appDir, 'layout.tsx'))).toBe(true);
-    expect(fs.existsSync(path.join(appDir, 'globals.css'))).toBe(true);
   });
 });

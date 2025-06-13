@@ -44,32 +44,32 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   };
 
   return (
-    <div className={styles.container} data-testid="time-setup">
-      <h2 className={styles.heading}>Set Time</h2>
+    <div className={styles.timeSetup} data-testid="time-setup">
+      <h2 className={styles.title}>Set Time</h2>
       
       <div className={styles.modeSelector}>
-        <button
+        <button 
           type="button"
-          className={`${styles.button} ${setupMode === 'duration' ? styles.buttonPrimary : styles.buttonSecondary}`}
+          className={`${styles.modeButton} ${setupMode === 'duration' ? styles.active : ''}`}
           onClick={() => setSetupMode('duration')}
         >
           Set Duration
         </button>
-        <button
+        <button 
           type="button"
-          className={`${styles.button} ${setupMode === 'deadline' ? styles.buttonPrimary : styles.buttonSecondary}`}
+          className={`${styles.modeButton} ${setupMode === 'deadline' ? styles.active : ''}`}
           onClick={() => setSetupMode('deadline')}
         >
           Set Deadline
         </button>
       </div>
       
-      <form onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         {setupMode === 'duration' ? (
-          <div className={styles.inputGrid}>
+          <div className={styles.durationInputs}>
             <div className={styles.inputGroup}>
               <label htmlFor="hours" className={styles.label}>Hours</label>
-              <input
+              <input 
                 type="number"
                 id="hours"
                 min="0"
@@ -80,7 +80,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
             </div>
             <div className={styles.inputGroup}>
               <label htmlFor="minutes" className={styles.label}>Minutes</label>
-              <input
+              <input 
                 type="number"
                 id="minutes"
                 min="0"
@@ -92,7 +92,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
             </div>
             <div className={styles.inputGroup}>
               <label htmlFor="seconds" className={styles.label}>Seconds</label>
-              <input
+              <input 
                 type="number"
                 id="seconds"
                 min="0"
@@ -104,19 +104,21 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
             </div>
           </div>
         ) : (
-          <div className={styles.inputGroup}>
-            <label htmlFor="deadlineTime" className={styles.label}>Deadline Time</label>
-            <input
-              type="time"
-              id="deadlineTime"
-              value={deadlineTime}
-              onChange={(e) => setDeadlineTime(e.target.value)}
-              className={styles.input}
-            />
+          <div className={styles.deadlineInputs}>
+            <div className={styles.inputGroup}>
+              <label htmlFor="deadlineTime" className={styles.label}>Deadline Time</label>
+              <input 
+                type="time"
+                id="deadlineTime"
+                value={deadlineTime}
+                onChange={(e) => setDeadlineTime(e.target.value)}
+                className={styles.input}
+              />
+            </div>
           </div>
         )}
         
-        <button
+        <button 
           type="submit"
           className={styles.submitButton}
         >

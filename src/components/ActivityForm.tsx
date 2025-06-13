@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styles from './ActivityManager.module.css';
 
 interface ActivityFormProps {
   onAddActivity: (activityName: string) => void;
@@ -18,19 +17,16 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onAddActivity, isDisabled }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form} role="form" data-testid="activity-form">
-      <div className={styles.inputContainer}>
-        <input
-          type="text"
+    <form onSubmit={handleSubmit}  role="form" data-testid="activity-form">
+      <div>
+        <input type="text"
           value={newActivityName}
           onChange={(e) => setNewActivityName(e.target.value)}
           placeholder={isDisabled ? "Time is up!" : "New activity name"}
-          className={styles.input}
+          
           disabled={isDisabled}
         />
-        <button 
-          type="submit"
-          className={`${styles.addButton} ${isDisabled ? styles.disabled : ''}`}
+        <button type="submit"
           disabled={isDisabled}
         >
           Add

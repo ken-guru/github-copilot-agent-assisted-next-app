@@ -1,10 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
-// Import order matters - global theme variables first, then app-specific styles
-import "../../styles/globals.css"; // Core theme variables and global utilities
-import "./globals.css"; // App-specific styles that use the theme variables
 import { Metadata, Viewport } from "next";
 import { LayoutClient } from "../components/LayoutClient";
 import Script from "next/script";
+import "../../styles/main.css";
 
 // Font configuration
 const geistSans = Geist({
@@ -68,8 +66,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         
         {/* Preload script to apply theme before first render to prevent flash */}
-        <script
-          dangerouslySetInnerHTML={{
+        <script dangerouslySetInnerHTML={{
             __html: `
               (function() {
                 // Don't run this script during SSR
@@ -116,8 +113,7 @@ export default function RootLayout({
           {children}
         </LayoutClient>
         {/* Service worker registration script - moved here from useServiceWorker hook */}
-        <Script
-          id="register-service-worker"
+        <Script id="register-service-worker"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `

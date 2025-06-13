@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import styles from './ProgressBar.module.css';
+import React, { useMemo } from 'react';
 import { formatTimeHuman } from '@lib/time';
 import type { TimelineEntry } from './Timeline';
+import styles from '@/components/ProgressBar.module.css';
 
 /**
  * Props for the ProgressBar component
@@ -32,39 +32,15 @@ export interface ProgressBarProps {
 }
 
 export default function ProgressBar({
-  entries,
+  // entries, // Unused after CSS removal experiment
   totalDuration,
   elapsedTime,
   // This prop is currently unused but kept for future features
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   timerActive = false
 }: ProgressBarProps) {
-  // State to track if the component is being viewed on mobile
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Effect to check if the device is mobile on mount and when window is resized
-  useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.matchMedia('(max-width: 768px)').matches);
-    };
-    
-    // Initial check
-    checkIsMobile();
-    
-    // Add listener for window resize
-    window.addEventListener('resize', checkIsMobile);
-    
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', checkIsMobile);
-    };
-  }, []);
-
   // Calculate progress percentage
   const progressPercentage = Math.min(100, (elapsedTime / totalDuration) * 100);
-  
-  // Is the progress bar active?
-  const isActive = entries.length > 0;
   
   // Calculate progress color based on percentage
   const progressColor = useMemo(() => {
@@ -114,14 +90,14 @@ export default function ProgressBar({
   // Render progress bar component
   const progressBarComponent = (
     <div 
-      className={`${styles.progressBarContainer} ${!isActive ? styles.inactiveBar : ''}`}
+      className={`${styles.progressBarContainer} ${!timerActive ? styles.inactiveBar : ''}`}
       role="progressbar"
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={progressPercentage}
     >
       <div 
-        className={styles.progressBar} 
+        className={styles.progressFill}
         style={{ width: `${progressPercentage}%`, backgroundColor: progressColor }}
         data-testid="progress-indicator"
       />
@@ -130,7 +106,7 @@ export default function ProgressBar({
 
   // Main container - adjust layout for mobile devices
   return (
-    <div className={`${styles.container} ${isMobile ? styles.mobileContainer : ''}`}>
+    <div className={styles.mobileContainer}>
       {progressBarComponent}
       {timeMarkersComponent}
     </div>

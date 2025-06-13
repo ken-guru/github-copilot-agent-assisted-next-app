@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@hooks/use-online-status';
-import styles from './OfflineIndicator.module.css';
 
 /**
  * Props for the OfflineIndicator component
@@ -33,8 +32,8 @@ export function OfflineIndicator({}: OfflineIndicatorProps): React.ReactElement 
   }
 
   return (
-    <div className={styles.offlineIndicator} role="status" data-testid="offline-indicator">
-      <div className={styles.content}>
+    <div role="status" data-testid="offline-indicator">
+      <div>
         You are offline
       </div>
     </div>

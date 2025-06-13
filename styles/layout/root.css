@@ -1,0 +1,169 @@
+/* Root Layout Foundation */
+/* Global layout structure for the entire application */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  /* Prevent iOS text size adjust after orientation change, without disabling user zoom */
+  -webkit-text-size-adjust: 100%;
+  /* Smooth scrolling for anchor links */
+  scroll-behavior: smooth;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-base);
+  font-size: var(--text-scale-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-primary);
+  /* Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Root application container */
+.app-root {
+  min-height: 100vh;
+  min-height: 100dvh; /* Use dynamic viewport height when available */
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface-primary);
+}
+
+/* Main content wrapper */
+.app-wrapper {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+  padding-inline: var(--container-padding);
+  padding-block: 0;
+}
+
+/* Application header - persistent across all states */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-index-sticky);
+  background-color: var(--color-surface-primary);
+  border-bottom: 1px solid var(--color-border-primary);
+  padding: var(--header-padding) 0;
+  /* Backdrop blur effect */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.header-content {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding-inline: var(--container-padding);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--gap-lg);
+  min-height: var(--touch-target-min);
+}
+
+.app-title {
+  font-size: var(--text-heading-2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-align: center;
+  margin: 0;
+  /* Prevent text from wrapping */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-controls {
+  display: flex;
+  gap: var(--gap-md);
+  align-items: center;
+  justify-self: end;
+}
+
+/* Offline indicator */
+.offline-indicator {
+  background-color: var(--color-warning-background);
+  color: var(--color-warning-text);
+  padding: var(--space-2);
+  text-align: center;
+  font-size: var(--text-scale-sm);
+  font-weight: var(--font-weight-medium);
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+
+/* Mobile-first responsive header */
+@media (max-width: 640px) {
+  .header-content {
+    grid-template-columns: 1fr auto auto;
+    gap: var(--gap-sm);
+  }
+  
+  .app-title {
+    font-size: var(--text-heading-3);
+    text-align: left;
+    justify-self: start;
+  }
+  
+  .header-controls {
+    gap: var(--gap-sm);
+  }
+}
+
+/* Focus management */
+.app-root:focus-within .skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: var(--z-index-modal);
+}
+
+/* Skip navigation link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -1000px;
+  left: -1000px;
+  height: 1px;
+  width: 1px;
+  text-align: left;
+  overflow: hidden;
+  background-color: var(--color-interactive-primary);
+  color: var(--color-text-on-primary);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+}
+
+.skip-link:focus {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  height: auto;
+  width: auto;
+  z-index: var(--z-index-modal);
+}

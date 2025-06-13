@@ -33,8 +33,7 @@ function MockRootLayout({ children }: { children: React.ReactNode }) {
       <div data-testid="head-element">
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
       </div>
-      <div 
-        data-testid="body-element" 
+      <div data-testid="body-element" 
         className="mocked-geist-variable mocked-geist-mono-variable"
       >
         <div data-testid="layout-client">{children}</div>

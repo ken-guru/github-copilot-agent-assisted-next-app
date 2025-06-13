@@ -30,11 +30,13 @@ describe('OfflineIndicator', () => {
     expect(screen.getByText(/you are offline/i)).toBeInTheDocument();
   });
   
-  it('should apply offline indicator styles when offline', () => {
+  it('should render offline status with proper accessibility', () => {
     mockedUseOnlineStatus.mockReturnValue(false);
     render(<OfflineIndicator />);
     const indicator = screen.getByRole('status');
-    expect(indicator).toHaveClass('offlineIndicator');
+    expect(indicator).toBeInTheDocument();
+    // Test that it has meaningful text content instead of aria-label
+    expect(indicator).toHaveTextContent(/offline/i);
   });
 
   it('should render with proper nested structure', () => {

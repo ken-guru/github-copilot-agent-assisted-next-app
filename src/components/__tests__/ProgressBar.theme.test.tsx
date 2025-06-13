@@ -1,4 +1,13 @@
-// filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/src/components/__tests__/ProgressBar.theme.test.tsx
+/*
+ * NOTE: These theme tests are entirely focused on visual presentation
+ * After the CSS removal experiment, these tests should be removed as they test:
+ * - CSS class presence (.progressFill, .progressBarContainer)
+ * - Style attribute colors and backgrounds
+ * - Visual color transitions and contrast
+ * 
+ * All failing tests in this file are expected after CSS removal.
+ */
+
 import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -66,8 +75,7 @@ describe('ProgressBar Theme Compatibility', () => {
     thresholds.forEach(({ elapsed, total, percent, description }) => {
       it(`should render with accessible contrast in light theme at ${description}`, () => {
         const { container } = render(
-          <ProgressBar 
-            entries={mockEntries}
+          <ProgressBar entries={mockEntries}
             totalDuration={total}
             elapsedTime={elapsed}
             timerActive={true}
@@ -96,8 +104,7 @@ describe('ProgressBar Theme Compatibility', () => {
 
     it('should render inactive progress bar correctly in light theme', () => {
       const { container } = render(
-        <ProgressBar 
-          entries={mockEntries}
+        <ProgressBar entries={mockEntries}
           totalDuration={3600}
           elapsedTime={1800}
           timerActive={false}
@@ -124,8 +131,7 @@ describe('ProgressBar Theme Compatibility', () => {
     thresholds.forEach(({ elapsed, total, percent, description }) => {
       it(`should render with accessible contrast in dark theme at ${description}`, () => {
         const { container } = render(
-          <ProgressBar 
-            entries={mockEntries}
+          <ProgressBar entries={mockEntries}
             totalDuration={total}
             elapsedTime={elapsed}
             timerActive={true}
@@ -145,8 +151,7 @@ describe('ProgressBar Theme Compatibility', () => {
 
     it('should render inactive progress bar correctly in dark theme', () => {
       const { container } = render(
-        <ProgressBar 
-          entries={mockEntries}
+        <ProgressBar entries={mockEntries}
           totalDuration={3600}
           elapsedTime={1800}
           timerActive={false}
@@ -174,8 +179,7 @@ describe('ProgressBar Theme Compatibility', () => {
         const elapsedTime = Math.round((progress / 100) * 3600);
         
         const { container } = render(
-          <ProgressBar 
-            entries={mockEntries}
+          <ProgressBar entries={mockEntries}
             totalDuration={3600}
             elapsedTime={elapsedTime}
             timerActive={true}

@@ -9,14 +9,12 @@ const TestComponent = () => {
   return (
     <div>
       <div data-testid="loading-state">{isLoading ? 'Loading' : 'Not Loading'}</div>
-      <button 
-        onClick={() => setIsLoading(false)}
+      <button onClick={() => setIsLoading(false)}
         data-testid="finish-loading-button"
       >
         Finish Loading
       </button>
-      <button 
-        onClick={() => setIsLoading(true)}
+      <button onClick={() => setIsLoading(true)}
         data-testid="start-loading-button"
       >
         Start Loading

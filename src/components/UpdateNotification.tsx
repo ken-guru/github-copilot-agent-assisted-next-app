@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import styles from './UpdateNotification.module.css';
 
 interface UpdateNotificationProps {
   message: string;
@@ -21,11 +20,9 @@ export function UpdateNotification({ message, onDismiss }: UpdateNotificationPro
   if (!isVisible) return null;
 
   return (
-    <div className={styles.updateNotification} role="status" data-testid="update-notification">
-      <span className={styles.message} data-testid="update-notification-message">{message}</span>
-      <button 
-        className={styles.dismissButton}
-        onClick={() => {
+    <div role="status" data-testid="update-notification">
+      <span data-testid="update-notification-message">{message}</span>
+      <button onClick={() => {
           setIsVisible(false);
           onDismiss();
         }}

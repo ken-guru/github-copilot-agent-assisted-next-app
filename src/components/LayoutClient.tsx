@@ -70,8 +70,7 @@ export function LayoutClient({ children }: LayoutClientProps) {
           alignItems: 'center'
         }}>
           <span>A new version is available</span>
-          <button 
-            onClick={handleUpdate}
+          <button onClick={handleUpdate}
             style={{
               backgroundColor: '#007bff',
               border: 'none',

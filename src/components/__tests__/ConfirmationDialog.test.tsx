@@ -11,8 +11,7 @@ describe('ConfirmationDialog', () => {
 
   it('should render correctly with default props', () => {
     render(
-      <ConfirmationDialog
-        message="Are you sure?"
+      <ConfirmationDialog message="Are you sure?"
         onConfirm={jest.fn()}
         onCancel={jest.fn()}
       />
@@ -25,8 +24,7 @@ describe('ConfirmationDialog', () => {
 
   it('should render with custom button text', () => {
     render(
-      <ConfirmationDialog
-        message="Delete this item?"
+      <ConfirmationDialog message="Delete this item?"
         confirmText="Delete"
         cancelText="Keep"
         onConfirm={jest.fn()}
@@ -44,8 +42,7 @@ describe('ConfirmationDialog', () => {
     const mockCancel = jest.fn();
 
     render(
-      <ConfirmationDialog
-        message="Are you sure?"
+      <ConfirmationDialog message="Are you sure?"
         onConfirm={mockConfirm}
         onCancel={mockCancel}
       />
@@ -63,8 +60,7 @@ describe('ConfirmationDialog', () => {
     const mockCancel = jest.fn();
 
     render(
-      <ConfirmationDialog
-        message="Are you sure?"
+      <ConfirmationDialog message="Are you sure?"
         onConfirm={mockConfirm}
         onCancel={mockCancel}
       />
@@ -79,8 +75,7 @@ describe('ConfirmationDialog', () => {
 
   it('should open the dialog when showDialog method is called', () => {
     const { container } = render(
-      <ConfirmationDialog
-        message="Are you sure?"
+      <ConfirmationDialog message="Are you sure?"
         onConfirm={jest.fn()}
         onCancel={jest.fn()}
       />

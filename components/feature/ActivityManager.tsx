@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import styles from './ActivityManager.module.css';
 import { getNextAvailableColorSet, ColorSet } from '@lib/utils/colors';
 import { TimelineEntry } from '@hooks/use-timeline-entries';
 import { ActivityButton } from '@components/ui/ActivityButton';
@@ -136,14 +135,13 @@ export default function ActivityManager({
   };
   
   return (
-    <div className={styles.activityManager}>
-      <h2 className={styles.title}>Activities</h2>
+    <div>
+      <h2>Activities</h2>
       
       {/* Activity list */}
-      <div className={styles.activitiesList}>
+      <div>
         {activities.map((activity) => (
-          <ActivityButton
-            key={activity.id}
+          <ActivityButton key={activity.id}
             activity={activity}
             isActive={currentActivityId === activity.id}
             isCompleted={completedActivityIds.includes(activity.id)}
@@ -156,14 +154,11 @@ export default function ActivityManager({
       
       {/* Add activity button or form */}
       {showForm ? (
-        <ActivityForm
-          onSubmit={handleAddActivity}
+        <ActivityForm onSubmit={handleAddActivity}
           onCancel={() => setShowForm(false)}
         />
       ) : (
-        <button 
-          className={styles.addButton}
-          onClick={() => setShowForm(true)}
+        <button onClick={() => setShowForm(true)}
           disabled={isTimeUp}
         >
           + Add Activity
@@ -172,14 +167,14 @@ export default function ActivityManager({
       
       {/* No activities message */}
       {activities.length === 0 && !showForm && (
-        <div className={styles.emptyState}>
+        <div>
           No activities yet. Add one to get started.
         </div>
       )}
       
       {/* Time up notification */}
       {isTimeUp && (
-        <div className={styles.timeupNotification}>
+        <div>
           Time&apos;s up! You can no longer modify activities.
         </div>
       )}

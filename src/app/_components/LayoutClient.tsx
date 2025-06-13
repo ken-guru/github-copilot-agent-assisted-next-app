@@ -52,8 +52,7 @@ export function LayoutClient({ children }: LayoutClientProps) {
     <ThemeProvider>
       {/* Service worker update notifications */}
       {updateAvailable && (
-        <ServiceWorkerUpdater 
-          onUpdate={handleUpdate} 
+        <ServiceWorkerUpdater onUpdate={handleUpdate} 
           onDismiss={() => setUpdateAvailable(false)}
         />
       )}
@@ -66,8 +65,7 @@ export function LayoutClient({ children }: LayoutClientProps) {
       {/* Additional global components here */}
       
       {/* Global scripts for performance monitoring, etc. */}
-      <script 
-        dangerouslySetInnerHTML={{ 
+      <script dangerouslySetInnerHTML={{ 
           __html: `
             // Performance monitoring
             if (window.performance) {

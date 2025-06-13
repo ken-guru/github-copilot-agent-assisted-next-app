@@ -35,8 +35,7 @@ describe('Timeline Break Visualization', () => {
     ];
 
     render(
-      <Timeline 
-        entries={mockEntries}
+      <Timeline entries={mockEntries}
         totalDuration={3600}
         elapsedTime={60}
         timerActive={true}
@@ -68,8 +67,7 @@ describe('Timeline Break Visualization', () => {
     ];
 
     render(
-      <Timeline 
-        entries={mockEntries}
+      <Timeline entries={mockEntries}
         totalDuration={3600}
         elapsedTime={120}
         timerActive={true}
@@ -123,8 +121,7 @@ describe('Timeline Break Visualization', () => {
     ];
 
     render(
-      <Timeline 
-        entries={mockEntries}
+      <Timeline entries={mockEntries}
         totalDuration={3600}
         elapsedTime={180}
         timerActive={true}
@@ -161,8 +158,7 @@ describe('Timeline Break Visualization', () => {
     ];
 
     const { rerender } = render(
-      <Timeline 
-        entries={mockEntries}
+      <Timeline entries={mockEntries}
         totalDuration={3600}
         elapsedTime={180}
         timerActive={true}
@@ -193,8 +189,7 @@ describe('Timeline Break Visualization', () => {
     ];
 
     rerender(
-      <Timeline 
-        entries={updatedEntries}
+      <Timeline entries={updatedEntries}
         totalDuration={3600}
         elapsedTime={180}
         timerActive={true}
@@ -241,8 +236,7 @@ describe('Timeline Break Visualization', () => {
     ];
 
     render(
-      <Timeline 
-        entries={mockEntries}
+      <Timeline entries={mockEntries}
         totalDuration={3600}
         elapsedTime={60}
         timerActive={true}

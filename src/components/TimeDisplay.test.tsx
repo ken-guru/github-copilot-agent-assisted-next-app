@@ -10,8 +10,7 @@ describe('TimeDisplay Component', () => {
   
   test('renders time correctly', () => {
     render(
-      <TimeDisplay 
-        dateTime={testDateTime} 
+      <TimeDisplay dateTime={testDateTime} 
         formattedTime={testFormattedTime} 
         formattedDate={testFormattedDate} 
       />
@@ -21,8 +20,7 @@ describe('TimeDisplay Component', () => {
 
   test('renders date correctly', () => {
     render(
-      <TimeDisplay 
-        dateTime={testDateTime} 
+      <TimeDisplay dateTime={testDateTime} 
         formattedTime={testFormattedTime} 
         formattedDate={testFormattedDate} 
       />
@@ -33,8 +31,7 @@ describe('TimeDisplay Component', () => {
   test('renders with custom time format', () => {
     const customTimeFormat = '12-00-00';
     render(
-      <TimeDisplay 
-        dateTime={testDateTime} 
+      <TimeDisplay dateTime={testDateTime} 
         formattedTime={customTimeFormat} 
         formattedDate={testFormattedDate}
         timeFormat="HH-mm-ss"
@@ -46,8 +43,7 @@ describe('TimeDisplay Component', () => {
   test('renders with custom date format', () => {
     const customDateFormat = '01/01/2023';
     render(
-      <TimeDisplay 
-        dateTime={testDateTime} 
+      <TimeDisplay dateTime={testDateTime} 
         formattedTime={testFormattedTime} 
         formattedDate={customDateFormat}
         dateFormat="MM/DD/YYYY"

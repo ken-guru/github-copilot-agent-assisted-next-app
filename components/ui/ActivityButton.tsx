@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './ActivityButton.module.css';
 import type { Activity } from '@components/feature/ActivityManager';
 import type { TimelineEntry } from '@components/feature/Timeline';
 
@@ -85,11 +84,6 @@ export function ActivityButton({
     }
   };
   
-  // Determine button states and styles based on activity state
-  const className = isCompleted
-    ? styles.completedActivityItem
-    : styles.activityItem;
-  
   // Get background and text colors from activity if available
   const style = activity.colors ? {
     backgroundColor: activity.colors.light?.background,
@@ -98,24 +92,23 @@ export function ActivityButton({
   } : undefined;
   
   return (
-    <div 
-      className={className}
+    <div
       style={style}
       onClick={onClick}
       data-testid={`activity-button-${activity.id}`}
     >
-      <div className={styles.activityInfo}>
-        <span className={styles.activityName}>
+      <div>
+        <span>
           {activity.name}
           
           {/* Show status badges */}
           {isActive && (
-            <span className={`${styles.badge} ${styles.badgeCurrent}`} data-testid="current-badge">
+            <span data-testid="current-badge">
               Current
             </span>
           )}
           {isCompleted && (
-            <span className={`${styles.badge} ${styles.badgeCompleted}`} data-testid="completed-badge">
+            <span data-testid="completed-badge">
               Done
             </span>
           )}
@@ -123,18 +116,16 @@ export function ActivityButton({
         
         {/* Show duration if available */}
         {(isCompleted || isActive) && timelineEntries.length > 0 && (
-          <span className={styles.duration} data-testid="activity-duration">
+          <span data-testid="activity-duration">
             {getDuration()}
           </span>
         )}
       </div>
       
-      <div className={styles.actions}>
+      <div>
         {/* Delete button */}
         {!isActive && (
-          <button 
-            className={`${styles.button} ${styles.deleteButton}`}
-            onClick={(e) => {
+          <button onClick={(e) => {
               e.stopPropagation();
               onRemove();
             }}
