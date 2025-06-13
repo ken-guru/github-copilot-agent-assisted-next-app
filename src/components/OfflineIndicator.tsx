@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
-import styles from './OfflineIndicator.module.css';
 
 /**
  * Component that displays an offline indicator when the user loses network connectivity
@@ -25,8 +24,8 @@ export function OfflineIndicator(): React.ReactElement | null {
   }
 
   return (
-    <div className={styles.offlineIndicator} role="status" data-testid="offline-indicator">
-      <div className={styles.content}>
+    <div role="status" data-testid="offline-indicator">
+      <div>
         You are offline
       </div>
     </div>
