@@ -305,36 +305,22 @@ export default function Summary({
 
   return (
     <div data-testid="summary">
-      {status && (
-        <div>
-          {status.message}
-        </div>
-      )}
+      {status && <div>{status.message}</div>}
       
-      <div>
-        <div>
-          <div>Planned Time</div>
-          <div>{formatDuration(totalDuration)}</div>
-        </div>
-        
-        <div>
-          <div>Spent Time</div>
-          <div>{formatDuration(elapsedTime)}</div>
-        </div>
-        
-        <div>
-          <div>Idle Time</div>
-          <div>{formatDuration(stats.idleTime)}</div>
-        </div>
-        
-        <div>
-          <div>Overtime</div>
-          <div>{formatDuration(overtime)}</div>
-        </div>
-      </div>
+      <div>Planned Time</div>
+      <div>{formatDuration(totalDuration)}</div>
+      
+      <div>Spent Time</div>
+      <div>{formatDuration(elapsedTime)}</div>
+      
+      <div>Idle Time</div>
+      <div>{formatDuration(stats.idleTime)}</div>
+      
+      <div>Overtime</div>
+      <div>{formatDuration(overtime)}</div>
 
       {activityTimes.length > 0 && (
-        <div>
+        <>
           <h3>Time Spent per Activity</h3>
           {activityTimes.map((activity) => {
             // Get theme-appropriate colors
@@ -357,13 +343,11 @@ export default function Summary({
                 >
                   {activity.name}
                 </span>
-                <span>
-                  {formatDuration(activity.duration)}
-                </span>
+                <span>{formatDuration(activity.duration)}</span>
               </div>
             );
           })}
-        </div>
+        </>
       )}
     </div>
   );
