@@ -178,10 +178,16 @@ describe('Mobile Layout', () => {
     expect(buttons.length).toBeGreaterThan(0);
   });
 
-  it('should render in a container with proper styling', () => {
+  it('should render all theme buttons', () => {
     render(<ThemeToggle />);
     
-    const container = screen.getByRole('group');
-    expect(container).toBeInTheDocument();
+    // Test functional behavior instead of container structure
+    const lightButton = screen.getByTitle('Light theme');
+    const systemButton = screen.getByTitle('System theme');
+    const darkButton = screen.getByTitle('Dark theme');
+    
+    expect(lightButton).toBeInTheDocument();
+    expect(systemButton).toBeInTheDocument();
+    expect(darkButton).toBeInTheDocument();
   });
 });

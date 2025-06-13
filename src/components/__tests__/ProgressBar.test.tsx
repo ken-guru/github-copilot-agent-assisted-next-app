@@ -1,3 +1,19 @@
+/*
+ * NOTE: These tests are primarily testing visual presentation (CSS classes, styles, colors)
+ * After the CSS removal experiment, most of these tests should be removed or completely rewritten
+ * to test functional behavior rather than visual appearance.
+ * 
+ * The following tests are failing as expected because they test removed CSS:
+ * - Tests checking for .progressBarContainer, .progressFill CSS classes
+ * - Tests checking for style attributes and background colors  
+ * - Tests about visual progress indicators and color transitions
+ * 
+ * Consider replacing with tests that verify:
+ * - Progress calculation logic
+ * - Accessibility attributes (aria-valuenow, etc.)
+ * - Component rendering without visual assertions
+ */
+
 import React from 'react';
 import { render } from '@testing-library/react';
 import ProgressBar from '../ProgressBar';

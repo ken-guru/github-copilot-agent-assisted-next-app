@@ -1,4 +1,13 @@
-// filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/src/components/__tests__/ProgressBar.theme.test.tsx
+/*
+ * NOTE: These theme tests are entirely focused on visual presentation
+ * After the CSS removal experiment, these tests should be removed as they test:
+ * - CSS class presence (.progressFill, .progressBarContainer)
+ * - Style attribute colors and backgrounds
+ * - Visual color transitions and contrast
+ * 
+ * All failing tests in this file are expected after CSS removal.
+ */
+
 import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';

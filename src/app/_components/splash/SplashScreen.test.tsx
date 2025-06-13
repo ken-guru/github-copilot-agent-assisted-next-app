@@ -34,7 +34,8 @@ describe('SplashScreen Component', () => {
     render(<SplashScreen />);
     
     expect(screen.getByText('Loading...')).toBeInTheDocument();
-    expect(document.querySelector('.loadingIndicator')).not.toBeNull();
+    // Test for functional elements instead of CSS classes
+    expect(screen.getByRole('img', { name: /application logo/i })).toBeInTheDocument();
   });
 
   it('hides after minimum display time when not loading', () => {
@@ -48,20 +49,13 @@ describe('SplashScreen Component', () => {
     // Splash should be visible initially
     expect(container.firstChild).not.toBeNull();
     
-    // Advance time to trigger minimum display timeout
+    // Advance time to trigger minimum display timeout plus fade out
     act(() => {
-      jest.advanceTimersByTime(500);
+      jest.advanceTimersByTime(1100); // 500ms + 500ms fade + buffer
     });
     
-    // If the element still exists, it should have the fadeOut class
-    // If it doesn't exist anymore, the test should pass too
-    if (container.firstChild) {
-      expect(container.firstChild).toHaveClass('fading');
-    } else {
-      // Test passes if element is removed - no assertion needed
-      // We're just preventing the test from failing
-      expect(true).toBe(true);
-    }
+    // Component should be removed from DOM after timeout
+    expect(container.firstChild).toBeNull();
   });
 
   it('stays visible while loading, even after minimum time', () => {
@@ -109,21 +103,12 @@ describe('SplashScreen Component', () => {
     
     rerender(<SplashScreen minimumDisplayTime={500} />);
     
-    // Check if it started fading out
-    // If firstChild exists, it should have fading class
-    if (container.firstChild) {
-      // Allow time for the fade animation to start
-      act(() => {
-        jest.advanceTimersByTime(100);
-      });
-      
-      // Instead of checking for the exact class name which might be hashed in CSS modules,
-      // check if the className contains the word "fading"
-      const className = (container.firstChild as HTMLElement).className;
-      expect(className).toMatch(/fading/);
-    } else {
-      // If element was removed, test still passes
-      expect(true).toBe(true);
-    }
+    // Check if it eventually gets removed from DOM after fade completes
+    act(() => {
+      jest.advanceTimersByTime(600); // Allow time for fade animation to complete
+    });
+    
+    // Component should eventually be removed from DOM
+    expect(container.firstChild).toBeNull();
   });
 });
