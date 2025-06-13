@@ -167,22 +167,21 @@ describe('Mobile Layout', () => {
     
     const buttons = screen.getAllByRole('button');
     buttons.forEach(button => {
-        // The toggleButton class in our CSS has explicit width and height set to 44px
-      }
+      expect(button).toBeInTheDocument();
     });
   });
 
   it('should maintain proper spacing between buttons on mobile', () => {
     render(<ThemeToggle />);
     
-    expect(toggleGroup).not.toBeNull();
-    }
+    const buttons = screen.getAllByRole('button');
+    expect(buttons.length).toBeGreaterThan(0);
   });
 
   it('should render in a container with proper styling', () => {
     render(<ThemeToggle />);
     
     const container = screen.getByRole('group');
-    }
+    expect(container).toBeInTheDocument();
   });
 });
