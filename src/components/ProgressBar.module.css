@@ -1,0 +1,206 @@
+/* ProgressBar Component Styles
+ * Mobile-first responsive design with accessibility features
+ */
+
+/* Main container */
+.container {
+  container-type: inline-size;
+  width: 100%;
+  position: relative;
+}
+
+/* Progress bar container */
+.progressBarContainer {
+  position: relative;
+  width: 100%;
+  height: var(--space-6); /* 24px */
+  background-color: var(--color-surface-tertiary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-block: var(--space-2);
+}
+
+/* Progress fill bar */
+.progressFill {
+  height: 100%;
+  background-color: var(--color-success-primary);
+  border-radius: inherit;
+  transition: 
+    width 0.3s ease-out,
+    background-color 0.2s ease-out;
+  min-width: 0;
+  position: relative;
+}
+
+/* Time markers container */
+.timeMarkers {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-scale-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.2;
+  margin-top: var(--space-1);
+}
+
+/* Individual time marker */
+.timeMarker {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Time marker positioning */
+.timeMarkers > span:first-child {
+  text-align: left;
+}
+
+.timeMarkers > span:nth-child(2) {
+  text-align: center;
+}
+
+.timeMarkers > span:last-child {
+  text-align: right;
+}
+
+/* Inactive state styling */
+.inactiveBar {
+  opacity: 0.6;
+}
+
+.inactiveBar .progressFill {
+  background-color: var(--color-border-primary);
+  transition: none;
+}
+
+/* Mobile container layout */
+.mobileContainer {
+  container-type: inline-size;
+  width: 100%;
+}
+
+/* Mobile-specific layout: time markers above progress bar */
+@media (max-width: 768px) {
+  .mobileContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  
+  .mobileContainer .timeMarkers {
+    order: 1; /* Time markers first on mobile */
+    margin-top: 0;
+    margin-bottom: var(--space-1);
+  }
+  
+  .mobileContainer .progressBarContainer {
+    order: 2; /* Progress bar second on mobile */
+    margin-block: 0;
+  }
+}
+
+/* Tablet and desktop layout */
+@media (min-width: 769px) {
+  .container,
+  .mobileContainer {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .mobileContainer .timeMarkers {
+    order: 2; /* Time markers below on desktop */
+  }
+  
+  .mobileContainer .progressBarContainer {
+    order: 1; /* Progress bar first on desktop */
+  }
+}
+
+/* Container queries for component-level responsive design */
+@container (max-width: 400px) {
+  .progressBarContainer {
+    height: var(--space-5); /* Slightly smaller on very small containers */
+  }
+  
+  .timeMarkers {
+    font-size: var(--text-scale-xs);
+    gap: var(--space-1);
+  }
+}
+
+@container (min-width: 600px) {
+  .progressBarContainer {
+    height: var(--space-8); /* Larger on bigger containers */
+  }
+  
+  .timeMarkers {
+    font-size: var(--text-scale-sm);
+    margin-top: var(--space-2);
+  }
+}
+
+/* Progress bar animation for active state */
+.progressFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+  opacity: 0;
+}
+
+.progressBarContainer:not(.inactiveBar) .progressFill::after {
+  opacity: 1;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .progressFill {
+    transition: none;
+  }
+  
+  .progressFill::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Focus styles for accessibility */
+.progressBarContainer:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .progressBarContainer {
+    border-width: 2px;
+    border-color: ButtonText;
+  }
+  
+  .progressFill {
+    background-color: Highlight;
+  }
+  
+  .inactiveBar .progressFill {
+    background-color: GrayText;
+  }
+}

@@ -1,0 +1,388 @@
+/* ActivityButton Component Styles */
+/* Mobile-first responsive design with design system integration */
+
+.activityButton {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  
+  /* Design system integration */
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  
+  /* Typography */
+  font-family: var(--font-family-base);
+  font-size: var(--text-scale-base);
+  
+  /* Interactive */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* Accessibility - minimum touch target */
+  min-height: 44px;
+}
+
+.activityButton:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-border-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.activityButton:focus-within {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Activity button states */
+.activityButton.isRunning {
+  background: var(--color-primary-50);
+  border-color: var(--color-primary-200);
+}
+
+.activityButton.isCompleted {
+  background: var(--color-success-50);
+  border-color: var(--color-success-200);
+  opacity: 0.8;
+}
+
+/* Activity name */
+.activityName {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  flex: 1;
+  margin-right: var(--space-3);
+}
+
+.activityButton.isCompleted .activityName {
+  color: var(--color-success-700);
+}
+
+/* Right side container */
+.rightContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Status section */
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.timer {
+  font-family: var(--font-family-mono);
+  font-size: var(--text-scale-sm);
+  color: var(--color-primary-600);
+  font-weight: 600;
+  background: var(--color-primary-100);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.completedIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--color-success-600);
+  background: var(--color-success-100);
+  border-radius: 50%;
+  border: 1px solid var(--color-success-200);
+}
+
+/* Action buttons container */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Base button styles */
+.actionButton {
+  /* Reset */
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  
+  /* Styling */
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* Touch targets */
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.actionButton:hover {
+  background: var(--color-surface-hover);
+}
+
+.actionButton:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.actionButton:active {
+  transform: scale(0.95);
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.actionButton:disabled:hover {
+  background: none;
+  transform: none;
+}
+
+/* Start button (primary action) */
+.startButton {
+  /* Reset */
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  
+  /* Styling */
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* Touch targets */
+  min-width: 44px;
+  min-height: 44px;
+  
+  /* Primary button styling */
+  color: var(--color-primary-600);
+}
+
+.startButton:hover {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.startButton:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.startButton:active {
+  transform: scale(0.95);
+}
+
+.startButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.startButton:disabled:hover {
+  background: none;
+  transform: none;
+}
+
+/* Complete button */
+.completeButton {
+  /* Reset */
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  
+  /* Styling */
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* Touch targets */
+  min-width: 44px;
+  min-height: 44px;
+  
+  /* Complete button styling */
+  color: var(--color-success-600);
+}
+
+.completeButton:hover {
+  background: var(--color-success-100);
+  color: var(--color-success-700);
+}
+
+.completeButton:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.completeButton:active {
+  transform: scale(0.95);
+}
+
+.completeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.completeButton:disabled:hover {
+  background: none;
+  transform: none;
+}
+
+/* Remove button (danger action) */
+.removeButton {
+  /* Reset */
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  
+  /* Styling */
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* Touch targets */
+  min-width: 44px;
+  min-height: 44px;
+  
+  /* Remove button styling */
+  color: var(--color-danger-600);
+}
+
+.removeButton:hover {
+  background: var(--color-danger-100);
+  color: var(--color-danger-700);
+}
+
+.removeButton:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.removeButton:active {
+  transform: scale(0.95);
+}
+
+.removeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.removeButton:disabled:hover {
+  background: none;
+  transform: none;
+}
+
+/* Icon sizing */
+.actionButton svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Responsive design */
+@media (min-width: 768px) {
+  .activityButton {
+    padding: var(--space-4) var(--space-5);
+  }
+  
+  .activityName {
+    font-size: var(--text-scale-lg);
+  }
+  
+  .timer {
+    font-size: var(--text-scale-base);
+  }
+  
+  .actionButton {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .actionButton svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .rightContent {
+    gap: var(--space-3);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .activityButton {
+    border-width: 2px;
+  }
+  
+  .actionButton:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .activityButton,
+  .actionButton {
+    transition: none;
+  }
+  
+  .activityButton:hover {
+    transform: none;
+  }
+  
+  .actionButton:active {
+    transform: none;
+  }
+}
+
+/* Dark theme support (if using CSS custom properties) */
+@media (prefers-color-scheme: dark) {
+  .activityButton {
+    background: var(--color-surface-secondary-dark, var(--color-surface-secondary));
+    border-color: var(--color-border-primary-dark, var(--color-border-primary));
+  }
+  
+  .activityName {
+    color: var(--color-text-primary-dark, var(--color-text-primary));
+  }
+}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Activity } from './ActivityManager';
 import { TimelineEntry } from '@/types';
 import { formatTime } from '@/utils/timeUtils';
+import styles from './ActivityButton.module.css';
 
 interface ActivityButtonProps {
   activity: Activity;
@@ -39,29 +40,42 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
     }
   };
 
+  // Build CSS classes
+  const buttonClasses = [
+    styles.activityButton,
+    isRunning && styles.isRunning,
+    isCompleted && styles.isCompleted
+  ].filter(Boolean).join(' ');
+
   return (
-    <div style={colors ? {
+    <div 
+      className={buttonClasses}
+      style={colors ? {
         backgroundColor: colors.background,
         borderColor: colors.border
       } : undefined}
     >
-      {/* Title */}
-      <span style={colors ? { color: colors.text } : undefined}
+      {/* Activity name */}
+      <span 
+        className={styles.activityName}
+        style={colors ? { color: colors.text } : undefined}
       >
         {name}
       </span>
 
       {/* Right side content grouped together */}
-      <div>
-        {/* Status */}
-        <div>
+      <div className={styles.rightContent}>
+        {/* Status section */}
+        <div className={styles.status}>
           {isRunning && (
-            <span>
-              <span>{formatTime(elapsedTime)}</span>
+            <span className={styles.timer}>
+              {formatTime(elapsedTime)}
             </span>
           )}
           {isCompleted && (
-            <span style={colors ? {
+            <span 
+              className={styles.completedIcon}
+              style={colors ? {
                 color: colors.text,
                 borderColor: colors.border
               } : undefined}
@@ -77,9 +91,10 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
         
         {/* Action buttons */}
         {!isCompleted && (
-        <div>
-            <button onClick={handleClick}
-              
+          <div className={styles.actions}>
+            <button 
+              className={isRunning ? styles.completeButton : styles.startButton}
+              onClick={handleClick}
               disabled={isCompleted}
               title={isRunning ? "Complete" : "Start"}
               aria-label={isRunning ? "Complete" : "Start"}
@@ -96,8 +111,9 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
               )}
             </button>
             {onRemove && (
-              <button onClick={handleRemove}
-                
+              <button 
+                className={styles.removeButton}
+                onClick={handleRemove}
                 disabled={isInUse}
                 title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
                 aria-label="Remove"

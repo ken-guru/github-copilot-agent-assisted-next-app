@@ -39,6 +39,38 @@
   --color-warning-background: #fef3cd;
   --color-warning-text: #856404;
   
+  /* Success/progress colors for ProgressBar */
+  --color-success-primary: #10b981; /* Green for progress */
+  --color-success-background: #d1fae5;
+  --color-success-text: #047857;
+  
+  /* Complete color system for components */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  
+  --color-danger-50: #fef2f2;
+  --color-danger-100: #fee2e2;
+  --color-danger-200: #fecaca;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+  
+  /* Interactive surface states */
+  --color-surface-hover: var(--gray-100);
+  --color-border-hover: var(--gray-300);
+  
+  /* Typography enhancements */
+  --font-family-mono: 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+  
   /* Shadow system */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -69,5 +101,10 @@
     
     --color-warning-background: #7c2d12;
     --color-warning-text: #fed7aa;
+    
+    /* Success/progress colors for dark mode */
+    --color-success-primary: #059669;
+    --color-success-background: #064e3b;
+    --color-success-text: #6ee7b7;
   }
 }
