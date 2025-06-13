@@ -134,7 +134,7 @@ function AppContent() {
   return (
     <>
       <SplashScreen minimumDisplayTime={500} />
-      <div  ${styles.container}`}>
+      <div>
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}
@@ -145,7 +145,7 @@ function AppContent() {
           onCancel={dialogActions.onCancel}
         />
         
-        <div >
+        <div>
           <header >
             <div >
               <h1 >Mr. Timely</h1>
