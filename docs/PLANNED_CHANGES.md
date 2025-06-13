@@ -548,63 +548,303 @@ Build a comprehensive, accessible design system from the ground up using the ins
 - [ ] Visual regression testing passes
 - [ ] Cross-browser compatibility verified
 
-### Phase 2 Timeline
+#### 2.1.1 Application Layout Structure Plan 📱
 
-**Week 1-2: Foundation** 
-- Design tokens system
-- Layout primitives
-- Basic component styles
+### Overview
+Based on analysis of the current application, there are **three distinct application states** that require different layout approaches. The layout system must be built with CSS Grid and Flexbox to ensure optimal responsive behavior across all device sizes.
 
-**Week 3-4: Components**
-- Feature component styling  
-- Accessibility implementation
-- Dark theme refinement
+### Application States Analysis
+The application transitions between three core states based on user progress:
 
-**Week 5-6: Polish**
-- Performance optimization
-- Cross-browser testing
-- Documentation completion
+1. **Setup State** (`appState === 'setup'`) - Initial time configuration
+2. **Activity State** (`appState === 'activity'`) - Active timer with activity management  
+3. **Completed State** (`appState === 'completed'`) - Session summary and results
 
-### Success Metrics
+---
 
-- [ ] All components maintain existing functionality
-- [ ] WCAG 2.2 AA compliance verified
-- [ ] Performance targets met
-- [ ] Cross-browser compatibility (Chrome, Firefox, Safari, Edge)
-- [ ] Mobile-first design validated across device sizes
-- [ ] Design system documentation completed
+## Visual Layout Structure Diagrams
 
-## Next Steps: Phase 2 Implementation Ready 🚀
+### Persistent Elements (Present in All States)
 
-The foundation has been set through the CSS removal experiment. The application is now ready for systematic design system implementation following the comprehensive plan outlined in Phase 2.
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      APP HEADER (sticky)                    │
+│  ┌─────────────┬─────────────────┬─────────────────────────┐ │
+│  │ App Title   │                 │ [Theme] [Reset*]        │ │
+│  └─────────────┴─────────────────┴─────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│              OFFLINE INDICATOR (conditional)                │
+└─────────────────────────────────────────────────────────────┘
 
-**Immediate Next Steps:**
-1. **Begin Phase 2.1**: Create design tokens system starting with color and spacing
-2. **Implement Foundation Layer**: Build systematic CSS custom properties
-3. **Mobile-First Approach**: Start with smallest screen sizes and progressive enhancement
-4. **WCAG 2.2 Compliance**: Ensure accessibility is built in from the start
-5. **Performance Monitoring**: Track CSS bundle size and loading performance
+*Reset button hidden in setup state
+```
 
-**Ready for Implementation:**
-- [x] Functional baseline established and tested
-- [x] Component architecture understood 
-- [x] Performance baseline measured
-- [x] Implementation plan documented
-- [x] Success criteria defined
+---
 
-The application is now in an optimal state to begin building a modern, accessible, mobile-first design system that leverages the insights gained from the CSS removal experiment.
+### 1. Setup State Layout
 
-## Rollback Information
-- Experiment preserved in `complete-style-and-structure-rewrite` branch
-- Main branch unaffected  
-- Full experiment history available in 22 granular commits
-- Memory Log entry MRTMLY-029 documents completion and insights
-- Can reference findings without affecting main development
+**Purpose**: Configure session duration and mode selection  
+**Layout**: Centered single-column focus layout
 
-## Final Metrics
-- **Test Results**: 72/74 test suites passing (444/466 individual tests)
-- **Failing Tests**: 2 test suites with 22 visual-only tests (expected failures)
-- **Build Status**: Clean builds with zero errors or warnings
-- **File Reduction**: Components 50-70% smaller without presentation code
-- **Performance**: Zero CSS processing overhead
-- **Documentation**: Complete experiment documentation and insights captured
+#### Desktop/Tablet View
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      APP HEADER                             │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│                                                             │
+│         ┌─────────────────────────────────┐                 │
+│         │                                 │                 │
+│         │         TIME SETUP              │                 │
+│         │                                 │                 │
+│         │  • Duration selection           │                 │
+│         │  • Mode selection               │                 │
+│         │  • Configuration options        │                 │
+│         │  • Start button                 │                 │
+│         │                                 │                 │
+│         └─────────────────────────────────┘                 │
+│                                                             │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Mobile View
+```
+┌───────────────────────────────────┐
+│           APP HEADER              │
+└───────────────────────────────────┘
+┌───────────────────────────────────┐
+│                                   │
+│ ┌─────────────────────────────────┐ │
+│ │                                 │ │
+│ │        TIME SETUP               │ │
+│ │                                 │ │
+│ │ • Duration selection            │ │
+│ │ • Mode selection                │ │
+│ │ • Configuration options         │ │
+│ │ • Start button                  │ │
+│ │                                 │ │
+│ └─────────────────────────────────┘ │
+│                                   │
+└───────────────────────────────────┘
+```
+
+**Components in Setup State:**
+- `TimeSetup` - Main configuration component
+
+---
+
+### 2. Activity State Layout
+
+**Purpose**: Active session with dual-pane layout for activity management and timeline  
+**Layout**: Responsive grid transitioning from 2-column desktop to 1-column mobile
+
+#### Desktop View (1024px+)
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      APP HEADER                             │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                   PROGRESS BAR                              │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ ┌───────────────────────┬───────────────────────────────────┐ │
+│ │                       │                                   │ │
+│ │   ACTIVITY MANAGER    │          TIMELINE                 │ │
+│ │                       │                                   │ │
+│ │ • Add activities      │ • Visual timeline                 │ │
+│ │ • Current activity    │ • Activity blocks                 │ │
+│ │ • Activity list       │ • Time markers                    │ │
+│ │ • Controls            │ • Progress indicators             │ │
+│ │                       │                                   │ │
+│ │                       │                                   │ │
+│ │                       │                                   │ │
+│ │                       │                                   │ │
+│ └───────────────────────┴───────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+        2fr                        3fr
+```
+
+#### Tablet View (768px - 1023px)
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      APP HEADER                             │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                   PROGRESS BAR                              │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ ┌─────────────────────┬─────────────────────────────────────┐ │
+│ │                     │                                     │ │
+│ │  ACTIVITY MANAGER   │         TIMELINE                    │ │
+│ │                     │                                     │ │
+│ │ • Add activities    │ • Visual timeline                   │ │
+│ │ • Current activity  │ • Activity blocks                   │ │
+│ │ • Activity list     │ • Time markers                      │ │
+│ │ • Controls          │ • Progress indicators               │ │
+│ │                     │                                     │ │
+│ └─────────────────────┴─────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+        1fr                        1fr
+```
+
+#### Mobile View (0px - 767px)
+```
+┌───────────────────────────────────┐
+│           APP HEADER              │
+└───────────────────────────────────┘
+┌───────────────────────────────────┐
+│          PROGRESS BAR             │
+└───────────────────────────────────┘
+┌───────────────────────────────────┐
+│                                   │
+│ ┌─────────────────────────────────┐ │
+│ │                                 │ │
+│ │     ACTIVITY MANAGER            │ │
+│ │                                 │ │
+│ │ • Add activities                │ │
+│ │ • Current activity              │ │
+│ │ • Activity list                 │ │
+│ │ • Controls                      │ │
+│ │                                 │ │
+│ │                                 │ │
+│ │                                 │ │
+│ └─────────────────────────────────┘ │
+│                                   │
+│ Timeline hidden on mobile         │
+│ to focus on activity management   │
+│                                   │
+└───────────────────────────────────┘
+```
+
+**Components in Activity State:**
+- `ProgressBar` - Session progress visualization
+- `ActivityManager` - Activity creation and management
+- `Timeline` - Visual timeline of session progress (hidden on mobile)
+
+---
+
+### 3. Completed State Layout
+
+**Purpose**: Display session results and statistics  
+**Layout**: Centered single-column content layout
+
+#### Desktop/Tablet View
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      APP HEADER                             │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│                                                             │
+│       ┌───────────────────────────────────────┐             │
+│       │                                       │             │
+│       │            SUMMARY                    │             │
+│       │                                       │             │
+│       │ • Session statistics                  │             │
+│       │ • Activity breakdown                  │             │
+│       │ • Time analysis                       │             │
+│       │ • Performance metrics                 │             │
+│       │ • Export/share options                │             │
+│       │                                       │             │
+│       │                                       │             │
+│       └───────────────────────────────────────┘             │
+│                                                             │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Mobile View
+```
+┌───────────────────────────────────┐
+│           APP HEADER              │
+└───────────────────────────────────┘
+┌───────────────────────────────────┐
+│                                   │
+│ ┌─────────────────────────────────┐ │
+│ │                                 │ │
+│ │           SUMMARY               │ │
+│ │                                 │ │
+│ │ • Session statistics            │ │
+│ │ • Activity breakdown            │ │
+│ │ • Time analysis                 │ │
+│ │ • Performance metrics           │ │
+│ │ • Export/share options          │ │
+│ │                                 │ │
+│ │                                 │ │
+│ └─────────────────────────────────┘ │
+│                                   │
+└───────────────────────────────────┘
+```
+
+**Components in Completed State:**
+- `Summary` - Session statistics and activity breakdown
+
+---
+
+### Layout Design Principles
+
+#### Mobile-First Responsive Strategy
+- **Base**: 0px - 639px (Mobile phones)
+- **sm**: 640px+ (Large mobile phones)
+- **md**: 768px+ (Tablets)
+- **lg**: 1024px+ (Small laptops/desktop)
+- **xl**: 1280px+ (Large desktop screens)
+
+#### Key Layout Features
+1. **Persistent Header**: Sticky header with app title and controls
+2. **Conditional Elements**: Progress bar and reset button based on state
+3. **Responsive Grid**: 2-column desktop → 1-column mobile
+4. **Timeline Visibility**: Hidden on mobile to focus on activity management
+5. **Touch Optimization**: 44px minimum touch targets, adequate spacing
+6. **Container Constraints**: Max-widths prevent excessive stretching
+7. **Smooth Transitions**: Animated state changes with reduced motion support
+
+### Accessibility Layout Considerations
+
+#### Semantic Structure
+```html
+<!-- Semantic layout structure -->
+<div class="app-root">
+  <header class="app-header" role="banner">
+    <!-- Header content -->
+  </header>
+  
+  <main class="app-wrapper" role="main">
+    <div class="offline-indicator" role="status" aria-live="polite">
+      <!-- Offline status -->
+    </div>
+    
+    <!-- State-specific content areas -->
+    <div class="setup-layout" role="region" aria-label="Time setup">
+      <!-- Setup state content -->
+    </div>
+    
+    <div class="activity-layout" role="region" aria-label="Activity session">
+      <!-- Activity state content -->
+    </div>
+    
+    <div class="completed-layout" role="region" aria-label="Session summary">
+      <!-- Completed state content -->
+    </div>
+  </main>
+</div>
+```
+
+#### Focus Management
+- Skip links for keyboard navigation
+- Focus trapping within modal/dialog components
+- Logical tab order across layout changes
+- Clear focus indicators with proper contrast
+
+### Implementation Priority
+
+1. **Foundation** (Highest): Root layout, header, basic containers
+2. **Setup State** (High): Single-column centered layout
+3. **Activity State** (High): Dual-pane responsive grid  
+4. **Completed State** (Medium): Single-column results layout
+5. **Enhancements** (Low): Animations, advanced responsive features
+
+This layout structure provides the foundation for implementing the design system while maintaining optimal user experience across all device sizes and application states.
