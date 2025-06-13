@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { TimelineEntry } from '@/types';
-import styles from './ProgressBar.module.css';
 import { formatTimeHuman } from '@/utils/time';
 
 interface ProgressBarProps {
@@ -85,17 +84,16 @@ export default function ProgressBar({
 
   // Render time markers component
   const timeMarkersComponent = totalDuration > 0 && (
-    <div className={styles.timeMarkers}>
-      <span className={styles.timeMarker}>0:00</span>
-      <span className={styles.timeMarker}>{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
-      <span className={styles.timeMarker}>{formatTimeHuman(totalDuration * 1000)}</span>
+    <div>
+      <span>0:00</span>
+      <span>{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
+      <span>{formatTimeHuman(totalDuration * 1000)}</span>
     </div>
   );
 
   // Render progress bar component
   const progressBarComponent = (
     <div 
-      className={`${styles.progressBarContainer} ${!isActive ? styles.inactiveBar : ''}`}
       role="progressbar"
       aria-valuenow={Math.round(progressPercentage)}
       aria-valuemin={0}
@@ -104,7 +102,6 @@ export default function ProgressBar({
     >
       {isActive && (
         <div 
-          className={styles.progressFill} 
           style={{ 
             width: `${progressPercentage}%`,
             backgroundColor: calculateProgressColor()
@@ -115,7 +112,7 @@ export default function ProgressBar({
   );
 
   return (
-    <div className={`${styles.container} ${isMobile ? styles.mobileContainer : ''}`}>
+    <div>
       {/* Render in different order based on viewport */}
       {isMobile ? (
         <>
