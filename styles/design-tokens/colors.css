@@ -58,25 +58,51 @@
   --color-success-600: #16a34a;
   --color-success-700: #15803d;
   
-  --color-danger-50: #fef2f2;
-  --color-danger-100: #fee2e2;
-  --color-danger-200: #fecaca;
-  --color-danger-600: #dc2626;
-  --color-danger-700: #b91c1c;
+  /* Danger Colors */
+  --color-danger-50: hsl(0, 86%, 97%);
+  --color-danger-100: hsl(0, 93%, 94%);
+  --color-danger-200: hsl(0, 96%, 89%);
+  --color-danger-300: hsl(0, 94%, 82%);
+  --color-danger-400: hsl(0, 91%, 71%);
+  --color-danger-500: hsl(0, 84%, 60%);
+  --color-danger-600: hsl(0, 72%, 51%);
+  --color-danger-700: hsl(0, 74%, 42%);
+  --color-danger-800: hsl(0, 70%, 35%);
+  --color-danger-900: hsl(0, 63%, 31%);
+
+  /* Warning Colors */
+  --color-warning-50: hsl(48, 100%, 96%);
+  --color-warning-100: hsl(48, 96%, 89%);
+  --color-warning-200: hsl(48, 97%, 77%);
+  --color-warning-300: hsl(46, 97%, 65%);
+  --color-warning-400: hsl(43, 96%, 56%);
+  --color-warning-500: hsl(38, 92%, 50%);
+  --color-warning-600: hsl(32, 95%, 44%);
+  --color-warning-700: hsl(26, 90%, 37%);
+  --color-warning-800: hsl(23, 83%, 31%);
+  --color-warning-900: hsl(22, 78%, 26%);
+
+  /* Additional Semantic Surface Colors */
+  --color-surface-secondary: var(--color-neutral-50);
+  --color-surface-tertiary: var(--color-neutral-100);
   
-  /* Interactive surface states */
-  --color-surface-hover: var(--gray-100);
-  --color-border-hover: var(--gray-300);
+  /* Additional Border Colors */
+  --color-border-secondary: var(--color-neutral-200);
+  --color-border-interactive: var(--color-primary-300);
   
-  /* Typography enhancements */
-  --font-family-mono: 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+  /* Additional Text Colors */
+  --color-text-secondary: var(--color-neutral-600);
+  --color-text-tertiary: var(--color-neutral-500);
+  --color-text-on-primary: var(--color-neutral-50);
+
+  /* Interactive States */
+  --color-interactive-primary-hover: var(--color-primary-600);
+  --color-interactive-primary-active: var(--color-primary-700);
+  --color-interactive-secondary: var(--color-neutral-100);
+  --color-interactive-secondary-hover: var(--color-neutral-200);
   
-  /* Shadow system */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  /* Focus Ring */
+  --color-focus-ring: var(--color-primary-500);
 }
 
 /* Dark theme preparation */

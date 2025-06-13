@@ -48,10 +48,10 @@ describe('ActivityManager Component', () => {
     
     // It should render the default activities
     await waitFor(() => {
-      expect(screen.getByText('Homework')).toBeInTheDocument();
-      expect(screen.getByText('Reading')).toBeInTheDocument();
-      expect(screen.getByText('Play Time')).toBeInTheDocument();
-      expect(screen.getByText('Chores')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Homework' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Reading' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Play Time' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Chores' })).toBeInTheDocument();
     });
   });
   
@@ -73,7 +73,7 @@ describe('ActivityManager Component', () => {
     fireEvent.click(screen.getByText('Add'));
     
     // New activity should appear in the list
-    expect(await screen.findByText('New Test Activity')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'New Test Activity' })).toBeInTheDocument();
     
     // Input should be cleared
     expect(input).toHaveValue('');
@@ -120,7 +120,7 @@ describe('ActivityManager Component', () => {
     
     // Wait for activities to render
     await waitFor(() => {
-      expect(screen.getByText('Homework')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Homework' })).toBeInTheDocument();
     });
     
     // Find the Complete button for the running activity
@@ -145,22 +145,27 @@ describe('ActivityManager Component', () => {
     
     // Wait for activities to render
     await waitFor(() => {
-      expect(screen.getByText('Homework')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Homework' })).toBeInTheDocument();
     });
     
     // Should show "Completed" icon/label
     expect(await screen.findByLabelText('Completed')).toBeInTheDocument();
     
-    // Find the homework container div
-    const homeworkItem = screen.getByText('Homework').closest('div');
+    // Find the homework activity item by using getByRole for the heading
+    const homeworkHeading = screen.getByRole('heading', { name: 'Homework' });
+    const homeworkItem = homeworkHeading.closest('.activityItem') as HTMLElement;
     if (!homeworkItem) {
       throw new Error('Could not find homework item container');
     }
     
-    // The homework item should not contain start/complete buttons
-    // We need to check this differently since there are multiple Start buttons in the document
-    const homeworkButtons = within(homeworkItem).queryAllByRole('button');
-    expect(homeworkButtons.length).toBe(0); // No buttons in the completed activity item
+    // The homework item should not contain start/complete buttons in the content area, only in actions
+    // Completed activities still have buttons in the action area but no action buttons like start
+    const startButtons = within(homeworkItem).queryAllByLabelText('Start');
+    const completeButtons = within(homeworkItem).queryAllByLabelText('Complete');
+    
+    // Should not have start or complete buttons for completed activities
+    expect(startButtons.length).toBe(0);
+    expect(completeButtons.length).toBe(0);
   });
   
   it('should allow removing an activity', async () => {
@@ -175,7 +180,7 @@ describe('ActivityManager Component', () => {
     
     // Wait for activities to render
     await waitFor(() => {
-      expect(screen.getByText('Homework')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Homework' })).toBeInTheDocument();
     });
     
     // Find all remove buttons and click the first one
@@ -210,7 +215,7 @@ describe('ActivityManager Component', () => {
     
     // Wait for activities to render
     await waitFor(() => {
-      expect(screen.getByText('Homework')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Homework' })).toBeInTheDocument();
     });
     
     // Find all remove buttons
@@ -234,13 +239,15 @@ describe('ActivityManager Component', () => {
       />
     );
     
-    // Add button should be disabled
-    const addButton = screen.getByText('Add');
-    expect(addButton).toBeDisabled();
+    // Form section should not be rendered when time is up
+    const form = screen.queryByTestId('activity-form');
+    expect(form).not.toBeInTheDocument();
     
-    // Input should have different placeholder
-    const input = screen.getByPlaceholderText('Time is up!');
-    expect(input).toBeDisabled();
+    // Should show different description
+    expect(screen.getByText('Time is up! No more activities can be added.')).toBeInTheDocument();
+    
+    // Activities should still be visible though
+    expect(screen.getByRole('heading', { name: 'Homework' })).toBeInTheDocument();
   });
   
   it('should start an activity when clicking Start', async () => {
@@ -255,14 +262,15 @@ describe('ActivityManager Component', () => {
     
     // Wait for activities to render and initialization to complete
     await waitFor(() => {
-      expect(screen.getByText('Homework')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Homework' })).toBeInTheDocument();
     });
     
     // Clear mocks after initialization but before the action we're testing
     mockOnActivitySelect.mockClear();
     
-    // Find the first activity item
-    const homeworkItem = screen.getByText('Homework').closest('div');
+    // Find the first activity item using the heading
+    const homeworkHeading = screen.getByRole('heading', { name: 'Homework' });
+    const homeworkItem = homeworkHeading.closest('.activityItem') as HTMLElement;
     if (!homeworkItem) {
       throw new Error('Could not find homework item container');
     }
@@ -290,7 +298,7 @@ describe('ActivityManager Component', () => {
     
     // Wait for activities to render
     await waitFor(() => {
-      expect(screen.getByText('Homework')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Homework' })).toBeInTheDocument();
     });
     
     // Check if the timer is displayed with the correct time
@@ -310,11 +318,12 @@ describe('ActivityManager Component', () => {
     
     // Wait for activities to render and find the Homework item
     await waitFor(() => {
-      expect(screen.getByText('Homework')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Homework' })).toBeInTheDocument();
     });
     
     // The Homework activity (not running) should not show the timer
-    const homeworkItem = screen.getByText('Homework').closest('div');
-    expect(within(homeworkItem || document.body).queryByText('00:30')).not.toBeInTheDocument();
+    const homeworkHeading = screen.getByRole('heading', { name: 'Homework' });
+    const homeworkItem = homeworkHeading.closest('.activityItem') as HTMLElement;
+    expect(within(homeworkItem).queryByText('00:30')).not.toBeInTheDocument();
   });
 });

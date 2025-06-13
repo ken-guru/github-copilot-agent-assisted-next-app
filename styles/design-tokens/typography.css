@@ -6,6 +6,10 @@
   --font-family-base: system-ui, -apple-system, "Segoe UI", "Roboto", "Ubuntu", "Cantarell", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-family-mono: ui-monospace, "SFMono-Regular", "SF Mono", "Cascadia Code", "Roboto Mono", "Consolas", "Liberation Mono", "Menlo", "Courier", monospace;
 
+  /* Font Family */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace;
+
   /* Mobile-first type scale */
   --text-scale-xs: 0.75rem;    /* 12px */
   --text-scale-sm: 0.875rem;   /* 14px */
@@ -16,7 +20,7 @@
   --text-scale-3xl: 1.875rem;  /* 30px */
   --text-scale-4xl: 2.25rem;   /* 36px */
 
-  /* Font weights */
+  /* Font Weight */
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
