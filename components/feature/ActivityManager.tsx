@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import styles from './ActivityManager.module.css';
 import { getNextAvailableColorSet, ColorSet } from '@lib/utils/colors';
 import { TimelineEntry } from '@hooks/use-timeline-entries';
 import { ActivityButton } from '@components/ui/ActivityButton';

@@ -1,5 +1,4 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@lib/time/timelineCalculations';
 import { formatTimeHuman } from '@lib/time';
 import { isDarkMode } from '@lib/utils/colors';

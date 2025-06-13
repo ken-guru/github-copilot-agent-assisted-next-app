@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './ActivityButton.module.css';
 import type { Activity } from '@components/feature/ActivityManager';
 import type { TimelineEntry } from '@components/feature/Timeline';
 

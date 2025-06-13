@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import styles from './UpdateNotification.module.css';
 
 interface UpdateNotificationProps {
   message: string;

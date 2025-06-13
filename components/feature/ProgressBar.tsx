@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import styles from './ProgressBar.module.css';
 import { formatTimeHuman } from '@lib/time';
 import type { TimelineEntry } from './Timeline';
 

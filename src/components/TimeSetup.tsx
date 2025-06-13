@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import styles from './TimeSetup.module.css';
 
 interface TimeSetupProps {
   onTimeSet: (durationInSeconds: number) => void;

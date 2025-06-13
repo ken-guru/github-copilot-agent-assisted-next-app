@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import styles from './Summary.module.css';
 import type { TimelineEntry } from '@/types';
 import { isDarkMode } from '@lib/utils/colors';
 

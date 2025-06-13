@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styles from './ActivityManager.module.css';
 
 interface ActivityFormProps {
   onAddActivity: (activityName: string) => void;

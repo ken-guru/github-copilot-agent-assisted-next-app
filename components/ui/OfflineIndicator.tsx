@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@hooks/use-online-status';
-import styles from './OfflineIndicator.module.css';
 
 /**
  * Props for the OfflineIndicator component

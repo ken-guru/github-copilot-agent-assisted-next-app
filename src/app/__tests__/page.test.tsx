@@ -5,7 +5,6 @@ import Home from '../page';
 import resetService, { DialogCallback } from '@/utils/resetService';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
 import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
-import styles from '../page.module.css';
 
 // Create a helper function to safely check CSS classes that might be undefined
 const safelyCheckClass = (element: HTMLElement, className?: string) => {

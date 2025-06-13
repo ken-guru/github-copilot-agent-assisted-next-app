@@ -2,7 +2,6 @@ import React from 'react';
 import { Activity } from './ActivityManager';
 import { TimelineEntry } from '@/types';
 import { formatTime } from '@/utils/timeUtils';
-import styles from './ActivityManager.module.css';
 
 interface ActivityButtonProps {
   activity: Activity;

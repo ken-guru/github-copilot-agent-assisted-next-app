@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import styles from './ServiceWorkerUpdater.module.css';
 
 /**
  * Props for the ServiceWorkerUpdater component

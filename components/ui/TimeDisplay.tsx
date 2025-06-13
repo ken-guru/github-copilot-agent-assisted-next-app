@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './TimeDisplay.module.css';
 
 /**
  * Props for the TimeDisplay component

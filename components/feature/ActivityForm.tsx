@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import styles from './ActivityForm.module.css';
 
 interface ActivityFormProps {
   onSubmit: (name: string, description?: string) => void;

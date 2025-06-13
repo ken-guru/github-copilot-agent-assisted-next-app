@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import styles from './TimeSetup.module.css';
 
 /**
  * Props for the TimeSetup component

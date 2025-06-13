@@ -1,7 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ThemeToggle from '../ThemeToggle';
-import styles from '../ThemeToggle.module.css';
 
 // Mock window.matchMedia
 window.matchMedia = jest.fn().mockImplementation(query => ({

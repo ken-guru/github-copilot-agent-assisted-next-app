@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ActivityButton } from '../ActivityButton';
-import styles from '../ActivityManager.module.css';
 import { jest } from '@jest/globals';
 
 describe('ActivityButton', () => {

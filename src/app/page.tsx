@@ -13,7 +13,6 @@ import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/Confirma
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import resetService from '@/utils/resetService';
-import styles from './page.module.css';
 
 // Main application content with loading context
 function AppContent() {

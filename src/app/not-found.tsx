@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import styles from './not-found.module.css';
 import { useEffect } from 'react';
 
 export default function NotFound() {

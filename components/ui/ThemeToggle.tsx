@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styles from './ThemeToggle.module.css';
 import { validateThemeColors } from '@lib/utils/colors';  // Updated import path
 
 /**
