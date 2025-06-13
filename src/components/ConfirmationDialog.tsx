@@ -1,6 +1,5 @@
 'use client';
 import { useRef, useImperativeHandle, forwardRef, useCallback } from 'react';
-import styles from './ConfirmationDialog.module.css';
 
 export interface ConfirmationDialogProps {
   message: string;
@@ -37,20 +36,14 @@ const ConfirmationDialog = forwardRef<ConfirmationDialogRef, ConfirmationDialogP
     }));
 
     return (
-      <dialog ref={dialogRef} className={styles.dialog}>
-        <div className={styles.content}>
-          <p className={styles.message}>{message}</p>
-          <div className={styles.actions}>
-            <button 
-              className={`${styles.button} ${styles.confirmButton}`}
-              onClick={handleConfirm}
-            >
+      <dialog ref={dialogRef}>
+        <div>
+          <p>{message}</p>
+          <div>
+            <button onClick={handleConfirm}>
               {confirmText}
             </button>
-            <button 
-              className={`${styles.button} ${styles.cancelButton}`}
-              onClick={handleCancel}
-            >
+            <button onClick={handleCancel}>
               {cancelText}
             </button>
           </div>
