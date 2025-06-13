@@ -36,8 +36,7 @@ describe('Summary Activity Order', () => {
     ]);
     
     render(
-      <Summary 
-        entries={entries}
+      <Summary entries={entries}
         totalDuration={2000}
         elapsedTime={2000}
         allActivitiesCompleted={true}
@@ -66,8 +65,7 @@ describe('Summary Activity Order', () => {
     ]);
     
     render(
-      <Summary 
-        entries={entries}
+      <Summary entries={entries}
         totalDuration={2000}
         elapsedTime={2000}
         allActivitiesCompleted={true}
@@ -99,8 +97,7 @@ describe('Summary Activity Order', () => {
     cleanup();
     
     const { unmount } = render(
-      <Summary 
-        entries={entries}
+      <Summary entries={entries}
         totalDuration={2000}
         elapsedTime={2000}
         allActivitiesCompleted={true}
@@ -130,8 +127,7 @@ describe('Summary Activity Order', () => {
     
     // Re-render the component
     render(
-      <Summary 
-        entries={entries}
+      <Summary entries={entries}
         totalDuration={2000}
         elapsedTime={2000}
         allActivitiesCompleted={true}
@@ -160,8 +156,7 @@ describe('Summary Activity Order', () => {
     ]);
     
     const { rerender } = render(
-      <Summary 
-        entries={entries}
+      <Summary entries={entries}
         totalDuration={2000}
         elapsedTime={2000}
         allActivitiesCompleted={true}
@@ -182,8 +177,7 @@ describe('Summary Activity Order', () => {
     
     // Re-render with same props (simulating a parent component re-render)
     rerender(
-      <Summary 
-        entries={entries}
+      <Summary entries={entries}
         totalDuration={2000}
         elapsedTime={2000}
         allActivitiesCompleted={true}
@@ -203,8 +197,7 @@ describe('Summary Activity Order', () => {
   
   it('should handle empty activity list gracefully', () => {
     render(
-      <Summary 
-        entries={[]}
+      <Summary entries={[]}
         totalDuration={1000}
         elapsedTime={1000}
         allActivitiesCompleted={true}

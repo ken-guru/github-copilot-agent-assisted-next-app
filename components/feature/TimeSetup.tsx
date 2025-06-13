@@ -135,20 +135,16 @@ export default function TimeSetup({
   };
 
   return (
-    <div >
-      <h2 >Set Up Time</h2>
+    <div>
+      <h2>Set Up Time</h2>
       
-      <div >
-        <button
-          type="button"
-           ${styles.modeButton} ${setupMode === 'duration' ? styles.modeButtonActive : ''}`}
+      <div>
+        <button type="button"
           onClick={() => handleModeChange('duration')}
         >
           Duration
         </button>
-        <button
-          type="button"
-           ${styles.modeButton} ${setupMode === 'deadline' ? styles.modeButtonActive : ''}`}
+        <button type="button"
           onClick={() => handleModeChange('deadline')}
         >
           Deadline
@@ -157,62 +153,53 @@ export default function TimeSetup({
       
       <form onSubmit={handleSubmit} >
         {setupMode === 'duration' ? (
-          <div >
-            <div >
+          <div>
+            <div>
               <label htmlFor="hours" >Hours</label>
-              <input
-                type="number"
+              <input type="number"
                 id="hours"
                 min="0"
                 value={hours}
                 onChange={(e) => handleNumberInput(e.target.value, setHours)}
-                 ${hasError ? styles.inputError : ''}`}
               />
             </div>
             
-            <div >
+            <div>
               <label htmlFor="minutes" >Minutes</label>
-              <input
-                type="number"
+              <input type="number"
                 id="minutes"
                 min="0"
                 max="59"
                 value={minutes}
                 onChange={(e) => handleNumberInput(e.target.value, setMinutes)}
-                 ${hasError ? styles.inputError : ''}`}
               />
             </div>
             
-            <div >
+            <div>
               <label htmlFor="seconds" >Seconds</label>
-              <input
-                type="number"
+              <input type="number"
                 id="seconds"
                 min="0"
                 max="59"
                 value={seconds}
                 onChange={(e) => handleNumberInput(e.target.value, setSeconds)}
-                 ${hasError ? styles.inputError : ''}`}
               />
             </div>
           </div>
         ) : (
-          <div >
+          <div>
             <label htmlFor="deadlineTime" >Time (24-hour format)</label>
-            <input
-              type="time"
+            <input type="time"
               id="deadlineTime"
               value={deadlineTime}
               onChange={(e) => setDeadlineTime(e.target.value)}
-               ${styles.deadlineInput} ${hasError ? styles.inputError : ''}`}
             />
           </div>
         )}
         
-        {hasError && <div >{errorMessage}</div>}
+        {hasError && <div>{errorMessage}</div>}
         
-        <button 
-          type="submit" 
+        <button type="submit" 
           
           disabled={setupMode === 'duration' && hours === 0 && minutes === 0 && seconds === 0}
         >

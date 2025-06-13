@@ -65,8 +65,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         
         {/* Preload script to apply theme before first render to prevent flash */}
-        <script
-          dangerouslySetInnerHTML={{
+        <script dangerouslySetInnerHTML={{
             __html: `
               (function() {
                 // Don't run this script during SSR
@@ -113,8 +112,7 @@ export default function RootLayout({
           {children}
         </LayoutClient>
         {/* Service worker registration script - moved here from useServiceWorker hook */}
-        <Script
-          id="register-service-worker"
+        <Script id="register-service-worker"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `

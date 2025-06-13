@@ -72,8 +72,7 @@ describe('Component Props Interface Validation', () => {
   describe('ActivityButton', () => {
     it('renders with required props only', () => {
       const { container } = render(
-        <ActivityButton
-          activity={mockActivity}
+        <ActivityButton activity={mockActivity}
           isCompleted={false}
           isActive={false}
           onClick={mockFn}
@@ -86,8 +85,7 @@ describe('Component Props Interface Validation', () => {
 
     it('renders with all props', () => {
       const { container } = render(
-        <ActivityButton
-          activity={mockActivity}
+        <ActivityButton activity={mockActivity}
           isCompleted={true}
           isActive={true}
           onClick={mockFn}
@@ -104,8 +102,7 @@ describe('Component Props Interface Validation', () => {
   describe('ActivityManager', () => {
     it('renders with required props only', () => {
       const { container } = render(
-        <ActivityManager
-          onActivitySelect={mockFn}
+        <ActivityManager onActivitySelect={mockFn}
           currentActivityId="test1"
           completedActivityIds={[]}
           timelineEntries={[]}
@@ -116,8 +113,7 @@ describe('Component Props Interface Validation', () => {
 
     it('renders with all props', () => {
       const { container } = render(
-        <ActivityManager
-          onActivitySelect={mockFn}
+        <ActivityManager onActivitySelect={mockFn}
           onActivityRemove={mockFn}
           currentActivityId="test1"
           completedActivityIds={['test2']}
@@ -135,8 +131,7 @@ describe('Component Props Interface Validation', () => {
   describe('ProgressBar', () => {
     it('renders with required props only', () => {
       const { container } = render(
-        <ProgressBar
-          entries={timelineEntries}
+        <ProgressBar entries={timelineEntries}
           totalDuration={3600}
           elapsedTime={600}
         />
@@ -146,8 +141,7 @@ describe('Component Props Interface Validation', () => {
 
     it('renders with all props', () => {
       const { container } = render(
-        <ProgressBar
-          entries={timelineEntries}
+        <ProgressBar entries={timelineEntries}
           totalDuration={3600}
           elapsedTime={600}
           timerActive={true}
@@ -167,8 +161,7 @@ describe('Component Props Interface Validation', () => {
   describe('TimeSetup', () => {
     it('renders with required props only', () => {
       const { container } = render(
-        <TimeSetup
-          onTimeSet={mockFn}
+        <TimeSetup onTimeSet={mockFn}
         />
       );
       expect(container).toBeInTheDocument();
@@ -176,8 +169,7 @@ describe('Component Props Interface Validation', () => {
 
     it('renders with all props', () => {
       const { container } = render(
-        <TimeSetup
-          onTimeSet={mockFn}
+        <TimeSetup onTimeSet={mockFn}
           initialMode="duration"
           initialHours={2}
           initialMinutes={30}

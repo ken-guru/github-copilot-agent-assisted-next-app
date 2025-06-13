@@ -307,24 +307,20 @@ export default function Timeline({
   };
   
   return (
-    <div >
-      <div >
-        <h2 >Timeline</h2>
-        <div 
-           ${isTimeUp ? styles.timeDisplayOvertime : ''}`}
-          data-testid="time-display"
+    <div>
+      <div>
+        <h2>Timeline</h2>
+        <div data-testid="time-display"
         >
           {timeDisplay}
         </div>
       </div>
       
-      <div >
-        <div >
+      <div>
+        <div>
           {/* Add overtime background to the ruler */}
           {isOvertime && (
-            <div 
-              
-              style={{ 
+            <div style={{ 
                 top: `${plannedDurationPosition}%`,
                 height: `${100 - plannedDurationPosition}%`
               }}
@@ -333,9 +329,7 @@ export default function Timeline({
           )}
           
           {timeMarkers.map(({ time, position, label, isOvertimeMarker }) => (
-            <div
-              key={time}
-               ${isOvertimeMarker ? styles.overtimeMarker : ''}`}
+            <div key={time}
               style={{ top: `${position}%` }}
               data-testid="time-marker"
             >
@@ -345,20 +339,16 @@ export default function Timeline({
           
           {/* Overtime indicator line */}
           {isOvertime && (
-            <div 
-              
-              style={{ top: `${plannedDurationPosition}%` }}
+            <div style={{ top: `${plannedDurationPosition}%` }}
               title="Original planned duration"
             />
           )}
         </div>
         
-        <div >
+        <div>
           {/* Overtime background section */}
           {isOvertime && (
-            <div 
-              
-              style={{ 
+            <div style={{ 
                 top: `${plannedDurationPosition}%`,
                 height: `${100 - plannedDurationPosition}%`
               }}
@@ -366,25 +356,21 @@ export default function Timeline({
             />
           )}
           
-          <div >
+          <div>
             {timeMarkers.map(({ time, position, isOvertimeMarker }) => (
-              <div
-                key={time}
-                 ${isOvertimeMarker ? styles.overtimeGuide : ''}`}
+              <div key={time}
                 style={{ top: `${position}%` }}
               />
             ))}
             
             {/* Overtime divider guide */}
             {isOvertime && (
-              <div 
-                
-                style={{ top: `${plannedDurationPosition}%` }}
+              <div style={{ top: `${plannedDurationPosition}%` }}
               />
             )}
           </div>
           
-          <div >
+          <div>
             {hasEntries ? (
               timeSpansData.items.map((item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number }, index: number) => {
                 const style = calculateEntryStyle(item);
@@ -392,8 +378,7 @@ export default function Timeline({
                 if (item.type === 'gap') {
                   if (allActivitiesCompleted && index === timeSpansData.items.length - 1) {
                     return (
-                      <div
-                        key="remaining"
+                      <div key="remaining"
                         
                         style={style}
                       >
@@ -402,8 +387,7 @@ export default function Timeline({
                     );
                   }
                   return (
-                    <div
-                      key={`gap-${index}`}
+                    <div key={`gap-${index}`}
                       
                       style={style}
                     >
@@ -413,15 +397,13 @@ export default function Timeline({
                 }
                 return (
                   <div key={item.entry!.id}  style={style}>
-                    <div >
-                      <div >
-                        <span
-                          
-                          data-testid="timeline-activity-name"
+                    <div>
+                      <div>
+                        <span data-testid="timeline-activity-name"
                         >
                           {item.entry!.activityName}
                         </span>
-                        <span >
+                        <span>
                           {formatTimeHuman(item.duration)}
                         </span>
                       </div>
@@ -430,7 +412,7 @@ export default function Timeline({
                 );
               })
             ) : (
-              <div >
+              <div>
                 No activities started yet
               </div>
             )}
@@ -439,7 +421,7 @@ export default function Timeline({
       </div>
       
       {isTimeUp && hasEntries && (
-        <div  data-testid="overtime-warning">
+        <div data-testid="overtime-warning">
           <strong>Warning:</strong> You&apos;ve exceeded the planned time!
         </div>
       )}

@@ -135,14 +135,13 @@ export default function ActivityManager({
   };
   
   return (
-    <div >
-      <h2 >Activities</h2>
+    <div>
+      <h2>Activities</h2>
       
       {/* Activity list */}
-      <div >
+      <div>
         {activities.map((activity) => (
-          <ActivityButton
-            key={activity.id}
+          <ActivityButton key={activity.id}
             activity={activity}
             isActive={currentActivityId === activity.id}
             isCompleted={completedActivityIds.includes(activity.id)}
@@ -155,14 +154,11 @@ export default function ActivityManager({
       
       {/* Add activity button or form */}
       {showForm ? (
-        <ActivityForm
-          onSubmit={handleAddActivity}
+        <ActivityForm onSubmit={handleAddActivity}
           onCancel={() => setShowForm(false)}
         />
       ) : (
-        <button 
-          
-          onClick={() => setShowForm(true)}
+        <button onClick={() => setShowForm(true)}
           disabled={isTimeUp}
         >
           + Add Activity
@@ -171,14 +167,14 @@ export default function ActivityManager({
       
       {/* No activities message */}
       {activities.length === 0 && !showForm && (
-        <div >
+        <div>
           No activities yet. Add one to get started.
         </div>
       )}
       
       {/* Time up notification */}
       {isTimeUp && (
-        <div >
+        <div>
           Time&apos;s up! You can no longer modify activities.
         </div>
       )}

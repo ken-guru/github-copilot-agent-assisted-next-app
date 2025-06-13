@@ -10,10 +10,10 @@ export default function NotFound() {
   }, []);
 
   return (
-    <div >
-      <div  role="region" aria-labelledby="error-title">
+    <div>
+      <div role="region" aria-labelledby="error-title">
         <h1 id="error-title" >404 - Page Not Found</h1>
-        <p >
+        <p>
           The page you are looking for does not exist or has been moved.
         </p>
         <Link href="/" >

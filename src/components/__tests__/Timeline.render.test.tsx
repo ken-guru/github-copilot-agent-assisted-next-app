@@ -39,8 +39,7 @@ describe('Timeline Component Rendering', () => {
       },
     ];
     render(
-      <Timeline 
-        entries={mockEntries}
+      <Timeline entries={mockEntries}
         totalDuration={3600}
         elapsedTime={1800}
         timerActive={true}
@@ -51,8 +50,7 @@ describe('Timeline Component Rendering', () => {
   
   it('should render an empty state when no entries are present', () => {
     render(
-      <Timeline 
-        entries={[]}
+      <Timeline entries={[]}
         totalDuration={3600}
         elapsedTime={0}
         timerActive={false}
@@ -80,8 +78,7 @@ describe('Timeline Component Rendering', () => {
     ];
     
     render(
-      <Timeline 
-        entries={mockEntries}
+      <Timeline entries={mockEntries}
         totalDuration={3600}
         elapsedTime={4000}
         timerActive={true}

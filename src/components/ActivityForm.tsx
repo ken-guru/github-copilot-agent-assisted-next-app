@@ -18,18 +18,15 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onAddActivity, isDisabled }
 
   return (
     <form onSubmit={handleSubmit}  role="form" data-testid="activity-form">
-      <div >
-        <input
-          type="text"
+      <div>
+        <input type="text"
           value={newActivityName}
           onChange={(e) => setNewActivityName(e.target.value)}
           placeholder={isDisabled ? "Time is up!" : "New activity name"}
           
           disabled={isDisabled}
         />
-        <button 
-          type="submit"
-           ${isDisabled ? styles.disabled : ''}`}
+        <button type="submit"
           disabled={isDisabled}
         >
           Add

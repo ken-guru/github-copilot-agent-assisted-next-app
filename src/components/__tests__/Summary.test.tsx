@@ -45,8 +45,7 @@ describe('Summary Component', () => {
       const elapsedTime = 5400; // 1h 30m actually spent
       
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={totalDuration}
           elapsedTime={elapsedTime}
           allActivitiesCompleted={true}
@@ -88,8 +87,7 @@ describe('Summary Component', () => {
       }];
 
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={3600}
           elapsedTime={0}
           allActivitiesCompleted={true}
@@ -118,8 +116,7 @@ describe('Summary Component', () => {
       }];
 
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={3600}
           elapsedTime={1800}
           allActivitiesCompleted={true}
@@ -143,8 +140,7 @@ describe('Summary Component', () => {
       }];
 
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={3600}
           elapsedTime={1800}
           allActivitiesCompleted={true}
@@ -178,8 +174,7 @@ describe('Summary Component', () => {
       const elapsedTime = 3602; // Just 2 seconds over
       
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={totalDuration}
           elapsedTime={elapsedTime}
           allActivitiesCompleted={true}
@@ -196,8 +191,7 @@ describe('Summary Component', () => {
       const elapsedTime = 3540; // 1 minute early
       
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={totalDuration}
           elapsedTime={elapsedTime}
           allActivitiesCompleted={true}
@@ -214,8 +208,7 @@ describe('Summary Component', () => {
       const entries = createMockTimelineEntries();
       
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={3600}
           elapsedTime={3600}
           allActivitiesCompleted={true}
@@ -236,8 +229,7 @@ describe('Summary Component', () => {
       }];
       
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={3600}
           elapsedTime={3900}
           allActivitiesCompleted={true}
@@ -269,8 +261,7 @@ describe('Summary Component', () => {
       const renderStart = performance.now();
       
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={360000} // 100 hours
           elapsedTime={360000}
           allActivitiesCompleted={true}
@@ -306,8 +297,7 @@ describe('Summary Component', () => {
       }];
 
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={maxDuration}
           elapsedTime={maxDuration}
           allActivitiesCompleted={true}
@@ -350,8 +340,7 @@ describe('Summary Component', () => {
       ];
 
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={7200}
           elapsedTime={7200}
           allActivitiesCompleted={true}
@@ -405,8 +394,7 @@ describe('Summary Component', () => {
       ];
 
       render(
-        <Summary 
-          entries={entries}
+        <Summary entries={entries}
           totalDuration={9000}
           elapsedTime={9000}
           allActivitiesCompleted={true}
@@ -452,8 +440,7 @@ describe('Summary Component', () => {
     
     // Render with light mode (default)
     render(
-      <Summary 
-        entries={mockEntries}
+      <Summary entries={mockEntries}
         totalDuration={1000}
         elapsedTime={500}
         allActivitiesCompleted={true}
@@ -522,8 +509,7 @@ describe('Summary Component', () => {
       
       // Render the component with the test case configuration
       render(
-        <Summary 
-          entries={mockEntries}
+        <Summary entries={mockEntries}
           totalDuration={testCase.totalDuration}
           elapsedTime={testCase.elapsedTime}
           allActivitiesCompleted={true}

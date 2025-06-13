@@ -54,13 +54,13 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({
   }
 
   return (
-    <div  ${fadeOut ? styles.fadeOut : ''}`} data-testid="splash-screen">
-      <div >
-        <h1 >Mr. Timely</h1>
-        <div >
-          <div ></div>
-          <div ></div>
-          <div ></div>
+    <div data-testid="splash-screen">
+      <div>
+        <h1>Mr. Timely</h1>
+        <div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
       </div>
     </div>

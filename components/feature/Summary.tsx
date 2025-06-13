@@ -127,8 +127,7 @@ export default function Summary({
     // First check if time is up, this should take precedence
     if (isTimeUp) {
       return {
-        message: "Time's up! Review your completed activities below.",
-        className: styles.statusMessageLate
+        message: "Time's up! Review your completed activities below."
       };
     }
 
@@ -136,18 +135,15 @@ export default function Summary({
       const remainingTime = totalDuration - elapsedTime;
       if (remainingTime < 0) {
         return {
-          message: "You've gone over the allocated time!",
-          className: styles.statusMessageLate
+          message: "You've gone over the allocated time!"
         };
       } else if (remainingTime === 0) {
         return {
-          message: "Time's up!",
-          className: styles.statusMessageLate
+          message: "Time's up!"
         };
       } else {
         return {
-          message: "You're doing great, keep going!",
-          className: styles.statusMessageEarly
+          message: "You're doing great, keep going!"
         };
       }
     } else if (allActivitiesCompleted) {
@@ -156,14 +152,12 @@ export default function Summary({
       if (timeDiff > 0) {
         const laterBy = formatDuration(timeDiff);
         return {
-          message: `You took ${laterBy} more than planned`,
-          className: styles.statusMessageLate
+          message: `You took ${laterBy} more than planned`
         };
       } else {
         const earlierBy = formatDuration(Math.abs(timeDiff));
         return {
-          message: `Amazing! You finished ${earlierBy} earlier than planned!`,
-          className: styles.statusMessageEarly
+          message: `Amazing! You finished ${earlierBy} earlier than planned!`
         };
       }
     }
@@ -283,38 +277,38 @@ export default function Summary({
   const activityTimes = calculateActivityTimes();
 
   return (
-    <div `} data-testid="summary">
+    <div data-testid="summary">
       {status && (
-        <div  ${status.className}`}>
+        <div>
           {status.message}
         </div>
       )}
       
-      <div >
-        <div >
-          <div >Planned Time</div>
-          <div >{formatDuration(totalDuration)}</div>
+      <div>
+        <div>
+          <div>Planned Time</div>
+          <div>{formatDuration(totalDuration)}</div>
         </div>
         
-        <div >
-          <div >Spent Time</div>
-          <div >{formatDuration(elapsedTime)}</div>
+        <div>
+          <div>Spent Time</div>
+          <div>{formatDuration(elapsedTime)}</div>
         </div>
         
-        <div >
-          <div >Idle Time</div>
-          <div >{formatDuration(stats.idleTime)}</div>
+        <div>
+          <div>Idle Time</div>
+          <div>{formatDuration(stats.idleTime)}</div>
         </div>
         
-        <div >
-          <div >Overtime</div>
-          <div >{formatDuration(overtime)}</div>
+        <div>
+          <div>Overtime</div>
+          <div>{formatDuration(overtime)}</div>
         </div>
       </div>
 
       {activityTimes.length > 0 && (
-        <div >
-          <h3 >Time Spent per Activity</h3>
+        <div>
+          <h3>Time Spent per Activity</h3>
           {activityTimes.map((activity) => {
             // Get theme-appropriate colors
             const themeColors = activity.colors ? 
@@ -322,8 +316,7 @@ export default function Summary({
               undefined;
             
             return (
-              <div 
-                key={activity.id}
+              <div key={activity.id}
                 
                 data-testid={`activity-summary-item-${activity.id}`}
                 style={themeColors ? {
@@ -331,14 +324,12 @@ export default function Summary({
                   borderColor: themeColors.border
                 } : undefined}
               >
-                <span 
-                  
-                  data-testid={`activity-name-${activity.id}`}
+                <span data-testid={`activity-name-${activity.id}`}
                   style={themeColors ? { color: themeColors.text } : undefined}
                 >
                   {activity.name}
                 </span>
-                <span >
+                <span>
                   {formatDuration(activity.duration)}
                 </span>
               </div>

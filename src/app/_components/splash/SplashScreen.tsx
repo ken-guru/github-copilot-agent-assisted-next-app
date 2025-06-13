@@ -111,22 +111,21 @@ export default function SplashScreen({
   const logoSrc = isDarkTheme() ? '/images/logo-dark.svg' : '/images/logo-light.svg';
   
   return (
-    <div  ${isFading ? styles.fading : ''}`}>
-      <div >
-        <Image
-          src={logoSrc}
+    <div>
+      <div>
+        <Image src={logoSrc}
           alt="Application Logo"
           width={250}
           height={250}
           
           priority
         />
-        <div >
-          <div ></div>
-          <div ></div>
-          <div ></div>
+        <div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
-        <p >Loading...</p>
+        <p>Loading...</p>
       </div>
     </div>
   );

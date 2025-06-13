@@ -157,22 +157,20 @@ export default function ActivityManager({
   };
 
   return (
-    <div >
-      <h2 >Activities</h2>
+    <div>
+      <h2>Activities</h2>
       
       {activities.length === 0 ? (
-        <div >
+        <div>
           No activities defined
         </div>
       ) : (
-        <div >
-          <ActivityForm
-            onAddActivity={handleAddActivity}
+        <div>
+          <ActivityForm onAddActivity={handleAddActivity}
             isDisabled={isTimeUp}
           />
           {activities.map((activity) => (
-            <ActivityButton
-              key={activity.id}
+            <ActivityButton key={activity.id}
               activity={activity}
               isCompleted={completedActivityIds.includes(activity.id)}
               isRunning={activity.id === currentActivityId}

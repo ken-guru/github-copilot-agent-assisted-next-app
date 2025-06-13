@@ -35,8 +35,7 @@ describe('ActivityManager Component', () => {
   
   it('should render default activities on mount', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
+      <ActivityManager onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
         currentActivityId={null}
         completedActivityIds={[]}
@@ -58,8 +57,7 @@ describe('ActivityManager Component', () => {
   
   it('should allow adding a new activity', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
+      <ActivityManager onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
         currentActivityId={null}
         completedActivityIds={[]}
@@ -86,8 +84,7 @@ describe('ActivityManager Component', () => {
 
   it('should add activity in pending state without starting it', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
+      <ActivityManager onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
         currentActivityId={null}
         completedActivityIds={[]}
@@ -113,8 +110,7 @@ describe('ActivityManager Component', () => {
   
   it('should mark an activity as completed when clicking Complete', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
+      <ActivityManager onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
         currentActivityId="1" // Homework is current
         completedActivityIds={[]}
@@ -139,8 +135,7 @@ describe('ActivityManager Component', () => {
   
   it('should show completed activities with completed styling', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
+      <ActivityManager onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
         currentActivityId={null}
         completedActivityIds={['1']} // Homework is completed
@@ -170,8 +165,7 @@ describe('ActivityManager Component', () => {
   
   it('should allow removing an activity', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
+      <ActivityManager onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
         currentActivityId={null}
         completedActivityIds={[]}
@@ -206,8 +200,7 @@ describe('ActivityManager Component', () => {
     ];
     
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
+      <ActivityManager onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
         currentActivityId={null}
         completedActivityIds={[]}
@@ -232,8 +225,7 @@ describe('ActivityManager Component', () => {
   
   it('should disable adding activities when time is up', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
+      <ActivityManager onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
         currentActivityId={null}
         completedActivityIds={[]}
@@ -253,8 +245,7 @@ describe('ActivityManager Component', () => {
   
   it('should start an activity when clicking Start', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
+      <ActivityManager onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
         currentActivityId={null}
         completedActivityIds={[]}
@@ -288,8 +279,7 @@ describe('ActivityManager Component', () => {
   
   it('should pass elapsedTime to running activity', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
+      <ActivityManager onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
         currentActivityId="1" // Homework is running
         completedActivityIds={[]}
@@ -309,8 +299,7 @@ describe('ActivityManager Component', () => {
   
   it('should not show timer for non-running activities', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
+      <ActivityManager onActivitySelect={mockOnActivitySelect}
         onActivityRemove={mockOnActivityRemove}
         currentActivityId="2" // Reading is running
         completedActivityIds={[]}

@@ -136,8 +136,7 @@ function AppContent() {
       <SplashScreen minimumDisplayTime={500} />
       <div>
         {/* Confirmation Dialog */}
-        <ConfirmationDialog
-          ref={resetDialogRef}
+        <ConfirmationDialog ref={resetDialogRef}
           message={dialogActions.message}
           confirmText="Reset"
           cancelText="Cancel"
@@ -146,15 +145,13 @@ function AppContent() {
         />
         
         <div>
-          <header >
-            <div >
-              <h1 >Mr. Timely</h1>
+          <header>
+            <div>
+              <h1>Mr. Timely</h1>
               <ThemeToggle />
-              <div >
+              <div>
                 {appState !== 'setup' && (
-                  <button 
-                     
-                    onClick={handleReset}
+                  <button onClick={handleReset}
                   >
                     Reset
                   </button>
@@ -166,9 +163,8 @@ function AppContent() {
           
           {/* Progress bar only rendered for activity state */}
           {timeSet && !allActivitiesCompleted && (
-            <div  data-testid="progress-container">
-              <ProgressBar 
-                entries={processedEntries}
+            <div data-testid="progress-container">
+              <ProgressBar entries={processedEntries}
                 totalDuration={totalDuration}
                 elapsedTime={elapsedTime}
                 timerActive={timerActive}
@@ -177,16 +173,15 @@ function AppContent() {
           )}
           
           {appState === 'setup' && (
-            <div >
+            <div>
               <TimeSetup onTimeSet={handleTimeSet} />
             </div>
           )}
           
           {appState === 'activity' && (
-            <div >
+            <div>
               <div>
-                <ActivityManager 
-                  onActivitySelect={handleActivitySelect} 
+                <ActivityManager onActivitySelect={handleActivitySelect} 
                   onActivityRemove={handleActivityRemoval}
                   currentActivityId={currentActivity?.id || null} 
                   completedActivityIds={completedActivityIds}
@@ -195,9 +190,8 @@ function AppContent() {
                   elapsedTime={elapsedTime}
                 />
               </div>
-              <div >
-                <Timeline 
-                  entries={processedEntries}
+              <div>
+                <Timeline entries={processedEntries}
                   totalDuration={totalDuration} 
                   elapsedTime={elapsedTime}
                   allActivitiesCompleted={allActivitiesCompleted}
@@ -209,10 +203,9 @@ function AppContent() {
           )}
           
           {appState === 'completed' && (
-            <div >
-              <div >
-                <Summary 
-                  entries={processedEntries}
+            <div>
+              <div>
+                <Summary entries={processedEntries}
                   totalDuration={totalDuration} 
                   elapsedTime={elapsedTime}
                   allActivitiesCompleted={allActivitiesCompleted}

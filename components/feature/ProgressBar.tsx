@@ -103,25 +103,21 @@ export default function ProgressBar({
 
   // Render time markers component
   const timeMarkersComponent = totalDuration > 0 && (
-    <div >
-      <span >0:00</span>
-      <span >{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
-      <span >{formatTimeHuman(totalDuration * 1000)}</span>
+    <div>
+      <span>0:00</span>
+      <span>{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
+      <span>{formatTimeHuman(totalDuration * 1000)}</span>
     </div>
   );
 
   // Render progress bar component
   const progressBarComponent = (
-    <div 
-       ${!isActive ? styles.inactiveBar : ''}`}
-      role="progressbar"
+    <div role="progressbar"
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={progressPercentage}
     >
-      <div 
-         
-        style={{ width: `${progressPercentage}%`, backgroundColor: progressColor }}
+      <div style={{ width: `${progressPercentage}%`, backgroundColor: progressColor }}
         data-testid="progress-indicator"
       />
     </div>
@@ -129,7 +125,7 @@ export default function ProgressBar({
 
   // Main container - adjust layout for mobile devices
   return (
-    <div  ${isMobile ? styles.mobileContainer : ''}`}>
+    <div>
       {progressBarComponent}
       {timeMarkersComponent}
     </div>

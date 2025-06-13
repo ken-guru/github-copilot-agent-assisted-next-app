@@ -124,9 +124,7 @@ export const SplashScreen = ({
   }
   
   return (
-    <div 
-       
-      data-testid="splash-screen"
+    <div data-testid="splash-screen"
       role="status"
       aria-live="polite"
       aria-label="Application is loading"
@@ -134,9 +132,8 @@ export const SplashScreen = ({
         backgroundColor: isDarkMode ? 'var(--bg-primary-dark, #121212)' : 'var(--bg-primary, #ffffff)'
       }}
     >
-      <div >
-        <Image
-          src="/images/splash/splash-logo.webp"
+      <div>
+        <Image src="/images/splash/splash-logo.webp"
           alt="Application logo"
           width={250}
           height={250}
@@ -144,14 +141,14 @@ export const SplashScreen = ({
           
         />
         
-        <div  data-testid="loading-indicator">
-          <div  style={{
+        <div data-testid="loading-indicator">
+          <div style={{
             backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
           }}></div>
-          <div  style={{
+          <div style={{
             backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
           }}></div>
-          <div  style={{
+          <div style={{
             backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
           }}></div>
         </div>

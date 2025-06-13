@@ -24,9 +24,8 @@ export default function ActivityForm({
   };
   
   return (
-    <form  onSubmit={handleSubmit}>
-      <input
-        type="text"
+    <form onSubmit={handleSubmit}>
+      <input type="text"
         value={activityName}
         onChange={(e) => setActivityName(e.target.value)}
         placeholder="Add new activity..."
@@ -34,8 +33,7 @@ export default function ActivityForm({
         disabled={isDisabled}
         data-testid="activity-name-input"
       />
-      <button
-        type="submit"
+      <button type="submit"
         
         disabled={!activityName.trim() || isDisabled}
         data-testid="add-activity-button"

@@ -43,20 +43,16 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   };
 
   return (
-    <div  data-testid="time-setup">
-      <h2 >Set Time</h2>
+    <div data-testid="time-setup">
+      <h2>Set Time</h2>
       
-      <div >
-        <button
-          type="button"
-           ${setupMode === 'duration' ? styles.buttonPrimary : styles.buttonSecondary}`}
+      <div>
+        <button type="button"
           onClick={() => setSetupMode('duration')}
         >
           Set Duration
         </button>
-        <button
-          type="button"
-           ${setupMode === 'deadline' ? styles.buttonPrimary : styles.buttonSecondary}`}
+        <button type="button"
           onClick={() => setSetupMode('deadline')}
         >
           Set Deadline
@@ -65,11 +61,10 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
       
       <form onSubmit={handleSubmit}>
         {setupMode === 'duration' ? (
-          <div >
-            <div >
+          <div>
+            <div>
               <label htmlFor="hours" >Hours</label>
-              <input
-                type="number"
+              <input type="number"
                 id="hours"
                 min="0"
                 value={hours}
@@ -77,10 +72,9 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                 
               />
             </div>
-            <div >
+            <div>
               <label htmlFor="minutes" >Minutes</label>
-              <input
-                type="number"
+              <input type="number"
                 id="minutes"
                 min="0"
                 max="59"
@@ -89,10 +83,9 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                 
               />
             </div>
-            <div >
+            <div>
               <label htmlFor="seconds" >Seconds</label>
-              <input
-                type="number"
+              <input type="number"
                 id="seconds"
                 min="0"
                 max="59"
@@ -103,10 +96,9 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
             </div>
           </div>
         ) : (
-          <div >
+          <div>
             <label htmlFor="deadlineTime" >Deadline Time</label>
-            <input
-              type="time"
+            <input type="time"
               id="deadlineTime"
               value={deadlineTime}
               onChange={(e) => setDeadlineTime(e.target.value)}
@@ -115,8 +107,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
           </div>
         )}
         
-        <button
-          type="submit"
+        <button type="submit"
           
         >
           Set Time

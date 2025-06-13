@@ -329,16 +329,14 @@ export default function Summary({
               undefined;
             
             return (
-              <div 
-                key={activity.id}
+              <div key={activity.id}
                 data-testid={`activity-summary-item-${activity.id}`}
                 style={themeColors ? {
                   backgroundColor: (themeColors as ColorSet).background,
                   borderColor: (themeColors as ColorSet).border
                 } : undefined}
               >
-                <span 
-                  data-testid={`activity-name-${activity.id}`}
+                <span data-testid={`activity-name-${activity.id}`}
                   style={themeColors ? { color: (themeColors as ColorSet).text } : undefined}
                 >
                   {activity.name}

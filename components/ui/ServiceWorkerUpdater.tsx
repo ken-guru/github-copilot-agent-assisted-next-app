@@ -57,22 +57,20 @@ const ServiceWorkerUpdater: React.FC<ServiceWorkerUpdaterProps> = ({
   }, [onUpdate, onDismiss]);
 
   return (
-    <div  role="alert" data-testid="sw-update-notification">
-      <div >
-        <div >
+    <div role="alert" data-testid="sw-update-notification">
+      <div>
+        <div>
           <strong>Update Available</strong>
           <p>A new version of this application is available.</p>
         </div>
-        <div >
-          <button 
-            onClick={onUpdate}
+        <div>
+          <button onClick={onUpdate}
             
             data-testid="sw-update-button"
           >
             Update Now
           </button>
-          <button 
-            onClick={onDismiss}
+          <button onClick={onDismiss}
             
             data-testid="sw-dismiss-button"
           >

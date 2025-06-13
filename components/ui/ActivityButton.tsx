@@ -84,11 +84,6 @@ export function ActivityButton({
     }
   };
   
-  // Determine button states and styles based on activity state
-  const className = isCompleted
-    ? styles.completedActivityItem
-    : styles.activityItem;
-  
   // Get background and text colors from activity if available
   const style = activity.colors ? {
     backgroundColor: activity.colors.light?.background,
@@ -97,24 +92,23 @@ export function ActivityButton({
   } : undefined;
   
   return (
-    <div 
-      className={className}
+    <div
       style={style}
       onClick={onClick}
       data-testid={`activity-button-${activity.id}`}
     >
-      <div >
-        <span >
+      <div>
+        <span>
           {activity.name}
           
           {/* Show status badges */}
           {isActive && (
-            <span  ${styles.badgeCurrent}`} data-testid="current-badge">
+            <span data-testid="current-badge">
               Current
             </span>
           )}
           {isCompleted && (
-            <span  ${styles.badgeCompleted}`} data-testid="completed-badge">
+            <span data-testid="completed-badge">
               Done
             </span>
           )}
@@ -122,18 +116,16 @@ export function ActivityButton({
         
         {/* Show duration if available */}
         {(isCompleted || isActive) && timelineEntries.length > 0 && (
-          <span  data-testid="activity-duration">
+          <span data-testid="activity-duration">
             {getDuration()}
           </span>
         )}
       </div>
       
-      <div >
+      <div>
         {/* Delete button */}
         {!isActive && (
-          <button 
-             ${styles.deleteButton}`}
-            onClick={(e) => {
+          <button onClick={(e) => {
               e.stopPropagation();
               onRemove();
             }}

@@ -93,16 +93,14 @@ export default function ProgressBar({
 
   // Render progress bar
   const progressBar = (
-    <div 
-      role="progressbar"
+    <div role="progressbar"
       aria-valuenow={Math.round(progressPercentage)}
       aria-valuemin={0}
       aria-valuemax={100}
       aria-label="Progress towards total duration"
     >
       {isActive && (
-        <div 
-          style={{ 
+        <div style={{ 
             width: `${progressPercentage}%`,
             backgroundColor: calculateProgressColor()
           }}

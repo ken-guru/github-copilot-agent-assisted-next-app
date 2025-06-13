@@ -45,7 +45,7 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
 }) => {
   const renderTime = (time: string): React.ReactElement => {
     return (
-      <div >
+      <div>
         {time}
       </div>
     );
@@ -53,30 +53,29 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
 
   const renderDate = (date: string): React.ReactElement => {
     return (
-      <div >
+      <div>
         {date}
       </div>
     );
   };
 
   return (
-    <div >
-      <time 
-        dateTime={new Date().toISOString()}
+    <div>
+      <time dateTime={new Date().toISOString()}
         
       >
         {renderTime(formattedTime)}
         {renderDate(formattedDate)}
       </time>
       {(timeFormat || dateFormat) && (
-        <div >
+        <div>
           {timeFormat && (
-            <span >
+            <span>
               Format: {timeFormat}
             </span>
           )}
           {dateFormat && (
-            <span >
+            <span>
               Format: {dateFormat}
             </span>
           )}

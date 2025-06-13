@@ -167,8 +167,7 @@ const ServiceWorkerUpdater: React.FC = () => {
   debugLog('Rendering update notification');
   
   return (
-    <div 
-      data-testid="update-notification" 
+    <div data-testid="update-notification" 
       className="update-notification"
       style={{
         position: 'fixed',
@@ -186,8 +185,7 @@ const ServiceWorkerUpdater: React.FC = () => {
         Update available! Reload to apply the latest changes.
       </p>
       <div style={{ display: 'flex', gap: '10px' }}>
-        <button 
-          onClick={handleUpdate}
+        <button onClick={handleUpdate}
           data-testid="update-button"
           style={{
             backgroundColor: '#FFFFFF',
@@ -200,8 +198,7 @@ const ServiceWorkerUpdater: React.FC = () => {
         >
           Update Now
         </button>
-        <button 
-          onClick={handleDismiss}
+        <button onClick={handleDismiss}
           data-testid="dismiss-button"
           style={{
             backgroundColor: 'transparent',

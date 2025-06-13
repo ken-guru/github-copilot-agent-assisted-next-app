@@ -66,8 +66,7 @@ describe('ProgressBar Theme Compatibility', () => {
     thresholds.forEach(({ elapsed, total, percent, description }) => {
       it(`should render with accessible contrast in light theme at ${description}`, () => {
         const { container } = render(
-          <ProgressBar 
-            entries={mockEntries}
+          <ProgressBar entries={mockEntries}
             totalDuration={total}
             elapsedTime={elapsed}
             timerActive={true}
@@ -96,8 +95,7 @@ describe('ProgressBar Theme Compatibility', () => {
 
     it('should render inactive progress bar correctly in light theme', () => {
       const { container } = render(
-        <ProgressBar 
-          entries={mockEntries}
+        <ProgressBar entries={mockEntries}
           totalDuration={3600}
           elapsedTime={1800}
           timerActive={false}
@@ -124,8 +122,7 @@ describe('ProgressBar Theme Compatibility', () => {
     thresholds.forEach(({ elapsed, total, percent, description }) => {
       it(`should render with accessible contrast in dark theme at ${description}`, () => {
         const { container } = render(
-          <ProgressBar 
-            entries={mockEntries}
+          <ProgressBar entries={mockEntries}
             totalDuration={total}
             elapsedTime={elapsed}
             timerActive={true}
@@ -145,8 +142,7 @@ describe('ProgressBar Theme Compatibility', () => {
 
     it('should render inactive progress bar correctly in dark theme', () => {
       const { container } = render(
-        <ProgressBar 
-          entries={mockEntries}
+        <ProgressBar entries={mockEntries}
           totalDuration={3600}
           elapsedTime={1800}
           timerActive={false}
@@ -174,8 +170,7 @@ describe('ProgressBar Theme Compatibility', () => {
         const elapsedTime = Math.round((progress / 100) * 3600);
         
         const { container } = render(
-          <ProgressBar 
-            entries={mockEntries}
+          <ProgressBar entries={mockEntries}
             totalDuration={3600}
             elapsedTime={elapsedTime}
             timerActive={true}

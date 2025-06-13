@@ -20,11 +20,9 @@ export function UpdateNotification({ message, onDismiss }: UpdateNotificationPro
   if (!isVisible) return null;
 
   return (
-    <div  role="status" data-testid="update-notification">
-      <span  data-testid="update-notification-message">{message}</span>
-      <button 
-        
-        onClick={() => {
+    <div role="status" data-testid="update-notification">
+      <span data-testid="update-notification-message">{message}</span>
+      <button onClick={() => {
           setIsVisible(false);
           onDismiss();
         }}

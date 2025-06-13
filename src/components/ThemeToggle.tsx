@@ -77,8 +77,7 @@ export default function ThemeToggle() {
 
   return (
     <>
-      <button
-        onClick={() => handleThemeChange('light')}
+      <button onClick={() => handleThemeChange('light')}
         aria-label="Light theme"
         title="Light theme"
       >
@@ -94,8 +93,7 @@ export default function ThemeToggle() {
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
         </svg>
       </button>
-      <button
-        onClick={() => handleThemeChange('system')}
+      <button onClick={() => handleThemeChange('system')}
         aria-label="System theme"
         title="System theme"
       >
@@ -105,8 +103,7 @@ export default function ThemeToggle() {
           <line x1="12" y1="17" x2="12" y2="21"></line>
         </svg>
       </button>
-      <button
-        onClick={() => handleThemeChange('dark')}
+      <button onClick={() => handleThemeChange('dark')}
         aria-label="Dark theme"
         title="Dark theme"
       >

@@ -32,8 +32,8 @@ export function OfflineIndicator({}: OfflineIndicatorProps): React.ReactElement 
   }
 
   return (
-    <div  role="status" data-testid="offline-indicator">
-      <div >
+    <div role="status" data-testid="offline-indicator">
+      <div>
         You are offline
       </div>
     </div>
