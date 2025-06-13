@@ -111,22 +111,22 @@ export default function SplashScreen({
   const logoSrc = isDarkTheme() ? '/images/logo-dark.svg' : '/images/logo-light.svg';
   
   return (
-    <div className={`${styles.splashScreen} ${isFading ? styles.fading : ''}`}>
-      <div className={styles.logoContainer}>
+    <div  ${isFading ? styles.fading : ''}`}>
+      <div >
         <Image
           src={logoSrc}
           alt="Application Logo"
           width={250}
           height={250}
-          className={styles.logo}
+          
           priority
         />
-        <div className={styles.loadingIndicator}>
-          <div className={styles.loadingDot}></div>
-          <div className={styles.loadingDot}></div>
-          <div className={styles.loadingDot}></div>
+        <div >
+          <div ></div>
+          <div ></div>
+          <div ></div>
         </div>
-        <p className={styles.loadingText}>Loading...</p>
+        <p >Loading...</p>
       </div>
     </div>
   );

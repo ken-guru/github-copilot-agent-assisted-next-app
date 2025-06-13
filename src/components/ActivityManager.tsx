@@ -157,15 +157,15 @@ export default function ActivityManager({
   };
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.heading}>Activities</h2>
+    <div >
+      <h2 >Activities</h2>
       
       {activities.length === 0 ? (
-        <div className={styles.emptyState}>
+        <div >
           No activities defined
         </div>
       ) : (
-        <div className={styles.activityList}>
+        <div >
           <ActivityForm
             onAddActivity={handleAddActivity}
             isDisabled={isTimeUp}

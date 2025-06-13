@@ -103,18 +103,18 @@ export function ActivityButton({
       onClick={onClick}
       data-testid={`activity-button-${activity.id}`}
     >
-      <div className={styles.activityInfo}>
-        <span className={styles.activityName}>
+      <div >
+        <span >
           {activity.name}
           
           {/* Show status badges */}
           {isActive && (
-            <span className={`${styles.badge} ${styles.badgeCurrent}`} data-testid="current-badge">
+            <span  ${styles.badgeCurrent}`} data-testid="current-badge">
               Current
             </span>
           )}
           {isCompleted && (
-            <span className={`${styles.badge} ${styles.badgeCompleted}`} data-testid="completed-badge">
+            <span  ${styles.badgeCompleted}`} data-testid="completed-badge">
               Done
             </span>
           )}
@@ -122,17 +122,17 @@ export function ActivityButton({
         
         {/* Show duration if available */}
         {(isCompleted || isActive) && timelineEntries.length > 0 && (
-          <span className={styles.duration} data-testid="activity-duration">
+          <span  data-testid="activity-duration">
             {getDuration()}
           </span>
         )}
       </div>
       
-      <div className={styles.actions}>
+      <div >
         {/* Delete button */}
         {!isActive && (
           <button 
-            className={`${styles.button} ${styles.deleteButton}`}
+             ${styles.deleteButton}`}
             onClick={(e) => {
               e.stopPropagation();
               onRemove();

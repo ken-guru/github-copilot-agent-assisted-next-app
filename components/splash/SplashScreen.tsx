@@ -125,7 +125,7 @@ export const SplashScreen = ({
   
   return (
     <div 
-      className={styles.splashScreen} 
+       
       data-testid="splash-screen"
       role="status"
       aria-live="polite"
@@ -134,24 +134,24 @@ export const SplashScreen = ({
         backgroundColor: isDarkMode ? 'var(--bg-primary-dark, #121212)' : 'var(--bg-primary, #ffffff)'
       }}
     >
-      <div className={styles.logoContainer}>
+      <div >
         <Image
           src="/images/splash/splash-logo.webp"
           alt="Application logo"
           width={250}
           height={250}
           priority
-          className={styles.logo}
+          
         />
         
-        <div className={styles.loadingIndicator} data-testid="loading-indicator">
-          <div className={styles.loadingDot} style={{
+        <div  data-testid="loading-indicator">
+          <div  style={{
             backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
           }}></div>
-          <div className={styles.loadingDot} style={{
+          <div  style={{
             backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
           }}></div>
-          <div className={styles.loadingDot} style={{
+          <div  style={{
             backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
           }}></div>
         </div>

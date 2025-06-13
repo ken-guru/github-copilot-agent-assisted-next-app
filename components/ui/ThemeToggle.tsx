@@ -90,7 +90,7 @@ export default function ThemeToggle({}: ThemeToggleProps) {
 
   // Don't render anything until mounted to prevent hydration mismatch
   if (!mounted) {
-    return <div className={styles.placeholder} aria-hidden="true" />;
+    return <div  aria-hidden="true" />;
   }
 
   const themeOptions = [
@@ -100,13 +100,13 @@ export default function ThemeToggle({}: ThemeToggleProps) {
   ];
 
   return (
-    <div className={styles.container} role="group" aria-label="Theme selection">
-      <div className={styles.toggleGroup}>
+    <div  role="group" aria-label="Theme selection">
+      <div >
         {themeOptions.map((option) => (
           <button
             key={option.value}
             onClick={() => toggleTheme(option.value)}
-            className={`${styles.toggleButton} ${theme === option.value ? styles.active : ''}`}
+             ${theme === option.value ? styles.active : ''}`}
             aria-pressed={theme === option.value}
             aria-label={`${option.label} theme`}
             title={`${option.label} theme`}

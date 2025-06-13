@@ -283,38 +283,38 @@ export default function Summary({
   const activityTimes = calculateActivityTimes();
 
   return (
-    <div className={`${styles.container}`} data-testid="summary">
+    <div `} data-testid="summary">
       {status && (
-        <div className={`${styles.statusMessage} ${status.className}`}>
+        <div  ${status.className}`}>
           {status.message}
         </div>
       )}
       
-      <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Planned Time</div>
-          <div className={styles.statValue}>{formatDuration(totalDuration)}</div>
+      <div >
+        <div >
+          <div >Planned Time</div>
+          <div >{formatDuration(totalDuration)}</div>
         </div>
         
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Spent Time</div>
-          <div className={styles.statValue}>{formatDuration(elapsedTime)}</div>
+        <div >
+          <div >Spent Time</div>
+          <div >{formatDuration(elapsedTime)}</div>
         </div>
         
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Idle Time</div>
-          <div className={styles.statValue}>{formatDuration(stats.idleTime)}</div>
+        <div >
+          <div >Idle Time</div>
+          <div >{formatDuration(stats.idleTime)}</div>
         </div>
         
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Overtime</div>
-          <div className={styles.statValue}>{formatDuration(overtime)}</div>
+        <div >
+          <div >Overtime</div>
+          <div >{formatDuration(overtime)}</div>
         </div>
       </div>
 
       {activityTimes.length > 0 && (
-        <div className={styles.activityList}>
-          <h3 className={styles.activityListHeading}>Time Spent per Activity</h3>
+        <div >
+          <h3 >Time Spent per Activity</h3>
           {activityTimes.map((activity) => {
             // Get theme-appropriate colors
             const themeColors = activity.colors ? 
@@ -324,7 +324,7 @@ export default function Summary({
             return (
               <div 
                 key={activity.id}
-                className={styles.activityItem}
+                
                 data-testid={`activity-summary-item-${activity.id}`}
                 style={themeColors ? {
                   backgroundColor: themeColors.background,
@@ -332,13 +332,13 @@ export default function Summary({
                 } : undefined}
               >
                 <span 
-                  className={styles.activityName}
+                  
                   data-testid={`activity-name-${activity.id}`}
                   style={themeColors ? { color: themeColors.text } : undefined}
                 >
                   {activity.name}
                 </span>
-                <span className={styles.activityTime}>
+                <span >
                   {formatDuration(activity.duration)}
                 </span>
               </div>

@@ -134,7 +134,7 @@ function AppContent() {
   return (
     <>
       <SplashScreen minimumDisplayTime={500} />
-      <div className={`${styles.layout} ${styles.container}`}>
+      <div  ${styles.container}`}>
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}
@@ -145,15 +145,15 @@ function AppContent() {
           onCancel={dialogActions.onCancel}
         />
         
-        <div className={styles.wrapper}>
-          <header className={styles.header}>
-            <div className={styles.headerContent}>
-              <h1 className={styles.title}>Mr. Timely</h1>
+        <div >
+          <header >
+            <div >
+              <h1 >Mr. Timely</h1>
               <ThemeToggle />
-              <div className={styles.resetButtonContainer}>
+              <div >
                 {appState !== 'setup' && (
                   <button 
-                    className={styles.resetButton} 
+                     
                     onClick={handleReset}
                   >
                     Reset
@@ -166,7 +166,7 @@ function AppContent() {
           
           {/* Progress bar only rendered for activity state */}
           {timeSet && !allActivitiesCompleted && (
-            <div className={styles.progressContainer} data-testid="progress-container">
+            <div  data-testid="progress-container">
               <ProgressBar 
                 entries={processedEntries}
                 totalDuration={totalDuration}
@@ -177,13 +177,13 @@ function AppContent() {
           )}
           
           {appState === 'setup' && (
-            <div className={styles.setupGrid}>
+            <div >
               <TimeSetup onTimeSet={handleTimeSet} />
             </div>
           )}
           
           {appState === 'activity' && (
-            <div className={styles.activityGrid}>
+            <div >
               <div>
                 <ActivityManager 
                   onActivitySelect={handleActivitySelect} 
@@ -195,7 +195,7 @@ function AppContent() {
                   elapsedTime={elapsedTime}
                 />
               </div>
-              <div className={styles.timelineContainer}>
+              <div >
                 <Timeline 
                   entries={processedEntries}
                   totalDuration={totalDuration} 
@@ -209,8 +209,8 @@ function AppContent() {
           )}
           
           {appState === 'completed' && (
-            <div className={styles.completedGrid}>
-              <div className={styles.summaryContainer}>
+            <div >
+              <div >
                 <Summary 
                   entries={processedEntries}
                   totalDuration={totalDuration} 

@@ -24,19 +24,19 @@ export default function ActivityForm({
   };
   
   return (
-    <form className={styles.addActivityForm} onSubmit={handleSubmit}>
+    <form  onSubmit={handleSubmit}>
       <input
         type="text"
         value={activityName}
         onChange={(e) => setActivityName(e.target.value)}
         placeholder="Add new activity..."
-        className={styles.addActivityInput}
+        
         disabled={isDisabled}
         data-testid="activity-name-input"
       />
       <button
         type="submit"
-        className={styles.addButton}
+        
         disabled={!activityName.trim() || isDisabled}
         data-testid="add-activity-button"
       >

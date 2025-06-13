@@ -135,11 +135,11 @@ export default function ActivityManager({
   };
   
   return (
-    <div className={styles.activityManager}>
-      <h2 className={styles.title}>Activities</h2>
+    <div >
+      <h2 >Activities</h2>
       
       {/* Activity list */}
-      <div className={styles.activitiesList}>
+      <div >
         {activities.map((activity) => (
           <ActivityButton
             key={activity.id}
@@ -161,7 +161,7 @@ export default function ActivityManager({
         />
       ) : (
         <button 
-          className={styles.addButton}
+          
           onClick={() => setShowForm(true)}
           disabled={isTimeUp}
         >
@@ -171,14 +171,14 @@ export default function ActivityManager({
       
       {/* No activities message */}
       {activities.length === 0 && !showForm && (
-        <div className={styles.emptyState}>
+        <div >
           No activities yet. Add one to get started.
         </div>
       )}
       
       {/* Time up notification */}
       {isTimeUp && (
-        <div className={styles.timeupNotification}>
+        <div >
           Time&apos;s up! You can no longer modify activities.
         </div>
       )}
