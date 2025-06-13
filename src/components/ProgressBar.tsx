@@ -82,17 +82,17 @@ export default function ProgressBar({
     }
   };
 
-  // Render time markers component
-  const timeMarkersComponent = totalDuration > 0 && (
-    <div>
+  // Render time markers
+  const timeMarkers = totalDuration > 0 && (
+    <>
       <span>0:00</span>
       <span>{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
       <span>{formatTimeHuman(totalDuration * 1000)}</span>
-    </div>
+    </>
   );
 
-  // Render progress bar component
-  const progressBarComponent = (
+  // Render progress bar
+  const progressBar = (
     <div 
       role="progressbar"
       aria-valuenow={Math.round(progressPercentage)}
@@ -112,19 +112,18 @@ export default function ProgressBar({
   );
 
   return (
-    <div>
-      {/* Render in different order based on viewport */}
+    <>
       {isMobile ? (
         <>
-          {timeMarkersComponent}
-          {progressBarComponent}
+          {timeMarkers}
+          {progressBar}
         </>
       ) : (
         <>
-          {progressBarComponent}
-          {timeMarkersComponent}
+          {progressBar}
+          {timeMarkers}
         </>
       )}
-    </div>
+    </>
   );
 }
