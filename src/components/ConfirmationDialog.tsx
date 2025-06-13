@@ -37,17 +37,13 @@ const ConfirmationDialog = forwardRef<ConfirmationDialogRef, ConfirmationDialogP
 
     return (
       <dialog ref={dialogRef}>
-        <div>
-          <p>{message}</p>
-          <div>
-            <button onClick={handleConfirm}>
-              {confirmText}
-            </button>
-            <button onClick={handleCancel}>
-              {cancelText}
-            </button>
-          </div>
-        </div>
+        <p>{message}</p>
+        <button onClick={handleConfirm}>
+          {confirmText}
+        </button>
+        <button onClick={handleCancel}>
+          {cancelText}
+        </button>
       </dialog>
     );
   }
