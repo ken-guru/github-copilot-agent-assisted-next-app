@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styles from './ThemeToggle.module.css';
 import { validateThemeColors } from '../utils/colors';
 
 export default function ThemeToggle() {
@@ -74,13 +73,12 @@ export default function ThemeToggle() {
   };
 
   // Only render the toggle once mounted to avoid hydration mismatch
-  if (!mounted) return <div className={styles.placeholder} />;
+  if (!mounted) return <div />;
 
   return (
-    <div className={styles.container} role="group" aria-label="Theme selection">
-      <div className={styles.toggleGroup}>
+    <div role="group" aria-label="Theme selection">
+      <div>
         <button
-          className={`${styles.toggleButton} ${theme === 'light' ? styles.active : ''}`}
           onClick={() => handleThemeChange('light')}
           aria-label="Light theme"
           title="Light theme"
@@ -98,7 +96,6 @@ export default function ThemeToggle() {
           </svg>
         </button>
         <button
-          className={`${styles.toggleButton} ${theme === 'system' ? styles.active : ''}`}
           onClick={() => handleThemeChange('system')}
           aria-label="System theme"
           title="System theme"
@@ -110,7 +107,6 @@ export default function ThemeToggle() {
           </svg>
         </button>
         <button
-          className={`${styles.toggleButton} ${theme === 'dark' ? styles.active : ''}`}
           onClick={() => handleThemeChange('dark')}
           aria-label="Dark theme"
           title="Dark theme"
