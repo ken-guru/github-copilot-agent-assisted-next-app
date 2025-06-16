@@ -1,0 +1,266 @@
+/* OfflineIndicator.module.css - Mobile-first, Accessible Design System Implementation */
+
+/* Main offline indicator container */
+.offlineIndicator {
+  /* Fixed positioning for visibility */
+  position: fixed;
+  top: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-index-modal);
+  
+  /* Sizing and constraints */
+  max-width: 320px;
+  width: calc(100vw - var(--space-8));
+  
+  /* Visual styling */
+  background: var(--color-semantic-warning);
+  color: var(--color-semantic-warning-text);
+  border: 1px solid var(--color-semantic-warning);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  
+  /* Animation for entrance */
+  animation: slideDown var(--transition-slow) var(--ease-out) forwards;
+  
+  /* Remove from document flow impacts */
+  pointer-events: auto;
+}
+
+/* Dark theme adjustments */
+.dark .offlineIndicator {
+  box-shadow: var(--shadow-dark-lg);
+}
+
+/* Content container for padding and layout */
+.offlineContent {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  
+  /* Spacing */
+  padding: var(--space-4) var(--space-6);
+  
+  /* Typography */
+  font-size: var(--text-scale-base);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  text-align: center;
+  
+  /* Ensure proper contrast */
+  color: var(--color-semantic-warning-text);
+}
+
+/* Icon for offline status */
+.offlineIcon {
+  /* Sizing */
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  
+  /* Visual styling */
+  fill: currentColor;
+  opacity: 0.9;
+}
+
+/* Alternative icon using CSS only */
+.offlineIcon::before {
+  content: '⚠️';
+  font-size: 18px;
+  display: block;
+  text-align: center;
+  line-height: 1;
+}
+
+/* Text content styling */
+.offlineText {
+  /* Typography */
+  font-size: var(--text-scale-base);
+  font-weight: var(--font-weight-medium);
+  color: inherit;
+  margin: 0;
+  
+  /* Responsive text sizing */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 400px) {
+  .offlineText {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: initial;
+  }
+}
+
+/* Enhanced contrast for high contrast mode */
+@media (prefers-contrast: high) {
+  .offlineIndicator {
+    border-width: 2px;
+    font-weight: var(--font-weight-bold);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Animation keyframes */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Slide up animation for dismissal */
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+}
+
+/* Dismissing state */
+.offlineIndicator.dismissing {
+  animation: slideUp var(--transition-base) var(--ease-in) forwards;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .offlineIndicator {
+    animation: none;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  
+  .offlineIndicator.dismissing {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .offlineIndicator {
+    top: var(--space-2);
+    max-width: calc(100vw - var(--space-4));
+    width: calc(100vw - var(--space-4));
+  }
+  
+  .offlineContent {
+    padding: var(--space-3) var(--space-4);
+    gap: var(--space-2);
+  }
+  
+  .offlineText {
+    font-size: var(--text-scale-sm);
+  }
+  
+  .offlineIcon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .offlineIcon::before {
+    font-size: 16px;
+  }
+}
+
+/* Medium screens */
+@media (min-width: 768px) {
+  .offlineIndicator {
+    max-width: 400px;
+    top: var(--space-6);
+  }
+  
+  .offlineContent {
+    padding: var(--space-5) var(--space-8);
+  }
+  
+  .offlineText {
+    font-size: var(--text-scale-lg);
+  }
+  
+  .offlineIcon {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .offlineIcon::before {
+    font-size: 20px;
+  }
+}
+
+/* Print styles - hide offline indicator */
+@media print {
+  .offlineIndicator {
+    display: none;
+  }
+}
+
+/* Screen reader optimizations */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Alternative styling variants for different contexts */
+.offlineIndicator.subtle {
+  background: var(--color-semantic-warning-subtle);
+  color: var(--color-semantic-warning-text);
+  border-color: var(--color-semantic-warning);
+  box-shadow: var(--shadow-sm);
+}
+
+.offlineIndicator.prominent {
+  background: var(--color-semantic-danger);
+  color: var(--color-semantic-danger-text);
+  border-color: var(--color-semantic-danger);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Focus management for accessibility */
+.offlineIndicator:focus-within {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Hover state for interactive variants */
+@media (hover: hover) {
+  .offlineIndicator.interactive:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: var(--shadow-xl);
+    transition: transform var(--transition-base) var(--ease-out),
+                box-shadow var(--transition-base) var(--ease-out);
+  }
+}
+
+/* Dark theme variants for different styling contexts */
+.dark .offlineIndicator.subtle {
+  background: var(--color-semantic-warning-subtle);
+  box-shadow: var(--shadow-dark-sm);
+}
+
+.dark .offlineIndicator.prominent {
+  box-shadow: var(--shadow-dark-xl);
+}
+
+.dark .offlineIndicator.interactive:hover {
+  box-shadow: var(--shadow-dark-xl);
+}
