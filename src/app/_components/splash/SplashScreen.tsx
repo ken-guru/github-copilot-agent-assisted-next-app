@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useLoading } from '@contexts/loading';
+import styles from './SplashScreen.module.css';
 
 interface SplashScreenProps {
   minimumDisplayTime?: number;
@@ -62,6 +63,7 @@ export default function SplashScreen({
   const { isLoading, setIsLoading } = useLoading();
   const [shouldRender, setShouldRender] = useState(true);
   const [scriptIncluded, setScriptIncluded] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
   
   // Load timestamp when component mounts
   const [startTime] = useState<number>(Date.now());
@@ -74,6 +76,7 @@ export default function SplashScreen({
       
       // Start fade out animation after minimum display time
       setTimeout(() => {
+        setIsExiting(true);
         // Remove from DOM after animation completes
         setTimeout(() => {
           setShouldRender(false);
@@ -108,21 +111,46 @@ export default function SplashScreen({
   const logoSrc = isDarkTheme() ? '/images/logo-dark.svg' : '/images/logo-light.svg';
   
   return (
-    <div>
-      <div>
-        <Image src={logoSrc}
-          alt="Application Logo"
-          width={250}
-          height={250}
-          
-          priority
-        />
-        <div>
-          <div></div>
-          <div></div>
-          <div></div>
+    <div 
+      className={`${styles.splashContainer} ${isExiting ? styles.fadeOut : ''}`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="splash-title"
+      aria-describedby="splash-description"
+    >
+      <div className={styles.splashContent}>
+        <div className={styles.logoContainer}>
+          <Image 
+            src={logoSrc}
+            alt="Application Logo"
+            width={250}
+            height={250}
+            className={styles.logoImage}
+            priority
+          />
         </div>
-        <p>Loading...</p>
+        
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingDots} aria-hidden="true">
+            <div className={styles.loadingDot}></div>
+            <div className={styles.loadingDot}></div>
+            <div className={styles.loadingDot}></div>
+          </div>
+          <p 
+            id="splash-description" 
+            className={styles.loadingText}
+          >
+            Loading...
+          </p>
+        </div>
+        
+        {/* Screen reader content */}
+        <h1 id="splash-title" className={styles.visuallyHidden}>
+          Application Loading Screen
+        </h1>
+        <div className={styles.visuallyHidden} aria-live="polite" aria-atomic="true">
+          {isLoading ? 'Application is loading, please wait.' : 'Loading complete.'}
+        </div>
       </div>
     </div>
   );

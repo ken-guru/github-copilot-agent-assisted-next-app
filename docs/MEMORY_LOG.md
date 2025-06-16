@@ -244,6 +244,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-001: CodeQL Configuration Path Mismatch](./logged_memories/MRTMLY-001-codeql-configuration-mismatch.md) - Fixed code scanning configuration issue with custom queries path
 - [MRTMLY-029: CSS and HTML Structure Removal Experiment Completion](./logged_memories/MRTMLY-029-css-html-structure-removal-experiment-completion.md)
 - [MRTMLY-032: Summary Component Design System Integration](./logged_memories/MRTMLY-032-summary-component-design-system-integration.md)
+- [MRTMLY-033: SplashScreen Component Design System Integration](./logged_memories/MRTMLY-033-splashscreen-component-design-system-integration.md)
 
 ## About Memory Logs
 

@@ -1,0 +1,308 @@
+/* SplashScreen.module.css - Mobile-first, Accessible Design System Implementation */
+
+/* Main splash screen container - Full screen overlay */
+.splashContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-index-modal);
+  
+  /* Background with subtle pattern/texture */
+  background: linear-gradient(135deg, 
+    var(--color-primary-50) 0%, 
+    var(--color-primary-100) 100%);
+  
+  /* Smooth fade-out transition */
+  opacity: 1;
+  transition: opacity var(--transition-slower) var(--ease-out);
+  
+  /* Ensure consistent rendering */
+  overflow: hidden;
+  
+  /* Center content */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  /* Typography base */
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
+}
+
+/* Dark theme adjustments */
+.dark .splashContainer {
+  background: linear-gradient(135deg, 
+    var(--color-primary-900) 0%, 
+    var(--color-primary-800) 100%);
+}
+
+/* Content wrapper for logo and loading elements */
+.splashContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  
+  /* Responsive width constraints */
+  max-width: 280px;
+  width: 100%;
+  padding: var(--space-6);
+  
+  /* Subtle animation for entrance */
+  animation: splashContentFadeIn var(--transition-slow) var(--ease-out) forwards;
+}
+
+@media (min-width: 640px) {
+  .splashContent {
+    max-width: 320px;
+    gap: var(--space-8);
+  }
+}
+
+@media (min-width: 768px) {
+  .splashContent {
+    max-width: 360px;
+    gap: var(--space-10);
+  }
+}
+
+/* Logo image container with accessibility and responsive sizing */
+.logoContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Responsive logo sizing */
+  width: 200px;
+  height: 200px;
+  
+  /* Subtle shadow for depth */
+  filter: drop-shadow(var(--shadow-lg));
+  
+  /* Smooth scale animation on load */
+  animation: logoScale var(--transition-slow) var(--ease-out) forwards;
+}
+
+@media (min-width: 640px) {
+  .logoContainer {
+    width: 240px;
+    height: 240px;
+  }
+}
+
+@media (min-width: 768px) {
+  .logoContainer {
+    width: 280px;
+    height: 280px;
+  }
+}
+
+/* Dark theme logo adjustments */
+.dark .logoContainer {
+  filter: drop-shadow(var(--shadow-dark-lg));
+}
+
+/* Logo image styling */
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  
+  /* Accessibility: ensure proper contrast */
+  image-rendering: crisp-edges;
+  
+  /* Smooth transition for theme changes */
+  transition: opacity var(--transition-base) var(--ease-in-out);
+}
+
+/* Loading animation container */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  
+  /* Animation timing */
+  animation: loadingFadeIn var(--transition-base) var(--ease-out) var(--transition-base) forwards;
+  opacity: 0;
+}
+
+/* Loading dots animation */
+.loadingDots {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  
+  /* Accessibility: Reduce motion if preferred */
+  animation: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .loadingDots {
+    animation: pulse var(--transition-slower) var(--ease-in-out) infinite;
+  }
+}
+
+/* Individual loading dot */
+.loadingDot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary-500);
+  border-radius: var(--radius-full);
+  
+  /* Accessible timing for animation */
+  animation: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .loadingDot:nth-child(1) {
+    animation: dotPulse 1.5s var(--ease-in-out) infinite;
+    animation-delay: 0s;
+  }
+  
+  .loadingDot:nth-child(2) {
+    animation: dotPulse 1.5s var(--ease-in-out) infinite;
+    animation-delay: 0.2s;
+  }
+  
+  .loadingDot:nth-child(3) {
+    animation: dotPulse 1.5s var(--ease-in-out) infinite;
+    animation-delay: 0.4s;
+  }
+}
+
+/* Dark theme loading dots */
+.dark .loadingDot {
+  background-color: var(--color-primary-400);
+}
+
+/* Loading text */
+.loadingText {
+  font-size: var(--text-scale-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  
+  /* Center text */
+  text-align: center;
+  
+  /* Responsive font sizing */
+  line-height: var(--line-height-normal);
+  letter-spacing: 0.025em;
+}
+
+@media (min-width: 640px) {
+  .loadingText {
+    font-size: var(--text-scale-lg);
+  }
+}
+
+/* Dark theme loading text */
+.dark .loadingText {
+  color: var(--color-text-secondary);
+}
+
+/* Animation keyframes */
+@keyframes splashContentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-4));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes logoScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes loadingFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-2));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+@keyframes dotPulse {
+  0%, 80%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Fade-out state for component unmounting */
+.splashContainer.fadeOut {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .splashContainer {
+    background: var(--color-surface-primary);
+    border: 2px solid var(--color-border-primary);
+  }
+  
+  .loadingDot {
+    background-color: var(--color-text-primary);
+    border: 1px solid var(--color-border-primary);
+  }
+  
+  .loadingText {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+/* Print media - hide splash screen */
+@media print {
+  .splashContainer {
+    display: none;
+  }
+}
+
+/* Screen reader optimizations */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
