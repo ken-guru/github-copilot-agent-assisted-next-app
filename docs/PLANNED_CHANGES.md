@@ -1216,42 +1216,78 @@ We have:
 
 **Priority: HIGHEST** - **Status: NEEDS COMPLETION**
 
-#### Core User Journey Analysis
-Before writing Cypress tests, we need to identify and document the fundamental user stories that represent the application's intended functionality.
+#### Current Cypress Test Suite Analysis
 
-##### Primary User Stories to Define:
-1. **First-Time User Setup Flow**
-   - User visits application for the first time
-   - User sets up their first activity and time allocation
-   - User starts their first activity session
+**✅ ASSESSMENT COMPLETE**: Current test status analyzed
 
-2. **Core Activity Management Flow**
-   - User creates a new activity
-   - User modifies activity details
-   - User starts/pauses/stops activities
-   - User views activity progress and timeline
+##### Test Removal & Refactoring Results:
 
-3. **Time Tracking & Display Flow**
-   - User tracks time during active sessions
-   - User views real-time progress updates
-   - User sees accurate time calculations and displays
+**1. ❌ REMOVED: `basic.cy.ts`**
+- **Reason**: Tested basic page loading, title, and navigation - inappropriate for Cypress
+- **Better suited for**: Unit/integration tests
+- **Result**: File completely removed
 
-4. **Application State Management Flow**
-   - User navigates between different application states
-   - User data persists across page refreshes
-   - User sees appropriate UI states (setup, active, completed)
+**2. ⚠️ REFACTORED: `activity-state-transitions.cy.ts` → `User Activity Management Workflows`**
+- **Previous issues**: 
+  - Hardcoded activity names ("Homework", "Reading", "Play Time", "Chores")
+  - Tested business logic instead of user journeys
+  - Complex state transitions better suited for unit tests
+- **New approach**: 
+  - **Complete User Journey**: Time setup → activity management → summary
+  - **Activity Management Workflows**: Sequential activities, custom activities, removal
+  - **Data Persistence**: Cross-refresh behavior validation
+  - **Responsive Experience**: Mobile vs desktop viewport testing
+- **Status**: Tests restructured but need technical fixes for DOM detachment issues
 
-5. **Theme & Accessibility Flow**
-   - User toggles between light/dark themes
-   - User navigates with keyboard only
-   - User accesses all functionality with screen reader
+**3. ✅ KEPT: `service-worker.cy.ts`**
+- **Reason**: Appropriate for Cypress (PWA functionality, cross-browser service worker behavior)
+- **Status**: All 5 tests passing
+- **Coverage**: SW registration, offline state, update notifications, update handling
 
-#### User Story Documentation Process:
-1. **Story Mapping**: Map out the complete user journey
-2. **Acceptance Criteria**: Define clear success criteria for each story
-3. **Edge Cases**: Identify boundary conditions and error scenarios
-4. **Accessibility Requirements**: Ensure WCAG 2.2 AA compliance testing
-5. **Performance Criteria**: Define acceptable response times
+##### Current Test Results:
+- **service-worker.cy.ts**: ✅ 5/5 tests passing
+- **activity-state-transitions.cy.ts**: ❌ 0/8 tests passing (DOM detachment issues need fixing)
+
+##### Key Insights Discovered:
+
+**✅ Appropriate Cypress Tests (Keep & Enhance):**
+- Service worker registration and lifecycle
+- Offline/online state transitions  
+- PWA update notifications
+- Cross-browser compatibility scenarios
+- Complex user interaction flows
+
+**❌ Inappropriate for Cypress (Move to Unit Tests):**
+- Basic page loading and DOM presence
+- Business logic and state transitions
+- Component rendering validation
+- Form validation logic
+- Simple UI element existence
+
+**🎯 Missing User Journey Tests (Need Implementation):**
+- **End-to-end user workflows**: Complete task from start to finish
+- **Data persistence scenarios**: Refresh during activities, browser restart
+- **Error handling workflows**: Network failures, invalid inputs
+- **Accessibility navigation**: Keyboard-only task completion
+- **Cross-device responsive behavior**: Mobile vs desktop user experience
+
+#### Recommended Next Steps:
+
+**Phase 3.2A: Fix Current Test Issues** ✅ **IN PROGRESS**
+- Fix DOM detachment issues in user workflow tests
+- Implement proper Cypress patterns for React component interactions
+- Ensure tests represent true user journeys
+
+**Phase 3.2B: Complete Service Worker Test Enhancement**
+- Add comprehensive PWA functionality testing
+- Test cache validation and offline functionality
+- Expand update flow testing
+
+**Phase 3.2C: Implement Missing Critical Tests**
+- Real user journey validation (setup → work → completion)
+- Data persistence across page refreshes
+- Responsive design user experience validation
+- Error recovery and edge case handling
 
 ### Phase 3.2: Cypress Test Suite Development 🧪
 
