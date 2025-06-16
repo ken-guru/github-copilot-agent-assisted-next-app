@@ -60,17 +60,15 @@ describe('TimeDisplay Component', () => {
   
   // Replace any with proper type
   const testOrderOfElements = (container: HTMLElement): void => {
-    // Test implementation for element order
-    const timeElement = container.querySelector('.time-display__time');
-    const dateElement = container.querySelector('.time-display__date');
+    // Test implementation for element order using text content
+    const timeText = screen.getByText(testFormattedTime);
+    const dateText = screen.getByText(testFormattedDate);
     
-    expect(timeElement).toBeInTheDocument();
-    expect(dateElement).toBeInTheDocument();
+    expect(timeText).toBeInTheDocument();
+    expect(dateText).toBeInTheDocument();
     
-    if (timeElement && dateElement) {
-      // Verify time appears before date in the DOM
-      expect(timeElement.compareDocumentPosition(dateElement) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    }
+    // Verify time appears before date in the DOM
+    expect(timeText.compareDocumentPosition(dateText) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   };
   
   test('displays time before date', () => {

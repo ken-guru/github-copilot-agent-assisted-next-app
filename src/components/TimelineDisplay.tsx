@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './TimelineDisplay.module.css';
 
 interface Event {
   id: string;
@@ -16,7 +17,8 @@ interface TimelineDisplayProps {
 /**
  * TimelineDisplay Component
  * 
- * Displays a list of events in chronological order
+ * Displays a list of events in chronological order with accessible design
+ * Features: semantic HTML, keyboard navigation, responsive design, timeline visualization
  */
 const TimelineDisplay: React.FC<TimelineDisplayProps> = ({ 
   events, 
@@ -25,7 +27,16 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({
 }) => {
   // Handle empty events array
   if (events.length === 0) {
-    return <div data-testid="empty-timeline">No events to display</div>;
+    return (
+      <div 
+        className={styles.emptyState}
+        data-testid="empty-timeline"
+        role="status"
+        aria-live="polite"
+      >
+        No events to display
+      </div>
+    );
   }
 
   // Sort events based on displayOrder
@@ -35,21 +46,52 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({
   });
 
   return (
-    <div className="timeline-display">
-      {sortedEvents.map((event) => (
-        <div key={event.id} data-testid="timeline-event" className="timeline-event">
-          <h3>{event.title}</h3>
-          <div className="timeline-date">
+    <section 
+      className={styles.timelineDisplay}
+      role="region" 
+      aria-label={`Timeline with ${sortedEvents.length} events in ${displayOrder}ending order`}
+    >
+      {sortedEvents.map((event, index) => (
+        <article 
+          key={event.id} 
+          data-testid="timeline-event" 
+          className={styles.timelineEvent}
+          role="article"
+          aria-labelledby={`event-title-${event.id}`}
+          aria-describedby={showDescriptions ? `event-desc-${event.id}` : `event-date-${event.id}`}
+          tabIndex={0}
+        >
+          <h3 
+            id={`event-title-${event.id}`}
+            className={styles.eventTitle}
+          >
+            {event.title}
+          </h3>
+          <time 
+            className={styles.eventDate}
+            id={`event-date-${event.id}`}
+            dateTime={event.date.toISOString()}
+            aria-label={`Event date: ${event.date.toLocaleDateString('en-US', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}`}
+          >
             {event.date.toLocaleDateString()}
-          </div>
+          </time>
           {showDescriptions && (
-            <div className="timeline-description">
+            <div 
+              className={styles.eventDescription}
+              id={`event-desc-${event.id}`}
+              role="text"
+            >
               {event.description}
             </div>
           )}
-        </div>
+        </article>
       ))}
-    </div>
+    </section>
   );
 };
 

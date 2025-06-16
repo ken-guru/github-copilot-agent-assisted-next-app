@@ -248,6 +248,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-034: ActivityForm Component Design System Integration](./logged_memories/MRTMLY-034-activityform-component-design-system-integration.md)
 - [MRTMLY-035: ThemeToggle Component Design System Integration](logged_memories/MRTMLY-035-themetoggle-component-design-system-integration.md) - *(2024-12-28)*
 - [MRTMLY-036: ConfirmationDialog Component Design System Integration](logged_memories/MRTMLY-036-confirmationdialog-component-design-system-integration.md) - *(2024-12-28)*
+- [MRTMLY-037: TimelineDisplay Component Design System Integration](logged_memories/MRTMLY-037-timelinedisplay-component-design-system-integration.md) - *(2025-06-16)*
 
 ## About Memory Logs
 
