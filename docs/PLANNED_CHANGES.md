@@ -417,8 +417,8 @@ Build a comprehensive, accessible design system from the ground up using the ins
 5. **✅ Timeline** - COMPLETED (Data visualization component styling)
    - ✅ Created `Timeline.module.css` with comprehensive design system integration  
    - ✅ Implemented responsive timeline layout with proper semantic HTML structure
-   - ✅ Added accessibility features (ARIA labels, semantic list structure, proper headings)
-   - ✅ Enhanced color system with warning semantic tokens and dark theme variants
+   - ✅ Added accessibility features (ARIA labels, semantic list structure, proper headings)  
+   - ✅ Enhanced color system with warning semantic tokens and dark theme support
    - ✅ Added responsive timeline entry layout with hover states and visual indicators
    - ✅ All Timeline tests pass with new structure
    - ✅ All 74/74 test suites passing (100% success rate)
@@ -436,12 +436,21 @@ Build a comprehensive, accessible design system from the ground up using the ins
 
 7. **✅ SplashScreen** - COMPLETED
    - ✅ Created SplashScreen component CSS module with full design system integration
-   - ✅ Implemented full-screen modal overlay with gradient background and proper z-index
-   - ✅ Added responsive logo sizing and smooth entrance/exit animations
-   - ✅ Enhanced accessibility (ARIA roles, screen reader support, high contrast mode)
-   - ✅ Added motion preferences support (prefers-reduced-motion) for inclusive design
-   - ✅ Enhanced color system with complete primary color palette (300, 400, 800, 900)
+   - ✅ Implemented full-screen modal overlay with gradient background and responsive design
+   - ✅ Added smooth animations with accessibility (prefers-reduced-motion) support
+   - ✅ Enhanced accessibility with ARIA roles, screen reader support, and high contrast mode
+   - ✅ Added complete primary color palette (300, 400, 800, 900) to design tokens
    - ✅ All SplashScreen tests pass with new structure
+   - ✅ All 74/74 test suites passing (100% success rate)
+   - ✅ All 466/466 tests passing (100% success rate)
+
+8. **ThemeToggle** - COMPLETED
+   - ✅ Created `ThemeToggle.tsx` component with design system integration
+   - ✅ Implemented toggle switch for light/dark mode
+   - ✅ Added responsive design with proper touch targets
+   - ✅ Integrated with design token system for color and spacing
+   - ✅ Ensured accessibility compliance (ARIA attributes, keyboard navigation)
+   - ✅ All ThemeToggle tests pass
    - ✅ All 74/74 test suites passing (100% success rate)
    - ✅ All 466/466 tests passing (100% success rate)
 
@@ -516,6 +525,7 @@ Build a comprehensive, accessible design system from the ground up using the ins
 5. ✅ **COMPLETED**: Timeline component styling with data visualization and responsive design
 6. ✅ **COMPLETED**: Summary component styling for results display and data visualization
 7. ✅ **COMPLETED**: SplashScreen component styling for app initialization
+8. ✅ **COMPLETED**: ThemeToggle component styling for light/dark mode switching
 
 **Acceptance Criteria:**
 - ✅ All 74 test suites pass (100% success rate achieved)
@@ -1092,3 +1102,42 @@ The application transitions between three core states based on user progress:
 5. **Enhancements** (Low): Animations, advanced responsive features
 
 This layout structure provides the foundation for implementing the design system while maintaining optimal user experience across all device sizes and application states.
+
+## PENDING COMPONENTS - DESIGN SYSTEM ROLLOUT
+
+### Priority 1: Essential Interactive Components
+
+### ~~7. ThemeToggle~~ ✅ **COMPLETED**
+~~- **File:** `/components/ui/ThemeToggle.tsx`~~
+~~- **Priority:** High - User theme switching~~  
+~~- **Complexity:** Medium - Toggle group with state management~~
+
+1. **ConfirmationDialog** 
+   - **File:** `/components/ui/ConfirmationDialog.tsx`
+   - **Priority:** High - User confirmation interactions
+   - **Complexity:** Medium - Modal overlay with button styling
+
+2. **TimeDisplay**
+   - **File:** `/components/TimeDisplay.tsx` 
+   - **Priority:** High - Core time formatting display
+   - **Complexity:** Low - Text display component
+
+3. **TimelineDisplay**
+   - **File:** `/components/TimelineDisplay.tsx`
+   - **Priority:** Medium - Timeline visualization
+   - **Complexity:** Medium - List display with formatting
+
+4. **UpdateNotification**
+   - **File:** `/components/UpdateNotification.tsx`
+   - **Priority:** Medium - Service worker updates
+   - **Complexity:** Low - Simple notification styling
+
+5. **ServiceWorkerUpdater**
+   - **File:** `/components/ServiceWorkerUpdater.tsx`
+   - **Priority:** Medium - Background update handling
+   - **Complexity:** Medium - Update UI and state management
+
+6. **LayoutClient**
+   - **File:** `/src/app/components/LayoutClient.tsx`
+   - **Priority:** Low - Layout wrapper component
+   - **Complexity:** Low - Container styling

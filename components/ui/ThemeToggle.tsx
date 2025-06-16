@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { validateThemeColors } from '@lib/utils/colors';  // Updated import path
+import styles from './ThemeToggle.module.css';
 
 /**
  * Props for the ThemeToggle component
@@ -100,16 +101,24 @@ export default function ThemeToggle({}: ThemeToggleProps) {
   ];
 
   return (
-    <div role="group" aria-label="Theme selection">
-      <div>
+    <div 
+      className={styles.themeToggle}
+      role="group" 
+      aria-label="Theme selection"
+    >
+      <div className={styles.buttonContainer}>
         {themeOptions.map((option) => (
-          <button key={option.value}
+          <button 
+            key={option.value}
+            className={styles.themeButton}
             onClick={() => toggleTheme(option.value)}
             aria-pressed={theme === option.value}
             aria-label={`${option.label} theme`}
             title={`${option.label} theme`}
           >
-            <span aria-hidden="true">{option.icon}</span>
+            <span className={styles.themeIcon} aria-hidden="true">
+              {option.icon}
+            </span>
           </button>
         ))}
       </div>

@@ -1,0 +1,303 @@
+/* ThemeToggle.module.css - Mobile-first, Accessible Design System Implementation */
+
+/* Main theme toggle container */
+.themeToggle {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  
+  /* Visual styling */
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-full);
+  padding: var(--space-1);
+  
+  /* Visual depth */
+  box-shadow: var(--shadow-sm);
+  
+  /* Smooth transitions */
+  transition: all var(--transition-base) var(--ease-in-out);
+  
+  /* Spacing */
+  gap: var(--space-1);
+}
+
+/* Dark theme adjustments */
+.dark .themeToggle {
+  box-shadow: var(--shadow-dark-sm);
+}
+
+/* Hover state for the container */
+@media (hover: hover) {
+  .themeToggle:hover {
+    background: var(--color-surface-primary);
+    border-color: var(--color-border-interactive);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .dark .themeToggle:hover {
+    box-shadow: var(--shadow-dark-md);
+  }
+}
+
+/* Button container for layout */
+.buttonContainer {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+/* Individual theme toggle button */
+.themeButton {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Sizing */
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  
+  /* Remove default button styles */
+  border: none;
+  background: transparent;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Typography */
+  font-size: 18px;
+  line-height: 1;
+  
+  /* Visual styling */
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-full);
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: all var(--transition-base) var(--ease-in-out);
+  
+  /* Ensure icons are centered */
+  text-align: center;
+}
+
+/* Active/pressed state */
+.themeButton[aria-pressed="true"] {
+  background: var(--color-interactive-primary);
+  color: var(--color-interactive-primary-text);
+  box-shadow: var(--shadow-sm);
+  transform: scale(0.95);
+}
+
+/* Dark theme active state */
+.dark .themeButton[aria-pressed="true"] {
+  box-shadow: var(--shadow-dark-sm);
+}
+
+/* Hover state for individual buttons */
+@media (hover: hover) {
+  .themeButton:hover:not([aria-pressed="true"]) {
+    background: var(--color-surface-tertiary);
+    color: var(--color-text-primary);
+    transform: scale(1.05);
+  }
+}
+
+/* Focus state */
+.themeButton:focus {
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+  z-index: 1;
+  position: relative;
+}
+
+/* Active state (click) */
+.themeButton:active {
+  transform: scale(0.9);
+}
+
+/* Disabled state */
+.themeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.themeButton:disabled:hover {
+  background: transparent;
+  color: var(--color-text-secondary);
+  transform: none;
+}
+
+/* Icon styling within buttons */
+.themeIcon {
+  display: block;
+  font-size: 16px;
+  line-height: 1;
+  
+  /* Ensure consistent icon rendering */
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .themeButton {
+    min-width: 40px;
+    min-height: 40px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .themeIcon {
+    font-size: 14px;
+  }
+}
+
+/* Large screens */
+@media (min-width: 768px) {
+  .themeButton {
+    min-width: 48px;
+    min-height: 48px;
+    width: 48px;
+    height: 48px;
+  }
+  
+  .themeIcon {
+    font-size: 20px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .themeToggle {
+    border-width: 2px;
+    box-shadow: none;
+  }
+  
+  .themeButton {
+    border: 1px solid var(--color-border-primary);
+  }
+  
+  .themeButton[aria-pressed="true"] {
+    border-color: var(--color-interactive-primary);
+    border-width: 2px;
+  }
+  
+  .themeButton:focus {
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .themeToggle,
+  .themeButton {
+    transition: none;
+  }
+  
+  .themeButton:hover,
+  .themeButton:active,
+  .themeButton[aria-pressed="true"] {
+    transform: none;
+  }
+}
+
+/* Print styles - simplify for print */
+@media print {
+  .themeToggle {
+    display: none;
+  }
+}
+
+/* Alternative compact layout for tight spaces */
+.themeToggle.compact {
+  padding: 2px;
+  gap: 1px;
+}
+
+.themeToggle.compact .themeButton {
+  min-width: 36px;
+  min-height: 36px;
+  width: 36px;
+  height: 36px;
+}
+
+.themeToggle.compact .themeIcon {
+  font-size: 14px;
+}
+
+/* Alternative vertical layout */
+.themeToggle.vertical {
+  flex-direction: column;
+  padding: var(--space-1);
+}
+
+.themeToggle.vertical .buttonContainer {
+  flex-direction: column;
+}
+
+/* Loading state for theme changes */
+.themeToggle.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.themeToggle.loading .themeButton {
+  cursor: wait;
+}
+
+/* Focus-within state for keyboard navigation */
+.themeToggle:focus-within {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Screen reader optimizations */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Enhanced button states for better UX */
+.themeButton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity var(--transition-fast) var(--ease-in-out);
+  pointer-events: none;
+}
+
+.themeButton:hover::before {
+  opacity: 0.1;
+}
+
+.themeButton:active::before {
+  opacity: 0.2;
+}
+
+/* Ensure proper stacking */
+.themeButton {
+  position: relative;
+  z-index: 0;
+}
+
+.themeButton .themeIcon {
+  position: relative;
+  z-index: 1;
+}
