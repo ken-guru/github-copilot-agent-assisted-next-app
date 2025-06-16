@@ -10,7 +10,6 @@ interface LayoutClientProps {
 
 export function LayoutClient({ children }: LayoutClientProps) {
   const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   
   // Handle service worker updates
   useEffect(() => {
@@ -54,7 +53,6 @@ export function LayoutClient({ children }: LayoutClientProps) {
     <ThemeProvider>
       <div 
         className={styles.appContainer}
-        aria-busy={isLoading}
         role="application"
         aria-label="Time Tracking Application"
       >

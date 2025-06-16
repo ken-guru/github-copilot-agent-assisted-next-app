@@ -51,7 +51,7 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({
       role="region" 
       aria-label={`Timeline with ${sortedEvents.length} events in ${displayOrder}ending order`}
     >
-      {sortedEvents.map((event, index) => (
+      {sortedEvents.map((event) => (
         <article 
           key={event.id} 
           data-testid="timeline-event" 

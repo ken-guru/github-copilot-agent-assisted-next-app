@@ -35,8 +35,6 @@ export default function ProgressBar({
   // entries, // Unused after CSS removal experiment
   totalDuration,
   elapsedTime,
-  // This prop is currently unused but kept for future features
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   timerActive = false
 }: ProgressBarProps) {
   // Calculate progress percentage

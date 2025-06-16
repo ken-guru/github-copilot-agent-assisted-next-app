@@ -59,7 +59,7 @@ describe('TimeDisplay Component', () => {
   });
   
   // Replace any with proper type
-  const testOrderOfElements = (container: HTMLElement): void => {
+  const testOrderOfElements = (): void => {
     // Test implementation for element order using text content
     const timeText = screen.getByText(testFormattedTime);
     const dateText = screen.getByText(testFormattedDate);
@@ -72,7 +72,7 @@ describe('TimeDisplay Component', () => {
   };
   
   test('displays time before date', () => {
-    const { container } = renderComponent({});
-    testOrderOfElements(container as HTMLElement);
+    renderComponent({});
+    testOrderOfElements();
   });
 });

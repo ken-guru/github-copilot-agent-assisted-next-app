@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styles from './UpdateNotification.module.css';
 
 interface UpdateNotificationProps {
@@ -26,13 +26,13 @@ export function UpdateNotification({
   const [isAnimatingOut, setIsAnimatingOut] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     setIsAnimatingOut(true);
     setTimeout(() => {
       setIsVisible(false);
       onDismiss();
     }, 200); // Match animation duration
-  };
+  }, [onDismiss]);
 
   useEffect(() => {
     if (!autoHide) return;
@@ -42,7 +42,7 @@ export function UpdateNotification({
     }, autoHideDelay);
 
     return () => clearTimeout(timer);
-  }, [autoHide, autoHideDelay]);
+  }, [autoHide, autoHideDelay, handleDismiss]);
 
   // Focus management for accessibility
   useEffect(() => {
