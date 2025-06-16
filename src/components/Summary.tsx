@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
+import styles from './Summary.module.css';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -303,49 +304,105 @@ export default function Summary({
   const overtime = calculateOvertime();
   const activityTimes = calculateActivityTimes();
 
-  return (
-    <div data-testid="summary">
-      {status && <div>{status.message}</div>}
-      
-      <div>Planned Time</div>
-      <div>{formatDuration(totalDuration)}</div>
-      
-      <div>Spent Time</div>
-      <div>{formatDuration(elapsedTime)}</div>
-      
-      <div>Idle Time</div>
-      <div>{formatDuration(stats.idleTime)}</div>
-      
-      <div>Overtime</div>
-      <div>{formatDuration(overtime)}</div>
+  const getStatusType = (): 'success' | 'warning' | 'error' | 'info' => {
+    if (isTimeUp) return 'warning';
+    if (timerActive) {
+      const remainingTime = totalDuration - elapsedTime;
+      if (remainingTime < 0) return 'error';
+      return 'info';
+    }
+    if (allActivitiesCompleted) {
+      const timeDiff = elapsedTime - totalDuration;
+      return timeDiff > 0 ? 'warning' : 'success';
+    }
+    return 'info';
+  };
 
-      {activityTimes.length > 0 && (
-        <>
-          <h3>Time Spent per Activity</h3>
-          {activityTimes.map((activity) => {
-            // Get theme-appropriate colors
-            const themeColors = activity.colors ? 
-              getThemeAppropriateColor(activity.colors) || activity.colors : 
-              undefined;
-            
-            return (
-              <div key={activity.id}
-                data-testid={`activity-summary-item-${activity.id}`}
-                style={themeColors ? {
-                  backgroundColor: (themeColors as ColorSet).background,
-                  borderColor: (themeColors as ColorSet).border
-                } : undefined}
-              >
-                <span data-testid={`activity-name-${activity.id}`}
-                  style={themeColors ? { color: (themeColors as ColorSet).text } : undefined}
+  return (
+    <div className={styles.summary} data-testid="summary" data-theme={currentTheme}>
+      {status && (
+        <div 
+          className={styles.statusMessage} 
+          data-status={getStatusType()}
+          role="alert"
+          aria-live="polite"
+        >
+          {status.message}
+        </div>
+      )}
+      
+      <div className={styles.metricsGrid} role="group" aria-label="Time metrics">
+        <div className={styles.metricCard}>
+          <span className={styles.metricLabel}>Planned Time</span>
+          <span className={styles.metricValue}>{formatDuration(totalDuration)}</span>
+        </div>
+        
+        <div className={styles.metricCard}>
+          <span className={styles.metricLabel}>Spent Time</span>
+          <span className={styles.metricValue}>{formatDuration(elapsedTime)}</span>
+        </div>
+        
+        <div className={styles.metricCard}>
+          <span className={styles.metricLabel}>Idle Time</span>
+          <span className={styles.metricValue}>{formatDuration(stats.idleTime)}</span>
+        </div>
+        
+        <div className={styles.metricCard}>
+          <span className={styles.metricLabel}>Overtime</span>
+          <span className={styles.metricValue}>{formatDuration(overtime)}</span>
+        </div>
+      </div>
+
+      {activityTimes.length > 0 ? (
+        <section className={styles.activitiesSection} aria-labelledby="activities-heading">
+          <h3 id="activities-heading" className={styles.activitiesHeading}>
+            Time Spent per Activity
+          </h3>
+          <ul className={styles.activitiesList} role="list">
+            {activityTimes.map((activity) => {
+              // Get theme-appropriate colors
+              const themeColors = activity.colors ? 
+                getThemeAppropriateColor(activity.colors) || activity.colors : 
+                undefined;
+              
+              return (
+                <li 
+                  key={activity.id}
+                  className={styles.activityItem}
+                  data-testid={`activity-summary-item-${activity.id}`}
+                  data-has-colors={!!themeColors}
+                  style={themeColors ? {
+                    backgroundColor: (themeColors as ColorSet).background,
+                    borderColor: (themeColors as ColorSet).border
+                  } : undefined}
                 >
-                  {activity.name}
-                </span>
-                <span>{formatDuration(activity.duration)}</span>
-              </div>
-            );
-          })}
-        </>
+                  {themeColors && (
+                    <div 
+                      className={styles.colorIndicator}
+                      style={{ backgroundColor: (themeColors as ColorSet).border }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <span 
+                    className={styles.activityName}
+                    data-testid={`activity-name-${activity.id}`}
+                    style={themeColors ? { color: (themeColors as ColorSet).text } : undefined}
+                  >
+                    {activity.name}
+                  </span>
+                  <span className={styles.activityDuration}>
+                    {formatDuration(activity.duration)}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyStateIcon} aria-hidden="true">📊</div>
+          <p>No activities completed yet</p>
+        </div>
       )}
     </div>
   );

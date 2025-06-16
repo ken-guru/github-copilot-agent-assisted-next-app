@@ -1,0 +1,437 @@
+/* Summary.module.css - Data display and results component styling */
+
+/* Main container with responsive design */
+.summary {
+  /* Layout and spacing */
+  padding: var(--space-6);
+  margin-bottom: var(--space-8);
+  
+  /* Surface styling */
+  background: var(--color-surface-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  
+  /* Responsive container behavior */
+  container-type: inline-size;
+  max-width: 100%;
+  
+  /* Visual effects */
+  box-shadow: var(--shadow-sm);
+  
+  /* Animation */
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-2));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Status message with responsive typography */
+.statusMessage {
+  /* Typography */
+  font-size: var(--text-scale-lg);
+  font-weight: 600;
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-primary);
+  
+  /* Layout */
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  
+  /* Surface styling */
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--color-semantic-info);
+  
+  /* Responsive design */
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .statusMessage {
+    font-size: var(--text-scale-xl);
+    padding: var(--space-5);
+  }
+}
+
+/* Status message variants */
+.statusMessage[data-status="success"] {
+  border-left-color: var(--color-semantic-success);
+  background: var(--color-semantic-success-subtle);
+  color: var(--color-semantic-success-text);
+}
+
+.statusMessage[data-status="warning"] {
+  border-left-color: var(--color-semantic-warning);
+  background: var(--color-semantic-warning-subtle);
+  color: var(--color-semantic-warning-text);
+}
+
+.statusMessage[data-status="error"] {
+  border-left-color: var(--color-semantic-danger);
+  background: var(--color-semantic-danger-subtle);
+  color: var(--color-semantic-danger-text);
+}
+
+/* Metrics grid layout */
+.metricsGrid {
+  display: grid;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  
+  /* Mobile-first: single column */
+  grid-template-columns: 1fr;
+}
+
+@container (min-width: 400px) {
+  .metricsGrid {
+    /* Small containers: 2 columns */
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+@container (min-width: 600px) {
+  .metricsGrid {
+    /* Larger containers: 4 columns */
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-6);
+  }
+}
+
+/* Individual metric card */
+.metricCard {
+  /* Layout */
+  padding: var(--space-4);
+  
+  /* Surface styling */
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  
+  /* Interactive */
+  transition: all 0.2s ease;
+  
+  /* Accessibility */
+  position: relative;
+}
+
+.metricCard:hover {
+  background: var(--color-surface-secondary-hover);
+  border-color: var(--color-border-secondary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* Metric label */
+.metricLabel {
+  /* Typography */
+  font-size: var(--text-scale-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  
+  /* Layout */
+  display: block;
+  margin-bottom: var(--space-2);
+  
+  /* Accessibility */
+  user-select: none;
+}
+
+/* Metric value */
+.metricValue {
+  /* Typography */
+  font-size: var(--text-scale-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: var(--leading-tight);
+  
+  /* Layout */
+  display: block;
+  
+  /* Font feature settings for better number display */
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 640px) {
+  .metricValue {
+    font-size: var(--text-scale-3xl);
+  }
+}
+
+/* Activities section */
+.activitiesSection {
+  margin-top: var(--space-8);
+}
+
+.activitiesHeading {
+  /* Typography */
+  font-size: var(--text-scale-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: var(--leading-tight);
+  
+  /* Layout */
+  margin: 0 0 var(--space-6) 0;
+  
+  /* Semantic HTML */
+  border-bottom: 2px solid var(--color-border-primary);
+  padding-bottom: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .activitiesHeading {
+    font-size: var(--text-scale-2xl);
+  }
+}
+
+/* Activities list */
+.activitiesList {
+  display: grid;
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Individual activity item */
+.activityItem {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  
+  /* Surface styling */
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  
+  /* Interactive */
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.activityItem:hover {
+  background: var(--color-surface-secondary-hover);
+  border-color: var(--color-border-secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Activity item with custom colors */
+.activityItem[data-has-colors="true"] {
+  /* Custom colors will be applied via inline styles */
+  border-width: 2px;
+}
+
+/* Activity name */
+.activityName {
+  /* Typography */
+  font-size: var(--text-scale-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: var(--leading-normal);
+  
+  /* Layout */
+  flex: 1;
+  min-width: 0; /* Allow text to truncate */
+  
+  /* Text handling */
+  word-break: break-word;
+  hyphens: auto;
+}
+
+@media (min-width: 640px) {
+  .activityName {
+    font-size: var(--text-scale-lg);
+  }
+}
+
+/* Activity duration */
+.activityDuration {
+  /* Typography */
+  font-size: var(--text-scale-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  
+  /* Layout */
+  flex-shrink: 0;
+  text-align: right;
+  
+  /* Font feature settings for better number display */
+  font-variant-numeric: tabular-nums;
+  
+  /* Visual styling */
+  background: var(--color-surface-tertiary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-tertiary);
+}
+
+@media (min-width: 640px) {
+  .activityDuration {
+    font-size: var(--text-scale-base);
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+/* Color indicator for activities */
+.colorIndicator {
+  /* Layout */
+  width: var(--space-3);
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  
+  /* Visual */
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  
+  /* Accessibility */
+  opacity: 0.8;
+}
+
+/* Empty state */
+.emptyState {
+  /* Layout */
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+  
+  /* Typography */
+  color: var(--color-text-secondary);
+  font-size: var(--text-scale-base);
+  line-height: var(--leading-relaxed);
+  
+  /* Visual */
+  opacity: 0.8;
+}
+
+.emptyStateIcon {
+  /* Layout */
+  font-size: var(--text-scale-4xl);
+  margin-bottom: var(--space-4);
+  
+  /* Visual */
+  opacity: 0.5;
+  
+  /* Accessibility */
+  user-select: none;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .summary {
+    border-width: 2px;
+  }
+  
+  .metricCard,
+  .activityItem {
+    border-width: 2px;
+  }
+  
+  .statusMessage {
+    border-left-width: 6px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .summary {
+    animation: none;
+  }
+  
+  .metricCard,
+  .activityItem {
+    transition: none;
+  }
+  
+  .metricCard:hover {
+    transform: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .summary {
+    box-shadow: none;
+    border: 1px solid #000;
+    background: white;
+    color: black;
+    page-break-inside: avoid;
+  }
+  
+  .metricCard,
+  .activityItem {
+    box-shadow: none;
+    border: 1px solid #000;
+    background: white;
+  }
+  
+  .statusMessage {
+    background: white;
+    border: 1px solid #000;
+  }
+}
+
+/* Dark theme enhancements */
+.summary[data-theme="dark"] {
+  box-shadow: var(--shadow-dark-sm);
+}
+
+.summary[data-theme="dark"] .metricCard:hover {
+  box-shadow: var(--shadow-dark-md);
+}
+
+/* Responsive typography adjustments */
+@media (min-width: 1024px) {
+  .summary {
+    padding: var(--space-8);
+  }
+  
+  .statusMessage {
+    font-size: var(--text-scale-2xl);
+  }
+  
+  .activitiesHeading {
+    font-size: var(--text-scale-3xl);
+  }
+}
+
+/* Focus management for accessibility */
+.summary:focus-within .metricCard,
+.summary:focus-within .activityItem {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Loading state support */
+.summary[data-loading="true"] {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.summary[data-loading="true"]::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-surface-primary);
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

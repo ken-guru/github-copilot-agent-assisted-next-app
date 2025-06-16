@@ -82,6 +82,15 @@
   --color-warning-800: hsl(23, 83%, 31%);
   --color-warning-900: hsl(22, 78%, 26%);
 
+  /* Red Color Aliases (pointing to danger colors) */
+  --color-red-50: var(--color-danger-50);
+  --color-red-100: var(--color-danger-100);
+  --color-red-200: var(--color-danger-200);
+  --color-red-400: var(--color-danger-400);
+  --color-red-600: var(--color-danger-600);
+  --color-red-800: var(--color-danger-800);
+  --color-red-900: var(--color-danger-900);
+
   /* Additional Semantic Surface Colors */
   --color-surface-secondary: var(--color-neutral-50);
   --color-surface-tertiary: var(--color-neutral-100);
@@ -98,9 +107,33 @@
   /* Interactive States */
   --color-interactive-primary-hover: var(--color-primary-600);
   --color-interactive-primary-active: var(--color-primary-700);
-  --color-interactive-secondary: var(--color-neutral-100);
-  --color-interactive-secondary-hover: var(--color-neutral-200);
-  
+
+  /* Warning Semantic Colors */
+  --color-warning-surface: var(--color-warning-50);
+  --color-warning-border: var(--color-warning-300);
+  --color-warning-text: var(--color-warning-800);
+
+  /* Additional Surface Colors */
+  --color-surface-muted: var(--color-neutral-100);
+  --color-border-tertiary: var(--color-neutral-150);
+  --color-text-tertiary: var(--color-neutral-500);
+
+  /* Success Semantic Colors */
+  --color-semantic-success: var(--color-success-600);
+  --color-semantic-success-subtle: var(--color-success-50);
+  --color-semantic-success-text: var(--color-success-800);
+  --color-text-on-success: var(--color-neutral-50);
+
+  /* Info Semantic Colors */
+  --color-semantic-info: var(--color-primary-500);
+  --color-semantic-info-subtle: var(--color-primary-50);
+  --color-semantic-info-text: var(--color-primary-800);
+
+  /* Danger/Error Semantic Colors */
+  --color-semantic-danger: var(--color-red-600);
+  --color-semantic-danger-subtle: var(--color-red-50);
+  --color-semantic-danger-text: var(--color-red-800);
+
   /* Focus Ring */
   --color-focus-ring: var(--color-primary-500);
 }
@@ -123,14 +156,32 @@
     --color-interactive-primary-hover: var(--gray-100);
     --color-text-on-primary: var(--gray-900);
     
-    --color-focus-ring-offset: var(--gray-900);
+    /* Dark theme warning colors */
+    --color-warning-surface: var(--color-warning-900);
+    --color-warning-border: var(--color-warning-600);
+    --color-warning-text: var(--color-warning-200);
     
-    --color-warning-background: #7c2d12;
-    --color-warning-text: #fed7aa;
+    /* Dark theme additional surfaces */
+    --color-surface-muted: var(--gray-800);
+    --color-border-tertiary: var(--gray-600);
     
-    /* Success/progress colors for dark mode */
-    --color-success-primary: #059669;
-    --color-success-background: #064e3b;
-    --color-success-text: #6ee7b7;
+    /* Dark theme semantic colors */
+    --color-semantic-success: var(--color-success-400);
+    --color-semantic-success-subtle: var(--color-success-900);
+    --color-semantic-success-text: var(--color-success-200);
+    --color-text-on-success: var(--gray-900);
+    
+    /* Dark theme info colors */
+    --color-semantic-info: var(--color-primary-400);
+    --color-semantic-info-subtle: var(--color-primary-900);
+    --color-semantic-info-text: var(--color-primary-200);
+    
+    /* Dark theme danger colors */
+    --color-semantic-danger: var(--color-red-400);
+    --color-semantic-danger-subtle: var(--color-red-900);
+    --color-semantic-danger-text: var(--color-red-200);
+    
+    /* Dark theme focus ring */
+    --color-focus-ring: var(--color-primary-400);
   }
 }

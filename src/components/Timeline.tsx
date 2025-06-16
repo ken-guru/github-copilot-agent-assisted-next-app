@@ -3,6 +3,7 @@ import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { TimelineEntry } from '@/types';
+import styles from './Timeline.module.css';
 
 interface TimelineProps {
   entries: TimelineEntry[];
@@ -284,20 +285,21 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   };
   
   return (
-    <div>
-      <div>
-        <h2>Timeline</h2>
-        <div data-testid="time-display"
-        >
+    <div className={styles.timeline}>
+      <div className={styles.timelineHeader}>
+        <h2 className={styles.timelineTitle}>Timeline</h2>
+        <div className={styles.timeDisplay} data-testid="time-display">
           {timeDisplay}
         </div>
       </div>
       
-      <div>
-        <div>
+      <div className={styles.timelineContent}>
+        <div className={styles.timelineRuler}>
           {/* Add overtime background to the ruler */}
           {isOvertime && (
-            <div style={{ 
+            <div 
+              className={styles.overtimeRulerSection}
+              style={{ 
                 top: `${plannedDurationPosition}%`,
                 height: `${100 - plannedDurationPosition}%`
               }}
@@ -306,7 +308,9 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
           )}
           
           {timeMarkers.map(({ time, position, label }) => (
-            <div key={time}
+            <div 
+              key={time}
+              className={styles.timeMarker}
               style={{ top: `${position}%` }}
               data-testid="time-marker"
             >
@@ -316,16 +320,20 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
           
           {/* Overtime indicator line */}
           {isOvertime && (
-            <div style={{ top: `${plannedDurationPosition}%` }}
+            <div 
+              className={styles.overtimeDivider}
+              style={{ top: `${plannedDurationPosition}%` }}
               title="Original planned duration"
             />
           )}
         </div>
         
-        <div>
+        <div className={styles.timelineVisualization}>
           {/* Overtime background section */}
           {isOvertime && (
-            <div style={{ 
+            <div 
+              className={styles.overtimeSection}
+              style={{ 
                 top: `${plannedDurationPosition}%`,
                 height: `${100 - plannedDurationPosition}%`
               }}
@@ -333,21 +341,25 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
             />
           )}
           
-          <div>
+          <div className={styles.timelineGrid}>
             {timeMarkers.map(({ time, position }) => (
-              <div key={time}
+              <div 
+                key={time}
+                className={styles.gridLine}
                 style={{ top: `${position}%` }}
               />
             ))}
             
             {/* Overtime divider guide */}
             {isOvertime && (
-              <div style={{ top: `${plannedDurationPosition}%` }}
+              <div 
+                className={`${styles.gridLine} ${styles.overtimeGridLine}`}
+                style={{ top: `${plannedDurationPosition}%` }}
               />
             )}
           </div>
           
-          <div>
+          <div className={styles.timelineEntries}>
             {hasEntries ? (
               timeSpansData.items.map((item, index) => {
                 const style = calculateEntryStyle(item);
@@ -355,32 +367,44 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                 if (item.type === 'gap') {
                   if (allActivitiesCompleted && index === timeSpansData.items.length - 1) {
                     return (
-                      <div key="remaining"
-                        
+                      <div 
+                        key="remaining"
+                        className={`${styles.timelineEntry} ${styles.remainingTime}`}
                         style={style}
                       >
-                        <span>Time Remaining ({formatTimeHuman(item.duration)})</span>
+                        <span className={styles.activityName}>
+                          Time Remaining ({formatTimeHuman(item.duration)})
+                        </span>
                       </div>
                     );
                   }
                   return (
-                    <div key={`gap-${index}`}
-                      
+                    <div 
+                      key={`gap-${index}`}
+                      className={`${styles.timelineEntry} ${styles.gapEntry}`}
                       style={style}
                     >
-                      <span>Break ({formatTimeHuman(item.duration)})</span>
+                      <span className={styles.activityName}>
+                        Break ({formatTimeHuman(item.duration)})
+                      </span>
                     </div>
                   );
                 }
                 return (
-                  <div key={item.entry!.id}  style={style}>
-                    <div>
-                      <div>
-                        <span data-testid="timeline-activity-name"
+                  <div 
+                    key={item.entry!.id}  
+                    className={`${styles.timelineEntry} ${styles.activityEntry}`}
+                    style={style}
+                  >
+                    <div className={styles.entryContent}>
+                      <div className={styles.entryHeader}>
+                        <span 
+                          className={styles.activityName}
+                          data-testid="timeline-activity-name"
                         >
                           {item.entry!.activityName}
                         </span>
-                        <span>
+                        <span className={styles.entryDuration}>
                           {formatTimeHuman(item.duration)}
                         </span>
                       </div>
@@ -389,7 +413,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                 );
               })
             ) : (
-              <div>
+              <div className={styles.emptyState}>
                 No activities started yet
               </div>
             )}
@@ -398,7 +422,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       </div>
       
       {isTimeUp && hasEntries && (
-        <div data-testid="overtime-warning">
+        <div className={styles.overtimeWarning} data-testid="overtime-warning">
           <strong>Warning:</strong> You&apos;ve exceeded the planned time!
         </div>
       )}
