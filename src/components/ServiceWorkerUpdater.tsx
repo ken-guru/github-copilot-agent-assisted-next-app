@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { UpdateNotification } from './UpdateNotification';
 
 /**
  * ServiceWorkerUpdater Component
@@ -167,29 +168,26 @@ const ServiceWorkerUpdater: React.FC = () => {
   debugLog('Rendering update notification');
   
   return (
-    <div data-testid="update-notification" 
-      className="update-notification"
-      style={{
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
-        backgroundColor: '#4CAF50',
-        color: 'white',
-        padding: '15px',
-        borderRadius: '5px',
-        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
-        zIndex: 1000
-      }}
-    >
-      <p style={{ margin: '0 0 10px 0' }}>
-        Update available! Reload to apply the latest changes.
-      </p>
-      <div style={{ display: 'flex', gap: '10px' }}>
+    <div data-testid="service-worker-updater">
+      <UpdateNotification
+        message="Update available! Reload to apply the latest changes."
+        onDismiss={handleDismiss}
+        variant="success"
+        autoHide={false}
+      />
+      <div style={{ 
+        position: 'fixed', 
+        bottom: '20px', 
+        right: '20px', 
+        zIndex: 1001,
+        display: 'flex',
+        gap: '10px'
+      }}>
         <button onClick={handleUpdate}
           data-testid="update-button"
           style={{
-            backgroundColor: '#FFFFFF',
-            color: '#4CAF50',
+            backgroundColor: '#4CAF50',
+            color: 'white',
             border: 'none',
             padding: '8px 15px',
             borderRadius: '4px',
@@ -202,8 +200,8 @@ const ServiceWorkerUpdater: React.FC = () => {
           data-testid="dismiss-button"
           style={{
             backgroundColor: 'transparent',
-            color: 'white',
-            border: '1px solid white',
+            color: '#4CAF50',
+            border: '1px solid #4CAF50',
             padding: '8px 15px',
             borderRadius: '4px',
             cursor: 'pointer'

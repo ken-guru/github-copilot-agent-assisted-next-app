@@ -100,7 +100,7 @@ describe('ServiceWorkerUpdater', () => {
     });
     
     // Click dismiss button
-    fireEvent.click(screen.getByRole('button', { name: /dismiss/i }));
+    fireEvent.click(screen.getByTestId('dismiss-button'));
     
     // Notification should disappear
     expect(screen.queryByTestId('update-notification')).not.toBeInTheDocument();

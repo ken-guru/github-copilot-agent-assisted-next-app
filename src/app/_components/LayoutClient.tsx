@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { ThemeProvider } from '@contexts/theme';
-import ServiceWorkerUpdater from '@components/ui/ServiceWorkerUpdater'; // This will need to be updated when the component is moved
+import ServiceWorkerUpdater from '@components/ui/ServiceWorkerUpdater';
+import styles from './LayoutClient.module.css';
 
 interface LayoutClientProps {
   children: React.ReactNode;
@@ -9,6 +10,7 @@ interface LayoutClientProps {
 
 export function LayoutClient({ children }: LayoutClientProps) {
   const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   
   // Handle service worker updates
   useEffect(() => {
@@ -50,36 +52,46 @@ export function LayoutClient({ children }: LayoutClientProps) {
 
   return (
     <ThemeProvider>
-      {/* Service worker update notifications */}
-      {updateAvailable && (
-        <ServiceWorkerUpdater onUpdate={handleUpdate} 
-          onDismiss={() => setUpdateAvailable(false)}
-        />
-      )}
-      
-      {/* Main content */}
-      <main className="app-container">
-        {children}
-      </main>
-      
-      {/* Additional global components here */}
-      
-      {/* Global scripts for performance monitoring, etc. */}
-      <script dangerouslySetInnerHTML={{ 
-          __html: `
-            // Performance monitoring
-            if (window.performance) {
-              window.addEventListener('load', () => {
-                setTimeout(() => {
-                  const timing = window.performance.timing;
-                  const loadTime = timing.loadEventEnd - timing.navigationStart;
-                  console.log('Page load time:', loadTime, 'ms');
-                }, 0);
-              });
-            }
-          `
-        }}
-      />
+      <div 
+        className={styles.appContainer}
+        aria-busy={isLoading}
+        role="application"
+        aria-label="Time Tracking Application"
+      >
+        {/* Service worker update notifications */}
+        {updateAvailable && (
+          <div className={styles.updateNotificationContainer}>
+            <ServiceWorkerUpdater 
+              onUpdate={handleUpdate} 
+              onDismiss={() => setUpdateAvailable(false)}
+            />
+          </div>
+        )}
+        
+        {/* Main content */}
+        <main className={styles.mainContent} id="main-content">
+          {children}
+        </main>
+        
+        {/* Performance monitoring script */}
+        <div className={styles.performanceScript}>
+          <script dangerouslySetInnerHTML={{ 
+              __html: `
+                // Performance monitoring
+                if (window.performance) {
+                  window.addEventListener('load', () => {
+                    setTimeout(() => {
+                      const timing = window.performance.timing;
+                      const loadTime = timing.loadEventEnd - timing.navigationStart;
+                      console.log('Page load time:', loadTime, 'ms');
+                    }, 0);
+                  });
+                }
+              `
+            }}
+          />
+        </div>
+      </div>
     </ThemeProvider>
   );
 }

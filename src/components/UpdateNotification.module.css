@@ -1,0 +1,247 @@
+/* UpdateNotification Component Styles */
+/* Mobile-first, accessible notification design system implementation */
+
+.updateNotification {
+  /* Positioning and layout */
+  position: fixed;
+  top: var(--space-md);
+  right: var(--space-md);
+  z-index: var(--z-index-modal);
+  
+  /* Container styling */
+  min-width: 280px;
+  max-width: 400px;
+  padding: var(--space-md);
+  
+  /* Visual design */
+  background-color: var(--color-primary-50);
+  border: 1px solid var(--color-primary-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  
+  /* Layout */
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap-md);
+  
+  /* Animation */
+  animation: slideInFromTop 0.3s ease-out;
+  
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    /* Full width on small screens */
+    left: var(--space-md);
+    right: var(--space-md);
+    top: var(--space-lg);
+    max-width: none;
+    min-width: auto;
+  }
+  
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--color-primary-900);
+    border-color: var(--color-primary-700);
+    color: var(--color-neutral-100);
+  }
+  
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    border-width: 2px;
+    box-shadow: var(--shadow-xl);
+  }
+}
+
+/* Message content styling */
+.message {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-primary);
+  margin: 0;
+  word-wrap: break-word;
+  hyphens: auto;
+  
+  /* Responsive typography */
+  @media (min-width: 768px) {
+    font-size: var(--font-size-base);
+  }
+  
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    color: var(--color-neutral-200);
+  }
+}
+
+/* Dismiss button styling */
+.dismissButton {
+  /* Reset button styles */
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  
+  /* Button sizing and positioning */
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  
+  /* Visual design */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-base);
+  color: var(--color-neutral-600);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  
+  /* Interactive states */
+  transition: all var(--transition-base);
+  
+  &:hover {
+    background-color: var(--color-neutral-100);
+    color: var(--color-neutral-800);
+    transform: scale(1.1);
+  }
+  
+  &:focus {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+    background-color: var(--color-neutral-100);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    color: var(--color-neutral-400);
+    
+    &:hover {
+      background-color: var(--color-neutral-700);
+      color: var(--color-neutral-200);
+    }
+    
+    &:focus {
+      background-color: var(--color-neutral-700);
+      outline-color: var(--color-primary-400);
+    }
+  }
+  
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    border: 1px solid currentColor;
+    
+    &:focus {
+      outline-width: 3px;
+    }
+  }
+}
+
+/* Slide-in animation */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide-out animation class */
+.slideOut {
+  animation: slideOutToTop 0.2s ease-in forwards;
+}
+
+@keyframes slideOutToTop {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+/* Success variant for positive notifications */
+.success {
+  background-color: var(--color-success-50);
+  border-color: var(--color-success-200);
+  
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--color-success-900);
+    border-color: var(--color-success-700);
+  }
+}
+
+/* Warning variant for important notifications */
+.warning {
+  background-color: var(--color-warning-50);
+  border-color: var(--color-warning-200);
+  
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--color-warning-900);
+    border-color: var(--color-warning-700);
+  }
+}
+
+/* Info variant for informational notifications */
+.info {
+  background-color: var(--color-info-50);
+  border-color: var(--color-info-200);
+  
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--color-info-900);
+    border-color: var(--color-info-700);
+  }
+}
+
+/* Accessibility enhancements */
+@media (prefers-reduced-motion: reduce) {
+  .updateNotification {
+    animation: none;
+  }
+  
+  .slideOut {
+    animation: none;
+  }
+  
+  .dismissButton:hover {
+    transform: none;
+  }
+  
+  .dismissButton:active {
+    transform: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .updateNotification {
+    display: none;
+  }
+}
+
+/* Focus trap for better accessibility when notification appears */
+.updateNotification:focus-within {
+  outline: 3px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Screen reader improvements */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
