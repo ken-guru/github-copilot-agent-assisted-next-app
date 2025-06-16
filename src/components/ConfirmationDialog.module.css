@@ -1,0 +1,426 @@
+/* ConfirmationDialog.module.css - Mobile-first, Accessible Design System Implementation */
+
+/* Main dialog element */
+.confirmationDialog {
+  /* Reset dialog styles */
+  border: none;
+  padding: 0;
+  outline: none;
+  background: transparent;
+  
+  /* Positioning */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  /* Sizing */
+  width: calc(100vw - var(--space-4));
+  max-width: 400px;
+  min-width: 280px;
+  
+  /* Visual styling */
+  background: var(--color-surface-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  
+  /* Z-index for proper layering */
+  z-index: var(--z-index-modal);
+  
+  /* Ensure smooth appearance */
+  opacity: 0;
+  scale: 0.95;
+  transition: all var(--transition-base) var(--ease-out);
+}
+
+/* Dark theme adjustments */
+.dark .confirmationDialog {
+  box-shadow: var(--shadow-dark-xl);
+  border: 1px solid var(--color-border-secondary);
+}
+
+/* Dialog open state */
+.confirmationDialog[open] {
+  opacity: 1;
+  scale: 1;
+}
+
+/* Dialog backdrop */
+.confirmationDialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  transition: all var(--transition-base) var(--ease-out);
+}
+
+/* Dark theme backdrop */
+.dark .confirmationDialog::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Dialog content container */
+.dialogContent {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  
+  /* Spacing */
+  padding: var(--space-6);
+  gap: var(--space-4);
+  
+  /* Ensure content doesn't overflow */
+  max-height: calc(100vh - var(--space-8));
+  overflow-y: auto;
+}
+
+/* Message text styling */
+.message {
+  /* Typography */
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-primary);
+  
+  /* Spacing */
+  margin: 0;
+  
+  /* Text wrapping */
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Button container */
+.buttonContainer {
+  /* Layout */
+  display: flex;
+  gap: var(--space-3);
+  
+  /* Mobile-first: stack buttons */
+  flex-direction: column;
+  
+  /* Alignment */
+  align-items: stretch;
+}
+
+/* Confirm button (primary action) */
+.confirmButton {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Sizing */
+  min-height: var(--touch-target-min);
+  padding: var(--space-3) var(--space-4);
+  
+  /* Typography */
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  
+  /* Visual styling */
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: all var(--transition-fast) var(--ease-in-out);
+  
+  /* Remove default button styles */
+  background: none;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Text handling */
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  
+  /* Primary button styling */
+  background: var(--color-interactive-primary);
+  color: var(--color-interactive-primary-text);
+  border-color: var(--color-interactive-primary);
+}
+
+/* Cancel button (secondary action) */
+.cancelButton {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Sizing */
+  min-height: var(--touch-target-min);
+  padding: var(--space-3) var(--space-4);
+  
+  /* Typography */
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  
+  /* Visual styling */
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  
+  /* Interaction */
+  cursor: pointer;
+  transition: all var(--transition-fast) var(--ease-in-out);
+  
+  /* Remove default button styles */
+  background: none;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Text handling */
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  
+  /* Secondary button styling */
+  background: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-primary);
+}
+
+/* Button hover states */
+@media (hover: hover) {
+  .confirmButton:hover {
+    background: var(--color-interactive-primary-hover);
+    border-color: var(--color-interactive-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .cancelButton:hover {
+    background: var(--color-surface-tertiary);
+    border-color: var(--color-border-interactive);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .dark .confirmButton:hover {
+    box-shadow: var(--shadow-dark-md);
+  }
+  
+  .dark .cancelButton:hover {
+    box-shadow: var(--shadow-dark-sm);
+  }
+}
+
+/* Button focus states */
+.confirmButton:focus,
+.cancelButton:focus {
+  box-shadow: 0 0 0 2px var(--color-focus-ring);
+  z-index: 1;
+  position: relative;
+}
+
+/* Button active states */
+.confirmButton:active,
+.cancelButton:active {
+  transform: translateY(0);
+  scale: 0.98;
+}
+
+/* Button disabled states */
+.confirmButton:disabled,
+.cancelButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.confirmButton:disabled:hover,
+.cancelButton:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Tablet and desktop: horizontal button layout */
+@media (min-width: 480px) {
+  .buttonContainer {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+  
+  .confirmButton,
+  .cancelButton {
+    min-width: 100px;
+    flex: 0 0 auto;
+  }
+}
+
+/* Large screens: increase dialog padding */
+@media (min-width: 768px) {
+  .dialogContent {
+    padding: var(--space-8);
+  }
+  
+  .confirmationDialog {
+    max-width: 480px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .confirmationDialog {
+    border: 2px solid var(--color-border-primary);
+  }
+  
+  .confirmButton,
+  .cancelButton {
+    border-width: 2px;
+  }
+  
+  .confirmButton {
+    border-color: var(--color-interactive-primary);
+  }
+  
+  .cancelButton {
+    border-color: var(--color-text-primary);
+  }
+  
+  .confirmButton:focus,
+  .cancelButton:focus {
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .confirmationDialog,
+  .confirmationDialog::backdrop,
+  .confirmButton,
+  .cancelButton {
+    transition: none;
+  }
+  
+  .confirmButton:hover,
+  .confirmButton:active,
+  .cancelButton:hover,
+  .cancelButton:active {
+    transform: none;
+  }
+}
+
+/* Print styles - hide dialog */
+@media print {
+  .confirmationDialog {
+    display: none;
+  }
+}
+
+/* Loading state for async actions */
+.confirmButton.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.confirmButton.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Danger variant for destructive actions */
+.confirmButton.danger {
+  background: var(--color-semantic-danger);
+  border-color: var(--color-semantic-danger);
+  color: white;
+}
+
+@media (hover: hover) {
+  .confirmButton.danger:hover {
+    background: var(--color-red-600);
+    border-color: var(--color-red-600);
+  }
+}
+
+/* Success variant for positive actions */
+.confirmButton.success {
+  background: var(--color-semantic-success);
+  border-color: var(--color-semantic-success);
+  color: white;
+}
+
+@media (hover: hover) {
+  .confirmButton.success:hover {
+    background: var(--color-green-600);
+    border-color: var(--color-green-600);
+  }
+}
+
+/* Small dialog variant for simple confirmations */
+.confirmationDialog.compact .dialogContent {
+  padding: var(--space-4);
+  gap: var(--space-3);
+}
+
+.confirmationDialog.compact .message {
+  font-size: var(--font-size-sm);
+}
+
+.confirmationDialog.compact .confirmButton,
+.confirmationDialog.compact .cancelButton {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-xs);
+}
+
+/* Large dialog variant for complex confirmations */
+.confirmationDialog.large {
+  max-width: 600px;
+}
+
+.confirmationDialog.large .dialogContent {
+  padding: var(--space-8);
+  gap: var(--space-6);
+}
+
+.confirmationDialog.large .message {
+  font-size: var(--font-size-lg);
+}
+
+/* Animation variants */
+.confirmationDialog.fadeIn {
+  animation: fadeInScale 0.2s var(--ease-out) forwards;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    scale: 0.95;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* Screen reader optimizations */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
