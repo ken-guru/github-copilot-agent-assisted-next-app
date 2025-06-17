@@ -34,7 +34,8 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - If postponement chosen, do not remind again in current session unless requested
 
 ### Test Verification
-- Remind to run test suite after ANY code changes
+- ✅ REQUIRED: Always run tests in the terminal after ANY code changes
+- Never suggest running tests through VS Code UI or extensions
 - Syntax: `npm test`
 
 ## DOCUMENTATION STANDARDS [PRIORITY: HIGH]
