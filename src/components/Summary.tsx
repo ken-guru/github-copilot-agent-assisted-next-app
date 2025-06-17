@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
-import styles from './Summary.module.css';
+// import styles from './Summary.module.css';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -319,10 +319,11 @@ export default function Summary({
   };
 
   return (
-    <div className={styles.summary} data-testid="summary" data-theme={currentTheme}>
+    // <div className={styles.summary} data-testid="summary" data-theme={currentTheme}>
+    <div data-testid="summary" data-theme={currentTheme}>
       {status && (
         <div 
-          className={styles.statusMessage} 
+          // className={styles.statusMessage} 
           data-status={getStatusType()}
           role="alert"
           aria-live="polite"
@@ -331,34 +332,50 @@ export default function Summary({
         </div>
       )}
       
-      <div className={styles.metricsGrid} role="group" aria-label="Time metrics">
-        <div className={styles.metricCard}>
-          <span className={styles.metricLabel}>Planned Time</span>
-          <span className={styles.metricValue}>{formatDuration(totalDuration)}</span>
+      {/* <div className={styles.metricsGrid} role="group" aria-label="Time metrics"> */}
+      <div role="group" aria-label="Time metrics">
+        {/* <div className={styles.metricCard}> */}
+        <div>
+          {/* <span className={styles.metricLabel}>Planned Time</span> */}
+          <span>Planned Time</span>
+          {/* <span className={styles.metricValue}>{formatDuration(totalDuration)}</span> */}
+          <span>{formatDuration(totalDuration)}</span>
         </div>
         
-        <div className={styles.metricCard}>
-          <span className={styles.metricLabel}>Spent Time</span>
-          <span className={styles.metricValue}>{formatDuration(elapsedTime)}</span>
+        {/* <div className={styles.metricCard}> */}
+        <div>
+          {/* <span className={styles.metricLabel}>Spent Time</span> */}
+          <span>Spent Time</span>
+          {/* <span className={styles.metricValue}>{formatDuration(elapsedTime)}</span> */}
+          <span>{formatDuration(elapsedTime)}</span>
         </div>
         
-        <div className={styles.metricCard}>
-          <span className={styles.metricLabel}>Idle Time</span>
-          <span className={styles.metricValue}>{formatDuration(stats.idleTime)}</span>
+        {/* <div className={styles.metricCard}> */}
+        <div>
+          {/* <span className={styles.metricLabel}>Idle Time</span> */}
+          <span>Idle Time</span>
+          {/* <span className={styles.metricValue}>{formatDuration(stats.idleTime)}</span> */}
+          <span>{formatDuration(stats.idleTime)}</span>
         </div>
         
-        <div className={styles.metricCard}>
-          <span className={styles.metricLabel}>Overtime</span>
-          <span className={styles.metricValue}>{formatDuration(overtime)}</span>
+        {/* <div className={styles.metricCard}> */}
+        <div>
+          {/* <span className={styles.metricLabel}>Overtime</span> */}
+          <span>Overtime</span>
+          {/* <span className={styles.metricValue}>{formatDuration(overtime)}</span> */}
+          <span>{formatDuration(overtime)}</span>
         </div>
       </div>
 
       {activityTimes.length > 0 ? (
-        <section className={styles.activitiesSection} aria-labelledby="activities-heading">
-          <h3 id="activities-heading" className={styles.activitiesHeading}>
+        // <section className={styles.activitiesSection} aria-labelledby="activities-heading">
+        <section aria-labelledby="activities-heading">
+          {/* <h3 id="activities-heading" className={styles.activitiesHeading}> */}
+          <h3 id="activities-heading">
             Time Spent per Activity
           </h3>
-          <ul className={styles.activitiesList} role="list">
+          {/* <ul className={styles.activitiesList} role="list"> */}
+          <ul role="list">
             {activityTimes.map((activity) => {
               // Get theme-appropriate colors
               const themeColors = activity.colors ? 
@@ -368,7 +385,7 @@ export default function Summary({
               return (
                 <li 
                   key={activity.id}
-                  className={styles.activityItem}
+                  // className={styles.activityItem}
                   data-testid={`activity-summary-item-${activity.id}`}
                   data-has-colors={!!themeColors}
                   style={themeColors ? {
@@ -378,19 +395,20 @@ export default function Summary({
                 >
                   {themeColors && (
                     <div 
-                      className={styles.colorIndicator}
+                      // className={styles.colorIndicator}
                       style={{ backgroundColor: (themeColors as ColorSet).border }}
                       aria-hidden="true"
                     />
                   )}
                   <span 
-                    className={styles.activityName}
+                    // className={styles.activityName}
                     data-testid={`activity-name-${activity.id}`}
                     style={themeColors ? { color: (themeColors as ColorSet).text } : undefined}
                   >
                     {activity.name}
                   </span>
-                  <span className={styles.activityDuration}>
+                  {/* <span className={styles.activityDuration}> */}
+                  <span>
                     {formatDuration(activity.duration)}
                   </span>
                 </li>
@@ -399,8 +417,10 @@ export default function Summary({
           </ul>
         </section>
       ) : (
-        <div className={styles.emptyState}>
-          <div className={styles.emptyStateIcon} aria-hidden="true">📊</div>
+        // <div className={styles.emptyState}>
+        <div>
+          {/* <div className={styles.emptyStateIcon} aria-hidden="true">📊</div> */}
+          <div aria-hidden="true">📊</div>
           <p>No activities completed yet</p>
         </div>
       )}

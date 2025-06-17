@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import styles from './UpdateNotification.module.css';
+// import styles from './UpdateNotification.module.css';
 
 interface UpdateNotificationProps {
   message: string;
@@ -54,9 +54,9 @@ export function UpdateNotification({
   if (!isVisible) return null;
 
   const notificationClasses = [
-    styles.updateNotification,
-    variant !== 'default' && styles[variant],
-    isAnimatingOut && styles.slideOut
+    // styles.updateNotification,
+    // variant !== 'default' && styles[variant],
+    // isAnimatingOut && styles.slideOut
   ].filter(Boolean).join(' ');
 
   return (
@@ -70,20 +70,21 @@ export function UpdateNotification({
       tabIndex={-1}
     >
       <div 
-        className={styles.message}
+        // className={styles.message}
         data-testid="update-notification-message"
       >
         {message}
       </div>
       <button 
-        className={styles.dismissButton}
+        // className={styles.dismissButton}
         onClick={handleDismiss}
         aria-label="Dismiss notification"
         data-testid="update-notification-dismiss"
         type="button"
       >
         <span aria-hidden="true">✕</span>
-        <span className={styles.srOnly}>Close notification</span>
+        {/* <span className={styles.srOnly}>Close notification</span> */}
+        <span>Close notification</span>
       </button>
     </div>
   );

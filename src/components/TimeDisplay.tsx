@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './TimeDisplay.module.css';
+// import styles from './TimeDisplay.module.css';
 
 interface TimeDisplayProps {
   dateTime: Date;
@@ -38,7 +38,8 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
 }) => {
   const renderTime = (time: string): React.ReactElement => {
     return (
-      <div className={styles.time}>
+      // <div className={styles.time}>
+      <div>
         {time}
       </div>
     );
@@ -46,7 +47,8 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
 
   const renderDate = (date: string): React.ReactElement => {
     return (
-      <div className={styles.date}>
+      // <div className={styles.date}>
+      <div>
         {date}
       </div>
     );
@@ -58,7 +60,8 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
     const timezoneText = timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
     
     return (
-      <div className={styles.timezone}>
+      // <div className={styles.timezone}>
+      <div>
         {timezoneText}
       </div>
     );
@@ -88,12 +91,12 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({
 
   // Build CSS class names
   const containerClasses = [
-    styles.timeDisplay,
-    variant !== 'default' && styles[variant],
-    status !== 'default' && styles[status],
-    interactive && styles.interactive,
-    loading && styles.loading,
-    live && styles.live,
+    // styles.timeDisplay,
+    // variant !== 'default' && styles[variant],
+    // status !== 'default' && styles[status],
+    // interactive && styles.interactive,
+    // loading && styles.loading,
+    // live && styles.live,
     className
   ].filter(Boolean).join(' ');
 

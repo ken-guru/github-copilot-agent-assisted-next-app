@@ -3,7 +3,6 @@ import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { TimelineEntry } from '@/types';
-import styles from './Timeline.module.css';
 
 interface TimelineProps {
   entries: TimelineEntry[];
@@ -285,20 +284,26 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   };
   
   return (
-    <div className={styles.timeline}>
-      <div className={styles.timelineHeader}>
-        <h2 className={styles.timelineTitle}>Timeline</h2>
-        <div className={styles.timeDisplay} data-testid="time-display">
+    // <div className={styles.timeline}>
+    <div>
+      {/* <div className={styles.timelineHeader}> */}
+      <div>
+        {/* <h2 className={styles.timelineTitle}>Timeline</h2> */}
+        <h2>Timeline</h2>
+        {/* <div className={styles.timeDisplay} data-testid="time-display"> */}
+        <div data-testid="time-display">
           {timeDisplay}
         </div>
       </div>
       
-      <div className={styles.timelineContent}>
-        <div className={styles.timelineRuler}>
+      {/* <div className={styles.timelineContent}> */}
+      <div>
+        {/* <div className={styles.timelineRuler}> */}
+        <div>
           {/* Add overtime background to the ruler */}
           {isOvertime && (
             <div 
-              className={styles.overtimeRulerSection}
+              // className={styles.overtimeRulerSection}
               style={{ 
                 top: `${plannedDurationPosition}%`,
                 height: `${100 - plannedDurationPosition}%`
@@ -310,7 +315,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
           {timeMarkers.map(({ time, position, label }) => (
             <div 
               key={time}
-              className={styles.timeMarker}
+              // className={styles.timeMarker}
               style={{ top: `${position}%` }}
               data-testid="time-marker"
             >
@@ -321,18 +326,19 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
           {/* Overtime indicator line */}
           {isOvertime && (
             <div 
-              className={styles.overtimeDivider}
+              // className={styles.overtimeDivider}
               style={{ top: `${plannedDurationPosition}%` }}
               title="Original planned duration"
             />
           )}
         </div>
         
-        <div className={styles.timelineVisualization}>
+        {/* <div className={styles.timelineVisualization}> */}
+        <div>
           {/* Overtime background section */}
           {isOvertime && (
             <div 
-              className={styles.overtimeSection}
+              // className={styles.overtimeSection}
               style={{ 
                 top: `${plannedDurationPosition}%`,
                 height: `${100 - plannedDurationPosition}%`
@@ -341,11 +347,12 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
             />
           )}
           
-          <div className={styles.timelineGrid}>
+          {/* <div className={styles.timelineGrid}> */}
+          <div>
             {timeMarkers.map(({ time, position }) => (
               <div 
                 key={time}
-                className={styles.gridLine}
+                // className={styles.gridLine}
                 style={{ top: `${position}%` }}
               />
             ))}
@@ -353,79 +360,45 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
             {/* Overtime divider guide */}
             {isOvertime && (
               <div 
-                className={`${styles.gridLine} ${styles.overtimeGridLine}`}
+                // className={`${styles.gridLine} ${styles.overtimeGridLine}`}
                 style={{ top: `${plannedDurationPosition}%` }}
               />
             )}
           </div>
           
-          <div className={styles.timelineEntries}>
+          {/* <div className={styles.timelineEntries}> */}
+          <div>
             {hasEntries ? (
               timeSpansData.items.map((item, index) => {
                 const style = calculateEntryStyle(item);
                 
-                if (item.type === 'gap') {
-                  if (allActivitiesCompleted && index === timeSpansData.items.length - 1) {
-                    return (
-                      <div 
-                        key="remaining"
-                        className={`${styles.timelineEntry} ${styles.remainingTime}`}
-                        style={style}
-                      >
-                        <span className={styles.activityName}>
-                          Time Remaining ({formatTimeHuman(item.duration)})
-                        </span>
-                      </div>
-                    );
-                  }
-                  return (
-                    <div 
-                      key={`gap-${index}`}
-                      className={`${styles.timelineEntry} ${styles.gapEntry}`}
-                      style={style}
-                    >
-                      <span className={styles.activityName}>
-                        Break ({formatTimeHuman(item.duration)})
-                      </span>
-                    </div>
-                  );
-                }
                 return (
-                  <div 
-                    key={item.entry!.id}  
-                    className={`${styles.timelineEntry} ${styles.activityEntry}`}
+                  <div
+                    key={index}
                     style={style}
+                    /* className={`${styles.timelineEntry} ${item.type === 'gap' ? styles.gapEntry : ''} ${item.entry?.isBreak ? styles.breakEntry : ''} ${item.entry?.isCurrent ? styles.currentEntry : ''}`.trim()} */
+                    data-testid={`timeline-entry-${index}`}
+                    title={item.type === 'activity' && item.entry ? `${item.entry.activityName || item.entry.title || 'Unnamed Activity'} (${formatTimeHuman(item.duration)})` : `Gap (${formatTimeHuman(item.duration)})`}
                   >
-                    <div className={styles.entryContent}>
-                      <div className={styles.entryHeader}>
-                        <span 
-                          className={styles.activityName}
-                          data-testid="timeline-activity-name"
-                        >
-                          {item.entry!.activityName}
-                        </span>
-                        <span className={styles.entryDuration}>
-                          {formatTimeHuman(item.duration)}
-                        </span>
-                      </div>
-                    </div>
+                    {item.type === 'activity' && item.entry ? (
+                      <>
+                        <span /* className={styles.entryName} */>{item.entry.activityName || item.entry.title || 'Unnamed Activity'}</span>
+                        <span /* className={styles.entryTime} */>({formatTimeHuman(item.duration)})</span>
+                      </>
+                    ) : (
+                      <span /* className={styles.gapLabel} */>Gap ({formatTimeHuman(item.duration)})</span>
+                    )}
                   </div>
                 );
               })
             ) : (
-              <div className={styles.emptyState}>
-                No activities started yet
+              <div /* className={styles.noEntriesMessage} */ data-testid="no-entries-message">
+                No activities planned yet.
               </div>
             )}
           </div>
         </div>
       </div>
-      
-      {isTimeUp && hasEntries && (
-        <div className={styles.overtimeWarning} data-testid="overtime-warning">
-          <strong>Warning:</strong> You&apos;ve exceeded the planned time!
-        </div>
-      )}
     </div>
   );
 }

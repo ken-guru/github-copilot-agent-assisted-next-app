@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from './TimeSetup.module.css';
+// import styles from './TimeSetup.module.css';
 
 interface TimeSetupProps {
   onTimeSet: (durationInSeconds: number) => void;
@@ -44,42 +44,51 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   };
 
   return (
-    <div className={styles.timeSetup} data-testid="time-setup">
-      <h2 className={styles.title}>Set Time</h2>
+    // <div className={styles.timeSetup} data-testid="time-setup">
+    <div data-testid="time-setup">
+      {/* <h2 className={styles.title}>Set Time</h2> */}
+      <h2>Set Time</h2>
       
-      <div className={styles.modeSelector}>
+      {/* <div className={styles.modeSelector}> */}
+      <div>
         <button 
           type="button"
-          className={`${styles.modeButton} ${setupMode === 'duration' ? styles.active : ''}`}
+          // className={`${styles.modeButton} ${setupMode === 'duration' ? styles.active : ''}`}
           onClick={() => setSetupMode('duration')}
         >
           Set Duration
         </button>
         <button 
           type="button"
-          className={`${styles.modeButton} ${setupMode === 'deadline' ? styles.active : ''}`}
+          // className={`${styles.modeButton} ${setupMode === 'deadline' ? styles.active : ''}`}
           onClick={() => setSetupMode('deadline')}
         >
           Set Deadline
         </button>
       </div>
       
-      <form className={styles.form} onSubmit={handleSubmit}>
+      {/* <form className={styles.form} onSubmit={handleSubmit}> */}
+      <form onSubmit={handleSubmit}>
         {setupMode === 'duration' ? (
-          <div className={styles.durationInputs}>
-            <div className={styles.inputGroup}>
-              <label htmlFor="hours" className={styles.label}>Hours</label>
+          // <div className={styles.durationInputs}>
+          <div>
+            {/* <div className={styles.inputGroup}> */}
+            <div>
+              {/* <label htmlFor="hours" className={styles.label}>Hours</label> */}
+              <label htmlFor="hours">Hours</label>
               <input 
                 type="number"
                 id="hours"
                 min="0"
                 value={hours}
                 onChange={(e) => setHours(parseInt(e.target.value) || 0)}
-                className={styles.input}
+                // className={styles.input}
               />
             </div>
-            <div className={styles.inputGroup}>
-              <label htmlFor="minutes" className={styles.label}>Minutes</label>
+            {/* <div className={styles.inputGroup}> */}
+            <div>
+              {/* <label htmlFor="minutes" className={styles.label}>Minutes</label> */}
+              <label htmlFor="minutes">Minutes</label>
               <input 
                 type="number"
                 id="minutes"
@@ -87,11 +96,13 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                 max="59"
                 value={minutes}
                 onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
-                className={styles.input}
+                // className={styles.input}
               />
             </div>
-            <div className={styles.inputGroup}>
-              <label htmlFor="seconds" className={styles.label}>Seconds</label>
+            {/* <div className={styles.inputGroup}> */}
+            <div>
+              {/* <label htmlFor="seconds" className={styles.label}>Seconds</label> */}
+              <label htmlFor="seconds">Seconds</label>
               <input 
                 type="number"
                 id="seconds"
@@ -99,20 +110,23 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                 max="59"
                 value={seconds}
                 onChange={(e) => setSeconds(parseInt(e.target.value) || 0)}
-                className={styles.input}
+                // className={styles.input}
               />
             </div>
           </div>
         ) : (
-          <div className={styles.deadlineInputs}>
-            <div className={styles.inputGroup}>
-              <label htmlFor="deadlineTime" className={styles.label}>Deadline Time</label>
+          // <div className={styles.deadlineInputs}>
+          <div>
+            {/* <div className={styles.inputGroup}> */}
+            <div>
+              {/* <label htmlFor="deadlineTime" className={styles.label}>Deadline Time</label> */}
+              <label htmlFor="deadlineTime">Deadline Time</label>
               <input 
                 type="time"
                 id="deadlineTime"
                 value={deadlineTime}
                 onChange={(e) => setDeadlineTime(e.target.value)}
-                className={styles.input}
+                // className={styles.input}
               />
             </div>
           </div>
@@ -120,7 +134,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
         
         <button 
           type="submit"
-          className={styles.submitButton}
+          // className={styles.submitButton}
         >
           Set Time
         </button>

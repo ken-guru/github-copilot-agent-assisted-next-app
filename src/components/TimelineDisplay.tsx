@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './TimelineDisplay.module.css';
+// import styles from './TimelineDisplay.module.css';
 
 interface Event {
   id: string;
@@ -29,7 +29,7 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({
   if (events.length === 0) {
     return (
       <div 
-        className={styles.emptyState}
+        // className={styles.emptyState}
         data-testid="empty-timeline"
         role="status"
         aria-live="polite"
@@ -47,7 +47,7 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({
 
   return (
     <section 
-      className={styles.timelineDisplay}
+      // className={styles.timelineDisplay}
       role="region" 
       aria-label={`Timeline with ${sortedEvents.length} events in ${displayOrder}ending order`}
     >
@@ -55,7 +55,7 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({
         <article 
           key={event.id} 
           data-testid="timeline-event" 
-          className={styles.timelineEvent}
+          // className={styles.timelineEvent}
           role="article"
           aria-labelledby={`event-title-${event.id}`}
           aria-describedby={showDescriptions ? `event-desc-${event.id}` : `event-date-${event.id}`}
@@ -63,12 +63,12 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({
         >
           <h3 
             id={`event-title-${event.id}`}
-            className={styles.eventTitle}
+            // className={styles.eventTitle}
           >
             {event.title}
           </h3>
           <time 
-            className={styles.eventDate}
+            // className={styles.eventDate}
             id={`event-date-${event.id}`}
             dateTime={event.date.toISOString()}
             aria-label={`Event date: ${event.date.toLocaleDateString('en-US', { 
@@ -82,7 +82,7 @@ const TimelineDisplay: React.FC<TimelineDisplayProps> = ({
           </time>
           {showDescriptions && (
             <div 
-              className={styles.eventDescription}
+              // className={styles.eventDescription}
               id={`event-desc-${event.id}`}
               role="text"
             >

@@ -55,7 +55,7 @@ Integrate Bootstrap into the Next.js project and establish a clean foundation fo
             *   Comment out `styles` import and usage in `src/components/ActivityManager.module.css` (DONE)
             *   Comment out `styles` import and usage in `src/components/ConfirmationDialog.module.css` (DONE)
             *   Comment out `styles` import and usage in `src/components/ProgressBar.module.css` (DONE)
-            *   Comment out `styles` import and usage in `src/components/Summary.module.css` (PENDING)
+            *   Comment out `styles` import and usage in `src/components/Summary.module.css` (DONE)
             *   Comment out `styles` import and usage in `src/components/TimeDisplay.module.css` (PENDING)
             *   Comment out `styles` import and usage in `src/components/TimeSetup.module.css` (PENDING)
             *   Comment out `styles` import and usage in `src/components/Timeline.module.css` (PENDING)
