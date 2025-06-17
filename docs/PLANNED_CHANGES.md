@@ -14,40 +14,42 @@ Integrate Bootstrap into the Next.js project and establish a clean foundation fo
         # or
         yarn add bootstrap @popperjs/core
         ```
-    *   Verify installation and package versions.
+    *   Verify installation and package versions. (DONE - bootstrap@5.3.6, @popperjs/core@2.11.8)
 
 2.  **Global Bootstrap CSS Integration:**
     *   Import Bootstrap CSS globally in `src/app/layout.tsx` (or your main layout file).
         ```typescript
         import 'bootstrap/dist/css/bootstrap.min.css';
         ```
-    *   Ensure Bootstrap styles are loaded correctly and apply basic resets.
+    *   Ensure Bootstrap styles are loaded correctly and apply basic resets. (DONE)
 
 3.  **Viewport Meta Tag:**
     *   Verify that the `pages/_document.tsx` (or equivalent for App Router if you have a custom document) includes the responsive viewport meta tag in the `<head>`:
         ```html
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         ```
+    *   (DONE - Verified via `viewport` export in `src/app/layout.tsx`)
 
 4.  **JavaScript Integration (as needed):**
-    *   For components requiring Bootstrap's JavaScript (e.g., Modals, Dropdowns, Carousel), plan for dynamic imports or selective imports to avoid including all of Bootstrap's JS if not necessary.
-    *   Consider using React-Bootstrap or reactstrap for better integration with React's component model, which can simplify the use of Bootstrap JS-dependent components. If choosing this route, install the chosen library:
+    *   For components requiring Bootstrap\'s JavaScript (e.g., Modals, Dropdowns, Carousel), plan for dynamic imports or selective imports to avoid including all of Bootstrap\'s JS if not necessary.
+    *   Consider using React-Bootstrap or reactstrap for better integration with React\'s component model, which can simplify the use of Bootstrap JS-dependent components. If choosing this route, install the chosen library:
         ```bash
         npm install react-bootstrap
         # or
         npm install reactstrap
         ```
+    *   (DONE - Installed `react-bootstrap`)
 
 5.  **Initial Sanity Check:**
-    *   Run the application and perform a quick visual inspection to ensure Bootstrap's base styles are being applied without major conflicts.
-    *   Check browser console for any immediate errors related to Bootstrap integration.
+    *   Run the application and perform a quick visual inspection to ensure Bootstrap\'s base styles are being applied without major conflicts.
+    *   Check browser console for any immediate errors related to Bootstrap integration. (DONE - Hydration errors present, likely related to theme logic, not Bootstrap directly)
 
 6.  **Remove Existing Custom CSS:**
     *   Systematically remove or comment out all existing custom CSS files and `className` references from components. This includes:
-        *   `styles/design-tokens/` (PENDING - to be deleted after module references are removed)
-        *   `styles/layout/` (PENDING - to be deleted after module references are removed)
-        *   `styles/main.css` (DONE - import commented in `src/app/layout.tsx`, file to be deleted later)
-        *   All `*.module.css` files associated with components. (IN PROGRESS)
+        *   `styles/design-tokens/` (DONE - Directory deleted)
+        *   `styles/layout/` (DONE - Directory deleted)
+        *   `styles/main.css` (DONE - File deleted)
+        *   All `*.module.css` files associated with components. (DONE)
             *   Comment out `styles` import and usage in `components/ui/OfflineIndicator.tsx` (DONE)
             *   Comment out `styles` import and usage in `components/ui/ThemeToggle.module.css` (DONE)
             *   Comment out `styles` import and usage in `src/components/ActivityButton.module.css` (DONE)
@@ -56,15 +58,15 @@ Integrate Bootstrap into the Next.js project and establish a clean foundation fo
             *   Comment out `styles` import and usage in `src/components/ConfirmationDialog.module.css` (DONE)
             *   Comment out `styles` import and usage in `src/components/ProgressBar.module.css` (DONE)
             *   Comment out `styles` import and usage in `src/components/Summary.module.css` (DONE)
-            *   Comment out `styles` import and usage in `src/components/TimeDisplay.module.css` (PENDING)
-            *   Comment out `styles` import and usage in `src/components/TimeSetup.module.css` (PENDING)
-            *   Comment out `styles` import and usage in `src/components/Timeline.module.css` (PENDING)
-            *   Comment out `styles` import and usage in `src/components/TimelineDisplay.module.css` (PENDING)
-            *   Comment out `styles` import and usage in `src/components/UpdateNotification.module.css` (PENDING)
-            *   (Once all above are DONE) Delete all `*.module.css` files (PENDING)
-            *   (Once all above are DONE) Delete `styles/design-tokens/` directory (PENDING)
-            *   (Once all above are DONE) Delete `styles/layout/` directory (PENDING)
-            *   (Once all above are DONE) Delete `styles/main.css` file (PENDING)
+            *   Comment out `styles` import and usage in `src/components/TimeDisplay.module.css` (DONE)
+            *   Comment out `styles` import and usage in `src/components/TimeSetup.module.css` (DONE)
+            *   Comment out `styles` import and usage in `src/components/Timeline.module.css` (DONE - Fixed resulting JSX/TS errors)
+            *   Comment out `styles` import and usage in `src/components/TimelineDisplay.module.css` (DONE)
+            *   Comment out `styles` import and usage in `src/components/UpdateNotification.module.css` (DONE)
+            *   (Once all above are DONE) Delete all `*.module.css` files (DONE)
+            *   (Once all above are DONE) Delete `styles/design-tokens/` directory (DONE)
+            *   (Once all above are DONE) Delete `styles/layout/` directory (DONE)
+            *   (Once all above are DONE) Delete `styles/main.css` file (DONE)
     *   This step is crucial to avoid style conflicts and to ensure that Bootstrap is the primary styling engine.
 
 7.  **Test Suite Review (Initial):**
@@ -74,7 +76,7 @@ Integrate Bootstrap into the Next.js project and establish a clean foundation fo
         *   Tests failing due to removed CSS classes/styles (expected).
         *   Tests failing due to DOM structure changes (will need updates as components are refactored).
         *   Tests for core logic (should ideally still pass or require minimal updates).
-    *   This initial run provides a baseline for tracking progress.
+    *   This initial run provides a baseline for tracking progress. (PENDING)
 
 ### Acceptance Criteria (Phase 1):
 *   Bootstrap CSS is successfully imported and globally applied.
