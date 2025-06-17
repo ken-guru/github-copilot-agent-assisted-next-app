@@ -1,5 +1,5 @@
 import { useState } from 'react';
-// import styles from './TimeSetup.module.css';
+import { Form, Button, ButtonGroup, Alert, Card } from 'react-bootstrap';
 
 interface TimeSetupProps {
   onTimeSet: (durationInSeconds: number) => void;
@@ -44,101 +44,86 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   };
 
   return (
-    // <div className={styles.timeSetup} data-testid="time-setup">
-    <div data-testid="time-setup">
-      {/* <h2 className={styles.title}>Set Time</h2> */}
-      <h2>Set Time</h2>
-      
-      {/* <div className={styles.modeSelector}> */}
-      <div>
-        <button 
-          type="button"
-          // className={`${styles.modeButton} ${setupMode === 'duration' ? styles.active : ''}`}
-          onClick={() => setSetupMode('duration')}
-        >
-          Set Duration
-        </button>
-        <button 
-          type="button"
-          // className={`${styles.modeButton} ${setupMode === 'deadline' ? styles.active : ''}`}
-          onClick={() => setSetupMode('deadline')}
-        >
-          Set Deadline
-        </button>
-      </div>
-      
-      {/* <form className={styles.form} onSubmit={handleSubmit}> */}
-      <form onSubmit={handleSubmit}>
-        {setupMode === 'duration' ? (
-          // <div className={styles.durationInputs}>
-          <div>
-            {/* <div className={styles.inputGroup}> */}
-            <div>
-              {/* <label htmlFor="hours" className={styles.label}>Hours</label> */}
-              <label htmlFor="hours">Hours</label>
-              <input 
-                type="number"
-                id="hours"
-                min="0"
-                value={hours}
-                onChange={(e) => setHours(parseInt(e.target.value) || 0)}
-                // className={styles.input}
-              />
+    <Card className="mb-4" data-testid="time-setup">
+      <Card.Header>
+        <h2 className="h5 mb-0">Set Time</h2>
+      </Card.Header>
+      <Card.Body>
+        <ButtonGroup className="d-flex mb-3">
+          <Button 
+            variant={setupMode === 'duration' ? 'primary' : 'outline-primary'}
+            onClick={() => setSetupMode('duration')}
+          >
+            Set Duration
+          </Button>
+          <Button 
+            variant={setupMode === 'deadline' ? 'primary' : 'outline-primary'}
+            onClick={() => setSetupMode('deadline')}
+          >
+            Set Deadline
+          </Button>
+        </ButtonGroup>
+        
+        <Form onSubmit={handleSubmit}>
+          {setupMode === 'duration' ? (
+            <div className="mb-3">
+              <Form.Group className="mb-2">
+                <Form.Label htmlFor="hours">Hours</Form.Label>
+                <Form.Control
+                  id="hours"
+                  type="number"
+                  min="0"
+                  value={hours}
+                  onChange={(e) => setHours(parseInt(e.target.value) || 0)}
+                />
+              </Form.Group>
+              
+              <Form.Group className="mb-2">
+                <Form.Label htmlFor="minutes">Minutes</Form.Label>
+                <Form.Control
+                  id="minutes"
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={minutes}
+                  onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
+                />
+              </Form.Group>
+              
+              <Form.Group className="mb-3">
+                <Form.Label htmlFor="seconds">Seconds</Form.Label>
+                <Form.Control
+                  id="seconds"
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={seconds}
+                  onChange={(e) => setSeconds(parseInt(e.target.value) || 0)}
+                />
+              </Form.Group>
             </div>
-            {/* <div className={styles.inputGroup}> */}
-            <div>
-              {/* <label htmlFor="minutes" className={styles.label}>Minutes</label> */}
-              <label htmlFor="minutes">Minutes</label>
-              <input 
-                type="number"
-                id="minutes"
-                min="0"
-                max="59"
-                value={minutes}
-                onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
-                // className={styles.input}
-              />
-            </div>
-            {/* <div className={styles.inputGroup}> */}
-            <div>
-              {/* <label htmlFor="seconds" className={styles.label}>Seconds</label> */}
-              <label htmlFor="seconds">Seconds</label>
-              <input 
-                type="number"
-                id="seconds"
-                min="0"
-                max="59"
-                value={seconds}
-                onChange={(e) => setSeconds(parseInt(e.target.value) || 0)}
-                // className={styles.input}
-              />
-            </div>
-          </div>
-        ) : (
-          // <div className={styles.deadlineInputs}>
-          <div>
-            {/* <div className={styles.inputGroup}> */}
-            <div>
-              {/* <label htmlFor="deadlineTime" className={styles.label}>Deadline Time</label> */}
-              <label htmlFor="deadlineTime">Deadline Time</label>
-              <input 
-                type="time"
+          ) : (
+            <Form.Group className="mb-3">
+              <Form.Label htmlFor="deadlineTime">Deadline Time</Form.Label>
+              <Form.Control
                 id="deadlineTime"
+                type="time"
                 value={deadlineTime}
                 onChange={(e) => setDeadlineTime(e.target.value)}
-                // className={styles.input}
               />
-            </div>
+            </Form.Group>
+          )}
+          
+          <div className="d-grid">
+            <Button 
+              type="submit" 
+              variant="success"
+            >
+              Set Time
+            </Button>
           </div>
-        )}
-        
-        <button 
-          type="submit"
-          // className={styles.submitButton}
-        >
-          Set Time
-        </button>
-      </form>
-    </div>
+        </Form>
+      </Card.Body>
+    </Card>
   );
 }

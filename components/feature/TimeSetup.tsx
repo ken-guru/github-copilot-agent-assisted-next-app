@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Form, Button, ButtonGroup, Alert, Card } from 'react-bootstrap';
 
 /**
  * Props for the TimeSetup component
@@ -135,77 +136,93 @@ export default function TimeSetup({
   };
 
   return (
-    <div>
-      <h2>Set Up Time</h2>
-      
-      <div>
-        <button type="button"
-          onClick={() => handleModeChange('duration')}
-        >
-          Duration
-        </button>
-        <button type="button"
-          onClick={() => handleModeChange('deadline')}
-        >
-          Deadline
-        </button>
-      </div>
-      
-      <form onSubmit={handleSubmit} >
-        {setupMode === 'duration' ? (
-          <div>
-            <div>
-              <label htmlFor="hours" >Hours</label>
-              <input type="number"
-                id="hours"
-                min="0"
-                value={hours}
-                onChange={(e) => handleNumberInput(e.target.value, setHours)}
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="minutes" >Minutes</label>
-              <input type="number"
-                id="minutes"
-                min="0"
-                max="59"
-                value={minutes}
-                onChange={(e) => handleNumberInput(e.target.value, setMinutes)}
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="seconds" >Seconds</label>
-              <input type="number"
-                id="seconds"
-                min="0"
-                max="59"
-                value={seconds}
-                onChange={(e) => handleNumberInput(e.target.value, setSeconds)}
-              />
-            </div>
-          </div>
-        ) : (
-          <div>
-            <label htmlFor="deadlineTime" >Time (24-hour format)</label>
-            <input type="time"
-              id="deadlineTime"
-              value={deadlineTime}
-              onChange={(e) => setDeadlineTime(e.target.value)}
-            />
-          </div>
-        )}
+    <Card className="mb-4">
+      <Card.Header>
+        <h2 className="h5 mb-0">Set Time</h2>
+      </Card.Header>
+      <Card.Body>
+        <ButtonGroup className="d-flex mb-3">
+          <Button 
+            variant={setupMode === 'duration' ? 'primary' : 'outline-primary'}
+            onClick={() => handleModeChange('duration')}
+          >
+            Duration
+          </Button>
+          <Button 
+            variant={setupMode === 'deadline' ? 'primary' : 'outline-primary'}
+            onClick={() => handleModeChange('deadline')}
+          >
+            Deadline
+          </Button>
+        </ButtonGroup>
         
-        {hasError && <div>{errorMessage}</div>}
-        
-        <button type="submit" 
+        <Form onSubmit={handleSubmit}>
+          {setupMode === 'duration' ? (
+            <div className="mb-3">
+              <Form.Group className="mb-2">
+                <Form.Label htmlFor="hours">Hours</Form.Label>
+                <Form.Control
+                  id="hours"
+                  type="number"
+                  min="0"
+                  value={hours}
+                  onChange={(e) => handleNumberInput(e.target.value, setHours)}
+                />
+              </Form.Group>
+              
+              <Form.Group className="mb-2">
+                <Form.Label htmlFor="minutes">Minutes</Form.Label>
+                <Form.Control
+                  id="minutes"
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={minutes}
+                  onChange={(e) => handleNumberInput(e.target.value, setMinutes)}
+                />
+              </Form.Group>
+              
+              <Form.Group className="mb-3">
+                <Form.Label htmlFor="seconds">Seconds</Form.Label>
+                <Form.Control
+                  id="seconds"
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={seconds}
+                  onChange={(e) => handleNumberInput(e.target.value, setSeconds)}
+                />
+              </Form.Group>
+            </div>
+          ) : (
+            <Form.Group className="mb-3">
+              <Form.Label htmlFor="deadlineTime">Time (24-hour format)</Form.Label>
+              <Form.Control
+                id="deadlineTime"
+                type="time"
+                value={deadlineTime}
+                onChange={(e) => setDeadlineTime(e.target.value)}
+              />
+            </Form.Group>
+          )}
           
-          disabled={setupMode === 'duration' && hours === 0 && minutes === 0 && seconds === 0}
-        >
-          Start Timer
-        </button>
-      </form>
-    </div>
+          {hasError && (
+            <Alert variant="danger" className="mb-3">
+              {errorMessage}
+            </Alert>
+          )}
+          
+          <div className="d-grid">
+            <Button 
+              type="submit" 
+              variant="success"
+              disabled={setupMode === 'duration' && hours === 0 && minutes === 0 && seconds === 0}
+            >
+              Start Timer
+            </Button>
+          </div>
+        </Form>
+      </Card.Body>
+    </Card>
   );
 }

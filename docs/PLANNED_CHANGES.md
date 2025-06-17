@@ -95,9 +95,10 @@ Incrementally refactor each existing React component to utilize Bootstrap classe
     *   Overall App Layout (`src/app/layout.tsx`, header, footer) (DONE)
     *   Basic UI Primitives (Buttons, Form Inputs - if not using a React-Bootstrap library) (DONE)
     *   `SplashScreen`
-    *   `TimeSetup`
+    *   `TimeSetup` (DONE)
+    *   `TimeDisplay` (DONE)
     *   `ActivityButton` (DONE)
-    *   `ProgressBar`
+    *   `ProgressBar` (DONE)
     *   `Timeline` / `TimelineDisplay`
     *   `Summary`
     *   `ActivityManager` (DONE)
@@ -147,7 +148,7 @@ Incrementally refactor each existing React component to utilize Bootstrap classe
     *   Replace custom button styling with Bootstrap's button classes (`btn`, `btn-primary`, `btn-lg`, etc.). (DONE)
 
 *   **`ProgressBar`:**
-    *   Utilize Bootstrap's `progress` and `progress-bar` components. (PENDING)
+    *   Utilize Bootstrap's `progress` and `progress-bar` components. (DONE)
 
 *   **`ActivityManager` (and other complex components):**
     *   This will likely be the most intensive refactoring. Break it down into smaller sub-sections. (DONE)
@@ -249,8 +250,8 @@ Ensure the application is stable, performant, and all tests are passing after th
 
 ### Next Steps:
 1. Continue refactoring remaining UI components in the following order:
-   - TimeSetup and TimeDisplay
-   - ProgressBar
+   - TimeSetup and TimeDisplay (DONE)
+   - ProgressBar (DONE)
    - Summary
    - Timeline/TimelineDisplay
    - OfflineIndicator and other utilities

@@ -11,7 +11,7 @@ import { jest } from '@jest/globals';
 // Import from relative paths to match the project structure
 import { ActivityButton } from '../../../components/ui/ActivityButton';
 import ActivityManager from '../../../components/feature/ActivityManager';
-import ProgressBar from '../../../components/feature/ProgressBar';
+import ProgressBar from '../ProgressBar';
 import ThemeToggle from '../../../components/ui/ThemeToggle';
 import TimeSetup from '../../../components/feature/TimeSetup';
 // Import types
@@ -131,7 +131,7 @@ describe('Component Props Interface Validation', () => {
   describe('ProgressBar', () => {
     it('renders with required props only', () => {
       const { container } = render(
-        <ProgressBar entries={timelineEntries}
+        <ProgressBar
           totalDuration={3600}
           elapsedTime={600}
         />
@@ -141,10 +141,9 @@ describe('Component Props Interface Validation', () => {
 
     it('renders with all props', () => {
       const { container } = render(
-        <ProgressBar entries={timelineEntries}
+        <ProgressBar
           totalDuration={3600}
           elapsedTime={600}
-          timerActive={true}
         />
       );
       expect(container).toBeInTheDocument();

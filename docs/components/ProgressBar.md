@@ -11,14 +11,11 @@
 
 ## Overview
 
-The ProgressBar component provides a visual representation of elapsed time against a total duration. It features smooth color transitions to indicate progress status, with colors shifting gradually from green to red as time elapses. The component is designed to be responsive and theme-compatible, offering clear visual feedback about the current progress of a timed session.
+The ProgressBar component provides a visual representation of elapsed time against a total duration. It leverages Bootstrap's ProgressBar component to display progress with color-coded feedback. The component uses Bootstrap variants (success, warning, danger) to indicate progress status, making it intuitive for users to understand the current progress of a timed session.
 
 ## Table of Contents
 - [Features](#features)
 - [Props](#props)
-- [Types](#types)
-- [State Management](#state-management)
-- [Color Transition Logic](#color-transition-logic)
 - [Theme Compatibility](#theme-compatibility)
 - [Mobile Responsiveness](#mobile-responsiveness)
 - [Accessibility](#accessibility)
@@ -32,72 +29,88 @@ The ProgressBar component provides a visual representation of elapsed time again
 
 ## Features
 
-- **Color-Coded Progress Indication**: Visual color transitions as time progresses
-- **Responsive Design**: Adapts layout for mobile and desktop viewports
-- **Theme Compatibility**: Works seamlessly in both light and dark themes
-- **Accessibility Support**: Includes proper ARIA attributes and meets contrast requirements
-- **Time Markers**: Displays readable time points for reference
-- **Smooth Animations**: Provides animated transitions when progress updates
+- **Color-Coded Progress Indication**: Visual color transitions using Bootstrap variants
+- **Responsive Design**: Inherits Bootstrap's responsive behavior
+- **Theme Compatibility**: Works seamlessly with Bootstrap's theme system
+- **Accessibility Support**: Includes proper ARIA attributes via Bootstrap
 - **Real-Time Updates**: Updates progress in real-time when timer is active
-- **Conditional Visibility**: Can be conditionally displayed based on application state
+- **Semantic Color Feedback**: Uses success (green), warning (yellow), and danger (red) to convey progress state
 
 ## Props
 
 | Prop | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
-| `entries` | `TimelineEntry[]` | Yes | - | Array of timeline entries to track |
 | `totalDuration` | `number` | Yes | - | Total duration in seconds |
 | `elapsedTime` | `number` | Yes | - | Elapsed time in seconds |
-| `timerActive` | `boolean` | No | `false` | Whether the timer is currently active |
 
-## State Management
+## Theme Compatibility
 
-The ProgressBar component manages several states internally:
+The ProgressBar component inherits Bootstrap's theme compatibility. It works seamlessly with both light and dark themes, adapting its appearance based on the theme context provided by Bootstrap.
 
-1. **Progress percentage**: Calculated from elapsed time and total duration
-   ```typescript
-   const progressPercentage = Math.min(100, (elapsedTime / totalDuration) * 100);
-   ```
+## Mobile Responsiveness
 
-2. **Current theme**: Tracks theme mode for proper color rendering
-   ```typescript
-   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
-     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
-   );
-   ```
+The component is fully responsive, adapting its size appropriately across different screen sizes. This is achieved through Bootstrap's responsive design system.
 
-3. **Color transition**: Dynamically calculates colors based on progress
-   ```typescript
-   const progressColor = useMemo(() => {
-     // Color calculation logic based on progress percentage
-     return calculateProgressColor(progressPercentage, currentTheme);
-   }, [progressPercentage, currentTheme]);
-   ```
+## Accessibility
 
-The component uses these key effects:
+The ProgressBar component implements proper ARIA attributes to ensure accessibility:
+- `role="progressbar"`: Identifies the element as a progress bar
+- `aria-valuenow`: Indicates the current progress value
+- `aria-valuemin="0"`: Sets the minimum value
+- `aria-valuemax="100"`: Sets the maximum value
+- Semantic color variants provide additional visual cues
 
-1. **Theme change detection**: Updates colors when the theme changes
-2. **Timer effect**: For real-time progress updates when timer is active
-3. **Entry analysis**: Processes timeline entries to compute activity presence and duration
+## Example Usage
 
-## Color Transition System
+```tsx
+import ProgressBar from '@/components/ProgressBar';
 
-The ProgressBar uses a smooth HSL color interpolation system that transitions between key threshold points:
+// In your component
+<ProgressBar 
+  totalDuration={3600} // 1 hour in seconds
+  elapsedTime={1800}   // 30 minutes elapsed (50%)
+/>
+```
 
-1. **Green Range (0% - 50%)**: 
-   - Starts with a vibrant green (hue: 142)
-   - Gradually shifts toward yellow as progress approaches 50%
-   - Signifies "plenty of time remaining"
+## Known Limitations
 
-2. **Yellow Range (50% - 75%)**: 
-   - Transitions from yellow (hue: 48) to orange
-   - Signifies "moderate time remaining"
+- Does not display time markers (unlike the previous version)
+- Progress color transitions are step-based (using Bootstrap variants) rather than continuous gradient
+- Bootstrap's default styles may need customization for specific design requirements
 
-3. **Orange Range (75% - 90%)**:
-   - Transitions from orange (hue: 25) toward red
-   - Signifies "time is running short"
-   
-4. **Red Range (90% - 100%+)**:
+## Test Coverage
+
+The ProgressBar component has comprehensive test coverage focusing on:
+- Correct progress percentage calculation
+- Proper variant selection based on progress thresholds
+- Appropriate ARIA attributes for accessibility
+- Handling edge cases (0% progress, >100% progress)
+
+## Related Components
+
+- **Timeline**: Often used alongside ProgressBar to show detailed activity breakdown
+- **TimeDisplay**: Complements ProgressBar by showing precise time values
+- **ActivityManager**: Parent component that often contains and controls ProgressBar
+
+## Implementation Details
+
+The ProgressBar component uses react-bootstrap's ProgressBar component for rendering. It calculates progress percentage and determines the appropriate Bootstrap variant based on thresholds:
+
+- Less than 50%: `success` variant (green)
+- Between 50% and 75%: `warning` variant (yellow/orange)
+- 75% or more: `danger` variant (red)
+
+## Change History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-06-17 | 1.0.0 | Migration to Bootstrap | GitHub Copilot |
+| 2024-10-15 | 0.2.0 | Added color transitions | Original Dev |
+| 2024-09-01 | 0.1.0 | Initial implementation | Original Dev |
+
+## Related Memory Logs
+
+- [MRTMLY-218: ProgressBar Component to Bootstrap](../logged_memories/MRTMLY-218-ProgressBar-bootstrap-migration.md)
    - Reaches full red (hue: 0) at 100%
    - Signifies "time limit reached or exceeded"
 

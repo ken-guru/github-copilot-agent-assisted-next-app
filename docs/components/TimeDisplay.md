@@ -36,11 +36,14 @@ The TimeDisplay component provides a standardized way to present time and date i
 - **Customizable Formats**: Supports multiple time and date formatting options
 - **Date Display**: Optional date display alongside time
 - **Semantic HTML**: Uses appropriate HTML elements with datetime attributes
+- **Bootstrap Integration**: Uses Bootstrap components and utility classes
 - **Theme Compatibility**: Adapts to light and dark themes
 - **Locale Support**: Handles different time formats based on locale
 - **Mobile Optimization**: Responsive design for all screen sizes
 - **Order Control**: Configurable display order for time and date elements
 - **Timezone Handling**: Properly handles timezone differences
+- **Multiple Variants**: Supports different display styles (default, compact, card, etc.)
+- **Status Indicators**: Can display status with Bootstrap Badge components
 
 ## Props
 
@@ -49,8 +52,16 @@ The TimeDisplay component provides a standardized way to present time and date i
 | `dateTime` | `Date` | Yes | - | Date object to display |
 | `formattedTime` | `string` | Yes | - | Pre-formatted time string |
 | `formattedDate` | `string` | Yes | - | Pre-formatted date string |
-| `timeFormat` | `string` | No | - | Format pattern for time display |
-| `dateFormat` | `string` | No | - | Format pattern for date display |
+| `timeFormat` | `string` | No | - | Format used for time (for display purposes only) |
+| `dateFormat` | `string` | No | - | Format used for date (for display purposes only) |
+| `variant` | `'default' \| 'compact' \| 'large' \| 'horizontal' \| 'card' \| 'minimal'` | No | `'default'` | Display variant |
+| `status` | `'default' \| 'success' \| 'warning' \| 'danger' \| 'info'` | No | `'default'` | Status indicator |
+| `interactive` | `boolean` | No | `false` | Makes the component interactive |
+| `loading` | `boolean` | No | `false` | Shows loading state |
+| `showTimezone` | `boolean` | No | `false` | Displays timezone information |
+| `timezone` | `string` | No | - | Timezone to display (if showTimezone is true) |
+| `live` | `boolean` | No | `false` | Indicates if the time updates in real-time |
+| `className` | `string` | No | - | Additional CSS class names |
 
 ## Types
 

@@ -15,7 +15,9 @@ Memory logs are organized by category and listed in sequential ID order.
 - [Typescript Entries](#typescript-entries)
 - [Eslint Entries](#eslint-entries)
 - [Deployment Entries](#deployment-entries)
+- [Bootstrap Migration Entries](#bootstrap-migration-entries)
 - [Miscellaneous Entries](#miscellaneous-entries)
+- [Bootstrap Migration Entries](#bootstrap-migration-entries)
 
 ## Service Worker Entries {#service-worker-entries}
 
@@ -262,3 +264,8 @@ Each log follows a standard format including:
 - Lessons Learned
 
 These logs serve as historical context to understand why certain decisions were made and how issues were resolved.
+
+## Bootstrap Migration Entries {#bootstrap-migration-entries}
+
+- [MRTMLY-217: TimeDisplay Component to Bootstrap](./logged_memories/MRTMLY-217-TimeDisplay-bootstrap-migration.md)
+- [MRTMLY-218: ProgressBar Component to Bootstrap](./logged_memories/MRTMLY-218-ProgressBar-bootstrap-migration.md)
