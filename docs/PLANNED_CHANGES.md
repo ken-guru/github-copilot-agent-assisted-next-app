@@ -92,15 +92,15 @@ Incrementally refactor each existing React component to utilize Bootstrap classe
 ### General Approach for Each Component:
 
 1.  **Prioritize Components:** Start with foundational layout components, then move to simpler UI elements, and finally tackle complex interactive components. A possible order:
-    *   Overall App Layout (`src/app/layout.tsx`, header, footer)
-    *   Basic UI Primitives (Buttons, Form Inputs - if not using a React-Bootstrap library)
+    *   Overall App Layout (`src/app/layout.tsx`, header, footer) (DONE)
+    *   Basic UI Primitives (Buttons, Form Inputs - if not using a React-Bootstrap library) (DONE)
     *   `SplashScreen`
     *   `TimeSetup`
-    *   `ActivityButton`
+    *   `ActivityButton` (DONE)
     *   `ProgressBar`
     *   `Timeline` / `TimelineDisplay`
     *   `Summary`
-    *   `ActivityManager`
+    *   `ActivityManager` (DONE)
     *   `OfflineIndicator`, `ServiceWorkerUpdater` (and other UI utilities)
 
 2.  **DOM Structure Review & Rewrite:**
@@ -119,10 +119,10 @@ Incrementally refactor each existing React component to utilize Bootstrap classe
     *   **Strong Recommendation:** For complex JS-driven components, prefer using a library like React-Bootstrap or reactstrap. These libraries provide React components that encapsulate Bootstrap's behavior, making integration much smoother and more idiomatic in a React application.
 
 5.  **Testing:**
-    *   **Test-First (for refactoring):** Before refactoring a component's DOM and styles, review its existing tests.
-    *   Update tests to reflect the new DOM structure (e.g., querying by Bootstrap classes if necessary, or preferably by roles and accessible names).
-    *   Ensure tests still cover the component's core functionality and user interactions.
-    *   Aim to get all tests for the refactored component passing.
+    *   **Test-First (for refactoring):** Before refactoring a component's DOM and styles, review its existing tests. (DONE)
+    *   Update tests to reflect the new DOM structure (e.g., querying by Bootstrap classes if necessary, or preferably by roles and accessible names). (IN PROGRESS)
+    *   Ensure tests still cover the component's core functionality and user interactions. (IN PROGRESS)
+    *   Aim to get all tests for the refactored component passing. (IN PROGRESS - ActivityManager tests fixed)
 
 6.  **Accessibility (A11y):**
     *   Pay attention to Bootstrap's accessibility recommendations.
@@ -136,30 +136,30 @@ Incrementally refactor each existing React component to utilize Bootstrap classe
 ### Specific Component Considerations (Examples):
 
 *   **Layout Components (`src/app/layout.tsx`, Header, etc.):**
-    *   Implement the main application shell using Bootstrap's grid system or flex utilities.
-    *   Use Bootstrap's `navbar` component for the header if applicable.
+    *   Implement the main application shell using Bootstrap's grid system or flex utilities. (DONE)
+    *   Use Bootstrap's `navbar` component for the header if applicable. (DONE)
 
 *   **Forms (`TimeSetup`, `ActivityForm`):**
-    *   Use Bootstrap's form classes (`form-control`, `form-label`, `form-check`, `btn`) for consistent styling.
-    *   Implement validation feedback using Bootstrap's validation styles.
+    *   Use Bootstrap's form classes (`form-control`, `form-label`, `form-check`, `btn`) for consistent styling. (DONE for ActivityForm)
+    *   Implement validation feedback using Bootstrap's validation styles. (PENDING)
 
 *   **Buttons (`ActivityButton`, etc.):**
-    *   Replace custom button styling with Bootstrap's button classes (`btn`, `btn-primary`, `btn-lg`, etc.).
+    *   Replace custom button styling with Bootstrap's button classes (`btn`, `btn-primary`, `btn-lg`, etc.). (DONE)
 
 *   **`ProgressBar`:**
-    *   Utilize Bootstrap's `progress` and `progress-bar` components.
+    *   Utilize Bootstrap's `progress` and `progress-bar` components. (PENDING)
 
 *   **`ActivityManager` (and other complex components):**
-    *   This will likely be the most intensive refactoring. Break it down into smaller sub-sections.
-    *   Focus on using Bootstrap's grid for layout, cards for grouping content, and appropriate utility classes.
+    *   This will likely be the most intensive refactoring. Break it down into smaller sub-sections. (DONE)
+    *   Focus on using Bootstrap's grid for layout, cards for grouping content, and appropriate utility classes. (DONE)
 
 ### Acceptance Criteria (Phase 2):
-*   All relevant components are refactored to use Bootstrap classes and DOM structures.
-*   Custom CSS modules and associated styles are completely removed.
-*   The application is visually styled using Bootstrap.
-*   The majority of the test suite is passing, with tests updated to reflect new structures.
-*   The application is responsive across common device breakpoints.
-*   Accessibility considerations have been addressed.
+*   All relevant components are refactored to use Bootstrap classes and DOM structures. (IN PROGRESS)
+*   Custom CSS modules and associated styles are completely removed. (DONE)
+*   The application is visually styled using Bootstrap. (IN PROGRESS)
+*   The majority of the test suite is passing, with tests updated to reflect new structures. (IN PROGRESS)
+*   The application is responsive across common device breakpoints. (IN PROGRESS)
+*   Accessibility considerations have been addressed. (IN PROGRESS)
 
 ## Phase 3: Theming and Customization (Optional)
 
@@ -195,8 +195,8 @@ Ensure the application is stable, performant, and all tests are passing after th
 ### Key Tasks:
 
 1.  **Full Test Suite Execution:**
-    *   Run `npm test` and ensure all tests are passing. Address any remaining failures.
-    *   Perform thorough end-to-end (E2E) testing if applicable (e.g., using Playwright).
+    *   Run `npm test` and ensure all tests are passing. Address any remaining failures. (IN PROGRESS - ActivityManager tests fixed, remaining components need updates)
+    *   Perform thorough end-to-end (E2E) testing if applicable (e.g., using Playwright). (PENDING)
 
 2.  **Cross-Browser and Cross-Device Testing:**
     *   Test the application on major browsers (Chrome, Firefox, Safari, Edge) and various device sizes.
@@ -218,6 +218,55 @@ Ensure the application is stable, performant, and all tests are passing after th
 *   Performance is acceptable.
 *   Code is clean, well-documented, and follows best practices.
 *   Project documentation is up-to-date.
+
+## Current Status Summary (Added on June 17, 2025)
+
+### Progress Highlights:
+1. **Phase 1 (Project Setup and Bootstrap Installation)**: Completed
+   - Bootstrap 5.3.6 successfully installed with Popper.js dependencies
+   - Bootstrap CSS integrated globally
+   - All custom CSS files and imports removed
+   - Initial test baseline established
+
+2. **Phase 2 (Component Refactoring with Bootstrap)**: In Progress
+   - Components successfully migrated to Bootstrap:
+     - ActivityManager (with all tests passing)
+     - ActivityButton
+     - ActivityForm (partial)
+     - App layout and basic UI components
+   - Tests updated for migrated components:
+     - ActivityManager tests (11/11 passing)
+   - Remaining work:
+     - ~123 className references still need to be updated across components
+     - Several UI components still need migration (TimeSetup, ProgressBar, Timeline, etc.)
+     - Test updates needed for remaining components
+
+3. **Phase 3 (Theming and Customization)**: Not Started
+
+4. **Phase 4 (Final Review and Testing)**: Initial Steps
+   - Some tests now passing after component migration
+   - Full test suite review pending after more components are migrated
+
+### Next Steps:
+1. Continue refactoring remaining UI components in the following order:
+   - TimeSetup and TimeDisplay
+   - ProgressBar
+   - Summary
+   - Timeline/TimelineDisplay
+   - OfflineIndicator and other utilities
+
+2. Update tests for each refactored component
+
+3. Run comprehensive test suite after each major component is migrated
+
+4. Address remaining DOM nesting issues (button within button warnings)
+
+### Known Issues:
+- DOM nesting warning in ActivityButton mock (button within button)
+- Several tests failing due to component structure changes
+- Some components may require significant refactoring to match Bootstrap patterns
+
+This summary will be updated as the migration progresses.
 
 ## General Guidelines Throughout the Process:
 

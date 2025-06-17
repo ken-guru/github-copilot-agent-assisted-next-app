@@ -57,22 +57,26 @@ export function ActivityButton({
         disabled={disabled || isCompleted}
         className={`flex-grow-1 me-2 ${isActive ? 'active' : ''}`}
         data-testid={`activity-button-${activity.id}`}
+        aria-label={activity.name}
+        aria-pressed={isActive}
       >
-        {activity.name}
+        <span>{activity.name}</span>
         {isCompleted && (
           <span className="ms-2 badge bg-light text-dark">Completed</span>
         )}
       </Button>
-      <Button
-        variant="danger"
-        size="sm"
-        onClick={onRemove}
-        disabled={disabled}
-        aria-label={`Remove ${activity.name}`}
-        data-testid={`remove-activity-${activity.id}-button`}
-      >
-        &times;
-      </Button>
+      <span className="d-inline-block">
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={onRemove}
+          disabled={disabled}
+          aria-label={`Remove ${activity.name}`}
+          data-testid={`remove-activity-${activity.id}-button`}
+        >
+          &times;
+        </Button>
+      </span>
     </div>
   );
 }
