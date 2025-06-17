@@ -15,235 +15,90 @@
  */
 
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import ProgressBar from '../ProgressBar';
-import { TimelineEntry } from '@/types';
-
-// Mock the CSS module
-jest.mock('../ProgressBar.module.css', () => ({
-  container: 'container',
-  progressBarContainer: 'progressBarContainer',
-  progressFill: 'progressFill',
-  timeMarkers: 'timeMarkers',
-  timeMarker: 'timeMarker',
-  inactiveBar: 'inactiveBar',
-  mobileContainer: 'mobileContainer'
-}));
-
-// Mock getComputedStyle to return our CSS variables
-Object.defineProperty(window, 'getComputedStyle', {
-  value: () => ({
-    getPropertyValue: (prop: string) => {
-      switch (prop) {
-        case '--progress-green-hue':
-          return '142';
-        case '--progress-yellow-hue':
-          return '48';
-        case '--progress-orange-hue':
-          return '25';
-        case '--progress-red-hue':
-          return '0';
-        case '--progress-saturation':
-          return '85%';
-        case '--progress-lightness':
-          return '45%';
-        default:
-          return '';
-      }
-    }
-  })
-});
 
 describe('ProgressBar Component', () => {
-  const mockEntries: TimelineEntry[] = [
-    {
-      id: '1',
-      activityId: 'activity-1',
-      activityName: 'Task 1',
-      startTime: 0,
-      endTime: 1800000, // 30 minutes
-      colors: {
-        background: '#E8F5E9',
-        text: '#1B5E20',
-        border: '#2E7D32'
-      }
-    },
-  ];
-
-  it('should render empty inactive progress bar when timer is not active', () => {
-    const { container } = render(
-      <ProgressBar entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={0}
-        timerActive={false}
-      />
-    );
-    
-    // Should now render an empty progress bar instead of null
-    expect(container.firstChild).not.toBeNull();
-    
-    const progressBarContainer = container.querySelector('.progressBarContainer');
-    expect(progressBarContainer).toBeInTheDocument();
-    
-    // Should have inactive state
-    expect(progressBarContainer).toHaveClass('inactiveBar');
-  });
-
-  it('should render the progress bar with correct progress percentage', () => {
-    const { container } = render(
-      <ProgressBar entries={mockEntries}
+  it('should render the progress bar with correct progress percentage and variant', () => {
+    render(
+      <ProgressBar
         totalDuration={3600}
         elapsedTime={1800} // 50% of total duration
-        timerActive={true}
       />
     );
-    
-    const progressFill = container.querySelector('.progressFill');
-    expect(progressFill).toBeInTheDocument();
-    
-    // Updated to check for style attribute containing width: 50%
-    const style = progressFill?.getAttribute('style');
-    expect(style).toContain('width: 50%');
+
+    const progressBar = screen.getByRole('progressbar');
+    expect(progressBar).toBeInTheDocument();
+    expect(progressBar).toHaveAttribute('aria-valuenow', '50');
+    expect(progressBar).toHaveClass('progress-bar-warning'); // 50% is warning variant
   });
 
-  it('should have background color style when less than 50% of time is elapsed', () => {
-    const { container } = render(
-      <ProgressBar entries={mockEntries}
+  it('should render with success variant when progress is less than 50%', () => {
+    render(
+      <ProgressBar
         totalDuration={3600}
-        elapsedTime={1440} // 40% of total duration
-        timerActive={true}
+        elapsedTime={720} // 20% of total duration
       />
     );
-    
-    const progressFill = container.querySelector('.progressFill');
-    // Updated to check for style attribute containing background-color
-    const style = progressFill?.getAttribute('style');
-    expect(style).toContain('background-color:');
+    const progressBar = screen.getByRole('progressbar');
+    expect(progressBar).toHaveClass('progress-bar-success');
+    expect(progressBar).toHaveAttribute('aria-valuenow', '20');
   });
 
-  it('should have background color style when between 50% and 75% of time is elapsed', () => {
-    const { container } = render(
-      <ProgressBar entries={mockEntries}
+  it('should render with danger variant when progress is 75% or more', () => {
+    render(
+      <ProgressBar
         totalDuration={3600}
-        elapsedTime={2340} // 65% of total duration
-        timerActive={true}
+        elapsedTime={2700} // 75% of total duration
       />
     );
-    
-    const progressFill = container.querySelector('.progressFill');
-    // Updated to check for style attribute containing background-color
-    const style = progressFill?.getAttribute('style');
-    expect(style).toContain('background-color:');
-  });
-
-  it('should have background color style when between 75% and 100% of time is elapsed', () => {
-    const { container } = render(
-      <ProgressBar entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={3240} // 90% of total duration
-        timerActive={true}
-      />
-    );
-    
-    const progressFill = container.querySelector('.progressFill');
-    // Updated to check for style attribute containing background-color
-    const style = progressFill?.getAttribute('style');
-    expect(style).toContain('background-color:');
-  });
-
-  it('should have red color when 100% or more of time is elapsed', () => {
-    const { container } = render(
-      <ProgressBar entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={3600} // 100% of total duration
-        timerActive={true}
-      />
-    );
-    
-    const progressFill = container.querySelector('.progressFill');
-    // Updated to check for style attribute containing background-color
-    const style = progressFill?.getAttribute('style');
-    expect(style).toContain('background-color:');
-    // We can't test the exact color but we can verify the style attribute exists
+    const progressBar = screen.getByRole('progressbar');
+    expect(progressBar).toHaveClass('progress-bar-danger');
+    expect(progressBar).toHaveAttribute('aria-valuenow', '75');
   });
 
   it('should cap at 100% width when time exceeds provided duration', () => {
-    const { container } = render(
-      <ProgressBar entries={mockEntries}
+    render(
+      <ProgressBar
         totalDuration={3600}
         elapsedTime={4500} // 125% of total duration
-        timerActive={true}
       />
     );
-    
-    const progressFill = container.querySelector('.progressFill');
-    // Updated to check for style attribute containing width: 100%
-    const style = progressFill?.getAttribute('style');
-    expect(style).toContain('width: 100%');
+    const progressBar = screen.getByRole('progressbar');
+    expect(progressBar).toHaveAttribute('aria-valuenow', '100');
+    expect(progressBar).toHaveClass('progress-bar-danger'); // 100% is danger
   });
-  
-  it('should have appropriate aria-valuenow attribute for accessibility', () => {
-    const { container } = render(
-      <ProgressBar entries={mockEntries}
+
+  it('should render with 0% when totalDuration is 0 to prevent division by zero', () => {
+    render(
+      <ProgressBar
+        totalDuration={0}
+        elapsedTime={100}
+      />
+    );
+    const progressBar = screen.getByRole('progressbar');
+    expect(progressBar).toHaveAttribute('aria-valuenow', '0');
+    expect(progressBar).toHaveClass('progress-bar-success'); // 0% is success
+  });
+
+  it('should have appropriate aria attributes for accessibility', () => {
+    render(
+      <ProgressBar
         totalDuration={3600}
         elapsedTime={1800} // 50% of total duration
-        timerActive={true}
       />
     );
-    
-    const progressBar = container.querySelector('[role="progressbar"]');
+    const progressBar = screen.getByRole('progressbar');
     expect(progressBar).toHaveAttribute('aria-valuenow', '50');
+    expect(progressBar).toHaveAttribute('aria-valuemin', '0');
+    expect(progressBar).toHaveAttribute('aria-valuemax', '100');
+    expect(progressBar).toHaveAttribute('aria-label', 'Progress bar');
   });
 
-  // Since testing height directly isn't reliable in Jest, we'll verify it exists and is rendered
-  it('should render the progress bar component', () => {
-    const { container } = render(
-      <ProgressBar entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={1800}
-        timerActive={true}
-      />
-    );
-    
-    const progressBarContainer = container.querySelector('.progressBarContainer');
-    expect(progressBarContainer).toBeInTheDocument();
-    // We'll rely on the CSS file for the height definition
-  });
-
-  it('should render time markers in the correct order for mobile view', () => {
-    // Mock matchMedia to simulate mobile viewport
-    window.matchMedia = jest.fn().mockImplementation((query) => ({
-      matches: query === '(max-width: 768px)',
-      media: query,
-      onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
-    }));
-
-    const { container } = render(
-      <ProgressBar entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={1800}
-        timerActive={true}
-      />
-    );
-    
-    // Check that container has mobile class
-    const root = container.firstChild;
-    expect(root).not.toBeNull();
-    expect(root).toHaveClass('mobileContainer');
-    
-    // Get all direct children of the container
-    if (!root) return;
-    const children = root.childNodes;
-    
-    // First child should be time markers in mobile view
-    expect(children[0]).toHaveClass('timeMarkers');
-    
-    // Second child should be progress bar container
-    expect(children[1]).toHaveClass('progressBarContainer');
-  });
+  // Removed tests that were specific to the old CSS module implementation:
+  // - 'should render empty inactive progress bar when timer is not active' (timerActive prop removed)
+  // - Tests for specific background colors (now handled by Bootstrap variants)
+  // - Tests for time markers (removed from component)
+  // - Tests for mobile view specific layout (handled by Bootstrap responsiveness)
+  // - 'should render the progress bar component' (covered by other tests)
 });
