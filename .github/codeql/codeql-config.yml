@@ -23,7 +23,6 @@ paths-ignore:
   - '**/*.test.tsx'
   - '**/*.spec.ts'
   - '**/*.spec.tsx'
-  - 'cypress/**'
   - '**/node_modules/**'
   - '.next/**'
   - 'out/**'

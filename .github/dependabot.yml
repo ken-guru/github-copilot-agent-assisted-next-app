@@ -58,7 +58,6 @@ updates:
         patterns:
           - "jest*"
           - "@testing-library/*"
-          - "cypress*"
           - "vitest*"
           - "*test*"
           - "*mock*"

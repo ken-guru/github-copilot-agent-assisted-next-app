@@ -11,30 +11,10 @@ const ServiceWorkerUpdater: React.FC = () => {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [waitingServiceWorker, setWaitingServiceWorker] = useState<ServiceWorker | null>(null);
   
-  // Debug logging function - this will appear in the Cypress test logs
+  // Debug logging function
   const debugLog = (message: string) => {
     console.log(`[ServiceWorkerUpdater] ${message}`);
   };
-
-  // Expose functions to window for testing with Cypress
-  useEffect(() => {
-    // Create a namespace for our component
-    if (typeof window !== 'undefined') {
-      window.ServiceWorkerUpdaterAPI = {
-        setUpdateAvailable: (value: boolean) => {
-          debugLog(`Setting updateAvailable to ${value} via test API`);
-          setUpdateAvailable(value);
-        },
-      };
-    }
-
-    // Clean up on unmount
-    return () => {
-      if (typeof window !== 'undefined') {
-        delete window.ServiceWorkerUpdaterAPI;
-      }
-    };
-  }, []);
 
   useEffect(() => {
     debugLog('Component mounted, setting up service worker listeners');
@@ -132,24 +112,14 @@ const ServiceWorkerUpdater: React.FC = () => {
       // Once the service worker takes control, refresh the page
       const handleControllerChange = () => {
         debugLog('Service worker controller changed, reloading page');
-        // Create a custom event that Cypress can detect instead of actually reloading
-        window.dispatchEvent(new CustomEvent('appReloadTriggered'));
-        // Only do the actual reload if not in a test environment
-        if (!window.Cypress) {
-          window.location.reload();
-        }
+        window.location.reload();
       };
       
       navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
     } else {
       // If for some reason the waiting worker isn't available, just reload
       debugLog('No waiting service worker, reloading page directly');
-      // Create a custom event that Cypress can detect instead of actually reloading
-      window.dispatchEvent(new CustomEvent('appReloadTriggered'));
-      // Only do the actual reload if not in a test environment
-      if (!window.Cypress) {
-        window.location.reload();
-      }
+      window.location.reload();
     }
   };
   
@@ -213,15 +183,5 @@ const ServiceWorkerUpdater: React.FC = () => {
     </div>
   );
 };
-
-// Add TypeScript interface for the global API
-declare global {
-  interface Window {
-    Cypress?: unknown;
-    ServiceWorkerUpdaterAPI?: {
-      setUpdateAvailable: (value: boolean) => void;
-    };
-  }
-}
 
 export default ServiceWorkerUpdater;

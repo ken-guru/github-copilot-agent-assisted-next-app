@@ -49,7 +49,7 @@
         "./contexts/*"
       ]
     },
-    "types": ["node", "jest", "@testing-library/jest-dom", "cypress"]
+    "types": ["node", "jest", "@testing-library/jest-dom"]
   },
   "include": [
     "next-env.d.ts",
@@ -59,9 +59,6 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "cypress/e2e/**/*.ts",
-    "**/*.cy.ts",
-    "**/*.cy.tsx"
+    "node_modules"
   ]
 }

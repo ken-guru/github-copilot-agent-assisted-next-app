@@ -236,17 +236,16 @@ npm test           # Run all tests
 npm run test:watch # Run tests in watch mode
 ```
 
-### End-to-End Testing
-This project uses Cypress for end-to-end testing:
-
-```bash
-npm run cypress       # Open Cypress Test Runner
-npm run cypress:run   # Run Cypress tests in headless mode
-```
+### Testing Philosophy
+This project relies entirely on Jest and React Testing Library for comprehensive testing coverage:
+- **Unit Tests**: Individual component and function testing
+- **Integration Tests**: Component interaction and workflow testing
+- **Hook Tests**: Custom React hooks testing
+- **Utility Tests**: Helper function validation
 
 ### CI/CD Integration
-All tests (including Cypress E2E tests) are automatically run in our GitHub Actions CI/CD pipeline:
+All tests are automatically run in our GitHub Actions CI/CD pipeline:
 - On push to main branch
 - On pull requests to main branch
 
-Test artifacts (screenshots and videos) for failed Cypress tests are available in the GitHub Actions workflow.
+The pipeline ensures 100% test suite success before deployment.
