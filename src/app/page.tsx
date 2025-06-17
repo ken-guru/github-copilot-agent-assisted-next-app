@@ -13,6 +13,7 @@ import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/Confirma
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import resetService from '@/utils/resetService';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 
 // Main application content with loading context
 function AppContent() {
@@ -20,7 +21,7 @@ function AppContent() {
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
-  
+
   const {
     currentActivity,
     timelineEntries,
@@ -34,7 +35,7 @@ function AppContent() {
       if (!timerActive) startTimer();
     }
   });
-  
+
   const {
     elapsedTime,
     isTimeUp,
@@ -132,11 +133,11 @@ function AppContent() {
   }));
   
   return (
-    <div className="app-root">
+    <Container fluid>
       <SplashScreen minimumDisplayTime={500} />
       
       {/* Skip navigation link for accessibility */}
-      <a href="#main-content" className="skip-link">
+      <a href="#main-content" className="visually-hidden-focusable">
         Skip to main content
       </a>
       
@@ -149,93 +150,82 @@ function AppContent() {
         onCancel={dialogActions.onCancel}
       />
       
-      <div className="app-wrapper">
-        {/* Application Header - Persistent across all states */}
-        <header className="app-header">
-          <div className="header-content">
-            <h1 className="app-title">Mr. Timely</h1>
-            <div></div> {/* Spacer for grid layout */}
-            <div className="header-controls">
+      <Row className="mb-3">
+        <Col>
+          {/* Application Header - Persistent across all states */}
+          <header className="d-flex justify-content-between align-items-center">
+            <h1>Mr. Timely</h1>
+            <div className="d-flex gap-2">
               <ThemeToggle />
               {appState !== 'setup' && (
-                <button onClick={handleReset}>
+                <Button variant="danger" onClick={handleReset}>
                   Reset
-                </button>
+                </Button>
               )}
             </div>
-          </div>
-        </header>
+          </header>
+        </Col>
+      </Row>
+      
+      {/* Offline Indicator - Conditional */}
+      <OfflineIndicator />
+      
+      {/* Main content area with id for skip link */}
+      <main id="main-content">
+        {/* Setup State Layout */}
+        {appState === 'setup' && (
+          <Row className="justify-content-center">
+            <Col md={6}>
+              <TimeSetup onTimeSet={handleTimeSet} />
+            </Col>
+          </Row>
+        )}
         
-        {/* Offline Indicator - Conditional */}
-        <OfflineIndicator />
-        
-        {/* Main content area with id for skip link */}
-        <main id="main-content">
-          {/* Setup State Layout */}
-          {appState === 'setup' && (
-            <div className="setup-layout">
-              <div className="setup-container">
-                <div className="setup-content">
-                  <TimeSetup onTimeSet={handleTimeSet} />
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Activity State Layout */}
-          {appState === 'activity' && (
-            <div className="activity-layout">
+        {/* Activity State Layout */}
+        {appState === 'activity' && (
+          <Row>
+            <Col md={4}>
               {/* Progress bar area - conditional visibility */}
-              <div className="progress-area" data-testid="progress-container">
-                <ProgressBar entries={processedEntries}
-                  totalDuration={totalDuration}
-                  elapsedTime={elapsedTime}
-                  timerActive={timerActive}
-                />
-              </div>
-              
+              <ProgressBar
+                totalDuration={totalDuration}
+                elapsedTime={elapsedTime} // Removed timerActive prop
+              />
+            </Col>
+            <Col md={8}>
               {/* Main activity content area */}
-              <div className="activity-content">
-                <div className="activity-manager-area">
-                  <ActivityManager onActivitySelect={handleActivitySelect} 
-                    onActivityRemove={handleActivityRemoval}
-                    currentActivityId={currentActivity?.id || null} 
-                    completedActivityIds={completedActivityIds}
-                    timelineEntries={processedEntries}
-                    isTimeUp={isTimeUp}
-                    elapsedTime={elapsedTime}
-                  />
-                </div>
-                <div className="timeline-area">
-                  <Timeline entries={processedEntries}
-                    totalDuration={totalDuration} 
-                    elapsedTime={elapsedTime}
-                    allActivitiesCompleted={allActivitiesCompleted}
-                    timerActive={timerActive}
-                    isTimeUp={isTimeUp}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Completed State Layout */}
-          {appState === 'completed' && (
-            <div className="completed-layout">
-              <div className="completed-container">
-                <div className="completed-content">
-                  <Summary entries={processedEntries}
-                    totalDuration={totalDuration} 
-                    elapsedTime={elapsedTime}
-                    allActivitiesCompleted={allActivitiesCompleted}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-        </main>
-      </div>
-    </div>
+              <ActivityManager onActivitySelect={handleActivitySelect} 
+                onActivityRemove={handleActivityRemoval}
+                currentActivityId={currentActivity?.id || null} 
+                completedActivityIds={completedActivityIds}
+                timelineEntries={processedEntries}
+                isTimeUp={isTimeUp}
+                elapsedTime={elapsedTime}
+              />
+              <Timeline entries={processedEntries}
+                totalDuration={totalDuration} 
+                elapsedTime={elapsedTime}
+                allActivitiesCompleted={allActivitiesCompleted}
+                timerActive={timerActive}
+                isTimeUp={isTimeUp}
+              />
+            </Col>
+          </Row>
+        )}
+        
+        {/* Completed State Layout */}
+        {appState === 'completed' && (
+          <Row className="justify-content-center">
+            <Col md={6}>
+              <Summary entries={processedEntries}
+                totalDuration={totalDuration} 
+                elapsedTime={elapsedTime}
+                allActivitiesCompleted={allActivitiesCompleted}
+              />
+            </Col>
+          </Row>
+        )}
+      </main>
+    </Container>
   );
 }
 

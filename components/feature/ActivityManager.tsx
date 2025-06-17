@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { getNextAvailableColorSet, ColorSet } from '@lib/utils/colors';
 import { TimelineEntry } from '@hooks/use-timeline-entries';
 import { ActivityButton } from '@components/ui/ActivityButton';
 import ActivityForm from './ActivityForm';
+import { ListGroup, Button, Alert, Card } from 'react-bootstrap';
 
 /**
  * Represents an activity that can be tracked in the application
@@ -21,12 +21,6 @@ export interface Activity {
   
   /** Whether the activity has been completed */
   completed?: boolean;
-  
-  /** Color scheme for the activity in light and dark mode */
-  colors?: ColorSet;
-  
-  /** Index of the color in the color palette, used for color rotation */
-  colorIndex?: number;
 }
 
 /**
@@ -88,16 +82,11 @@ export default function ActivityManager({
     // Generate a unique ID for the activity
     const id = `activity-${Date.now()}`;
     
-    // Get the next available color set for the activity
-    const { colors, index } = getNextAvailableColorSet(activities.length);
-    
     // Create the new activity
     const newActivity: Activity = {
       id,
       name,
       description,
-      colors,
-      colorIndex: index
     };
     
     // Update the activities list
@@ -135,49 +124,57 @@ export default function ActivityManager({
   };
   
   return (
-    <div>
-      <h2>Activities</h2>
-      
-      {/* Activity list */}
-      <div>
-        {activities.map((activity) => (
-          <ActivityButton key={activity.id}
-            activity={activity}
-            isActive={currentActivityId === activity.id}
-            isCompleted={completedActivityIds.includes(activity.id)}
-            onClick={() => handleActivityClick(activity)}
-            onRemove={() => handleRemoveActivity(activity.id)}
-            disabled={isTimeUp}
+    <Card className="mb-3">
+      <Card.Header as="h2">Activities</Card.Header>
+      <Card.Body>
+        {/* Activity list */}
+        {activities.length > 0 && (
+          <ListGroup variant="flush" className="mb-3">
+            {activities.map((activity) => (
+              <ListGroup.Item key={activity.id} className="p-0 border-0">
+                <ActivityButton 
+                  activity={activity}
+                  isActive={currentActivityId === activity.id}
+                  isCompleted={completedActivityIds.includes(activity.id)}
+                  onClick={() => handleActivityClick(activity)}
+                  onRemove={() => handleRemoveActivity(activity.id)}
+                  disabled={isTimeUp}
+                />
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        )}
+        
+        {/* Add activity button or form */}
+        {showForm ? (
+          <ActivityForm onSubmit={handleAddActivity}
+            onCancel={() => setShowForm(false)}
           />
-        ))}
-      </div>
-      
-      {/* Add activity button or form */}
-      {showForm ? (
-        <ActivityForm onSubmit={handleAddActivity}
-          onCancel={() => setShowForm(false)}
-        />
-      ) : (
-        <button onClick={() => setShowForm(true)}
-          disabled={isTimeUp}
-        >
-          + Add Activity
-        </button>
-      )}
-      
-      {/* No activities message */}
-      {activities.length === 0 && !showForm && (
-        <div>
-          No activities yet. Add one to get started.
-        </div>
-      )}
-      
-      {/* Time up notification */}
-      {isTimeUp && (
-        <div>
-          Time&apos;s up! You can no longer modify activities.
-        </div>
-      )}
-    </div>
+        ) : (
+          <Button 
+            variant="primary" 
+            onClick={() => setShowForm(true)}
+            disabled={isTimeUp}
+            className="w-100"
+          >
+            + Add Activity
+          </Button>
+        )}
+        
+        {/* No activities message */}
+        {activities.length === 0 && !showForm && (
+          <Alert variant="info" className="mt-3">
+            No activities yet. Add one to get started.
+          </Alert>
+        )}
+        
+        {/* Time up notification */}
+        {isTimeUp && (
+          <Alert variant="warning" className="mt-3">
+            Time&apos;s up! You can no longer modify activities.
+          </Alert>
+        )}
+      </Card.Body>
+    </Card>
   );
 }
