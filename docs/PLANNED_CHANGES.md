@@ -76,13 +76,13 @@ Integrate Bootstrap into the Next.js project and establish a clean foundation fo
         *   Tests failing due to removed CSS classes/styles (expected).
         *   Tests failing due to DOM structure changes (will need updates as components are refactored).
         *   Tests for core logic (should ideally still pass or require minimal updates).
-    *   This initial run provides a baseline for tracking progress. (PENDING)
+    *   This initial run provides a baseline for tracking progress. (DONE - Test run completed: 8 failed, 66 passed, 74 total test suites; 50 failed, 416 passed, 466 total tests. Failures primarily due to missing classNames, DOM structure changes, and removed custom styles.)
 
 ### Acceptance Criteria (Phase 1):
 *   Bootstrap CSS is successfully imported and globally applied.
 *   The application runs without critical errors related to Bootstrap setup.
 *   All custom CSS files and `className` props (related to old styling) are removed or commented out.
-*   A baseline of failing tests is established.
+*   A baseline of failing tests is established. (DONE)
 
 ## Phase 2: Component Refactoring with Bootstrap
 
