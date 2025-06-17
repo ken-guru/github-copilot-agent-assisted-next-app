@@ -1,8 +1,8 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Geist, Geist_Mono } from "next/font/google";
 import { Metadata, Viewport } from "next";
 import { LayoutClient } from "../components/LayoutClient";
 import Script from "next/script";
-import "../../styles/main.css";
 
 // Font configuration
 const geistSans = Geist({

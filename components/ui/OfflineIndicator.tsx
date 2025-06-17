@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@hooks/use-online-status';
-import styles from './OfflineIndicator.module.css';
+// import styles from './OfflineIndicator.module.css';
 
 /**
  * Props for the OfflineIndicator component
@@ -34,23 +34,22 @@ export function OfflineIndicator({}: OfflineIndicatorProps): React.ReactElement 
 
   return (
     <div 
-      className={styles.offlineIndicator}
+      // className={styles.offlineIndicator}
       role="status" 
       data-testid="offline-indicator"
       aria-live="polite"
       aria-atomic="true"
     >
-      <div className={styles.offlineContent}>
+      {/* <div className={styles.offlineContent}> */}
+      <div>
         <div 
-          className={styles.offlineIcon}
+          // className={styles.offlineIcon}
           aria-hidden="true"
         />
-        <p className={styles.offlineText}>
+        {/* <p className={styles.offlineText}> */}
+        <p>
           You are offline
         </p>
-      </div>
-      <div className={styles.visuallyHidden}>
-        Network connection lost. You are currently working offline. Some features may be limited.
       </div>
     </div>
   );

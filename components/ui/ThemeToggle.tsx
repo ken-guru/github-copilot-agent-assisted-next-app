@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { validateThemeColors } from '@lib/utils/colors';  // Updated import path
-import styles from './ThemeToggle.module.css';
 
 /**
  * Props for the ThemeToggle component
@@ -51,77 +50,72 @@ export default function ThemeToggle({}: ThemeToggleProps) {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme, mounted]);
 
-  /**
-   * Apply theme to document and save preference
-   */
-  function applyTheme(newTheme: string) {
-    const root = document.documentElement;
-    const isValid = validateThemeColors();
-    
-    if (!isValid) {
-      console.warn(`Theme "${newTheme}" is not valid, fallback to light theme`);
-      newTheme = 'light';
-    }
-    
-    // Remove existing theme classes
-    root.classList.remove('light-mode', 'dark-mode', 'system-mode');
-    
-    if (newTheme === 'system') {
-      // For system theme, apply based on user preference
-      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      root.classList.add(isDarkMode ? 'dark-mode' : 'light-mode');
-      root.classList.add('system-mode');
-    } else {
-      // Apply specific theme class
-      root.classList.add(`${newTheme}-mode`);
-    }
-    
-    // Update document attributes for accessibility
-    document.documentElement.setAttribute('data-theme', newTheme);
-  }
-
-  /**
-   * Toggle theme and save to localStorage
-   */
-  function toggleTheme(newTheme: string) {
+  const handleThemeChange = (newTheme: string) => {
     setTheme(newTheme);
-    applyTheme(newTheme);
     localStorage.setItem('theme', newTheme);
-  }
+    applyTheme(newTheme);
+  };
 
-  // Don't render anything until mounted to prevent hydration mismatch
   if (!mounted) {
-    return <div aria-hidden="true" />;
+    // Return a placeholder or null to avoid rendering mismatch during SSR
+    // Or, better, ensure this component is only rendered client-side if it heavily relies on window/localStorage
+    return <div /* className={styles.themeToggle} */ aria-hidden="true" />;
   }
-
-  const themeOptions = [
-    { value: 'light', label: 'Light', icon: '☀️' },
-    { value: 'dark', label: 'Dark', icon: '🌙' },
-    { value: 'system', label: 'Auto', icon: '⚙️' }
-  ];
 
   return (
-    <div 
-      className={styles.themeToggle}
-      role="group" 
-      aria-label="Theme selection"
-    >
-      <div className={styles.buttonContainer}>
-        {themeOptions.map((option) => (
-          <button 
-            key={option.value}
-            className={styles.themeButton}
-            onClick={() => toggleTheme(option.value)}
-            aria-pressed={theme === option.value}
-            aria-label={`${option.label} theme`}
-            title={`${option.label} theme`}
-          >
-            <span className={styles.themeIcon} aria-hidden="true">
-              {option.icon}
-            </span>
-          </button>
-        ))}
-      </div>
+    <div /* className={styles.themeToggle} */ data-testid="theme-toggle-container">
+      <button 
+        // className={`${styles.button} ${theme === 'light' ? styles.active : ''}`}
+        onClick={() => handleThemeChange('light')}
+        aria-pressed={theme === 'light'}
+        data-testid="theme-toggle-light"
+      >
+        Light
+      </button>
+      <button 
+        // className={`${styles.button} ${theme === 'dark' ? styles.active : ''}`}
+        onClick={() => handleThemeChange('dark')}
+        aria-pressed={theme === 'dark'}
+        data-testid="theme-toggle-dark"
+      >
+        Dark
+      </button>
+      <button 
+        // className={`${styles.button} ${theme === 'system' ? styles.active : ''}`}
+        onClick={() => handleThemeChange('system')}
+        aria-pressed={theme === 'system'}
+        data-testid="theme-toggle-system"
+      >
+        System
+      </button>
     </div>
   );
+}
+
+/**
+ * Applies the selected theme to the document element
+ * @param {string} selectedTheme - The theme to apply ('light', 'dark', or 'system')
+ */
+function applyTheme(selectedTheme: string) {
+  let currentTheme = selectedTheme;
+  if (currentTheme === 'system') {
+    currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  // Remove existing theme classes
+  document.documentElement.classList.remove('light-mode', 'dark-mode');
+  document.documentElement.removeAttribute('data-theme'); // Remove data-theme attribute
+
+  // Add new theme class and data-theme attribute
+  if (currentTheme === 'light') {
+    document.documentElement.classList.add('light-mode');
+    document.documentElement.setAttribute('data-theme', 'light');
+  } else if (currentTheme === 'dark') {
+    document.documentElement.classList.add('dark-mode');
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+
+  // Validate and apply theme colors (if this function is still relevant)
+  // Consider if validateThemeColors is still needed or how it interacts with Bootstrap
+  validateThemeColors(); 
 }

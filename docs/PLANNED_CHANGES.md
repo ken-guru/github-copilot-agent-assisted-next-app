@@ -44,10 +44,27 @@ Integrate Bootstrap into the Next.js project and establish a clean foundation fo
 
 6.  **Remove Existing Custom CSS:**
     *   Systematically remove or comment out all existing custom CSS files and `className` references from components. This includes:
-        *   `styles/design-tokens/`
-        *   `styles/layout/`
-        *   `styles/main.css`
-        *   All `*.module.css` files associated with components.
+        *   `styles/design-tokens/` (PENDING - to be deleted after module references are removed)
+        *   `styles/layout/` (PENDING - to be deleted after module references are removed)
+        *   `styles/main.css` (DONE - import commented in `src/app/layout.tsx`, file to be deleted later)
+        *   All `*.module.css` files associated with components. (IN PROGRESS)
+            *   Comment out `styles` import and usage in `components/ui/OfflineIndicator.tsx` (DONE)
+            *   Comment out `styles` import and usage in `components/ui/ThemeToggle.module.css` (DONE)
+            *   Comment out `styles` import and usage in `src/components/ActivityButton.module.css` (DONE)
+            *   Comment out `styles` import and usage in `src/components/ActivityForm.module.css` (PENDING)
+            *   Comment out `styles` import and usage in `src/components/ActivityManager.module.css` (PENDING)
+            *   Comment out `styles` import and usage in `src/components/ConfirmationDialog.module.css` (PENDING)
+            *   Comment out `styles` import and usage in `src/components/ProgressBar.module.css` (PENDING)
+            *   Comment out `styles` import and usage in `src/components/Summary.module.css` (PENDING)
+            *   Comment out `styles` import and usage in `src/components/TimeDisplay.module.css` (PENDING)
+            *   Comment out `styles` import and usage in `src/components/TimeSetup.module.css` (PENDING)
+            *   Comment out `styles` import and usage in `src/components/Timeline.module.css` (PENDING)
+            *   Comment out `styles` import and usage in `src/components/TimelineDisplay.module.css` (PENDING)
+            *   Comment out `styles` import and usage in `src/components/UpdateNotification.module.css` (PENDING)
+            *   (Once all above are DONE) Delete all `*.module.css` files (PENDING)
+            *   (Once all above are DONE) Delete `styles/design-tokens/` directory (PENDING)
+            *   (Once all above are DONE) Delete `styles/layout/` directory (PENDING)
+            *   (Once all above are DONE) Delete `styles/main.css` file (PENDING)
     *   This step is crucial to avoid style conflicts and to ensure that Bootstrap is the primary styling engine.
 
 7.  **Test Suite Review (Initial):**

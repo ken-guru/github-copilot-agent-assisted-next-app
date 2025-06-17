@@ -2,7 +2,7 @@ import React from 'react';
 import { Activity } from './ActivityManager';
 import { TimelineEntry } from '@/types';
 import { formatTime } from '@/utils/timeUtils';
-import styles from './ActivityButton.module.css';
+// import styles from './ActivityButton.module.css';
 
 interface ActivityButtonProps {
   activity: Activity;
@@ -42,92 +42,45 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
 
   // Build CSS classes
   const buttonClasses = [
-    styles.activityButton,
-    isRunning && styles.isRunning,
-    isCompleted && styles.isCompleted
+    // styles.activityButton,
+    // isRunning && styles.isRunning,
+    // isCompleted && styles.isCompleted
   ].filter(Boolean).join(' ');
 
   return (
-    <div 
-      className={buttonClasses}
-      style={colors ? {
-        backgroundColor: colors.background,
-        borderColor: colors.border
-      } : undefined}
+    <button
+      type="button"
+      // className={buttonClasses}
+      onClick={handleClick}
+      // style={{
+      //   backgroundColor: colors.background,
+      //   color: colors.text,
+      //   border: `2px solid ${colors.border}`,
+      // }}
+      data-testid={`activity-button-${id}`}
+      aria-pressed={isRunning}
+      aria-label={`${name}${isCompleted ? ' (Completed)' : ''}${isRunning ? ' (Running)' : ''}`}
     >
-      {/* Activity name */}
-      <span 
-        className={styles.activityName}
-        style={colors ? { color: colors.text } : undefined}
-      >
-        {name}
-      </span>
-
-      {/* Right side content grouped together */}
-      <div className={styles.rightContent}>
-        {/* Status section */}
-        <div className={styles.status}>
-          {isRunning && (
-            <span className={styles.timer}>
-              {formatTime(elapsedTime)}
-            </span>
-          )}
-          {isCompleted && (
-            <span 
-              className={styles.completedIcon}
-              style={colors ? {
-                color: colors.text,
-                borderColor: colors.border
-              } : undefined}
-              title="Completed"
-              aria-label="Completed"
-            >
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-              </svg>
-            </span>
-          )}
-        </div>
-        
-        {/* Action buttons */}
-        {!isCompleted && (
-          <div className={styles.actions}>
-            <button 
-              className={isRunning ? styles.completeButton : styles.startButton}
-              onClick={handleClick}
-              disabled={isCompleted}
-              title={isRunning ? "Complete" : "Start"}
-              aria-label={isRunning ? "Complete" : "Start"}
-              data-testid={`${isRunning ? 'complete' : 'start'}-activity-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-            >
-              {isRunning ? (
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                </svg>
-              ) : (
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              )}
-            </button>
-            {onRemove && (
-              <button 
-                className={styles.removeButton}
-                onClick={handleRemove}
-                disabled={isInUse}
-                title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
-                aria-label="Remove"
-                data-testid={`remove-activity-${name.toLowerCase().replace(/\s+/g, '-')}`}
-              >
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                </svg>
-              </button>
-            )}
-          </div>
+      <div /* className={styles.activityInfo} */>
+        <span /* className={styles.activityName} */>{name}</span>
+        {elapsedTime > 0 && (
+          <span /* className={styles.elapsedTime} */>
+            {formatTime(elapsedTime)}
+          </span>
         )}
       </div>
-    </div>
+      {onRemove && !isInUse && (
+        <button 
+          type="button"
+          // className={styles.removeButton}
+          onClick={handleRemove}
+          aria-label={`Remove ${name}`}
+          data-testid={`remove-button-${id}`}
+        >
+          &times;
+        </button>
+      )}
+    </button>
   );
 };
 

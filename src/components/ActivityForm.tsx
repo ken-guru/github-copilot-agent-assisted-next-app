@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './ActivityForm.module.css';
+// import styles from './ActivityForm.module.css';
 
 interface ActivityFormProps {
   onAddActivity: (activityName: string) => void;
@@ -20,17 +20,18 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onAddActivity, isDisabled }
   return (
     <form 
       onSubmit={handleSubmit} 
-      className={styles.activityForm}
+      // className={styles.activityForm}
       role="form" 
       data-testid="activity-form"
     >
-      <div className={styles.inputContainer}>
+      {/* <div className={styles.inputContainer}> */}
+      <div>
         <input 
           type="text"
           value={newActivityName}
           onChange={(e) => setNewActivityName(e.target.value)}
           placeholder={isDisabled ? "Time is up!" : "New activity name"}
-          className={styles.textInput}
+          // className={styles.textInput}
           disabled={isDisabled}
           aria-label="Activity name"
           aria-describedby="activity-form-description"
@@ -38,7 +39,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onAddActivity, isDisabled }
         <button 
           type="submit"
           disabled={isDisabled || !newActivityName.trim()}
-          className={styles.submitButton}
+          // className={styles.submitButton}
           aria-label={isDisabled ? "Cannot add activity - time is up" : "Add new activity"}
         >
           Add
@@ -46,7 +47,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onAddActivity, isDisabled }
       </div>
       <div 
         id="activity-form-description" 
-        className={styles.visuallyHidden}
+        // className={styles.visuallyHidden}
       >
         {isDisabled 
           ? "Activity form is disabled because time has expired"
