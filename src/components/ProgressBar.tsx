@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 import { formatTimeHuman } from '@lib/time';
 import type { TimelineEntry } from '@/types';
-import styles from './ProgressBar.module.css';
-
 /**
  * Props for the ProgressBar component
  * 
@@ -80,24 +78,22 @@ export default function ProgressBar({
 
   // Render time markers component
   const timeMarkersComponent = totalDuration > 0 && (
-    <div className={styles.timeMarkers}>
-      <span className={styles.timeMarker}>0:00</span>
-      <span className={styles.timeMarker}>{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
-      <span className={styles.timeMarker}>{formatTimeHuman(totalDuration * 1000)}</span>
+    <div>
+      <span>0:00</span>
+      <span>{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
+      <span>{formatTimeHuman(totalDuration * 1000)}</span>
     </div>
   );
 
   // Render progress bar component
   const progressBarComponent = (
     <div 
-      className={`${styles.progressBarContainer} ${!timerActive ? styles.inactiveBar : ''}`}
       role="progressbar"
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={progressPercentage}
     >
       <div 
-        className={styles.progressFill}
         style={{ width: `${progressPercentage}%`, backgroundColor: progressColor }}
         data-testid="progress-indicator"
       />
@@ -106,7 +102,7 @@ export default function ProgressBar({
 
   // Main container - adjust layout for mobile devices
   return (
-    <div className={styles.mobileContainer}>
+    <div>
       {timeMarkersComponent}
       {progressBarComponent}
     </div>

@@ -3,7 +3,6 @@ import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './ActivityForm';
-import styles from './ActivityManager.module.css';
 
 export interface Activity {
   id: string;
@@ -158,11 +157,11 @@ export default function ActivityManager({
   };
 
   return (
-    <div className={`${styles.activityManager} ${isTimeUp ? styles.disabled : ''}`}>
-      <header className={styles.header}>
+    <div /* className={`${styles.activityManager} ${isTimeUp ? styles.disabled : ''}`} */ >
+      <header /* className={styles.header} */ >
         <div>
-          <h2 className={styles.title}>Activities</h2>
-          <p className={styles.description}>
+          <h2 /* className={styles.title} */ >Activities</h2>
+          <p /* className={styles.description} */ >
             {isTimeUp 
               ? 'Time is up! No more activities can be added.' 
               : 'Manage your session activities below.'
@@ -172,7 +171,7 @@ export default function ActivityManager({
       </header>
       
       {!isTimeUp && (
-        <section className={styles.formSection}>
+        <section /* className={styles.formSection} */ >
           <ActivityForm 
             onAddActivity={handleAddActivity}
             isDisabled={isTimeUp}
@@ -180,9 +179,9 @@ export default function ActivityManager({
         </section>
       )}
       
-      <section className={styles.activityList}>
+      <section /* className={styles.activityList} */ >
         {activities.length === 0 ? (
-          <div className={styles.emptyState}>
+          <div /* className={styles.emptyState} */ >
             <p>No activities defined yet.</p>
             <p>Add your first activity above to get started!</p>
           </div>
@@ -195,20 +194,20 @@ export default function ActivityManager({
             return (
               <div 
                 key={activity.id} 
-                className={`${styles.activityItem} ${styles[status]}`}
+                // className={`${styles.activityItem} ${styles[status]}`}
               >
-                <div className={styles.activityContent}>
-                  <h3 className={styles.activityName}>{activity.name}</h3>
-                  <span className={`${styles.activityStatus} ${styles[`status${status.charAt(0).toUpperCase() + status.slice(1)}`]}`}>
+                <div /* className={styles.activityContent} */ >
+                  <h3 /* className={styles.activityName} */>{activity.name}</h3>
+                  <span /* className={`${styles.activityStatus} ${styles[`status${status.charAt(0).toUpperCase() + status.slice(1)}`]}`} */>
                     {status}
                   </span>
                   {isRunning && elapsedTime > 0 && (
-                    <div className={styles.activityTimer}>
+                    <div /* className={styles.activityTimer} */>
                       Running: {Math.floor(elapsedTime / 60)}:{(elapsedTime % 60).toString().padStart(2, '0')}
                     </div>
                   )}
                 </div>
-                <div className={styles.activityActions}>
+                <div /* className={styles.activityActions} */>
                   <ActivityButton 
                     activity={activity}
                     isCompleted={isCompleted}
