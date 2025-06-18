@@ -202,6 +202,7 @@ Memory logs are organized chronologically by creation date. Each entry includes 
 194. [MRTMLY-194-planning-template-documentation-integration](./logged_memories/MRTMLY-194-planning-template-documentation-integration.md) - #documentation #templates #planning #ai-assistance #markdown-links
 195. [MRTMLY-195-memory-log-reorganization-and-cleanup](./logged_memories/MRTMLY-195-memory-log-reorganization-and-cleanup.md) - #memory-logs #reorganization #debugging #documentation #maintenance
 196. [MRTMLY-196-pr-feedback-id-filename-mismatches-fix](./logged_memories/MRTMLY-196-pr-feedback-id-filename-mismatches-fix.md) - #documentation #memory-logs #pr-feedback #links #maintenance
+197. [MRTMLY-197-script-duplication-cleanup-security-review](./logged_memories/MRTMLY-197-script-duplication-cleanup-security-review.md) - #scripts #security #cleanup #repository #maintenance
 
 ## About Memory Logs
 
@@ -215,5 +216,5 @@ Each log follows a standard format including:
 
 These logs serve as historical context to understand why certain decisions were made and how issues were resolved.
 
-**Total Entries:** 196  
+**Total Entries:** 197  
 **Last Updated:** 2025-06-18
