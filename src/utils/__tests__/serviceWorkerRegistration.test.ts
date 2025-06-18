@@ -4,6 +4,18 @@ import {
   setUpdateHandler 
 } from '../serviceWorkerRegistration';
 
+// Mock fetch globally for service worker tests
+beforeAll(() => {
+  global.fetch = jest.fn().mockResolvedValue({
+    status: 200,
+    headers: { get: () => 'application/javascript' },
+  } as any);
+});
+
+afterAll(() => {
+  jest.restoreAllMocks();
+});
+
 // Define types for our mocks to improve type safety
 interface MockListeners {
   [key: string]: EventListener;
@@ -139,30 +151,42 @@ describe('Service Worker Registration', () => {
   const originalNodeEnv = process.env.NODE_ENV;
   
   beforeEach(() => {
-    // Set up mock navigator
-    Object.defineProperty(global, 'navigator', {
-      value: {
-        serviceWorker: mockServiceWorkerContainer
-      },
-      writable: true
+    // Store original values at the correct scope
+    const originalWindow = global.window;
+    const originalNavigator = global.navigator;
+    
+    // Set up mock navigator - ensure serviceWorker property exists
+    const mockNavigator = {
+      serviceWorker: mockServiceWorkerContainer
+    };
+    
+    // Add serviceWorker to global navigator
+    Object.defineProperty(global.navigator, 'serviceWorker', {
+      value: mockServiceWorkerContainer,
+      writable: true,
+      configurable: true
     });
     
-    // Set up mock window
-    Object.defineProperty(global, 'window', {
-      value: {
-        addEventListener: jest.fn(),
-        location: {
-          hostname: 'localhost',
-          origin: 'http://localhost:3000'
-        }
-      },
-      writable: true
-    });
+    // Also set global navigator if needed
+    (global as any).navigator = {
+      ...originalNavigator,
+      serviceWorker: mockServiceWorkerContainer
+    };
     
-    // Set NODE_ENV for tests - using defineProperty to handle the readonly property
+    // Set up mock window properties without using Object.defineProperty
+    (global as any).window = {
+      ...originalWindow,
+      addEventListener: jest.fn(),
+      location: {
+        hostname: 'localhost',
+        origin: 'http://localhost:3000'
+      }
+    };
+    
+    // Set NODE_ENV for tests using defineProperty
     Object.defineProperty(process.env, 'NODE_ENV', {
       value: 'test',
-      writable: true
+      configurable: true
     });
     
     // Reset all mocks
@@ -171,20 +195,13 @@ describe('Service Worker Registration', () => {
   
   afterEach(() => {
     // Restore original environment
-    Object.defineProperty(global, 'navigator', {
-      value: originalNavigator,
-      writable: true
-    });
+    (global as any).navigator = originalNavigator;
+    (global as any).window = originalWindow;
     
-    Object.defineProperty(global, 'window', {
-      value: originalWindow,
-      writable: true
-    });
-    
-    // Restore original NODE_ENV - using defineProperty to handle the readonly property
+    // Restore original NODE_ENV
     Object.defineProperty(process.env, 'NODE_ENV', {
       value: originalNodeEnv,
-      writable: true
+      configurable: true
     });
     
     // Clear update handler

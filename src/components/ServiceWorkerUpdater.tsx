@@ -134,7 +134,7 @@ const ServiceWorkerUpdater: React.FC = () => {
         // Create a custom event that Cypress can detect instead of actually reloading
         window.dispatchEvent(new CustomEvent('appReloadTriggered'));
         // Only do the actual reload if not in a test environment
-        if (!window.Cypress) {
+        if (!window.Cypress && process.env.NODE_ENV !== 'test') {
           window.location.reload();
         }
       };
@@ -146,7 +146,7 @@ const ServiceWorkerUpdater: React.FC = () => {
       // Create a custom event that Cypress can detect instead of actually reloading
       window.dispatchEvent(new CustomEvent('appReloadTriggered'));
       // Only do the actual reload if not in a test environment
-      if (!window.Cypress) {
+      if (!window.Cypress && process.env.NODE_ENV !== 'test') {
         window.location.reload();
       }
     }
