@@ -153,10 +153,6 @@ describe('Service Worker Registration', () => {
   const originalNodeEnv = process.env.NODE_ENV;
   
   beforeEach(() => {
-    // Store original values at the correct scope
-    const originalWindow = global.window;
-    const originalNavigator = global.navigator;
-    
     // Add serviceWorker to global navigator
     Object.defineProperty(global.navigator, 'serviceWorker', {
       value: mockServiceWorkerContainer,

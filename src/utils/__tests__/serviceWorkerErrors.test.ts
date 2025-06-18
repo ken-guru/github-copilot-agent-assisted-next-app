@@ -44,12 +44,37 @@ describe('Service Worker Errors', () => {
   });
 
   describe('isLocalhost', () => {
-    it('should return result based on window.location.hostname', () => {
-      // This test just verifies that isLocalhost calls isHostnameLocalhost
-      // with the current hostname - we can't easily mock window.location in JSDOM
+    it('should delegate to isHostnameLocalhost with current hostname', () => {
+      // Since we import the function directly, we can't easily spy on it
+      // Instead, we verify the behavior by testing the integration
+      const currentHostname = window.location.hostname;
+      const expectedResult = isHostnameLocalhost(currentHostname);
+      const actualResult = isLocalhost();
+      
+      // Verify that isLocalhost returns the same result as calling isHostnameLocalhost 
+      // with the current hostname, proving delegation works correctly
+      expect(actualResult).toBe(expectedResult);
+      
+      // Verify result is a boolean
+      expect(typeof actualResult).toBe('boolean');
+    });
+
+    it('should return correct boolean value based on hostname logic', () => {
+      // Test the integration by verifying isLocalhost returns a boolean
+      // and that it's consistent with the hostname checking logic
       const result = isLocalhost();
-      // Just verify it returns a boolean (the logic is tested in isHostnameLocalhost)
+      const currentHostname = window.location.hostname;
+      
       expect(typeof result).toBe('boolean');
+      
+      // Verify that the result matches what we'd expect from the hostname
+      if (currentHostname === 'localhost' || 
+          currentHostname === '[::1]' || 
+          /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/.test(currentHostname)) {
+        expect(result).toBe(true);
+      } else {
+        expect(result).toBe(false);
+      }
     });
   });
 
