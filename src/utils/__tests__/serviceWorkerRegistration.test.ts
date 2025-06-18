@@ -7,9 +7,11 @@ import {
 // Mock fetch globally for service worker tests
 beforeAll(() => {
   global.fetch = jest.fn().mockResolvedValue({
+    ok: true,
     status: 200,
+    statusText: 'OK',
     headers: { get: () => 'application/javascript' },
-  } as any);
+  } as unknown as Response);
 });
 
 afterAll(() => {
@@ -155,11 +157,6 @@ describe('Service Worker Registration', () => {
     const originalWindow = global.window;
     const originalNavigator = global.navigator;
     
-    // Set up mock navigator - ensure serviceWorker property exists
-    const mockNavigator = {
-      serviceWorker: mockServiceWorkerContainer
-    };
-    
     // Add serviceWorker to global navigator
     Object.defineProperty(global.navigator, 'serviceWorker', {
       value: mockServiceWorkerContainer,
@@ -168,19 +165,19 @@ describe('Service Worker Registration', () => {
     });
     
     // Also set global navigator if needed
-    (global as any).navigator = {
+    (global as unknown as { navigator: unknown }).navigator = {
       ...originalNavigator,
       serviceWorker: mockServiceWorkerContainer
     };
     
     // Set up mock window properties without using Object.defineProperty
-    (global as any).window = {
+    (global as unknown as { window: unknown }).window = {
       ...originalWindow,
       addEventListener: jest.fn(),
       location: {
         hostname: 'localhost',
         origin: 'http://localhost:3000'
-      }
+      } as Location
     };
     
     // Set NODE_ENV for tests using defineProperty
@@ -195,8 +192,8 @@ describe('Service Worker Registration', () => {
   
   afterEach(() => {
     // Restore original environment
-    (global as any).navigator = originalNavigator;
-    (global as any).window = originalWindow;
+    (global as unknown as { navigator: unknown }).navigator = originalNavigator;
+    (global as unknown as { window: unknown }).window = originalWindow;
     
     // Restore original NODE_ENV
     Object.defineProperty(process.env, 'NODE_ENV', {
