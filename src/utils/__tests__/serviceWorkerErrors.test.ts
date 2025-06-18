@@ -1,4 +1,4 @@
-import { handleServiceWorkerError, isLocalhost, logCacheEvent } from '../serviceWorkerErrors';
+import { handleServiceWorkerError, isLocalhost, isHostnameLocalhost, logCacheEvent } from '../serviceWorkerErrors';
 
 describe('Service Worker Errors', () => {
   describe('handleServiceWorkerError', () => {
@@ -21,61 +21,60 @@ describe('Service Worker Errors', () => {
     });
   });
 
-  describe('isLocalhost', () => {
+  describe('isHostnameLocalhost', () => {
     it('should return true when hostname is localhost', () => {
-      // Arrange
-      Object.defineProperty(window, 'location', {
-        value: { hostname: 'localhost' },
-        writable: true
-      });
-      
-      // Act
-      const result = isLocalhost();
-      
-      // Assert
-      expect(result).toBe(true);
+      expect(isHostnameLocalhost('localhost')).toBe(true);
     });
 
     it('should return true when hostname is [::1]', () => {
-      // Arrange
-      Object.defineProperty(window, 'location', {
-        value: { hostname: '[::1]' },
-        writable: true
-      });
-      
-      // Act
-      const result = isLocalhost();
-      
-      // Assert
-      expect(result).toBe(true);
+      expect(isHostnameLocalhost('[::1]')).toBe(true);
     });
 
     it('should return true when hostname matches IPv4 localhost pattern', () => {
-      // Arrange
-      Object.defineProperty(window, 'location', {
-        value: { hostname: '127.0.0.1' },
-        writable: true
-      });
-      
-      // Act
-      const result = isLocalhost();
-      
-      // Assert
-      expect(result).toBe(true);
+      expect(isHostnameLocalhost('127.0.0.1')).toBe(true);
+      expect(isHostnameLocalhost('127.1.1.1')).toBe(true);
+      expect(isHostnameLocalhost('127.255.255.255')).toBe(true);
     });
 
     it('should return false when hostname is not localhost', () => {
-      // Arrange
-      Object.defineProperty(window, 'location', {
-        value: { hostname: 'example.com' },
-        writable: true
-      });
+      expect(isHostnameLocalhost('example.com')).toBe(false);
+      expect(isHostnameLocalhost('google.com')).toBe(false);
+      expect(isHostnameLocalhost('128.0.0.1')).toBe(false);
+    });
+  });
+
+  describe('isLocalhost', () => {
+    it('should delegate to isHostnameLocalhost with current hostname', () => {
+      // Since we import the function directly, we can't easily spy on it
+      // Instead, we verify the behavior by testing the integration
+      const currentHostname = window.location.hostname;
+      const expectedResult = isHostnameLocalhost(currentHostname);
+      const actualResult = isLocalhost();
       
-      // Act
+      // Verify that isLocalhost returns the same result as calling isHostnameLocalhost 
+      // with the current hostname, proving delegation works correctly
+      expect(actualResult).toBe(expectedResult);
+      
+      // Verify result is a boolean
+      expect(typeof actualResult).toBe('boolean');
+    });
+
+    it('should return correct boolean value based on hostname logic', () => {
+      // Test the integration by verifying isLocalhost returns a boolean
+      // and that it's consistent with the hostname checking logic
       const result = isLocalhost();
+      const currentHostname = window.location.hostname;
       
-      // Assert
-      expect(result).toBe(false);
+      expect(typeof result).toBe('boolean');
+      
+      // Verify that the result matches what we'd expect from the hostname
+      if (currentHostname === 'localhost' || 
+          currentHostname === '[::1]' || 
+          /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/.test(currentHostname)) {
+        expect(result).toBe(true);
+      } else {
+        expect(result).toBe(false);
+      }
     });
   });
 

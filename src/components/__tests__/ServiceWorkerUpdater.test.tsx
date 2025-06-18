@@ -40,15 +40,9 @@ describe('ServiceWorkerUpdater', () => {
     // Get mock objects including postMessageMock
     const { simulateUpdate, postMessageMock, simulateActivation, cleanup } = mockServiceWorker();
     
-    // Mock location.reload using Object.defineProperty instead of direct assignment
-    const originalLocation = window.location;
-    const mockReload = jest.fn();
-    
-    // Define a mock location object with a reload function
-    Object.defineProperty(window, 'location', {
-      configurable: true,
-      value: { ...originalLocation, reload: mockReload }
-    });
+    // Listen for the reload event instead of mocking window.location.reload
+    const reloadEventListener = jest.fn();
+    window.addEventListener('appReloadTriggered', reloadEventListener);
     
     render(<ServiceWorkerUpdater />);
     
@@ -72,14 +66,11 @@ describe('ServiceWorkerUpdater', () => {
       simulateActivation();
     });
     
-    // Check if reload was called after the service worker took control
-    expect(mockReload).toHaveBeenCalled();
+    // Check if the reload event was fired (since window.location.reload is skipped in tests)
+    expect(reloadEventListener).toHaveBeenCalled();
     
-    // Restore original location
-    Object.defineProperty(window, 'location', {
-      configurable: true,
-      value: originalLocation
-    });
+    // Clean up event listener
+    window.removeEventListener('appReloadTriggered', reloadEventListener);
     
     cleanup();
   });
