@@ -140,7 +140,7 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Ensure proper referencing in main index
 - Link related issues
 - Verify unique IDs
-- Maintain chronological order
+- Maintain sequential ID order (not necessarily creation date order)
 
 ### Large-Scale Reorganization Protocol
 - BEFORE starting: Document reorganization plan and scope
@@ -151,7 +151,7 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - DOCUMENT process and lessons learned in Memory Log
 
 ### Memory Log ID Management
-- ASSIGN sequential IDs based on creation date for consistency
+- ASSIGN sequential IDs in chronological order for consistency
 - NEVER reuse or skip ID numbers
 - MAINTAIN ID-to-filename consistency in all references
 - UPDATE display IDs when files are renumbered
