@@ -224,7 +224,7 @@ The component architecture:
 
 ## Change History
 
-- **2025-03-15**: Fixed memory leak issues and timer cleanup (MRTMLY-014)
+- **2025-03-15**: Fixed memory leak issues and timer cleanup (MRTMLY-147)
 - **2025-03-15**: Implemented countdown timer fix (MRTMLY-020)
 - **2025-02-20**: Added real-time break visualization (MRTMLY-013)
 - **2025-02-15**: Added overtime visualization

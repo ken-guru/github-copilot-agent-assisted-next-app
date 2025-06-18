@@ -3,7 +3,7 @@
 
 **Date:** 2025-04-29
 **Status:** In Progress
-**Related Memory Log:** [MRTMLY-185](../logged_memories/MRTMLY-185-component-props-interface-optimization.md)
+**Related Memory Log:** [MRTMLY-133](../logged_memories/MRTMLY-133-additional-cleanup-candidates.md)
 
 ## Overview
 This document analyzes the usage of deprecated utilities found in `/src/utils/deprecated-utils/` to facilitate migration to modern alternatives.

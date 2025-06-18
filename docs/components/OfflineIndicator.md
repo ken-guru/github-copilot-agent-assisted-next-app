@@ -284,7 +284,7 @@ useEffect(() => {
 
 This component has been discussed in the following memory logs:
 
-- [MRTMLY-009: Offline Indicator Layout and Test Optimization](../logged_memories/MRTMLY-108-offline-indicator-layout.md) - Layout improvements and testing
+- [MRTMLY-108: Offline Indicator Layout and Test Optimization](../logged_memories/MRTMLY-108-offline-indicator-layout.md) - Layout improvements and testing
 
 ---
 
