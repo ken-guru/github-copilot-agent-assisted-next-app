@@ -22,6 +22,8 @@ const FIXED_TIME = 1609459200000; // 2021-01-01 00:00:00
 // Helper function for checking break item
 const expectBreakItemWithDuration = (durationSeconds: number, testIdSuffix: string = '') => {
   const expectedDurationText = formatTimeHuman(durationSeconds * 1000);
+  // Create a regex pattern to match the duration with optional space and parentheses
+  const durationPattern = new RegExp(`\\s*\\(${expectedDurationText.replace(/:/g, ':')}\\)`);
   
   // Get all list items. We will iterate through them to find our specific break.
   const allListItems = screen.getAllByRole('listitem');
@@ -33,7 +35,7 @@ const expectBreakItemWithDuration = (durationSeconds: number, testIdSuffix: stri
     // Check if this list item contains the text "Break"
     if (breakTextElement) {
       // If it does, then check if it also contains a badge with the correct duration
-      const badgeElement = within(listItem).queryByText(expectedDurationText);
+      const badgeElement = within(listItem).queryByText(durationPattern);
       if (badgeElement && badgeElement.tagName === 'SPAN' && badgeElement.classList.contains('badge')) {
         foundCorrectBreak = true;
         break; // Found the specific break item we were looking for
@@ -42,7 +44,7 @@ const expectBreakItemWithDuration = (durationSeconds: number, testIdSuffix: stri
   }
 
   if (!foundCorrectBreak) {
-    console.error(`[Test Debug${testIdSuffix}] Expected break item with text "Break" AND duration "${expectedDurationText}" not found.`);
+    console.error(`[Test Debug${testIdSuffix}] Expected break item with text "Break" AND duration matching pattern "${durationPattern}" not found.`);
     // Output the DOM structure of all list items to help diagnose.
     console.log("[Test Debug] Current List Items in DOM:");
     allListItems.forEach((item, index) => {

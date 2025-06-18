@@ -87,7 +87,8 @@ describe('Timeline Component Rendering', () => {
         timerActive={false}
       />
     );
-    expect(screen.getByText('No activities planned yet')).toBeInTheDocument();
+    expect(screen.getByTestId('no-entries-message')).toBeInTheDocument();
+    expect(screen.getByTestId('no-entries-message')).toHaveTextContent('No activities planned yet.');
   });
 
   it('should adjust timeline ruler and show overtime warning when activities run into overtime', () => {

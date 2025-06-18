@@ -36,11 +36,13 @@ export default function ProgressBar({
   }
 
   return (
-    <BootstrapProgressBar
-      now={progressPercentage}
-      aria-label="Progress bar"
-      variant={variant}
-      style={{ height: '20px' }} // Optional: Add some default height or manage via global styles
-    />
+    <div data-testid="progress-container">
+      <BootstrapProgressBar
+        now={progressPercentage}
+        aria-label="Progress bar"
+        variant={variant}
+        style={{ height: '20px' }} // Optional: Add some default height or manage via global styles
+      />
+    </div>
   );
 }

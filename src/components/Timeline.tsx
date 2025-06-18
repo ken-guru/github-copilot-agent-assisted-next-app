@@ -100,7 +100,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
         clearInterval(intervalId);
       }
     };
-  }, [timerActive, hasEntries, entries, allActivitiesCompleted, initialElapsedTime, totalDuration, currentElapsedTime]); // Added currentElapsedTime to dependencies
+  }, [timerActive, hasEntries, entries, allActivitiesCompleted, initialElapsedTime, totalDuration]); // currentElapsedTime intentionally excluded to prevent infinite loop
 
   const timeLeft = totalDuration - currentElapsedTime;
   const isOvertime = timeLeft < 0;
@@ -209,6 +209,19 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
         </Col>
       </Row>
       
+      {/* Overtime warning section */}
+      {isOvertime && (
+        <Row className="mb-3">
+          <Col>
+            <div data-testid="overtime-warning" className="alert alert-warning" role="alert">
+              <div data-testid="overtime-section">
+                Timeline is in overtime.
+              </div>
+            </div>
+          </Col>
+        </Row>
+      )}
+      
       <Row>
         {/* Ruler Column - using position relative for markers */}
         <Col md={2} className="position-relative border-end" style={{ minHeight: '400px' /* Ensure ruler has height */ }}>
@@ -265,6 +278,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                   return (
                     <ListGroup.Item
                       key={activity.id || `activity-${index}`}
+                      data-testid={`timeline-entry-${index}`}
                       // variant={itemStyle.variant as any} // Apply variant if determined
                       style={{ 
                         backgroundColor: itemStyle.backgroundColor, 
@@ -278,7 +292,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                       <div style={{ height: `${item.height}%`, width: '100%' }} className="d-flex justify-content-between align-items-center">
                         <span data-testid="timeline-activity-name" className="fw-bold">{activity.activityName}</span>
                         <Badge bg="secondary" pill>
-                          {formatTimeHuman(item.duration)}
+                          ({formatTimeHuman(item.duration)})
                         </Badge>
                       </div>
                     </ListGroup.Item>
@@ -300,7 +314,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                       <div style={{ height: `${item.height}%`, width: '100%' }} className="d-flex justify-content-between align-items-center">
                         <span className="fst-italic">Break</span> {/* Changed from "Gap" to "Break" */}
                         <Badge bg="info" pill> {/* Using 'info' for breaks, can be adjusted */}
-                          {formatTimeHuman(item.duration)}
+                          ({formatTimeHuman(item.duration)})
                         </Badge>
                       </div>
                     </ListGroup.Item>
@@ -309,8 +323,8 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                 return null;
               })
             ) : (
-              <ListGroup.Item className="text-center p-3">
-                No activities planned yet
+              <ListGroup.Item className="text-center p-3" data-testid="no-entries-message">
+                No activities planned yet.
               </ListGroup.Item>
             )}
           </ListGroup>

@@ -8,14 +8,25 @@ import { formatTimeHuman } from '@/utils/time'; // Added import for formatTimeHu
 // We are interested in the logic and data flow, not Bootstrap's internal rendering.
 jest.mock('react-bootstrap', () => {
   const ActualReactBootstrap = jest.requireActual('react-bootstrap');
+  const ListGroup = ({ children, ...props }: any) => <ul {...props}>{children}</ul>;
+  ListGroup.Item = ({ children, ...props }: any) => <li {...props}>{children}</li>;
+  
+  const Badge = ({ children, pill, ...props }: any) => {
+    // Handle the pill prop properly - if it's a boolean, don't pass it to DOM
+    const filteredProps = { ...props };
+    if (typeof pill === 'boolean') {
+      delete filteredProps.pill;
+    }
+    return <span {...filteredProps} className={pill ? 'badge-pill' : 'badge'}>{children}</span>;
+  };
+  
   return {
     ...ActualReactBootstrap,
     Container: ({ children, ...props }: any) => <div {...props}>{children}</div>,
     Row: ({ children, ...props }: any) => <div {...props}>{children}</div>,
     Col: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    ListGroup: ({ children, ...props }: any) => <ul {...props}>{children}</ul>,
-    ListGroupItem: ({ children, ...props }: any) => <li {...props}>{children}</li>,
-    Badge: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+    ListGroup,
+    Badge,
     Alert: ({ children, ...props }: any) => <div {...props} role="alert">{children}</div>,
   };
 });
