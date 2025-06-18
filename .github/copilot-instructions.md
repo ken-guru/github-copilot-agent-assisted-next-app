@@ -142,6 +142,21 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Verify unique IDs
 - Maintain chronological order
 
+### Large-Scale Reorganization Protocol
+- BEFORE starting: Document reorganization plan and scope
+- CREATE backup/mapping strategy for reference preservation  
+- PLAN systematic approach to reference updates
+- EXECUTE reorganization with validation checkpoints
+- VALIDATE all links and references after completion
+- DOCUMENT process and lessons learned in Memory Log
+
+### Memory Log ID Management
+- ASSIGN sequential IDs based on creation date for consistency
+- NEVER reuse or skip ID numbers
+- MAINTAIN ID-to-filename consistency in all references
+- UPDATE display IDs when files are renumbered
+- VALIDATE ID consistency with automated tools
+
 ## CODE QUALITY STANDARDS [PRIORITY: HIGH]
 ### Large File Refactoring
 - IDENTIFY files exceeding 200 lines
@@ -178,6 +193,9 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Address ALL errors and warnings
 - Document deployment-specific considerations in Memory Log
 - Tag deployment issues with #deployment
+- VERIFY link integrity after file reorganizations
+- CHECK for duplicate files in scripts directory
+- RUN `node scripts/check-markdown-links.js` for link validation
 
 ## COMMUNICATION GUIDELINES [PRIORITY: MEDIUM]
 ### Change Summary Format
@@ -193,6 +211,44 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Update Memory Log with progress and challenges
 - Review completed work against expected benefits
 - Focus on one enhancement at a time
+
+## SCRIPT LIFECYCLE MANAGEMENT [PRIORITY: HIGH]
+### One-Off Script Protocols
+- ARCHIVE immediately after single-use scripts complete their purpose
+- NEVER leave completed fix/reorganization scripts in main `scripts/` directory
+- CREATE scripts in `scripts/` for development, MOVE to `scripts/archive/` when done
+- DELETE duplicates - keep only one copy (preferably archived version for history)
+
+### Script Naming and Organization
+- Use descriptive names: `fix-[specific-issue]-[date].js`
+- Document script purpose in header comments
+- Include cleanup instructions in script comments
+- Archive with: `mv scripts/fix-*.js scripts/archive/` after completion
+
+### Script Security Guidelines
+- AVOID hardcoded credentials, passwords, or sensitive data
+- LIMIT shell commands to safe, project-scoped operations
+- DOCUMENT any `execSync` or `spawn` usage with security justification
+- REVIEW scripts for security implications before committing
+
+## LINK INTEGRITY PROTOCOLS [PRIORITY: HIGH]
+### Systematic Link Validation
+- RUN link checker after ANY large-scale file reorganization
+- VALIDATE all markdown links before completing documentation changes
+- USE `node scripts/check-markdown-links.js` as standard validation step
+- NEVER complete reorganization without link verification
+
+### Reorganization Best Practices
+- PLAN link update strategy before starting file reorganizations
+- CREATE mapping files for any ID or filename changes
+- UPDATE references systematically, not ad-hoc
+- VALIDATE with automated tools, not manual checking
+
+### Link Maintenance Requirements
+- INCLUDE link validation in all documentation PRs
+- FIX broken links immediately when discovered
+- MAINTAIN audit trail of reference changes in Memory Log
+- PREVENT false positives by proper code block formatting
 
 ## DEBUGGING TEMPLATE [REFERENCE]
 ```markdown
