@@ -1,4 +1,4 @@
-# MRTMLY-212: Timeline Entry Interface Consolidation
+# MRTMLY-188: Timeline Entry Interface Consolidation
 
 **Date:** 2025-05-19  
 **Tags:** #interfaces #typescript #refactoring #compatibility  
@@ -118,7 +118,7 @@ These inconsistencies caused TypeScript errors and potentially runtime issues.
      - Cons: Type safety is slightly reduced
 
 4. **Chosen approach**:
-   - Based on MRTMLY-003, we decided to "maintain a single comprehensive TimelineEntry interface with optional fields"
+   - Based on MRTMLY-185, we decided to "maintain a single comprehensive TimelineEntry interface with optional fields"
    - Created a consolidated interface in `src/types/index.ts`
    - Made all fields that varied between implementations optional
    - Added JSDoc comments for clarity

@@ -1,4 +1,4 @@
-### Issue: MRTMLY-218: Planning Template Documentation Integration and Reference Updates
+### Issue: MRTMLY-194: Planning Template Documentation Integration and Reference Updates
 **Date:** 2025-06-18
 **Tags:** #documentation #templates #planning #ai-assistance #markdown-links
 **Status:** Resolved

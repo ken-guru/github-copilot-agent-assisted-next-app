@@ -1,4 +1,4 @@
-### Issue: MRTMLY-037: Test Suite Expansion Planning Based on Known Bugs
+### Issue: MRTMLY-031: Test Suite Expansion Planning Based on Known Bugs
 **Date:** 2025-04-02
 **Tags:** #testing #planning #bugs #test-coverage #regression-testing
 **Status:** In Progress

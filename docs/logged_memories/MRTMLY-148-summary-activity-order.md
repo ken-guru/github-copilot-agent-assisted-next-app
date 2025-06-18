@@ -1,4 +1,4 @@
-### Issue: MRTMLY-025: Summary Activity Order Fix
+### Issue: MRTMLY-019: Summary Activity Order Fix
 **Date:** 2025-03-15
 **Tags:** #bug-fix #summary #chronological-order #testing
 **Status:** Resolved

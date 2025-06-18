@@ -4,7 +4,7 @@ This document details the viewport configuration for Mr. Timely and explains how
 
 ## Navigation
 - [Back to Component Documentation Index](../components/README.md)
-- [Related: Layout Configuration](./Layout.md)
+- [Related: Layout Configuration](../README.md#layout-components)
 
 ## Overview
 The viewport configuration in Next.js controls how the application is displayed on different devices, particularly for mobile responsiveness. In Mr. Timely, we've configured specific viewport settings to ensure consistent user experience across devices.

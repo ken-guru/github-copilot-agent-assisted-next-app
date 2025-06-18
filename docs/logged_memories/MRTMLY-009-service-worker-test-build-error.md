@@ -1,4 +1,4 @@
-### Issue: MRTMLY-013: Service Worker Test Build Error Fix
+### Issue: MRTMLY-007: Service Worker Test Build Error Fix
 **Date:** 2025-03-01
 **Tags:** #debugging #tests #typescript #linting
 **Status:** Resolved

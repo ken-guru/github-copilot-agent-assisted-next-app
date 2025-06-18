@@ -1,4 +1,4 @@
-### Issue: MRTMLY-026: Timeline Component Countdown Timer Fix
+### Issue: MRTMLY-020: Timeline Component Countdown Timer Fix
 **Date:** 2025-03-15
 **Tags:** #debugging #timer #useEffect #cleanup
 **Status:** Resolved

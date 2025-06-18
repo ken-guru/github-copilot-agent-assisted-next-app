@@ -3,7 +3,7 @@
 
 **Date:** 2025-04-29
 **Status:** Pending Analysis
-**Related Memory Log:** [MRTMLY-140-additional-cleanup-candidates](./logged_memories/MRTMLY-140-additional-cleanup-candidates.md)
+**Related Memory Log:** [MRTMLY-133-additional-cleanup-candidates](../logged_memories/MRTMLY-133-additional-cleanup-candidates.md)
 **Related Analysis:** [Draft Documentation Status](../analysis/draft-docs-status.md)
 
 ## Overview

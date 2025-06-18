@@ -31,7 +31,7 @@ This file contains a record of changes that have been implemented in the applica
 - Used conditional checks like `if (colors && 'light' in colors && 'dark' in colors)` for type safety
 - Added specific ESLint disable comments (`@typescript-eslint/no-empty-object-type`, `@typescript-eslint/no-unused-vars`)
 - Replaced let with const where possible using nullish coalescing and array methods
-- Added proper documentation in memory log (MRTMLY-214)
+- Added proper documentation in memory log (MRTMLY-190)
 
 ### Post-Migration Code Quality Improvements (2025-05-19)
 
@@ -98,7 +98,7 @@ This file contains a record of changes that have been implemented in the applica
 - Aligned with project ESLint rules prohibiting `any` types
 
 **Memory Log References:**
-- [MRTMLY-034-service-worker-event-handler-types: Service Worker Event Handler Types](./logged_memories/MRTMLY-034-service-worker-event-handler-types.md)
+- [MRTMLY-028-service-worker-event-handler-types: Service Worker Event Handler Types](./logged_memories/MRTMLY-028-service-worker-event-handler-types.md)
 
 ### Service Worker State Type Fix (2023-12-03)
 
@@ -116,7 +116,7 @@ This file contains a record of changes that have been implemented in the applica
 - "waiting" is not a valid ServiceWorkerState despite being used in the API documentation
 
 **Memory Log References:**
-- [MRTMLY-033-service-worker-state-type-fix: Service Worker State Type Fix](./logged_memories/MRTMLY-033-service-worker-state-type-fix.md)
+- [MRTMLY-027-service-worker-state-type-fix: Service Worker State Type Fix](./logged_memories/MRTMLY-027-service-worker-state-type-fix.md)
 
 ### Service Worker Interface Compliance Fixes (2023-12-03)
 
@@ -136,7 +136,7 @@ This file contains a record of changes that have been implemented in the applica
 - Maintained test functionality while ensuring type compliance
 
 **Memory Log References:**
-- [MRTMLY-032-service-worker-interface-compliance: Service Worker Interface Compliance Fixes](./logged_memories/MRTMLY-032-service-worker-interface-compliance.md)
+- [MRTMLY-026-service-worker-interface-compliance: Service Worker Interface Compliance Fixes](./logged_memories/MRTMLY-026-service-worker-interface-compliance.md)
 
 ### Service Worker ServiceWorker Type Issue Fix (2023-12-02)
 
@@ -155,7 +155,7 @@ This file contains a record of changes that have been implemented in the applica
 - Added minimum required methods to satisfy the interface requirements
 
 **Memory Log References:**
-- [MRTMLY-031-service-worker-serviceworker-type-issue: Service Worker ServiceWorker Type Issue](./logged_memories/MRTMLY-031-service-worker-serviceworker-type-issue.md)
+- [MRTMLY-025-service-worker-serviceworker-type-issue: Service Worker ServiceWorker Type Issue](./logged_memories/MRTMLY-025-service-worker-serviceworker-type-issue.md)
 
 ### Service Worker ESLint Error Fixes (2023-12-02)
 
@@ -174,7 +174,7 @@ This file contains a record of changes that have been implemented in the applica
 - Fixed test mocks to better match the expected API interfaces
 
 **Memory Log References:**
-- [MRTMLY-030-service-worker-eslint-fixes: Service Worker ESLint Error Fixes](./logged_memories/MRTMLY-030-service-worker-eslint-fixes.md)
+- [MRTMLY-024-service-worker-eslint-fixes: Service Worker ESLint Error Fixes](./logged_memories/MRTMLY-024-service-worker-eslint-fixes.md)
 
 ### Service Worker TypeScript Error Fixes (2023-12-02)
 
@@ -196,7 +196,7 @@ This file contains a record of changes that have been implemented in the applica
 - Fixed NODE_ENV assignment with Object.defineProperty
 
 **Memory Log References:**
-- [MRTMLY-029-service-worker-typescript-errors-variation-1: Service Worker TypeScript Error Fixes](./logged_memories/MRTMLY-029-service-worker-typescript-errors-variation-1.md)
+- [MRTMLY-023-service-worker-typescript-errors-variation-1: Service Worker TypeScript Error Fixes](./logged_memories/MRTMLY-023-service-worker-typescript-errors-variation-1.md)
 
 ### Service Worker Registration Refactoring Complete (2023-12-01)
 
@@ -231,13 +231,13 @@ This file contains a record of changes that have been implemented in the applica
 - Maintained backward compatibility with existing imports
 
 **Memory Log References:**
-- [MRTMLY-026-service-worker-test-mock-implementation: Service Worker Test Mock Implementation](./logged_memories/MRTMLY-026-service-worker-test-mock-implementation.md)
-- [MRTMLY-025-service-worker-test-final-fixes: Service Worker Test Final Fixes](./logged_memories/MRTMLY-025-service-worker-test-final-fixes.md)
-- [MRTMLY-024-service-worker-test-promise-handling: Service Worker Test Promise Handling](./logged_memories/MRTMLY-024-service-worker-test-promise-handling.md)
-- [MRTMLY-022-service-worker-circular-deps: Service Worker Circular Dependencies Resolution](./logged_memories/MRTMLY-022-service-worker-circular-deps.md)
-- [MRTMLY-021-service-worker-test-mocking-variation-1: Service Worker Test Mocking Improvements](./logged_memories/MRTMLY-021-service-worker-test-mocking-variation-1.md)
-- [MRTMLY-019-service-worker-test-fixes-variation-1: Service Worker Test Fixes](./logged_memories/MRTMLY-019-service-worker-test-fixes-variation-1.md)
-- [MRTMLY-018-service-worker-refactoring: Service Worker Refactoring](./logged_memories/MRTMLY-018-service-worker-refactoring.md)
+- [MRTMLY-020-service-worker-test-mock-implementation: Service Worker Test Mock Implementation](./logged_memories/MRTMLY-020-service-worker-test-mock-implementation.md)
+- [MRTMLY-019-service-worker-test-final-fixes: Service Worker Test Final Fixes](./logged_memories/MRTMLY-019-service-worker-test-final-fixes.md)
+- [MRTMLY-018-service-worker-test-promise-handling: Service Worker Test Promise Handling](./logged_memories/MRTMLY-018-service-worker-test-promise-handling.md)
+- [MRTMLY-016-service-worker-circular-deps: Service Worker Circular Dependencies Resolution](./logged_memories/MRTMLY-016-service-worker-circular-deps.md)
+- [MRTMLY-015-service-worker-test-mocking-variation-1: Service Worker Test Mocking Improvements](./logged_memories/MRTMLY-015-service-worker-test-mocking-variation-1.md)
+- [MRTMLY-013-service-worker-test-fixes-variation-1: Service Worker Test Fixes](./logged_memories/MRTMLY-013-service-worker-test-fixes-variation-1.md)
+- [MRTMLY-012-service-worker-refactoring: Service Worker Refactoring](./logged_memories/MRTMLY-012-service-worker-test-fixes-original.md)
 
 ### Service Worker Test Mock Enhancement (2023-12-01)
 
@@ -256,7 +256,7 @@ This file contains a record of changes that have been implemented in the applica
 - Created more realistic service worker lifecycle simulation
 
 **Memory Log References:**
-- [MRTMLY-026-service-worker-test-mock-implementation: Service Worker Test Mock Implementation](./logged_memories/MRTMLY-026-service-worker-test-mock-implementation.md)
+- [MRTMLY-020-service-worker-test-mock-implementation: Service Worker Test Mock Implementation](./logged_memories/MRTMLY-020-service-worker-test-mock-implementation.md)
 
 ## 2023 November
 
@@ -289,12 +289,12 @@ This file contains a record of changes that have been implemented in the applica
 - Added specific code paths for test environments to improve testability
 
 **Memory Log References:**
-- [MRTMLY-025-service-worker-test-final-fixes: Service Worker Test Final Fixes](./logged_memories/MRTMLY-025-service-worker-test-final-fixes.md)
-- [MRTMLY-024-service-worker-test-promise-handling: Service Worker Test Promise Handling](./logged_memories/MRTMLY-024-service-worker-test-promise-handling.md)
-- [MRTMLY-022-service-worker-circular-deps: Service Worker Circular Dependencies Resolution](./logged_memories/MRTMLY-022-service-worker-circular-deps.md)
-- [MRTMLY-021-service-worker-test-mocking-variation-1: Service Worker Test Mocking Improvements](./logged_memories/MRTMLY-021-service-worker-test-mocking-variation-1.md)
-- [MRTMLY-019-service-worker-test-fixes-variation-1: Service Worker Test Fixes](./logged_memories/MRTMLY-019-service-worker-test-fixes-variation-1.md)
-- [MRTMLY-018-service-worker-refactoring: Service Worker Refactoring](./logged_memories/MRTMLY-018-service-worker-refactoring.md)
+- [MRTMLY-019-service-worker-test-final-fixes: Service Worker Test Final Fixes](./logged_memories/MRTMLY-019-service-worker-test-final-fixes.md)
+- [MRTMLY-018-service-worker-test-promise-handling: Service Worker Test Promise Handling](./logged_memories/MRTMLY-018-service-worker-test-promise-handling.md)
+- [MRTMLY-016-service-worker-circular-deps: Service Worker Circular Dependencies Resolution](./logged_memories/MRTMLY-016-service-worker-circular-deps.md)
+- [MRTMLY-015-service-worker-test-mocking-variation-1: Service Worker Test Mocking Improvements](./logged_memories/MRTMLY-015-service-worker-test-mocking-variation-1.md)
+- [MRTMLY-013-service-worker-test-fixes-variation-1: Service Worker Test Fixes](./logged_memories/MRTMLY-013-service-worker-test-fixes-variation-1.md)
+- [MRTMLY-012-service-worker-refactoring: Service Worker Refactoring](./logged_memories/MRTMLY-012-service-worker-test-fixes-original.md)
 
 ## Code Refactoring for Large Files
 
@@ -324,5 +324,5 @@ This file contains a record of changes that have been implemented in the applica
 - Clear migration path for gradual adoption of new structure
 
 **Documentation:**
-- [Time Utilities Documentation](/docs/utils/TIME_UTILS_DOCUMENTATION.md)
-- [Memory Log Entry](/docs/logged_memories/MRTMLY-001-timeutils-refactoring.md)
+- [Time Utilities Documentation](./dev-guides/TIME_UTILITIES_GUIDE.md)
+- [Memory Log Entry](./logged_memories/MRTMLY-130-timeutils-refactoring.md)

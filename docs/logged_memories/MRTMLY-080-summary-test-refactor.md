@@ -1,4 +1,4 @@
-### Issue: MRTMLY-003: Summary Component Test Suite Refactor
+### Issue: MRTMLY-185: Summary Component Test Suite Refactor
 **Date:** 2024-02-10
 **Tags:** #testing #refactoring #edge-cases #performance
 **Status:** Resolved

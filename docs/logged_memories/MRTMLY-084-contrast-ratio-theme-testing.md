@@ -1,4 +1,4 @@
-### Issue: MRTMLY-022: Contrast Ratio and Theme Testing Improvements
+### Issue: MRTMLY-016: Contrast Ratio and Theme Testing Improvements
 **Date:** 2025-03-04
 **Tags:** #accessibility #testing #dark-mode #contrast
 **Status:** Resolved

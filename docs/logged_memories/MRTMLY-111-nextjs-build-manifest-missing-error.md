@@ -14,7 +14,7 @@
   }
   ```
 - Error indicates Next.js is trying to access a build manifest file in the `_not-found` directory that doesn't exist
-- This follows the resolution of a routing conflict between Pages Router and App Router (see MRTMLY-065)
+- This follows the resolution of a routing conflict between Pages Router and App Router (see MRTMLY-059)
 
 #### Debug Process
 1. Build system analysis

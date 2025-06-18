@@ -1,4 +1,4 @@
-### Issue: MRTMLY-028: Progress Element Repositioning for Mobile Optimization
+### Issue: MRTMLY-022: Progress Element Repositioning for Mobile Optimization
 **Date:** 2025-03-21
 **Tags:** #mobile #layout #progress-bar #optimization
 **Status:** Resolved

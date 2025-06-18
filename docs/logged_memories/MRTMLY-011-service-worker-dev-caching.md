@@ -1,4 +1,4 @@
-### Issue: MRTMLY-018: Service Worker Development Caching Strategy Enhancement
+### Issue: MRTMLY-012: Service Worker Development Caching Strategy Enhancement
 **Date:** 2025-03-02
 **Tags:** #service-worker #caching #development-experience #javascript #json
 **Status:** Resolved
@@ -7,7 +7,7 @@
 - JavaScript and JSON files not refreshing properly during development
 - Changes to API responses (JSON) not reflected in application
 - Development workflow impaired by aggressive caching
-- Need for comprehensive solution beyond CSS-specific fix from MRTMLY-017
+- Need for comprehensive solution beyond CSS-specific fix from MRTMLY-011
 
 #### Debug Process
 1. Investigated caching behavior for JS and JSON resources

@@ -1,4 +1,4 @@
-### Issue: MRTMLY-082: Production Console Log Removal
+### Issue: MRTMLY-075: Production Console Log Removal
 **Date:** 2024-07-15
 **Tags:** #debugging #production #optimization #logging
 **Status:** Resolved
@@ -44,7 +44,7 @@
        
        // Only log in development or for important messages
        if (isDevelopment() || isImportant) {
-         console[level]('[Service Worker] ' + message);
+         consolelevel;
        }
      }
      ```

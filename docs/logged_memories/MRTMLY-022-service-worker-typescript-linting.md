@@ -1,4 +1,4 @@
-### Issue: MRTMLY-033: Service Worker Utils TypeScript Linting Fix
+### Issue: MRTMLY-027: Service Worker Utils TypeScript Linting Fix
 **Date:** 2025-04-02
 **Tags:** #typescript #linting #service-worker #testing #type-safety
 **Status:** Resolved

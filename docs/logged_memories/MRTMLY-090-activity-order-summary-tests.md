@@ -1,11 +1,11 @@
-### Issue: MRTMLY-041: Activity Order in Summary Tests Implementation
+### Issue: MRTMLY-035: Activity Order in Summary Tests Implementation
 **Date:** 2025-04-05
 **Tags:** #testing #summary #activity-order #chronological-order
 **Status:** Resolved
 
 #### Initial State
 - Current test suite has basic coverage for Summary component
-- MRTMLY-025 documented issues with activity ordering in Summary
+- MRTMLY-019 documented issues with activity ordering in Summary
 - Need expanded test coverage for activity ordering, especially with similar timestamps
 - Test suite should verify activities are displayed in chronological order consistently
 

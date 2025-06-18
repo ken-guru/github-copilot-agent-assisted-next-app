@@ -1,4 +1,4 @@
-### Issue: MRTMLY-036: Progress Bar Theme Compatibility Testing
+### Issue: MRTMLY-030: Progress Bar Theme Compatibility Testing
 **Date:** 2025-04-02
 **Tags:** #testing #theme #accessibility #progress-bar
 **Status:** Resolved

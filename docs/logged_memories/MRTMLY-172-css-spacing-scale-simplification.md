@@ -1,4 +1,4 @@
-### Issue: MRTMLY-050: CSS Spacing Scale Simplification Implementation
+### Issue: MRTMLY-044: CSS Spacing Scale Simplification Implementation
 **Date:** 2025-04-13
 **Tags:** #css #refactoring #spacing-system #variables
 **Status:** Resolved

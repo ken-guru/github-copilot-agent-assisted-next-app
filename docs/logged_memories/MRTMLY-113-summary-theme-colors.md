@@ -1,4 +1,4 @@
-### Issue: MRTMLY-031: Summary Component Theme Color Updates
+### Issue: MRTMLY-025: Summary Component Theme Color Updates
 **Date:** 2025-03-28
 **Tags:** #bug-fix #theme #dark-mode #summary #testing
 **Status:** Resolved

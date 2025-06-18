@@ -1,4 +1,4 @@
-### Issue: MRTMLY-029: Service Worker Registration Test Console Error Fix
+### Issue: MRTMLY-023: Service Worker Registration Test Console Error Fix
 **Date:** 2025-03-25
 **Tags:** #debugging #tests #service-worker #test-mocking
 **Status:** Resolved

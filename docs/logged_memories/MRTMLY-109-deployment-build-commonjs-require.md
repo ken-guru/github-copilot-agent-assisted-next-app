@@ -1,4 +1,4 @@
-### Issue: MRTMLY-016: Deployment Build Failing Due to CommonJS Require
+### Issue: MRTMLY-010: Deployment Build Failing Due to CommonJS Require
 **Date:** 2025-03-01
 **Tags:** #deployment #testing #eslint #typescript
 **Status:** Resolved

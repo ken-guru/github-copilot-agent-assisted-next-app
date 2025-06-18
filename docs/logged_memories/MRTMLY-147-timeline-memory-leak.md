@@ -1,4 +1,4 @@
-### Issue: MRTMLY-020: Timeline Component Memory Leak
+### Issue: MRTMLY-014: Timeline Component Memory Leak
 **Date:** 2025-03-03
 **Tags:** #debugging #memory-leak #jest #timeline #testing
 **Status:** Resolved

@@ -4,7 +4,7 @@
 **Status:** Resolved
 
 #### Initial State
-- After implementing the previous fix in MRTMLY-068, the service worker error has reappeared:
+- After implementing the previous fix in MRTMLY-062, the service worker error has reappeared:
   ```
   TypeError: Failed to update a ServiceWorker for scope ('http://localhost:3000/') with script ('Unknown'): Not found
   ```

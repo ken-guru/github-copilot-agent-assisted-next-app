@@ -1,4 +1,4 @@
-### Issue: MRTMLY-019: Timeline Break Visualization Fix
+### Issue: MRTMLY-013: Timeline Break Visualization Fix
 **Date:** 2025-03-02
 **Tags:** #timeline #visualization #breaks #real-time-updates
 **Status:** Resolved

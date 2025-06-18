@@ -1,4 +1,4 @@
-### Issue: MRTMLY-053: Additional Mobile Spacing Optimizations
+### Issue: MRTMLY-047: Additional Mobile Spacing Optimizations
 **Date:** 2025-04-14
 **Tags:** #css #mobile #responsive-design #spacing-system #optimization
 **Status:** In Progress

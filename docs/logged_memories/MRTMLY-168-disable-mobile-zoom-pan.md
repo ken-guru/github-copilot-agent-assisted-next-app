@@ -1,4 +1,4 @@
-# MRTMLY-024: Disabling Zoom and Pan on Mobile Devices
+# MRTMLY-018: Disabling Zoom and Pan on Mobile Devices
 
 **Date:** 2025-04-10  
 **Tags:** #mobile #viewport #accessibility #ux  

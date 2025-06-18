@@ -1,4 +1,4 @@
-### Issue: MRTMLY-044: Build Failure Due to Unused Import
+### Issue: MRTMLY-038: Build Failure Due to Unused Import
 **Date:** 2023-10-31
 **Tags:** #debugging #build-failure #linting #time-utils
 **Status:** Resolved
@@ -15,7 +15,7 @@
    - Established that this was causing an ESLint error blocking the build
 
 2. Investigated the context of time utilities
-   - Found evidence of a previous refactoring/consolidation of time utilities (MRTMLY-038)
+   - Found evidence of a previous refactoring/consolidation of time utilities (MRTMLY-032)
    - Determined that the unused import was likely a leftover from that consolidation
    - Checked if removing the import would cause any regressions
 

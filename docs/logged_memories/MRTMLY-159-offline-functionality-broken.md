@@ -4,7 +4,7 @@
 **Status:** Resolved
 
 #### Initial State
-- After implementing the routing and service worker fixes (MRTMLY-066 and MRTMLY-067):
+- After implementing the routing and service worker fixes (MRTMLY-060 and MRTMLY-061):
   - The offline status banner appears when the network is offline
   - The app does not work when reloaded while offline
   - Browser storage/caching is no longer being used

@@ -1,4 +1,4 @@
-### Issue: MRTMLY-004: Summary Component Status Message Bug Fix
+### Issue: MRTMLY-002: Summary Component Status Message Bug Fix
 **Date:** 2024-02-20
 **Tags:** #bugfix #testing #ui #state-management
 **Status:** Resolved

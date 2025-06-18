@@ -1,4 +1,4 @@
-### Issue: MRTMLY-014: Header Component Mobile Layout Enhancement
+### Issue: MRTMLY-008: Header Component Mobile Layout Enhancement
 **Date:** 2025-03-01
 **Tags:** #mobile #layout #header #accessibility #testing
 **Status:** Resolved

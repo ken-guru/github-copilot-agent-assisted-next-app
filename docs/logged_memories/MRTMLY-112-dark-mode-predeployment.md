@@ -1,4 +1,4 @@
-### Issue: MRTMLY-024: Pre-deployment Verification for Dark Mode and Contrast Updates
+### Issue: MRTMLY-018: Pre-deployment Verification for Dark Mode and Contrast Updates
 **Date:** 2025-03-10
 **Tags:** #deployment #verification #testing #accessibility
 **Status:** Resolved

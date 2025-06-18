@@ -1,4 +1,4 @@
-### Issue: MRTMLY-054: Duplicate Activity Addition Error
+### Issue: MRTMLY-048: Duplicate Activity Addition Error
 **Date:** 2025-04-10
 **Tags:** #debugging #activities #state-machine #error-handling
 **Status:** Resolved

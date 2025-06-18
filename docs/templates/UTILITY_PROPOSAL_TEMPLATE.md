@@ -101,7 +101,7 @@ describe('utilityName', () => {
 - [References to any related utilities that interact with this one]
 
 **Consistency with time utility standards:**
-- [ ] Follows naming conventions established in MRTMLY-038
+- [ ] Follows naming conventions established in MRTMLY-032
 - [ ] Consistent behavior with similar utilities
 - [ ] Appropriate error handling matching existing patterns
 - [ ] Timezone considerations addressed

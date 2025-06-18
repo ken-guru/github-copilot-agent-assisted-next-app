@@ -3,7 +3,7 @@
 
 **Date:** 2025-04-29
 **Status:** In Progress
-**Related Memory Log:** [MRTMLY-003](../logged_memories/MRTMLY-003-additional-cleanup-candidates.md)
+**Related Memory Log:** [MRTMLY-185](../logged_memories/MRTMLY-185-component-props-interface-optimization.md)
 
 ## Overview
 This document analyzes the usage of outdated test helper functions found in `/test/helpers/old-test-helpers.js` to facilitate migration to modern alternatives.

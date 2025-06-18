@@ -1,4 +1,4 @@
-### Issue: MRTMLY-027: Service Worker Update Notification Test Fixes
+### Issue: MRTMLY-021: Service Worker Update Notification Test Fixes
 **Date:** 2025-03-20
 **Tags:** #debugging #testing #service-worker #cypress
 **Status:** Resolved

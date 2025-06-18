@@ -1,4 +1,4 @@
-### Issue: MRTMLY-054: Replacing Remaining Hardcoded Spacing Values
+### Issue: MRTMLY-048: Replacing Remaining Hardcoded Spacing Values
 **Date:** 2025-04-14
 **Tags:** #css #spacing-system #variables #consistency #refactoring
 **Status:** In Progress

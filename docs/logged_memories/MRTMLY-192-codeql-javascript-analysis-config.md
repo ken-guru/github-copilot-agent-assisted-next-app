@@ -1,4 +1,4 @@
-### Issue: MRTMLY-216: CodeQL JavaScript/TypeScript Analysis Configuration Fix
+### Issue: MRTMLY-192: CodeQL JavaScript/TypeScript Analysis Configuration Fix
 **Date:** 2025-06-02
 **Tags:** #debugging #codeql #security #deployment #typescript
 **Status:** Resolved

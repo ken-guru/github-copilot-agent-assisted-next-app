@@ -1,4 +1,4 @@
-### Issue: MRTMLY-030: Progress Bar Conditional Visibility Fix
+### Issue: MRTMLY-024: Progress Bar Conditional Visibility Fix
 **Date:** 2025-03-27
 **Tags:** #debugging #tests #progress-bar #conditional-rendering
 **Status:** Resolved

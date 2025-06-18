@@ -1,4 +1,4 @@
-### Issue: MRTMLY-069: Splash Screen Theme Compatibility and Reduced Display Time
+### Issue: MRTMLY-063: Splash Screen Theme Compatibility and Reduced Display Time
 **Date:** 2025-04-09
 **Tags:** #enhancement #ui #theming #performance #tests
 **Status:** Resolved

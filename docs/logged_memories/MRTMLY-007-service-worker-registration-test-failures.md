@@ -1,4 +1,4 @@
-### Issue: MRTMLY-010: Service Worker Registration Test Failures
+### Issue: MRTMLY-006: Service Worker Registration Test Failures
 **Date:** 2024-12-05
 **Tags:** #debugging #tests #service-worker #jest-mocks
 **Status:** Resolved

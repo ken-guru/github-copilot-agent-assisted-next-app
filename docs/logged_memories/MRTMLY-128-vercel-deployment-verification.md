@@ -1,4 +1,4 @@
-### Issue: MRTMLY-002: Vercel Deployment Verification Requirements
+### Issue: MRTMLY-184: Vercel Deployment Verification Requirements
 **Date:** 2024-02-05
 **Tags:** #deployment #vercel #type-checking #quality-assurance
 **Status:** Resolved

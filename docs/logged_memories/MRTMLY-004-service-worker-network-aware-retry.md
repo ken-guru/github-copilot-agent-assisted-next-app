@@ -1,4 +1,4 @@
-### Issue: MRTMLY-007: Service Worker Network-Aware Retry Enhancement
+### Issue: MRTMLY-003: Service Worker Network-Aware Retry Enhancement
 **Date:** 2024-11-20
 **Tags:** #service-worker #retry-mechanism #offline #network-awareness
 **Status:** Resolved

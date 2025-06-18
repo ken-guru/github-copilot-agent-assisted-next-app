@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/logged_memories/MRTMLY-003-additional-cleanup-candidates.md -->
+<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/logged_memories/MRTMLY-185-additional-cleanup-candidates.md -->
 ### Issue: Additional Cleanup Candidates Analysis and Migration Planning
 **Date:** 2025-04-29
 **Tags:** #maintenance #cleanup #code-quality
@@ -29,7 +29,7 @@ During the previous cleanup process (MRTMLY-002), several additional files were 
 
 #### Implementation Plan
 
-Following the detailed plan outlined in MRTMLY-002, this cleanup effort will be executed in four phases:
+Following the detailed plan outlined in MRTMLY-184, this cleanup effort will be executed in four phases:
 
 1. **Phase 1**: Analysis and Documentation
 2. **Phase 2**: Migration Planning

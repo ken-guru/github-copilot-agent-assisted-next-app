@@ -1,4 +1,4 @@
-### Issue: MRTMLY-015: Offline Indicator Layout and Test Optimization
+### Issue: MRTMLY-009: Offline Indicator Layout and Test Optimization
 **Date:** 2025-03-01
 **Tags:** #layout #testing #accessibility #mobile
 **Status:** Resolved

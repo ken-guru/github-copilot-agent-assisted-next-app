@@ -1,11 +1,11 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/logged_memories/MRTMLY-004-removal-of-additional-one-off-scripts.md -->
+<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/logged_memories/MRTMLY-002-removal-of-additional-one-off-scripts.md -->
 ### Issue: Removal of Additional One-Off Scripts
 **Date:** 2025-04-29
 **Tags:** #maintenance #cleanup #scripts #testing
 **Status:** Completed
 
 #### Initial State
-After our initial cleanup of one-off scripts documented in [MRTMLY-002](./MRTMLY-002-removal-of-one-off-scripts.md), a more thorough code review identified additional one-off scripts that should be considered for removal. These scripts are:
+After our initial cleanup of one-off scripts documented in [MRTMLY-132](./MRTMLY-132-removal-of-one-off-scripts.md), a more thorough code review identified additional one-off scripts that should be considered for removal. These scripts are:
 
 1. **`scripts/extended-build.js`**: A build script that clears Next.js cache and temporarily modifies tsconfig.json to exclude Cypress files.
 2. **`verify-fix.js`**: A simple verification script for testing ActivityStateMachine, likely used once to verify a bug fix.

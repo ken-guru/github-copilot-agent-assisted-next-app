@@ -1,4 +1,4 @@
-### Issue: MRTMLY-032: Timeline Component Theme Color Update Bug
+### Issue: MRTMLY-026: Timeline Component Theme Color Update Bug
 **Date:** 2025-03-31
 **Tags:** #bug-fix #theme #dark-mode #timeline #regression
 **Status:** Resolved

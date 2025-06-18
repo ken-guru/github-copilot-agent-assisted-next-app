@@ -1,4 +1,4 @@
-### Issue: MRTMLY-048: Timer Display Consistency Test Suite Implementation
+### Issue: MRTMLY-042: Timer Display Consistency Test Suite Implementation
 **Date:** 2023-11-15
 **Tags:** #testing #timer #consistency #long-running-sessions #regression-testing
 **Status:** Resolved

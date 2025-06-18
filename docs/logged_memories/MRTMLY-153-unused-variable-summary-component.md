@@ -1,4 +1,4 @@
-### Issue: MRTMLY-047: Unused Variable in Summary Component
+### Issue: MRTMLY-041: Unused Variable in Summary Component
 **Date:** 2025-04-05
 **Tags:** #linting #deployment #summary #compilation-error
 **Status:** Resolved

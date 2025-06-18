@@ -1,4 +1,4 @@
-### Issue: MRTMLY-008: Service Worker Network-Aware Retry Test Failures
+### Issue: MRTMLY-004: Service Worker Network-Aware Retry Test Failures
 **Date:** 2024-11-25
 **Tags:** #debugging #service-worker #testing #event-listeners
 **Status:** Resolved

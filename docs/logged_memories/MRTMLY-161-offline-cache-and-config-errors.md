@@ -17,7 +17,7 @@
   GET /_next/static/chunks/main.js 404 in 1331ms
   GET /_next/static/css/app.css 404 in 55ms
   ```
-- This occurred after implementing fixes from MRTMLY-070
+- This occurred after implementing fixes from MRTMLY-064
 
 #### Debug Process
 1. Initial problem assessment

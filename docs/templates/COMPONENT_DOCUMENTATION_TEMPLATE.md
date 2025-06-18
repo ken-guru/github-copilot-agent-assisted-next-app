@@ -98,8 +98,8 @@ Key test scenarios covered:
 
 | Date | Change Description | Issue/PR Reference |
 |------|-------------------|-------------------|
-| YYYY-MM-DD | Initial implementation | [#123](link) |
-| YYYY-MM-DD | Added feature X | [#456](link) |
+| YYYY-MM-DD | Initial implementation | [#123](https://example.com) |
+| YYYY-MM-DD | Added feature X | [#456](https://example.com) |
 
 ## Known Limitations
 

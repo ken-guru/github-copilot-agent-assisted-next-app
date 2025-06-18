@@ -224,9 +224,9 @@ The component architecture:
 
 ## Change History
 
-- **2025-03-15**: Fixed memory leak issues and timer cleanup (MRTMLY-020)
-- **2025-03-15**: Implemented countdown timer fix (MRTMLY-026)
-- **2025-02-20**: Added real-time break visualization (MRTMLY-019)
+- **2025-03-15**: Fixed memory leak issues and timer cleanup (MRTMLY-014)
+- **2025-03-15**: Implemented countdown timer fix (MRTMLY-020)
+- **2025-02-20**: Added real-time break visualization (MRTMLY-013)
 - **2025-02-15**: Added overtime visualization
 - **2025-02-01**: Implemented theme compatibility
 - **2025-01-15**: Initial implementation with basic timeline functionality
@@ -235,10 +235,10 @@ The component architecture:
 
 This component has been discussed in the following memory logs:
 
-- [MRTMLY-019: Timeline Break Visualization Fix](../logged_memories/MRTMLY-019-timeline-break-visualization.md) - Fixed issues with break visualization
-- [MRTMLY-020: Timeline Component Memory Leak](../logged_memories/MRTMLY-020-timeline-memory-leak.md) - Resolved memory leak issues
-- [MRTMLY-021: Timeline Test Suite Memory Leak](../logged_memories/MRTMLY-021-timeline-test-suite-memory-leak.md) - Fixed test suite-specific issues
-- [MRTMLY-023: Timeline Calculation Test Update](../logged_memories/MRTMLY-023-timeline-calculation-test.md) - Updated calculation logic tests
+- [MRTMLY-013: Timeline Break Visualization Fix](../logged_memories/MRTMLY-146-timeline-break-visualization.md) - Fixed issues with break visualization
+- [MRTMLY-014: Timeline Component Memory Leak](../logged_memories/MRTMLY-147-timeline-memory-leak.md) - Resolved memory leak issues
+- [MRTMLY-015: Timeline Test Suite Memory Leak](../logged_memories/MRTMLY-083-timeline-test-suite-memory-leak.md) - Fixed test suite-specific issues
+- [MRTMLY-017: Timeline Calculation Test Update](../logged_memories/MRTMLY-085-timeline-calculation-test.md) - Updated calculation logic tests
 
 ---
 

@@ -1,4 +1,4 @@
-### Issue: MRTMLY-034: Time Utils TypeScript Linting Fix
+### Issue: MRTMLY-028: Time Utils TypeScript Linting Fix
 **Date:** 2025-04-02
 **Tags:** #typescript #linting #testing #time-utils #type-safety
 **Status:** Resolved

@@ -1,4 +1,4 @@
-### Issue: MRTMLY-017: Service Worker CSS Caching Strategy Update
+### Issue: MRTMLY-011: Service Worker CSS Caching Strategy Update
 **Date:** 2025-03-02
 **Tags:** #service-worker #caching #development-experience #CSS
 **Status:** Resolved

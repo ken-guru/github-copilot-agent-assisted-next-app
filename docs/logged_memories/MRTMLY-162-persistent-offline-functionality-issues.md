@@ -6,7 +6,7 @@
 #### Initial State
 - Service worker is now caching significantly more content (5MB)
 - Application remains unavailable when network is disabled
-- Previous fixes (MRTMLY-068, MRTMLY-069, MRTMLY-070, MRTMLY-071) have incrementally improved caching
+- Previous fixes (MRTMLY-062, MRTMLY-063, MRTMLY-064, MRTMLY-065) have incrementally improved caching
 - Despite improved caching, core offline functionality is still not working
 
 #### Debug Process
