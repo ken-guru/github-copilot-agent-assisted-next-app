@@ -108,5 +108,6 @@ graph TD
 ## Related Documentation
 
 - [Main README](../../README.md)
-- [Development Process Guidelines](../PLANNED_CHANGES.md#development-process-guidelines)
+- [Planning Changes](../PLANNED_CHANGES.md) - How to document upcoming changes
+- [Planning Template](../templates/PLANNED_CHANGES_TEMPLATE.md) - Template for new change requests
 - [Memory Log](../MEMORY_LOG.md) - Project history and issue resolutions

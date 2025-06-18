@@ -91,6 +91,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-070: Service Worker Test Implementation](./logged_memories/MRTMLY-070-service-worker-test-implementation.md)
 - [MRTMLY-071: MRTMLY XXX Service Worker Typescript Errors](./logged_memories/MRTMLY-071-MRTMLY-XXX-service-worker-typescript-errors.md)
 - [MRTMLY-217: Service Worker Unused Variable Removal](./logged_memories/MRTMLY-217-service-worker-unused-variable-removal.md)
+- [MRTMLY-218: Planning Template Documentation Integration](./logged_memories/MRTMLY-218-planning-template-documentation-integration.md)
 
 ## Testing Entries {#testing-entries}
 
@@ -242,6 +243,7 @@ Memory logs are organized by category and listed in sequential ID order.
 - [MRTMLY-190: Dependabot Automated Pull Request Configuration](./logged_memories/MRTMLY-190-dependabot-automated-pull-request-configuration.md)
 - [MRTMLY-082: Next.js App Router Migration](./logged_memories/MRTMLY-082-next-js-app-router-migration.md)
 - [MRTMLY-001: CodeQL Configuration Path Mismatch](./logged_memories/MRTMLY-001-codeql-configuration-mismatch.md) - Fixed code scanning configuration issue with custom queries path
+- [MRTMLY-218: Planning Template Documentation Integration](./logged_memories/MRTMLY-218-planning-template-documentation-integration.md)
 
 ## About Memory Logs
 

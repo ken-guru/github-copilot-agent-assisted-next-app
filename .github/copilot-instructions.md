@@ -80,6 +80,27 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
   - Configuration options
   - Dependencies/requirements
 
+### Change Planning Documentation
+- USE TEMPLATE: `docs/templates/PLANNED_CHANGES_TEMPLATE.md` for all new feature/change requests
+- REQUIRED SECTIONS in change planning:
+  - Context: Components affected, current behavior, user needs
+  - Requirements: Detailed specifications with implementation details
+  - Technical Guidelines: Framework considerations, performance, accessibility
+  - Expected Outcome: Success criteria from user and technical perspectives
+  - Validation Criteria: Checklist for completion verification
+- DOCUMENT in `docs/PLANNED_CHANGES.md` using template format
+- MOVE to `docs/IMPLEMENTED_CHANGES.md` with timestamp when complete
+- ENSURE template format for effective AI-assisted implementation
+
+### Template Usage for AI Agents
+- ALWAYS use `docs/templates/PLANNED_CHANGES_TEMPLATE.md` when user requests new features
+- COPY the complete template structure - never create partial specifications
+- FILL OUT ALL SECTIONS completely before implementation
+- ASK clarifying questions if template sections cannot be completed
+- REFERENCE existing template when explaining change planning process
+- VALIDATE that all template requirements are met before proceeding with implementation
+- UPDATE related documentation (component docs, README) when changes affect described functionality
+
 ## MEMORY LOG PROTOCOLS [PRIORITY: HIGH]
 ### File Organization
 - Store individual entries in: `docs/logged_memories/`
