@@ -3,7 +3,7 @@
 
 **Date:** 2025-04-29
 **Status:** In Progress
-**Related Memory Log:** [MRTMLY-003](../logged_memories/MRTMLY-003-additional-cleanup-candidates.md)
+**Related Memory Log:** [MRTMLY-133](../logged_memories/MRTMLY-133-additional-cleanup-candidates.md)
 
 ## Overview
 This document analyzes the status of draft documentation files found in `/docs/drafts/` to determine which should be completed, updated, or removed.

@@ -80,6 +80,27 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
   - Configuration options
   - Dependencies/requirements
 
+### Change Planning Documentation
+- USE TEMPLATE: `docs/templates/PLANNED_CHANGES_TEMPLATE.md` for all new feature/change requests
+- REQUIRED SECTIONS in change planning:
+  - Context: Components affected, current behavior, user needs
+  - Requirements: Detailed specifications with implementation details
+  - Technical Guidelines: Framework considerations, performance, accessibility
+  - Expected Outcome: Success criteria from user and technical perspectives
+  - Validation Criteria: Checklist for completion verification
+- DOCUMENT in `docs/PLANNED_CHANGES.md` using template format
+- MOVE to `docs/IMPLEMENTED_CHANGES.md` with timestamp when complete
+- ENSURE template format for effective AI-assisted implementation
+
+### Template Usage for AI Agents
+- ALWAYS use `docs/templates/PLANNED_CHANGES_TEMPLATE.md` when user requests new features
+- COPY the complete template structure - never create partial specifications
+- FILL OUT ALL SECTIONS completely before implementation
+- ASK clarifying questions if template sections cannot be completed
+- REFERENCE existing template when explaining change planning process
+- VALIDATE that all template requirements are met before proceeding with implementation
+- UPDATE related documentation (component docs, README) when changes affect described functionality
+
 ## MEMORY LOG PROTOCOLS [PRIORITY: HIGH]
 ### File Organization
 - Store individual entries in: `docs/logged_memories/`
@@ -119,7 +140,22 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Ensure proper referencing in main index
 - Link related issues
 - Verify unique IDs
-- Maintain chronological order
+- Maintain sequential ID order (not necessarily creation date order)
+
+### Large-Scale Reorganization Protocol
+- BEFORE starting: Document reorganization plan and scope
+- CREATE backup/mapping strategy for reference preservation  
+- PLAN systematic approach to reference updates
+- EXECUTE reorganization with validation checkpoints
+- VALIDATE all links and references after completion
+- DOCUMENT process and lessons learned in Memory Log
+
+### Memory Log ID Management
+- ASSIGN sequential IDs in chronological order for consistency
+- NEVER reuse or skip ID numbers
+- MAINTAIN ID-to-filename consistency in all references
+- UPDATE display IDs when files are renumbered
+- VALIDATE ID consistency with automated tools
 
 ## CODE QUALITY STANDARDS [PRIORITY: HIGH]
 ### Large File Refactoring
@@ -157,6 +193,9 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Address ALL errors and warnings
 - Document deployment-specific considerations in Memory Log
 - Tag deployment issues with #deployment
+- VERIFY link integrity after file reorganizations
+- CHECK for duplicate files in scripts directory
+- RUN `node scripts/check-markdown-links.js` for link validation
 
 ## COMMUNICATION GUIDELINES [PRIORITY: MEDIUM]
 ### Change Summary Format
@@ -172,6 +211,44 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Update Memory Log with progress and challenges
 - Review completed work against expected benefits
 - Focus on one enhancement at a time
+
+## SCRIPT LIFECYCLE MANAGEMENT [PRIORITY: HIGH]
+### One-Off Script Protocols
+- ARCHIVE immediately after single-use scripts complete their purpose
+- NEVER leave completed fix/reorganization scripts in main `scripts/` directory
+- CREATE scripts in `scripts/` for development, MOVE to `scripts/archive/` when done
+- DELETE duplicates - keep only one copy (preferably archived version for history)
+
+### Script Naming and Organization
+- Use descriptive names: `fix-[specific-issue]-[date].js`
+- Document script purpose in header comments
+- Include cleanup instructions in script comments
+- Archive with: `mv scripts/fix-*.js scripts/archive/` after completion
+
+### Script Security Guidelines
+- AVOID hardcoded credentials, passwords, or sensitive data
+- LIMIT shell commands to safe, project-scoped operations
+- DOCUMENT any `execSync` or `spawn` usage with security justification
+- REVIEW scripts for security implications before committing
+
+## LINK INTEGRITY PROTOCOLS [PRIORITY: HIGH]
+### Systematic Link Validation
+- RUN link checker after ANY large-scale file reorganization
+- VALIDATE all markdown links before completing documentation changes
+- USE `node scripts/check-markdown-links.js` as standard validation step
+- NEVER complete reorganization without link verification
+
+### Reorganization Best Practices
+- PLAN link update strategy before starting file reorganizations
+- CREATE mapping files for any ID or filename changes
+- UPDATE references systematically, not ad-hoc
+- VALIDATE with automated tools, not manual checking
+
+### Link Maintenance Requirements
+- INCLUDE link validation in all documentation PRs
+- FIX broken links immediately when discovered
+- MAINTAIN audit trail of reference changes in Memory Log
+- PREVENT false positives by proper code block formatting
 
 ## DEBUGGING TEMPLATE [REFERENCE]
 ```markdown

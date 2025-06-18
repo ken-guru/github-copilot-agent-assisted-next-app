@@ -28,7 +28,8 @@ The application is developed using AI-assisted techniques with these principles:
 The project uses a documentation system for tracking changes:
 1. docs/PLANNED_CHANGES.md: 
    - Contains upcoming feature specifications
-   - Written in a prompt-friendly format
+   - Uses standardized template format from docs/templates/PLANNED_CHANGES_TEMPLATE.md
+   - Written in a prompt-friendly format for AI-assisted implementation
    - Used as input for AI-assisted implementation
 2. docs/IMPLEMENTED_CHANGES.md:
    - Chronicles completed implementations
@@ -96,8 +97,12 @@ src/
   └── utils/          # Utility functions
       └── __tests__/  # Utility tests
 docs/                 # Project documentation
-  ├── PLANNED_CHANGES.md    # Upcoming changes
-  └── IMPLEMENTED_CHANGES.md # Completed changes
+  ├── PLANNED_CHANGES.md    # Upcoming changes (uses template format)
+  ├── IMPLEMENTED_CHANGES.md # Completed changes
+  └── templates/        # Documentation templates
+      ├── PLANNED_CHANGES_TEMPLATE.md
+      ├── COMPONENT_DOCUMENTATION_TEMPLATE.md
+      └── UTILITY_PROPOSAL_TEMPLATE.md
 ```
 
 ### Design System Specifications
@@ -216,7 +221,8 @@ Key component categories:
 
 ### Development Resources
 
-- [Development Process Guidelines](./docs/PLANNED_CHANGES.md#development-process-guidelines)
+- [Planning Changes](./docs/PLANNED_CHANGES.md) - How to document upcoming changes
+- [Planning Template](./docs/templates/PLANNED_CHANGES_TEMPLATE.md) - Template for new change requests
 - [Memory Log](./docs/MEMORY_LOG.md) - Project history and issue resolutions
 - [Time Utilities Testing Guide](./docs/dev-guides/TIME_UTILITIES_TESTING.md)
 

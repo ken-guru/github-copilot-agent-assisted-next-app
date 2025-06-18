@@ -1,46 +1,22 @@
-# Planned Changes Prompt Template
-This file contains specifications for upcoming changes to the application. Each change should be documented in a format suitable for AI-assisted implementation. Once implemented, move the change to IMPLEMENTED_CHANGES.md with a timestamp.
+# Planned Changes
 
-## Change Request Template
-```markdown
-# Feature/Change Title
+This document contains specifications for upcoming changes to the application. Each change should be documented using the template format to ensure AI-assisted implementation is effective.
 
-## Context
-Provide context about the part of the application this change affects.
-- Which components/utilities are involved?
-- What current behavior needs to change?
-- What user needs does this address?
+## Using the Template
 
-## Requirements
-Detailed specifications for the change:
-1. First requirement
-   - Implementation details
-   - Technical considerations
-   - Testing requirements
-2. Second requirement
-   - Sub-points
-   - Edge cases to handle
-3. Additional requirements as needed
+When planning a new feature or change:
 
-## Technical Guidelines
-- Framework-specific considerations
-- Performance requirements
-- Accessibility requirements
-- Theme compatibility requirements
-- Testing approach
+1. **Use the Template**: Copy the structure from [PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEMPLATE.md)
+2. **Fill Out Completely**: The more detailed the specification, the better the AI assistance
+3. **Include All Sections**: Context, Requirements, Technical Guidelines, Expected Outcome, and Validation Criteria
+4. **Move When Complete**: After implementation, move the completed change to [IMPLEMENTED_CHANGES.md](./IMPLEMENTED_CHANGES.md) with timestamp
 
-## Expected Outcome
-Describe what success looks like:
-- User perspective
-- Technical perspective
-- Testing criteria
+## Template Reference
 
-## Validation Criteria
-- [ ] Test cases written
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Theme compatibility verified
-- [ ] Documentation updated
-```
+See [docs/templates/PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEMPLATE.md) for the complete template structure.
 
-Note: When implementing a change, copy this template and fill it out completely. The more detailed the prompt, the better the AI assistance will be in implementation.
+---
+
+## Current Planned Changes
+
+*Add new planned changes below using the template format*

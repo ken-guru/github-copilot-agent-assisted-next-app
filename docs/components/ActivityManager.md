@@ -286,8 +286,8 @@ The ActivityManager implements several key algorithms:
 
 This component has been referenced in the following memory logs:
 
-- [MRTMLY-025: Summary Activity Order Fix](../logged_memories/MRTMLY-025-summary-activity-order.md) - Activity ordering logic
-- [MRTMLY-041: Activity Order in Summary Tests Implementation](../logged_memories/MRTMLY-041-activity-order-summary-tests.md) - Testing chronological order
+- [MRTMLY-148: Summary Activity Order Fix](../logged_memories/MRTMLY-148-summary-activity-order.md) - Activity ordering logic
+- [MRTMLY-035: Activity Order in Summary Tests Implementation](../logged_memories/MRTMLY-090-activity-order-summary-tests.md) - Testing chronological order
 
 ---
 
