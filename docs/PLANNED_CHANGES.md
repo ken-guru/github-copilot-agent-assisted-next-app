@@ -52,18 +52,18 @@ This change affects the entire UI component library of the application. Currentl
    - ✅ Defer custom theme integration for future consideration
    - ✅ Testing: Verify Bootstrap loads correctly with default styles
 
-2. **Component Inventory and Mapping**
-   - Create comprehensive checklist of all custom UI components
-   - Map each custom component to appropriate Bootstrap equivalent:
+2. **Component Inventory and Mapping** ✅ **COMPLETED**
+   - ✅ Create comprehensive checklist of all custom UI components
+   - ✅ Map each custom component to appropriate Bootstrap equivalent:
      - `ActivityButton` → Bootstrap `Button` with custom variants
      - `ConfirmationDialog` → Bootstrap `Modal`
      - `ProgressBar` → Bootstrap `ProgressBar`
      - `ThemeToggle` → Bootstrap `ButtonGroup` or `ToggleButton`
      - `ActivityForm`/`TimeSetup` → Bootstrap `Form`, `FormControl`, `InputGroup`
      - Cards and containers → Bootstrap `Card`, `Container`, `Row`, `Col`
-   - Identify components that need custom wrapper components
-   - Document any Bootstrap gaps that require alternative solutions
-   - Testing: Validate mapping decisions with UI mockups
+   - ✅ Identify components that need custom wrapper components
+   - ✅ Document any Bootstrap gaps that require alternative solutions
+   - ✅ Testing: Validate mapping decisions with UI mockups
 
 3. **Test-First Migration Strategy**
    - Write/update tests for each component before refactoring
@@ -145,15 +145,10 @@ This change affects the entire UI component library of the application. Currentl
 
 ## Validation Criteria
 
+### 🎯 Overall Project Milestones
 - [x] Bootstrap 5.x and react-bootstrap successfully installed and configured
-- [ ] Component inventory and mapping document completed
+- [x] Component inventory and mapping document completed
 - [ ] All existing component tests updated and passing
-- [ ] ActivityButton migrated to Bootstrap Button with tests passing
-- [ ] ConfirmationDialog migrated to Bootstrap Modal with tests passing
-- [ ] ProgressBar migrated to Bootstrap ProgressBar with tests passing
-- [ ] ThemeToggle migrated to Bootstrap ButtonGroup with tests passing
-- [ ] Forms (ActivityForm, TimeSetup) migrated to Bootstrap Form components
-- [ ] Card components migrated to Bootstrap Card system
 - [ ] All custom CSS modules reviewed and removed where replaced by Bootstrap
 - [ ] Default Bootstrap styling verified across all migrated components
 - [ ] Bootstrap's default theme consistency validated
@@ -163,3 +158,179 @@ This change affects the entire UI component library of the application. Currentl
 - [ ] Performance impact assessed and within acceptable limits
 - [ ] Visual regression testing completed
 - [ ] Integration testing with full application flow completed
+
+### 📋 Component Migration Checklist
+
+#### Phase 1: Low Complexity Components (Quick Wins)
+
+##### ProgressBar Component
+- [ ] Review existing ProgressBar tests and functionality
+- [ ] Write tests for Bootstrap ProgressBar integration
+- [ ] Migrate ProgressBar to react-bootstrap/ProgressBar
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (ProgressBar.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate ProgressBar to Bootstrap ProgressBar component"
+
+##### OfflineIndicator Component
+- [ ] Review existing OfflineIndicator tests and functionality
+- [ ] Write tests for Bootstrap Alert integration
+- [ ] Migrate OfflineIndicator to react-bootstrap/Alert
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (OfflineIndicator.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate OfflineIndicator to Bootstrap Alert component"
+
+##### UpdateNotification Component
+- [ ] Review existing UpdateNotification tests and functionality
+- [ ] Write tests for Bootstrap Toast/Alert integration
+- [ ] Migrate UpdateNotification to react-bootstrap/Toast or Alert
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (UpdateNotification.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate UpdateNotification to Bootstrap Toast/Alert component"
+
+##### ConfirmationDialog Component
+- [ ] Review existing ConfirmationDialog tests and functionality
+- [ ] Write tests for Bootstrap Modal integration
+- [ ] Migrate ConfirmationDialog to react-bootstrap/Modal
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (ConfirmationDialog.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate ConfirmationDialog to Bootstrap Modal component"
+
+#### Phase 2: Medium Complexity Components
+
+##### ActivityForm Component
+- [ ] Review existing ActivityForm tests and functionality
+- [ ] Write tests for Bootstrap Form integration
+- [ ] Migrate ActivityForm to react-bootstrap/Form components
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (ActivityForm.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate ActivityForm to Bootstrap Form components"
+
+##### TimeSetup Component
+- [ ] Review existing TimeSetup tests and functionality
+- [ ] Write tests for Bootstrap Form integration
+- [ ] Migrate TimeSetup to react-bootstrap/Form components
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (TimeSetup.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate TimeSetup to Bootstrap Form components"
+
+##### ActivityManager Component
+- [ ] Review existing ActivityManager tests and functionality
+- [ ] Write tests for Bootstrap layout integration
+- [ ] Migrate ActivityManager to Bootstrap Container/Row/Col
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (ActivityManager.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate ActivityManager to Bootstrap layout components"
+
+##### Summary Component
+- [ ] Review existing Summary tests and functionality
+- [ ] Write tests for Bootstrap Card integration
+- [ ] Migrate Summary to react-bootstrap/Card system
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (Summary.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate Summary to Bootstrap Card components"
+
+##### TimeDisplay Component
+- [ ] Review existing TimeDisplay tests and functionality
+- [ ] Write tests for Bootstrap typography integration
+- [ ] Migrate TimeDisplay to Bootstrap utilities and layout
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (TimeDisplay.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate TimeDisplay to Bootstrap typography and layout"
+
+##### ServiceWorkerUpdater Component
+- [ ] Review existing ServiceWorkerUpdater tests and functionality
+- [ ] Write tests for Bootstrap Toast/Alert integration
+- [ ] Migrate ServiceWorkerUpdater to react-bootstrap/Toast or Alert
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (ServiceWorkerUpdater.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate ServiceWorkerUpdater to Bootstrap Toast/Alert"
+
+#### Phase 3: High Complexity Components
+
+##### ActivityButton Component
+- [ ] Review existing ActivityButton tests and functionality
+- [ ] Write tests for Bootstrap Button with custom wrapper
+- [ ] Create ActivityButtonWrapper component
+- [ ] Migrate ActivityButton to react-bootstrap/Button with wrapper
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (ActivityButton.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate ActivityButton to Bootstrap Button with custom wrapper"
+
+##### ThemeToggle Component
+- [ ] Review existing ThemeToggle tests and functionality
+- [ ] Write tests for Bootstrap ButtonGroup integration
+- [ ] Create ThemeToggleWrapper component if needed
+- [ ] Migrate ThemeToggle to react-bootstrap/ButtonGroup
+- [ ] Update component props and interfaces
+- [ ] Remove custom CSS module (ThemeToggle.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate ThemeToggle to Bootstrap ButtonGroup"
+
+##### Timeline Component
+- [ ] Review existing Timeline tests and functionality
+- [ ] Write tests for Bootstrap layout with custom styling
+- [ ] Create TimelineWrapper component
+- [ ] Migrate Timeline to Bootstrap layout + custom timeline styles
+- [ ] Update component props and interfaces
+- [ ] Remove/update custom CSS module (Timeline.module.css)
+- [ ] Update all imports and usage throughout codebase
+- [ ] Run tests and verify functionality
+- [ ] Update component documentation
+- [ ] **COMMIT:** "Migrate Timeline to Bootstrap layout with custom styling"
+
+#### Final Integration and Cleanup
+- [ ] Run full test suite to ensure all components work together
+- [ ] Perform visual regression testing
+- [ ] Conduct accessibility audit
+- [ ] Review and clean up any remaining custom CSS
+- [ ] Update README and main documentation
+- [ ] Create Memory Log entry for overall migration experience
+- [ ] **COMMIT:** "Complete Bootstrap migration - final cleanup and documentation"
+
+### 🔄 Regular Commit Protocol
+For each component migration:
+1. **Before starting:** Commit current state with "Start [ComponentName] Bootstrap migration"
+2. **After tests:** Commit with "Add Bootstrap tests for [ComponentName]"
+3. **After migration:** Commit with "Migrate [ComponentName] to Bootstrap [BootstrapComponent]"
+4. **After cleanup:** Commit with "Clean up [ComponentName] - remove custom CSS and update docs"
+
+### 📊 Progress Tracking
+- **Phase 1 Progress:** 0/4 components completed
+- **Phase 2 Progress:** 0/6 components completed  
+- **Phase 3 Progress:** 0/3 components completed
+- **Overall Progress:** 0/13 components completed (0%)
