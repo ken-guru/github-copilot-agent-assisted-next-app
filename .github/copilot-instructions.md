@@ -197,6 +197,36 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - CHECK for duplicate files in scripts directory
 - RUN `node scripts/check-markdown-links.js` for link validation
 
+## COMMIT GUIDELINES [PRIORITY: HIGH]
+### Frequent Commit Strategy
+- COMMIT early and often to maintain development momentum
+- LIMIT each commit to maximum 5 files unless tightly coupled
+- ENSURE each commit represents a logical, complete unit of work
+- INCLUDE meaningful commit messages describing the specific change
+
+### Commit Scope Guidelines
+- **Single Component Changes**: One commit per component when migrating or refactoring
+- **Related File Groups**: Group tightly coupled changes (component + test + documentation)
+- **Feature Increments**: Commit each working increment of a feature implementation
+- **Test Updates**: Separate commits for test-only changes when appropriate
+- **Documentation Updates**: Can be combined with related code changes or separate if substantial
+
+### Commit Quality Standards
+- VERIFY all tests pass before committing
+- ENSURE code compiles and type-checks successfully
+- RUN linting and fix any issues before commit
+- INCLUDE any necessary documentation updates in the same commit
+- VALIDATE that the commit doesn't break existing functionality
+
+### Commit Message Format
+- Use clear, descriptive commit messages
+- Include component/area affected in the message
+- Reference issue numbers when applicable
+- Examples:
+  - "Migrate ActivityButton to Bootstrap Button component"
+  - "Add tests for ProgressBar Bootstrap migration"
+  - "Update component documentation for ThemeToggle"
+
 ## COMMUNICATION GUIDELINES [PRIORITY: MEDIUM]
 ### Change Summary Format
 - Provide concise implementation summaries covering:
