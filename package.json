@@ -17,8 +17,10 @@
     "clean-build:full": "node scripts/clean-build.js --full"
   },
   "dependencies": {
+    "bootstrap": "^5.3.7",
     "next": "15.3.3",
     "react": "^19.0.0",
+    "react-bootstrap": "^2.10.10",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {

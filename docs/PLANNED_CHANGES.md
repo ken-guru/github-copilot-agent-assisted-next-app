@@ -46,11 +46,11 @@ This change affects the entire UI component library of the application. Currentl
 ## Requirements
 
 1. **Bootstrap Setup and Configuration**
-   - Install Bootstrap 5.x and react-bootstrap packages
+   - Install Bootstrap 5.x and react-bootstrap packages (react-bootstrap@2.10.10 and bootstrap@5.3.7)
    - Configure Bootstrap CSS integration with Next.js
-   - Set up Bootstrap theme customization to match current design system
-   - Ensure Bootstrap works with existing CSS custom properties and theme system
-   - Testing: Verify Bootstrap loads correctly and themes work
+   - Use Bootstrap's default styling and theming system
+   - Defer custom theme integration for future consideration
+   - Testing: Verify Bootstrap loads correctly with default styles
 
 2. **Component Inventory and Mapping**
    - Create comprehensive checklist of all custom UI components
@@ -84,12 +84,12 @@ This change affects the entire UI component library of the application. Currentl
    - Testing: Manual verification after each component replacement
 
 5. **Theme Integration and Customization**
-   - Maintain existing light/dark theme compatibility
-   - Customize Bootstrap theme variables to match current design tokens
-   - Ensure CSS custom properties integration works with Bootstrap
-   - Preserve current spacing system and component behavior
-   - Handle any Bootstrap/custom CSS conflicts
-   - Testing: Theme switching must work correctly with Bootstrap components
+   - Use Bootstrap's default theme and color system initially
+   - Phase out custom CSS properties in favor of Bootstrap's design tokens
+   - Consider future Bootstrap theme customization to match brand colors
+   - Maintain light/dark mode support using Bootstrap's dark mode features (data-bs-theme)
+   - Handle transition from custom CSS variables to Bootstrap's approach
+   - Testing: Verify default Bootstrap styling works correctly
 
 6. **Documentation and Cleanup**
    - Update component documentation to reflect Bootstrap usage patterns
@@ -101,15 +101,21 @@ This change affects the entire UI component library of the application. Currentl
 
 ## Technical Guidelines
 
-- **Next.js Integration**: Use proper Bootstrap integration for Next.js 15.x
+- **Official Documentation**: Always refer to official documentation for best practices:
+  - React Bootstrap: https://react-bootstrap.github.io/docs/getting-started/introduction
+  - Bootstrap 5.3: https://getbootstrap.com/docs/5.3/getting-started/introduction/
+- **Package Versions**: Using bootstrap@5.3.7 and react-bootstrap@2.10.10
+- **Next.js Integration**: Use proper Bootstrap integration for Next.js 15.x with official documentation guidance
 - **React Bootstrap**: Prefer react-bootstrap over direct Bootstrap CSS classes for better React integration
-- **CSS Custom Properties**: Maintain existing CSS custom property system for theming
+- **Documentation References**: Follow https://react-bootstrap.github.io/docs/getting-started/introduction and https://getbootstrap.com/docs/5.3/getting-started/introduction/
+- **Package Versions**: Use react-bootstrap@2.10.10 and bootstrap@5.3.7 specifically
+- **Default Styling**: Use Bootstrap's default theme and design tokens instead of custom CSS properties
 - **Accessibility**: Ensure Bootstrap components meet existing accessibility standards
 - **Performance**: Monitor bundle size impact and lazy load Bootstrap components where appropriate
 - **TypeScript**: Maintain full TypeScript support with proper Bootstrap component types
 - **Testing Strategy**: Use testing-library patterns that work well with Bootstrap components
 - **Migration Approach**: Use feature flags or component aliases to enable gradual migration
-- **CSS Modules**: Phase out custom CSS modules gradually while preserving functionality
+- **CSS Modules**: Phase out custom CSS modules gradually, replacing with Bootstrap's utility classes and components
 
 ## Expected Outcome
 
@@ -122,19 +128,20 @@ This change affects the entire UI component library of the application. Currentl
 
 **Technical Perspective:**
 - Reduced custom CSS codebase by ~70-80%
-- Standardized component library using Bootstrap
+- Standardized component library using Bootstrap's default design system
 - Improved maintainability through well-documented Bootstrap patterns
 - Enhanced accessibility through Bootstrap's ARIA implementations
 - Faster development of new UI components using Bootstrap primitives
 - Better responsive design through Bootstrap's grid system
 - Reduced bundle size through elimination of redundant custom styles
+- Consistent design language using Bootstrap's default theme
 
 **Testing Criteria:**
 - All existing tests pass with Bootstrap components
-- Visual regression tests show no unintended changes
+- Visual regression tests show Bootstrap's default styling is applied correctly
 - Accessibility audit passes with same or better scores
 - Performance metrics remain within acceptable ranges
-- Theme switching works correctly in all scenarios
+- Bootstrap's default theme renders consistently across components
 
 ## Validation Criteria
 
@@ -148,7 +155,8 @@ This change affects the entire UI component library of the application. Currentl
 - [ ] Forms (ActivityForm, TimeSetup) migrated to Bootstrap Form components
 - [ ] Card components migrated to Bootstrap Card system
 - [ ] All custom CSS modules reviewed and removed where replaced by Bootstrap
-- [ ] Theme compatibility verified across all migrated components
+- [ ] Default Bootstrap styling verified across all migrated components
+- [ ] Bootstrap's default theme consistency validated
 - [ ] Accessibility testing completed and passing
 - [ ] Documentation updated for all migrated components
 - [ ] Memory Log entries created for migration decisions and challenges
