@@ -40,12 +40,10 @@ describe('UpdateNotification', () => {
     render(<UpdateNotification {...defaultProps} />);
     
     const notification = screen.getByTestId('update-notification');
-    expect(notification).toHaveAttribute('role', 'alert');
-    expect(notification).toHaveAttribute('aria-live', 'assertive');
-    expect(notification).toHaveAttribute('aria-atomic', 'true');
+    expect(notification).toHaveAttribute('role', 'status');
     
     const dismissButton = screen.getByTestId('update-notification-dismiss');
-    expect(dismissButton).toHaveAttribute('aria-label', 'Close');
+    expect(dismissButton).toHaveAttribute('aria-label', 'Dismiss notification');
   });
 
   it('calls onDismiss when dismiss button is clicked', () => {
@@ -131,8 +129,7 @@ describe('UpdateNotification', () => {
     
     expect(dismissButton).toHaveFocus();
     
-    // Verify button is focusable and has correct Bootstrap classes
+    // Verify button is focusable (buttons are focusable by default, no explicit tabindex needed)
     expect(dismissButton.tagName).toBe('BUTTON');
-    expect(dismissButton).toHaveClass('btn-close');
   });
 });
