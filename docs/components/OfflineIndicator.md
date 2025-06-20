@@ -10,7 +10,15 @@
 
 ## Overview
 
-The OfflineIndicator component provides visual feedback to users about the application's current network status. It displays a non-intrusive indicator when the application is operating in offline mode, helping users understand why certain features might be unavailable and providing confidence that the application is still functioning despite lack of connectivity.
+The OfflineIndicator component provides visual feedback to users about the application's current network status using Bootstrap's Alert component. It displays a non-intrusive warning alert when the application is operating in offline mode, helping users understand why certain features might be unavailable and providing confidence that the application is still functioning despite lack of connectivity.
+
+## Migration Status
+
+**Status:** ✅ **Migrated to Bootstrap**
+- **From:** Custom CSS module implementation with custom warning styling
+- **To:** react-bootstrap/Alert with warning variant
+- **Migration Date:** 2024-12-19
+- **Commit:** "Migrate OfflineIndicator to Bootstrap Alert component"
 
 ## Table of Contents
 - [Features](#features)
@@ -45,122 +53,90 @@ The OfflineIndicator component provides visual feedback to users about the appli
 
 | Prop | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
-| `position` | `'top' \| 'bottom' \| 'inline'` | No | `'top'` | Position of the indicator |
-| `message` | `string` | No | `'You are offline'` | Custom message to display |
-| `showOnlineStatus` | `boolean` | No | `false` | Whether to show online status message |
-| `onlineMessage` | `string` | No | `'Online'` | Message to show when online |
-| `forceOffline` | `boolean` | No | `false` | Force offline state (for testing) |
+| None | - | - | - | Component takes no props; uses Bootstrap Alert with fixed styling |
+
+**Note:** The current Bootstrap implementation uses a simplified prop interface. The component automatically detects online/offline status and displays a warning alert when offline.
 
 ## Types
 
 ```typescript
-interface OfflineIndicatorProps {
-  position?: 'top' | 'bottom' | 'inline';
-  message?: string;
-  showOnlineStatus?: boolean;
-  onlineMessage?: string;
-  forceOffline?: boolean;
-}
+// Current simplified interface after Bootstrap migration
+export function OfflineIndicator(): React.ReactElement | null;
+
+// Previous interface (for reference):
+// interface OfflineIndicatorProps {
+//   position?: 'top' | 'bottom' | 'inline';
+//   message?: string;
+//   showOnlineStatus?: boolean;
+//   onlineMessage?: string;
+//   forceOffline?: boolean;
+// }
 ```
 
 ## State Management
 
 The OfflineIndicator component manages these state elements:
 
-1. **Network status**: Tracks online/offline state
+1. **Network status**: Tracks online/offline state using the `useOnlineStatus` hook
    ```typescript
-   const [isOffline, setIsOffline] = useState<boolean>(
-     forceOffline || (typeof navigator !== 'undefined' && !navigator.onLine)
-   );
+   const isOnline = useOnlineStatus();
    ```
 
-2. **Visibility state**: Controls the appearance/disappearance animation
+2. **Mounting state**: Prevents SSR hydration mismatches
    ```typescript
-   const [isVisible, setIsVisible] = useState<boolean>(false);
-   ```
-
-3. **Animation state**: Manages transition animations
-   ```typescript
-   const [animationState, setAnimationState] = useState<'entering' | 'entered' | 'exiting' | 'exited'>(
-     isOffline ? 'entering' : 'exited'
-   );
-   ```
-
-The component uses these key effects:
-
-1. **Network status monitoring**: Listens for browser online/offline events
-   ```typescript
+   const [mounted, setMounted] = useState(false);
+   
    useEffect(() => {
-     const handleOnline = () => setIsOffline(false);
-     const handleOffline = () => setIsOffline(true);
-     
-     window.addEventListener('online', handleOnline);
-     window.addEventListener('offline', handleOffline);
-     
-     return () => {
-       window.removeEventListener('online', handleOnline);
-       window.removeEventListener('offline', handleOffline);
-     };
+     setMounted(true);
    }, []);
    ```
 
-2. **Animation management**: Controls animation timing
-   ```typescript
-   useEffect(() => {
-     let timeout: NodeJS.Timeout;
-     
-     if (isOffline) {
-       setIsVisible(true);
-       timeout = setTimeout(() => setAnimationState('entered'), 10);
-     } else if (isVisible) {
-       setAnimationState('exiting');
-       timeout = setTimeout(() => {
-         setAnimationState('exited');
-         setIsVisible(false);
-       }, 300);
-     }
-     
-     return () => {
-       if (timeout) clearTimeout(timeout);
-     };
-   }, [isOffline, isVisible]);
-   ```
+The component uses Bootstrap Alert styling and automatically shows/hides based on network status:
+
+```typescript
+// Component structure with Bootstrap Alert
+<Alert 
+  variant="warning" 
+  className="text-center mb-3"
+  data-testid="offline-indicator"
+>
+  You are offline
+</Alert>
+```
 
 ## Theme Compatibility
 
-The OfflineIndicator adapts to different themes:
+The OfflineIndicator adapts to different themes through Bootstrap's default theming system:
 
-- **Automatic color adaptation**: Uses CSS variables to adapt colors based on theme
-- **Icon theming**: Icons adjust color based on the current theme
-- **Contrast optimization**: Maintains readability in both light and dark themes
-- **Background opacity**: Adjusts background opacity for different themes
-- **Border styling**: Adapts border styles based on theme variables
+- **Bootstrap theming**: Uses Bootstrap's warning variant which automatically adapts to the current theme
+- **Color consistency**: Warning colors remain consistent with Bootstrap's design system
+- **Dark mode support**: Bootstrap's alert variants include built-in dark mode support
+- **Automatic adaptation**: No custom CSS required for theme switching
 
 ## Mobile Responsiveness
 
-The component is optimized for all screen sizes:
+The component is optimized for all screen sizes using Bootstrap utilities:
 
-- **Responsive positioning**: Adapts position based on viewport size
-- **Touch-friendly**: Suitable target size if interactive elements are included
-- **Viewport awareness**: Adjusted size and positioning on small screens
-- **Orientation handling**: Works in both portrait and landscape
-- **Space efficiency**: Minimizes screen space usage, especially important on mobile
+- **Responsive design**: Bootstrap Alert is inherently responsive and mobile-friendly
+- **Text centering**: Uses Bootstrap's `text-center` utility for consistent alignment
+- **Spacing**: Uses Bootstrap's `mb-3` margin utility for consistent spacing
+- **Touch-friendly**: Bootstrap Alert provides adequate touch target size
+- **Viewport adaptation**: Automatically adapts to different screen sizes
 
 ## Accessibility
 
-- **ARIA live region**: Uses aria-live for announcing status changes
-- **Status role**: Includes appropriate ARIA role for status messages
-- **Focus management**: Manages focus appropriately if interactive
-- **Color independence**: Conveys information through more than just color
-- **Screen reader announcements**: Announces status changes to screen readers
-- **Contrast ratios**: Ensures text is readable against background
+- **Alert role**: Bootstrap Alert provides proper `role="alert"` for screen readers
+- **Status announcements**: Screen readers automatically announce alert content
+- **Color independence**: Information conveyed through more than just color
+- **Contrast ratios**: Bootstrap ensures WCAG AA compliance for alert text
+- **Semantic markup**: Uses proper semantic HTML structure
 
 ## Example Usage
 
 ### Basic Usage
 
 ```tsx
-import OfflineIndicator from '../components/OfflineIndicator';
+import { OfflineIndicator } from '../components/OfflineIndicator';
 
 function App() {
   return (
@@ -172,63 +148,51 @@ function App() {
 }
 ```
 
-### Custom Position and Message
+### Integration with Layout
 
 ```tsx
-<OfflineIndicator
-  position="bottom"
-  message="No internet connection available. Some features may be limited."
-/>
-```
-
-### Showing Online Status
-
-```tsx
-<OfflineIndicator
-  showOnlineStatus={true}
-  onlineMessage="Connection restored!"
-/>
-```
-
-### For Testing
-
-```tsx
-// Force offline status for testing offline mode
-<OfflineIndicator forceOffline={true} />
+function Layout({ children }) {
+  return (
+    <div className="layout">
+      <OfflineIndicator />
+      <main>{children}</main>
+    </div>
+  );
+}
 ```
 
 ## Status Display Variations
 
-The OfflineIndicator supports different display modes:
+The Bootstrap OfflineIndicator provides a consistent display mode:
 
-1. **Top banner**: Full-width notification at the top of the screen (default)
-2. **Bottom banner**: Full-width notification at the bottom of the screen
-3. **Inline**: In-place indicator that can be positioned anywhere in the layout
+1. **Warning Alert**: Full-width Bootstrap warning alert with centered text
+2. **Automatic visibility**: Shows only when offline, hides when online
+3. **Consistent styling**: Uses Bootstrap's default warning variant colors
 
-Each mode has appropriate styling and behavior based on the positioning context.
+**Note:** Previous custom positioning and messaging options have been simplified in favor of Bootstrap's consistent design system.
 
 ## Known Limitations
 
 1. **Detection accuracy**: Relies on browser's online/offline events which may not always reflect true connectivity
 2. **Connection quality**: Cannot detect slow or poor-quality connections
-3. **Offline features**: Does not indicate which features remain available offline
-4. **Multiple instances**: Not designed for multiple simultaneous instances
-5. **Initial state**: May have brief flicker on initial load if offline
+3. **Fixed styling**: Uses Bootstrap's default warning variant (no custom positioning or messages)
+4. **Bootstrap dependency**: Requires react-bootstrap to be installed and configured
+5. **Simplified interface**: Previous customization options removed in favor of consistency
 
 ## Test Coverage
 
 The OfflineIndicator component has comprehensive test coverage:
 
 - **OfflineIndicator.test.tsx**: Basic rendering and functionality tests
-- **OfflineIndicator.events.test.tsx**: Online/offline event handling tests
-- **OfflineIndicator.animation.test.tsx**: Animation tests
+- **OfflineIndicator.bootstrap.test.tsx**: Bootstrap-specific integration tests
 
 Key tested scenarios include:
 - Initial offline state detection
+- Bootstrap Alert rendering and styling
 - Transition between online and offline states
-- Event handler registration and cleanup
-- Animation sequences
-- Prop variations (position, messages)
+- Accessibility attributes (role="alert")
+- Bootstrap utility classes
+- SSR compatibility
 
 ## Related Components
 
@@ -238,41 +202,44 @@ Key tested scenarios include:
 
 ## Implementation Details
 
-The OfflineIndicator uses CSS transitions for smooth state changes:
-
-```css
-.offlineIndicator {
-  transition: transform 300ms ease-in-out, opacity 300ms ease-in-out;
-  transform: translateY(-100%);
-  opacity: 0;
-}
-
-.offlineIndicator.visible {
-  transform: translateY(0);
-  opacity: 1;
-}
-```
-
-The component implements network event listeners with proper cleanup:
+The OfflineIndicator uses Bootstrap Alert for consistent styling:
 
 ```typescript
-useEffect(() => {
-  const handleNetworkChange = () => {
-    setIsOffline(!navigator.onLine);
-  };
-  
-  window.addEventListener('online', handleNetworkChange);
-  window.addEventListener('offline', handleNetworkChange);
-  
-  return () => {
-    window.removeEventListener('online', handleNetworkChange);
-    window.removeEventListener('offline', handleNetworkChange);
-  };
-}, []);
+import { Alert } from 'react-bootstrap';
+
+return (
+  <Alert 
+    variant="warning" 
+    className="text-center mb-3"
+    data-testid="offline-indicator"
+  >
+    You are offline
+  </Alert>
+);
+```
+
+The component integrates with the `useOnlineStatus` hook for network detection:
+
+```typescript
+const isOnline = useOnlineStatus();
+
+// Component only renders when offline
+if (isOnline) {
+  return null;
+}
 ```
 
 ## Change History
 
+| Date | Version | Changes |
+|------|---------|---------|
+| 2024-12-19 | 2.0.0 | ✅ Migrated to Bootstrap Alert component |
+|           |       | ✅ Simplified prop interface |
+|           |       | ✅ Added comprehensive test suite |
+|           |       | ✅ Updated to use Bootstrap warning variant |
+|           |       | ✅ Removed custom CSS module dependency |
+
+Previous versions:
 - **2025-03-20**: Added animation improvements
 - **2025-03-01**: Enhanced accessibility for status announcements
 - **2025-02-15**: Added inline positioning option

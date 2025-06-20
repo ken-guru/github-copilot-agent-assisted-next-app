@@ -174,16 +174,16 @@ This change affects the entire UI component library of the application. Currentl
 - [x] Update component documentation
 - [x] **COMMIT:** "Migrate ProgressBar to Bootstrap ProgressBar component"
 
-##### OfflineIndicator Component
-- [ ] Review existing OfflineIndicator tests and functionality
-- [ ] Write tests for Bootstrap Alert integration
-- [ ] Migrate OfflineIndicator to react-bootstrap/Alert
-- [ ] Update component props and interfaces
-- [ ] Remove custom CSS module (OfflineIndicator.module.css)
-- [ ] Update all imports and usage throughout codebase
-- [ ] Run tests and verify functionality
-- [ ] Update component documentation
-- [ ] **COMMIT:** "Migrate OfflineIndicator to Bootstrap Alert component"
+##### OfflineIndicator Component ✅ COMPLETED
+- [x] Review existing OfflineIndicator tests and functionality
+- [x] Write tests for Bootstrap Alert integration
+- [x] Migrate OfflineIndicator to react-bootstrap/Alert
+- [x] Update component props and interfaces
+- [x] Remove custom CSS module (OfflineIndicator.module.css)
+- [x] Update all imports and usage throughout codebase
+- [x] Run tests and verify functionality
+- [x] Update component documentation
+- [x] **COMMIT:** "Migrate OfflineIndicator to Bootstrap Alert component"
 
 ##### UpdateNotification Component
 - [ ] Review existing UpdateNotification tests and functionality
