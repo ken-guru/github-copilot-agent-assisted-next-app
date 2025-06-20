@@ -1,80 +1,206 @@
-# ProgressBar Component
+# ProgressBar Component Documentation
 
 ## Navigation
-
-- [Component Documentation Home](./README.md)
-- **Category**: [Visualization Components](./README.md#visualization-components)
-- **Related Components**:
-  - [Timeline](./Timeline.md) - Often used alongside ProgressBar
-  - [ActivityManager](./ActivityManager.md) - Provides activity data
-  - [TimeDisplay](./TimeDisplay.md) - Used for formatting time markers
+- [Back to Component Documentation Index](../README.md#component-documentation)
+- [Bootstrap Migration Guide](../bootstrap-component-mapping.md)
 
 ## Overview
 
-The ProgressBar component provides a visual representation of elapsed time against a total duration. It features smooth color transitions to indicate progress status, with colors shifting gradually from green to red as time elapses. The component is designed to be responsive and theme-compatible, offering clear visual feedback about the current progress of a timed session.
+The ProgressBar component displays activity progress visualization using Bootstrap's ProgressBar component. It shows a visual progress indicator with different color variants based on progress percentage, along with time markers and mobile-responsive layout.
 
-## Table of Contents
-- [Features](#features)
-- [Props](#props)
-- [Types](#types)
-- [State Management](#state-management)
-- [Color Transition Logic](#color-transition-logic)
-- [Theme Compatibility](#theme-compatibility)
-- [Mobile Responsiveness](#mobile-responsiveness)
-- [Accessibility](#accessibility)
-- [Example Usage](#example-usage)
-- [Known Limitations](#known-limitations)
-- [Test Coverage](#test-coverage)
-- [Related Components](#related-components)
-- [Implementation Details](#implementation-details)
-- [Change History](#change-history)
-- [Related Memory Logs](#related-memory-logs)
+## Migration Status
 
-## Features
+**Status:** ✅ **Migrated to Bootstrap**
+- **From:** Custom CSS module implementation with HSL color interpolation
+- **To:** react-bootstrap/ProgressBar with Bootstrap variants
+- **Migration Date:** 2024-12-19
+- **Commit:** `821dcc9` - "Migrate ProgressBar component to Bootstrap"
 
-- **Color-Coded Progress Indication**: Visual color transitions as time progresses
-- **Responsive Design**: Adapts layout for mobile and desktop viewports
-- **Theme Compatibility**: Works seamlessly in both light and dark themes
-- **Accessibility Support**: Includes proper ARIA attributes and meets contrast requirements
-- **Time Markers**: Displays readable time points for reference
-- **Smooth Animations**: Provides animated transitions when progress updates
-- **Real-Time Updates**: Updates progress in real-time when timer is active
-- **Conditional Visibility**: Can be conditionally displayed based on application state
+## API Reference
 
-## Props
+### Props
 
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `entries` | `TimelineEntry[]` | Yes | - | Array of timeline entries to track |
-| `totalDuration` | `number` | Yes | - | Total duration in seconds |
-| `elapsedTime` | `number` | Yes | - | Elapsed time in seconds |
-| `timerActive` | `boolean` | No | `false` | Whether the timer is currently active |
+```typescript
+interface ProgressBarProps {
+  entries: TimelineEntry[];          // Timeline entries for context
+  totalDuration: number;             // Total duration in seconds
+  elapsedTime: number;               // Elapsed time in seconds
+  timerActive?: boolean;             // Whether timer is currently active (default: false)
+}
+```
+
+### Component Structure
+
+```typescript
+<div className="w-100">              // Bootstrap utility classes
+  <ProgressBar 
+    now={progressPercentage}         // 0-100 percentage
+    variant={getVariant()}           // success|info|warning|danger
+    style={{ height: '16px' }}       // Fixed height
+    data-testid="bootstrap-progress-bar"
+    aria-label="Progress towards total duration"
+  />
+  <div className="d-flex justify-content-between mt-2 px-1">
+    <span>0:00</span>                // Time markers
+    <span>{midpointTime}</span>
+    <span>{totalTime}</span>
+  </div>
+</div>
+```
 
 ## State Management
 
-The ProgressBar component manages several states internally:
+### Progress Calculation
+- Progress percentage calculated as `(elapsedTime / totalDuration) * 100`
+- Capped at 100% maximum
+- Shows 0% when timer is inactive
 
-1. **Progress percentage**: Calculated from elapsed time and total duration
-   ```typescript
-   const progressPercentage = Math.min(100, (elapsedTime / totalDuration) * 100);
-   ```
+### Variant Selection
+The component uses Bootstrap variants based on progress:
+- **success** (green): < 50% progress
+- **info** (blue): 50% ≤ progress < 75%
+- **warning** (yellow): 75% ≤ progress < 100%
+- **danger** (red): ≥ 100% progress
 
-2. **Current theme**: Tracks theme mode for proper color rendering
-   ```typescript
-   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
-     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
-   );
-   ```
+### Mobile Responsiveness
+- **Desktop:** Progress bar above, time markers below
+- **Mobile (≤768px):** Time markers above, progress bar below
+- Responsive layout using Bootstrap flexbox utilities
 
-3. **Color transition**: Dynamically calculates colors based on progress
-   ```typescript
-   const progressColor = useMemo(() => {
-     // Color calculation logic based on progress percentage
-     return calculateProgressColor(progressPercentage, currentTheme);
-   }, [progressPercentage, currentTheme]);
-   ```
+## Theme Compatibility
 
-The component uses these key effects:
+### Bootstrap Theme Integration
+- Uses Bootstrap's default color system
+- Automatically inherits theme colors from Bootstrap variables
+- No custom CSS variables required
+- Fully compatible with Bootstrap theme customization
+
+### Accessibility
+- Proper ARIA attributes: `aria-label`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax`
+- Role attribute: `role="progressbar"`
+- Semantic HTML structure
+- Screen reader compatible
+
+## Testing
+
+### Test Coverage
+- ✅ Basic rendering and DOM structure
+- ✅ Progress percentage calculation and display
+- ✅ Bootstrap variant selection for all ranges
+- ✅ Mobile responsiveness
+- ✅ Inactive state handling
+- ✅ Accessibility attributes
+- ✅ Edge cases (empty entries, zero duration)
+- ✅ Progress capping at 100%
+
+### Test Location
+- **New Tests:** `src/components/__tests__/ProgressBar.bootstrap.test.tsx`
+- **Backed Up:** Original tests moved to `.backup` files
+- **Test Framework:** Jest + React Testing Library
+
+## Usage Examples
+
+### Basic Usage
+```tsx
+import ProgressBar from '@/components/ProgressBar';
+
+function MyComponent() {
+  const entries = [/* timeline entries */];
+  const totalDuration = 3600; // 1 hour in seconds
+  const elapsedTime = 1800;   // 30 minutes elapsed
+  
+  return (
+    <ProgressBar
+      entries={entries}
+      totalDuration={totalDuration}
+      elapsedTime={elapsedTime}
+      timerActive={true}
+    />
+  );
+}
+```
+
+### With Timer State
+```tsx
+function TimerDisplay() {
+  const { elapsedTime, totalDuration, isActive, entries } = useTimerState();
+  
+  return (
+    <ProgressBar
+      entries={entries}
+      totalDuration={totalDuration}
+      elapsedTime={elapsedTime}
+      timerActive={isActive}
+    />
+  );
+}
+```
+
+## Performance Considerations
+
+### Optimizations
+- Memoized variant calculation prevents unnecessary re-renders
+- Efficient time formatting using existing utility functions
+- Minimal DOM updates through React's reconciliation
+
+### Render Frequency
+- Component re-renders on timer tick (typically every second)
+- Progress calculation is lightweight (simple math operations)
+- No expensive operations in render path
+
+## Dependencies
+
+### Internal Dependencies
+- `@/types` - TimelineEntry interface
+- `@/utils/time` - formatTimeHuman utility
+
+### External Dependencies
+- `react-bootstrap` - ProgressBar component
+- `react` - useState, useEffect hooks
+
+## Known Limitations
+
+1. **Fixed Height:** Progress bar height is fixed at 16px (matches original design)
+2. **Time Markers:** Always shows 3 time markers (start, middle, end)
+3. **Variant System:** Limited to 4 Bootstrap variants (vs infinite custom colors)
+4. **Mobile Breakpoint:** Fixed at 768px using window.matchMedia
+
+## Migration Notes
+
+### Breaking Changes from Original
+- **Color System:** Switched from custom HSL interpolation to Bootstrap variants
+- **CSS Classes:** All custom CSS classes replaced with Bootstrap utilities
+- **Theme Variables:** No longer uses custom CSS properties
+
+### Maintained Functionality
+- ✅ Mobile responsive layout
+- ✅ Time markers display
+- ✅ Progress capping at 100%
+- ✅ Inactive state styling
+- ✅ Accessibility attributes
+- ✅ Same component interface
+
+## Future Enhancements
+
+### Potential Improvements
+1. **Custom Variant Colors:** Support for custom color schemes while maintaining Bootstrap structure
+2. **Animation Options:** Optional progress animation/transitions
+3. **Time Marker Customization:** Configurable time marker intervals
+4. **Size Variants:** Support for different progress bar sizes (sm, lg)
+
+### Bootstrap 6 Compatibility
+- Component structure compatible with future Bootstrap versions
+- Uses stable Bootstrap APIs
+- Minimal changes expected for future Bootstrap updates
+
+## Change History
+
+| Date | Version | Changes |
+|------|---------|---------|
+| 2024-12-19 | 1.0.0 | ✅ Migrated to Bootstrap ProgressBar component |
+|           |       | ✅ Added comprehensive test suite |
+|           |       | ✅ Updated to use Bootstrap variants |
+|           |       | ✅ Removed custom CSS module dependency |
 
 1. **Theme change detection**: Updates colors when the theme changes
 2. **Timer effect**: For real-time progress updates when timer is active
