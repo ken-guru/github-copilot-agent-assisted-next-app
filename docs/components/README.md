@@ -29,6 +29,7 @@ These components provide supporting functionality:
 
 - [**ServiceWorkerUpdater**](./ServiceWorkerUpdater.md): Manages service worker lifecycle and update notifications
 - [**ActivityForm**](./ActivityForm.md): Interface for creating and editing activities
+- [**ConfirmationDialog**](./ConfirmationDialog.md): Modal dialog for confirming user actions (Bootstrap-based)
 
 ## Utility Components
 
@@ -96,7 +97,7 @@ graph TD
 - **Visualization Components**: Timeline, ProgressBar
 - **State Management Components**: ActivityManager, Summary  
 - **User Input Components**: TimeSetup, ActivityButton
-- **Auxiliary Components**: ServiceWorkerUpdater, ActivityForm
+- **Auxiliary Components**: ServiceWorkerUpdater, ActivityForm, ConfirmationDialog
 - **Utility Components**: TimeDisplay, OfflineIndicator, ThemeToggle, ErrorBoundary
 
 ### Diagram Relationship Types
