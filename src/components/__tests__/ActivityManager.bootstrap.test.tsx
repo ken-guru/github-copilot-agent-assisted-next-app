@@ -1,6 +1,5 @@
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import ActivityManager from '../ActivityManager';
-import * as colorUtils from '../../utils/colors';
 
 // Mock utils and setup
 jest.mock('../../utils/colors', () => ({

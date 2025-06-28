@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { ThemeProvider } from '@contexts/theme';
-import ServiceWorkerUpdater from './ServiceWorkerUpdater';
+import ServiceWorkerUpdater from '@components/ui/ServiceWorkerUpdater';
 
 interface LayoutClientProps {
   children: React.ReactNode;
@@ -50,41 +50,14 @@ export function LayoutClient({ children }: LayoutClientProps) {
 
   return (
     <ThemeProvider>
-      {/* Include the ServiceWorkerUpdater component */}
-      <ServiceWorkerUpdater />
-      
-      {/* Legacy update notification - can eventually be removed once tests are updated */}
+      {/* Service worker update notifications */}
       {updateAvailable && (
-        <div style={{
-          position: 'fixed',
-          bottom: '20px',
-          left: '20px',
-          right: '20px',
-          backgroundColor: '#333',
-          color: 'white',
-          padding: '10px',
-          borderRadius: '5px',
-          zIndex: 1000,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <span>A new version is available</span>
-          <button 
-            onClick={handleUpdate}
-            style={{
-              backgroundColor: '#007bff',
-              border: 'none',
-              color: 'white',
-              padding: '5px 10px',
-              borderRadius: '3px',
-              cursor: 'pointer'
-            }}
-          >
-            Update
-          </button>
-        </div>
+        <ServiceWorkerUpdater 
+          onUpdate={handleUpdate} 
+          onDismiss={() => setUpdateAvailable(false)}
+        />
       )}
+      
       {children}
     </ThemeProvider>
   );

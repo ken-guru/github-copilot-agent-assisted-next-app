@@ -173,7 +173,7 @@ export default function ActivityManager({
               isDisabled={isTimeUp}
             />
           </Col>
-          {activities.map((activity, index) => (
+          {activities.map((activity) => (
             <Col 
               key={activity.id} 
               xs={12} 
