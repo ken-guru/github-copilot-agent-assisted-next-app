@@ -204,6 +204,7 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - LIMIT each commit to maximum 5 files unless tightly coupled
 - ENSURE each commit represents a logical, complete unit of work
 - INCLUDE meaningful commit messages describing the specific change
+- UPDATE planning documents before each commit to reflect current progress
 
 ### Commit Scope Guidelines
 - **Single Component Changes**: One commit per component when migrating or refactoring
@@ -218,6 +219,14 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - RUN linting and fix any issues before commit
 - INCLUDE any necessary documentation updates in the same commit
 - VALIDATE that the commit doesn't break existing functionality
+
+### Planning Document Commit Protocol
+- ALWAYS update planning documents (PLANNED_CHANGES.md) BEFORE committing
+- MARK completed tasks with checkboxes and completion status
+- UPDATE progress tracking percentages to reflect current state
+- ENSURE planning document accurately reflects completed work
+- COMMIT planning document updates along with implementation changes
+- NEVER commit implementation without corresponding planning document updates
 
 ### Commit Message Format
 - Use clear, descriptive commit messages
