@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import styles from './ServiceWorkerUpdater.module.css';
+import { Toast } from 'react-bootstrap';
 
 /**
  * Props for the ServiceWorkerUpdater component
@@ -58,30 +58,45 @@ const ServiceWorkerUpdater: React.FC<ServiceWorkerUpdaterProps> = ({
   }, [onUpdate, onDismiss]);
 
   return (
-    <div className={styles.updateNotification} role="alert" data-testid="sw-update-notification">
-      <div className={styles.updateContent}>
-        <div className={styles.updateMessage}>
-          <strong>Update Available</strong>
-          <p>A new version of this application is available.</p>
+    <Toast
+      show={true}
+      className="toast show position-fixed bottom-0 end-0 m-3 bg-success text-white"
+      style={{ maxWidth: '350px', zIndex: 1080 }}
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+      data-testid="sw-update-notification"
+    >
+      <Toast.Header className="toast-header bg-success text-white px-3 py-2" closeButton={false}>
+        <div className="d-flex align-items-center">
+          <i className="bi bi-arrow-clockwise me-2" data-testid="sw-update-icon"></i>
+          <strong className="h6 mb-0 fw-bold" data-testid="sw-update-title">Update Available</strong>
         </div>
-        <div className={styles.updateActions}>
+      </Toast.Header>
+      <Toast.Body className="toast-body px-3 pb-3">
+        <p className="mb-0 small" data-testid="sw-update-message">
+          A new version of this application is available.
+        </p>
+        <div className="d-flex gap-2 mt-2" data-testid="sw-button-container">
           <button 
             onClick={onUpdate}
-            className={styles.updateButton}
+            className="btn btn-light btn-sm me-2"
+            type="button"
             data-testid="sw-update-button"
           >
             Update Now
           </button>
           <button 
             onClick={onDismiss}
-            className={styles.dismissButton}
+            className="btn btn-outline-light btn-sm"
+            type="button"
             data-testid="sw-dismiss-button"
           >
             Later
           </button>
         </div>
-      </div>
-    </div>
+      </Toast.Body>
+    </Toast>
   );
 };
 
