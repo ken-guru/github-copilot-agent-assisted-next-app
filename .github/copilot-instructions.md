@@ -35,7 +35,8 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 
 ### Test Verification
 - Remind to run test suite after ANY code changes
-- Syntax: `npm test`
+- ALWAYS use terminal command: `npm run test`
+- Run tests in terminal, not through other interfaces
 
 ## DOCUMENTATION STANDARDS [PRIORITY: HIGH]
 ### Component Documentation
@@ -185,7 +186,7 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
   ```
 - Tests:
   ```bash
-  npm test
+  npm run test
   ```
 
 ### Verification Process
