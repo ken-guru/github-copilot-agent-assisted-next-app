@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import styles from './ActivityManager.module.css';
+import { Container, Row, Col } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
@@ -158,33 +158,42 @@ export default function ActivityManager({
   };
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.heading}>Activities</h2>
+    <Container fluid className="h-100" data-testid="activity-manager">
+      <h4 className="h4 mb-3">Activities</h4>
       
       {activities.length === 0 ? (
-        <div className={styles.emptyState}>
+        <div className="alert alert-info text-center" role="alert" data-testid="empty-state">
           No activities defined
         </div>
       ) : (
-        <div className={styles.activityList}>
-          <ActivityForm
-            onAddActivity={handleAddActivity}
-            isDisabled={isTimeUp}
-          />
-          {activities.map((activity) => (
-            <ActivityButton
-              key={activity.id}
-              activity={activity}
-              isCompleted={completedActivityIds.includes(activity.id)}
-              isRunning={activity.id === currentActivityId}
-              onSelect={handleActivitySelect}
-              onRemove={onActivityRemove ? handleRemoveActivity : undefined}
-              timelineEntries={timelineEntries}
-              elapsedTime={elapsedTime}
+        <Row className="gy-3" data-testid="activity-list">
+          <Col xs={12} className="mb-3" data-testid="activity-form-column">
+            <ActivityForm
+              onAddActivity={handleAddActivity}
+              isDisabled={isTimeUp}
             />
+          </Col>
+          {activities.map((activity, index) => (
+            <Col 
+              key={activity.id} 
+              xs={12} 
+              md={6} 
+              lg={4}
+              data-testid={`activity-column-${activity.id}`}
+            >
+              <ActivityButton
+                activity={activity}
+                isCompleted={completedActivityIds.includes(activity.id)}
+                isRunning={activity.id === currentActivityId}
+                onSelect={handleActivitySelect}
+                onRemove={onActivityRemove ? handleRemoveActivity : undefined}
+                timelineEntries={timelineEntries}
+                elapsedTime={elapsedTime}
+              />
+            </Col>
           ))}
-        </div>
+        </Row>
       )}
-    </div>
+    </Container>
   );
 }
