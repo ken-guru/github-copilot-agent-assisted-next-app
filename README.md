@@ -216,7 +216,7 @@ Key component categories:
 - **Visualization Components**: [Timeline](./docs/components/Timeline.md), [ProgressBar](./docs/components/ProgressBar.md)
 - **State Management Components**: [ActivityManager](./docs/components/ActivityManager.md), [Summary](./docs/components/Summary.md)
 - **User Input Components**: [TimeSetup](./docs/components/TimeSetup.md), [ActivityButton](./docs/components/ActivityButton.md)
-- **Auxiliary Components**: [ServiceWorkerUpdater](./docs/components/ServiceWorkerUpdater.md), [ActivityForm](./docs/components/ActivityForm.md)
+- **Auxiliary Components**: [ServiceWorkerUpdater](./docs/components/ServiceWorkerUpdater.md), [ActivityForm](./docs/components/ActivityForm.md), [ConfirmationDialog](./docs/components/ConfirmationDialog.md)
 - **Utility Components**: [TimeDisplay](./docs/components/TimeDisplay.md), [OfflineIndicator](./docs/components/OfflineIndicator.md), [ThemeToggle](./docs/components/ThemeToggle.md), [ErrorBoundary](./docs/components/ErrorBoundary.md)
 
 ### Development Resources

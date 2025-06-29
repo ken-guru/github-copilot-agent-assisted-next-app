@@ -1,53 +1,10 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  gap: var(--space-md);
-  width: 100%;
-  height: 100%;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.heading {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--foreground);
-}
-
-.timeDisplay {
-  font-size: 1.25rem;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  transition: all 0.2s ease;
-  padding: var(--space-xs) var(--space-md);
-  border-radius: 0.25rem;
-  background: var(--background-muted);
-  color: var(--foreground);
-}
-
-.timeDisplayOvertime {
-  color: var(--error, #dc2626);
-  background: var(--error-bg, #fee2e2);
-}
-
-.timeDisplayInactive {
-  background-color: var(--background-muted);
-  color: var(--text-secondary);
-  font-style: italic;
-}
+/* Timeline-specific visualization styles - preserving custom timeline functionality */
+/* Bootstrap now handles: layout, typography, borders, spacing, positioning, responsive design */
 
 .timelineContainer {
   display: flex;
   flex: 1;
   min-height: 0; /* Important for flex child to respect parent's height */
-  border: 1px solid var(--border);
-  border-radius: var(--space-2xs);
   position: relative;
   overflow: hidden;
   background: var(--background);
@@ -66,12 +23,9 @@
 }
 
 .timeMarker {
-  position: absolute;
   left: 0;
   width: 100%;
   padding: var(--space-xs) var(--space-md);
-  font-size: 0.75rem;
-  color: var(--foreground-muted);
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -164,12 +118,7 @@
 .timelineEntry {
   margin: 0;
   padding: var(--space-md);
-  border-radius: var(--space-xs);
-  border-width: 1px;
-  border-style: solid;
   transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
   min-height: 3rem;
 }
 
@@ -209,15 +158,12 @@
 }
 
 .timeInfo {
-  font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
   color: inherit;
   flex-shrink: 0; /* Prevent time info from wrapping */
 }
 
 .activityName {
-  font-weight: 500;
-  font-size: 0.875rem;
   color: inherit;
   white-space: normal; /* Allow text to wrap */
   flex: 1; /* Take up remaining space */
@@ -244,18 +190,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--foreground-muted);
-  font-style: italic;
-}
-
-.warningMessage {
-  color: var(--error, #dc2626);
-  font-size: 0.875rem;
-  padding: var(--space-xs);
-  border: 1px solid currentColor;
-  border-radius: var(--space-xs);
-  margin-top: var(--space-xs);
-  background: var(--error-bg, #fee2e2);
 }
 
 .timeGuides {
@@ -278,11 +212,6 @@
 }
 
 @media (max-width: 768px) {
-  .container {
-    padding: var(--space-xs); /* Reduced padding for mobile views */
-    gap: var(--space-xs); /* Smaller gap between elements on mobile */
-  }
-  
   .timelineEntry {
     padding: var(--space-sm); /* Reduced from var(--space-md) for mobile */
     min-height: 2.5rem; /* Slightly smaller for mobile */

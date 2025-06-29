@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './ActivityManager.module.css';
+import { Form, InputGroup, Button } from 'react-bootstrap';
 
 interface ActivityFormProps {
   onAddActivity: (activityName: string) => void;
@@ -18,25 +18,24 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onAddActivity, isDisabled }
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form} role="form" data-testid="activity-form">
-      <div className={styles.inputContainer}>
-        <input
+    <Form onSubmit={handleSubmit} className="mb-3" role="form" data-testid="activity-form">
+      <InputGroup data-testid="activity-form-input-group">
+        <Form.Control
           type="text"
           value={newActivityName}
           onChange={(e) => setNewActivityName(e.target.value)}
           placeholder={isDisabled ? "Time is up!" : "New activity name"}
-          className={styles.input}
           disabled={isDisabled}
         />
-        <button 
+        <Button 
           type="submit"
-          className={`${styles.addButton} ${isDisabled ? styles.disabled : ''}`}
+          variant="primary"
           disabled={isDisabled}
         >
           Add
-        </button>
-      </div>
-    </form>
+        </Button>
+      </InputGroup>
+    </Form>
   );
 };
 

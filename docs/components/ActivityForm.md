@@ -10,14 +10,12 @@
 
 ## Overview
 
-The ActivityForm component provides an interface for creating and editing activities within the application. It handles form input, validation, and submission while offering a consistent user experience for activity management. The component supports both creating new activities and editing existing ones, with appropriate validation and feedback mechanisms.
+The ActivityForm component provides a Bootstrap-powered interface for adding new activities within the application. It uses React Bootstrap Form components including InputGroup, Form.Control, and Button to deliver a consistent, responsive, and accessible form experience. The component handles form input validation and submission while maintaining compatibility with the application's existing activity management system.
 
 ## Table of Contents
 - [Features](#features)
 - [Props](#props)
-- [Types](#types)
-- [State Management](#state-management)
-- [Form Validation](#form-validation)
+- [Bootstrap Integration](#bootstrap-integration)
 - [Theme Compatibility](#theme-compatibility)
 - [Mobile Responsiveness](#mobile-responsiveness)
 - [Accessibility](#accessibility)
@@ -27,344 +25,253 @@ The ActivityForm component provides an interface for creating and editing activi
 - [Related Components](#related-components)
 - [Implementation Details](#implementation-details)
 - [Change History](#change-history)
-- [Related Memory Logs](#related-memory-logs)
 
 ## Features
 
-- **Activity Creation**: Form interface for adding new activities
-- **Activity Editing**: Support for modifying existing activities
-- **Input Validation**: Validates user input for required fields and constraints
-- **Error Messaging**: Clear error feedback for invalid inputs
-- **Form Submission**: Handles form submission with appropriate callbacks
-- **Keyboard Support**: Full keyboard navigation and submission
-- **Theme Compatibility**: Adapts styling to light and dark themes
-- **Mobile Optimized**: Responsive design for all screen sizes
-- **Color Selection**: Optional color selection for activity categorization
+- **Bootstrap Form Integration**: Uses React Bootstrap components for consistent styling
+- **Input Group Layout**: Implements Bootstrap InputGroup for seamless input-button combination
+- **Activity Creation**: Simple form interface for adding new activities
+- **Input Validation**: Basic validation for required activity names
+- **Responsive Design**: Bootstrap's responsive utilities ensure mobile compatibility
+- **Keyboard Support**: Full keyboard navigation and form submission
+- **Disabled State**: Properly handles disabled state when time is up
+- **Theme Integration**: Works with Bootstrap's default theme system
 
 ## Props
 
 | Prop | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
-| `onSubmit` | `(activity: ActivityFormData) => void` | Yes | - | Callback when form is submitted with valid data |
-| `onCancel` | `() => void` | No | - | Callback when form submission is canceled |
-| `initialValues` | `ActivityFormData` | No | `{ name: '', colorIndex: 0 }` | Initial form values for editing mode |
-| `isEditing` | `boolean` | No | `false` | Whether the form is in editing mode |
-| `availableColors` | `number[]` | No | `[]` | Array of available color indices |
+| `onAddActivity` | `(activityName: string) => void` | Yes | - | Callback when form is submitted with valid activity name |
+| `isDisabled` | `boolean` | Yes | - | Whether the form should be disabled (e.g., when time is up) |
 
-## Types
+## Bootstrap Integration
 
-```typescript
-interface ActivityFormData {
-  name: string;
-  colorIndex: number;
-  id?: string;
-}
+The ActivityForm leverages several React Bootstrap components:
 
-interface ActivityFormProps {
-  onSubmit: (activity: ActivityFormData) => void;
-  onCancel?: () => void;
-  initialValues?: ActivityFormData;
-  isEditing?: boolean;
-  availableColors?: number[];
-}
+### Form Structure
+```tsx
+import { Form, InputGroup, Button } from 'react-bootstrap';
 
-interface ValidationErrors {
-  name?: string;
-}
+// Form with Bootstrap styling
+<Form onSubmit={handleSubmit} className="mb-3" role="form">
+  <InputGroup>
+    <Form.Control
+      type="text"
+      placeholder="New activity name"
+      disabled={isDisabled}
+    />
+    <Button 
+      type="submit"
+      variant="primary"
+      disabled={isDisabled}
+    >
+      Add
+    </Button>
+  </InputGroup>
+</Form>
 ```
 
-## State Management
+### Bootstrap Classes Applied
+- `mb-3`: Bootstrap margin-bottom utility for form spacing
+- `form-control`: Applied automatically by Form.Control for consistent input styling
+- `btn btn-primary`: Applied automatically by Button component for primary action styling
+- `input-group`: Applied automatically by InputGroup for seamless input-button layout
 
-The ActivityForm component manages several pieces of state:
-
-1. **Form values**: Tracks the current form input values
-   ```typescript
-   const [formValues, setFormValues] = useState<ActivityFormData>({
-     name: initialValues?.name || '',
-     colorIndex: initialValues?.colorIndex ?? 0,
-     id: initialValues?.id
-   });
-   ```
-
-2. **Validation errors**: Tracks form validation errors
-   ```typescript
-   const [errors, setErrors] = useState<ValidationErrors>({});
-   ```
-
-3. **Submission state**: Tracks whether the form is currently being submitted
-   ```typescript
-   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-   ```
-
-4. **Touched fields**: Tracks which fields have been interacted with
-   ```typescript
-   const [touched, setTouched] = useState<Record<string, boolean>>({});
-   ```
-
-The component uses several key effects:
-
-1. **Initialization effect**: Updates form values when initialValues changes
-   ```typescript
-   useEffect(() => {
-     if (initialValues) {
-       setFormValues({
-         name: initialValues.name,
-         colorIndex: initialValues.colorIndex,
-         id: initialValues.id
-       });
-     }
-   }, [initialValues]);
-   ```
-
-2. **Validation effect**: Validates form values on change
-   ```typescript
-   useEffect(() => {
-     if (Object.keys(touched).length > 0) {
-       setErrors(validateForm(formValues));
-     }
-   }, [formValues, touched]);
-   ```
-
-## Form Validation Logic
-
-The ActivityForm implements comprehensive validation:
-
-1. **Required fields**: Ensures required fields like activity name are provided
-2. **Length constraints**: Validates text length (e.g., name between 2-50 characters)
-3. **Special character handling**: Handles special characters in activity names
-4. **Real-time validation**: Updates errors as the user types
-5. **Submission validation**: Performs a final validation before submission
-
-The validation logic is implemented as follows:
-
-```typescript
-const validateForm = (values: ActivityFormData): ValidationErrors => {
-  const errors: ValidationErrors = {};
-  
-  if (!values.name.trim()) {
-    errors.name = 'Activity name is required';
-  } else if (values.name.trim().length < 2) {
-    errors.name = 'Activity name must be at least 2 characters';
-  } else if (values.name.trim().length > 50) {
-    errors.name = 'Activity name cannot exceed 50 characters';
-  }
-  
-  return errors;
-};
-```
+### Theme Integration
+The component uses Bootstrap's default theme system:
+- Default primary color for the submit button
+- Standard form control styling for inputs
+- Bootstrap's disabled state handling
+- Consistent spacing using Bootstrap's spacing utilities
 
 ## Theme Compatibility
 
-The ActivityForm adapts to the application theme:
+The ActivityForm uses Bootstrap's default theme system:
 
-- **Form styling**: Uses theme variables for colors, borders, and backgrounds
-- **Error states**: Error styles adapt to the current theme
-- **Focus states**: Focus indicators are visible in both light and dark themes
-- **Color preview**: Activity color previews adjust for better visibility in different themes
-- **Transition effects**: Smooth transitions between theme modes
+- **Bootstrap Theme**: Inherits from Bootstrap's default light theme
+- **Form Controls**: Uses Bootstrap's form control styling with built-in theme support
+- **Primary Actions**: Submit button uses Bootstrap's primary variant
+- **Disabled States**: Leverages Bootstrap's disabled state styling
+- **Spacing**: Uses Bootstrap's spacing utilities (mb-3) for consistent layout
+- **Focus States**: Bootstrap's focus ring styling for better accessibility
 
 ## Mobile Responsiveness
 
-The component is designed to be fully responsive:
+Bootstrap's responsive design ensures the ActivityForm works across all devices:
 
-- **Flexible layout**: Adapts to different screen sizes
-- **Touch-friendly inputs**: Larger touch targets on mobile
-- **Responsive spacing**: Adjusts margins and padding based on viewport
-- **Keyboard handling**: Better virtual keyboard handling on mobile devices
-- **Orientation support**: Works in both portrait and landscape orientations
+- **InputGroup**: Automatically stacks or stays inline based on screen size
+- **Form Controls**: Bootstrap form controls are touch-friendly by default
+- **Button Sizing**: Bootstrap buttons maintain proper touch targets
+- **Spacing**: Bootstrap spacing utilities ensure appropriate mobile spacing
+- **Viewport Adaptation**: Works seamlessly across different viewport sizes
 
 ## Accessibility
 
-- **Semantic HTML**: Uses appropriate form elements
-- **Label associations**: All inputs have properly associated labels
-- **Error announcements**: Errors are announced to screen readers
-- **ARIA attributes**: Uses aria-invalid, aria-required, and other appropriate attributes
-- **Focus management**: Manages focus appropriately during form interactions
-- **Keyboard navigation**: Full keyboard support for form completion
+Bootstrap components provide built-in accessibility features:
+
+- **Semantic HTML**: Form, InputGroup, and Button use proper semantic markup
+- **ARIA Support**: Bootstrap components include appropriate ARIA attributes
+- **Focus Management**: Bootstrap's focus styles ensure keyboard navigation visibility
+- **Screen Reader Support**: Bootstrap markup is screen reader friendly
+- **Form Validation**: Bootstrap provides accessible form validation patterns
+- **Keyboard Navigation**: Full keyboard support through Bootstrap components
 
 ## Example Usage
 
-### Basic New Activity Form
+### Basic Activity Form
 
 ```tsx
 import ActivityForm from '../components/ActivityForm';
 
-function ActivityCreationPage() {
-  const handleSubmit = (activityData) => {
-    console.log('New activity:', activityData);
-    // Create activity logic
-  };
+function ActivityCreationSection() {
+  const [isTimeUp, setIsTimeUp] = useState(false);
   
-  const handleCancel = () => {
-    // Navigate away or close modal
+  const handleAddActivity = (activityName: string) => {
+    console.log('New activity:', activityName);
+    // Add activity to state or send to API
   };
   
   return (
     <div className="activity-creation">
-      <h2>Create New Activity</h2>
+      <h2>Add New Activity</h2>
       <ActivityForm 
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
+        onAddActivity={handleAddActivity}
+        isDisabled={isTimeUp}
       />
     </div>
   );
 }
 ```
 
-### Editing Existing Activity
+### Within Activity Manager
 
 ```tsx
-const existingActivity = {
-  id: 'activity-123',
-  name: 'Reading',
-  colorIndex: 2
-};
-
+// Used within ActivityManager component
 <ActivityForm
-  onSubmit={handleUpdateActivity}
-  onCancel={handleCancel}
-  initialValues={existingActivity}
-  isEditing={true}
+  onAddActivity={handleAddActivity}
+  isDisabled={isTimeUp}
 />
 ```
 
-### With Available Color Constraints
+### Testing with Bootstrap Classes
 
 ```tsx
-<ActivityForm
-  onSubmit={handleCreateActivity}
-  availableColors={[0, 2, 5, 7]} // Only these color indices are available
-/>
-```
+// Component renders with Bootstrap classes
+const form = screen.getByRole('form');
+const input = screen.getByRole('textbox');
+const button = screen.getByRole('button', { name: /add/i });
 
-## Form Submission Flow
-
-The ActivityForm handles form submission through these steps:
-
-1. **Validation**: Performs final validation of all form fields
-2. **Error checking**: Checks if there are any validation errors
-3. **Submission state**: Sets isSubmitting state to true during submission
-4. **Callback invocation**: Calls onSubmit with the validated form data
-5. **Form reset**: Optionally resets form after successful submission
-
-```typescript
-const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  // Validate all fields
-  const formErrors = validateForm(formValues);
-  setErrors(formErrors);
-  
-  // Mark all fields as touched
-  const allTouched = Object.keys(formValues).reduce(
-    (acc, field) => ({ ...acc, [field]: true }),
-    {}
-  );
-  setTouched(allTouched);
-  
-  // If no errors, proceed with submission
-  if (Object.keys(formErrors).length === 0) {
-    setIsSubmitting(true);
-    
-    try {
-      onSubmit({
-        name: formValues.name.trim(),
-        colorIndex: formValues.colorIndex,
-        id: formValues.id
-      });
-      
-      // Reset form if not in editing mode
-      if (!isEditing) {
-        setFormValues({
-          name: '',
-          colorIndex: 0
-        });
-        setTouched({});
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
-};
+expect(form).toHaveClass('mb-3');
+expect(input).toHaveClass('form-control');
+expect(button).toHaveClass('btn', 'btn-primary');
 ```
 
 ## Known Limitations
 
-1. **Color selection**: Limited to predefined color indices
-2. **Form state persistence**: Form state is not persisted across navigation
-3. **Concurrent submissions**: No protection against multiple rapid submissions
-4. **Image support**: No support for activity images or icons
-5. **Advanced validation**: No support for complex validation rules
-6. **Autofocus behavior**: May not work consistently across all browsers
+1. **Single Purpose**: Only supports adding new activities, not editing
+2. **Basic Validation**: Only validates that activity name is not empty
+3. **No Complex Features**: No color selection, categories, or descriptions
+4. **Bootstrap Dependency**: Requires React Bootstrap to be properly configured
+5. **Theme Limitations**: Limited to Bootstrap's default theme system
+6. **Simple Layout**: Uses basic InputGroup layout without advanced Bootstrap features
 
 ## Test Coverage
 
-The ActivityForm has comprehensive test coverage:
+The ActivityForm has comprehensive test coverage including Bootstrap integration:
 
-- **ActivityForm.test.tsx**: Core functionality tests
-- **ActivityForm.validation.test.tsx**: Input validation tests
-- **ActivityForm.submission.test.tsx**: Form submission tests
-- **ActivityForm.a11y.test.tsx**: Accessibility tests
+### Core Test Files
+- **ActivityForm.test.tsx**: Original functionality tests ensuring backward compatibility
+- **ActivityForm.bootstrap.test.tsx**: Bootstrap-specific integration tests
 
-Key tested scenarios include:
-- Form initialization with default and custom values
-- Input validation for various scenarios
-- Error message display
-- Form submission with valid and invalid data
-- Editing mode functionality
-- Keyboard navigation and submission
-- Color selection functionality
+### Test Scenarios Covered
+- **Form Rendering**: Verifies Bootstrap Form components render correctly
+- **Input Styling**: Ensures form-control class is applied to inputs
+- **Button Styling**: Validates btn and btn-primary classes on submit button
+- **Input Group Layout**: Tests Bootstrap InputGroup structure
+- **Responsive Behavior**: Verifies Bootstrap responsive utilities
+- **Disabled States**: Tests Bootstrap disabled state handling
+- **Form Submission**: Validates form submission with Bootstrap components
+- **Keyboard Navigation**: Tests accessibility with Bootstrap markup
+- **Theme Integration**: Ensures Bootstrap theme compatibility
 
-## Related Components
-
-- **ActivityManager**: Parent component that renders ActivityForm for creation/editing
-- **ColorPicker**: Sub-component used for color selection
-- **FormInput**: Reusable input component with validation
-- **Button**: Reusable button component used for form actions
+### Bootstrap-Specific Tests
+```typescript
+// Example test for Bootstrap integration
+it('renders with Bootstrap classes', () => {
+  render(<ActivityForm onAddActivity={mockFn} isDisabled={false} />);
+  
+  const form = screen.getByRole('form');
+  const input = screen.getByRole('textbox');
+  const button = screen.getByRole('button', { name: /add/i });
+  
+  expect(form).toHaveClass('mb-3');
+  expect(input).toHaveClass('form-control');
+  expect(button).toHaveClass('btn', 'btn-primary');
+});
+```
 
 ## Implementation Details
 
-The ActivityForm implements several key patterns:
+The ActivityForm implements Bootstrap integration patterns:
 
-1. **Controlled form pattern**:
-   ```typescript
-   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-     const { name, value } = e.target;
-     setFormValues(prev => ({ ...prev, [name]: value }));
-     setTouched(prev => ({ ...prev, [name]: true }));
-   };
-   ```
+### Bootstrap Component Usage
+```tsx
+import { Form, InputGroup, Button } from 'react-bootstrap';
 
-2. **Field blur handling**:
-   ```typescript
-   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-     const { name } = e.target;
-     setTouched(prev => ({ ...prev, [name]: true }));
-   };
-   ```
+// Bootstrap Form with proper structure
+<Form onSubmit={handleSubmit} className="mb-3" role="form">
+  <InputGroup>
+    <Form.Control
+      type="text"
+      value={newActivityName}
+      onChange={(e) => setNewActivityName(e.target.value)}
+      placeholder={isDisabled ? "Time is up!" : "New activity name"}
+      disabled={isDisabled}
+    />
+    <Button 
+      type="submit"
+      variant="primary"
+      disabled={isDisabled}
+    >
+      Add
+    </Button>
+  </InputGroup>
+</Form>
+```
 
-3. **Color selection handling**:
-   ```typescript
-   const handleColorSelect = (colorIndex: number) => {
-     setFormValues(prev => ({ ...prev, colorIndex }));
-     setTouched(prev => ({ ...prev, colorIndex: true }));
-   };
-   ```
+### State Management
+```typescript
+const [newActivityName, setNewActivityName] = useState('');
+
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  if (newActivityName.trim() && !isDisabled) {
+    onAddActivity(newActivityName.trim());
+    setNewActivityName('');
+  }
+};
+```
+
+### Bootstrap Classes Applied
+- **Form**: `mb-3` for bottom margin spacing
+- **InputGroup**: Automatic Bootstrap styling for input-button combination  
+- **Form.Control**: Automatic `form-control` class for consistent input styling
+- **Button**: Automatic `btn btn-primary` classes for primary action styling
 
 ## Change History
 
+- **2025-06-28**: **MAJOR UPDATE** - Migrated to Bootstrap components
+  - Replaced custom CSS with React Bootstrap Form, InputGroup, and Button
+  - Added comprehensive Bootstrap integration tests
+  - Updated documentation to reflect Bootstrap usage
+  - Maintained backward compatibility with existing props interface
+  - Added Bootstrap theme integration
 - **2025-03-10**: Added real-time validation feedback
 - **2025-02-15**: Enhanced color selection UI
 - **2025-02-01**: Improved form accessibility
 - **2025-01-20**: Added editing mode support
 - **2025-01-05**: Enhanced validation logic
 - **2025-01-01**: Initial implementation with basic form functionality
-
-## Related Memory Logs
-
-// Add relevant memory logs if any exist
 
 ---
 

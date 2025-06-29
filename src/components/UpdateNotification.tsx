@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styles from './UpdateNotification.module.css';
+import { Toast, ToastContainer } from 'react-bootstrap';
 
 interface UpdateNotificationProps {
   message: string;
@@ -20,20 +20,31 @@ export function UpdateNotification({ message, onDismiss }: UpdateNotificationPro
 
   if (!isVisible) return null;
 
+  const handleClose = () => {
+    setIsVisible(false);
+    onDismiss();
+  };
+
   return (
-    <div className={styles.updateNotification} role="status" data-testid="update-notification">
-      <span className={styles.message} data-testid="update-notification-message">{message}</span>
-      <button 
-        className={styles.dismissButton}
-        onClick={() => {
-          setIsVisible(false);
-          onDismiss();
-        }}
-        aria-label="Dismiss notification"
-        data-testid="update-notification-dismiss"
+    <ToastContainer position="bottom-end" className="p-3 position-fixed" style={{ zIndex: 1055 }}>
+      <Toast 
+        show={isVisible}
+        onClose={handleClose}
+        bg="info"
+        className="text-white"
+        data-testid="update-notification"
       >
-        ✕
-      </button>
-    </div>
+        <Toast.Body data-testid="update-notification-message">
+          {message}
+        </Toast.Body>
+        <button
+          type="button"
+          className="btn-close btn-close-white me-2 m-auto"
+          onClick={handleClose}
+          aria-label="Close"
+          data-testid="update-notification-dismiss"
+        />
+      </Toast>
+    </ToastContainer>
   );
 }

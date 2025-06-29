@@ -33,8 +33,8 @@ describe('OfflineIndicator', () => {
   it('should apply offline indicator styles when offline', () => {
     mockedUseOnlineStatus.mockReturnValue(false);
     render(<OfflineIndicator />);
-    const indicator = screen.getByRole('alert');
-    expect(indicator).toHaveClass('alert-warning');
+    const indicator = screen.getByRole('status');
+    expect(indicator).toHaveClass('offlineIndicator');
   });
 
   it('should render with proper nested structure', () => {
@@ -42,8 +42,9 @@ describe('OfflineIndicator', () => {
     const { container } = render(<OfflineIndicator />);
     
     const outerDiv = container.firstChild as HTMLElement;
+    const innerDiv = outerDiv?.firstChild as HTMLElement;
     
-    expect(outerDiv?.getAttribute('role')).toBe('alert');
-    expect(outerDiv?.textContent).toBe('You are offline');
+    expect(outerDiv?.getAttribute('role')).toBe('status');
+    expect(innerDiv?.textContent).toBe('You are offline');
   });
 });

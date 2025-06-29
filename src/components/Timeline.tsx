@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
+import { Container, Row, Col, Card, Badge, Alert } from 'react-bootstrap';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
@@ -285,142 +286,153 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   };
   
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h2 className={styles.heading}>Timeline</h2>
-        <div 
-          className={`${styles.timeDisplay} ${isTimeUp ? styles.timeDisplayOvertime : ''}`}
-          data-testid="time-display"
-        >
-          {timeDisplay}
-        </div>
-      </div>
-      
-      <div className={styles.timelineContainer}>
-        <div className={styles.timelineRuler}>
-          {/* Add overtime background to the ruler */}
-          {isOvertime && (
-            <div 
-              className={styles.overtimeRulerSection}
-              style={{ 
-                top: `${plannedDurationPosition}%`,
-                height: `${100 - plannedDurationPosition}%`
-              }}
-              data-testid="overtime-ruler-section"
-            />
-          )}
-          
-          {timeMarkers.map(({ time, position, label, isOvertimeMarker }) => (
-            <div
-              key={time}
-              className={`${styles.timeMarker} ${isOvertimeMarker ? styles.overtimeMarker : ''}`}
-              style={{ top: `${position}%` }}
-              data-testid="time-marker"
-            >
-              {label}
-            </div>
-          ))}
-          
-          {/* Overtime indicator line */}
-          {isOvertime && (
-            <div 
-              className={styles.overtimeDivider}
-              style={{ top: `${plannedDurationPosition}%` }}
-              title="Original planned duration"
-            />
-          )}
-        </div>
+    <Container fluid className="p-3 timeline-component" role="region" aria-label="Timeline visualization">
+      <Card className="border">
+        <Card.Header className="d-flex justify-content-between align-items-center">
+          <Row className="g-3 w-100">
+            <Col>
+              <h2 className="h2 mb-0" role="heading" aria-level={2}>Timeline</h2>
+            </Col>
+            <Col xs="auto">
+              <Badge 
+                bg={isTimeUp ? 'danger' : 'primary'} 
+                className={`badge-${isTimeUp ? 'danger' : 'primary'} text-nowrap`}
+                data-testid="time-display"
+              >
+                {timeDisplay}
+              </Badge>
+            </Col>
+          </Row>
+        </Card.Header>
         
-        <div className={styles.entriesContainer}>
-          {/* Overtime background section */}
-          {isOvertime && (
-            <div 
-              className={styles.overtimeSection}
-              style={{ 
-                top: `${plannedDurationPosition}%`,
-                height: `${100 - plannedDurationPosition}%`
-              }}
-              data-testid="overtime-section"
-            />
-          )}
-          
-          <div className={styles.timeGuides}>
-            {timeMarkers.map(({ time, position, isOvertimeMarker }) => (
-              <div
-                key={time}
-                className={`${styles.timeGuide} ${isOvertimeMarker ? styles.overtimeGuide : ''}`}
-                style={{ top: `${position}%` }}
-              />
-            ))}
+        <Card.Body className="p-0">
+          <div className={`${styles.timelineContainer} timeline-container position-relative`}>
+            <div className={`${styles.timelineRuler} timeline-ruler`}>
+              {/* Add overtime background to the ruler */}
+              {isOvertime && (
+                <div 
+                  className={styles.overtimeRulerSection}
+                  style={{ 
+                    top: `${plannedDurationPosition}%`,
+                    height: `${100 - plannedDurationPosition}%`
+                  }}
+                  data-testid="overtime-ruler-section"
+                />
+              )}
+              
+              {timeMarkers.map(({ time, position, label, isOvertimeMarker }) => (
+                <div
+                  key={time}
+                  className={`${styles.timeMarker} ${isOvertimeMarker ? styles.overtimeMarker : ''} position-absolute small text-muted`}
+                  style={{ top: `${position}%` }}
+                  data-testid="time-marker"
+                >
+                  {label}
+                </div>
+              ))}
+              
+              {/* Overtime indicator line */}
+              {isOvertime && (
+                <div 
+                  className={styles.overtimeDivider}
+                  style={{ top: `${plannedDurationPosition}%` }}
+                  title="Original planned duration"
+                />
+              )}
+            </div>
             
-            {/* Overtime divider guide */}
-            {isOvertime && (
-              <div 
-                className={styles.overtimeDividerGuide}
-                style={{ top: `${plannedDurationPosition}%` }}
-              />
-            )}
-          </div>
-          
-          <div className={styles.entriesWrapper}>
-            {hasEntries ? (
-              timeSpansData.items.map((item, index) => {
-                const style = calculateEntryStyle(item);
+            <div className={`${styles.entriesContainer} entries-container`}>
+              {/* Overtime background section */}
+              {isOvertime && (
+                <div 
+                  className={styles.overtimeSection}
+                  style={{ 
+                    top: `${plannedDurationPosition}%`,
+                    height: `${100 - plannedDurationPosition}%`
+                  }}
+                  data-testid="overtime-section"
+                />
+              )}
+              
+              <div className={styles.timeGuides}>
+                {timeMarkers.map(({ time, position, isOvertimeMarker }) => (
+                  <div
+                    key={time}
+                    className={`${styles.timeGuide} ${isOvertimeMarker ? styles.overtimeGuide : ''}`}
+                    style={{ top: `${position}%` }}
+                  />
+                ))}
                 
-                if (item.type === 'gap') {
-                  if (allActivitiesCompleted && index === timeSpansData.items.length - 1) {
+                {/* Overtime divider guide */}
+                {isOvertime && (
+                  <div 
+                    className={styles.overtimeDividerGuide}
+                    style={{ top: `${plannedDurationPosition}%` }}
+                  />
+                )}
+              </div>
+              
+              <div className={styles.entriesWrapper}>
+                {hasEntries ? (
+                  timeSpansData.items.map((item, index) => {
+                    const style = calculateEntryStyle(item);
+                    
+                    if (item.type === 'gap') {
+                      if (allActivitiesCompleted && index === timeSpansData.items.length - 1) {
+                        return (
+                          <div
+                            key="remaining"
+                            className={styles.timeGap}
+                            style={style}
+                          >
+                            <span>Time Remaining ({formatTimeHuman(item.duration)})</span>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div
+                          key={`gap-${index}`}
+                          className={styles.timeGap}
+                          style={style}
+                        >
+                          <span>Break ({formatTimeHuman(item.duration)})</span>
+                        </div>
+                      );
+                    }
                     return (
-                      <div
-                        key="remaining"
-                        className={styles.timeGap}
-                        style={style}
-                      >
-                        <span>Time Remaining ({formatTimeHuman(item.duration)})</span>
+                      <div key={item.entry!.id} className={`${styles.timelineEntry} timeline-entry d-flex flex-column border rounded`} style={style}>
+                        <div className={styles.entryContent}>
+                          <div className={styles.entryHeader}>
+                            <span
+                              className={`${styles.activityName} fw-medium`}
+                              data-testid="timeline-activity-name"
+                            >
+                              {item.entry!.activityName}
+                            </span>
+                            <span className={`${styles.timeInfo} time-info small text-nowrap`}>
+                              {formatTimeHuman(item.duration)}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     );
-                  }
-                  return (
-                    <div
-                      key={`gap-${index}`}
-                      className={styles.timeGap}
-                      style={style}
-                    >
-                      <span>Break ({formatTimeHuman(item.duration)})</span>
-                    </div>
-                  );
-                }
-                return (
-                  <div key={item.entry!.id} className={styles.timelineEntry} style={style}>
-                    <div className={styles.entryContent}>
-                      <div className={styles.entryHeader}>
-                        <span
-                          className={styles.activityName}
-                          data-testid="timeline-activity-name"
-                        >
-                          {item.entry!.activityName}
-                        </span>
-                        <span className={styles.timeInfo}>
-                          {formatTimeHuman(item.duration)}
-                        </span>
-                      </div>
-                    </div>
+                  })
+                ) : (
+                  <div className={`${styles.noEntries} text-muted fst-italic text-center`}>
+                    No activities started yet
                   </div>
-                );
-              })
-            ) : (
-              <div className={styles.noEntries}>
-                No activities started yet
+                )}
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      </div>
+        </Card.Body>
+      </Card>
       
       {isTimeUp && hasEntries && (
-        <div className={styles.warningMessage} data-testid="overtime-warning">
+        <Alert variant="danger" className="mt-3 alert-danger" role="alert" data-testid="overtime-warning">
           <strong>Warning:</strong> You&apos;ve exceeded the planned time!
-        </div>
+        </Alert>
       )}
-    </div>
+    </Container>
   );
 }

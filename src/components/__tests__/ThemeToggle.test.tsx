@@ -1,7 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ThemeToggle from '../ThemeToggle';
-import styles from '../ThemeToggle.module.css';
 
 // Mock window.matchMedia
 window.matchMedia = jest.fn().mockImplementation(query => ({
@@ -14,13 +13,6 @@ window.matchMedia = jest.fn().mockImplementation(query => ({
   removeEventListener: jest.fn(),
   dispatchEvent: jest.fn(),
 }));
-
-// Create a helper function to safely check CSS classes that might be undefined
-const safelyCheckClass = (element: HTMLElement, className?: string) => {
-  if (className) {
-    expect(element).toHaveClass(className);
-  }
-};
 
 describe('ThemeToggle', () => {
   const originalLocalStorage = window.localStorage;
@@ -163,35 +155,30 @@ describe('Mobile Layout', () => {
     }));
   });
 
-  it('should render buttons with correct styling', () => {
+  it('should render buttons with correct Bootstrap styling', () => {
     render(<ThemeToggle />);
     
     const buttons = screen.getAllByRole('button');
     buttons.forEach(button => {
-      if (styles.toggleButton) {
-        expect(button).toHaveClass(styles.toggleButton);
-        // The toggleButton class in our CSS has explicit width and height set to 44px
-        expect(button.className).toContain(styles.toggleButton);
-      }
+      // Now using Bootstrap button classes instead of CSS modules
+      expect(button).toHaveClass('btn');
+      expect(button).toHaveAttribute('type', 'button');
     });
   });
 
-  it('should maintain proper spacing between buttons on mobile', () => {
+  it('should maintain proper spacing with Bootstrap ButtonGroup', () => {
     render(<ThemeToggle />);
     
-    const toggleGroup = document.querySelector(`.${styles.toggleGroup || ''}`);
-    expect(toggleGroup).not.toBeNull();
-    if (toggleGroup && styles.toggleGroup) {
-      safelyCheckClass(toggleGroup as HTMLElement, styles.toggleGroup);
-    }
+    const buttonGroup = document.querySelector('.btn-group');
+    expect(buttonGroup).toBeInTheDocument();
+    expect(buttonGroup).toHaveClass('btn-group');
   });
 
-  it('should render in a container with proper styling', () => {
+  it('should render in Bootstrap ButtonGroup container', () => {
     render(<ThemeToggle />);
     
     const container = screen.getByRole('group');
-    if (styles.container) {
-      safelyCheckClass(container, styles.container);
-    }
+    expect(container).toHaveClass('btn-group');
+    expect(container).toHaveClass('btn-group-sm');
   });
 });

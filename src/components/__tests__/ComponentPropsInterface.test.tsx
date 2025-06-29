@@ -9,17 +9,17 @@
 import { render } from '@testing-library/react';
 import { jest } from '@jest/globals';
 // Import from relative paths to match the project structure
-import { ActivityButton } from '../../../components/ui/ActivityButton';
-import ActivityManager from '../../../components/feature/ActivityManager';
-import ProgressBar from '../../../components/feature/ProgressBar';
-import ThemeToggle from '../../../components/ui/ThemeToggle';
-import TimeSetup from '../../../components/feature/TimeSetup';
+import { ActivityButton } from '../ActivityButton';
+import ActivityManager from '../ActivityManager';
+import ProgressBar from '../ProgressBar';
+import ThemeToggle from '../ThemeToggle';
+import TimeSetup from '../TimeSetup';
 // Import types
 // ColorSet is imported for types that use it indirectly
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { ColorSet } from '../../../lib/utils/colors';
-import type { TimelineEntry } from '../../../components/feature/Timeline';
-import type { Activity } from '../../../components/feature/ActivityManager';
+import type { ColorSet } from '../../utils/colors';
+import type { TimelineEntry } from '../../types';
+import type { Activity } from '../ActivityManager';
 
 describe('Component Props Interface Validation', () => {
   // Mock functions and data for testing
@@ -29,19 +29,11 @@ describe('Component Props Interface Validation', () => {
   const mockActivity: Activity = {
     id: 'test1',
     name: 'Test Activity',
-    description: 'Test activity description',
     completed: false,
     colors: {
-      light: {
-        background: '#ffffff',
-        text: '#000000',
-        border: '#cccccc'
-      },
-      dark: {
-        background: '#333333',
-        text: '#ffffff',
-        border: '#666666'
-      }
+      background: '#ffffff',
+      text: '#000000',
+      border: '#cccccc'
     },
     colorIndex: 0
   };
@@ -75,10 +67,8 @@ describe('Component Props Interface Validation', () => {
         <ActivityButton
           activity={mockActivity}
           isCompleted={false}
-          isActive={false}
-          onClick={mockFn}
-          onRemove={mockFn}
-          disabled={false}
+          isRunning={false}
+          onSelect={mockFn}
         />
       );
       expect(container).toBeInTheDocument();
@@ -89,10 +79,9 @@ describe('Component Props Interface Validation', () => {
         <ActivityButton
           activity={mockActivity}
           isCompleted={true}
-          isActive={true}
-          onClick={mockFn}
+          isRunning={true}
+          onSelect={mockFn}
           onRemove={mockFn}
-          disabled={false}
           timelineEntries={timelineEntries}
           elapsedTime={600}
         />
@@ -169,20 +158,6 @@ describe('Component Props Interface Validation', () => {
       const { container } = render(
         <TimeSetup
           onTimeSet={mockFn}
-        />
-      );
-      expect(container).toBeInTheDocument();
-    });
-
-    it('renders with all props', () => {
-      const { container } = render(
-        <TimeSetup
-          onTimeSet={mockFn}
-          initialMode="duration"
-          initialHours={2}
-          initialMinutes={30}
-          initialSeconds={0}
-          initialDeadlineTime="14:30"
         />
       );
       expect(container).toBeInTheDocument();

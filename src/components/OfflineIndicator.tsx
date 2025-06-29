@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Alert } from 'react-bootstrap';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
-import styles from './OfflineIndicator.module.css';
 
 /**
  * Component that displays an offline indicator when the user loses network connectivity
+ * Uses Bootstrap Alert component for consistent styling
  */
 export function OfflineIndicator(): React.ReactElement | null {
   const isOnline = useOnlineStatus();
@@ -25,10 +26,12 @@ export function OfflineIndicator(): React.ReactElement | null {
   }
 
   return (
-    <div className={styles.offlineIndicator} role="status" data-testid="offline-indicator">
-      <div className={styles.content}>
-        You are offline
-      </div>
-    </div>
+    <Alert 
+      variant="warning" 
+      className="text-center mb-3"
+      data-testid="offline-indicator"
+    >
+      You are offline
+    </Alert>
   );
 }

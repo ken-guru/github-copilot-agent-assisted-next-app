@@ -14,6 +14,8 @@
 
 The Timeline component provides a visual representation of activities and the time between them (breaks). It features a time ruler with appropriate time intervals, activity blocks with duration information, and specialized handling for breaks and overtime scenarios. The component is designed to update in real-time and adapt to different theme modes.
 
+**Bootstrap Integration**: This component has been migrated to use Bootstrap's layout system, typography utilities, and components while preserving the specialized timeline visualization. It uses a hybrid approach combining Bootstrap's layout components (Container, Card, Row, Col) with custom CSS for timeline-specific functionality.
+
 ## Table of Contents
 - [Props](#props)
 - [Types](#types)
@@ -31,13 +33,17 @@ The Timeline component provides a visual representation of activities and the ti
 
 ## Features
 
+- **Bootstrap layout integration** with Container, Card, Row, and Col components
+- **Hybrid design approach** combining Bootstrap utilities with custom timeline visualization
 - **Time-based visualization** of activities and breaks
 - **Real-time updates** for ongoing activities and breaks
 - **Automatic time interval calculation** based on total duration
 - **Theme compatibility** with automatic light/dark mode detection
-- **Overtime visualization** with specialized UI indicators
+- **Overtime visualization** with specialized UI indicators and Bootstrap Alert components
 - **Dynamic break visualization** that updates in real-time
-- **Responsive design** for mobile and desktop viewports
+- **Responsive design** using Bootstrap grid system for mobile and desktop viewports
+- **Bootstrap Badge integration** for time display with variant support
+- **Enhanced accessibility** with proper ARIA attributes and semantic structure
 
 ## Props
 
@@ -132,19 +138,20 @@ The Timeline component is designed to be fully responsive:
 
 ## Example Usage
 
-### Basic Usage
+### Bootstrap Usage Example
 
 ```tsx
 import Timeline from '../components/Timeline';
+import { Container } from 'react-bootstrap';
 
-// Example timeline entries
-const entries = [
+// Timeline now uses Bootstrap components internally
+const timelineEntries = [
   {
     id: '1',
     activityId: 'activity-1',
     activityName: 'Complete project outline',
-    startTime: 1609459200000,
-    endTime: 1609459200000 + 1800000,
+    startTime: Date.now() - 1800000,
+    endTime: Date.now() - 900000,
     colors: {
       background: '#E8F5E9',
       text: '#1B5E20',
@@ -153,10 +160,9 @@ const entries = [
   }
 ];
 
-// In your component
 return (
   <Timeline 
-    entries={entries}
+    entries={timelineEntries}
     totalDuration={3600}  // 1 hour in seconds
     elapsedTime={1800}    // 30 minutes in seconds
     timerActive={true}
@@ -164,7 +170,7 @@ return (
 );
 ```
 
-### With Overtime Handling
+### With Bootstrap Alert for Overtime
 
 ```tsx
 <Timeline 
@@ -172,7 +178,7 @@ return (
   totalDuration={1800}     // 30 minutes in seconds
   elapsedTime={2400}       // 40 minutes in seconds (10 minutes overtime)
   timerActive={true}
-  isTimeUp={true}
+  isTimeUp={true}          // Triggers Bootstrap Alert for overtime warning
 />
 ```
 
@@ -183,10 +189,49 @@ return (
 3. **Time marker density**: Very short total durations may result in overlapping time markers
 4. **Dynamic height calculation**: Very small activities may not render proportionally to their actual duration due to minimum height constraints
 
+## Bootstrap Integration
+
+### Layout Components Used
+- **Container**: `Container` with fluid layout and responsive padding (`container-fluid`, `p-3`)
+- **Card**: Primary wrapper with header and body sections (`card`, `card-header`, `card-body`, `border`)
+- **Row/Col**: Grid system for header layout and responsive design (`row`, `g-3`, `col`, `col-auto`)
+- **Badge**: Time display with variant support (`badge-primary`, `badge-danger`, `text-nowrap`)
+- **Alert**: Overtime warning with proper accessibility (`alert-danger`, `role="alert"`)
+
+### Bootstrap Classes Applied
+- **Layout**: `container-fluid`, `p-3`, `row`, `g-3`, `col`, `col-auto`
+- **Typography**: `h2`, `mb-0`, `fw-medium`, `small`, `text-muted`, `text-nowrap`, `fst-italic`, `text-center`
+- **Flex**: `d-flex`, `justify-content-between`, `align-items-center`, `flex-column`
+- **Position**: `position-relative`, `position-absolute`
+- **Border**: `border`, `rounded`
+- **Accessibility**: `role`, `aria-label`, `aria-level`
+
+### Hybrid Design Approach
+The Timeline component uses Bootstrap for layout, typography, and standard UI elements while preserving custom CSS for timeline-specific visualization including:
+- Timeline ruler with time markers
+- Activity entry positioning and sizing
+- Overtime section background highlighting
+- Custom time guides and dividers
+- Theme-aware color management
+
 ## Test Coverage
 
 The Timeline component has extensive test coverage across multiple test files:
 
+### Bootstrap Integration Tests (35 tests)
+- **Layout Structure**: Container, Row, Col grid system validation
+- **Card Integration**: Card, Card.Header, Card.Body component usage
+- **Typography**: Bootstrap heading classes, text utilities, font utilities
+- **Badge Integration**: Time display with proper variants (primary/danger)
+- **Alert Integration**: Overtime warnings with accessibility
+- **Responsive Design**: Mobile layout, spacing utilities, gap utilities
+- **Flex Utilities**: Header layout, timeline entries, responsive behavior
+- **Position Utilities**: Timeline elements, marker positioning
+- **Border Utilities**: Container and entry styling
+- **Accessibility**: ARIA attributes, semantic structure, alert roles
+- **Custom Preservation**: Timeline visualization, overtime features, marker functionality
+
+### Existing Functionality Tests (31 tests)
 - **Timeline.render.test.tsx**: Basic rendering tests
 - **Timeline.test.tsx**: Core functionality tests
 - **Timeline.breaks.test.tsx**: Tests for break visualization
@@ -224,6 +269,14 @@ The component architecture:
 
 ## Change History
 
+- **2025-03-15**: **Bootstrap Migration (v2.0.0)** - Migrated to Bootstrap layout system while preserving custom timeline visualization
+  - Added Container, Card, Row, Col components for layout
+  - Integrated Badge component for time display with variants
+  - Added Alert component for overtime warnings
+  - Applied Bootstrap typography and utility classes
+  - Created 35 comprehensive Bootstrap integration tests
+  - Maintained all existing functionality (66 total tests passing)
+  - Updated documentation for hybrid Bootstrap approach
 - **2025-03-15**: Fixed memory leak issues and timer cleanup (MRTMLY-147)
 - **2025-03-15**: Implemented countdown timer fix (MRTMLY-020)
 - **2025-02-20**: Added real-time break visualization (MRTMLY-013)
