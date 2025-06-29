@@ -59,7 +59,7 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
       activityId,
       startTime: Date.now(),
       title: activity.name,
-      description: activity.description || ''
+      description: ''
     });
     
     // Set as current activity

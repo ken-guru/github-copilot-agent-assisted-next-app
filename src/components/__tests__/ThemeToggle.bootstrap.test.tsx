@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ThemeToggle from '../ThemeToggle';
 
@@ -299,7 +299,6 @@ describe('ThemeToggle Bootstrap Integration', () => {
       render(<ThemeToggle />);
       
       const lightButton = screen.getByTitle('Light theme');
-      const darkButton = screen.getByTitle('Dark theme');
       
       // Initially system should be active, others outline
       expect(lightButton.className).toMatch(/btn-outline-/);
