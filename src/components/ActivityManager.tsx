@@ -176,9 +176,7 @@ export default function ActivityManager({
           {activities.map((activity) => (
             <Col 
               key={activity.id} 
-              xs={12} 
-              md={6} 
-              lg={4}
+              xs={12}
               data-testid={`activity-column-${activity.id}`}
             >
               <ActivityButton

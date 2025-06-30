@@ -98,7 +98,7 @@ describe('ActivityManager Bootstrap Integration', () => {
       });
     });
 
-    it('renders each activity in Bootstrap column', async () => {
+    it('renders each activity in full-width Bootstrap column', async () => {
       render(
         <ActivityManager 
           onActivitySelect={mockOnActivitySelect}
@@ -115,11 +115,14 @@ describe('ActivityManager Bootstrap Integration', () => {
 
       const activityColumns = screen.getAllByTestId(/^activity-column-/);
       activityColumns.forEach(column => {
-        expect(column).toHaveClass('col-12', 'col-md-6', 'col-lg-4');
+        expect(column).toHaveClass('col-12');
+        // Should not have responsive breakpoint classes for multi-column layout
+        expect(column).not.toHaveClass('col-md-6');
+        expect(column).not.toHaveClass('col-lg-4');
       });
     });
 
-    it('applies responsive grid classes correctly', async () => {
+    it('applies full-width layout classes correctly', async () => {
       render(
         <ActivityManager 
           onActivitySelect={mockOnActivitySelect}
@@ -134,11 +137,12 @@ describe('ActivityManager Bootstrap Integration', () => {
         expect(screen.getByText('Homework')).toBeInTheDocument();
       });
 
-      // Check that activity columns have responsive classes
+      // Check that activity columns have full-width layout
       const homeworkColumn = screen.getByTestId('activity-column-1');
-      expect(homeworkColumn).toHaveClass('col-12'); // Full width on mobile
-      expect(homeworkColumn).toHaveClass('col-md-6'); // Half width on medium
-      expect(homeworkColumn).toHaveClass('col-lg-4'); // Third width on large
+      expect(homeworkColumn).toHaveClass('col-12'); // Full width on all screen sizes
+      // Should not have responsive breakpoint classes
+      expect(homeworkColumn).not.toHaveClass('col-md-6');
+      expect(homeworkColumn).not.toHaveClass('col-lg-4');
     });
   });
 
@@ -215,8 +219,8 @@ describe('ActivityManager Bootstrap Integration', () => {
     });
   });
 
-  describe('Bootstrap Responsive Behavior', () => {
-    it('handles responsive column behavior correctly', async () => {
+  describe('Bootstrap Full-Width Layout', () => {
+    it('handles full-width column behavior correctly', async () => {
       render(
         <ActivityManager 
           onActivitySelect={mockOnActivitySelect}
@@ -231,17 +235,16 @@ describe('ActivityManager Bootstrap Integration', () => {
         expect(screen.getByText('Homework')).toBeInTheDocument();
       });
 
-      // Each activity should be in a responsive column
+      // Each activity should be in a full-width column
       const activityColumns = screen.getAllByTestId(/^activity-column-/);
       expect(activityColumns.length).toBeGreaterThan(0);
 
       activityColumns.forEach(column => {
-        // Mobile: full width
+        // Full width on all screen sizes
         expect(column).toHaveClass('col-12');
-        // Tablet: half width  
-        expect(column).toHaveClass('col-md-6');
-        // Desktop: third width
-        expect(column).toHaveClass('col-lg-4');
+        // Should not have multi-column breakpoints
+        expect(column).not.toHaveClass('col-md-6');
+        expect(column).not.toHaveClass('col-lg-4');
       });
     });
 
@@ -276,9 +279,11 @@ describe('ActivityManager Bootstrap Integration', () => {
       const activityColumns = screen.getAllByTestId(/^activity-column-/);
       expect(activityColumns.length).toBeGreaterThan(4); // Should include new activity
 
-      // New activity column should have proper Bootstrap classes
+      // New activity column should have proper full-width Bootstrap classes
       const newActivityColumn = activityColumns[activityColumns.length - 1];
-      expect(newActivityColumn).toHaveClass('col-12', 'col-md-6', 'col-lg-4');
+      expect(newActivityColumn).toHaveClass('col-12');
+      expect(newActivityColumn).not.toHaveClass('col-md-6');
+      expect(newActivityColumn).not.toHaveClass('col-lg-4');
     });
   });
 
@@ -323,8 +328,10 @@ describe('ActivityManager Bootstrap Integration', () => {
       const homeworkText = within(homeworkColumn).getByText('Homework');
       expect(homeworkText).toBeInTheDocument();
 
-      // Column should have proper Bootstrap classes
-      expect(homeworkColumn).toHaveClass('col-12', 'col-md-6', 'col-lg-4');
+      // Column should have proper full-width Bootstrap classes
+      expect(homeworkColumn).toHaveClass('col-12');
+      expect(homeworkColumn).not.toHaveClass('col-md-6');
+      expect(homeworkColumn).not.toHaveClass('col-lg-4');
     });
   });
 
