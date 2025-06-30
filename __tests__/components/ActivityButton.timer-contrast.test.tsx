@@ -155,13 +155,13 @@ describe('ActivityButton Timer Contrast', () => {
         />
       );
 
-      // Timer should be in the status badge container
-      const statusContainer = screen.getByText('1:00').closest('.d-flex.flex-column.align-items-end');
+      // Timer should be in the status badge container (now horizontal layout)
+      const statusContainer = screen.getByText('1:00').closest('.d-flex.align-items-center.gap-2');
       expect(statusContainer).toBeInTheDocument();
       
       // Badge should have proper Bootstrap classes
       const timerBadge = screen.getByText('1:00').closest('.badge');
-      expect(timerBadge).toHaveClass('d-flex', 'align-items-center', 'gap-1');
+      expect(timerBadge).toHaveClass('d-flex', 'align-items-center');
     });
 
     it('should handle multiple badges (timer + completion) properly', () => {
@@ -180,8 +180,8 @@ describe('ActivityButton Timer Contrast', () => {
       expect(screen.getByText('3:00')).toBeInTheDocument();
       expect(screen.getByText('Done')).toBeInTheDocument();
       
-      // Both should be in the same container
-      const statusContainer = screen.getByText('3:00').closest('.d-flex.flex-column.align-items-end');
+      // Both should be in the same container (now horizontal layout)
+      const statusContainer = screen.getByText('3:00').closest('.d-flex.align-items-center.gap-2');
       const doneText = screen.getByText('Done');
       expect(statusContainer).toContainElement(doneText);
     });

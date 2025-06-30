@@ -228,22 +228,20 @@ describe('ActivityButton Bootstrap Integration', () => {
     });
   });
 
-  describe('Bootstrap Button Groups', () => {
-    it('should group action buttons using Bootstrap ButtonGroup when multiple actions', () => {
+  describe('Bootstrap Button Layout', () => {
+    it('should layout action buttons using Bootstrap flex utilities when multiple actions', () => {
       render(<ActivityButton {...defaultProps} onRemove={jest.fn()} />);
       
-      // Should use Bootstrap button group for multiple buttons
-      const buttonGroup = document.querySelector('.btn-group, .btn-toolbar');
-      expect(buttonGroup).toBeInTheDocument();
+      // Should use Bootstrap flex layout for multiple buttons
+      const buttonContainer = document.querySelector('.d-flex.gap-1');
+      expect(buttonContainer).toBeInTheDocument();
     });
 
-    it('should maintain Bootstrap button group accessibility', () => {
+    it('should maintain proper button spacing using Bootstrap gap utility', () => {
       render(<ActivityButton {...defaultProps} onRemove={jest.fn()} />);
       
-      const buttonGroup = document.querySelector('.btn-group');
-      if (buttonGroup) {
-        expect(buttonGroup).toHaveAttribute('role', 'group');
-      }
+      const buttonContainer = document.querySelector('.d-flex.gap-1');
+      expect(buttonContainer).toHaveClass('gap-1');
     });
   });
 
@@ -328,12 +326,16 @@ describe('ActivityButton Bootstrap Integration', () => {
   });
 
   describe('Integration with Timeline Entries', () => {
-    it('should display duration using Bootstrap typography when timeline entries exist', () => {
+    it('should not display duration for completed activities (duration display removed)', () => {
       render(<ActivityButton {...defaultProps} isCompleted={true} timelineEntries={mockTimelineEntries} />);
       
-      // Should display duration with Bootstrap text classes - duration is inside text, so check container
-      const durationContainer = screen.getByText(/30m 0s/);
-      expect(durationContainer).toHaveClass('text-muted');
+      // Duration should NOT be displayed for completed activities
+      const durationText = screen.queryByText(/30m 0s/);
+      expect(durationText).not.toBeInTheDocument();
+      
+      // Should still show the completed badge
+      const completedBadge = screen.getByText('Done');
+      expect(completedBadge).toBeInTheDocument();
     });
   });
 });
