@@ -88,7 +88,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
           <div className="d-flex flex-column align-items-end gap-1">
             {isRunning && (
               <Badge bg="primary" className="d-flex align-items-center gap-1">
-                <span className="fw-normal small text-muted">{formatTime(elapsedTime)}</span>
+                <span className="fw-normal text-white">{formatTime(elapsedTime)}</span>
               </Badge>
             )}
             {isCompleted && (

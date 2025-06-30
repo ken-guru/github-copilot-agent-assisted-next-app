@@ -112,11 +112,13 @@ describe('ActivityButton Bootstrap Integration', () => {
       expect(activityName).toHaveClass(/h[1-6]|fs-[1-6]|fw-bold/);
     });
 
-    it('should use Bootstrap muted text for timer display', () => {
+    it('should use Bootstrap high-contrast text for timer display', () => {
       render(<ActivityButton {...defaultProps} isRunning={true} elapsedTime={125} />);
       
       const timer = screen.getByText('02:05');
-      expect(timer).toHaveClass('text-muted');
+      // Timer should use high-contrast text (text-white) for better readability on primary background
+      expect(timer).toHaveClass('text-white');
+      expect(timer).not.toHaveClass('text-muted'); // text-muted has poor contrast on primary background
     });
 
     it('should use Bootstrap typography utilities for status indicators', () => {
