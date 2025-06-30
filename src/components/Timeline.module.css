@@ -4,7 +4,7 @@
 .timelineContainer {
   display: flex;
   flex: 1;
-  min-height: 0; /* Important for flex child to respect parent's height */
+  min-height: 400px; /* Ensure minimum height for timeline visibility */
   position: relative;
   overflow: hidden;
   background: var(--background);

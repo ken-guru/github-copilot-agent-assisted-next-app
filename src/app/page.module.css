@@ -136,9 +136,9 @@
 .timelineContainer {
   display: flex;
   flex-direction: column;
-  min-height: 400px;
   flex: 1; /* Add this to allow growing */
   height: 100%; /* Ensure full height */
+  min-height: 0; /* Allow flex children to shrink */
 }
 
 .progressContainer {

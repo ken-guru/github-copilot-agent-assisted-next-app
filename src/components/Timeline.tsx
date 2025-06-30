@@ -286,9 +286,8 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   };
   
   return (
-    <Container fluid className="p-3 timeline-component" role="region" aria-label="Timeline visualization">
-      <Card className="border">
-        <Card.Header className="d-flex justify-content-between align-items-center">
+    <Container fluid className="p-0 h-100 d-flex flex-column" role="region" aria-label="Timeline visualization">        <Card className="border h-100 d-flex flex-column">
+        <Card.Header className="d-flex justify-content-between align-items-center flex-shrink-0">
           <Row className="g-3 w-100">
             <Col>
               <h2 className="h2 mb-0" role="heading" aria-level={2}>Timeline</h2>
@@ -305,7 +304,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
           </Row>
         </Card.Header>
         
-        <Card.Body className="p-0">
+        <Card.Body className="p-0 flex-grow-1 d-flex flex-column overflow-hidden">
           <div className={`${styles.timelineContainer} timeline-container position-relative`}>
             <div className={`${styles.timelineRuler} timeline-ruler`}>
               {/* Add overtime background to the ruler */}
