@@ -228,3 +228,4 @@ These logs serve as historical context to understand why certain decisions were 
 204. [MRTMLY-195: ActivityButton Bootstrap Migration Completion and Cleanup](./logged_memories/MRTMLY-195-activitybutton-bootstrap-migration-completion.md) - #bootstrap-migration #component-cleanup #phase3 #testing #card-button-badge
 205. [MRTMLY-196: ThemeToggle Bootstrap Migration - ButtonGroup Integration](./logged_memories/MRTMLY-196-themetoggle-bootstrap-migration.md) - #bootstrap-migration #button-group #theme-toggle #phase3 #accessibility
 206. [MRTMLY-206: ServiceWorkerUpdater Cypress Tests and ActivityManager Test Fixes](./logged_memories/MRTMLY-206-serviceworkerupdater-cypress-activitymanager-test-fixes.md) - #debugging #cypress #service-worker #tests #bootstrap-migration
+207. [MRTMLY-207: Activity Button Icon Visibility Fix](./logged_memories/MRTMLY-207-activity-button-icon-visibility-fix.md) - #bugfix #bootstrap #ui #color-theming #activity-button
