@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, Badge, ButtonGroup } from 'react-bootstrap';
+import { Button, Card, Badge } from 'react-bootstrap';
 import { Activity } from './ActivityManager';
 import { TimelineEntry } from '@/types';
 import { formatTime } from '@/utils/timeUtils';
