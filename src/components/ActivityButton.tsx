@@ -62,7 +62,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
           </div>
 
           {/* Right side: Status badge and action buttons */}
-          <div className="d-flex align-items-center gap-2">
+          <div className="d-flex align-items-center gap-2" style={{ minHeight: '32px' }}>
             {/* Status Badge */}
             {isRunning && (
               <Badge bg="primary" className="d-flex align-items-center">
