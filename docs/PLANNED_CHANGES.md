@@ -410,10 +410,11 @@ This change affects several components in the application that currently have in
    - ✅ Update all related tests to reflect new Card-based structure
    - ✅ Testing: Verify all existing functionality preserved
 
-3. **Timeline Header Alignment**
-   - Ensure Timeline Card.Header aligns properly with ActivityManager Card.Header
-   - Verify consistent header styling and spacing
-   - Testing: Visual alignment verification between components
+3. **Timeline Header Alignment** ✅ **COMPLETED**
+   - ✅ Ensure Timeline Card.Header aligns properly with ActivityManager Card.Header
+   - ✅ Verify consistent header styling and spacing (both use h5 with mb-0)
+   - ✅ Remove Container wrapper from Timeline to create pure Card structure
+   - ✅ Testing: Visual alignment verification between components
 
 4. **Summary Component Card Enhancement**
    - Enhance individual statistic display using nested Card components
@@ -421,13 +422,13 @@ This change affects several components in the application that currently have in
    - Improve visual hierarchy and readability
    - Testing: Verify all statistics display correctly
 
-5. **Alert Message Standardization**
-   - Standardize all warning and notice alerts to use consistent Bootstrap Alert variants
-   - Planned time exceeded warnings: Use `alert-warning` variant
-   - Summary completion notices: Use `alert-success` or `alert-info` variants
-   - Consistent placement within card structures (typically after headers, before main content)
-   - Shared CSS classes for consistent spacing and styling
-   - Testing: Verify alert accessibility and proper variant usage
+5. **Alert Message Standardization** ✅ **COMPLETED**
+   - ✅ Standardize all warning and notice alerts to use consistent Bootstrap Alert variants
+   - ✅ Planned time exceeded warnings: Use `alert-warning` variant (implemented in Timeline)
+   - ✅ Summary completion notices: Use `alert-success` or `alert-info` variants (already implemented)
+   - ✅ Consistent placement within card structures (after headers, before main content)
+   - ✅ Replace old Timeline alert with new standardized Bootstrap Alert
+   - ✅ Testing: Verify alert accessibility and proper variant usage
 
 6. **Alert Placement and Styling Standards**
    - Define consistent placement rules for alerts within card structures
@@ -485,16 +486,18 @@ This change affects several components in the application that currently have in
 - [ ] Test that component maintains existing functionality
 - [ ] Visual regression test to ensure proper appearance
 
-#### ActivityManager Component  
-- [ ] Convert to Bootstrap Card structure with proper header
-- [ ] Align header styling with Timeline component
-- [ ] Maintain all existing functionality within Card.Body
-- [ ] Test that ActivityForm and activity list work correctly in new structure
+#### ActivityManager Component ✅ **COMPLETED**
+- [x] Convert to Bootstrap Card structure with proper header
+- [x] Align header styling with Timeline component  
+- [x] Maintain all existing functionality within Card.Body
+- [x] Test that ActivityForm and activity list work correctly in new structure
 
-#### Timeline Component
-- [ ] Verify header alignment with updated ActivityManager
-- [ ] Ensure existing Card structure remains optimal
-- [ ] Test that overtime alerts maintain proper placement
+#### Timeline Component ✅ **COMPLETED**
+- [x] Verify header alignment with updated ActivityManager
+- [x] Ensure existing Card structure remains optimal
+- [x] Test that overtime alerts maintain proper placement
+- [x] Remove Container wrapper to create pure Card structure
+- [x] Standardize overtime alert with Bootstrap Alert component
 
 #### Summary Component
 - [ ] Enhance individual statistic cards for better visual hierarchy
@@ -502,17 +505,17 @@ This change affects several components in the application that currently have in
 - [ ] Verify alert messages use proper Bootstrap variants
 
 ### 🎨 Visual Consistency Goals
-- [ ] Headers align properly between ActivityManager and Timeline
-- [ ] Card structures have consistent spacing and appearance
-- [ ] Alert messages follow consistent styling patterns
-- [ ] Component borders and shadows create visual cohesion
+- [x] Headers align properly between ActivityManager and Timeline
+- [x] Card structures have consistent spacing and appearance  
+- [x] Alert messages follow consistent styling patterns
+- [x] Component borders and shadows create visual cohesion (removed wrapper containers)
 
 ### 🚨 Alert Standardization Goals
-- [ ] All warning alerts use `alert-warning` variant
-- [ ] All success notices use `alert-success` variant
-- [ ] All informational notices use `alert-info` variant
-- [ ] Alert placement is consistent within card structures
-- [ ] Alert spacing doesn't disrupt card visual flow
+- [x] All warning alerts use `alert-warning` variant
+- [x] All success notices use `alert-success` variant  
+- [x] All informational notices use `alert-info` variant
+- [x] Alert placement is consistent within card structures
+- [x] Alert spacing doesn't disrupt card visual flow
 
 ### 📱 Responsive Design Goals
 - [ ] All card structures work correctly on mobile
