@@ -185,40 +185,34 @@ function AppContent() {
           
           {appState === 'activity' && (
             <div className={styles.activityGrid}>
-              <div>
-                <ActivityManager 
-                  onActivitySelect={handleActivitySelect} 
-                  onActivityRemove={handleActivityRemoval}
-                  currentActivityId={currentActivity?.id || null} 
-                  completedActivityIds={completedActivityIds}
-                  timelineEntries={processedEntries}
-                  isTimeUp={isTimeUp}
-                  elapsedTime={elapsedTime}
-                />
-              </div>
-              <div className={styles.timelineContainer}>
-                <Timeline 
-                  entries={processedEntries}
-                  totalDuration={totalDuration} 
-                  elapsedTime={elapsedTime}
-                  allActivitiesCompleted={allActivitiesCompleted}
-                  timerActive={timerActive}
-                  isTimeUp={isTimeUp}
-                />
-              </div>
+              <ActivityManager 
+                onActivitySelect={handleActivitySelect} 
+                onActivityRemove={handleActivityRemoval}
+                currentActivityId={currentActivity?.id || null} 
+                completedActivityIds={completedActivityIds}
+                timelineEntries={processedEntries}
+                isTimeUp={isTimeUp}
+                elapsedTime={elapsedTime}
+              />
+              <Timeline 
+                entries={processedEntries}
+                totalDuration={totalDuration} 
+                elapsedTime={elapsedTime}
+                allActivitiesCompleted={allActivitiesCompleted}
+                timerActive={timerActive}
+                isTimeUp={isTimeUp}
+              />
             </div>
           )}
           
           {appState === 'completed' && (
             <div className={styles.completedGrid}>
-              <div className={styles.summaryContainer}>
-                <Summary 
-                  entries={processedEntries}
-                  totalDuration={totalDuration} 
-                  elapsedTime={elapsedTime}
-                  allActivitiesCompleted={allActivitiesCompleted}
-                />
-              </div>
+              <Summary 
+                entries={processedEntries}
+                totalDuration={totalDuration} 
+                elapsedTime={elapsedTime}
+                allActivitiesCompleted={allActivitiesCompleted}
+              />
             </div>
           )}
         </div>

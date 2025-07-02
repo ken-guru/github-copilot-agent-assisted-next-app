@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import { Container, Row, Col, Card, Badge, Alert } from 'react-bootstrap';
+import { Row, Col, Card, Badge, Alert } from 'react-bootstrap';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
@@ -286,23 +286,30 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   };
   
   return (
-    <Container fluid className="p-3 timeline-component h-100 d-flex flex-column" role="region" aria-label="Timeline visualization">        <Card className="border h-100 d-flex flex-column">
-        <Card.Header className="d-flex justify-content-between align-items-center flex-shrink-0">
-          <Row className="g-3 w-100">
-            <Col>
-              <h2 className="h2 mb-0" role="heading" aria-level={2}>Timeline</h2>
-            </Col>
-            <Col xs="auto">
-              <Badge 
-                bg={isTimeUp ? 'danger' : 'primary'} 
-                className={`badge-${isTimeUp ? 'danger' : 'primary'} text-nowrap`}
-                data-testid="time-display"
-              >
-                {timeDisplay}
-              </Badge>
-            </Col>
-          </Row>
-        </Card.Header>
+    <Card className="border h-100 d-flex flex-column">
+      <Card.Header className="d-flex justify-content-between align-items-center flex-shrink-0">
+        <Row className="g-3 w-100">
+          <Col>
+            <h5 className="mb-0" role="heading" aria-level={2}>Timeline</h5>
+          </Col>
+          <Col xs="auto">
+            <Badge 
+              bg={isTimeUp ? 'danger' : 'primary'} 
+              className={`badge-${isTimeUp ? 'danger' : 'primary'} text-nowrap`}
+              data-testid="time-display"
+            >
+              {timeDisplay}
+            </Badge>
+          </Col>
+        </Row>
+      </Card.Header>
+        
+        {/* Overtime alert for consistent warning placement */}
+        {isOvertime && (
+          <Alert variant="warning" className="mb-0 border-0 border-bottom rounded-0" data-testid="overtime-alert">
+            <strong>Overtime:</strong> You have exceeded your planned time limit.
+          </Alert>
+        )}
         
         <Card.Body className="p-0 flex-grow-1 d-flex flex-column overflow-hidden">
           <div className={`${styles.timelineContainer} timeline-container position-relative`}>
@@ -425,13 +432,6 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
             </div>
           </div>
         </Card.Body>
-      </Card>
-      
-      {isTimeUp && hasEntries && (
-        <Alert variant="danger" className="mt-3 alert-danger" role="alert" data-testid="overtime-warning">
-          <strong>Warning:</strong> You&apos;ve exceeded the planned time!
-        </Alert>
-      )}
-    </Container>
+    </Card>
   );
 }
