@@ -1,6 +1,7 @@
-'use client';
-import { useRef, useImperativeHandle, forwardRef, useCallback } from 'react';
-import styles from './ConfirmationDialog.module.css';
+// Bootstrap Modal migration
+import { useState, useImperativeHandle, forwardRef, useCallback } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
 export interface ConfirmationDialogProps {
   message: string;
@@ -16,20 +17,20 @@ export interface ConfirmationDialogRef {
 
 const ConfirmationDialog = forwardRef<ConfirmationDialogRef, ConfirmationDialogProps>(
   ({ message, confirmText = 'Confirm', cancelText = 'Cancel', onConfirm, onCancel }, ref) => {
-    const dialogRef = useRef<HTMLDialogElement>(null);
+    const [show, setShow] = useState(false);
 
     const showDialog = useCallback(() => {
-      dialogRef.current?.showModal();
+      setShow(true);
     }, []);
 
     const handleConfirm = useCallback(() => {
       onConfirm();
-      dialogRef.current?.close();
+      setShow(false);
     }, [onConfirm]);
 
     const handleCancel = useCallback(() => {
       onCancel();
-      dialogRef.current?.close();
+      setShow(false);
     }, [onCancel]);
 
     useImperativeHandle(ref, () => ({
@@ -37,30 +38,29 @@ const ConfirmationDialog = forwardRef<ConfirmationDialogRef, ConfirmationDialogP
     }));
 
     return (
-      <dialog ref={dialogRef} className={styles.dialog}>
-        <div className={styles.content}>
-          <p className={styles.message}>{message}</p>
-          <div className={styles.actions}>
-            <button 
-              className={`${styles.button} ${styles.confirmButton}`}
-              onClick={handleConfirm}
-            >
-              {confirmText}
-            </button>
-            <button 
-              className={`${styles.button} ${styles.cancelButton}`}
-              onClick={handleCancel}
-            >
-              {cancelText}
-            </button>
-          </div>
-        </div>
-      </dialog>
+      <Modal
+        show={show}
+        onHide={handleCancel}
+        backdrop="static"
+        keyboard
+        centered
+        aria-modal="true"
+      >
+        <Modal.Body>
+          <p>{message}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={handleConfirm} autoFocus>
+            {confirmText}
+          </Button>
+          <Button variant="secondary" onClick={handleCancel}>
+            {cancelText}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     );
   }
 );
 
-// Explicitly set display name for debugging
 ConfirmationDialog.displayName = 'ConfirmationDialog';
-
 export default ConfirmationDialog;

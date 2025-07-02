@@ -270,8 +270,8 @@ describe('ActivityManager Component', () => {
     // Clear mocks after initialization but before the action we're testing
     mockOnActivitySelect.mockClear();
     
-    // Find the first activity item
-    const homeworkItem = screen.getByText('Homework').closest('div');
+    // Find the first activity item - need to get the entire card, not just the header
+    const homeworkItem = screen.getByText('Homework').closest('.card') as HTMLElement;
     if (!homeworkItem) {
       throw new Error('Could not find homework item container');
     }

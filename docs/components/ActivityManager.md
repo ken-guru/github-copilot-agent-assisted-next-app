@@ -1,307 +1,264 @@
-# ActivityManager Component
+# ActivityManager Component Documentation
 
 ## Navigation
-
-- [Component Documentation Home](./README.md)
-- **Category**: [State Management Components](./README.md#state-management-components)
-- **Related Components**:
-  - [Timeline](./Timeline.md) - Visualizes activities managed by ActivityManager
-  - [ActivityButton](./ActivityButton.md) - Controls activity states 
-  - [ActivityForm](./ActivityForm.md) - Used for creating/editing activities
-  - [Summary](./Summary.md) - Displays activity statistics
+- [← Back to Component Documentation Index](../README.md)
+- [Related Components](#related-components)
 
 ## Overview
+The `ActivityManager` component serves as the primary container for managing user activities within the application. It provides a responsive Bootstrap layout that allows users to add, select, and remove activities with proper state management and visual feedback.
 
-The ActivityManager component serves as the central hub for activity management in the application. It provides a user interface for creating, selecting, and tracking activities while managing their states throughout the session. The component handles color assignment, activity state transitions, and visual representation of activity status.
+## Component Location
+- **File**: `src/components/ActivityManager.tsx`
+- **Type**: Layout/Container Component
+- **Framework**: React with Bootstrap 5.3.7
 
-## Table of Contents
-- [Features](#features)
-- [Props](#props)
-- [Types](#types)
-- [State Management](#state-management)
-- [Activity Lifecycle Management](#activity-lifecycle-management)
-- [Theme Compatibility](#theme-compatibility)
-- [Mobile Responsiveness](#mobile-responsiveness)
-- [Accessibility](#accessibility)
-- [Example Usage](#example-usage)
-- [Known Limitations](#known-limitations)
-- [Test Coverage](#test-coverage)
-- [Related Components and Hooks](#related-components-and-hooks)
-- [Implementation Details](#implementation-details)
-- [Change History](#change-history)
-- [Related Memory Logs](#related-memory-logs)
+## Props Interface
 
-## Features
+```typescript
+interface ActivityManagerProps {
+  onActivitySelect: (activity: Activity | null, justAdd?: boolean) => void;
+  onActivityRemove?: (activityId: string) => void;
+  currentActivityId: string | null;
+  completedActivityIds: string[];
+  timelineEntries: TimelineEntry[];
+  isTimeUp?: boolean;
+  elapsedTime?: number;
+}
+```
 
-- **Activity Creation**: Interface for adding new activities
-- **Activity Selection**: Mechanism for selecting the current active activity
-- **Color Management**: Automatic color assignment for visual distinction between activities
-- **State Tracking**: Tracking of pending, active, and completed activities
-- **Theme Compatibility**: Dynamic color adaptation for light and dark themes
-- **Activity Removal**: Interface for removing activities from the session
-- **Timer Display**: Shows activity duration for active and completed activities
-- **Real-Time Updates**: Dynamically updates activity status and duration
-
-## Props
+### Props Documentation
 
 | Prop | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
-| `onActivitySelect` | `(activity: Activity \| null, justAdd?: boolean) => void` | Yes | - | Callback when an activity is selected or deselected |
-| `onActivityRemove` | `(activityId: string) => void` | Yes | - | Callback when an activity is removed |
-| `currentActivityId` | `string \| null` | Yes | - | ID of the currently active activity |
-| `completedActivityIds` | `string[]` | Yes | - | Array of IDs for completed activities |
-| `timelineEntries` | `TimelineEntry[]` | Yes | - | Timeline entries for activity history |
-| `isTimeUp` | `boolean` | No | `false` | Flag indicating if allocated time is up |
-| `elapsedTime` | `number` | No | `0` | Current elapsed time in seconds |
-
-## Types
-
-```typescript
-interface Activity {
-  id: string;
-  name: string;
-  colorIndex: number;
-  colors?: {
-    background: string;
-    text: string;
-    border: string;
-  };
-}
-
-interface TimelineEntry {
-  id: string;
-  activityId: string | null;
-  activityName: string | null;
-  startTime: number;
-  endTime: number | null;
-  colors?: {
-    background: string;
-    text: string;
-    border: string;
-  };
-}
-```
+| `onActivitySelect` | `(activity: Activity \| null, justAdd?: boolean) => void` | ✅ | - | Callback for activity selection/deselection |
+| `onActivityRemove` | `(activityId: string) => void` | ❌ | `undefined` | Callback for activity removal |
+| `currentActivityId` | `string \| null` | ✅ | - | ID of currently active activity |
+| `completedActivityIds` | `string[]` | ✅ | - | Array of completed activity IDs |
+| `timelineEntries` | `TimelineEntry[]` | ✅ | - | Timeline entries for activity history |
+| `isTimeUp` | `boolean` | ❌ | `false` | Whether time limit has been reached |
+| `elapsedTime` | `number` | ❌ | `0` | Elapsed time for current activity |
 
 ## State Management
 
-The ActivityManager component manages several pieces of state:
+### Internal State
+- **Activities List**: Manages the array of user-defined activities
+- **Color Management**: Assigns and tracks color indices for visual differentiation
+- **Initialization State**: Ensures default activities are loaded once
 
-1. **Activities list**: A collection of all activities available for selection
-   ```typescript
-   const [activities, setActivities] = useState<Activity[]>([]);
-   ```
+### Default Activities
+The component automatically initializes with four default activities:
+- Homework (Color Index 0)
+- Reading (Color Index 1)
+- Play Time (Color Index 2)
+- Chores (Color Index 3)
 
-2. **Color assignment**: Tracks which color indices have been assigned
-   ```typescript
-   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
-   ```
+## Bootstrap Integration
 
-3. **Initialization state**: Tracks whether default activities have been initialized
-   ```typescript
-   const [hasInitializedActivities, setHasInitializedActivities] = useState(false);
-   ```
+### Layout Structure
+```jsx
+<Container fluid className="h-100" data-testid="activity-manager">
+  <h4 className="h4 mb-3">Activities</h4>
+  
+  {/* Empty State */}
+  <div className="alert alert-info text-center" role="alert">
+    No activities defined
+  </div>
+  
+  {/* Activities Grid */}
+  <Row className="gy-3" data-testid="activity-list">
+    <Col xs={12} className="mb-3" data-testid="activity-form-column">
+      <ActivityForm />
+    </Col>
+    
+    {/* Activity Columns */}
+    <Col xs={12} md={6} lg={4} data-testid="activity-column-{id}">
+      <ActivityButton />
+    </Col>
+  </Row>
+</Container>
+```
 
-4. **New activity input**: Manages the form input for adding new activities
-   ```typescript
-   const [newActivityName, setNewActivityName] = useState('');
-   ```
+### Responsive Grid Classes
+- **Mobile (xs)**: `col-12` - Full width
+- **Tablet (md)**: `col-6` - Half width  
+- **Desktop (lg)**: `col-4` - One-third width
 
-The component uses several key effects:
-
-1. **Default activity initialization**: Sets up initial activities on first render
-   ```typescript
-   useEffect(() => {
-     const defaultActivities = [
-       { id: '1', name: 'Homework', colorIndex: 0 },
-       { id: '2', name: 'Reading', colorIndex: 1 },
-       { id: '3', name: 'Play Time', colorIndex: 2 },
-       { id: '4', name: 'Chores', colorIndex: 3 }
-     ];
-     
-     // Initialize default activities
-   }, [hasInitializedActivities, onActivitySelect]);
-   ```
-
-2. **Theme change detection**: Updates activity colors when theme changes
-   ```typescript
-   useEffect(() => {
-     const updateColors = () => {
-       setActivities(currentActivities => 
-         currentActivities.map(activity => ({
-           ...activity,
-           colors: getNextAvailableColorSet(activity.colorIndex)
-         }))
-       );
-     };
-     
-     // Set up theme change listeners
-   }, []);
-   ```
-
-3. **Color initialization**: Initializes activity colors on component mount
-   ```typescript
-   useEffect(() => {
-     setActivities(currentActivities => 
-       currentActivities.map(activity => ({
-         ...activity,
-         colors: getNextAvailableColorSet(activity.colorIndex || 0)
-       }))
-     );
-   }, []);
-   ```
-
-## Activity Lifecycle Management
-
-The ActivityManager handles the complete lifecycle of activities:
-
-1. **Creation**: New activities are created with a unique ID and assigned a color
-2. **Pending State**: Activities start in the pending state before being selected
-3. **Active State**: An activity becomes active when selected by the user
-4. **Completed State**: Activities are marked as completed when finished
-
-This component works closely with the ActivityState hook to maintain the state machine for activities.
+### Bootstrap Components Used
+- **Container**: `Container` with `fluid` prop for full-width layout
+- **Grid System**: `Row` and `Col` for responsive layout
+- **Typography**: `h4` class for consistent heading styling
+- **Spacing**: `mb-3`, `gy-3` for consistent spacing
+- **Alerts**: `alert alert-info` for empty state messaging
 
 ## Theme Compatibility
 
-The ActivityManager fully supports both light and dark themes:
+### Color Management
+- Supports dynamic color assignment based on theme
+- Automatically updates colors on theme changes
+- Watches for both system preference and manual theme switches
 
-- **Dynamic color generation**: Activities are assigned color sets that work in both light and dark modes
-- **Theme detection**: Uses MutationObserver to detect theme changes on the document element
-- **Color refreshing**: Regenerates activity colors whenever the theme changes
-- **System preference detection**: Responds to system dark mode preference changes
-- **Visual consistency**: Ensures visual consistency of activities across theme modes
+### Theme Integration
+- Uses Bootstrap's theme-aware color classes
+- Responds to `prefers-color-scheme` media queries
+- Monitors document class changes for theme switching
 
 ## Mobile Responsiveness
 
-The ActivityManager component is designed to be fully responsive:
+### Responsive Breakpoints
+- **Mobile (< 768px)**: Single column layout
+- **Tablet (768px - 992px)**: Two-column layout
+- **Desktop (≥ 992px)**: Three-column layout
 
-- **Flexible layout**: Uses CSS Grid and Flexbox for adaptive layouts
-- **Touch-friendly controls**: Large touch targets for mobile interaction
-- **Responsive typography**: Text scales appropriately for different screen sizes
-- **Compact mobile view**: Optimized layout for small screens
-- **Responsive form elements**: Input fields and buttons adapt to screen width
+### Touch Interaction
+- Full touch support for all interactive elements
+- Appropriate touch targets for mobile devices
+- Responsive spacing for different screen sizes
 
-## Accessibility
+## Accessibility Features
 
-- **Semantic HTML**: Uses appropriate semantic elements (buttons, forms, etc.)
-- **ARIA labels**: Includes labels for interactive elements
-- **Focus management**: Proper keyboard focus handling for form elements
-- **Color contrast**: Maintains sufficient color contrast for text elements
-- **Form validation**: Provides visual and programmatic form validation feedback
-- **Screen reader support**: Important elements have appropriate text content
+### ARIA Support
+- Proper heading hierarchy with `h4` element
+- Alert role for empty state messaging
+- Semantic HTML structure
 
-## Example Usage
+### Keyboard Navigation
+- Tab navigation through all interactive elements
+- Focus management for activity selection
+- Keyboard accessibility for all actions
 
-### Basic Usage in App Component
-
-```tsx
-import ActivityManager from '../components/ActivityManager';
-
-// In your component
-return (
-  <ActivityManager
-    onActivitySelect={handleActivitySelect}
-    onActivityRemove={handleActivityRemoval}
-    currentActivityId={currentActivity?.id || null}
-    completedActivityIds={completedActivityIds}
-    timelineEntries={processedEntries}
-  />
-);
-```
-
-### With Time-Up State
-
-```tsx
-<ActivityManager
-  onActivitySelect={handleActivitySelect}
-  onActivityRemove={handleActivityRemoval}
-  currentActivityId={currentActivity?.id || null}
-  completedActivityIds={completedActivityIds}
-  timelineEntries={processedEntries}
-  isTimeUp={true}
-  elapsedTime={3600}
-/>
-```
-
-## Known Limitations
-
-1. **Activity count**: Performance may degrade with a very large number of activities (40+)
-2. **Long activity names**: Very long activity names may be truncated on small screens
-3. **Color differentiation**: Limited number of visually distinct colors for activities
-4. **State persistence**: Activity state is not persisted across page refreshes without additional storage
+### Screen Reader Support
+- Descriptive text for activity states
+- Proper labeling for all interactive elements
+- Accessible form controls
 
 ## Test Coverage
 
-The ActivityManager component has comprehensive test coverage:
+### Bootstrap Integration Tests (18 tests)
+- ✅ Container structure validation
+- ✅ Typography and heading styling
+- ✅ Grid system implementation
+- ✅ Responsive column behavior
+- ✅ Empty state alert styling
+- ✅ Spacing and layout utilities
+- ✅ Child component integration
+- ✅ Theme consistency
+- ✅ Accessibility features
+- ✅ Overflow handling
 
-- **ActivityManager.test.tsx**: Core functionality tests
-- **ActivityManager.theme.test.tsx**: Theme adaptation tests
-- **ActivityManager.mobile.test.tsx**: Mobile responsiveness tests
+### Functional Tests (11 tests)
+- ✅ Default activity rendering
+- ✅ Activity addition/removal
+- ✅ State management
+- ✅ Timeline integration
+- ✅ Time limit handling
+- ✅ Activity selection/deselection
+- ✅ Elapsed time display
 
-Key tested scenarios include:
-- Activity creation, selection, and removal
-- Color assignment and theme compatibility
-- Proper state management for activities
-- Form validation and input handling
-- Interaction with the activity state machine
-- Timer display accuracy
+## Usage Examples
 
-## Related Components and Hooks
+### Basic Usage
+```jsx
+import ActivityManager from './components/ActivityManager';
 
-- **Timeline**: Visualizes activity history and breaks
-- **Summary**: Shows activity statistics after completion
-- **useActivityState**: Hook that manages activity state transitions
-- **useTimelineEntries**: Hook that tracks activity timeline entries
+function App() {
+  const [currentActivityId, setCurrentActivityId] = useState(null);
+  const [completedIds, setCompletedIds] = useState([]);
+  const [timelineEntries, setTimelineEntries] = useState([]);
 
-## Implementation Details
+  const handleActivitySelect = (activity, justAdd = false) => {
+    if (justAdd) {
+      // Add activity without starting
+      return;
+    }
+    setCurrentActivityId(activity?.id || null);
+  };
 
-The ActivityManager implements several key algorithms:
+  const handleActivityRemove = (activityId) => {
+    // Remove activity logic
+  };
 
-1. **Color assignment**: Ensures each activity gets a unique color
-   ```typescript
-   const getNextColorIndex = (): number => {
-     let index = 0;
-     while (assignedColorIndices.includes(index)) {
-       index++;
-     }
-     return index;
-   };
-   ```
+  return (
+    <ActivityManager
+      onActivitySelect={handleActivitySelect}
+      onActivityRemove={handleActivityRemove}
+      currentActivityId={currentActivityId}
+      completedActivityIds={completedIds}
+      timelineEntries={timelineEntries}
+    />
+  );
+}
+```
 
-2. **Activity duration calculation**: Computes activity duration from timeline entries
-   ```typescript
-   const getActivityDuration = (activityId: string): number => {
-     return timelineEntries
-       .filter(entry => entry.activityId === activityId)
-       .reduce((total, entry) => {
-         const endTime = entry.endTime || Date.now();
-         return total + (endTime - entry.startTime);
-       }, 0);
-   };
-   ```
+### With Time Limit
+```jsx
+<ActivityManager
+  onActivitySelect={handleActivitySelect}
+  onActivityRemove={handleActivityRemove}
+  currentActivityId={currentActivityId}
+  completedActivityIds={completedIds}
+  timelineEntries={timelineEntries}
+  isTimeUp={true}
+  elapsedTime={1800} // 30 minutes
+/>
+```
 
-3. **Activity state determination**: Determines if an activity is pending, active, or completed
+### Empty State Display
+When no activities are defined, the component displays a Bootstrap alert:
+```jsx
+// Automatically shown when activities.length === 0
+<div className="alert alert-info text-center" role="alert">
+  No activities defined
+</div>
+```
 
-## Related Memory Logs
+## Related Components
 
-This component has been referenced in the following memory logs:
+### Child Components
+- [`ActivityForm`](./ActivityForm.md) - Form for adding new activities
+- [`ActivityButton`](./ActivityButton.md) - Individual activity display and interaction
 
-- [MRTMLY-148: Summary Activity Order Fix](../logged_memories/MRTMLY-148-summary-activity-order.md) - Activity ordering logic
-- [MRTMLY-035: Activity Order in Summary Tests Implementation](../logged_memories/MRTMLY-090-activity-order-summary-tests.md) - Testing chronological order
+### Parent Components
+- Used in main application layout for activity management
+- Integrates with timer and timeline systems
 
----
+## Known Limitations
 
-## Navigation
+### Color Assignment
+- Limited to available color indices in the color system
+- Color reuse when exceeding available colors
 
-- [Back to Component Documentation Home](./README.md)
-- **Previous Component**: [ProgressBar](./ProgressBar.md)
-- **Next Component**: [Summary](./Summary.md)
+### Performance Considerations
+- Re-renders on theme changes for color updates
+- Efficient state management for large activity lists
 
 ## Change History
 
-- **2025-03-20**: Improved activity state transitions
-- **2025-03-01**: Added activity removal functionality
-- **2025-02-15**: Enhanced theme compatibility for activity colors
-- **2025-02-01**: Implemented activity duration tracking
-- **2025-01-15**: Added form validation for activity creation
-- **2025-01-01**: Initial implementation with basic activity management
+### Bootstrap Migration (Latest)
+- **Date**: 2025-06-28
+- **Changes**: 
+  - Migrated from CSS modules to Bootstrap layout system
+  - Implemented responsive Container/Row/Col structure
+  - Added comprehensive Bootstrap integration tests (18 tests)
+  - Enhanced theme integration with Bootstrap classes
+  - Improved accessibility with Bootstrap components
+  - Removed ActivityManager.module.css dependency
+  - Updated all tests to pass with new Bootstrap structure
+
+### Previous Versions
+- CSS Module implementation with custom styling
+- Basic responsive design with custom breakpoints
+- Manual theme handling
+
+## Implementation Notes
+
+### Color System Integration
+The component integrates with the application's color utility system to assign unique colors to each activity, ensuring visual differentiation while maintaining theme consistency.
+
+### State Synchronization
+Activity state is synchronized with parent components through callback props, allowing for integration with broader application state management.
+
+### Theme Responsiveness
+The component automatically responds to theme changes by re-evaluating colors and updating the display, ensuring consistency across light and dark themes.
+
+### Bootstrap Migration Impact
+The migration to Bootstrap improved the component's responsive design, accessibility, and maintainability while preserving all existing functionality.

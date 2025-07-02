@@ -62,8 +62,8 @@ describe('TimeDisplay Component', () => {
   // Replace any with proper type
   const testOrderOfElements = (container: HTMLElement): void => {
     // Test implementation for element order
-    const timeElement = container.querySelector('.time-display__time');
-    const dateElement = container.querySelector('.time-display__date');
+    const timeElement = container.querySelector('[data-testid="time-value"]');
+    const dateElement = container.querySelector('[data-testid="date-value"]');
     
     expect(timeElement).toBeInTheDocument();
     expect(dateElement).toBeInTheDocument();

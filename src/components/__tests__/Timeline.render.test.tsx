@@ -89,7 +89,7 @@ describe('Timeline Component Rendering', () => {
       />
     );
     
-    expect(screen.getByTestId('overtime-warning')).toBeInTheDocument();
+    expect(screen.getByTestId('overtime-alert')).toBeInTheDocument();
     expect(screen.getByTestId('overtime-section')).toBeInTheDocument();
     
     const timeMarkers = screen.getAllByTestId('time-marker');

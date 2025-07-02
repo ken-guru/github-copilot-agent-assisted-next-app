@@ -1,32 +1,16 @@
 import { useState } from 'react';
 import styles from './ActivityManager.module.css';
-import { getNextAvailableColorSet, ColorSet } from '@lib/utils/colors';
-import { TimelineEntry } from '@hooks/use-timeline-entries';
-import { ActivityButton } from '@components/ui/ActivityButton';
+import { getNextAvailableColorSet, ColorSet } from '@/utils/colors';
+import { TimelineEntry } from '@/types';
+import { ActivityButton } from '@/components/ActivityButton';
 import ActivityForm from './ActivityForm';
 
-/**
- * Represents an activity that can be tracked in the application
- * 
- * @interface Activity
- */
+// Using the Activity interface from the new component structure
 export interface Activity {
-  /** Unique identifier for the activity */
   id: string;
-  
-  /** The name of the activity */
   name: string;
-  
-  /** Optional description of the activity */
-  description?: string;
-  
-  /** Whether the activity has been completed */
   completed?: boolean;
-  
-  /** Color scheme for the activity in light and dark mode */
   colors?: ColorSet;
-  
-  /** Index of the color in the color palette, used for color rotation */
   colorIndex?: number;
 }
 
@@ -74,31 +58,27 @@ export default function ActivityManager({
   onActivityRemove,
   currentActivityId, 
   completedActivityIds,
-  // These props are unused but kept in the interface for future use
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   timelineEntries,
   isTimeUp = false,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   elapsedTime = 0 
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [showForm, setShowForm] = useState(false);
   
   // Handle adding a new activity
-  const handleAddActivity = (name: string, description: string = '') => {
+  const handleAddActivity = (name: string) => {
     // Generate a unique ID for the activity
     const id = `activity-${Date.now()}`;
     
     // Get the next available color set for the activity
-    const { colors, index } = getNextAvailableColorSet(activities.length);
+    const colors = getNextAvailableColorSet(activities.length);
     
     // Create the new activity
     const newActivity: Activity = {
       id,
       name,
-      description,
       colors,
-      colorIndex: index
+      colorIndex: activities.length
     };
     
     // Update the activities list
@@ -145,11 +125,12 @@ export default function ActivityManager({
           <ActivityButton
             key={activity.id}
             activity={activity}
-            isActive={currentActivityId === activity.id}
+            isRunning={currentActivityId === activity.id}
             isCompleted={completedActivityIds.includes(activity.id)}
-            onClick={() => handleActivityClick(activity)}
+            onSelect={() => handleActivityClick(activity)}
             onRemove={() => handleRemoveActivity(activity.id)}
-            disabled={isTimeUp}
+            timelineEntries={timelineEntries}
+            elapsedTime={elapsedTime}
           />
         ))}
       </div>

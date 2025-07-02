@@ -219,8 +219,16 @@ Each log follows a standard format including:
 
 These logs serve as historical context to understand why certain decisions were made and how issues were resolved.
 
-**Total Entries:** 202  
-**Last Updated:** 2025-06-18
+**Total Entries:** 210  
+**Last Updated:** 2025-07-01
 
 201. [MRTMLY-201: GitHub Actions Workflow and TypeScript Build Fixes](./logged_memories/MRTMLY-201-github-actions-workflow-typescript-fix.md) - #github-actions #typescript #eslint #ci-fix #service-worker
 202. [MRTMLY-202: GitHub Copilot Code Review Feedback Fixes](./logged_memories/MRTMLY-202-github-copilot-feedback-fixes.md) - #code-review #github-copilot #testing #variable-scope #test-coverage
+203. [MRTMLY-203: TimeSetup Bootstrap Migration](./logged_memories/MRTMLY-025-timesetup-bootstrap-migration.md) - #bootstrap #migration #components #forms #testing
+204. [MRTMLY-195: ActivityButton Bootstrap Migration Completion and Cleanup](./logged_memories/MRTMLY-195-activitybutton-bootstrap-migration-completion.md) - #bootstrap-migration #component-cleanup #phase3 #testing #card-button-badge
+205. [MRTMLY-196: ThemeToggle Bootstrap Migration - ButtonGroup Integration](./logged_memories/MRTMLY-196-themetoggle-bootstrap-migration.md) - #bootstrap-migration #button-group #theme-toggle #phase3 #accessibility
+206. [MRTMLY-206: ServiceWorkerUpdater Cypress Tests and ActivityManager Test Fixes](./logged_memories/MRTMLY-206-serviceworkerupdater-cypress-activitymanager-test-fixes.md) - #debugging #cypress #service-worker #tests #bootstrap-migration
+207. [MRTMLY-207: Activity Button Icon Visibility Fix](./logged_memories/MRTMLY-207-activity-button-icon-visibility-fix.md) - #bugfix #bootstrap #ui #color-theming #activity-button
+208. [MRTMLY-208: Timeline Height Fill Container Fix](./logged_memories/MRTMLY-208-timeline-height-fill-container-fix.md) - #bugfix #timeline #bootstrap #css #height-layout
+209. [MRTMLY-209: Activity Manager Full-Width Layout Fix](./logged_memories/MRTMLY-209-activity-manager-full-width-layout.md) - #layout #bootstrap #ui-improvement #activity-manager #full-width
+210. [MRTMLY-210: ActivityButton Layout Shift Prevention Fix](./logged_memories/MRTMLY-210-activity-button-layout-shift-prevention.md) - #ui-fix #layout #bootstrap #activity-button #vertical-space

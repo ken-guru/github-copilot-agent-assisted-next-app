@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import styles from './Summary.module.css';
+import { Card, Alert, Row, Col, ListGroup, Badge } from 'react-bootstrap';
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 
@@ -142,7 +142,7 @@ export default function Summary({
     if (isTimeUp) {
       return {
         message: "Time's up! Review your completed activities below.",
-        className: styles.statusMessageLate
+        className: 'statusMessageLate'
       };
     }
 
@@ -151,17 +151,17 @@ export default function Summary({
       if (remainingTime < 0) {
         return {
           message: "You've gone over the allocated time!",
-          className: styles.statusMessageLate
+          className: 'statusMessageLate'
         };
       } else if (remainingTime === 0) {
         return {
           message: "Time's up!",
-          className: styles.statusMessageLate
+          className: 'statusMessageLate'
         };
       } else {
         return {
           message: "You're doing great, keep going!",
-          className: styles.statusMessageEarly
+          className: 'statusMessageEarly'
         };
       }
     } else if (allActivitiesCompleted) {
@@ -171,13 +171,13 @@ export default function Summary({
         const laterBy = formatDuration(timeDiff);
         return {
           message: `You took ${laterBy} more than planned`,
-          className: styles.statusMessageLate
+          className: 'statusMessageLate'
         };
       } else {
         const earlierBy = formatDuration(Math.abs(timeDiff));
         return {
           message: `Amazing! You finished ${earlierBy} earlier than planned!`,
-          className: styles.statusMessageEarly
+          className: 'statusMessageEarly'
         };
       }
     }
@@ -201,7 +201,12 @@ export default function Summary({
   };
 
   const calculateActivityStats = () => {
-    if (!entries || entries.length === 0) return null;
+    if (!entries || entries.length === 0) {
+      return {
+        idleTime: 0,
+        activeTime: 0
+      };
+    }
     
     const stats = {
       idleTime: 0,
@@ -299,6 +304,13 @@ export default function Summary({
     }));
   };
 
+  // Helper function to convert CSS module classes to Bootstrap Alert variants
+  const getBootstrapVariant = (className: string): 'success' | 'warning' | 'info' => {
+    if (className.includes('statusMessageEarly')) return 'success';
+    if (className.includes('statusMessageLate')) return 'warning';
+    return 'info';
+  };
+
   const status = getStatusMessage();
   const stats = calculateActivityStats();
   
@@ -311,69 +323,92 @@ export default function Summary({
   const activityTimes = calculateActivityTimes();
 
   return (
-    <div className={`${styles.container}`} data-testid="summary">
-      {status && (
-        <div className={`${styles.statusMessage} ${status.className}`}>
-          {status.message}
-        </div>
-      )}
+    <Card data-testid="summary" className="summary-card h-100">
+      <Card.Header className="d-flex justify-content-between align-items-center">
+        <h5 className="mb-0" role="heading" aria-level={2}>Summary</h5>
+      </Card.Header>
       
-      <div className={styles.statsGrid}>
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Planned Time</div>
-          <div className={styles.statValue}>{formatDuration(totalDuration)}</div>
-        </div>
-        
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Spent Time</div>
-          <div className={styles.statValue}>{formatDuration(elapsedTime)}</div>
-        </div>
-        
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Idle Time</div>
-          <div className={styles.statValue}>{formatDuration(stats.idleTime)}</div>
-        </div>
-        
-        <div className={styles.statCard}>
-          <div className={styles.statLabel}>Overtime</div>
-          <div className={styles.statValue}>{formatDuration(overtime)}</div>
-        </div>
-      </div>
+      <Card.Body data-testid="summary-body">
+        {status && (
+          <Alert variant={getBootstrapVariant(status.className)} className="mb-3" data-testid="summary-status">
+            {status.message}
+          </Alert>
+        )}
+        <Row className="stats-grid g-3 mb-4" data-testid="stats-grid">
+          <Col xs={6} md={3} data-testid="stat-card-planned">
+            <Card className="text-center h-100">
+              <Card.Body className="text-center">
+                <div className="card-title small text-muted" data-testid="stat-label-planned">Planned Time</div>
+                <div className="card-text fs-4 fw-bold" data-testid="stat-value-planned">{formatDuration(totalDuration)}</div>
+              </Card.Body>
+            </Card>
+          </Col>
+          
+          <Col xs={6} md={3} data-testid="stat-card-spent">
+            <Card className="text-center h-100">
+              <Card.Body className="text-center">
+                <div className="card-title small text-muted" data-testid="stat-label-spent">Spent Time</div>
+                <div className="card-text fs-4 fw-bold" data-testid="stat-value-spent">{formatDuration(elapsedTime)}</div>
+              </Card.Body>
+            </Card>
+          </Col>
+          
+          <Col xs={6} md={3} data-testid="stat-card-idle">
+            <Card className="text-center h-100">
+              <Card.Body className="text-center">
+                <div className="card-title small text-muted" data-testid="stat-label-idle">Idle Time</div>
+                <div className="card-text fs-4 fw-bold" data-testid="stat-value-idle">{formatDuration(stats.idleTime)}</div>
+              </Card.Body>
+            </Card>
+          </Col>
+          
+          <Col xs={6} md={3} data-testid="stat-card-overtime">
+            <Card className="text-center h-100">
+              <Card.Body className="text-center">
+                <div className="card-title small text-muted" data-testid="stat-label-overtime">Overtime</div>
+                <div className="card-text fs-4 fw-bold" data-testid="stat-value-overtime">{formatDuration(overtime)}</div>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
 
-      {activityTimes.length > 0 && (
-        <div className={styles.activityList}>
-          <h3 className={styles.activityListHeading}>Time Spent per Activity</h3>
-          {activityTimes.map((activity) => {
-            // Get theme-appropriate colors
-            const themeColors = activity.colors ? 
-              getThemeAppropriateColor(activity.colors) || activity.colors : 
-              undefined;
-            
-            return (
-              <div 
-                key={activity.id}
-                className={styles.activityItem}
-                data-testid={`activity-summary-item-${activity.id}`}
-                style={themeColors ? {
-                  backgroundColor: (themeColors as ColorSet).background,
-                  borderColor: (themeColors as ColorSet).border
-                } : undefined}
-              >
-                <span 
-                  className={styles.activityName}
-                  data-testid={`activity-name-${activity.id}`}
-                  style={themeColors ? { color: (themeColors as ColorSet).text } : undefined}
-                >
-                  {activity.name}
-                </span>
-                <span className={styles.activityTime}>
-                  {formatDuration(activity.duration)}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+        {activityTimes.length > 0 && (
+          <div className="mt-4">
+            <h3 className="h5 mb-3" data-testid="activity-list-heading">Time Spent per Activity</h3>
+            <ListGroup className="list-group-flush" data-testid="activity-list">
+              {activityTimes.map((activity) => {
+                // Get theme-appropriate colors
+                const themeColors = activity.colors ? 
+                  getThemeAppropriateColor(activity.colors) || activity.colors : 
+                  undefined;
+                
+                return (
+                  <ListGroup.Item 
+                    key={activity.id}
+                    className="activity-item d-flex justify-content-between align-items-center"
+                    data-testid={`activity-summary-item-${activity.id}`}
+                    style={themeColors ? {
+                      backgroundColor: (themeColors as ColorSet).background,
+                      borderColor: (themeColors as ColorSet).border
+                    } : undefined}
+                  >
+                    <span 
+                      className="activity-name"
+                      data-testid={`activity-name-${activity.id}`}
+                      style={themeColors ? { color: (themeColors as ColorSet).text } : undefined}
+                    >
+                      {activity.name}
+                    </span>
+                    <Badge bg="secondary" className="activity-time ms-auto">
+                      {formatDuration(activity.duration)}
+                    </Badge>
+                  </ListGroup.Item>
+                );
+              })}
+            </ListGroup>
+          </div>
+        )}
+      </Card.Body>
+    </Card>
   );
 }
