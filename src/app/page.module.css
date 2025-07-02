@@ -126,21 +126,6 @@
   padding-top: 2rem;
 }
 
-.summaryContainer {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  background-color: var(--background-alt, white);
-}
-
-.timelineContainer {
-  display: flex;
-  flex-direction: column;
-  flex: 1; /* Add this to allow growing */
-  height: 100%; /* Ensure full height */
-  min-height: 0; /* Allow flex children to shrink */
-}
-
 .progressContainer {
   border-radius: 0.5rem;
   background-color: var(--background-alt, white);
@@ -151,25 +136,9 @@
   z-index: 5; /* Ensure it's above content but below header */
 }
 
-/* Update container backgrounds and add visual separation */
-.setupGrid > div,
-.activityGrid > div,
-.timelineContainer,
-.summaryContainer {
-  background-color: var(--background-alt, white);
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  padding: var(--space-md); /* Updated from hardcoded 1rem to use spacing variable */
-  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
-}
+/* Remove extra styling - Bootstrap Cards handle their own styling */
 
-/* Add visual separation to activity manager specifically */
-.activityGrid > div:first-child {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: auto;
-}
+/* Remove extra styling - Bootstrap Cards handle their own styling */
 
 .card {
   background-color: var(--background-alt, white);
@@ -219,7 +188,8 @@
     gap: var(--space-xs);
   }
 
-  .timelineContainer {
+  /* Hide Timeline component on mobile - only show ActivityManager */
+  .activityGrid > *:nth-child(2) {
     display: none;
   }
 
@@ -239,12 +209,7 @@
     gap: var(--space-xs);
   }
 
-  /* Ensure mobile containers have proper styling */
-  .setupGrid > div,
-  .activityGrid > div,
-  .summaryContainer {
-    padding: var(--space-sm); /* Updated from hardcoded 1rem to use variable for mobile */
-  }
+  /* Bootstrap Cards handle their own styling on mobile */
 }
 
 /* Media query for landscape mode on mobile */
