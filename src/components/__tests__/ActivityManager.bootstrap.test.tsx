@@ -32,7 +32,7 @@ describe('ActivityManager Bootstrap Integration', () => {
   });
 
   describe('Bootstrap Container Structure', () => {
-    it('renders with Bootstrap Container structure', async () => {
+    it('renders with Bootstrap Card structure', async () => {
       render(
         <ActivityManager 
           onActivitySelect={mockOnActivitySelect}
@@ -44,10 +44,10 @@ describe('ActivityManager Bootstrap Integration', () => {
       );
 
       const container = screen.getByTestId('activity-manager');
-      expect(container).toHaveClass('container-fluid');
+      expect(container).toHaveClass('card', 'h-100');
     });
 
-    it('renders heading with Bootstrap typography', async () => {
+    it('renders heading with Bootstrap Card Header', async () => {
       render(
         <ActivityManager 
           onActivitySelect={mockOnActivitySelect}
@@ -59,7 +59,11 @@ describe('ActivityManager Bootstrap Integration', () => {
       );
 
       const heading = screen.getByRole('heading', { name: 'Activities' });
-      expect(heading).toHaveClass('h4', 'mb-3');
+      expect(heading).toHaveClass('mb-0');
+      
+      // Check that it's inside a Card.Header
+      const cardHeader = heading.closest('.card-header');
+      expect(cardHeader).toBeInTheDocument();
     });
 
     it('renders activity list with Bootstrap structure', async () => {
@@ -151,10 +155,14 @@ describe('ActivityManager Bootstrap Integration', () => {
       // Render with no default activities by mocking useEffect
       const ActivityManagerNoDefaults = () => {
         return (
-          <div className="container-fluid" data-testid="activity-manager">
-            <h4 className="h4 mb-3">Activities</h4>
-            <div className="alert alert-info text-center" role="alert" data-testid="empty-state">
-              No activities defined
+          <div className="card h-100" data-testid="activity-manager">
+            <div className="card-header">
+              <h5 className="mb-0">Activities</h5>
+            </div>
+            <div className="card-body">
+              <div className="alert alert-info text-center" role="alert" data-testid="empty-state">
+                No activities defined
+              </div>
             </div>
           </div>
         );
@@ -181,10 +189,10 @@ describe('ActivityManager Bootstrap Integration', () => {
       );
 
       const container = screen.getByTestId('activity-manager');
-      expect(container).toHaveClass('container-fluid');
+      expect(container).toHaveClass('card', 'h-100');
 
       const heading = screen.getByRole('heading', { name: 'Activities' });
-      expect(heading).toHaveClass('mb-3');
+      expect(heading).toHaveClass('mb-0');
 
       await waitFor(() => {
         const activityList = screen.getByTestId('activity-list');
@@ -204,9 +212,9 @@ describe('ActivityManager Bootstrap Integration', () => {
       );
 
       await waitFor(() => {
-        // Container should be fluid
+        // Container should be a card
         const container = screen.getByTestId('activity-manager');
-        expect(container).toHaveClass('container-fluid');
+        expect(container).toHaveClass('card', 'h-100');
 
         // Activity list should be a row
         const activityList = screen.getByTestId('activity-list');
@@ -348,10 +356,10 @@ describe('ActivityManager Bootstrap Integration', () => {
       );
 
       const container = screen.getByTestId('activity-manager');
-      expect(container).toHaveClass('container-fluid');
+      expect(container).toHaveClass('card', 'h-100');
 
       const heading = screen.getByRole('heading', { name: 'Activities' });
-      expect(heading).toHaveClass('h4');
+      expect(heading.tagName.toLowerCase()).toBe('h5');
 
       await waitFor(() => {
         const activityList = screen.getByTestId('activity-list');
@@ -381,7 +389,7 @@ describe('ActivityManager Bootstrap Integration', () => {
 
       // Bootstrap structure should be maintained
       const container = screen.getByTestId('activity-manager');
-      expect(container).toHaveClass('container-fluid');
+      expect(container).toHaveClass('card', 'h-100');
 
       const activityList = screen.getByTestId('activity-list');
       expect(activityList).toHaveClass('row', 'gy-3');
@@ -444,7 +452,7 @@ describe('ActivityManager Bootstrap Integration', () => {
   });
 
   describe('Bootstrap Overflow and Scrolling', () => {
-    it('handles Bootstrap container overflow properly', async () => {
+    it('handles Bootstrap card overflow properly', async () => {
       render(
         <ActivityManager 
           onActivitySelect={mockOnActivitySelect}
@@ -456,7 +464,7 @@ describe('ActivityManager Bootstrap Integration', () => {
       );
 
       const container = screen.getByTestId('activity-manager');
-      expect(container).toHaveClass('container-fluid');
+      expect(container).toHaveClass('card');
       
       // Container should handle full height
       expect(container).toHaveClass('h-100');

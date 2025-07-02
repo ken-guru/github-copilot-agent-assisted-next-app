@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Card, Row, Col, Alert } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
@@ -158,40 +158,43 @@ export default function ActivityManager({
   };
 
   return (
-    <Container fluid className="h-100" data-testid="activity-manager">
-      <h4 className="h4 mb-3">Activities</h4>
-      
-      {activities.length === 0 ? (
-        <div className="alert alert-info text-center" role="alert" data-testid="empty-state">
-          No activities defined
-        </div>
-      ) : (
-        <Row className="gy-3" data-testid="activity-list">
-          <Col xs={12} className="mb-3" data-testid="activity-form-column">
-            <ActivityForm
-              onAddActivity={handleAddActivity}
-              isDisabled={isTimeUp}
-            />
-          </Col>
-          {activities.map((activity) => (
-            <Col 
-              key={activity.id} 
-              xs={12}
-              data-testid={`activity-column-${activity.id}`}
-            >
-              <ActivityButton
-                activity={activity}
-                isCompleted={completedActivityIds.includes(activity.id)}
-                isRunning={activity.id === currentActivityId}
-                onSelect={handleActivitySelect}
-                onRemove={onActivityRemove ? handleRemoveActivity : undefined}
-                timelineEntries={timelineEntries}
-                elapsedTime={elapsedTime}
+    <Card className="h-100" data-testid="activity-manager">
+      <Card.Header>
+        <h5 className="mb-0">Activities</h5>
+      </Card.Header>
+      <Card.Body>
+        {activities.length === 0 ? (
+          <Alert variant="info" className="text-center" data-testid="empty-state">
+            No activities defined
+          </Alert>
+        ) : (
+          <Row className="gy-3" data-testid="activity-list">
+            <Col xs={12} className="mb-3" data-testid="activity-form-column">
+              <ActivityForm
+                onAddActivity={handleAddActivity}
+                isDisabled={isTimeUp}
               />
             </Col>
-          ))}
-        </Row>
-      )}
-    </Container>
+            {activities.map((activity) => (
+              <Col 
+                key={activity.id} 
+                xs={12}
+                data-testid={`activity-column-${activity.id}`}
+              >
+                <ActivityButton
+                  activity={activity}
+                  isCompleted={completedActivityIds.includes(activity.id)}
+                  isRunning={activity.id === currentActivityId}
+                  onSelect={handleActivitySelect}
+                  onRemove={onActivityRemove ? handleRemoveActivity : undefined}
+                  timelineEntries={timelineEntries}
+                  elapsedTime={elapsedTime}
+                />
+              </Col>
+            ))}
+          </Row>
+        )}
+      </Card.Body>
+    </Card>
   );
 }

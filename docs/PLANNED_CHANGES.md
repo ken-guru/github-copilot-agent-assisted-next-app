@@ -372,3 +372,168 @@ All critical test failures have been resolved, achieving full deployment readine
 - **Memory Log:** Documented in MRTMLY-206
 
 **Deployment Status:** ✅ **READY FOR PRODUCTION DEPLOYMENT**
+
+---
+
+# Bootstrap Card Structure and Alert Standardization
+
+## Context
+
+This change affects several components in the application that currently have inconsistent card structure and alert message styling. After the successful Bootstrap migration, there are structural improvements needed to create consistency across card-like components and standardize alert message placement and styling.
+
+**Current Issues:**
+- **TimeSetup Component**: Migrated to Bootstrap Card but has unnecessary padding that conflicts with Card structure
+- **ActivityManager**: Uses Bootstrap Container/Row/Col layout but should be structured as a Card to align headers with Timeline
+- **Timeline Component**: Already properly structured as Bootstrap Card with header
+- **Summary Component**: Uses Bootstrap Card but individual statistics could be better organized as nested cards
+- **Alert Messages**: Inconsistent styling and placement across components for warnings and notifications
+
+**User Needs:** 
+- Visual consistency between card-structured components (TimeSetup, ActivityManager, Timeline)
+- Unified header alignment between ActivityManager and Timeline
+- Consistent alert message styling and placement for warnings like "planned time exceeded"
+- Better visual hierarchy for statistics within Summary component
+
+## Requirements
+
+1. **TimeSetup Component Card Structure Fix**
+   - Remove redundant padding that conflicts with Bootstrap Card padding
+   - Ensure proper Card.Header and Card.Body structure
+   - Verify consistent spacing with other card components
+   - Testing: Visual regression tests to ensure no layout breaks
+
+2. **ActivityManager Card Structure Migration**
+   - Convert from Container-based layout to Bootstrap Card structure
+   - Add Card.Header with "Activities" title to align with Timeline header
+   - Move ActivityForm and activity list into Card.Body
+   - Maintain existing Bootstrap Row/Col grid system within Card.Body
+   - Testing: Verify all existing functionality preserved
+
+3. **Timeline Header Alignment**
+   - Ensure Timeline Card.Header aligns properly with ActivityManager Card.Header
+   - Verify consistent header styling and spacing
+   - Testing: Visual alignment verification between components
+
+4. **Summary Component Card Enhancement**
+   - Enhance individual statistic display using nested Card components
+   - Create consistent card structure for "Planned Time", "Spent Time", "Idle Time", "Overtime" statistics
+   - Improve visual hierarchy and readability
+   - Testing: Verify all statistics display correctly
+
+5. **Alert Message Standardization**
+   - Standardize all warning and notice alerts to use consistent Bootstrap Alert variants
+   - Planned time exceeded warnings: Use `alert-warning` variant
+   - Summary completion notices: Use `alert-success` or `alert-info` variants
+   - Consistent placement within card structures (typically after headers, before main content)
+   - Shared CSS classes for consistent spacing and styling
+   - Testing: Verify alert accessibility and proper variant usage
+
+6. **Alert Placement and Styling Standards**
+   - Define consistent placement rules for alerts within card structures
+   - Create shared utility classes for common alert patterns
+   - Ensure alerts don't break card visual flow
+   - Maintain proper spacing relationships with surrounding content
+   - Testing: Verify alert placement in all affected components
+
+## Technical Guidelines
+
+- **Bootstrap Card Structure**: Use proper Card, Card.Header, Card.Body hierarchy
+- **Spacing System**: Use Bootstrap spacing utilities (`mb-3`, `p-3`, etc.) instead of custom padding
+- **Alert Variants**: Follow Bootstrap Alert variant guidelines:
+  - `alert-success`: Positive completion states
+  - `alert-warning`: Time exceeded or caution states  
+  - `alert-info`: General information notices
+  - `alert-danger`: Critical issues or errors
+- **Grid Integration**: Maintain Bootstrap Row/Col system within Card.Body where needed
+- **Responsive Design**: Ensure card structures work across all breakpoints
+- **Accessibility**: Maintain proper semantic structure and ARIA attributes
+- **Theme Compatibility**: Use Bootstrap's default theme system for consistent appearance
+- **Testing Strategy**: Focus on visual regression and layout consistency testing
+
+## Expected Outcome
+
+**User Perspective:**
+- Consistent visual structure across all card-based components
+- Aligned headers between ActivityManager and Timeline create visual harmony
+- Clear, consistently styled alerts that don't disrupt the interface flow
+- Improved readability of statistics in Summary component
+- Professional, cohesive appearance throughout the application
+
+**Technical Perspective:**
+- Consistent Bootstrap Card structure implementation across components
+- Reduced custom CSS by leveraging Bootstrap's default spacing and structure
+- Standardized alert messaging patterns that can be reused
+- Improved maintainability through consistent component structure
+- Better responsive behavior through proper Bootstrap implementation
+- Enhanced accessibility through semantic HTML structure
+
+**Testing Criteria:**
+- All existing functionality preserved across affected components
+- Visual alignment verified between card-structured components
+- Alert messages display with consistent styling and proper variants
+- Responsive design works correctly at all breakpoints
+- Accessibility audit passes with improved semantic structure
+
+## Validation Criteria
+
+### 🎯 Component-Specific Goals
+
+#### TimeSetup Component
+- [ ] Remove conflicting padding while maintaining proper spacing
+- [ ] Verify Card.Header and Card.Body structure is correct
+- [ ] Test that component maintains existing functionality
+- [ ] Visual regression test to ensure proper appearance
+
+#### ActivityManager Component  
+- [ ] Convert to Bootstrap Card structure with proper header
+- [ ] Align header styling with Timeline component
+- [ ] Maintain all existing functionality within Card.Body
+- [ ] Test that ActivityForm and activity list work correctly in new structure
+
+#### Timeline Component
+- [ ] Verify header alignment with updated ActivityManager
+- [ ] Ensure existing Card structure remains optimal
+- [ ] Test that overtime alerts maintain proper placement
+
+#### Summary Component
+- [ ] Enhance individual statistic cards for better visual hierarchy
+- [ ] Test that all statistics display correctly
+- [ ] Verify alert messages use proper Bootstrap variants
+
+### 🎨 Visual Consistency Goals
+- [ ] Headers align properly between ActivityManager and Timeline
+- [ ] Card structures have consistent spacing and appearance
+- [ ] Alert messages follow consistent styling patterns
+- [ ] Component borders and shadows create visual cohesion
+
+### 🚨 Alert Standardization Goals
+- [ ] All warning alerts use `alert-warning` variant
+- [ ] All success notices use `alert-success` variant
+- [ ] All informational notices use `alert-info` variant
+- [ ] Alert placement is consistent within card structures
+- [ ] Alert spacing doesn't disrupt card visual flow
+
+### 📱 Responsive Design Goals
+- [ ] All card structures work correctly on mobile
+- [ ] Alert messages remain readable at small sizes
+- [ ] Header alignment maintained across breakpoints
+- [ ] Statistics cards stack properly on mobile
+
+### ♿ Accessibility Goals
+- [ ] Card structures use proper semantic HTML
+- [ ] Alert messages have appropriate ARIA attributes
+- [ ] Keyboard navigation works correctly
+- [ ] Screen reader compatibility maintained
+
+### 🧪 Testing Goals
+- [ ] All existing tests continue to pass
+- [ ] Visual regression tests confirm consistent appearance
+- [ ] Alert functionality tests verify proper variants
+- [ ] Responsive design tests confirm mobile compatibility
+- [ ] Accessibility tests confirm improved semantic structure
+
+### 📄 Documentation Goals
+- [ ] Component documentation updated to reflect new card structures
+- [ ] Alert usage patterns documented for future reference
+- [ ] Visual design guidelines updated with card structure standards
+- [ ] Memory Log entries created for structural decisions
