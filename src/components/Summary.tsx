@@ -324,6 +324,10 @@ export default function Summary({
 
   return (
     <Card data-testid="summary" className="summary-card h-100">
+      <Card.Header className="d-flex justify-content-between align-items-center">
+        <h5 className="mb-0" role="heading" aria-level={2}>Summary</h5>
+      </Card.Header>
+      
       <Card.Body data-testid="summary-body">
         {status && (
           <Alert variant={getBootstrapVariant(status.className)} className="mb-3" data-testid="summary-status">
