@@ -137,4 +137,58 @@
   .activityName {
     margin-bottom: var(--space-xxs);
   }
+  
+  .container {
+    padding: var(--space-sm); /* Reduced padding on mobile */
+  }
+  
+  .heading {
+    font-size: 1.25rem; /* Smaller heading on mobile */
+    margin-bottom: var(--space-sm);
+  }
+  
+  .activityListHeading {
+    font-size: 0.875rem; /* Smaller subheading on mobile */
+    margin-bottom: var(--space-sm);
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .statsGrid {
+    grid-template-columns: 1fr; /* Single column on very small screens */
+    gap: var(--gap-small);
+  }
+  
+  .statCard {
+    padding: var(--space-xs); /* Even smaller padding */
+  }
+  
+  .statValue {
+    font-size: 1rem; /* Smaller stat values */
+  }
+  
+  .statLabel {
+    font-size: 0.75rem; /* Smaller labels */
+  }
+  
+  .container {
+    padding: var(--space-xs); /* Minimal padding on very small screens */
+  }
+  
+  .heading {
+    font-size: 1.125rem; /* Even smaller heading */
+  }
+  
+  .activityItem {
+    padding: var(--space-xxs); /* Minimal padding */
+    margin-bottom: var(--space-xxs);
+  }
+  
+  .activityName {
+    font-size: 0.875rem; /* Smaller activity names */
+  }
+  
+  .activityTime {
+    font-size: 0.75rem; /* Smaller time text */
+  }
 }

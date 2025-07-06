@@ -125,4 +125,56 @@
   .container {
     padding: var(--space-xs); /* Reduced from var(--padding-small) for better mobile spacing */ 
   }
+  
+  .timeInputGroup {
+    gap: var(--space-sm); /* Slightly reduced gap on mobile */
+  }
+  
+  .timeInput {
+    padding: var(--space-sm); /* Adjust padding for better touch targets */
+    font-size: 1rem; /* Ensure readable font size on mobile */
+    min-height: 44px; /* Ensure minimum touch target size */
+  }
+  
+  .button {
+    padding: var(--space-sm) var(--space-md); /* Better touch targets */
+    min-height: 44px; /* Minimum touch target size */
+    font-size: 0.9rem; /* Readable font size */
+  }
+  
+  .modeSelector {
+    gap: var(--space-xs); /* Reduced gap on mobile */
+  }
+  
+  .modeButton {
+    padding: var(--space-xs) var(--space-sm); /* Adjust padding for mobile */
+    font-size: 0.875rem; /* Slightly smaller font */
+    min-height: 40px; /* Good touch target */
+  }
+}
+
+@media (max-width: 576px) {
+  .timeInputGroup {
+    flex-direction: column; /* Stack inputs vertically on very small screens */
+    gap: var(--space-sm);
+  }
+  
+  .timeInput {
+    width: 100%; /* Full width inputs on very small screens */
+  }
+  
+  .modeSelector {
+    flex-direction: column; /* Stack mode buttons vertically */
+    gap: var(--space-xs);
+  }
+  
+  .modeButton {
+    width: 100%; /* Full width buttons */
+    justify-content: center; /* Center text */
+  }
+  
+  .button {
+    width: 100%; /* Full width submit button */
+    padding: var(--space-md); /* Larger padding for better touch */
+  }
 }
