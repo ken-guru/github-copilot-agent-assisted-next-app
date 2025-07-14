@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ButtonGroup, Button } from 'react-bootstrap';
-import { validateThemeColors } from '../lib/utils/colors';
+import { checkThemeColors } from '../lib/utils/colors';
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState('system');
@@ -93,7 +93,7 @@ export default function ThemeToggle() {
 
     // Validate contrast ratios after theme change
     setTimeout(() => {
-      validateThemeColors();
+      checkThemeColors();
     }, 100); // Small delay to ensure CSS variables are updated
   };
 
