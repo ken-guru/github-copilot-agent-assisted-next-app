@@ -219,5 +219,58 @@
   
   .timeGap {
     min-height: 1.5rem; /* Smaller for mobile */
+    font-size: 0.6875rem; /* Slightly smaller font for mobile */
+  }
+  
+  .timelineRuler {
+    width: 50px; /* Narrower ruler on mobile */
+    padding: var(--space-md) 0; /* Adjust padding for mobile */
+  }
+  
+  .timeMarker {
+    padding: var(--space-xs) var(--space-sm); /* Smaller padding on mobile */
+    font-size: 0.75rem; /* Smaller font size for mobile */
+    height: 20px; /* Slightly smaller height */
+  }
+  
+  .entryHeader {
+    gap: var(--space-sm); /* Reduced gap on mobile */
+    flex-direction: column; /* Stack name and time vertically on mobile */
+    align-items: flex-start; /* Align to start for vertical layout */
+  }
+  
+  .timeInfo {
+    align-self: flex-end; /* Align time to the right when stacked */
+    margin-top: var(--space-xs); /* Add small margin when stacked */
+  }
+  
+  .activityName {
+    line-height: 1.3; /* Improve readability on mobile */
+  }
+}
+
+@media (max-width: 576px) {
+  .timelineContainer {
+    min-height: 350px; /* Smaller minimum height on very small screens */
+  }
+  
+  .timelineRuler {
+    width: 40px; /* Even narrower on very small screens */
+  }
+  
+  .timeMarker {
+    padding: var(--space-xs) var(--space-xs); /* Minimal padding on very small screens */
+    font-size: 0.6875rem; /* Even smaller font */
+    height: 18px; /* Smaller height */
+  }
+  
+  .timelineEntry {
+    padding: var(--space-xs); /* Minimal padding on very small screens */
+    min-height: 2rem; /* Smaller minimum height */
+  }
+  
+  .timeGap {
+    min-height: 1rem; /* Smaller gaps on very small screens */
+    font-size: 0.625rem; /* Smaller font */
   }
 }

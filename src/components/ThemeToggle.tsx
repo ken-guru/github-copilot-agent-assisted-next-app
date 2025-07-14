@@ -11,14 +11,35 @@ export default function ThemeToggle() {
   // Initialize theme from localStorage or system preference
   useEffect(() => {
     setMounted(true);
+    
+    // Get the theme that was set by the inline script during page load
+    const currentTheme = document.documentElement.getAttribute('data-theme');
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
+    
+    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
       setTheme(savedTheme);
-      applyTheme(savedTheme);
+      // Only apply if it differs from what's already set
+      if (savedTheme !== 'system') {
+        const expectedTheme = savedTheme;
+        if (currentTheme !== expectedTheme) {
+          applyTheme(savedTheme);
+        }
+      } else {
+        // For system theme, apply based on current system preference
+        const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const systemTheme = darkModePreferred ? 'dark' : 'light';
+        if (currentTheme !== systemTheme) {
+          applyTheme('system');
+        }
+      }
     } else {
-      // Apply system preference on initial load
+      // No saved theme, use system preference
       const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      applyTheme(darkModePreferred ? 'dark' : 'light');
+      const systemTheme = darkModePreferred ? 'dark' : 'light';
+      setTheme('system');
+      if (currentTheme !== systemTheme) {
+        applyTheme('system');
+      }
     }
   }, []);
 
@@ -42,19 +63,25 @@ export default function ThemeToggle() {
     const isDark = newTheme === 'dark' || 
       (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-    // Apply appropriate classes for different styling mechanisms
-    if (isDark) {
-      root.classList.add('dark-mode');
-      root.classList.add('dark'); // For styles/globals.css
-      root.classList.remove('light-mode');
-      root.setAttribute('data-theme', 'dark'); // For ThemeContext
-      root.setAttribute('data-bs-theme', 'dark'); // For Bootstrap dark mode
-    } else {
-      root.classList.add('light-mode');
-      root.classList.remove('dark-mode');
-      root.classList.remove('dark');
-      root.setAttribute('data-theme', 'light'); // For ThemeContext
-      root.setAttribute('data-bs-theme', 'light'); // For Bootstrap light mode
+    const currentDataTheme = root.getAttribute('data-theme');
+    const targetTheme = isDark ? 'dark' : 'light';
+    
+    // Only apply changes if the target theme is different from current
+    if (currentDataTheme !== targetTheme) {
+      // Apply appropriate classes for different styling mechanisms
+      if (isDark) {
+        root.classList.add('dark-mode');
+        root.classList.add('dark'); // For styles/globals.css
+        root.classList.remove('light-mode');
+        root.setAttribute('data-theme', 'dark'); // For ThemeContext
+        root.setAttribute('data-bs-theme', 'dark'); // For Bootstrap dark mode
+      } else {
+        root.classList.add('light-mode');
+        root.classList.remove('dark-mode');
+        root.classList.remove('dark');
+        root.setAttribute('data-theme', 'light'); // For ThemeContext
+        root.setAttribute('data-bs-theme', 'light'); // For Bootstrap light mode
+      }
     }
 
     // Save preference to localStorage unless it's system default
