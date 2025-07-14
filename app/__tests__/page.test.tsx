@@ -2,9 +2,9 @@
 import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Home from '../page';
-import resetService, { DialogCallback } from '../../../lib/utils/resetService';
+import resetService, { DialogCallback } from '../../lib/utils/resetService';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
-import { ConfirmationDialogProps, ConfirmationDialogRef } from '../../../components/ConfirmationDialog';
+import { ConfirmationDialogProps, ConfirmationDialogRef } from '../../components/ConfirmationDialog';
 import styles from '../page.module.css';
 
 // Create a helper function to safely check CSS classes that might be undefined
@@ -22,7 +22,7 @@ let mockDialogProps = {
 };
 
 // Mock the ConfirmationDialog component
-jest.mock('../../../components/ConfirmationDialog', () => {
+jest.mock('../../components/ConfirmationDialog', () => {
   const ForwardRefComponent = jest.fn().mockImplementation(
     ({ message, onConfirm, onCancel }, ref) => {
       // Store the props for testing
@@ -63,7 +63,7 @@ interface MockResetService {
 }
 
 // Mock resetService
-jest.mock('../../../lib/utils/resetService', () => {
+jest.mock('../../lib/utils/resetService', () => {
   const mockService: Partial<MockResetService> = {
     reset: jest.fn().mockResolvedValue(true),
     registerResetCallback: jest.fn().mockImplementation((callback) => {
@@ -108,11 +108,11 @@ const mockUseActivityState = jest.fn().mockImplementation(() => ({
   resetActivities: mockResetActivities,
 }));
 
-jest.mock('../../hooks/useActivityState', () => ({
+jest.mock('../../src/hooks/useActivityState', () => ({
   useActivityState: () => mockUseActivityState(),
 }));
 
-jest.mock('../../hooks/useTimerState', () => ({
+jest.mock('../../src/hooks/useTimerState', () => ({
   useTimerState: () => ({
     elapsedTime: 0,
     isTimeUp: false,
@@ -189,7 +189,7 @@ describe('Home Page', () => {
       handleActivityRemoval: jest.fn(),
       resetActivities: mockResetActivities,
     }));
-    jest.mock('../../../hooks/use-timer-state', () => ({
+jest.mock('../../src/hooks/useTimerState', () => ({
       useTimerState: () => ({
         elapsedTime: 0,
         isTimeUp: false,
@@ -233,7 +233,7 @@ describe('Home Page', () => {
       // Start the dialog callback process in an act block
       await act(async () => {
         // The dialog callback returns a promise that resolves when user confirms/cancels
-        dialogCallback('Test message').then(result => {
+        dialogCallback('Test message').then((result: boolean) => {
           resolveCallback(result);
         });
       });

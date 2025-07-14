@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
-import SplashScreen from '@/app/_components/splash/SplashScreen';
+import SplashScreen from './SplashScreen';
 
 // Mock the loading context
 const mockUseLoading = jest.fn().mockReturnValue({
