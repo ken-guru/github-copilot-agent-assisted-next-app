@@ -1,4 +1,4 @@
-import { TimelineEntry } from '../../../src/types/index';
+import { TimelineEntry } from '@hooks/use-timeline-entries';
 
 // Helper function to mimic idle time calculation logic from Summary component
 function calculateIdleTime(entries: TimelineEntry[]): number {

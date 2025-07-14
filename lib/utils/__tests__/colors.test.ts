@@ -1,13 +1,13 @@
-import { validateThemeColors } from '../colors';
+import { checkThemeColors } from '../colors';
 
-// Mock the isDarkMode function directly
+// Mock the checkThemeColors function directly
 jest.mock('../colors', () => {
   // Get the original module
   const originalModule = jest.requireActual('../colors');
   
   return {
     ...originalModule,
-    validateThemeColors: jest.fn().mockImplementation(() => {
+    checkThemeColors: jest.fn().mockImplementation(() => {
       // This mock implementation will call the console methods in development
       // but do nothing in production
       if (process.env.NODE_ENV === 'production') {
@@ -22,7 +22,7 @@ jest.mock('../colors', () => {
   };
 });
 
-describe('validateThemeColors', () => {
+describe('checkThemeColors', () => {
   // Save and restore console methods
   const originalConsoleGroup = console.group;
   const originalConsoleLog = console.log;
@@ -63,11 +63,10 @@ describe('validateThemeColors', () => {
     
     // Use jest.replaceProperty instead of direct assignment
     jest.replaceProperty(process.env, 'NODE_ENV', 'production');
-    
-    // Run validation
-    validateThemeColors();
-    
-    // Check that no console methods were called
+     // Run validation
+    checkThemeColors();
+
+    // Validate that no console methods were called
     expect(console.group).not.toHaveBeenCalled();
     expect(console.log).not.toHaveBeenCalled();
     expect(console.groupEnd).not.toHaveBeenCalled();
@@ -83,10 +82,9 @@ describe('validateThemeColors', () => {
     
     // Use jest.replaceProperty instead of direct assignment
     jest.replaceProperty(process.env, 'NODE_ENV', 'development');
-    
-    // Run validation
-    validateThemeColors();
-    
+     // Run validation
+    checkThemeColors();
+
     // Check that console methods were called appropriately
     expect(console.group).toHaveBeenCalled();
     expect(console.log).toHaveBeenCalled();

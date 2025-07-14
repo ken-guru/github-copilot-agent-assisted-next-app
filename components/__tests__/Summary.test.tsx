@@ -1,6 +1,6 @@
 import { render, screen, cleanup } from '@testing-library/react';
 import Summary from '../Summary';
-import { TimelineEntry } from '@/types';
+import { TimelineEntry } from '@hooks/use-timeline-entries';
 
 // Mock TimelineEntry data
 const createMockTimelineEntries = (): TimelineEntry[] => [

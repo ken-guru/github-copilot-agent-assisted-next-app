@@ -34,7 +34,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./src/*"
+        "./*"
       ],
       "@components/*": [
         "./components/*"
@@ -47,13 +47,18 @@
       ],
       "@contexts/*": [
         "./contexts/*"
+      ],
+      "@app/*": [
+        "./app/*"
+      ],
+      "@types": [
+        "./types/index"
       ]
     },
-    "types": ["node", "jest", "@testing-library/jest-dom", "cypress"]
+    "types": ["node", "jest", "@testing-library/jest-dom"]
   },
   "include": [
     "next-env.d.ts",
-    "src/types/jest.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
@@ -62,6 +67,11 @@
     "node_modules",
     "cypress/e2e/**/*.ts",
     "**/*.cy.ts",
-    "**/*.cy.tsx"
+    "**/*.cy.tsx",
+    "src/types/jest.d.ts",
+    "**/__tests__/**/*.ts",
+    "**/__tests__/**/*.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ]
 }

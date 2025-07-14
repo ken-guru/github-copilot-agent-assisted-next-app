@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ActivityButton from '../../components/ActivityButton';
 import { Activity } from '../../components/ActivityManager';
-import { TimelineEntry } from '@/types';
+import { TimelineEntry } from '@hooks/use-timeline-entries';
 
 // Mock formatTime utility
 jest.mock('@/utils/timeUtils', () => ({

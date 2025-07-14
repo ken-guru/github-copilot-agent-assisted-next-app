@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "jest", "@testing-library/jest-dom"]
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/types/jest.d.ts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/__tests__/**/*.ts",
+    "**/__tests__/**/*.tsx",
+    "__tests__/**/*.ts",
+    "__tests__/**/*.tsx",
+    "jest.setup.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "cypress/**/*",
+    "**/*.cy.ts",
+    "**/*.cy.tsx",
+    "cypress.config.ts"
+  ]
+}

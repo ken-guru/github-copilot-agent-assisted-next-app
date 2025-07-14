@@ -18,7 +18,7 @@ import TimeSetup from '../TimeSetup';
 // ColorSet is imported for types that use it indirectly
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ColorSet } from '../../lib/utils/colors';
-import type { TimelineEntry } from '../../src/types/index';
+import type { TimelineEntry } from '@hooks/use-timeline-entries';
 import type { Activity } from '../ActivityManager';
 
 describe('Component Props Interface Validation', () => {

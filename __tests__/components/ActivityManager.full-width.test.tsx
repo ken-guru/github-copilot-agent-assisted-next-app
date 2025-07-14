@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ActivityManager from '../../components/ActivityManager';
-import { TimelineEntry } from '../../src/types/index';
+import { TimelineEntry } from '@hooks/use-timeline-entries';
 
 // Mock the ActivityButton component
 jest.mock('@/components/ActivityButton', () => {
