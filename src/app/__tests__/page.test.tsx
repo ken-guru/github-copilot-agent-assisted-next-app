@@ -2,9 +2,9 @@
 import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Home from '../page';
-import resetService, { DialogCallback } from '@/utils/resetService';
+import resetService, { DialogCallback } from '../../../lib/utils/resetService';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
-import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
+import { ConfirmationDialogProps, ConfirmationDialogRef } from '../../../components/ConfirmationDialog';
 import styles from '../page.module.css';
 
 // Create a helper function to safely check CSS classes that might be undefined
@@ -22,7 +22,7 @@ let mockDialogProps = {
 };
 
 // Mock the ConfirmationDialog component
-jest.mock('@/components/ConfirmationDialog', () => {
+jest.mock('../../../components/ConfirmationDialog', () => {
   const ForwardRefComponent = jest.fn().mockImplementation(
     ({ message, onConfirm, onCancel }, ref) => {
       // Store the props for testing
@@ -63,7 +63,7 @@ interface MockResetService {
 }
 
 // Mock resetService
-jest.mock('@/utils/resetService', () => {
+jest.mock('../../../lib/utils/resetService', () => {
   const mockService: Partial<MockResetService> = {
     reset: jest.fn().mockResolvedValue(true),
     registerResetCallback: jest.fn().mockImplementation((callback) => {
@@ -108,11 +108,11 @@ const mockUseActivityState = jest.fn().mockImplementation(() => ({
   resetActivities: mockResetActivities,
 }));
 
-jest.mock('@/hooks/useActivityState', () => ({
+jest.mock('../../hooks/useActivityState', () => ({
   useActivityState: () => mockUseActivityState(),
 }));
 
-jest.mock('@/hooks/useTimerState', () => ({
+jest.mock('../../hooks/useTimerState', () => ({
   useTimerState: () => ({
     elapsedTime: 0,
     isTimeUp: false,
@@ -179,14 +179,38 @@ describe('Home Page', () => {
   });
 
   it('should register reset callbacks and dialog callback with resetService', () => {
+    // Ensure hooks return fresh mocks before rendering
+    mockUseActivityState.mockImplementation(() => ({
+      currentActivity: null,
+      timelineEntries: [],
+      completedActivityIds: [],
+      allActivitiesCompleted: false,
+      handleActivitySelect: jest.fn(),
+      handleActivityRemoval: jest.fn(),
+      resetActivities: mockResetActivities,
+    }));
+    jest.mock('../../../hooks/use-timer-state', () => ({
+      useTimerState: () => ({
+        elapsedTime: 0,
+        isTimeUp: false,
+        timerActive: false,
+        startTimer: jest.fn(),
+        resetTimer: mockResetTimer,
+      }),
+    }));
+
     render(<Home />);
-    
+
     expect(mockedResetService.registerResetCallback).toHaveBeenCalled();
     expect(mockedResetService.setDialogCallback).toHaveBeenCalled();
-    
+
     // Simulate reset service execution of callbacks
     mockedResetService.executeCallbacks();
-    
+
+    // Debug output
+    // console.log('mockResetActivities calls:', mockResetActivities.mock.calls.length);
+    // console.log('mockResetTimer calls:', mockResetTimer.mock.calls.length);
+
     // Check that reset functions were called through callbacks
     expect(mockResetActivities).toHaveBeenCalled();
     expect(mockResetTimer).toHaveBeenCalled();

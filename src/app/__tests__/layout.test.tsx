@@ -22,7 +22,7 @@ jest.mock('next/script', () => {
 });
 
 // Mock LayoutClient component
-jest.mock('../../components/LayoutClient', () => ({
+jest.mock('../../../components/LayoutClient', () => ({
   LayoutClient: ({ children }: { children: React.ReactNode }) => <div data-testid="layout-client">{children}</div>,
 }));
 

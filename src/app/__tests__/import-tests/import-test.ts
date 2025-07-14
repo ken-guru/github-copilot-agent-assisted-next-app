@@ -1,4 +1,4 @@
-import TimeSetup from '@/components/TimeSetup';
+import TimeSetup from '../../../../components/TimeSetup';
 
 describe('Import Tests', () => {
   test('TimeSetup component can be imported', () => {
