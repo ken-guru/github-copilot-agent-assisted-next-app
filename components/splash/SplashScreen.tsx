@@ -1,160 +1,67 @@
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useLoading } from '../../contexts/LoadingContext';
+import React, { useState, useEffect } from 'react';
+import { useLoading } from '@contexts/loading';
 import styles from './SplashScreen.module.css';
 
 interface SplashScreenProps {
   minimumDisplayTime?: number;
+  testMode?: boolean; // Add for testing purposes
 }
 
-// Helper function to detect dark mode based on system preference and localStorage
-// Safe to use on both client and server
-const isDarkTheme = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  
-  try {
-    // First check for localStorage theme setting (highest priority)
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      return savedTheme === 'dark';
-    }
-    
-    // Then check for system preference
-    return window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-  } catch {
-    // Fallback in case of errors (e.g., localStorage blocked)
-    return false;
-  }
-};
-
-// Create a script that will run as soon as possible during page load
-// This needs to be in a string so it executes before React hydration
-const earlyThemeScript = `
-  (function() {
-    try {
-      var isDark = false;
-      
-      // Check localStorage first
-      var savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        isDark = savedTheme === 'dark';
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        // Then try system preference
-        isDark = true;
-      }
-      
-      // Apply theme class immediately
-      if (isDark) {
-        document.documentElement.classList.add('dark-mode');
-        document.documentElement.classList.remove('light-mode');
-      } else {
-        document.documentElement.classList.add('light-mode');
-        document.documentElement.classList.remove('dark-mode');
-      }
-      
-      // Also apply to document body background to prevent any white flash
-      document.body.style.backgroundColor = isDark ? 
-        'var(--bg-primary-dark, #121212)' : 
-        'var(--bg-primary, #ffffff)';
-    } catch(e) {
-      // Silently fail
-    }
-  })();
-`;
-
-// Try to apply theme immediately during module initialization
-// This helps with subsequent navigations in the SPA
-if (typeof document !== 'undefined') {
-  try {
-    if (isDarkTheme()) {
-      document.documentElement.classList.add('dark-mode');
-      document.documentElement.classList.remove('light-mode');
-    } else {
-      document.documentElement.classList.add('light-mode');
-      document.documentElement.classList.remove('dark-mode');
-    }
-  } catch {
-    // Silently fail
-  }
-}
-
-export const SplashScreen = ({ 
-  minimumDisplayTime = 1000 
-}: SplashScreenProps) => {
+export const SplashScreen: React.FC<SplashScreenProps> = ({ 
+  minimumDisplayTime = 1000,
+  testMode = false
+}) => {
   const { isLoading } = useLoading();
-  const [shouldDisplay, setShouldDisplay] = useState(true);
-  const [displayStartTime] = useState(Date.now());
-  const [isDarkMode] = useState(isDarkTheme());
-  
-  // Inject the early theme script on first render
+  const [shouldShow, setShouldShow] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
+
   useEffect(() => {
-    // Only run once on initial mount
-    const script = document.createElement('script');
-    script.innerHTML = earlyThemeScript;
-    document.head.appendChild(script);
-    
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
-  }, []);
-  
-  useEffect(() => {
-    if (!isLoading) {
-      const currentTime = Date.now();
-      const elapsedTime = currentTime - displayStartTime;
-      
-      if (elapsedTime >= minimumDisplayTime) {
-        // If minimum time has passed, hide splash screen immediately
-        setShouldDisplay(false);
-      } else {
-        // Otherwise, wait for the remaining time
-        const remainingTime = minimumDisplayTime - elapsedTime;
-        const timer = setTimeout(() => {
-          setShouldDisplay(false);
-        }, remainingTime);
+    let fadeTimer: NodeJS.Timeout;
+    const splashTimer: NodeJS.Timeout = setTimeout(() => {
+      // If the app is no longer loading, begin fade out
+      if (!isLoading) {
+        setFadeOut(true);
         
-        return () => clearTimeout(timer);
+        // After fade animation completes, fully hide the splash screen
+        // But skip actual DOM removal in test mode
+        if (!testMode) {
+          fadeTimer = setTimeout(() => {
+            setShouldShow(false);
+          }, 500); // Matching the CSS transition duration
+        }
+      }
+    }, minimumDisplayTime);
+
+    // If loading state changes after minimum time has elapsed
+    if (!isLoading && !fadeOut) {
+      setFadeOut(true);
+      
+      // Skip actual DOM removal in test mode
+      if (!testMode) {
+        fadeTimer = setTimeout(() => {
+          setShouldShow(false);
+        }, 500);
       }
     }
-  }, [isLoading, minimumDisplayTime, displayStartTime]);
-  
-  if (!shouldDisplay) {
+
+    return () => {
+      clearTimeout(splashTimer);
+      clearTimeout(fadeTimer);
+    };
+  }, [isLoading, minimumDisplayTime, fadeOut, testMode]);
+
+  if (!shouldShow) {
     return null;
   }
-  
+
   return (
-    <div 
-      className={styles.splashScreen} 
-      data-testid="splash-screen"
-      role="status"
-      aria-live="polite"
-      aria-label="Application is loading"
-      style={{
-        backgroundColor: isDarkMode ? 'var(--bg-primary-dark, #121212)' : 'var(--bg-primary, #ffffff)'
-      }}
-    >
-      <div className={styles.logoContainer}>
-        <Image
-          src="/images/splash/splash-logo.webp"
-          alt="Application logo"
-          width={250}
-          height={250}
-          priority
-          className={styles.logo}
-        />
-        
-        <div className={styles.loadingIndicator} data-testid="loading-indicator">
-          <div className={styles.loadingDot} style={{
-            backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
-          }}></div>
-          <div className={styles.loadingDot} style={{
-            backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
-          }}></div>
-          <div className={styles.loadingDot} style={{
-            backgroundColor: isDarkMode ? 'var(--accent-color-dark, #30a9de)' : 'var(--accent-color, #0070f3)'
-          }}></div>
+    <div className={`${styles.splashScreen} ${fadeOut ? styles.fadeOut : ''}`} data-testid="splash-screen">
+      <div className={styles.content}>
+        <h1 className={styles.title}>Mr. Timely</h1>
+        <div className={styles.loadingIndicator}>
+          <div className={styles.dot}></div>
+          <div className={styles.dot}></div>
+          <div className={styles.dot}></div>
         </div>
       </div>
     </div>
