@@ -19,24 +19,24 @@ const customJestConfig = {
   ],
   moduleNameMapper: {
     // Handle module aliases
-    '^@/components/(.*)$': '<rootDir>/src/components/$1',
-    '^@/pages/(.*)$': '<rootDir>/src/pages/$1',
-    '^@/app/(.*)$': '<rootDir>/src/app/$1',
-    '^@/hooks/(.*)$': '<rootDir>/src/hooks/$1',
-    '^@/contexts/(.*)$': '<rootDir>/src/contexts/$1',
-    '^@/utils/(.*)$': '<rootDir>/src/utils/$1',
-    '^@/lib/(.*)$': '<rootDir>/src/lib/$1',
-    '^@/styles/(.*)$': '<rootDir>/src/styles/$1',
+    '^@/components/(.*)$': '<rootDir>/components/$1',
+    '^@/pages/(.*)$': '<rootDir>/pages/$1',
+    '^@/app/(.*)$': '<rootDir>/app/$1',
+    '^@/hooks/(.*)$': '<rootDir>/hooks/$1',
+    '^@/contexts/(.*)$': '<rootDir>/contexts/$1',
+    '^@/utils/(.*)$': '<rootDir>/lib/utils/$1',
+    '^@/lib/(.*)$': '<rootDir>/lib/$1',
+    '^@/styles/(.*)$': '<rootDir>/styles/$1',
     '^@/public/(.*)$': '<rootDir>/public/$1',
-    '^@/test/(.*)$': '<rootDir>/test/$1',
+    '^@/test/(.*)$': '<rootDir>/__tests__/$1',
     // New module aliases for restructuring
     '^@contexts/(.*)$': '<rootDir>/contexts/$1',
     '^@components/(.*)$': '<rootDir>/components/$1',
     '^@lib/(.*)$': '<rootDir>/lib/$1',
     '^@hooks/(.*)$': '<rootDir>/hooks/$1',
     // Handle relative imports from src/app/page.tsx
-    '\\.\\./contexts/LoadingContext': '<rootDir>/src/contexts/LoadingContext',
-    '\\.\\./components/splash/SplashScreen': '<rootDir>/src/components/splash/SplashScreen',
+    '\\.\\./contexts/LoadingContext': '<rootDir>/contexts/LoadingContext',
+    '\\.\\./components/splash/SplashScreen': '<rootDir>/components/splash/SplashScreen',
     // Handle CSS, SCSS, SVG imports
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js'
@@ -50,7 +50,12 @@ const customJestConfig = {
     '^.+\\.module\\.(css|sass|scss)$'
   ],
   collectCoverageFrom: [
-    'src/**/*.{js,jsx,ts,tsx}',
+    'app/**/*.{js,jsx,ts,tsx}',
+    'components/**/*.{js,jsx,ts,tsx}',
+    'hooks/**/*.{js,jsx,ts,tsx}',
+    'lib/**/*.{js,jsx,ts,tsx}',
+    'contexts/**/*.{js,jsx,ts,tsx}',
+    'styles/**/*.{js,jsx,ts,tsx}',
     '!**/*.d.ts',
     '!**/node_modules/**',
     '!<rootDir>/out/**',
