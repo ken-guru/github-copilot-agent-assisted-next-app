@@ -24,18 +24,27 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Add a slight delay to avoid hydration mismatch
     // This ensures the component is fully hydrated before we make any DOM changes
     const timer = setTimeout(() => {
+      // Check what's already been applied by the inline script or ThemeToggle
+      const currentTheme = document.documentElement.getAttribute('data-theme') as Theme;
       const savedTheme = localStorage.getItem('theme') as Theme;
+      
       if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
         setTheme(savedTheme);
-        applyThemeToDOM(savedTheme);
+        // Only apply if different from what's already set
+        if (currentTheme !== savedTheme) {
+          applyThemeToDOM(savedTheme);
+        }
       } else {
         // Check for system preference
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const initialTheme = prefersDark ? 'dark' : 'light';
         setTheme(initialTheme);
-        applyThemeToDOM(initialTheme);
+        // Only apply if different from what's already set
+        if (currentTheme !== initialTheme) {
+          applyThemeToDOM(initialTheme);
+        }
       }
-    }, 0);
+    }, 50); // Slightly longer delay to let ThemeToggle initialize first
     
     return () => clearTimeout(timer);
   }, []);

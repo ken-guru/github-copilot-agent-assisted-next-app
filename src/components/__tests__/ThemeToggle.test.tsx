@@ -92,7 +92,12 @@ describe('ThemeToggle', () => {
     expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
   });
 
-  it('respects system preference when no theme is saved', () => {
+  it('respects system preference when no theme is saved', async () => {
+    // Reset document to default light state
+    document.documentElement.className = 'light-mode';
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.setAttribute('data-bs-theme', 'light');
+    
     // Mock system dark mode preference
     window.matchMedia = jest.fn().mockImplementation(query => ({
       matches: query === '(prefers-color-scheme: dark)',
@@ -107,6 +112,8 @@ describe('ThemeToggle', () => {
 
     render(<ThemeToggle />);
     
+    // Wait for the component to apply the theme (it's async now)
+    await new Promise(resolve => setTimeout(resolve, 10));
     expect(document.documentElement.classList.contains('dark-mode')).toBe(true);
   });
 

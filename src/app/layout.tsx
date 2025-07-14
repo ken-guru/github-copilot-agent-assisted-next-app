@@ -61,7 +61,7 @@ export default function RootLayout({
   const fontClasses = `${geistSans.variable} ${geistMono.variable}`;
   
   return (
-    <html lang="en" className="light-mode" data-theme="light">
+    <html lang="en" className="light-mode" data-theme="light" data-bs-theme="light">
       <head>
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -69,44 +69,50 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="manifest" href="/manifest.json" />
         
-        {/* Preload script to apply theme before first render to prevent flash */}
+        {/* Theme initialization script - runs before React hydration */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                // Don't run this script during SSR
+                // Don't run during SSR
                 if (typeof window === 'undefined' || typeof document === 'undefined') {
                   return;
                 }
 
                 try {
-                  // We need to set this consistently between server and client
-                  // to avoid hydration mismatches
-                  const savedTheme = typeof localStorage !== 'undefined' 
-                    ? localStorage.getItem('theme') 
-                    : null;
-                  
-                  const prefersDark = typeof window !== 'undefined' 
-                    && window.matchMedia 
-                    && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  
-                  const theme = savedTheme || (prefersDark ? 'dark' : 'light');
-                  
                   const root = document.documentElement;
                   
-                  // Only make changes if we need to switch from the default light theme
-                  // This prevents hydration mismatches by not modifying the DOM during initial render
-                  if (theme === 'dark' || (theme === 'system' && prefersDark)) {
-                    // Switch to dark theme
-                    root.classList.remove('light-mode');
-                    root.classList.add('dark-mode');
-                    root.classList.add('dark');
-                    root.setAttribute('data-theme', 'dark');
+                  // Get theme preference - check localStorage first, then system preference
+                  const savedTheme = localStorage.getItem('theme');
+                  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  
+                  // Determine effective theme
+                  let effectiveTheme = 'light'; // Default server value
+                  
+                  if (savedTheme === 'dark') {
+                    effectiveTheme = 'dark';
+                  } else if (savedTheme === 'light') {
+                    effectiveTheme = 'light';
+                  } else if (!savedTheme && prefersDark) {
+                    // No saved preference, use system preference
+                    effectiveTheme = 'dark';
                   }
-                  // For light theme, we don't need to do anything as it's the default
-                  // and already set in the server-rendered HTML
+                  
+                  // Apply theme to match what React components will set
+                  if (effectiveTheme === 'dark') {
+                    root.classList.remove('light-mode');
+                    root.classList.add('dark-mode', 'dark');
+                    root.setAttribute('data-theme', 'dark');
+                    root.setAttribute('data-bs-theme', 'dark');
+                  } else {
+                    // Ensure light theme classes are set (should already be from server)
+                    root.classList.add('light-mode');
+                    root.classList.remove('dark-mode', 'dark');
+                    root.setAttribute('data-theme', 'light');
+                    root.setAttribute('data-bs-theme', 'light');
+                  }
                 } catch (e) {
-                  console.error('Error applying theme:', e);
+                  console.error('Theme initialization error:', e);
                 }
               })();
             `
