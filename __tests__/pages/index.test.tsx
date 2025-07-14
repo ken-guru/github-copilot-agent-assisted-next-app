@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Home from '../../src/app/page';
+import Home from '../../app/page';
 
 // Mock components and hooks that would be used in the App Router Home page
 jest.mock('../../components/TimeSetup', () => {
