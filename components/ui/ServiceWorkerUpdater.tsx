@@ -10,13 +10,18 @@ interface ServiceWorkerUpdaterProps {
    * This should handle the service worker update process
    */
   onUpdate: () => void;
-  
+
   /**
    * Callback function triggered when the user dismisses the update notification
    * This should handle hiding the notification or setting a delay for the reminder
    * Optional - if not provided, the component will just hide the notification
    */
   onDismiss?: () => void;
+
+  /**
+   * Controls visibility of the notification UI (for test and integration purposes)
+   */
+  show?: boolean;
 }
 
 /**
@@ -27,7 +32,8 @@ interface ServiceWorkerUpdaterProps {
  */
 const ServiceWorkerUpdater: React.FC<ServiceWorkerUpdaterProps> = ({
   onUpdate,
-  onDismiss
+  onDismiss,
+  show
 }) => {
   const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
 
@@ -103,8 +109,8 @@ const ServiceWorkerUpdater: React.FC<ServiceWorkerUpdaterProps> = ({
     };
   }, []);
 
-  // Don't render if update is not available
-  if (!updateAvailable) {
+  // Don't render if update is not available and not forced to show
+  if (!updateAvailable && !show) {
     return null;
   }
 

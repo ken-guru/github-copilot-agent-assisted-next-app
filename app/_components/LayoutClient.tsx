@@ -9,19 +9,46 @@ interface LayoutClientProps {
 
 export function LayoutClient({ children }: LayoutClientProps) {
   const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
-  
+
   // Handle service worker updates
   useEffect(() => {
+    // Expose ServiceWorkerUpdaterAPI for Cypress tests immediately
+    if (typeof window !== 'undefined') {
+      window.ServiceWorkerUpdaterAPI = {
+        setUpdateAvailable: (value: boolean) => {
+          console.log('[ServiceWorkerUpdaterAPI] setUpdateAvailable called with:', value);
+          setUpdateAvailable(value);
+        }
+      };
+      console.log('[ServiceWorkerUpdaterAPI] API exposed on window');
+
+      // Listen for custom Cypress event fallback
+      const handleCypressUpdate = (event: CustomEvent) => {
+        console.log('[ServiceWorkerUpdaterAPI] Custom event received:', event.type, event.detail);
+        if (event.detail && event.detail.updateAvailable !== undefined) {
+          setUpdateAvailable(event.detail.updateAvailable);
+        } else {
+          setUpdateAvailable(true);
+        }
+      };
+      window.addEventListener('cypressServiceWorkerUpdate', handleCypressUpdate as EventListener);
+      window.addEventListener('serviceWorkerUpdateAvailable', handleCypressUpdate as EventListener);
+
+      // Clean up listeners on unmount
+      return () => {
+        window.removeEventListener('cypressServiceWorkerUpdate', handleCypressUpdate as EventListener);
+        window.removeEventListener('serviceWorkerUpdateAvailable', handleCypressUpdate as EventListener);
+      };
+    }
+
+    // Service worker update detection
     if ('serviceWorker' in navigator) {
-      // Listen for service worker updates
       navigator.serviceWorker.ready.then((registration) => {
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
-          
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // New content is available, show update prompt
                 setUpdateAvailable(true);
               }
             });
@@ -50,21 +77,17 @@ export function LayoutClient({ children }: LayoutClientProps) {
 
   return (
     <ThemeProvider>
-      {/* Service worker update notifications */}
-      {updateAvailable && (
-        <ServiceWorkerUpdater 
-          onUpdate={handleUpdate} 
-          onDismiss={() => setUpdateAvailable(false)}
-        />
-      )}
-      
+      {/* Service worker update notifications - always mounted, visibility controlled by prop */}
+      <ServiceWorkerUpdater 
+        onUpdate={handleUpdate} 
+        onDismiss={() => setUpdateAvailable(false)}
+        show={updateAvailable}
+      />
       {/* Main content */}
       <main className="app-container">
         {children}
       </main>
-      
       {/* Additional global components here */}
-      
       {/* Global scripts for performance monitoring, etc. */}
       <script 
         dangerouslySetInnerHTML={{ 

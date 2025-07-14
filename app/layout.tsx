@@ -5,8 +5,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css'; // Bootstrap Icons
 import "../styles/globals.css"; // Core theme variables and global utilities
 import "./globals.css"; // App-specific styles that use the theme variables
 import { Metadata, Viewport } from "next";
-// import { LayoutClient } from "../components/LayoutClient";
-// TODO: LayoutClient not found in project. If needed, implement or update import path.
+import { LayoutClient } from "./_components/LayoutClient";
 import Script from "next/script";
 
 // Font configuration
@@ -121,9 +120,6 @@ export default function RootLayout({
         />
       </head>
       <body className={fontClasses}>
-        {/* <LayoutClient> */}
-          {children}
-        {/* </LayoutClient> */}
         {/* Service worker registration script - moved here from useServiceWorker hook */}
         <Script
           id="register-service-worker"
@@ -144,6 +140,8 @@ export default function RootLayout({
             `
           }}
         />
+        {/* Mount client layout for notification UI and other client-side features */}
+        <LayoutClient>{children}</LayoutClient>
       </body>
     </html>
   );
