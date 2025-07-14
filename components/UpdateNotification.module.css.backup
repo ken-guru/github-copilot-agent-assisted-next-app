@@ -1,0 +1,63 @@
+.updateNotification {
+  position: fixed;
+  bottom: var(--space-md);
+  right: var(--space-md);
+  padding: var(--space-md);
+  background-color: var(--background-alt);
+  border-left: 4px solid var(--accent-color);
+  border-radius: var(--radius-card); /* Updated from hardcoded value to use semantic radius */
+  box-shadow: var(--shadow-dropdown); /* Updated from var(--shadow-medium) */
+  max-width: 350px;
+  animation: slideIn 0.3s ease-out;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  max-width: 90vw;
+  border: 1px solid var(--border);
+}
+
+.message {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dismissButton {
+  background: transparent;
+  border: none;
+  color: var(--foreground-muted);
+  padding: var(--space-xs);
+  cursor: pointer;
+  margin-left: var(--space-sm);
+  border-radius: var(--radius-button); /* Updated from var(--space-xs) to use semantic radius */
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dismissButton:hover {
+  color: var(--foreground);
+  background-color: var(--background-muted);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Add responsive styling for mobile devices */
+@media (width <= 768px) {
+  .updateNotification {
+    bottom: var(--space-xs);
+    right: var(--space-xs);
+    left: var(--space-xs);
+    max-width: calc(100vw - var(--space-md));
+  }
+}
