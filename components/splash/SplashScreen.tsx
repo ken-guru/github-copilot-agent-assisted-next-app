@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLoading } from '@contexts/loading';
+import { useLoading } from '../../contexts/LoadingContext';
 import styles from './SplashScreen.module.css';
 
 interface SplashScreenProps {
