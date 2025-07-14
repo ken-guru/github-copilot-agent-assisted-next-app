@@ -8,6 +8,8 @@ describe('Test Factory Utilities', () => {
       expect(entry).toEqual({
         id: 'test-entry-1',
         activityId: 'activity-1',
+        title: 'Test Activity',
+        description: 'Test activity description',
         activityName: 'Test Activity',
         startTime: 1000000,
         endTime: 1000000 + 3600000, // 1 hour duration
