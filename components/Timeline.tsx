@@ -4,10 +4,38 @@ import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '../lib/utils/timelineCalculations';
 import { formatTimeHuman } from '../lib/utils/time';
 import { isDarkMode, ColorSet, internalActivityColors } from '../lib/utils/colors';
-import { TimelineEntry } from '@/types';
+
+/**
+ * Extended timeline entry interface for Timeline component
+ */
+interface TimelineTimelineEntry {
+  id: string;
+  activityId: string;
+  activityName?: string;
+  startTime: number;
+  endTime?: number;
+  title: string;
+  description: string;
+  colors?: {
+    background?: string;
+    text?: string;
+    border?: string;
+  } | {
+    light?: {
+      background?: string;
+      text?: string;
+      border?: string;
+    };
+    dark?: {
+      background?: string;
+      text?: string;
+      border?: string;
+    };
+  };
+}
 
 interface TimelineProps {
-  entries: TimelineEntry[];
+  entries: TimelineTimelineEntry[];
   totalDuration: number;
   elapsedTime: number;
   isTimeUp?: boolean;
@@ -43,7 +71,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   );
   
   // Function to get the theme-appropriate color for an activity
-  const getThemeAppropriateColor = (colors?: TimelineEntry['colors']) => {
+  const getThemeAppropriateColor = (colors?: TimelineTimelineEntry['colors']) => {
     if (!colors) return undefined;
     
     // If we already have theme-specific colors, use those directly
@@ -243,7 +271,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     timeLeft: currentTimeLeft,
   });
   
-  const calculateEntryStyle = (item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number } | undefined) => {
+  const calculateEntryStyle = (item: { type: 'activity' | 'gap'; entry?: TimelineTimelineEntry; duration: number; height: number } | undefined) => {
     if (!item) {
       return {
         height: '0%',
@@ -413,7 +441,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                               className={`${styles.activityName} fw-medium`}
                               data-testid="timeline-activity-name"
                             >
-                              {item.entry!.activityName}
+                              {(item.entry as TimelineTimelineEntry)?.activityName || item.entry!.title}
                             </span>
                             <span className={`${styles.timeInfo} time-info small text-nowrap`}>
                               {formatTimeHuman(item.duration)}

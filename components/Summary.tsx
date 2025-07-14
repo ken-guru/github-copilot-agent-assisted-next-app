@@ -1,10 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Alert, Row, Col, ListGroup, Badge } from 'react-bootstrap';
-import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../lib/utils/colors';
 
+/**
+ * Extended timeline entry interface for Summary component
+ */
+interface SummaryTimelineEntry {
+  id: string;
+  activityId: string;
+  activityName?: string;
+  startTime: number;
+  endTime?: number;
+  title: string;
+  description: string;
+  colors?: {
+    background?: string;
+    text?: string;
+    border?: string;
+  } | {
+    light?: {
+      background?: string;
+      text?: string;
+      border?: string;
+    };
+    dark?: {
+      background?: string;
+      text?: string;
+      border?: string;
+    };
+  };
+}
+
 interface SummaryProps {
-  entries?: TimelineEntry[];
+  entries?: SummaryTimelineEntry[];
   totalDuration: number;
   elapsedTime: number;
   timerActive?: boolean;
@@ -26,7 +54,7 @@ export default function Summary({
   );
 
   // Function to get the theme-appropriate color for an activity
-  const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
+  const getThemeAppropriateColor = (colors: SummaryTimelineEntry['colors']) => {
     if (!colors) return undefined;
 
     // If we already have theme-specific colors, use those directly
@@ -262,8 +290,8 @@ export default function Summary({
   const calculateActivityTimes = () => {
     if (!entries || entries.length === 0) return [];
     
-    const activityTimes: { id: string; name: string; duration: number; colors?: TimelineEntry['colors'] }[] = [];
-    const activityMap = new Map<string, { duration: number; name: string; colors?: TimelineEntry['colors'] }>();
+    const activityTimes: { id: string; name: string; duration: number; colors?: SummaryTimelineEntry['colors'] }[] = [];
+    const activityMap = new Map<string, { duration: number; name: string; colors?: SummaryTimelineEntry['colors'] }>();
     const seenActivityIds = new Set<string>(); // Track order of first appearance
     
     // Sort entries by startTime to ensure chronological order

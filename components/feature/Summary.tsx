@@ -1,7 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Summary.module.css';
-import type { TimelineEntry } from '@/types';
 import { isDarkMode } from '@lib/utils/colors';
+
+/**
+ * Extended timeline entry interface for Summary component
+ */
+interface SummaryTimelineEntry {
+  id: string;
+  activityId: string;
+  activityName?: string;
+  startTime: number;
+  endTime?: number;
+  title: string;
+  description: string;
+  colors?: {
+    background?: string;
+    text?: string;
+    border?: string;
+  } | {
+    light?: {
+      background?: string;
+      text?: string;
+      border?: string;
+    };
+    dark?: {
+      background?: string;
+      text?: string;
+      border?: string;
+    };
+  };
+}
 
 /**
  * Props interface for the Summary component
@@ -10,7 +38,7 @@ interface SummaryProps {
   /**
    * Timeline entries to analyze and display in the summary
    */
-  entries?: TimelineEntry[];
+  entries?: SummaryTimelineEntry[];
   
   /**
    * Total planned duration in seconds
@@ -55,11 +83,24 @@ export default function Summary({
   );
 
   // Function to get the theme-appropriate color for an activity
-  const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
+  const getThemeAppropriateColor = (colors: SummaryTimelineEntry['colors']) => {
     if (!colors) return undefined;
     
-    // If colors is already in the format with background/text/border directly
-    if ('background' in colors && 'text' in colors && 'border' in colors) {
+    // Type guard for simple color object
+    const hasDirectColors = (obj: typeof colors): obj is { background?: string; text?: string; border?: string } => {
+      return obj !== null && typeof obj === 'object' && 
+             ('background' in obj || 'text' in obj || 'border' in obj) &&
+             !('light' in obj) && !('dark' in obj);
+    };
+    
+    // Type guard for theme-based colors
+    const hasThemeColors = (obj: typeof colors): obj is { light?: { background?: string; text?: string; border?: string }; dark?: { background?: string; text?: string; border?: string } } => {
+      return obj !== null && typeof obj === 'object' && 
+             ('light' in obj || 'dark' in obj);
+    };
+    
+    // If colors has direct background/text/border properties
+    if (hasDirectColors(colors)) {
       return {
         background: colors.background,
         text: colors.text,
@@ -68,9 +109,9 @@ export default function Summary({
     }
     
     // If colors has light/dark variants
-    if ('light' in colors && 'dark' in colors) {
+    if (hasThemeColors(colors)) {
       const themeColors = currentTheme === 'dark' ? colors.dark : colors.light;
-      if (themeColors) {
+      if (themeColors && typeof themeColors === 'object') {
         return {
           background: themeColors.background,
           text: themeColors.text,
@@ -230,8 +271,8 @@ export default function Summary({
   const calculateActivityTimes = () => {
     if (!entries || entries.length === 0) return [];
     
-    const activityTimes: { id: string; name: string; duration: number; colors?: TimelineEntry['colors'] }[] = [];
-    const activityMap = new Map<string, { duration: number; name: string; colors?: TimelineEntry['colors'] }>();
+    const activityTimes: { id: string; name: string; duration: number; colors?: SummaryTimelineEntry['colors'] }[] = [];
+    const activityMap = new Map<string, { duration: number; name: string; colors?: SummaryTimelineEntry['colors'] }>();
     const seenActivityIds = new Set<string>(); // Track order of first appearance
     
     // Sort entries by startTime to ensure chronological order
