@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { Activity } from '@/components/ActivityManager';
-import { getNextAvailableColorSet } from '@/utils/colors';
+import { Activity } from '../../components/ActivityManager';
+import { getNextAvailableColorSet } from '../../lib/utils/colors';
 import { TimelineEntry } from '@/types';
 
 export interface UseTimelineEntriesResult {

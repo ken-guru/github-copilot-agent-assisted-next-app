@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { formatTime } from '@/utils/timeUtils';
+import { formatTime } from '../../lib/utils/timeUtils';
 
 export function useTimeDisplay(totalDuration: number, elapsedTime: number, isActive: boolean) {
   const [displayTime, setDisplayTime] = useState('');

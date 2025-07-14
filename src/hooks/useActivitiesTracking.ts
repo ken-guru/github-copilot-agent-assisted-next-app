@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { ActivityStateMachine, ActivityState } from '@/utils/activityStateMachine';
+import { ActivityStateMachine, ActivityState } from '../../lib/utils/activityStateMachine';
 
 // Determine if we're in a test environment
 const isTestEnvironment = process && process.env && process.env.NODE_ENV === 'test';
