@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ActivityButton } from '@/components/ActivityButton';
-import { Activity } from '@/components/ActivityManager';
+import ActivityButton from '../../components/ActivityButton';
+import { Activity } from '../../components/ActivityManager';
 import { TimelineEntry } from '@/types';
 
 // Mock formatTime utility

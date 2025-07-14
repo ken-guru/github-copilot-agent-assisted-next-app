@@ -5,10 +5,10 @@ import fs from 'fs';
 import path from 'path';
 
 // Import App Router component for testing
-import AppRouterHome from '../../src/app/page';
+import AppRouterHome from '../../app/page';
 
 // Mock necessary hooks and components
-jest.mock('../../src/hooks/useActivityState', () => ({
+jest.mock('../../hooks/use-activity-state', () => ({
   useActivityState: () => ({
     currentActivity: null,
     timelineEntries: [],
@@ -30,13 +30,13 @@ jest.mock('../../src/hooks/useTimerState', () => ({
   })
 }));
 
-jest.mock('../../src/utils/serviceWorkerRegistration', () => ({
+jest.mock('../../lib/utils/serviceWorkerRegistration', () => ({
   registerServiceWorker: jest.fn(),
   setUpdateHandler: jest.fn()
 }));
 
 // Mock the App Router component
-jest.mock('../../src/app/page', () => {
+jest.mock('../../app/page', () => {
   return {
     __esModule: true,
     default: () => <div data-testid="app-router-component">Mr. Timely</div>
@@ -117,7 +117,7 @@ describe('Next.js Routing System', () => {
   });
 
   it('should verify routing structure exists and is valid', () => {
-    const appRouterPagePath = path.join(process.cwd(), 'src/app/page.tsx');
+    const appRouterPagePath = path.join(process.cwd(), 'app/page.tsx');
     const pagesRouterIndexPath = path.join(process.cwd(), 'pages/index.tsx');
     
     const appRouterExists = fs.existsSync(appRouterPagePath);
