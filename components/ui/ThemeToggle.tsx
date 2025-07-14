@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import styles from './ThemeToggle.module.css';
-import { validateThemeColors } from '@lib/utils/colors';  // Updated import path
+import { checkThemeColors } from '@lib/utils/colors';  // Updated import path
 
 /**
  * Props for the ThemeToggle component
@@ -56,7 +56,7 @@ export default function ThemeToggle({}: ThemeToggleProps) {
    */
   function applyTheme(newTheme: string) {
     const root = document.documentElement;
-    validateThemeColors(); // This function does not return a value, so do not test for truthiness
+    checkThemeColors(); // This function does not return a value, so do not test for truthiness
     
     // Remove existing theme classes
     root.classList.remove('light-mode', 'dark-mode', 'system-mode');

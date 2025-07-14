@@ -460,7 +460,7 @@ export function validateContrast(
 }
 
 // Validate theme colors
-export function validateThemeColors(): void {
+export function checkThemeColors(): void {
   // Skip all validation and logging in production
   if (process.env.NODE_ENV === 'production') {
     return;
