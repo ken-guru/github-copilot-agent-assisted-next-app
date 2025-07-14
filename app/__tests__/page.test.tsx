@@ -108,11 +108,11 @@ const mockUseActivityState = jest.fn().mockImplementation(() => ({
   resetActivities: mockResetActivities,
 }));
 
-jest.mock('../../src/hooks/useActivityState', () => ({
+jest.mock('../../hooks/use-activity-state', () => ({
   useActivityState: () => mockUseActivityState(),
 }));
 
-jest.mock('../../src/hooks/useTimerState', () => ({
+jest.mock('../../hooks/use-timer-state', () => ({
   useTimerState: () => ({
     elapsedTime: 0,
     isTimeUp: false,
@@ -189,7 +189,7 @@ describe('Home Page', () => {
       handleActivityRemoval: jest.fn(),
       resetActivities: mockResetActivities,
     }));
-jest.mock('../../src/hooks/useTimerState', () => ({
+jest.mock('../../hooks/use-timer-state', () => ({
       useTimerState: () => ({
         elapsedTime: 0,
         isTimeUp: false,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, Row, Col, Alert } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../lib/utils/colors';
-import { TimelineEntry } from '@/types';
+import { TimelineEntry } from '@hooks/use-timeline-entries';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './ActivityForm';
 

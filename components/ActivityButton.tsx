@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Card, Badge } from 'react-bootstrap';
 import { Activity } from './ActivityManager';
-import { TimelineEntry } from '@/types';
+import { TimelineEntry } from '@hooks/use-timeline-entries';
 import { formatTime } from '../lib/utils/timeUtils';
 
 interface ActivityButtonProps {

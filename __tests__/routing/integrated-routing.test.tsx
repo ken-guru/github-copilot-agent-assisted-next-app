@@ -20,7 +20,7 @@ jest.mock('../../hooks/use-activity-state', () => ({
   })
 }));
 
-jest.mock('../../src/hooks/useTimerState', () => ({
+jest.mock('../../hooks/use-timer-state', () => ({
   useTimerState: () => ({
     elapsedTime: 0,
     isTimeUp: false,

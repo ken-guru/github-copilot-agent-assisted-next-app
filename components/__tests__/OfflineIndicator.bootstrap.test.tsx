@@ -3,12 +3,12 @@ import { render, screen } from '@testing-library/react';
 import { OfflineIndicator } from '../OfflineIndicator';
 
 // Mock the useOnlineStatus hook
-jest.mock('../../src/hooks/useOnlineStatus', () => ({
+jest.mock('../../hooks/use-online-status', () => ({
   useOnlineStatus: jest.fn()
 }));
 
 // Import the mocked hook
-import { useOnlineStatus } from '../../src/hooks/useOnlineStatus';
+import { useOnlineStatus } from '../../hooks/use-online-status';
 
 describe('OfflineIndicator Bootstrap Integration', () => {
   // Cast mocked function to proper type

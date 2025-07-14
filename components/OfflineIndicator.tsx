@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Alert } from 'react-bootstrap';
-import { useOnlineStatus } from '@/hooks/useOnlineStatus';
+import { useOnlineStatus } from '@hooks/use-online-status';
 
 /**
  * Component that displays an offline indicator when the user loses network connectivity

@@ -1,4 +1,4 @@
-import { TimelineEntry } from '@/types';
+import { TimelineEntry } from '@hooks/use-timeline-entries';
 
 interface CalculateTimeSpansProps {
   entries: TimelineEntry[];

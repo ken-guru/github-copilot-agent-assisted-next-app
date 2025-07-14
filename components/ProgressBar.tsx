@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ProgressBar as BootstrapProgressBar } from 'react-bootstrap';
-import { TimelineEntry } from '@/types';
+import { TimelineEntry } from '@hooks/use-timeline-entries';
 import { formatTimeHuman } from '../lib/utils/time';
 
 interface ProgressBarProps {

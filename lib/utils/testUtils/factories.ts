@@ -5,7 +5,19 @@
  * for various components and tests throughout the application.
  */
 
-import { TimelineEntry } from '../../../src/types/index';
+import { TimelineEntry } from '@hooks/use-timeline-entries';
+
+/**
+ * Extended timeline entry for testing that includes additional properties
+ */
+interface TestTimelineEntry extends TimelineEntry {
+  activityName?: string;
+  colors?: {
+    background?: string;
+    text?: string;
+    border?: string;
+  };
+}
 
 /**
  * Factory function to create timeline entries for testing
@@ -13,10 +25,12 @@ import { TimelineEntry } from '../../../src/types/index';
  * @param overrides - Optional properties to override defaults
  * @returns A timeline entry object for testing
  */
-export function createTimelineEntry(overrides?: Partial<TimelineEntry>): TimelineEntry {
+export function createTimelineEntry(overrides?: Partial<TestTimelineEntry>): TestTimelineEntry {
   return {
     id: 'test-entry-1',
     activityId: 'activity-1',
+    title: 'Test Activity',
+    description: 'Test activity description',
     activityName: 'Test Activity',
     startTime: 1000000, // arbitrary start timestamp
     endTime: 1000000 + 3600000, // 1 hour duration

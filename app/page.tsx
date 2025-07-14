@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { LoadingProvider, useLoading } from '@contexts/loading';
 import { SplashScreen } from '../components/splash/SplashScreen';
 import TimeSetup from '../components/TimeSetup';
@@ -10,8 +10,9 @@ import ProgressBar from '../components/ProgressBar';
 import ThemeToggle from '../components/ThemeToggle';
 import { OfflineIndicator } from '../components/OfflineIndicator';
 import ConfirmationDialog, { ConfirmationDialogRef } from '../components/ConfirmationDialog';
-import { useActivityState } from '@/hooks/useActivityState';
-import { useTimerState } from '@/hooks/useTimerState';
+import { useActivityState } from '@hooks/use-activity-state';
+import { useTimerState } from '@hooks/use-timer-state';
+import { Activity } from '../components/feature/ActivityManager';
 import resetService from '../lib/utils/resetService';
 import styles from './page.module.css';
 
@@ -27,8 +28,8 @@ function AppContent() {
     timelineEntries,
     completedActivityIds,
     allActivitiesCompleted,
-    handleActivitySelect,
-    handleActivityRemoval,
+    selectActivity,
+    deleteActivity,
     resetActivities,
   } = useActivityState({
     onTimerStart: () => {
@@ -36,6 +37,17 @@ function AppContent() {
     }
   });
   
+  // Wrapper function to handle ActivityManager's interface
+  const handleActivitySelect = useCallback((activity: Activity | null, justAdd?: boolean) => {
+    if (activity && !justAdd) {
+      selectActivity(activity);
+    }
+  }, [selectActivity]);
+  
+  const handleActivityRemoval = useCallback((activityId: string) => {
+    deleteActivity(activityId);
+  }, [deleteActivity]);
+
   const {
     elapsedTime,
     isTimeUp,
@@ -129,7 +141,7 @@ function AppContent() {
   
   const processedEntries = timelineEntries.map(entry => ({
     ...entry,
-    endTime: entry.endTime === undefined ? null : entry.endTime
+    endTime: entry.endTime === undefined ? undefined : entry.endTime
   }));
   
   return (
@@ -185,8 +197,8 @@ function AppContent() {
           
           {appState === 'activity' && (
             <div className={styles.activityGrid}>
-              <ActivityManager 
-                onActivitySelect={handleActivitySelect} 
+              <ActivityManager
+                onActivitySelect={handleActivitySelect}
                 onActivityRemove={handleActivityRemoval}
                 currentActivityId={currentActivity?.id || null} 
                 completedActivityIds={completedActivityIds}
