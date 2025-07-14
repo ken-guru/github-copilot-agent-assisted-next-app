@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import styles from './ActivityManager.module.css';
-import { getNextAvailableColorSet, ColorSet } from '@/utils/colors';
-import { TimelineEntry } from '@/types';
-import { ActivityButton } from '@/components/ActivityButton';
+import { getNextAvailableColorSet, ColorSet } from '../../lib/utils/colors';
+import { TimelineEntry } from '../../src/types/index';
+import { ActivityButton } from '../ActivityButton';
 import ActivityForm from './ActivityForm';
 
 // Using the Activity interface from the new component structure

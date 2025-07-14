@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Activity } from '@/components/ActivityManager';
+import { Activity } from '../../components/feature/ActivityManager';
 import { useActivitiesTracking } from './useActivitiesTracking';
 import { useTimelineEntries } from './useTimelineEntries';
-import { ActivityState } from '@/utils/activityStateMachine';
+import { ActivityState } from '../../lib/utils/activityStateMachine';
 
 export interface UseActivityStateProps {
   onTimerStart?: () => void;

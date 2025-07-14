@@ -56,12 +56,7 @@ export default function ThemeToggle({}: ThemeToggleProps) {
    */
   function applyTheme(newTheme: string) {
     const root = document.documentElement;
-    const isValid = validateThemeColors();
-    
-    if (!isValid) {
-      console.warn(`Theme "${newTheme}" is not valid, fallback to light theme`);
-      newTheme = 'light';
-    }
+    validateThemeColors(); // This function does not return a value, so do not test for truthiness
     
     // Remove existing theme classes
     root.classList.remove('light-mode', 'dark-mode', 'system-mode');
