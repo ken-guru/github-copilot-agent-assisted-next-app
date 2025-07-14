@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 // Import order matters - Bootstrap first, then global theme variables, then app-specific styles
 import 'bootstrap/dist/css/bootstrap.min.css'; // Bootstrap CSS
 import 'bootstrap-icons/font/bootstrap-icons.css'; // Bootstrap Icons
-import "../../styles/globals.css"; // Core theme variables and global utilities
+import "../styles/globals.css"; // Core theme variables and global utilities
 import "./globals.css"; // App-specific styles that use the theme variables
 import { Metadata, Viewport } from "next";
 // import { LayoutClient } from "../components/LayoutClient";
