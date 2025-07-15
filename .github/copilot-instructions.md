@@ -11,11 +11,19 @@
 - Communicate with casual, friendly yet professional tone
 - Focus on problem resolution over documentation during active development
 
+
+## Testing, Linting, and Type Checking Protocols
+- Always run tests, linting, and type checking using the npm scripts defined in package.json:
+	- `npm test` for Jest unit tests
+	- `npm run lint` for linting
+	- `npm run type-check` for TypeScript type checking
+- Do not use the integrated tools in VS Code for these tasks; rely on the npm scripts for consistency with CI/CD and local workflows.
+
 ## Testing Protocols
 - **Beast Mode**: Test frequently during implementation for immediate validation
 - **Standard Mode**: Write tests before implementing functionality (TDD approach)
 - Maintain thorough test coverage for all features and bug fixes
-- Use Jest for unit tests and Cypress for end-to-end tests
+- Use Jest for unit tests
 
 ## Documentation Standards
 - Document major architectural decisions when they impact long-term maintainability

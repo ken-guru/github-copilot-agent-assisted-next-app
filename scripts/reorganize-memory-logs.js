@@ -62,7 +62,7 @@ function determineCategory(filename) {
   
   // Priority order - more specific categories first
   if (lowerFilename.includes('service-worker')) return 'service-worker';
-  if (lowerFilename.includes('test') || lowerFilename.includes('jest') || lowerFilename.includes('cypress')) return 'testing';
+  if (lowerFilename.includes('test') || lowerFilename.includes('jest')) return 'testing';
   if (lowerFilename.includes('layout') || lowerFilename.includes('ui') || lowerFilename.includes('icon') || lowerFilename.includes('progress-bar')) return 'ui-layout';
   if (lowerFilename.includes('dark-mode') || lowerFilename.includes('theme')) return 'dark-mode';
   if (lowerFilename.includes('typescript') || lowerFilename.includes('type') || lowerFilename.includes('ts-')) return 'typescript';

@@ -62,9 +62,7 @@ function regenerateMemoryLog() {
         if (lowerContent.includes('typescript') || lowerFileName.includes('typescript')) {
             tags.add('typescript');
         }
-        if (lowerContent.includes('cypress') || lowerFileName.includes('cypress')) {
-            tags.add('cypress');
-        }
+    // Removed Cypress references
         if (lowerContent.includes('jest') || lowerFileName.includes('jest')) {
             tags.add('jest');
         }

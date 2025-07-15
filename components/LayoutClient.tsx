@@ -3,12 +3,6 @@ import { useEffect } from 'react';
 import { ThemeProvider } from '@contexts/theme';
 import ServiceWorkerUpdater from '@components/ui/ServiceWorkerUpdater';
 
-// Add TypeScript interface for the global window object
-declare global {
-  interface Window {
-    Cypress?: unknown;
-  }
-}
 
 interface LayoutClientProps {
   children: React.ReactNode;
@@ -50,18 +44,10 @@ export function LayoutClient({ children }: LayoutClientProps) {
           
           // Reload page when the new service worker takes over
           navigator.serviceWorker.addEventListener('controllerchange', () => {
-            // For testing purposes, emit a custom event instead of actually reloading
-            if (typeof window !== 'undefined' && window.Cypress) {
-              window.dispatchEvent(new CustomEvent('appReloadTriggered'));
-            } else {
-              window.location.reload();
-            }
+            window.location.reload();
           });
         }
       });
-    } else if (typeof window !== 'undefined' && window.Cypress) {
-      // For testing when service worker is not available
-      window.dispatchEvent(new CustomEvent('appReloadTriggered'));
     }
   };
 

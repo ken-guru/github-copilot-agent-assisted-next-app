@@ -9,9 +9,6 @@
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "cypress": "cypress open",
-    "cypress:run": "cypress run",
-    "cypress:headless": "cypress run --headless",
     "type-check": "tsc --noEmit",
     "clean-build": "node scripts/clean-build.js",
     "clean-build:full": "node scripts/clean-build.js --full"
@@ -33,7 +30,6 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/uuid": "^10.0.0",
-    "cypress": "^14.5.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
     "jest": "^30.0.4",

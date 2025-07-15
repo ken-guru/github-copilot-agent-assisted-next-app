@@ -47,12 +47,8 @@ const ServiceWorkerUpdater: React.FC<ServiceWorkerUpdaterProps> = ({
     debugLog('Update button clicked');
     
     // For testing purposes, emit a custom event instead of actually reloading
-    if (typeof window !== 'undefined' && window.Cypress) {
-      window.dispatchEvent(new CustomEvent('appReloadTriggered'));
-    } else {
-      // Call the parent's onUpdate handler for actual updates
-      onUpdate();
-    }
+  // Call the parent's onUpdate handler for actual updates
+  onUpdate();
   };
 
   // Listen for service worker update events
@@ -62,52 +58,16 @@ const ServiceWorkerUpdater: React.FC<ServiceWorkerUpdaterProps> = ({
       setUpdateAvailable(true);
     };
 
-    const handleCypressUpdate = (event: CustomEvent) => {
-      debugLog(`Cypress test event received: updateAvailable=${event.detail.updateAvailable}`);
-      setUpdateAvailable(event.detail.updateAvailable);
-    };
 
     if (typeof window !== 'undefined') {
       window.addEventListener('serviceWorkerUpdateAvailable', handleServiceWorkerUpdate);
-      window.addEventListener('cypressServiceWorkerUpdate', handleCypressUpdate as EventListener);
-      
       return () => {
         window.removeEventListener('serviceWorkerUpdateAvailable', handleServiceWorkerUpdate);
-        window.removeEventListener('cypressServiceWorkerUpdate', handleCypressUpdate as EventListener);
       };
     }
   }, []);
 
   // Expose functions to window for testing with Cypress
-  useEffect(() => {
-    // Only create API if it doesn't already exist (preserves Cypress setup)
-    if (typeof window !== 'undefined' && !window.ServiceWorkerUpdaterAPI) {
-      debugLog('Setting up ServiceWorkerUpdaterAPI');
-      window.ServiceWorkerUpdaterAPI = {
-        setUpdateAvailable: (value: boolean) => {
-          debugLog(`Update availability set to ${value} via test API`);
-          setUpdateAvailable(value);
-          
-          if (value) {
-            // Also dispatch the event for consistency
-            window.dispatchEvent(new CustomEvent('serviceWorkerUpdateAvailable', {
-              detail: { message: 'A new version is available. Please refresh to update.' }
-            }));
-          }
-        }
-      };
-    } else if (typeof window !== 'undefined' && window.ServiceWorkerUpdaterAPI) {
-      debugLog('ServiceWorkerUpdaterAPI already exists (likely from Cypress), using existing one');
-    }
-
-    // Clean up only if we created the API
-    return () => {
-      if (typeof window !== 'undefined' && window.ServiceWorkerUpdaterAPI) {
-        debugLog('Component cleanup - ServiceWorkerUpdaterAPI might be cleaned up by Cypress');
-        // Don't delete the API in cleanup as it might be managed by Cypress
-      }
-    };
-  }, []);
 
   // Don't render if update is not available and not forced to show
   if (!updateAvailable && !show) {

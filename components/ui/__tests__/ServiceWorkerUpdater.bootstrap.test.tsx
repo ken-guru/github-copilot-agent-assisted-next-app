@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import ServiceWorkerUpdater from '../ServiceWorkerUpdater';
 
 describe('ServiceWorkerUpdater Bootstrap Integration', () => {
@@ -15,21 +15,13 @@ describe('ServiceWorkerUpdater Bootstrap Integration', () => {
   });
 
   const renderComponent = () => {
-    const result = render(
+    return render(
       <ServiceWorkerUpdater 
         onUpdate={mockOnUpdate}
         onDismiss={mockOnDismiss}
+        show={true}
       />
     );
-    
-    // Trigger the update available state via the API
-    if (window.ServiceWorkerUpdaterAPI) {
-      act(() => {
-        window.ServiceWorkerUpdaterAPI!.setUpdateAvailable(true);
-      });
-    }
-    
-    return result;
   };
 
   describe('Bootstrap Toast Structure', () => {
