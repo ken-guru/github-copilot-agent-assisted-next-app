@@ -160,11 +160,11 @@ describe('Timeline Transition Behavior', () => {
     
     // Verify that both activities and breaks are children of the entries wrapper
     activityElements.forEach(element => {
-      expect(entriesWrapper).toContainElement(element);
+      expect(entriesWrapper).toContainElement(element as HTMLElement);
     });
     
     breakElements.forEach(element => {
-      expect(entriesWrapper).toContainElement(element);
+      expect(entriesWrapper).toContainElement(element as HTMLElement);
     });
   });
 });
