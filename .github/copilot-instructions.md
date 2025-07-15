@@ -39,6 +39,12 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - For specific test patterns use: `npm test -- --testPathPatterns="pattern"`
 - Run tests in terminal, not through other interfaces
 
+### GitHub PR Check Monitoring
+- Use `gh pr checks <PR_NUMBER> --fail-fast --watch` for real-time updates
+- Avoid using `gh pr checks` without flags as it may hang indefinitely
+- The `--fail-fast` flag ensures quick response when checks fail
+- The `--watch` flag provides live updates as checks complete
+
 ## DOCUMENTATION STANDARDS [PRIORITY: HIGH]
 ### Component Documentation
 - CREATE/UPDATE in `docs/components/` when:
