@@ -8,6 +8,8 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Maintain thorough documentation with each code change
 - Update the Memory Log for all debugging and issue resolution
 - Verify code quality through testing, linting, and type checking
+- **NEVER push code that fails CI/CD pipeline tests**
+- **Ensure all code passes npm run test, npm run lint, npm run type-check, and npm run build before commits**
 - Communicate clearly about implementation choices and alternatives
 
 ## TESTING PROTOCOLS [PRIORITY: HIGHEST]

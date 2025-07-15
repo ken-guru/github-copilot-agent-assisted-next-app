@@ -488,7 +488,7 @@ export function validateThemeColors(): boolean {
         const value = style.getPropertyValue(variable);
         return value && value.trim() !== '';
       });
-    } catch (error) {
+    } catch {
       // Return false if an error occurs
       return false;
     }

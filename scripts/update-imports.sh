@@ -12,23 +12,11 @@ portable_sed() {
     sed "$pattern" "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 }
 
-# Update @components/* to @/components/*
+# Update import paths in src directory
 find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | while read -r file; do
     portable_sed 's/@components\//@\/components\//g' "$file"
-done
-
-# Update @lib/* to @/utils/*
-find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | while read -r file; do
     portable_sed 's/@lib\//@\/utils\//g' "$file"
-done
-
-# Update @hooks/* to @/hooks/*
-find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | while read -r file; do
     portable_sed 's/@hooks\//@\/hooks\//g' "$file"
-done
-
-# Update @contexts/* to @/contexts/*
-find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | while read -r file; do
     portable_sed 's/@contexts\//@\/contexts\//g' "$file"
 done
 
