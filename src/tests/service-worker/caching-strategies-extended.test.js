@@ -16,7 +16,8 @@ describe('Service Worker Cache Strategies', () => {
   // Mock fetch API
   let mockFetch;
   
-  // Mock Response constructor
+  // Mock Response constructor (declared but not currently used)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let mockResponse;
   
   // Original globals
@@ -50,7 +51,7 @@ describe('Service Worker Cache Strategies', () => {
           if (typeof this.body === 'string') {
             try {
               return Promise.resolve(JSON.parse(this.body));
-            } catch (e) {
+            } catch {
               // If it's not valid JSON, return an empty object
               return Promise.resolve({});
             }

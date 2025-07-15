@@ -29,7 +29,8 @@ describe('Service Worker Fetch Handlers', () => {
   const originalCaches = global.caches;
   const originalFetch = global.fetch;
   
-  // Mock cache names
+  // Mock cache names (declared but not currently used in tests)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const CACHE_NAMES = {
     STATIC: 'static-assets-v1',
     DYNAMIC: 'dynamic-content-v1',
@@ -65,7 +66,7 @@ describe('Service Worker Fetch Handlers', () => {
           if (typeof this.body === 'string') {
             try {
               return Promise.resolve(JSON.parse(this.body));
-            } catch (e) {
+            } catch {
               // If it's not valid JSON, return an empty object
               return Promise.resolve({});
             }
