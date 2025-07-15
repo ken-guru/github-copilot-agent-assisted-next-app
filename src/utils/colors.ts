@@ -481,12 +481,17 @@ export function validateThemeColors(): boolean {
   
   // Check if CSS variables exist
   if (typeof window !== 'undefined') {
-    const style = getComputedStyle(document.documentElement);
-    
-    return requiredColorVariables.every(variable => {
-      const value = style.getPropertyValue(variable);
-      return value && value.trim() !== '';
-    });
+    try {
+      const style = getComputedStyle(document.documentElement);
+      
+      return requiredColorVariables.every(variable => {
+        const value = style.getPropertyValue(variable);
+        return value && value.trim() !== '';
+      });
+    } catch (error) {
+      // Return false if an error occurs
+      return false;
+    }
   }
   
   // In SSR environment, assume everything is fine

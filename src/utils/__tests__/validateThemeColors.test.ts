@@ -149,8 +149,9 @@ describe('validateThemeColors', () => {
         throw new Error('getComputedStyle failed');
       });
       
-      // Should not throw and should handle the error gracefully
-      expect(() => validateThemeColors()).toThrow();
+      // Should not throw and should handle the error gracefully by returning false
+      expect(() => validateThemeColors()).not.toThrow();
+      expect(validateThemeColors()).toBe(false);
     });
 
     it('should handle getPropertyValue returning null', () => {

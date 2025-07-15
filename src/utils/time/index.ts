@@ -11,7 +11,7 @@ export * from './timeFormatters';
 export * from './timeConversions';
 export * from './timeDurations';
 
-// Also add the standalone formatting function from the old time.ts file
+// Standalone utility function for human-readable time formatting
 function formatTimeHuman(milliseconds: number): string {
   // Handle negative values and edge cases
   if (milliseconds < 0) {
