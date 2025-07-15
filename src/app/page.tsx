@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { LoadingProvider, useLoading } from '@/contexts/loading';
-import SplashScreen from '@/app/_components/splash/SplashScreen';
 import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
@@ -47,7 +46,7 @@ function AppContent() {
     isCompleted: allActivitiesCompleted
   });
 
-  // Initialize app and hide splash screen after initialization is complete
+  // Initialize app and hide loading screen after initialization is complete
   useEffect(() => {
     const initApp = async () => {
       // Add any actual initialization logic here
@@ -134,7 +133,6 @@ function AppContent() {
   
   return (
     <>
-      <SplashScreen minimumDisplayTime={1000} />
       <div className={`${styles.layout} ${styles.container}`}>
         {/* Confirmation Dialog */}
         <ConfirmationDialog
@@ -224,7 +222,7 @@ function AppContent() {
 // Main Home component that provides the LoadingContext
 export default function Home() {
   return (
-    <LoadingProvider initialLoadingState={true}>
+    <LoadingProvider initialLoadingState={false}>
       <AppContent />
     </LoadingProvider>
   );
