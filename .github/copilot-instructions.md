@@ -36,6 +36,7 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 ### Test Verification
 - Remind to run test suite after ANY code changes
 - ALWAYS use terminal command: `npm run test`
+- For specific test patterns use: `npm test -- --testPathPatterns="pattern"`
 - Run tests in terminal, not through other interfaces
 
 ## DOCUMENTATION STANDARDS [PRIORITY: HIGH]
