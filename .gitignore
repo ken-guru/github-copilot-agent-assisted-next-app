@@ -44,3 +44,10 @@ next-env.d.ts
 /cypress/downloads
 /cypress/videos
 /cypress/screenshots
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
