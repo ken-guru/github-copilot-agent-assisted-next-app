@@ -4,22 +4,40 @@
 
 echo "Updating import paths from old aliases to @/* pattern..."
 
+# Cross-platform sed function
+# Uses temp file for portability between macOS and Linux
+portable_sed() {
+    local pattern="$1"
+    local file="$2"
+    sed "$pattern" "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+}
+
 # Update @components/* to @/components/*
-find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | xargs sed -i '' 's/@components\//@\/components\//g'
+find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | while read -r file; do
+    portable_sed 's/@components\//@\/components\//g' "$file"
+done
 
 # Update @lib/* to @/utils/*
-find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | xargs sed -i '' 's/@lib\//@\/utils\//g'
+find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | while read -r file; do
+    portable_sed 's/@lib\//@\/utils\//g' "$file"
+done
 
 # Update @hooks/* to @/hooks/*
-find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | xargs sed -i '' 's/@hooks\//@\/hooks\//g'
+find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | while read -r file; do
+    portable_sed 's/@hooks\//@\/hooks\//g' "$file"
+done
 
 # Update @contexts/* to @/contexts/*
-find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | xargs sed -i '' 's/@contexts\//@\/contexts\//g'
+find src -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | while read -r file; do
+    portable_sed 's/@contexts\//@\/contexts\//g' "$file"
+done
 
 # Also update files in __tests__ directories
-find __tests__ -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | xargs sed -i '' 's/@components\//@\/components\//g'
-find __tests__ -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | xargs sed -i '' 's/@lib\//@\/utils\//g'
-find __tests__ -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | xargs sed -i '' 's/@hooks\//@\/hooks\//g'
-find __tests__ -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | xargs sed -i '' 's/@contexts\//@\/contexts\//g'
+find __tests__ -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" | while read -r file; do
+    portable_sed 's/@components\//@\/components\//g' "$file"
+    portable_sed 's/@lib\//@\/utils\//g' "$file"
+    portable_sed 's/@hooks\//@\/hooks\//g' "$file"
+    portable_sed 's/@contexts\//@\/contexts\//g' "$file"
+done
 
 echo "Import path updates completed."

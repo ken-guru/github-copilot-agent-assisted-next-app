@@ -14,7 +14,7 @@ interface LoadingProviderProps {
 
 export const LoadingProvider = ({ 
   children, 
-  initialLoadingState = true 
+  initialLoadingState = false  // Keep default as false to avoid breaking change
 }: LoadingProviderProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(initialLoadingState);
   
