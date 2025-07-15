@@ -130,7 +130,7 @@ describe('validateThemeColors', () => {
     const originalWindow = global.window;
 
     beforeEach(() => {
-      // @ts-ignore - Remove window for SSR simulation
+      // @ts-expect-error - Remove window for SSR simulation
       delete global.window;
     });
 
