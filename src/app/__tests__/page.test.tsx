@@ -5,6 +5,7 @@ import Home from '../page';
 import resetService, { DialogCallback } from '@/utils/resetService';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
 import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
+import { LoadingProvider } from '@/contexts/LoadingContext';
 import styles from '../page.module.css';
 
 // Create a helper function to safely check CSS classes that might be undefined
@@ -137,6 +138,15 @@ beforeAll(() => {
   });
 });
 
+// Helper function to render Home component with required providers
+const renderHome = () => {
+  return render(
+    <LoadingProvider>
+      <Home />
+    </LoadingProvider>
+  );
+};
+
 describe('Home Page', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -149,13 +159,13 @@ describe('Home Page', () => {
   });
 
   it('should not show reset button in setup state', () => {
-    render(<Home />);
+    renderHome();
     
     expect(screen.queryByText('Reset')).not.toBeInTheDocument();
   });
 
   it('should show reset button after time is set', () => {
-    render(<Home />);
+    renderHome();
     
     // Find and trigger the TimeSetup component
     const timeSetupButton = screen.getByRole('button', { name: /set time/i });
@@ -165,7 +175,7 @@ describe('Home Page', () => {
   });
 
   it('should call resetService when reset is clicked', () => {
-    render(<Home />);
+    renderHome();
     
     // Set initial time to move past setup state
     const timeSetupButton = screen.getByRole('button', { name: /set time/i });
@@ -179,7 +189,7 @@ describe('Home Page', () => {
   });
 
   it('should register reset callbacks and dialog callback with resetService', () => {
-    render(<Home />);
+    renderHome();
     
     expect(mockedResetService.registerResetCallback).toHaveBeenCalled();
     expect(mockedResetService.setDialogCallback).toHaveBeenCalled();
@@ -193,7 +203,7 @@ describe('Home Page', () => {
   });
 
   it('should provide a working dialog callback to resetService', async () => {
-    render(<Home />);
+    renderHome();
 
     // Get the dialog callback that was registered
     const dialogCallback = mockedResetService.dialogCallbackFn;
@@ -239,7 +249,7 @@ describe('Home Page', () => {
       window.innerWidth = 480;
       window.innerHeight = 800;
       
-      render(<Home />);
+      renderHome();
       
       // Update this line to be more specific about which title we want
       const title = screen.getByText('Mr. Timely', { selector: 'header h1.title' });
@@ -295,7 +305,7 @@ describe('OfflineIndicator Integration', () => {
       resetActivities: mockResetActivities,
     }));
     
-    const { rerender } = render(<Home />);
+    const { rerender } = renderHome();
     
     // Check setup state
     // Use data-testid instead of role to avoid ambiguity with multiple status elements
@@ -331,7 +341,11 @@ describe('OfflineIndicator Integration', () => {
     mockCurrentActivity = { id: '1', name: 'Homework', colors: {} };
     
     // Re-render the component with the updated state
-    rerender(<Home />);
+    rerender(
+      <LoadingProvider>
+        <Home />
+      </LoadingProvider>
+    );
     
     // Now we should have a complete button
     const completeButton = screen.getByTestId('complete-activity-homework');
@@ -349,7 +363,11 @@ describe('OfflineIndicator Integration', () => {
     }));
     
     // Re-render to reflect the updated state
-    rerender(<Home />);
+    rerender(
+      <LoadingProvider>
+        <Home />
+      </LoadingProvider>
+    );
     
     // In completed state, there should be an offline indicator with specific text
     const completedOfflineIndicator = screen.getByTestId('offline-indicator');
@@ -378,7 +396,7 @@ describe('Progress Element Visibility', () => {
       resetActivities: mockResetActivities,
     }));
     
-    render(<Home />);
+    renderHome();
     
     // In activity state, progress container should be present
     const progressContainer = document.querySelector(`.${styles.progressContainer}`);
@@ -389,7 +407,7 @@ describe('Progress Element Visibility', () => {
     // Mock for setup state (timeSet = false)
     jest.spyOn(React, 'useState').mockImplementationOnce(() => [false, jest.fn()]);
     
-    render(<Home />);
+    renderHome();
     
     // In setup state, progress container should not be rendered
     const progressContainer = document.querySelector(`.${styles.progressContainer}`);
@@ -413,7 +431,7 @@ describe('Progress Element Visibility', () => {
       resetActivities: mockResetActivities,
     }));
     
-    render(<Home />);
+    renderHome();
     
     // In completed state, progress container should not be rendered
     const progressContainer = document.querySelector(`.${styles.progressContainer}`);
