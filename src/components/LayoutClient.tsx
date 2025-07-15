@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
-import { ThemeProvider } from '@contexts/theme';
-import ServiceWorkerUpdater from '@components/ui/ServiceWorkerUpdater';
+import { ThemeProvider } from '@/contexts/theme';
+import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
 
 // Add TypeScript interface for the global window object
 declare global {

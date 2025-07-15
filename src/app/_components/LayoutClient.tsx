@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { ThemeProvider } from '@contexts/theme';
-import ServiceWorkerUpdater from '@components/ui/ServiceWorkerUpdater'; // This will need to be updated when the component is moved
+import { ThemeProvider } from '@/contexts/theme';
+import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater'; // This will need to be updated when the component is moved
 
 interface LayoutClientProps {
   children: React.ReactNode;

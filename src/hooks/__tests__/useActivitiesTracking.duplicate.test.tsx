@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useActivitiesTracking } from '../../hooks/useActivitiesTracking';
+import { useActivitiesTracking } from '@/hooks/useActivitiesTracking';
 
 describe('useActivitiesTracking Duplicate Activity Handling', () => {
   it('should handle duplicate activity additions gracefully', () => {

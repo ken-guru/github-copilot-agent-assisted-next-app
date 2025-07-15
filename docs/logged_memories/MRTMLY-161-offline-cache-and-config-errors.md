@@ -60,7 +60,8 @@
      - Updated cache name to 'v3' to clear old cache entries
 
 3. Runtime Asset Detection Implementation:
-   - Added DOM scanning functionality to detect and cache dynamically loaded assets:
+   - Added DOM scanning functionality to detect and cache dynamically loaded assets
+
    ```javascript
    function captureRuntimeAssets() {
      // Find all script tags and stylesheet links in the DOM
@@ -68,7 +69,7 @@
        .map(script => script.getAttribute('src'))
        .filter(Boolean);
      
-     const styleSources = Array.from(document.querySelectorAll('link[rel="stylesheet"][href]'))
+     const styleSources = Array.from(document.querySelectorAll('link\\[rel="stylesheet"\\]\\[href\\]'))
        .map(link => link.getAttribute('href'))
        .filter(Boolean);
      
@@ -78,8 +79,10 @@
          fetch(source);
        }
      });
-     
-     // Also scan for dynamically loaded chunks in Next.js elements
+   }
+   ```
+
+4. Service Worker Registration Fix:
      const dynamicChunks = [];
      const nextElements = document.querySelectorAll('[id^="_next"]');
      nextElements.forEach(el => {

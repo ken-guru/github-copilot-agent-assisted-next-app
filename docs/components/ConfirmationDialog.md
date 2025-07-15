@@ -3,7 +3,7 @@
 ---
 
 ## Navigation
-- [Component Documentation Index](../index.md)
+- [Component Documentation Index](./README.md)
 - [Related: ActivityManager](./ActivityManager.md)
 
 ---

@@ -8,14 +8,11 @@ const MockLoadingProvider = ({ children }) => (
 
 const MockTimeSetup = () => <div data-testid="time-setup">Time Setup</div>;
 
-const MockSplashScreen = () => <div data-testid="splash-screen">Splash Screen</div>;
-
 // Create a simple mock of the Home page
 const MockHomePage = () => {
   return (
     <MockLoadingProvider>
       <div>
-        <MockSplashScreen />
         <div data-testid="app-content">
           <div data-testid="time-setup-container">
             <MockTimeSetup />

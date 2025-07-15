@@ -82,11 +82,11 @@ it('should precache static assets during installation', async () => {
   handleInstall(event);
   
   expect(event.waitUntil).toHaveBeenCalled();
-  const waitUntilFn = event.waitUntil.mock.calls[0][0];
+  const waitUntilFn = event.waitUntil.mock.calls\[0\]\[0\];
   await waitUntilFn;
   
   expect(mockCachingStrategies.precache).toHaveBeenCalled();
-  expect(mockCachingStrategies.precache.mock.calls[0][1]).toEqual(expect.any(Array));
+  expect(mockCachingStrategies.precache.mock.calls\[0\]\[1\]).toEqual(expect.any(Array));
 });
 ```
 
@@ -107,7 +107,7 @@ it('should delete old caches during activation', async () => {
   handleActivate(event);
   
   expect(event.waitUntil).toHaveBeenCalled();
-  const waitUntilFn = event.waitUntil.mock.calls[0][0];
+  const waitUntilFn = event.waitUntil.mock.calls\[0\]\[0\];
   await waitUntilFn;
   
   expect(mockCachingStrategies.deleteOldCaches).toHaveBeenCalledWith(expect.any(Array));

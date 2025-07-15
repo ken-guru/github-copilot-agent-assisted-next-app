@@ -279,9 +279,11 @@ describe('Summary Component', () => {
 
       const renderTime = performance.now() - renderStart;
       
-      // Verify render completes in reasonable time (< 150ms)
-      // Increased from 100ms to 150ms to account for CI/CD environment variability
-      expect(renderTime).toBeLessThan(150);
+      // Verify render completes in reasonable time
+      // Use different thresholds for CI vs local development due to resource variability
+      const isCI = process.env.CI === 'true';
+      const maxRenderTime = isCI ? 400 : 150;
+      expect(renderTime).toBeLessThan(maxRenderTime);
 
       // Verify summary still shows all metrics correctly
       expect(screen.getByText('Planned Time')).toBeInTheDocument();

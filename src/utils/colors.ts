@@ -459,44 +459,41 @@ export function validateContrast(
   return ratio >= minRatio;
 }
 
-// Validate theme colors
-export function validateThemeColors(): void {
-  // Skip all validation and logging in production
-  if (process.env.NODE_ENV === 'production') {
-    return;
+/**
+ * Validates that all required CSS theme variables are defined and non-empty.
+ * Returns a boolean indicating whether all CSS variables are properly set.
+ * 
+ * @returns {boolean} True if all required CSS variables are defined and non-empty, false otherwise.
+ *                   Always returns true in SSR environment.
+ */
+export function validateThemeColors(): boolean {
+  // List of required CSS variables
+  const requiredColorVariables = [
+    '--primary',
+    '--secondary', 
+    '--accent',
+    '--background',
+    '--foreground',
+    '--border-color',
+    '--error',
+    '--success'
+  ];
+  
+  // Check if CSS variables exist
+  if (typeof window !== 'undefined') {
+    try {
+      const style = getComputedStyle(document.documentElement);
+      
+      return requiredColorVariables.every(variable => {
+        const value = style.getPropertyValue(variable);
+        return value && value.trim() !== '';
+      });
+    } catch {
+      // Return false if an error occurs
+      return false;
+    }
   }
   
-  try {
-    // Get theme colors
-    const root = document.documentElement;
-    const computedStyle = getComputedStyle(root);
-    
-    // Get base colors
-    const background = computedStyle.getPropertyValue('--background').trim() || '#ffffff';
-    const foreground = computedStyle.getPropertyValue('--foreground').trim() || '#000000';
-    const backgroundMuted = computedStyle.getPropertyValue('--background-muted').trim() || '#f5f5f5';
-    const foregroundMuted = computedStyle.getPropertyValue('--foreground-muted').trim() || '#6b7280';
-
-    // Only log in development environment
-    if (process.env.NODE_ENV === 'development') {
-      console.group('Theme Contrast Validation (' + (isDarkMode() ? 'Dark' : 'Light') + ' Mode)');
-      // Safely try to calculate contrast ratios - these may fail if the variables aren't CSS colors
-      try {
-        if (background && foreground) {
-          console.log('Main contrast ratio:', getContrastRatio(background, foreground));
-        }
-        if (backgroundMuted && foregroundMuted) {
-          console.log('Muted contrast ratio:', getContrastRatio(backgroundMuted, foregroundMuted));
-        }
-      } catch {
-        console.log('Could not calculate contrast ratios with current theme values.');
-      }
-      console.groupEnd();
-    }
-  } catch (error) {
-    // Silently handle errors in test environment
-    if (process.env.NODE_ENV !== 'test') {
-      console.error('Error validating theme colors:', error);
-    }
-  }
+  // In SSR environment, assume everything is fine
+  return true;
 }

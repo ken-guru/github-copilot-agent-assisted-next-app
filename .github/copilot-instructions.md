@@ -8,6 +8,8 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Maintain thorough documentation with each code change
 - Update the Memory Log for all debugging and issue resolution
 - Verify code quality through testing, linting, and type checking
+- **NEVER push code that fails CI/CD pipeline tests**
+- **Ensure all code passes npm run test, npm run lint, npm run type-check, and npm run build before commits**
 - Communicate clearly about implementation choices and alternatives
 
 ## TESTING PROTOCOLS [PRIORITY: HIGHEST]
@@ -36,7 +38,14 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 ### Test Verification
 - Remind to run test suite after ANY code changes
 - ALWAYS use terminal command: `npm run test`
+- For specific test patterns use: `npm test -- --testPathPatterns="pattern"`
 - Run tests in terminal, not through other interfaces
+
+### GitHub PR Check Monitoring
+- Use `gh pr checks <PR_NUMBER> --fail-fast --watch` for real-time updates
+- Avoid using `gh pr checks` without flags as it may hang indefinitely
+- The `--fail-fast` flag ensures quick response when checks fail
+- The `--watch` flag provides live updates as checks complete
 
 ## DOCUMENTATION STANDARDS [PRIORITY: HIGH]
 ### Component Documentation
@@ -92,6 +101,13 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - DOCUMENT in `docs/PLANNED_CHANGES.md` using template format
 - MOVE to `docs/IMPLEMENTED_CHANGES.md` with timestamp when complete
 - ENSURE template format for effective AI-assisted implementation
+
+### Planning Document Lifecycle Management
+- **CLEAR** `docs/PLANNED_CHANGES.md` after completing major features/PRs
+- **RESET** to template reference only to prepare for future work
+- **DOCUMENT** completed changes in `docs/IMPLEMENTED_CHANGES.md` before clearing
+- **COMMIT** the cleanup as part of PR completion process
+- **MAINTAIN** clean slate for next development cycle
 
 ### Template Usage for AI Agents
 - ALWAYS use `docs/templates/PLANNED_CHANGES_TEMPLATE.md` when user requests new features
@@ -197,6 +213,117 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - VERIFY link integrity after file reorganizations
 - CHECK for duplicate files in scripts directory
 - RUN `node scripts/check-markdown-links.js` for link validation
+
+## MCP TOOL USAGE GUIDELINES [PRIORITY: HIGH]
+### Enhanced Problem-Solving Tools
+When these MCP tools are available, leverage them to enhance development workflows and problem-solving capabilities:
+
+#### Sequential Thinking Tool
+**Purpose**: Dynamic, step-by-step problem analysis and solution development
+**When to Use**:
+- Breaking down complex implementation requirements
+- Planning multi-step refactoring or migration processes
+- Analyzing debugging challenges that require systematic investigation
+- Design decisions that need thorough evaluation of alternatives
+- Problems where the full scope isn't initially clear
+- Tasks requiring context maintenance across multiple development steps
+
+**Usage Guidelines**:
+- START with initial thought estimate but adjust `totalThoughts` as understanding deepens
+- USE `isRevision` and `revisesThought` to refine previous analysis
+- EMPLOY `branchFromThought` and `branchId` for exploring alternative approaches
+- SET `nextThoughtNeeded` to false only when satisfied with solution completeness
+- INCLUDE hypothesis generation and verification in the thinking process
+- DOCUMENT key insights in Memory Log after complex problem-solving sessions
+
+**Example Applications**:
+- Component migration planning with dependency analysis
+- Test strategy development for complex features
+- Architecture decisions requiring trade-off evaluation
+- Debugging multi-layered issues with unknown root causes
+
+#### Time Management Tool
+**Purpose**: Timezone-aware time handling and conversion
+**When to Use**:
+- Documenting timestamps in Memory Log entries with timezone context
+- Planning development schedules across team timezones
+- Handling time-sensitive features or deployments
+- Converting meeting times or deadlines for global collaboration
+- Adding temporal context to development milestones
+
+**Usage Guidelines**:
+- USE `get_current_time` with specific IANA timezone names for accurate timestamps
+- APPLY `convert_time` when coordinating across multiple timezones
+- INCLUDE timezone information in all time-sensitive documentation
+- STANDARDIZE on UTC for internal logging, convert for user-facing times
+
+**Example Applications**:
+- Memory Log entry timestamps: "Debugging session started at 2024-01-15 14:30:00 EST"
+- Release planning: "Deploy window: 02:00 UTC (21:00 EST, 15:00 JST+1)"
+- Meeting coordination: "Code review at 16:00 CET converts to 10:00 EST"
+
+#### Memory Knowledge Graph Tool
+**Purpose**: Persistent knowledge management across development sessions
+**When to Use**:
+- Tracking complex project relationships and dependencies
+- Maintaining developer context across long-term initiatives
+- Building institutional knowledge about codebase patterns
+- Documenting architectural decisions and their relationships
+- Creating searchable knowledge base of debugging solutions
+
+**Usage Guidelines**:
+**Entity Creation**:
+- CREATE entities for: components, developers, issues, features, dependencies, patterns
+- USE descriptive `entityType` classifications: "component", "developer", "issue", "pattern", "dependency"
+- STORE atomic observations: one fact per observation entry
+- MAINTAIN consistent naming conventions for entity references
+
+**Relationship Mapping**:
+- DEFINE relations in active voice: "depends_on", "implements", "resolves", "authored_by"
+- MAP component dependencies, developer responsibilities, issue relationships
+- TRACK architectural patterns and their usage across codebase
+- DOCUMENT decision influences and implementation relationships
+
+**Knowledge Retrieval**:
+- USE `search_nodes` for finding related information during development
+- APPLY `open_nodes` to retrieve specific context for current work
+- LEVERAGE `read_graph` for comprehensive project understanding
+- QUERY before starting complex tasks to gather relevant historical context
+
+**Maintenance Practices**:
+- UPDATE observations when component behavior or architecture changes
+- ADD new relationships when dependencies or responsibilities shift
+- DELETE obsolete entities when components are removed or refactored
+- REGULAR cleanup of outdated observations and relationships
+
+**Integration with Memory Log**:
+- LINK Memory Log entries to relevant knowledge graph entities
+- CREATE entities for significant debugging sessions and their outcomes
+- REFERENCE knowledge graph findings in Memory Log documentation
+- MAINTAIN bidirectional references between systems
+
+### Tool Combination Strategies
+**Sequential Thinking + Memory Graph**:
+- USE sequential thinking to analyze complex problems
+- STORE analysis outcomes and decision rationale in knowledge graph
+- REFERENCE previous similar analyses when facing comparable challenges
+
+**Time + Memory Graph**:
+- TIMESTAMP all knowledge graph updates with timezone context
+- TRACK temporal patterns in development issues and solutions
+- MAINTAIN historical timeline of architectural decisions
+
+**All Three Tools Together**:
+- ANALYZE problems systematically with sequential thinking
+- DOCUMENT solutions and context in knowledge graph with time stamps
+- BUILD comprehensive development intelligence over time
+- CREATE searchable institutional memory for future reference
+
+### Tool Availability Protocol
+- CHECK for tool availability before complex problem-solving sessions
+- INFORM users when enhanced capabilities are available
+- FALLBACK to standard approaches when tools unavailable
+- DOCUMENT enhanced workflows in Memory Log for process improvement
 
 ## COMMIT GUIDELINES [PRIORITY: HIGH]
 ### Frequent Commit Strategy
