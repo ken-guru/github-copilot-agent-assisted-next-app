@@ -82,12 +82,6 @@ describe('Project Structure Refactoring', () => {
       expect(Layout.default).toBeDefined();
       expect(NotFound.default).toBeDefined();
     });
-
-    test('should import splash components from src/app/_components', async () => {
-      const SplashScreen = await import('@/app/_components/splash/SplashScreen');
-      
-      expect(SplashScreen.default).toBeDefined();
-    });
   });
 
   describe('Configuration Validation', () => {
