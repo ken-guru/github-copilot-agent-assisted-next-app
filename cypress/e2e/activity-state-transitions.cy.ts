@@ -24,6 +24,11 @@ describe('Activity State Transitions', () => {
     });
     
     cy.visit('/')
+    
+    // Wait for splash screen to disappear completely (it has a 2000ms minimum display time + 500ms fade)
+    // This ensures we don't try to interact with elements while splash screen is covering them
+    cy.get('[data-testid="splash-screen"]', { timeout: 10000 }).should('not.exist')
+    
     // Wait for the initial load and set up time
     cy.get('[data-testid="time-setup"]').should('be.visible')
     cy.get('#hours').type('1')

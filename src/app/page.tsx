@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { LoadingProvider, useLoading } from '@/contexts/loading';
-import { SplashScreen } from '@/components/splash/SplashScreen';
+import SplashScreen from '@/app/_components/splash/SplashScreen';
 import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
@@ -56,7 +56,7 @@ function AppContent() {
       // For demo purposes, using a timeout to simulate loading
       setTimeout(() => {
         setIsLoading(false);
-      }, 1500);
+      }, 800);
     };
     
     initApp();
@@ -134,7 +134,7 @@ function AppContent() {
   
   return (
     <>
-      <SplashScreen minimumDisplayTime={500} />
+      <SplashScreen minimumDisplayTime={1000} />
       <div className={`${styles.layout} ${styles.container}`}>
         {/* Confirmation Dialog */}
         <ConfirmationDialog
