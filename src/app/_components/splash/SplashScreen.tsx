@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useLoading } from '@contexts/loading';
+import { useLoading } from '@/contexts/loading';
 import styles from './SplashScreen.module.css';
 
 interface SplashScreenProps {

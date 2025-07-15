@@ -10,7 +10,7 @@ const mockUseLoading = jest.fn().mockReturnValue({
   setIsLoading: jest.fn()
 });
 
-jest.mock('@contexts/loading', () => ({
+jest.mock('@/contexts/loading', () => ({
   useLoading: () => mockUseLoading(),
   LoadingProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>
 }));

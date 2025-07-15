@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { LoadingProvider, useLoading } from '@contexts/loading';
+import { LoadingProvider, useLoading } from '@/contexts/loading';
 import { SplashScreen } from '@/components/splash/SplashScreen';
 import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
