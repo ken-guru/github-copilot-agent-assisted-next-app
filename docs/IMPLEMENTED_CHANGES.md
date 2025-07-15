@@ -2,6 +2,73 @@
 
 This file contains a record of changes that have been implemented in the application, along with the date of implementation and any relevant notes.
 
+## 2025 July
+
+### Next.js Project Structure Refactoring - COMPLETED (2025-07-15)
+
+**Summary:**
+Successfully completed comprehensive refactoring of the Next.js project structure to follow App Router best practices with consolidated `src/`-based organization. This major refactoring included resolving critical SplashScreen implementation issues and ensuring all CI/CD pipeline tests pass.
+
+**Files Modified/Created:**
+- Restructured entire application from mixed root/src structure to clean `src/`-only organization
+- Consolidated all components, hooks, contexts, and utilities under `src/`
+- Updated all import paths and TypeScript configurations
+- Resolved duplicate SplashScreen implementations causing Cypress test failures
+- Fixed timing coordination between LoadingContext and SplashScreen
+- Updated jest.config.js and removed obsolete path mappings
+
+**Key Achievements:**
+- **Complete consolidation**: All code moved from duplicate root directories to `src/`
+- **Clean structure**: Now follows Next.js App Router best practices
+- **Zero broken imports**: All 734 tests passing across 85 test suites
+- **Performance verified**: ESLint shows no import path errors
+- **Type safety maintained**: TypeScript compilation successful
+- **Functionality preserved**: All components, hooks, and utilities working correctly
+- **Tests consolidated**: All test files moved to `src/tests/` with fixed import paths
+- **Build working**: Development and production builds functioning properly
+- **SplashScreen optimization**: Resolved duplicate implementations and fixed Cypress E2E test failures
+- **CI validation**: All 9 CI checks passing including critical Cypress tests
+
+**Structure Transformation:**
+```
+// BEFORE: Mixed structure with duplicates
+/components/, /hooks/, /contexts/, /app/, /lib/, /types/
+/src/components/, /src/hooks/, /src/contexts/, etc.
+
+// AFTER: Clean, consolidated structure
+src/
+├── app/              # Next.js App Router files
+├── components/       # All UI components
+├── hooks/           # React custom hooks  
+├── contexts/        # React context providers
+├── utils/           # Utility functions (consolidated from lib/)
+└── types/           # TypeScript type definitions
+```
+
+**Critical Issue Resolution:**
+During final validation, discovered and resolved duplicate SplashScreen implementations that were causing Cypress E2E test failures in CI:
+- **Root Cause**: Old SplashScreen in `src/components/splash/` conflicting with new implementation in `src/app/_components/splash/`
+- **Solution**: Updated import paths in `src/app/page.tsx` and removed duplicate implementation
+- **Timing Fix**: Coordinated SplashScreen minimumDisplayTime (1000ms) with LoadingContext timing
+- **Result**: All 14 Cypress E2E tests now passing consistently
+
+**Technical Notes:**
+- Fixed flaky performance test in Summary component by using CI-aware timing thresholds
+- Updated `process.env.CI` detection for environment-specific test behavior
+- Maintained backward compatibility during transition
+- All import paths updated systematically using automated scripts
+- Comprehensive test validation at each step of the refactoring
+
+**Validation Results:**
+- **Local Tests**: 734/734 tests passing across 85 test suites ✅
+- **Local Cypress Tests**: All 14 E2E tests passing ✅
+- **CI Pipeline**: All 9 checks successful ✅
+  - CI/cypress, CI/lint, CI/test, CI/build, CI/type-check ✅
+  - CodeQL Security Scan, Vercel Deployment ✅
+
+**Memory Log References:**
+- Pull Request: [Next.js Project Structure Refactoring #227](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/pull/227)
+
 ## 2025 June
 
 ### ConfirmationDialog Bootstrap Modal Migration (2025-06-23)

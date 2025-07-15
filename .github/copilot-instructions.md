@@ -102,6 +102,13 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - MOVE to `docs/IMPLEMENTED_CHANGES.md` with timestamp when complete
 - ENSURE template format for effective AI-assisted implementation
 
+### Planning Document Lifecycle Management
+- **CLEAR** `docs/PLANNED_CHANGES.md` after completing major features/PRs
+- **RESET** to template reference only to prepare for future work
+- **DOCUMENT** completed changes in `docs/IMPLEMENTED_CHANGES.md` before clearing
+- **COMMIT** the cleanup as part of PR completion process
+- **MAINTAIN** clean slate for next development cycle
+
 ### Template Usage for AI Agents
 - ALWAYS use `docs/templates/PLANNED_CHANGES_TEMPLATE.md` when user requests new features
 - COPY the complete template structure - never create partial specifications
