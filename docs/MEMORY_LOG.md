@@ -219,7 +219,7 @@ Each log follows a standard format including:
 
 These logs serve as historical context to understand why certain decisions were made and how issues were resolved.
 
-**Total Entries:** 212  
+**Total Entries:** 215  
 **Last Updated:** 2025-07-15
 
 201. [MRTMLY-201: GitHub Actions Workflow and TypeScript Build Fixes](./logged_memories/MRTMLY-201-github-actions-workflow-typescript-fix.md) - #github-actions #typescript #eslint #ci-fix #service-worker
@@ -233,4 +233,7 @@ These logs serve as historical context to understand why certain decisions were 
 209. [MRTMLY-209: Activity Manager Full-Width Layout Fix](./logged_memories/MRTMLY-209-activity-manager-full-width-layout.md) - #layout #bootstrap #ui-improvement #activity-manager #full-width
 210. [MRTMLY-210: ActivityButton Layout Shift Prevention Fix](./logged_memories/MRTMLY-210-activity-button-layout-shift-prevention.md) - #ui-fix #layout #bootstrap #activity-button #vertical-space
 211. [MRTMLY-090: GitHub Copilot PR Review Response - PR #227 Resolution](./logged_memories/MRTMLY-090-github-copilot-pr-review-response-pr227.md) - #pr-review #code-review #testing #github-copilot #breaking-changes
+212. [MRTMLY-212: MCP Tools Copilot Instructions Enhancement](./logged_memories/MRTMLY-212-mcp-tools-copilot-instructions-enhancement.md) - #mcp-tools #copilot-instructions #sequential-thinking #time-management #memory-graph
+213. [MRTMLY-213: Documentation Link Integrity Maintenance](./logged_memories/MRTMLY-213-documentation-link-integrity-maintenance.md) - #documentation #link-validation #markdown #quality-assurance #maintenance
+214. [MRTMLY-214: Splash Screen Removal](./logged_memories/MRTMLY-214-splash-screen-removal.md) - #refactoring #performance #ui-simplification #splash-screen #code-cleanup
 212. [MRTMLY-212: MCP Tools Integration in Copilot Instructions Enhancement](./logged_memories/MRTMLY-212-mcp-tools-copilot-instructions-enhancement.md) - #mcp-tools #copilot-instructions #documentation #enhanced-workflows #sequential-thinking
