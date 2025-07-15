@@ -29,17 +29,6 @@ describe('Service Worker Fetch Handlers', () => {
   const originalCaches = global.caches;
   const originalFetch = global.fetch;
   
-  // Mock cache names (declared but not currently used in tests)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const CACHE_NAMES = {
-    STATIC: 'static-assets-v1',
-    DYNAMIC: 'dynamic-content-v1',
-    PAGES: 'pages-cache-v1',
-    IMAGES: 'images-cache-v1',
-    API: 'api-cache-v1',
-    FONTS: 'fonts-cache-v1'
-  };
-  
   beforeEach(() => {
     // Create a fresh mock cache for each test
     mockCache = {

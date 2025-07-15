@@ -13,6 +13,11 @@ export * from './timeDurations';
 
 // Also add the standalone formatting function from the old time.ts file
 function formatTimeHuman(milliseconds: number): string {
+  // Handle negative values and edge cases
+  if (milliseconds < 0) {
+    milliseconds = 0;
+  }
+  
   const totalSeconds = Math.floor(milliseconds / 1000);
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);

@@ -1,7 +1,6 @@
 'use client';
 import { useEffect } from 'react';
 import { ThemeProvider } from '@/contexts/theme';
-import { LoadingProvider } from '@/contexts/LoadingContext';
 import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
 
 // Add TypeScript interface for the global window object
@@ -67,15 +66,13 @@ export function LayoutClient({ children }: LayoutClientProps) {
   };
 
   return (
-    <LoadingProvider>
-      <ThemeProvider>
-        {/* Service worker update notifications - always render the component */}
-        <ServiceWorkerUpdater 
-          onUpdate={handleUpdate} 
-        />
-        
-        {children}
-      </ThemeProvider>
-    </LoadingProvider>
+    <ThemeProvider>
+      {/* Service worker update notifications - always render the component */}
+      <ServiceWorkerUpdater 
+        onUpdate={handleUpdate} 
+      />
+      
+      {children}
+    </ThemeProvider>
   );
 }

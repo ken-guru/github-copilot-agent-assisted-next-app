@@ -459,7 +459,13 @@ export function validateContrast(
   return ratio >= minRatio;
 }
 
-// Validate theme colors - returns boolean for compatibility
+/**
+ * Validates that all required CSS theme variables are defined and non-empty.
+ * Returns a boolean indicating whether all CSS variables are properly set.
+ * 
+ * @returns {boolean} True if all required CSS variables are defined and non-empty, false otherwise.
+ *                   Always returns true in SSR environment.
+ */
 export function validateThemeColors(): boolean {
   // List of required CSS variables
   const requiredColorVariables = [
