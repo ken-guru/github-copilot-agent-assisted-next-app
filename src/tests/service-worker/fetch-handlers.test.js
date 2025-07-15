@@ -140,7 +140,7 @@ describe('Service Worker Fetch Handlers', () => {
   describe('handleFetch', () => {
     it('should route API requests to networkFirst strategy', async () => {
       // Import the module under test
-      const { handleFetch } = require('../../public/sw-fetch-handlers');
+      const { handleFetch } = require('../../../public/sw-fetch-handlers');
       
       // Set up an API request
       const request = new Request('/api/data');
@@ -157,7 +157,7 @@ describe('Service Worker Fetch Handlers', () => {
     
     it('should route page navigation requests to networkFirst strategy', async () => {
       // Import the module under test
-      const { handleFetch } = require('../../public/sw-fetch-handlers');
+      const { handleFetch } = require('../../../public/sw-fetch-handlers');
       
       // Set up a navigation request with appropriate headers
       const request = new Request('/dashboard', {
@@ -176,7 +176,7 @@ describe('Service Worker Fetch Handlers', () => {
     
     it('should route static asset requests to cacheFirst strategy', async () => {
       // Import the module under test
-      const { handleFetch } = require('../../public/sw-fetch-handlers');
+      const { handleFetch } = require('../../../public/sw-fetch-handlers');
       
       // Set up a static asset request
       const request = new Request('/assets/logo.png');
@@ -193,7 +193,7 @@ describe('Service Worker Fetch Handlers', () => {
     
     it('should route image requests to cacheFirst strategy', async () => {
       // Import the module under test
-      const { handleFetch } = require('../../public/sw-fetch-handlers');
+      const { handleFetch } = require('../../../public/sw-fetch-handlers');
       
       // Set up an image request
       const request = new Request('/images/profile.jpg');
@@ -210,7 +210,7 @@ describe('Service Worker Fetch Handlers', () => {
     
     it('should route font requests to staleWhileRevalidate strategy', async () => {
       // Import the module under test
-      const { handleFetch } = require('../../public/sw-fetch-handlers');
+      const { handleFetch } = require('../../../public/sw-fetch-handlers');
       
       // Set up a font request
       const request = new Request('/fonts/roboto.woff2');
@@ -227,7 +227,7 @@ describe('Service Worker Fetch Handlers', () => {
     
     it('should fall back to networkOnly for unmatched requests', async () => {
       // Import the module under test
-      const { handleFetch } = require('../../public/sw-fetch-handlers');
+      const { handleFetch } = require('../../../public/sw-fetch-handlers');
       
       // Set up an unmatched request
       const request = new Request('/some-other-path');
@@ -241,7 +241,7 @@ describe('Service Worker Fetch Handlers', () => {
     
     it('should handle errors gracefully', async () => {
       // Import the module under test
-      const { handleFetch } = require('../../public/sw-fetch-handlers');
+      const { handleFetch } = require('../../../public/sw-fetch-handlers');
       
       // Set up a request
       const request = new Request('/api/data');
@@ -258,7 +258,7 @@ describe('Service Worker Fetch Handlers', () => {
     
     it('should return a fallback offline response for HTML requests when all strategies fail', async () => {
       // Import the module under test
-      const { handleFetch } = require('../../public/sw-fetch-handlers');
+      const { handleFetch } = require('../../../public/sw-fetch-handlers');
       
       // Set up an HTML navigation request
       const request = new Request('/dashboard', {
@@ -284,7 +284,7 @@ describe('Service Worker Fetch Handlers', () => {
   describe('isNavigationRequest', () => {
     it('should identify navigation requests correctly based on headers', async () => {
       // Import the module under test
-      const { isNavigationRequest } = require('../../public/sw-fetch-handlers');
+      const { isNavigationRequest } = require('../../../public/sw-fetch-handlers');
       
       // Create a navigation request
       const navRequest = new Request('/page', {
@@ -303,7 +303,7 @@ describe('Service Worker Fetch Handlers', () => {
     
     it('should identify navigation requests based on URL patterns', async () => {
       // Import the module under test
-      const { isNavigationRequest } = require('../../public/sw-fetch-handlers');
+      const { isNavigationRequest } = require('../../../public/sw-fetch-handlers');
       
       // Create requests with different URL patterns
       const htmlRequest = new Request('/page.html');
@@ -318,7 +318,7 @@ describe('Service Worker Fetch Handlers', () => {
   describe('isStaticAsset', () => {
     it('should identify static assets based on file extensions', async () => {
       // Import the module under test
-      const { isStaticAsset } = require('../../public/sw-fetch-handlers');
+      const { isStaticAsset } = require('../../../public/sw-fetch-handlers');
       
       // Create various requests
       const jsRequest = new Request('/assets/app.js');
@@ -333,7 +333,7 @@ describe('Service Worker Fetch Handlers', () => {
     
     it('should identify static assets based on URL patterns', async () => {
       // Import the module under test
-      const { isStaticAsset } = require('../../public/sw-fetch-handlers');
+      const { isStaticAsset } = require('../../../public/sw-fetch-handlers');
       
       // Create requests with specific paths
       const assetsRequest = new Request('/assets/logo.svg');
@@ -350,7 +350,7 @@ describe('Service Worker Fetch Handlers', () => {
   describe('isImageRequest', () => {
     it('should identify image requests based on file extensions', async () => {
       // Import the module under test
-      const { isImageRequest } = require('../../public/sw-fetch-handlers');
+      const { isImageRequest } = require('../../../public/sw-fetch-handlers');
       
       // Create various requests
       const pngRequest = new Request('/images/logo.png');
@@ -365,7 +365,7 @@ describe('Service Worker Fetch Handlers', () => {
     
     it('should identify image requests based on URL patterns', async () => {
       // Import the module under test
-      const { isImageRequest } = require('../../public/sw-fetch-handlers');
+      const { isImageRequest } = require('../../../public/sw-fetch-handlers');
       
       // Create requests with specific paths
       const imagesRequest = new Request('/images/header.webp');
@@ -382,7 +382,7 @@ describe('Service Worker Fetch Handlers', () => {
   describe('isApiRequest', () => {
     it('should identify API requests based on URL patterns', async () => {
       // Import the module under test
-      const { isApiRequest } = require('../../public/sw-fetch-handlers');
+      const { isApiRequest } = require('../../../public/sw-fetch-handlers');
       
       // Create various requests
       const apiDataRequest = new Request('/api/data');
@@ -399,7 +399,7 @@ describe('Service Worker Fetch Handlers', () => {
   describe('isFontRequest', () => {
     it('should identify font requests based on file extensions', async () => {
       // Import the module under test
-      const { isFontRequest } = require('../../public/sw-fetch-handlers');
+      const { isFontRequest } = require('../../../public/sw-fetch-handlers');
       
       // Create various requests
       const woffRequest = new Request('/fonts/roboto.woff');
@@ -416,7 +416,7 @@ describe('Service Worker Fetch Handlers', () => {
     
     it('should identify font requests based on URL patterns', async () => {
       // Import the module under test
-      const { isFontRequest } = require('../../public/sw-fetch-handlers');
+      const { isFontRequest } = require('../../../public/sw-fetch-handlers');
       
       // Create requests with specific paths
       const fontsRequest = new Request('/fonts/lato.otf');
