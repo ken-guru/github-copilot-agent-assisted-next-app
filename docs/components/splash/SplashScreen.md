@@ -47,8 +47,8 @@ The SplashScreen component provides a visually appealing loading screen that app
 ### Basic Usage
 
 ```tsx
-import { SplashScreen } from '../components/splash/SplashScreen';
-import { LoadingProvider } from '../contexts/LoadingContext';
+import SplashScreen from '@/app/_components/splash/SplashScreen';
+import { LoadingProvider } from '@/contexts/loading';
 
 export default function App({ Component, pageProps }) {
   return (

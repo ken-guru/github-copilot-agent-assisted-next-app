@@ -36,7 +36,6 @@ const customJestConfig = {
     '^@hooks/(.*)$': '<rootDir>/hooks/$1',
     // Handle relative imports from src/app/page.tsx
     '\\.\\./contexts/LoadingContext': '<rootDir>/src/contexts/LoadingContext',
-    '\\.\\./components/splash/SplashScreen': '<rootDir>/src/components/splash/SplashScreen',
     // Handle CSS, SCSS, SVG imports
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js'
