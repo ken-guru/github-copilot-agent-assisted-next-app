@@ -52,15 +52,19 @@ The application currently uses hardcoded activities (Homework, Reading, Play Tim
    - **Implementation Details:**
      - Install `@supabase/supabase-js` package
      - Create Supabase client configuration in `src/utils/supabase/client.ts`
-     - Set up environment variables in `.env.local`
+     - Set up environment variables in `.env.example` (for structure) and Vercel dashboard (for actual values)
      - Configure TypeScript types for database schema
+     - Create `.env.example` with placeholder values for documentation
    - **Technical Considerations:**
      - Use singleton pattern for client initialization
      - Implement proper error handling for connection issues
      - Support for server-side and client-side operations
+     - **Security**: Never commit real environment variables to source control
+     - **Vercel**: Set environment variables in Vercel dashboard for all environments
    - **Testing Requirements:**
      - Mock Supabase client for testing
      - Integration tests for database operations
+     - Test environment variable setup in Vercel Preview deployments
 
 ### 2. Database Schema Design
    - **Implementation Details:**
@@ -90,41 +94,60 @@ The application currently uses hardcoded activities (Homework, Reading, Play Tim
 
 ### 3. Row Level Security (RLS) Configuration
    - **Implementation Details:**
-     - Enable RLS on activities table for future security
-     - Create public read/write policy for initial implementation (no authentication)
+     - Enable RLS on activities table for security best practices
+     - Create restrictive public read/write policy for initial implementation (no authentication)
      - Plan for future user-specific policies when authentication is added
+     - Document all security policies and their purpose
      ```sql
      ALTER TABLE activities ENABLE ROW LEVEL SECURITY;
      
-     -- Initial public policy (can be refined later)
-     CREATE POLICY "Public activities access" ON activities
-       FOR ALL TO anon, authenticated
+     -- Initial public policy with explicit permissions (can be refined later)
+     CREATE POLICY "Public activities read" ON activities
+       FOR SELECT TO anon, authenticated
+       USING (is_active = true);
+       
+     CREATE POLICY "Public activities write" ON activities
+       FOR INSERT TO anon, authenticated
+       WITH CHECK (true);
+       
+     CREATE POLICY "Public activities update" ON activities
+       FOR UPDATE TO anon, authenticated
        USING (true)
        WITH CHECK (true);
+       
+     CREATE POLICY "Public activities delete" ON activities
+       FOR DELETE TO anon, authenticated
+       USING (true);
      ```
    - **Technical Considerations:**
-     - Start with open access, can restrict later
+     - Start with restrictive access, expand as needed
      - Prepare foundation for future user authentication
-     - Maintain security best practices even in simple implementation
+     - **Security**: Explicitly define what operations are allowed for which users
+     - **Audit**: Log policy changes and review regularly
    - **Testing Requirements:**
-     - Security policy tests
-     - Access control validation
-     - Future migration path testing
+     - Security policy tests for all CRUD operations
+     - Access control validation with different user roles
+     - Future migration path testing for user-specific policies
 
 ### 4. Activity Service Layer
    - **Implementation Details:**
      - Create `src/services/activity-service.ts`
      - Implement CRUD operations: create, read, update, delete
-     - Add batch operations for efficiency
-     - Implement caching strategy
+     - Add input validation and sanitization for all operations
+     - Implement proper error handling with user-friendly messages
+     - Add logging for all external API interactions
+     - Implement caching strategy for performance
    - **Technical Considerations:**
-     - Error handling and retry logic
-     - Type safety with generated types
-     - Optimistic updates for better UX
+     - **Security**: Validate and sanitize all inputs before sending to Supabase
+     - **Error Handling**: Never expose sensitive information in error messages
+     - **Type Safety**: Use generated types from Supabase schema
+     - **Performance**: Implement optimistic updates for better UX
+     - **Monitoring**: Log all database operations for debugging and security audit
    - **Testing Requirements:**
-     - Unit tests for all CRUD operations
-     - Error scenario testing
-     - Performance testing
+     - Unit tests for all CRUD operations with various input scenarios
+     - Security tests for input validation and sanitization
+     - Error scenario testing (network failures, invalid data, etc.)
+     - Performance testing for caching effectiveness
 
 ### 5. Navigation System
    - **Implementation Details:**
@@ -200,6 +223,25 @@ The application currently uses hardcoded activities (Homework, Reading, Play Tim
 
 ## Technical Guidelines
 
+### Vercel Deployment Considerations
+- **Environment Variables**: Store Supabase keys in Vercel dashboard, never in source control. Use `.env.example` for structure only
+- **Serverless Functions**: Next.js API routes run as stateless serverless functions - avoid long-running operations
+- **Database Connections**: Use Supabase client only; never connect directly to PostgreSQL from Vercel functions
+- **Static vs Dynamic Rendering**: Use SSG for static pages, SSR/client-side fetching for dynamic activity data
+- **Rate Limits**: Be mindful of both Vercel execution limits and Supabase API rate limits
+- **Preview Deployments**: Test Supabase integration in Vercel Preview Deployments before production
+- **Monitoring**: Use Vercel's logging for API routes and add error reporting for Supabase operations
+
+### Security Precautions for External Communication
+- **Key Management**: Only use Supabase anon key in client-side code. Never expose service role keys
+- **Row Level Security**: Always enable RLS on all tables. Create restrictive policies even for public access
+- **Input Validation**: Sanitize and validate all user inputs before sending to Supabase
+- **Error Handling**: Gracefully handle Supabase errors without leaking sensitive information
+- **Network Security**: All Supabase communication uses HTTPS by default
+- **Data Minimization**: Only request and store necessary data fields
+- **Audit Trail**: Log all external API interactions for debugging and security monitoring
+- **Future Authentication**: Design RLS policies to easily transition to user-specific access
+
 ### Framework Considerations
 - **Next.js App Router**: Use server components where appropriate for initial data loading
 - **TypeScript**: Generate types from Supabase schema for full type safety
@@ -257,21 +299,26 @@ The application currently uses hardcoded activities (Homework, Reading, Play Tim
 
 ## Validation Criteria
 - [ ] Supabase client configured and tested
+- [ ] Environment variables properly set in Vercel dashboard (not source control)
 - [ ] Database schema created with proper RLS policies
-- [ ] Activity service layer implemented with full CRUD operations
+- [ ] Security policies tested for all CRUD operations
+- [ ] Activity service layer implemented with input validation and error handling
+- [ ] All external API interactions properly logged
 - [ ] Navigation component added to layout
 - [ ] Activity management interface (/activities) fully functional
 - [ ] ActivityManager updated to use database activities
 - [ ] Data migration and seeding scripts created
 - [ ] All existing tests updated and passing
-- [ ] New functionality thoroughly tested
+- [ ] New functionality thoroughly tested including security scenarios
+- [ ] Vercel Preview deployment tested with Supabase integration
 - [ ] Theme compatibility verified across all new components
 - [ ] Mobile responsiveness confirmed
 - [ ] Accessibility standards met
 - [ ] Performance benchmarks satisfied
-- [ ] Documentation updated (component docs, README)
+- [ ] Documentation updated (component docs, README, Vercel setup)
 - [ ] Memory Log entries created for implementation process
 - [ ] Code quality checks passed (lint, type-check, build)
+- [ ] Security audit completed for external communication
 
 ## Implementation Phases
 
