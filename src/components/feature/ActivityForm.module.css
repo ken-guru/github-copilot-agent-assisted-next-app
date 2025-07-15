@@ -1,0 +1,62 @@
+.addActivityForm {
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-md);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-sm);
+}
+
+.addActivityInput {
+  padding: var(--space-sm);
+  border-radius: var(--radius-input);
+  border: 2px solid #d0d0d0; /* Lighter, more visible border for light mode */
+  background-color: #ffffff; /* Pure white in light mode */
+  color: var(--text-primary);
+}
+
+.dark .addActivityInput,
+[data-theme="dark"] .addActivityInput,
+.dark-mode .addActivityInput {
+  background-color: #383838; /* Much lighter gray for dark mode */
+  border-color: #555555; /* More visible border in dark mode */
+  color: var(--text-primary-dark);
+}
+
+.addActivityInput:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  background-color: #f9f9f9; /* Very slight gray to indicate focus in light mode */
+}
+
+.addActivityInput:disabled {
+  background-color: var(--background-muted);
+  color: var(--foreground-muted);
+  cursor: not-allowed;
+}
+
+.addButton {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-button);
+  border: none;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addButton:hover:not(:disabled) {
+  background-color: var(--primary-highlight);
+}
+
+.addButton:disabled {
+  background-color: var(--background-muted);
+  color: var(--foreground-muted);
+  cursor: not-allowed;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .addActivityForm {
+    grid-template-columns: 1fr;
+  }
+}

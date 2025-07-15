@@ -1,0 +1,149 @@
+.container {
+  background-color: var(--background);
+  padding: var(--padding-medium);
+  border-radius: var(--radius-card); /* Updated from var(--space-sm) to use semantic radius */
+  box-shadow: var(--shadow-card);
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: var(--space-md);
+  color: var(--foreground);
+}
+
+.modeSelector {
+  display: flex;
+  margin-bottom: var(--space-md);
+  gap: var(--gap-medium);
+  justify-content: space-evenly;
+}
+
+.button {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-button); /* Updated from var(--space-xs) to use semantic radius */
+  border: none;
+  cursor: pointer;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.buttonPrimary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.buttonSecondary {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+.buttonAccent {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.modeButton {
+  background-color: var(--background-alt);
+  color: var(--foreground);
+  transition: all 0.2s ease;
+}
+
+.modeButtonActive {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-medium);
+}
+
+.inputGroup {
+  display: flex;
+  gap: var(--gap-small);
+}
+
+.timeInput {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-small);
+}
+
+.label {
+  color: var(--foreground-muted);
+  font-size: 0.875rem;
+}
+
+.input {
+  padding: var(--space-sm);
+  border-radius: var(--radius-input); /* Updated from var(--space-xs) to use semantic radius */
+  border: 2px solid #d0d0d0; /* Lighter, more visible border for light mode */
+  background-color: #ffffff; /* Pure white in light mode */
+  color: var(--text-primary);
+}
+
+.dark .input,
+[data-theme="dark"] .input,
+.dark-mode .input {
+  background-color: #383838; /* Much lighter gray for dark mode */
+  border-color: #555555; /* More visible border in dark mode */
+  color: var(--text-primary-dark);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  background-color: #f9f9f9; /* Very slight gray to indicate focus in light mode */
+}
+
+.submitButton {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-button); /* Updated from var(--space-xs) to use semantic radius */
+  border: none;
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.submitButton:hover {
+  background-color: var(--accent-highlight);
+}
+
+.submitButton:disabled {
+  background-color: var(--background-muted);
+  color: var(--foreground-muted);
+  cursor: not-allowed;
+}
+
+/* Error styling */
+.error {
+  color: var(--error);
+  font-size: 0.875rem;
+  margin-top: var(--space-xs);
+}
+
+.inputError {
+  border: 1px solid var(--error);
+}
+
+.deadlineInput {
+  width: 100%;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .inputGroup {
+    flex-direction: column;
+  }
+  
+  .submitButton {
+    padding: var(--space-md);
+    font-size: 1rem;
+  }
+}

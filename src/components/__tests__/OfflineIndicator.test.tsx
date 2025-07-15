@@ -8,7 +8,7 @@ jest.mock('../../hooks/useOnlineStatus', () => ({
 }));
 
 // Import the mocked hook
-import { useOnlineStatus } from '../../hooks/useOnlineStatus';
+import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 
 describe('OfflineIndicator', () => {
   // Cast mocked function to proper type

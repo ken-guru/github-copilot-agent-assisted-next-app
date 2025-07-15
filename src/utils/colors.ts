@@ -459,44 +459,30 @@ export function validateContrast(
   return ratio >= minRatio;
 }
 
-// Validate theme colors
-export function validateThemeColors(): void {
-  // Skip all validation and logging in production
-  if (process.env.NODE_ENV === 'production') {
-    return;
+// Validate theme colors - returns boolean for compatibility
+export function validateThemeColors(): boolean {
+  // List of required CSS variables
+  const requiredColorVariables = [
+    '--primary',
+    '--secondary', 
+    '--accent',
+    '--background',
+    '--foreground',
+    '--border-color',
+    '--error',
+    '--success'
+  ];
+  
+  // Check if CSS variables exist
+  if (typeof window !== 'undefined') {
+    const style = getComputedStyle(document.documentElement);
+    
+    return requiredColorVariables.every(variable => {
+      const value = style.getPropertyValue(variable);
+      return value && value.trim() !== '';
+    });
   }
   
-  try {
-    // Get theme colors
-    const root = document.documentElement;
-    const computedStyle = getComputedStyle(root);
-    
-    // Get base colors
-    const background = computedStyle.getPropertyValue('--background').trim() || '#ffffff';
-    const foreground = computedStyle.getPropertyValue('--foreground').trim() || '#000000';
-    const backgroundMuted = computedStyle.getPropertyValue('--background-muted').trim() || '#f5f5f5';
-    const foregroundMuted = computedStyle.getPropertyValue('--foreground-muted').trim() || '#6b7280';
-
-    // Only log in development environment
-    if (process.env.NODE_ENV === 'development') {
-      console.group('Theme Contrast Validation (' + (isDarkMode() ? 'Dark' : 'Light') + ' Mode)');
-      // Safely try to calculate contrast ratios - these may fail if the variables aren't CSS colors
-      try {
-        if (background && foreground) {
-          console.log('Main contrast ratio:', getContrastRatio(background, foreground));
-        }
-        if (backgroundMuted && foregroundMuted) {
-          console.log('Muted contrast ratio:', getContrastRatio(backgroundMuted, foregroundMuted));
-        }
-      } catch {
-        console.log('Could not calculate contrast ratios with current theme values.');
-      }
-      console.groupEnd();
-    }
-  } catch (error) {
-    // Silently handle errors in test environment
-    if (process.env.NODE_ENV !== 'test') {
-      console.error('Error validating theme colors:', error);
-    }
-  }
+  // In SSR environment, assume everything is fine
+  return true;
 }
