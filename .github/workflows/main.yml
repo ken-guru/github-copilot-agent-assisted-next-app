@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       
       - name: Install dependencies
         run: npm ci
@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       
       - name: Install dependencies
         run: npm ci
@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       
       - name: Install dependencies
         run: npm ci
@@ -55,7 +55,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       
       - name: Install dependencies
         run: npm ci
@@ -84,7 +84,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       
       - name: Install dependencies
         run: npm ci
@@ -100,6 +100,21 @@ jobs:
       
       - name: Build application for testing
         run: npm run build
+      
+      - name: Test production start (debugging)
+        run: |
+          echo "Testing if production server starts correctly..."
+          timeout 30s npm start &
+          SERVER_PID=$!
+          sleep 10
+          if curl -f http://localhost:3000 > /dev/null 2>&1; then
+            echo "✅ Server is responding correctly"
+            kill $SERVER_PID || true
+          else
+            echo "❌ Server failed to respond"
+            kill $SERVER_PID || true
+            exit 1
+          fi
       
       - name: Save Next.js cache
         uses: actions/cache/save@v4
