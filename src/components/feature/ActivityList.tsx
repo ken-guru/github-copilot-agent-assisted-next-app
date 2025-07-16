@@ -23,7 +23,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
         <Card.Header className="d-flex justify-content-between align-items-center">
           <h5 className="mb-0">Your Activities</h5>
           {onAdd && (
-            <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center">
+            <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center px-3">
               <i className="fas fa-plus me-2"></i>
               Add Activity
             </Button>
@@ -46,7 +46,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
       <Card.Header className="d-flex justify-content-between align-items-center">
         <h5 className="mb-0">Your Activities</h5>
         {onAdd && (
-          <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center">
+          <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center px-3">
             <i className="fas fa-plus me-2"></i>
             Add Activity
           </Button>
@@ -93,9 +93,9 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                 size="sm" 
                 onClick={() => onEdit?.(activity)} 
                 aria-label={`Edit ${activity.name}`}
-                className="d-flex align-items-center"
+                className="d-flex align-items-center px-3"
               >
-                <i className="fas fa-edit me-1"></i>
+                <i className="fas fa-edit me-2"></i>
                 Edit
               </Button>
               <Button 
@@ -103,9 +103,9 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                 size="sm" 
                 onClick={() => onDelete?.(activity)} 
                 aria-label={`Delete ${activity.name}`}
-                className="d-flex align-items-center"
+                className="d-flex align-items-center px-3"
               >
-                <i className="fas fa-trash me-1"></i>
+                <i className="fas fa-trash me-2"></i>
                 Delete
               </Button>
             </div>
