@@ -332,6 +332,7 @@ The application currently uses hardcoded activities (Homework, Reading, Play Tim
 - [x] Create /activities route structure (complete)
 - [x] Update layout integration with responsive navigation (complete)
 - [x] Test navigation functionality across devices (complete)
+- [x] Expose navigation to ActivityCrud page in main UI (complete)
 
 ### Phase 3: Management Interface
 - [ ] Build ActivityCrud page with Bootstrap styling
