@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { ThemeProvider } from '@/contexts/theme';
 import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
+import Navigation from '@/components/Navigation';
 
 // Add TypeScript interface for the global window object
 declare global {
@@ -71,6 +72,9 @@ export function LayoutClient({ children }: LayoutClientProps) {
       <ServiceWorkerUpdater 
         onUpdate={handleUpdate} 
       />
+      
+      {/* Main navigation */}
+      <Navigation />
       
       {children}
     </ThemeProvider>
