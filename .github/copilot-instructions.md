@@ -465,9 +465,9 @@ When these MCP tools are available, leverage them to enhance development workflo
 - Key insights gained
 - Patterns identified
 - Future considerations
+```
 
 #### MCP Tool Usage (when available)
 - **Sequential Thinking**: Record complex analysis steps and hypothesis testing
 - **Memory Tool**: Document patterns and solutions for future reference
 - **Time Tool**: Track debugging session duration and timezone context
-```

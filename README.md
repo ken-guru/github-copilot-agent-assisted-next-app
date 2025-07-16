@@ -29,7 +29,23 @@ This project leverages Model Context Protocol (MCP) tools to enhance AI-assisted
 - **Sequential Thinking Tool**: Enables step-by-step problem analysis and solution development
 - **Time Tool**: Provides timezone-aware time handling for documentation and coordination
 
-These tools enable more sophisticated AI assistance in debugging, planning, and implementation tasks.
+**Practical Examples:**
+```javascript
+// Search existing debugging knowledge
+mcp_memory_search_nodes("component testing typescript errors")
+
+// Complex problem analysis
+mcp_sequential-th_sequentialthinking({
+  thought: "Breaking down this multi-step refactoring...",
+  // Systematic analysis with iterative refinement
+})
+
+// Timezone-aware documentation
+mcp_time_get_current_time("America/New_York")
+// Result: "2025-07-16 15:30:00 EST"
+```
+
+These tools enable more sophisticated AI assistance in debugging, planning, and implementation tasks. For complete usage guides, see [Memory Log Workflow](./docs/dev-guides/memory-log-workflow.md) and [AI Agent Quick Reference](./docs/dev-guides/ai-agent-memory-quick-reference.md).
 
 ### Change Management Approach
 ```markdown
