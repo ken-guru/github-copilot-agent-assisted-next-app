@@ -58,3 +58,11 @@ When working with this project:
 - **Suggest template improvements** when patterns emerge that aren't covered
 - **Maintain template consistency** across all project documentation
 - **Validate template compliance** before beginning any implementation work
+
+### MCP Tool Integration
+
+When MCP (Model Context Protocol) tools are available, enhance documentation workflows:
+- **Memory Tool**: Store template patterns and documentation relationships in knowledge graph
+- **Sequential Thinking Tool**: Use for complex template design and documentation architecture decisions
+- **Time Tool**: Add timezone-aware timestamps to documentation creation and updates
+- **Combined Usage**: Leverage all tools together for comprehensive documentation planning and maintenance

@@ -23,6 +23,14 @@ The application is developed using AI-assisted techniques with these principles:
 - Theme-aware styling
 - Accessibility considerations
 
+### AI Development Enhancement
+This project leverages Model Context Protocol (MCP) tools to enhance AI-assisted development:
+- **Memory Tool**: Maintains persistent knowledge graphs for project context
+- **Sequential Thinking Tool**: Enables step-by-step problem analysis and solution development
+- **Time Tool**: Provides timezone-aware time handling for documentation and coordination
+
+These tools enable more sophisticated AI assistance in debugging, planning, and implementation tasks.
+
 ### Change Management Approach
 ```markdown
 The project uses a documentation system for tracking changes:
