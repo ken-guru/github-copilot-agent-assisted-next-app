@@ -153,9 +153,13 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ activity, onSubmit, error, 
           aria-label="Selected color index"
         />
       </Form.Group>
-      <Button type="submit" variant="primary">Save</Button>
+      <Button type="submit" variant="primary" className="d-flex align-items-center">
+        <i className="fas fa-save me-2"></i>
+        Save
+      </Button>
       {typeof onCancel === 'function' && (
-        <Button type="button" variant="secondary" className="ms-2" onClick={handleCancel}>
+        <Button type="button" variant="secondary" className="ms-2 d-flex align-items-center" onClick={handleCancel}>
+          <i className="fas fa-times me-2"></i>
           Cancel
         </Button>
       )}

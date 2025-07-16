@@ -269,7 +269,10 @@ const ActivityCrud: React.FC = () => {
           />
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => { setShowFormRaw(false); setFormError(null); }}>Cancel</Button>
+          <Button variant="secondary" onClick={() => { setShowFormRaw(false); setFormError(null); }} className="d-flex align-items-center">
+            <i className="fas fa-times me-2"></i>
+            Cancel
+          </Button>
         </Modal.Footer>
       </Modal>
       {/* Delete Confirmation Modal */}
@@ -289,8 +292,14 @@ const ActivityCrud: React.FC = () => {
           <p className="text-muted small">This action cannot be undone.</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowConfirm(false)}>Cancel</Button>
-          <Button variant="danger" onClick={confirmDelete} autoFocus>Delete</Button>
+          <Button variant="secondary" onClick={() => setShowConfirm(false)} className="d-flex align-items-center">
+            <i className="fas fa-times me-2"></i>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmDelete} autoFocus className="d-flex align-items-center">
+            <i className="fas fa-trash me-2"></i>
+            Delete
+          </Button>
         </Modal.Footer>
       </Modal>
       {/* Export Modal */}
@@ -331,7 +340,7 @@ const ActivityCrud: React.FC = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowExport(false)} autoFocus>
+          <Button variant="secondary" onClick={() => setShowExport(false)} autoFocus className="d-flex align-items-center">
             <i className="fas fa-times me-2"></i>
             Close
           </Button>
@@ -383,11 +392,11 @@ const ActivityCrud: React.FC = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowImport(false)}>
+          <Button variant="secondary" onClick={() => setShowImport(false)} className="d-flex align-items-center">
             <i className="fas fa-times me-2"></i>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleImportSubmit} disabled={!importFile}>
+          <Button variant="primary" onClick={handleImportSubmit} disabled={!importFile} className="d-flex align-items-center">
             <i className="fas fa-upload me-2"></i>
             Import Activities
           </Button>
@@ -425,11 +434,11 @@ const ActivityCrud: React.FC = () => {
           <p className="mb-0">Do you want to continue with the import?</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowImportConfirm(false)}>
+          <Button variant="secondary" onClick={() => setShowImportConfirm(false)} className="d-flex align-items-center">
             <i className="fas fa-times me-2"></i>
             Cancel
           </Button>
-          <Button variant="danger" onClick={confirmImportOverwrite} autoFocus>
+          <Button variant="danger" onClick={confirmImportOverwrite} autoFocus className="d-flex align-items-center">
             <i className="fas fa-upload me-2"></i>
             Replace Activities
           </Button>
