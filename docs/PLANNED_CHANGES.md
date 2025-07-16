@@ -1,3 +1,39 @@
+# Beast Mode V3 Autonomous Agent Workflow (GPT-4.1 Enhanced)
+
+This project uses the advanced autonomous developer agent workflow, designed for elite full-stack development with enhanced multi-mode capabilities. The methodology below is integrated into all planning and implementation phases for maximum rigor, research, and never-ending problem resolution.
+
+## Agent Principles & Workflow
+
+- **Never stop until the problem is fully solved and all items are checked off.**
+- **Extensive internet research is required for all third-party packages, dependencies, and best practices.**
+- **Plan, act, research, analyze, checkpoint, and prompt-generate in cycles.**
+- **Use sequential thinking and memory tools for complex problem breakdowns.**
+- **Test rigorously and repeatedly, handling all edge cases.**
+- **Update planning documents and commit in logical increments.**
+- **Communicate clearly and concisely at every step.**
+
+### Workflow Steps
+
+1. **Fetch Provided URLs**: Use the fetch tool for all user-provided and discovered URLs. Recursively gather all relevant information.
+2. **Deeply Understand the Problem**: Read the issue, break it down, and plan before coding. Use sequential thinking for complex tasks.
+3. **Codebase Investigation**: Explore files, search for key functions, and validate context.
+4. **Internet Research**: Use Google and official docs for every package, dependency, and best practice. Recursively fetch and read all relevant links.
+5. **Develop a Detailed Plan**: Create a markdown todo list for all steps. Check off each step as completed and continue until all are done.
+6. **Make Code Changes**: Read full file context before editing. Make small, testable, incremental changes.
+7. **Debugging**: Use error tools, print/logs, and hypothesis testing. Find and fix root causes, not just symptoms.
+8. **Test Frequently**: Run all tests after each change. Iterate until all tests pass and edge cases are covered.
+9. **Reflect and Validate**: After tests pass, review intent, add more tests if needed, and ensure robustness.
+10. **Documentation & Commit**: Update planning docs, component docs, README, and commit in logical increments.
+
+### Communication Guidelines
+
+- Always explain what you are doing before each tool call.
+- Never ask unnecessary questions if you can act instead.
+- Use markdown for todo lists and progress tracking.
+- Maintain a casual, friendly, and professional tone.
+
+---
+
 # Planned Changes
 
 This document contains specifications for upcoming changes to the application. Each change should be documented using the template format to ensure AI-assisted implementation is effective.
@@ -20,6 +56,125 @@ See [docs/templates/PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEM
 ## Current Planned Changes
 
 # Activity Customization with Local Storage
+---
+# ActivityCrud Confirmation Dialogs & Import/Export UX Enhancement
+
+## Context
+The ActivityCrud management interface currently provides basic CRUD operations for activities, with a simple confirmation dialog for deletion and partial export functionality. Import functionality is not yet implemented, and confirmation dialogs do not fully leverage best practices for accessibility, UX clarity, and error handling. This change will:
+
+- Enhance confirmation dialogs for all destructive actions (delete, import overwrite, bulk actions)
+- Implement robust import/export UX for activity data backup and restore
+- Ensure accessibility, ARIA labeling, and keyboard navigation for all dialogs
+- Integrate comprehensive error handling and user feedback
+- Align with project standards for documentation, testing, and code quality
+
+**Components Affected:**
+- `ActivityCrud.tsx` (confirmation dialogs, import/export modals)
+- `ActivityForm.tsx` (error feedback)
+- `ActivityList.tsx` (bulk actions, delete)
+- Documentation in `docs/components/`
+
+**Current Behavior:**
+- Delete confirmation dialog is present but basic
+- Export modal provides JSON download, but lacks error handling and feedback
+- Import modal is not implemented
+- Accessibility and keyboard navigation are partially supported
+
+**User Needs:**
+- Clear, safe confirmation for destructive actions
+- Reliable import/export for data backup and restore
+- Accessible, keyboard-navigable dialogs
+- Error feedback for invalid files or failed operations
+
+## Requirements
+
+### 1. Confirmation Dialogs
+   - **Implementation Details:**
+     - Enhance delete confirmation dialog with static backdrop, ARIA labeling, and focus management
+     - Add confirmation dialogs for import overwrite and bulk delete actions
+     - Use visually distinct destructive action buttons (e.g., red for "Delete")
+     - Provide clear, descriptive messaging for all dialogs
+   - **Technical Considerations:**
+     - Use React-Bootstrap Modal with `backdrop="static"` for critical actions
+     - Default keyboard focus to "Cancel" for destructive dialogs
+     - ARIA attributes for accessibility
+     - Reusable modal pattern for all confirmations
+   - **Testing Requirements:**
+     - Unit and integration tests for dialog appearance, behavior, and accessibility
+     - Edge case tests for accidental closure, keyboard navigation, and ARIA compliance
+
+### 2. Export UX
+   - **Implementation Details:**
+     - Provide clear instructions and feedback in export modal
+     - Accessible download link for JSON file
+     - Error handling for empty or malformed data
+   - **Technical Considerations:**
+     - Use ARIA labeling and Bootstrap styling
+     - Validate data before export
+   - **Testing Requirements:**
+     - Tests for export modal, download functionality, and error scenarios
+
+### 3. Import UX
+   - **Implementation Details:**
+     - Implement import modal with file input for JSON upload
+     - Validate file type and structure before import
+     - Error messaging for invalid files
+     - Confirmation dialog if import will overwrite existing activities
+     - Success feedback after import
+   - **Technical Considerations:**
+     - ARIA labeling and keyboard accessibility
+     - Graceful error handling for invalid or corrupted files
+   - **Testing Requirements:**
+     - Tests for import modal, file validation, overwrite confirmation, and error feedback
+
+### 4. Accessibility & UX
+   - **Implementation Details:**
+     - ARIA labels and keyboard navigation for all modals
+     - Static backdrop for destructive actions
+     - Focus management for dialog actions
+     - Clear, descriptive button labels
+   - **Testing Requirements:**
+     - Accessibility tests for ARIA compliance and keyboard navigation
+
+### 5. Documentation
+   - **Implementation Details:**
+     - Update component documentation in `docs/components/`
+     - Document props, state, accessibility, and test coverage
+     - Update planning docs and README as needed
+
+## Technical Guidelines
+
+- Use React-Bootstrap Modal for all dialogs
+- ARIA labeling and static backdrop for destructive actions
+- Keyboard accessibility and focus management
+- Error handling and user feedback for all operations
+- Strict TypeScript typing and code quality standards
+- Comprehensive unit and integration tests
+- Documentation updates for all affected components
+
+## Expected Outcome
+
+### User Perspective
+- Safe, clear confirmation for all destructive actions
+- Reliable import/export for activity data
+- Accessible, keyboard-navigable dialogs
+- Error feedback for invalid files or failed operations
+
+### Technical Perspective
+- Reusable, robust modal/dialog pattern
+- Comprehensive test coverage for dialogs and import/export
+- Documentation and code quality aligned with project standards
+
+## Validation Criteria
+- [ ] Enhanced confirmation dialogs for all destructive actions
+- [ ] Export modal with clear instructions, accessible download, and error handling
+- [ ] Import modal with file validation, error feedback, and overwrite confirmation
+- [ ] ARIA labeling and keyboard accessibility for all dialogs
+- [ ] Comprehensive unit and integration tests
+- [ ] Documentation updated for all affected components
+- [ ] Code quality checks passed (lint, type-check, build)
+
+---
 
 ## Context
 The application currently uses hardcoded activities (Homework, Reading, Play Time, Chores) defined in the ActivityManager component. This change will:
