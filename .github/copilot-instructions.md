@@ -301,6 +301,16 @@ When these MCP tools are available, leverage them to enhance development workflo
 - CREATE entities for significant debugging sessions and their outcomes
 - REFERENCE knowledge graph findings in Memory Log documentation
 - MAINTAIN bidirectional references between systems
+- MIGRATE existing memory logs to MCP memory tool for AI-agent accessibility
+- USE MCP search for finding relevant historical debugging sessions
+- STORE new debugging sessions in both markdown and MCP formats during transition
+
+**Memory Log Migration Status**:
+- EXISTING LOGS: 219 memory log entries in `docs/logged_memories/`
+- MIGRATION TOOL: Use `scripts/migrate-memory-logs-to-mcp.js` for automated migration
+- POC COMPLETED: MRTMLY-001 and MRTMLY-002 successfully migrated with full entity/relation structure
+- SEARCH VALIDATED: Semantic search working effectively for AI agent queries
+- HYBRID APPROACH: Maintain both markdown files and MCP entities during transition
 
 ### Tool Combination Strategies
 **Sequential Thinking + Memory Graph**:
