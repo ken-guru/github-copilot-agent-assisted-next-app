@@ -213,32 +213,6 @@ const ActivityCrud: React.FC = () => {
         </div>
       )}
 
-      {/* Header Section */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <div>
-              <h1 className="h3 mb-1">Activity Management</h1>
-              <p className="text-muted mb-0">Create and customize your activities</p>
-            </div>
-            <div className="d-flex gap-2">
-              <Button variant="outline-secondary" onClick={handleImport} className="d-flex align-items-center">
-                <i className="fas fa-upload me-2"></i>
-                Import
-              </Button>
-              <Button variant="outline-secondary" onClick={handleExport} className="d-flex align-items-center">
-                <i className="fas fa-download me-2"></i>
-                Export
-              </Button>
-              <Button variant="primary" onClick={handleAdd} className="d-flex align-items-center">
-                <i className="fas fa-plus me-2"></i>
-                Add Activity
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Activities List Section */}
       <div className="row">
         <div className="col-12">
@@ -255,10 +229,32 @@ const ActivityCrud: React.FC = () => {
               </Button>
             </div>
           ) : (
-            <ActivityList activities={activities} onEdit={handleEdit} onDelete={handleDelete} />
+            <ActivityList 
+              activities={activities} 
+              onEdit={handleEdit} 
+              onDelete={handleDelete}
+              onAdd={handleAdd}
+            />
           )}
         </div>
       </div>
+
+      {/* Import/Export Actions - Moved to secondary location */}
+      <div className="row mt-3">
+        <div className="col-12">
+          <div className="d-flex gap-2 justify-content-center">
+            <Button variant="outline-secondary" onClick={handleImport} size="sm" className="d-flex align-items-center">
+              <i className="fas fa-upload me-2"></i>
+              Import
+            </Button>
+            <Button variant="outline-secondary" onClick={handleExport} size="sm" className="d-flex align-items-center">
+              <i className="fas fa-download me-2"></i>
+              Export
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Activity Form Modal */}
       <Modal key={formError || 'no-error'} show={showForm} onHide={() => { setShowFormRaw(false); setFormError(null); }} aria-labelledby="activity-form-modal" centered backdrop="static">
         <Modal.Header closeButton>

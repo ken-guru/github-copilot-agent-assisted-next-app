@@ -59,7 +59,7 @@ const Navigation: React.FC = () => {
               </Link>
             </li>
             <li className="nav-item d-flex align-items-center">
-              <ThemeToggle />
+              <ThemeToggle size="sm" variant="navbar" />
             </li>
           </ul>
         </div>

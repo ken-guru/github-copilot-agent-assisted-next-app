@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ListGroup, Badge } from 'react-bootstrap';
+import { Button, ListGroup, Card } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
 import { getColorDisplay } from '../../utils/colorNames';
 import { getActivityColors } from '../../utils/colors';
@@ -8,33 +8,50 @@ interface ActivityListProps {
   activities: Activity[];
   onEdit?: (activity: Activity) => void;
   onDelete?: (activity: Activity) => void;
+  onAdd?: () => void; // New prop for Add Activity button
 }
 
-const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelete }) => {
+const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelete, onAdd }) => {
   // Get current theme colors for visual indicators
   const activityColors = getActivityColors();
 
   if (!activities.length) {
     return (
-      <div className="text-center py-4">
-        <div className="text-muted">
-          <i className="fas fa-tasks fa-2x mb-3"></i>
-          <p>No activities found</p>
-        </div>
-      </div>
+      <Card>
+        <Card.Header className="d-flex justify-content-between align-items-center">
+          <h5 className="mb-0">Your Activities</h5>
+          {onAdd && (
+            <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center">
+              <i className="fas fa-plus me-2"></i>
+              Add Activity
+            </Button>
+          )}
+        </Card.Header>
+        <Card.Body>
+          <div className="text-center py-4">
+            <div className="text-muted">
+              <i className="fas fa-tasks fa-2x mb-3"></i>
+              <p>No activities found</p>
+            </div>
+          </div>
+        </Card.Body>
+      </Card>
     );
   }
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-3">
+    <Card>
+      <Card.Header className="d-flex justify-content-between align-items-center">
         <h5 className="mb-0">Your Activities</h5>
-        <Badge bg="secondary" className="fs-6">
-          {activities.length} activity{activities.length !== 1 ? 'ies' : ''}
-        </Badge>
-      </div>
-      
-      <ListGroup aria-label="Activity List">
+        {onAdd && (
+          <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center">
+            <i className="fas fa-plus me-2"></i>
+            Add Activity
+          </Button>
+        )}
+      </Card.Header>
+      <Card.Body className="p-0">
+        <ListGroup variant="flush" aria-label="Activity List">
         {activities.map(activity => (
           <ListGroup.Item 
             key={activity.id} 
@@ -92,8 +109,9 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
             </div>
           </ListGroup.Item>
         ))}
-      </ListGroup>
-    </div>
+        </ListGroup>
+      </Card.Body>
+    </Card>
   );
 };
 

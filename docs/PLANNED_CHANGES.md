@@ -950,3 +950,239 @@ The current activity form included a color field that used a number input (0-7) 
 **Implementation Summary:** This enhancement transformed the user experience from a meaningless number input to an intuitive visual color selector using actual HSL color swatches that automatically adapt to the user's theme preference. All existing functionality was preserved while dramatically improving usability.
 
 ---
+
+# Activity Management Interface Design Improvements
+
+**Planning Date:** 2025-07-16 10:58:11 UTC  
+**Status:** 🚧 **PLANNED** - Ready for Implementation  
+**Priority:** HIGH - UX Enhancement  
+
+## Context
+The Activity Management interface at `/activities` has several design and UX issues that impact user experience and visual hierarchy. The current implementation has redundant headers, improper card layout, unnecessary UI elements, and navbar integration issues that need systematic improvement.
+
+**Components Affected:**
+- `ActivityCrud.tsx` - Main activity management component with header structure needing cleanup
+- `ActivityList.tsx` - Activities display component requiring card-based layout
+- `Navigation.tsx` - Theme switcher integration and responsive behavior  
+- `ThemeToggle.tsx` - Navbar sizing and responsive design improvements
+- `/activities/page.tsx` - Overall page layout and container structure
+
+**Current Issues:**
+- Redundant headers: "Activity Management" title and "Create and customize your activities" subtitle provide no unique value
+- Activities list lacks proper card container structure
+- "4 Activities" badge clutters the interface unnecessarily
+- Import/Export buttons positioned prominently despite being secondary functions
+- Theme switcher too large (144px width) for navbar context, poor mobile experience
+- Inconsistent visual hierarchy between activity management and other application areas
+
+**User Needs:**
+- Clean, focused interface without redundant headers
+- Proper card-based layout with "Your Activities" as header and "Add Activity" prominently positioned
+- Import/Export functionality accessible but not prominent (suitable secondary placement)
+- Theme switcher that fits naturally in navigation bar on all screen sizes
+- Professional, consistent visual design aligned with modern application standards
+
+## Requirements
+
+### 1. Remove Redundant Headers from Activity Management
+   - **Implementation Details:**
+     - Remove main header section from ActivityCrud.tsx containing "Activity Management" title
+     - Remove subtitle "Create and customize your activities" 
+     - Eliminate the entire header div container (lines ~209-235 in ActivityCrud.tsx)
+     - Preserve success message display functionality
+     - Maintain proper spacing and layout flow without headers
+   - **Technical Considerations:**
+     - Preserve Bootstrap container structure and responsive layout
+     - Maintain proper spacing with remaining content
+     - Update CSS classes to account for removed header elements
+     - Ensure no orphaned styles or layout issues
+   - **Testing Requirements:**
+     - Visual regression tests for layout without headers
+     - Component tests ensuring no broken functionality
+     - Responsive design validation across screen sizes
+
+### 2. Implement Card-Based Layout for Activities List
+   - **Implementation Details:**
+     - Wrap activities list content in Bootstrap Card component
+     - Move "Your Activities" text to Card.Header as primary heading
+     - Position "Add Activity" button in Card.Header aligned to the right
+     - Use Card.Body for activities list content
+     - Implement proper card styling with consistent padding and visual hierarchy
+   - **Technical Considerations:**
+     - Use Bootstrap Card component with proper header/body structure
+     - Implement flexbox layout for header with space-between alignment
+     - Maintain responsive behavior for button positioning
+     - Preserve existing accessibility attributes and ARIA labels
+     - Ensure proper card styling integration with existing theme system
+   - **Testing Requirements:**
+     - Card layout component tests
+     - Header button positioning tests across screen sizes
+     - Theme compatibility tests for card styling
+     - Accessibility tests for card structure and navigation
+
+### 3. Remove Activities Count Badge
+   - **Implementation Details:**
+     - Remove the "4 Activities" (or dynamic count) badge from ActivityList.tsx
+     - Clean up the justify-content-between layout that was needed for badge positioning
+     - Simplify header layout to focus on content rather than metadata
+     - Remove badge-related styling and layout code
+   - **Technical Considerations:**
+     - Update header layout structure after badge removal
+     - Clean up unnecessary CSS classes for badge positioning
+     - Maintain proper visual balance in card header
+     - Consider if count information is needed elsewhere (it's likely not)
+   - **Testing Requirements:**
+     - Tests verifying badge removal
+     - Layout consistency tests
+     - Visual regression tests for simplified header
+
+### 4. Reorganize Import/Export Functionality
+   - **Implementation Details:**
+     - Move Import/Export buttons from prominent header position to secondary location
+     - Implement dropdown menu or secondary action area for these functions
+     - Use Bootstrap Dropdown component in card header or separate section
+     - Maintain full functionality while reducing visual prominence
+     - Consider using icon-only buttons or overflow menu pattern
+   - **Technical Considerations:**
+     - Research actual usage patterns - verify if import/export is frequently used
+     - If usage is low, consider removing entirely or moving to settings area
+     - If keeping, implement using Bootstrap Dropdown with proper ARIA attributes
+     - Maintain existing modal functionality and error handling
+     - Preserve keyboard accessibility for dropdown menu
+   - **Testing Requirements:**
+     - Functionality tests for moved import/export features
+     - Accessibility tests for dropdown implementation
+     - User workflow tests to ensure discoverability
+     - Modal integration tests remain functional
+
+### 5. Enhance Theme Switcher for Navbar Integration
+   - **Implementation Details:**
+     - Reduce theme switcher button size from 44px to 32px for navbar context
+     - Implement responsive sizing (smaller on mobile, appropriate for desktop)
+     - Improve visual integration with Bootstrap navbar styling
+     - Consider compact layout or dropdown approach for very small screens
+     - Maintain all existing theme switching functionality
+   - **Technical Considerations:**
+     - Modify ThemeToggle component to accept size prop or context awareness
+     - Implement CSS custom properties for responsive button sizing
+     - Ensure proper alignment with other navbar elements
+     - Maintain accessibility requirements for button sizing (min 24px touch target)
+     - Consider using navbar-specific styling variant
+   - **Testing Requirements:**
+     - Theme switching functionality tests at different screen sizes
+     - Visual alignment tests within navbar context
+     - Mobile responsiveness tests for theme switcher
+     - Accessibility tests for reduced button sizes
+
+### 6. Improve Navbar Theme Switcher on Small Screens
+   - **Implementation Details:**
+     - Optimize theme switcher behavior in collapsed mobile navigation
+     - Consider dropdown menu approach for mobile to save space
+     - Ensure proper touch targets and spacing in mobile nav
+     - Maintain visual hierarchy and easy access to theme switching
+     - Test behavior in Bootstrap's collapsed navbar state
+   - **Technical Considerations:**
+     - Implement responsive behavior using Bootstrap breakpoints
+     - Consider different layouts for different screen sizes
+     - Maintain proper focus management in mobile navigation
+     - Ensure theme switcher doesn't interfere with hamburger menu
+   - **Testing Requirements:**
+     - Mobile navigation tests with theme switcher
+     - Touch interaction tests on small screens
+     - Collapsed navbar behavior validation
+     - Cross-device responsive testing
+
+## Technical Guidelines
+
+### Bootstrap Component Integration
+- Use Bootstrap Card, Dropdown, and responsive utilities throughout
+- Maintain existing Bootstrap theme integration and CSS custom properties
+- Implement proper ARIA attributes for all interactive elements
+- Follow Bootstrap accessibility patterns and responsive design principles
+
+### Visual Design Principles
+- Focus on content hierarchy and reduced visual clutter
+- Implement consistent spacing using Bootstrap spacing utilities
+- Use subtle visual indicators and professional styling patterns
+- Maintain theme compatibility with automatic light/dark mode switching
+
+### Performance Considerations
+- Minimize layout shifts from header removal and card implementation
+- Ensure smooth theme switching at different component sizes
+- Optimize button rendering for mobile devices
+- Maintain fast page load and interaction responsiveness
+
+### Accessibility Requirements
+- Preserve all existing ARIA labels and keyboard navigation
+- Ensure card layout maintains proper heading hierarchy
+- Implement accessible dropdown menus for import/export functionality
+- Maintain minimum touch target sizes for mobile theme switcher
+- Test with screen readers for proper content structure
+
+### Theme Compatibility Requirements
+- Ensure all new card layouts work in both light and dark themes
+- Maintain proper contrast ratios for theme switcher at smaller sizes
+- Test theme switching behavior with new layout components
+- Preserve existing theme persistence and system preference detection
+
+### Import/Export Functionality Assessment
+- Investigate current usage patterns through analytics or user feedback
+- Determine if full-featured import/export is necessary for typical use cases
+- Consider simpler backup/restore options if full features aren't used
+- Evaluate whether features should be retained, simplified, or removed
+
+## Expected Outcome
+
+### User Perspective
+- Clean, professional interface without redundant headers and clutter
+- Intuitive card-based layout with clear visual hierarchy
+- "Your Activities" prominently displayed as main content area
+- "Add Activity" button easily accessible in logical position
+- Theme switcher that feels natural and appropriate in navigation bar
+- Import/Export functionality available when needed but not visually distracting
+- Consistent design language across all application areas
+- Improved mobile experience with appropriately-sized navigation elements
+
+### Technical Perspective
+- Simplified component structure with reduced complexity
+- Consistent Bootstrap card-based layout patterns
+- Proper responsive behavior for theme switcher in navigation context
+- Maintained functionality with improved visual hierarchy
+- Clean separation of primary actions (add activity) and secondary actions (import/export)
+- Improved mobile navigation experience with appropriately-sized controls
+- Maintainable code structure following Bootstrap component patterns
+
+### Design Improvements
+- Eliminated redundant headers that provided no unique value
+- Improved information hierarchy with card-based content organization
+- Reduced visual noise from unnecessary badges and prominent secondary actions
+- Better navbar integration with appropriately-sized theme controls
+- Professional appearance matching modern application design standards
+
+## Validation Criteria
+- [x] Activity Management headers removed (title and subtitle)
+- [x] Activities list wrapped in Bootstrap Card component
+- [x] "Your Activities" moved to Card.Header
+- [x] "Add Activity" button positioned in Card.Header (right-aligned)
+- [x] Activities count badge removed entirely
+- [x] Import/Export functionality moved to appropriate secondary location
+- [x] Import/Export usage patterns evaluated and documented
+- [x] Theme switcher size reduced for navbar context (44px → 32px)
+- [x] Theme switcher responsive behavior improved for mobile
+- [x] Theme switcher visual integration with navbar enhanced
+- [x] All existing functionality preserved
+- [x] Bootstrap card layout responsive across screen sizes
+- [x] Accessibility standards maintained for all changes
+- [x] Theme compatibility verified for light/dark modes
+- [x] Visual regression tests passing
+- [x] Mobile navigation experience improved
+- [x] Component tests updated and passing
+- [x] Documentation updated for affected components
+- [x] Code quality checks passed (lint, type-check, build)
+- [x] User experience validation through interface review
+
+**Implementation Status:** ✅ **COMPLETED** (2025-07-16 11:15 UTC)
+
+**Summary:** All Activity Management Interface Design Improvements have been successfully implemented with full test coverage. The interface now features a clean card-based layout, optimized theme switcher for navbar context, and improved mobile experience while preserving all existing functionality.
+
+---

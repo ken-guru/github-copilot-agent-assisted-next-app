@@ -9,7 +9,7 @@ import { DEFAULT_ACTIVITIES } from '../../types/activity';
 describe('ActivityCrud', () => {
   it('renders the activity list and form', () => {
     render(<ActivityCrud />);
-    expect(screen.getByText(/Activity Management/i)).toBeInTheDocument();
+    expect(screen.getByText(/Your Activities/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Add Activity/i })).toBeInTheDocument();
   });
 

@@ -4,7 +4,12 @@ import { useState, useEffect } from 'react';
 import { ButtonGroup, Button } from 'react-bootstrap';
 import { validateThemeColors } from '../utils/colors';
 
-export default function ThemeToggle() {
+interface ThemeToggleProps {
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'navbar' | 'standalone';
+}
+
+export default function ThemeToggle({ size = 'md', variant = 'standalone' }: ThemeToggleProps) {
   const [theme, setTheme] = useState('system');
   const [mounted, setMounted] = useState(false);
 
@@ -102,19 +107,26 @@ export default function ThemeToggle() {
     applyTheme(newTheme);
   };
 
+  // Configure sizing based on props
+  const buttonSize = size === 'sm' ? '32px' : size === 'lg' ? '48px' : '44px';
+  const iconSize = size === 'sm' ? '16px' : size === 'lg' ? '24px' : '20px';
+  const totalWidth = variant === 'navbar' 
+    ? `calc(3 * ${buttonSize} + 0.5rem)` // Smaller gaps for navbar
+    : `calc(3 * ${buttonSize} + 1rem)`; // Standard gaps for standalone
+
   // Only render the toggle once mounted to avoid hydration mismatch
   if (!mounted) {
     return (
-      <div style={{ width: '144px', height: '44px', display: 'flex', alignItems: 'center' }}>
+      <div style={{ width: totalWidth, height: buttonSize, display: 'flex', alignItems: 'center' }}>
         <ButtonGroup size="sm" role="group" aria-label="Theme selection">
-          <Button variant="outline-secondary" disabled style={{ width: '44px', height: '44px' }}>
-            <div style={{ width: '20px', height: '20px' }} />
+          <Button variant="outline-secondary" disabled style={{ width: buttonSize, height: buttonSize }}>
+            <div style={{ width: iconSize, height: iconSize }} />
           </Button>
-          <Button variant="outline-secondary" disabled style={{ width: '44px', height: '44px' }}>
-            <div style={{ width: '20px', height: '20px' }} />
+          <Button variant="outline-secondary" disabled style={{ width: buttonSize, height: buttonSize }}>
+            <div style={{ width: iconSize, height: iconSize }} />
           </Button>
-          <Button variant="outline-secondary" disabled style={{ width: '44px', height: '44px' }}>
-            <div style={{ width: '20px', height: '20px' }} />
+          <Button variant="outline-secondary" disabled style={{ width: buttonSize, height: buttonSize }}>
+            <div style={{ width: iconSize, height: iconSize }} />
           </Button>
         </ButtonGroup>
       </div>
@@ -130,9 +142,9 @@ export default function ThemeToggle() {
         aria-label="Light theme"
         title="Light theme"
         type="button"
-        style={{ width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        style={{ width: buttonSize, height: buttonSize, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="5"></circle>
           <line x1="12" y1="1" x2="12" y2="3"></line>
           <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -151,9 +163,9 @@ export default function ThemeToggle() {
         aria-label="System theme"
         title="System theme"
         type="button"
-        style={{ width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        style={{ width: buttonSize, height: buttonSize, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
           <line x1="8" y1="21" x2="16" y2="21"></line>
           <line x1="12" y1="17" x2="12" y2="21"></line>
@@ -166,9 +178,9 @@ export default function ThemeToggle() {
         aria-label="Dark theme"
         title="Dark theme"
         type="button"
-        style={{ width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        style={{ width: buttonSize, height: buttonSize, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
         </svg>
       </Button>
