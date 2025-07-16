@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import ActivityForm from './ActivityForm';
 import ActivityList from './ActivityList';
-import { DEFAULT_ACTIVITIES, Activity } from '../../types/activity';
+import { Activity } from '../../types/activity';
+import { getActivities, saveActivities, addActivity as persistActivity, updateActivity as persistUpdateActivity, deleteActivity as persistDeleteActivity } from '../../utils/activity-storage';
 
 const ActivityCrud: React.FC = () => {
-  const [activities, setActivities] = useState<Activity[]>(DEFAULT_ACTIVITIES);
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [showForm, setShowFormRaw] = useState(false);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -14,11 +17,18 @@ const ActivityCrud: React.FC = () => {
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showImport, setShowImport] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   // Import modal state
   const [showImportConfirm, setShowImportConfirm] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importSuccess, setImportSuccess] = useState(false);
+
+  // Load activities from localStorage on mount
+  useEffect(() => {
+    const loadedActivities = getActivities().filter(a => a.isActive);
+    setActivities(loadedActivities);
+  }, []);
 
   const handleAdd = () => {
     setEditingActivity(null);
@@ -40,9 +50,27 @@ const ActivityCrud: React.FC = () => {
   // Enhanced confirmation dialog: static backdrop, focus management
   const confirmDelete = () => {
     if (activityToDelete) {
-      setActivities(activities.filter(a => a.id !== activityToDelete.id));
+      // Use soft delete via localStorage utility
+      persistDeleteActivity(activityToDelete.id);
+      // Update local state to reflect the change
+      const updatedActivities = getActivities().filter(a => a.isActive);
+      setActivities(updatedActivities);
       setShowConfirm(false);
       setActivityToDelete(null);
+      // Show success message
+      setSuccessMessage(`Activity "${activityToDelete.name}" deleted successfully`);
+      setTimeout(() => setSuccessMessage(null), 3000);
+    }
+  };
+
+  // Handle keyboard navigation for confirmation dialog
+  const handleConfirmKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      confirmDelete();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setShowConfirm(false);
     }
   };
 
@@ -54,12 +82,30 @@ const ActivityCrud: React.FC = () => {
     }
     setFormError(null);
     if (editingActivity) {
-      setActivities(activities.map(a => (a.id === activity.id ? activity : a)));
+      // Update existing activity in localStorage
+      persistUpdateActivity(activity);
+      // Refresh from localStorage to get current state
+      const updatedActivities = getActivities().filter(a => a.isActive);
+      setActivities(updatedActivities);
+      setSuccessMessage(`Activity "${activity.name}" updated successfully`);
     } else {
-      setActivities([...activities, activity]);
+      // Add new activity to localStorage
+      const newActivity = {
+        ...activity,
+        id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+        createdAt: new Date().toISOString(),
+        isActive: true
+      };
+      persistActivity(newActivity);
+      // Refresh from localStorage to get current state
+      const updatedActivities = getActivities().filter(a => a.isActive);
+      setActivities(updatedActivities);
+      setSuccessMessage(`Activity "${activity.name}" created successfully`);
     }
     setShowFormRaw(false);
     setEditingActivity(null);
+    // Auto-hide success message after 3 seconds
+    setTimeout(() => setSuccessMessage(null), 3000);
   };
 
   // Export modal: error handling for empty/malformed data
@@ -111,7 +157,11 @@ const ActivityCrud: React.FC = () => {
       if (activities.length > 0) {
         setShowImportConfirm(true);
       } else {
-        setActivities(imported);
+        // Save imported activities to localStorage
+        saveActivities(imported);
+        // Refresh from localStorage
+        const updatedActivities = getActivities().filter(a => a.isActive);
+        setActivities(updatedActivities);
         setShowImport(false);
         setImportSuccess(true);
       }
@@ -125,10 +175,16 @@ const ActivityCrud: React.FC = () => {
       importFile.text().then(text => {
         try {
           const imported = JSON.parse(text);
-          setActivities(imported);
+          // Save imported activities to localStorage (overwrites existing)
+          saveActivities(imported);
+          // Refresh from localStorage
+          const updatedActivities = getActivities().filter(a => a.isActive);
+          setActivities(updatedActivities);
           setShowImportConfirm(false);
           setShowImport(false);
           setImportSuccess(true);
+          setSuccessMessage(`Successfully imported ${imported.length} activities`);
+          setTimeout(() => setSuccessMessage(null), 3000);
         } catch {
           setImportError('Failed to parse file');
           setShowImportConfirm(false);
@@ -138,12 +194,71 @@ const ActivityCrud: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Activities</h2>
-      <Button variant="primary" onClick={handleAdd}>Add Activity</Button>
-      <Button variant="secondary" onClick={handleExport}>Export</Button>
-      <Button variant="secondary" onClick={handleImport}>Import</Button>
-      <ActivityList activities={activities} onEdit={handleEdit} onDelete={handleDelete} />
+    <div className="container-fluid py-4">
+      {/* Success Message */}
+      {successMessage && (
+        <div className="row mb-3">
+          <div className="col-12">
+            <div className="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+              <i className="fas fa-check-circle me-2"></i>
+              {successMessage}
+              <button 
+                type="button" 
+                className="btn-close" 
+                aria-label="Close"
+                onClick={() => setSuccessMessage(null)}
+              ></button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header Section */}
+      <div className="row mb-4">
+        <div className="col-12">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h1 className="h3 mb-1">Activity Management</h1>
+              <p className="text-muted mb-0">Create and customize your activities</p>
+            </div>
+            <div className="d-flex gap-2">
+              <Button variant="outline-secondary" onClick={handleImport} className="d-flex align-items-center">
+                <i className="fas fa-upload me-2"></i>
+                Import
+              </Button>
+              <Button variant="outline-secondary" onClick={handleExport} className="d-flex align-items-center">
+                <i className="fas fa-download me-2"></i>
+                Export
+              </Button>
+              <Button variant="primary" onClick={handleAdd} className="d-flex align-items-center">
+                <i className="fas fa-plus me-2"></i>
+                Add Activity
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Activities List Section */}
+      <div className="row">
+        <div className="col-12">
+          {activities.length === 0 ? (
+            <div className="text-center py-5">
+              <div className="mb-3">
+                <i className="fas fa-tasks fa-3x text-muted"></i>
+              </div>
+              <h4 className="text-muted">No activities yet</h4>
+              <p className="text-muted">Get started by creating your first activity</p>
+              <Button variant="primary" onClick={handleAdd} className="d-flex align-items-center mx-auto">
+                <i className="fas fa-plus me-2"></i>
+                Create First Activity
+              </Button>
+            </div>
+          ) : (
+            <ActivityList activities={activities} onEdit={handleEdit} onDelete={handleDelete} />
+          )}
+        </div>
+      </div>
       {/* Activity Form Modal */}
       <Modal key={formError || 'no-error'} show={showForm} onHide={() => { setShowFormRaw(false); setFormError(null); }} aria-labelledby="activity-form-modal" centered backdrop="static">
         <Modal.Header closeButton>
@@ -162,66 +277,166 @@ const ActivityCrud: React.FC = () => {
         </Modal.Footer>
       </Modal>
       {/* Delete Confirmation Modal */}
-      <Modal show={showConfirm} onHide={() => setShowConfirm(false)} aria-labelledby="confirm-delete-modal" centered backdrop="static">
+      <Modal 
+        show={showConfirm} 
+        onHide={() => setShowConfirm(false)} 
+        aria-labelledby="confirm-delete-modal" 
+        centered 
+        backdrop="static"
+        onKeyDown={handleConfirmKeyDown}
+      >
         <Modal.Header closeButton>
           <Modal.Title id="confirm-delete-modal">Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Are you sure you want to delete this activity?</p>
+          <p>Are you sure you want to delete the activity <strong>&ldquo;{activityToDelete?.name}&rdquo;</strong>?</p>
+          <p className="text-muted small">This action cannot be undone.</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" autoFocus onClick={() => setShowConfirm(false)}>Cancel</Button>
-          <Button variant="danger" onClick={confirmDelete}>Confirm</Button>
+          <Button variant="secondary" onClick={() => setShowConfirm(false)}>Cancel</Button>
+          <Button variant="danger" onClick={confirmDelete} autoFocus>Delete</Button>
         </Modal.Footer>
       </Modal>
       {/* Export Modal */}
-        <Modal show={showExport} onHide={() => setShowExport(false)} aria-labelledby="export-modal" aria-describedby="export-modal-desc" centered backdrop="static">
-          <Modal.Header closeButton>
-            <Modal.Title id="export-modal">Export Activities</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div id="export-modal-desc">
-              <p>Export your activities as a JSON file. This file can be imported later for backup or transfer.</p>
-            </div>
-            {exportUrl ? (
-              <a href={exportUrl} download="activities.json" className="btn btn-success" aria-label="Download activities as JSON">Download JSON</a>
-            ) : (
-              <div className="text-danger" role="alert">No activities to export or export failed.</div>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowExport(false)} autoFocus>Close</Button>
-          </Modal.Footer>
-        </Modal>
-      {/* Import Modal */}
-        <Modal show={showImport} onHide={() => setShowImport(false)} aria-labelledby="import-modal" aria-describedby="import-modal-desc" centered backdrop="static">
-          <Modal.Header closeButton>
-            <Modal.Title id="import-modal">Import Activities</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div id="import-modal-desc">
-              <p>Select a JSON file to import activities. Only valid activity files will be accepted. Importing may overwrite your current activities.</p>
-            </div>
-            <input type="file" accept="application/json" onChange={handleImportFileChange} aria-label="Import JSON File" />
-            {importError && <div className="text-danger mt-2" role="alert">{importError}</div>}
-            {importSuccess && <div className="text-success mt-2" role="status">Import successful!</div>}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowImport(false)} autoFocus>Cancel</Button>
-            <Button variant="primary" onClick={handleImportSubmit}>Import</Button>
-          </Modal.Footer>
-        </Modal>
-      {/* Import Overwrite Confirmation Modal */}
-      <Modal show={showImportConfirm} onHide={() => setShowImportConfirm(false)} aria-labelledby="confirm-import-overwrite-modal" centered backdrop="static">
+      <Modal show={showExport} onHide={() => setShowExport(false)} aria-labelledby="export-modal" aria-describedby="export-modal-desc" centered backdrop="static">
         <Modal.Header closeButton>
-          <Modal.Title id="confirm-import-overwrite-modal">Overwrite Existing Activities?</Modal.Title>
+          <Modal.Title id="export-modal">
+            <i className="fas fa-download me-2"></i>
+            Export Activities
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Importing will overwrite your current activities. Continue?</p>
+          <div id="export-modal-desc" className="mb-3">
+            <p className="mb-2">Export your activities as a JSON file for backup or transfer to another device.</p>
+            {activities.length > 0 && (
+              <p className="text-muted small mb-0">
+                <i className="fas fa-info-circle me-1"></i>
+                Exporting {activities.length} activity{activities.length !== 1 ? 'ies' : ''}
+              </p>
+            )}
+          </div>
+          {exportUrl ? (
+            <div className="d-grid">
+              <a 
+                href={exportUrl} 
+                download="activities.json" 
+                className="btn btn-success d-flex align-items-center justify-content-center"
+                aria-label="Download activities as JSON"
+              >
+                <i className="fas fa-file-download me-2"></i>
+                Download activities.json
+              </a>
+            </div>
+          ) : (
+            <div className="alert alert-warning d-flex align-items-center" role="alert">
+              <i className="fas fa-exclamation-triangle me-2"></i>
+              No activities to export. Create some activities first.
+            </div>
+          )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" autoFocus onClick={() => setShowImportConfirm(false)}>Cancel</Button>
-          <Button variant="danger" onClick={confirmImportOverwrite}>Overwrite</Button>
+          <Button variant="secondary" onClick={() => setShowExport(false)} autoFocus>
+            <i className="fas fa-times me-2"></i>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* Import Modal */}
+      <Modal show={showImport} onHide={() => setShowImport(false)} aria-labelledby="import-modal" aria-describedby="import-modal-desc" centered backdrop="static">
+        <Modal.Header closeButton>
+          <Modal.Title id="import-modal">
+            <i className="fas fa-upload me-2"></i>
+            Import Activities
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div id="import-modal-desc" className="mb-3">
+            <p className="mb-2">Select a JSON file to import activities from a previous export.</p>
+            <div className="alert alert-info d-flex align-items-start" role="note">
+              <i className="fas fa-info-circle me-2 mt-1"></i>
+              <div>
+                <strong>Important:</strong> Importing will replace all your current activities. 
+                Make sure to export your current activities first if you want to keep them.
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-3">
+            <label className="form-label fw-bold">Select JSON file:</label>
+            <input 
+              type="file" 
+              className="form-control"
+              accept="application/json,.json" 
+              onChange={handleImportFileChange} 
+              aria-label="Import JSON File"
+            />
+          </div>
+
+          {importError && (
+            <div className="alert alert-danger d-flex align-items-center" role="alert">
+              <i className="fas fa-exclamation-circle me-2"></i>
+              {importError}
+            </div>
+          )}
+          
+          {importSuccess && (
+            <div className="alert alert-success d-flex align-items-center" role="status">
+              <i className="fas fa-check-circle me-2"></i>
+              Import successful!
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowImport(false)}>
+            <i className="fas fa-times me-2"></i>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleImportSubmit} disabled={!importFile}>
+            <i className="fas fa-upload me-2"></i>
+            Import Activities
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* Import Overwrite Confirmation Modal */}
+      <Modal 
+        show={showImportConfirm} 
+        onHide={() => setShowImportConfirm(false)} 
+        aria-labelledby="confirm-import-overwrite-modal" 
+        centered 
+        backdrop="static"
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            confirmImportOverwrite();
+          }
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="confirm-import-overwrite-modal">
+            <i className="fas fa-exclamation-triangle text-warning me-2"></i>
+            Replace All Activities?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="alert alert-warning d-flex align-items-start" role="alert">
+            <i className="fas fa-exclamation-triangle me-2 mt-1"></i>
+            <div>
+              <strong>This will replace all your current activities.</strong>
+              <br />
+              This action cannot be undone. Make sure you have exported your current activities if you want to keep them.
+            </div>
+          </div>
+          <p className="mb-0">Do you want to continue with the import?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowImportConfirm(false)}>
+            <i className="fas fa-times me-2"></i>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmImportOverwrite} autoFocus>
+            <i className="fas fa-upload me-2"></i>
+            Replace Activities
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>
