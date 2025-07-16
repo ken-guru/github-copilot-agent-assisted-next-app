@@ -7,17 +7,25 @@ interface ActivityFormProps {
   activity?: Activity | null;
   onSubmit: (activity: Activity | null) => void;
   error?: string | null;
+  onCancel?: () => void;
 }
 
 
 
 
-const ActivityForm: React.FC<ActivityFormProps> = ({ activity, onSubmit, error }) => {
+const ActivityForm: React.FC<ActivityFormProps> = ({ activity, onSubmit, error, onCancel }) => {
   const [name, setName] = useState(activity?.name || '');
   const [description, setDescription] = useState(activity?.description || '');
   const [colorIndex, setColorIndex] = useState(activity?.colorIndex || 0);
   const [validated, setValidated] = useState(false);
   const nameInputRef = React.useRef<HTMLInputElement>(null);
+
+  // Support cancel button if onCancel is provided
+  const handleCancel = () => {
+    if (typeof onCancel === 'function') {
+      onCancel();
+    }
+  };
 
   React.useEffect(() => {
     // Always log error prop changes for debugging
@@ -95,6 +103,11 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ activity, onSubmit, error }
         />
       </Form.Group>
       <Button type="submit" variant="primary">Save</Button>
+      {typeof onCancel === 'function' && (
+        <Button type="button" variant="secondary" className="ms-2" onClick={handleCancel}>
+          Cancel
+        </Button>
+      )}
     </Form>
   );
 };
