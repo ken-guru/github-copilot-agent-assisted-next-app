@@ -342,7 +342,7 @@ The application currently uses hardcoded activities (Homework, Reading, Play Tim
 - [ ] Implement export/import functionality
 
 ### Phase 4: Integration & Testing
-- [ ] Update ActivityManager to use localStorage instead of hardcoded list
+- [x] Update ActivityManager to use localStorage instead of hardcoded list (complete)
 - [ ] Maintain compatibility with existing ActivityStateMachine
 - [ ] Add "Create New Activity" option to activity selection flow
 - [ ] Comprehensive testing including edge cases and error scenarios

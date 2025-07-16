@@ -1,18 +1,11 @@
 import { useState } from 'react';
 import styles from './ActivityManager.module.css';
 import { getNextAvailableColorSet, ColorSet } from '@/utils/colors';
+import { getActivities, addActivity, deleteActivity } from '@/utils/activity-storage';
 import { TimelineEntry } from '@/types';
+import { Activity } from '@/types/activity';
 import { ActivityButton } from '@/components/ActivityButton';
 import ActivityForm from './ActivityForm';
-
-// Using the Activity interface from the new component structure
-export interface Activity {
-  id: string;
-  name: string;
-  completed?: boolean;
-  colors?: ColorSet;
-  colorIndex?: number;
-}
 
 /**
  * Props for the ActivityManager component
@@ -62,32 +55,28 @@ export default function ActivityManager({
   isTimeUp = false,
   elapsedTime = 0 
 }: ActivityManagerProps) {
-  const [activities, setActivities] = useState<Activity[]>([]);
+  const [activities, setActivities] = useState<Activity[]>(() => getActivities());
   const [showForm, setShowForm] = useState(false);
   
   // Handle adding a new activity
-  const handleAddActivity = (name: string) => {
-    // Generate a unique ID for the activity
-    const id = `activity-${Date.now()}`;
-    
-    // Get the next available color set for the activity
-    const colors = getNextAvailableColorSet(activities.length);
-    
-    // Create the new activity
-    const newActivity: Activity = {
+  const handleAddActivity = (activity: Activity | null) => {
+    if (!activity) {
+      setShowForm(false);
+      return;
+    }
+    // Assign ID and color if not present
+    const id = activity.id || `activity-${Date.now()}`;
+    const colorIndex = typeof activity.colorIndex === 'number' ? activity.colorIndex : activities.length;
+    const newActivity = {
+      ...activity,
       id,
-      name,
-      colors,
-      colorIndex: activities.length
+      colorIndex,
+      createdAt: activity?.createdAt || new Date().toISOString(),
+      isActive: activity?.isActive ?? true
     };
-    
-    // Update the activities list
-    setActivities(prevActivities => [...prevActivities, newActivity]);
-    
-    // Hide the form after adding
+    addActivity(newActivity);
+    setActivities(getActivities());
     setShowForm(false);
-    
-    // Notify parent about the new activity
     onActivitySelect(newActivity, true);
   };
   
@@ -104,12 +93,8 @@ export default function ActivityManager({
   
   // Handle activity removal
   const handleRemoveActivity = (activityId: string) => {
-    // Update local state
-    setActivities(prevActivities => 
-      prevActivities.filter(activity => activity.id !== activityId)
-    );
-    
-    // Notify parent
+    deleteActivity(activityId);
+    setActivities(getActivities());
     if (onActivityRemove) {
       onActivityRemove(activityId);
     }
