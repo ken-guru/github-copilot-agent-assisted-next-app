@@ -9,7 +9,7 @@ import { DEFAULT_ACTIVITIES } from '../../types/activity';
 describe('ActivityCrud', () => {
   it('renders the activity list and form', () => {
     render(<ActivityCrud />);
-    expect(screen.getByText(/Activities/i)).toBeInTheDocument();
+    expect(screen.getByText(/Activity Management/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Add Activity/i })).toBeInTheDocument();
   });
 
@@ -68,7 +68,9 @@ describe('ActivityCrud', () => {
       }
     }
     expect(screen.getByText(/Are you sure/i)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /Confirm/i }));
+    // Click the delete button in the modal (not the activity list delete buttons)
+    const modal = screen.getByRole('dialog');
+    fireEvent.click(within(modal).getByRole('button', { name: /Delete/i }));
     await waitFor(() => {
       if (DEFAULT_ACTIVITIES[0]) {
         expect(screen.queryByText(DEFAULT_ACTIVITIES[0].name)).not.toBeInTheDocument();
