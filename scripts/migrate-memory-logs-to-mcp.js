@@ -1,12 +1,31 @@
 #!/usr/bin/env node
 
 /**
- * Memory Log to MCP Migration Script
+ * Memory Log to MCP Synchronization Tool
  * 
- * Parses existing memory log markdown files and migrates them to MCP Memory Tool
- * as structured entities with observations and relations.
+ * Synchronizes memory log markdown files with the MCP Memory Tool knowledge graph.
+ * This script serves as the bridge between authoritative markdown files and the 
+ * searchable MCP index in our hybrid memory system.
  * 
- * Usage: node scripts/migrate-memory-logs-to-mcp.js [--dry-run]
+ * Primary Use Cases:
+ * - Initial migration of existing memory logs to MCP
+ * - Ongoing synchronization of new memory logs
+ * - Disaster recovery: rebuild MCP knowledge graph from markdown
+ * - Team onboarding: populate MCP with historical debugging knowledge
+ * - System migration: transfer data between MCP providers
+ * 
+ * The script parses markdown files in docs/logged_memories/ and creates
+ * structured entities with observations and relations in the MCP Memory Tool.
+ * 
+ * Usage: 
+ *   node scripts/migrate-memory-logs-to-mcp.js [--dry-run] [--incremental]
+ * 
+ * Options:
+ *   --dry-run      Preview operations without executing MCP calls
+ *   --incremental  Only process files modified since last sync (future enhancement)
+ * 
+ * Note: This is NOT a one-off script - it's infrastructure for the hybrid
+ * markdown + MCP memory system and should be retained for ongoing use.
  */
 
 const fs = require('fs');
@@ -15,6 +34,7 @@ const path = require('path');
 // Configuration
 const MEMORY_LOGS_DIR = path.join(__dirname, '../docs/logged_memories');
 const DRY_RUN = process.argv.includes('--dry-run');
+const INCREMENTAL = process.argv.includes('--incremental'); // Future enhancement
 
 // Track migration statistics
 let stats = {
@@ -356,12 +376,19 @@ async function executeMCPOperations(entities, relations) {
 }
 
 /**
- * Main migration function
+ * Main synchronization function
+ * 
+ * Processes memory log files and synchronizes them with MCP Memory Tool.
+ * Can be used for initial migration, incremental updates, or full rebuild.
  */
 async function migrateMemoryLogs() {
-  console.log('🚀 Starting Memory Log to MCP Migration');
-  console.log(`Mode: ${DRY_RUN ? 'DRY RUN' : 'LIVE MIGRATION'}`);
+  console.log('🚀 Starting Memory Log to MCP Synchronization');
+  console.log(`Mode: ${DRY_RUN ? 'DRY RUN' : 'LIVE SYNC'}`);
   console.log(`Source: ${MEMORY_LOGS_DIR}`);
+  
+  if (INCREMENTAL) {
+    console.log('🔄 Incremental mode (future enhancement - processing all files for now)');
+  }
   
   // Get all memory log files
   const files = fs.readdirSync(MEMORY_LOGS_DIR)
@@ -420,7 +447,7 @@ async function migrateMemoryLogs() {
   }
   
   // Print final statistics
-  console.log('\n📊 Migration Statistics:');
+  console.log('\n📊 Synchronization Statistics:');
   console.log(`Total files: ${stats.totalFiles}`);
   console.log(`Processed: ${stats.processed}`);
   console.log(`Skipped: ${stats.skipped}`);
@@ -430,15 +457,23 @@ async function migrateMemoryLogs() {
   
   if (DRY_RUN) {
     console.log('\n✅ Dry run completed successfully!');
-    console.log('Run without --dry-run to execute actual migration');
+    console.log('Run without --dry-run to execute actual synchronization');
   } else {
-    console.log('\n✅ Migration completed!');
+    console.log('\n✅ Synchronization completed!');
+    console.log('Memory logs are now synced with MCP Memory Tool');
   }
 }
 
-// Run migration
+// Run synchronization
 if (require.main === module) {
   migrateMemoryLogs().catch(console.error);
 }
 
-module.exports = { migrateMemoryLogs, parseMemoryLogFile, createMCPEntity };
+// Export functions for potential reuse by other scripts
+module.exports = { 
+  migrateMemoryLogs, 
+  parseMemoryLogFile, 
+  createMCPEntity,
+  extractRelatedEntities,
+  cleanMarkdownContent
+};

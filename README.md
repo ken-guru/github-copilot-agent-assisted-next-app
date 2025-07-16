@@ -263,6 +263,14 @@ Key component categories:
 - **[MCP Memory Tool Usage](./docs/dev-guides/mcp-memory-tool-usage.md) - AI agent guide for semantic search and knowledge building**
 - [Time Utilities Testing Guide](./docs/dev-guides/TIME_UTILITIES_TESTING.md)
 
+### Development Scripts
+
+- **Memory Log Synchronization**: `node scripts/migrate-memory-logs-to-mcp.js`
+  - Syncs markdown memory logs with MCP Memory Tool for AI search
+  - Use `--dry-run` to preview changes before execution
+  - Essential for maintaining hybrid markdown + MCP memory system
+  - Not a one-off tool - keep for ongoing synchronization and disaster recovery
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 
