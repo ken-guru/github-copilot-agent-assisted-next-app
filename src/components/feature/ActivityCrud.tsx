@@ -24,6 +24,9 @@ const ActivityCrud: React.FC = () => {
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importSuccess, setImportSuccess] = useState(false);
 
+  // Create ref for ActivityForm to trigger submit from modal footer
+  const activityFormRef = React.useRef<{ submitForm: () => void }>(null);
+
   // Load activities from localStorage on mount
   useEffect(() => {
     const loadedActivities = getActivities().filter(a => a.isActive);
@@ -262,6 +265,7 @@ const ActivityCrud: React.FC = () => {
         </Modal.Header>
         <Modal.Body>
           <ActivityForm
+            ref={activityFormRef}
             key={formError || 'no-error'}
             activity={editingActivity}
             onSubmit={handleFormSubmit}
@@ -272,6 +276,14 @@ const ActivityCrud: React.FC = () => {
           <Button variant="secondary" onClick={() => { setShowFormRaw(false); setFormError(null); }} className="d-flex align-items-center">
             <i className="fas fa-times me-2"></i>
             Cancel
+          </Button>
+          <Button 
+            variant="primary" 
+            onClick={() => activityFormRef.current?.submitForm()} 
+            className="d-flex align-items-center"
+          >
+            <i className="fas fa-save me-2"></i>
+            Save
           </Button>
         </Modal.Footer>
       </Modal>

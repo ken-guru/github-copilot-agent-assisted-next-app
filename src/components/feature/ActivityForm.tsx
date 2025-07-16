@@ -4,6 +4,7 @@ import { Form, Button, Dropdown } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
 import { getColorName } from '../../utils/colorNames';
 import { getActivityColors } from '../../utils/colors';
+import { useTheme } from '../../contexts/theme';
 
 interface ActivityFormProps {
   activity?: Activity | null;
@@ -12,25 +13,29 @@ interface ActivityFormProps {
   onCancel?: () => void;
 }
 
+interface ActivityFormRef {
+  submitForm: () => void;
+}
 
-
-
-const ActivityForm: React.FC<ActivityFormProps> = ({ activity, onSubmit, error, onCancel }) => {
+const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(({ activity, onSubmit, error, onCancel }, ref) => {
   const [name, setName] = useState(activity?.name || '');
   const [description, setDescription] = useState(activity?.description || '');
   const [colorIndex, setColorIndex] = useState(activity?.colorIndex || 0);
   const [validated, setValidated] = useState(false);
   const nameInputRef = React.useRef<HTMLInputElement>(null);
   
-  // Get current theme colors for visual display
+  // Get theme from context - this ensures component re-renders when theme changes
+  const themeContext = useTheme();
+  
+  // Get current theme colors for visual display - call on each render to be reactive to theme changes
   const activityColors = getActivityColors();
 
-  // Support cancel button if onCancel is provided
-  const handleCancel = () => {
-    if (typeof onCancel === 'function') {
-      onCancel();
+  // Expose form submission method to parent components
+  React.useImperativeHandle(ref, () => ({
+    submitForm: () => {
+      handleSubmit(new Event('submit') as any);
     }
-  };
+  }));
 
   React.useEffect(() => {
     // Always log error prop changes for debugging
@@ -153,18 +158,10 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ activity, onSubmit, error, 
           aria-label="Selected color index"
         />
       </Form.Group>
-      <Button type="submit" variant="primary" className="d-flex align-items-center">
-        <i className="fas fa-save me-2"></i>
-        Save
-      </Button>
-      {typeof onCancel === 'function' && (
-        <Button type="button" variant="secondary" className="ms-2 d-flex align-items-center" onClick={handleCancel}>
-          <i className="fas fa-times me-2"></i>
-          Cancel
-        </Button>
-      )}
     </Form>
   );
-};
+});
+
+ActivityForm.displayName = 'ActivityForm';
 
 export default ActivityForm;
