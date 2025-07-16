@@ -152,22 +152,29 @@ mcp_memory_search_nodes("MRTMLY-001")
 
 ## Integration with Existing Workflow
 
-### Hybrid Approach
-- **MCP Memory Tool**: For AI agent queries and knowledge discovery
-- **Markdown Files**: For detailed human reference and version control
-- **Both Systems**: Maintained in parallel for comprehensive coverage
+### Hybrid Approach - RECOMMENDED STRATEGY
+- **MCP Memory Tool**: For AI agent queries and knowledge discovery  
+- **Markdown Files**: For detailed human reference, backup, and version control
+- **Both Systems**: Maintained in parallel for comprehensive coverage and risk mitigation
 
 ### When to Use MCP Memory Tool
-- AI agents seeking debugging guidance
-- Finding patterns across multiple debugging sessions
-- Discovering related components or technologies
-- Building on previous solutions
+- AI agents seeking debugging guidance and pattern discovery
+- Finding connections across multiple debugging sessions
+- Semantic search for related components, technologies, or solutions  
+- Building on previous debugging approaches
 
-### When to Use Markdown Files
-- Detailed human review of debugging processes
-- Creating new memory log entries (then migrate to MCP)
-- Backup and version control of debugging history
-- Sharing debugging knowledge with team members
+### When to Use Markdown Files  
+- Detailed human review of complete debugging processes
+- Creating new memory log entries (recommended primary workflow)
+- Backup access when MCP tool unavailable
+- Version control and change tracking of debugging knowledge
+- Sharing debugging knowledge with team members without AI agent access
+
+### Backup and Recovery Strategy
+- **Authoritative Source**: Markdown files in `docs/logged_memories/` 
+- **Search Index**: MCP Memory Tool for AI agent accessibility
+- **Migration**: Use `scripts/migrate-memory-logs-to-mcp.js` to sync markdown → MCP
+- **Data Preservation**: Both systems maintained to prevent knowledge loss
 
 ## Future Enhancements
 
