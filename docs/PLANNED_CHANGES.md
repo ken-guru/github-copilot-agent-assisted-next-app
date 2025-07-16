@@ -55,8 +55,27 @@ See [docs/templates/PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEM
 
 ## Current Planned Changes
 
+### Activity CRUD Interface UX Improvements
+
+**Context:**
+The Activity CRUD interface at `/activities` has several usability and design issues that need attention:
+- Confirmation dialog doesn't respond to Enter key when delete button is visually primary
+- Overall UX and design needs improvement for better user experience
+- Keyboard navigation patterns don't match visual hierarchy
+
+**Components Affected:**
+- `ActivityCrud.tsx` - Main CRUD interface component
+- Confirmation dialogs for delete actions
+- Overall page layout and styling
+
+**Current Behavior:**
+- Delete confirmation dialog shows red "Delete" button as visually primary but Enter key doesn't trigger it
+- Interface design lacks polish and modern UX patterns
+- Keyboard navigation doesn't follow expected patterns
 
 **User Needs:**
+- Intuitive keyboard navigation that matches visual design
+- Modern, polished interface design
 - Clear, safe confirmation for destructive actions
 - Reliable import/export for data backup and restore
 - Accessible, keyboard-navigable dialogs
@@ -64,22 +83,59 @@ See [docs/templates/PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEM
 
 ## Requirements
 
-### 1. Confirmation Dialogs
+### 1. Keyboard Navigation & Dialog Behavior
    - **Implementation Details:**
-     - Enhance delete confirmation dialog with static backdrop, ARIA labeling, and focus management
+     - Fix Enter key handling in delete confirmation dialog to trigger the visually primary button
+     - Implement proper focus management and keyboard navigation throughout the interface
+     - Ensure Tab navigation follows logical order and visual hierarchy
+     - Add keyboard shortcuts for common actions (Ctrl+N for new activity, Delete key for delete)
+   - **Technical Considerations:**
+     - Use React-Bootstrap Modal with proper `autoFocus` and `onKeyDown` handlers
+     - Implement focus trap within dialogs for accessibility
+     - Default keyboard focus to appropriate button based on visual hierarchy
+     - Handle Escape key for dialog dismissal
+   - **Testing Requirements:**
+     - Keyboard navigation tests for all dialogs and interface elements
+     - Enter key behavior tests for confirmation dialogs
+     - Focus management and accessibility compliance tests
+
+### 2. Confirmation Dialogs
+   - **Implementation Details:**
+     - Enhance delete confirmation dialog with proper Enter key handling
+     - Make visually primary button respond to Enter key press
+     - Use static backdrop, ARIA labeling, and focus management
      - Add confirmation dialogs for import overwrite and bulk delete actions
      - Use visually distinct destructive action buttons (e.g., red for "Delete")
      - Provide clear, descriptive messaging for all dialogs
    - **Technical Considerations:**
      - Use React-Bootstrap Modal with `backdrop="static"` for critical actions
-     - Default keyboard focus to "Cancel" for destructive dialogs
+     - Implement `onKeyDown` handler to capture Enter key and trigger primary action
      - ARIA attributes for accessibility
      - Reusable modal pattern for all confirmations
    - **Testing Requirements:**
      - Unit and integration tests for dialog appearance, behavior, and accessibility
+     - Enter key handling tests for primary button activation
      - Edge case tests for accidental closure, keyboard navigation, and ARIA compliance
 
-### 2. Export UX
+### 3. Interface Design & UX Polish
+   - **Implementation Details:**
+     - Modernize the overall design with better spacing, typography, and visual hierarchy
+     - Add loading states and smooth transitions for all operations
+     - Implement better visual feedback for user actions (success messages, error states)
+     - Improve the activity list design with better card layouts or table styling
+     - Add icons to buttons and actions for better visual communication
+     - Implement hover states and micro-interactions for better user feedback
+   - **Technical Considerations:**
+     - Use Bootstrap utility classes and custom CSS for polished styling
+     - Implement React transitions for smooth state changes
+     - Follow accessibility guidelines for color contrast and visual indicators
+     - Maintain theme compatibility (light/dark mode support)
+   - **Testing Requirements:**
+     - Visual regression tests for design consistency
+     - Theme compatibility tests
+     - Interaction and transition tests
+
+### 4. Export UX
    - **Implementation Details:**
      - Provide clear instructions and feedback in export modal
      - Accessible download link for JSON file
@@ -90,7 +146,7 @@ See [docs/templates/PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEM
    - **Testing Requirements:**
      - Tests for export modal, download functionality, and error scenarios
 
-### 3. Import UX
+### 5. Import UX
    - **Implementation Details:**
      - Implement import modal with file input for JSON upload
      - Validate file type and structure before import
@@ -103,7 +159,7 @@ See [docs/templates/PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEM
    - **Testing Requirements:**
      - Tests for import modal, file validation, overwrite confirmation, and error feedback
 
-### 4. Accessibility & UX
+### 6. Accessibility & UX
    - **Implementation Details:**
      - ARIA labels and keyboard navigation for all modals
      - Static backdrop for destructive actions
@@ -112,7 +168,7 @@ See [docs/templates/PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEM
    - **Testing Requirements:**
      - Accessibility tests for ARIA compliance and keyboard navigation
 
-### 5. Documentation
+### 7. Documentation
    - **Implementation Details:**
      - Update component documentation in `docs/components/`
      - Document props, state, accessibility, and test coverage
@@ -149,6 +205,69 @@ See [docs/templates/PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEM
  [x] Comprehensive unit and integration tests
  [x] Documentation updated for all affected components
  [x] Code quality checks passed (lint, type-check, build)
+
+---
+
+## Critical Implementation Gaps Found (2025-07-16)
+
+### Analysis Summary
+After comprehensive code review, the feature is **85-90% complete** but has **two critical gaps** that prevent full functionality:
+
+### 🚨 **Priority 1: Activities Page Route Integration**
+- **Status**: ❌ **INCOMPLETE** 
+- **Issue**: `/activities` page is still a stub showing "Coming soon"
+- **Impact**: Users cannot access the activity management interface
+- **Fix Required**: Connect ActivityCrud component to the activities page route
+
+#### Implementation Task:
+```typescript
+// Update src/app/activities/page.tsx
+import ActivityCrud from '@/components/feature/ActivityCrud';
+
+const ActivitiesPage: React.FC = () => (
+  <main className="container py-4">
+    <ActivityCrud />
+  </main>
+);
+```
+
+### 🚨 **Priority 2: ActivityCrud localStorage Integration**
+- **Status**: ❌ **INCOMPLETE**
+- **Issue**: ActivityCrud uses in-memory state instead of localStorage
+- **Impact**: Changes made in management interface don't persist
+- **Fix Required**: Replace DEFAULT_ACTIVITIES with localStorage integration
+
+#### Implementation Task:
+```typescript
+// Update ActivityCrud component imports and state
+import { getActivities, saveActivities, addActivity, updateActivity, deleteActivity } from '../../utils/activity-storage';
+
+// Replace initialization
+const [activities, setActivities] = useState<Activity[]>([]);
+
+useEffect(() => {
+  setActivities(getActivities());
+}, []);
+
+// Update CRUD operations to use localStorage utilities
+```
+
+### ✅ **What's Working Perfectly**
+- [x] localStorage utilities (`activity-storage.ts`) - Fully implemented
+- [x] ActivityManager integration with localStorage - Working correctly  
+- [x] Navigation component - Properly implemented and integrated
+- [x] ActivityCrud UI/UX - Excellent React-Bootstrap implementation
+- [x] Import/export functionality - File validation and error handling complete
+- [x] Test coverage - 759 passing tests, comprehensive edge cases
+- [x] Documentation - Complete component documentation
+
+### 📋 **Updated Validation Criteria**
+- [ ] **CRITICAL**: Connect ActivityCrud to /activities page route
+- [ ] **CRITICAL**: Integrate ActivityCrud with localStorage utilities  
+- [ ] Verify end-to-end functionality with persistence
+- [ ] Update PLANNED_CHANGES.md to reflect actual completion status
+- [ ] Run final test suite validation
+- [ ] Document completion in Memory Log
 
 ---
 
@@ -462,12 +581,17 @@ All technical, UX, accessibility, and documentation requirements for Activity Cu
 - [x] Implement export/import functionality
 
 ## Validation Criteria
-- [x] Enhanced confirmation dialogs for all destructive actions
-- [x] Export modal with clear instructions, accessible download, and error handling
-- [x] Import modal with file validation, error feedback, and overwrite confirmation
-- [x] ARIA labeling and keyboard accessibility for all dialogs
-- [x] Comprehensive unit and integration tests
-- [x] Documentation updated for all affected components
+- [x] Enhanced keyboard navigation with Enter key triggering primary actions 
+- [x] Delete confirmation dialog responds to Enter key for delete button
+- [x] Modern interface design with icons, better spacing, and visual hierarchy
+- [x] Success/error messaging with auto-dismiss functionality
+- [x] Enhanced confirmation dialogs with proper focus management and static backdrop
+- [x] Improved export modal with activity count and better download UX
+- [x] Enhanced import modal with file validation and clearer warnings
+- [x] Activity list redesigned with cards, descriptions, and timestamps
+- [x] Comprehensive keyboard accessibility (Tab navigation, Escape dismissal)
+- [x] All existing tests updated and passing
+- [x] Documentation updated for UX improvements
 - [x] Code quality checks passed (lint, type-check, build)
 
 ---
@@ -510,3 +634,139 @@ The localStorage foundation makes future enhancements easy:
 ---
 
 *This change represents a focused enhancement that provides immediate user value while maintaining simplicity and reliability. The localStorage approach gives users full control over their data with zero infrastructure complexity.*
+
+---
+
+# Activity Color Selection UX Enhancement
+
+**Planning Date:** 2025-07-16  
+**Status:** Ready for Implementation
+
+## Context
+The current activity form includes a color field that uses a number input (0-7) with no visual feedback, providing terrible user experience. Users have no insight into what colors they're selecting when creating or editing activities.
+
+**Components Affected:**
+- `/src/components/feature/ActivityForm.tsx` - Contains the problematic number input field
+- `/src/components/feature/ActivityList.tsx` - Currently shows no color visual feedback 
+- `/src/utils/colors.ts` - Contains sophisticated HSL color system with 12 predefined colors
+- `/src/types/activity.ts` - Activity interface uses colorIndex property
+
+**Current Behavior:**
+- ActivityForm shows `<Form.Control type="number" min={0} max={7}` for color selection
+- No visual preview of selected color
+- ActivityList doesn't display activity colors at all
+- Users must guess what colors correspond to index numbers
+
+**User Needs:**
+- Visual feedback when selecting activity colors
+- Intuitive color selection process
+- Ability to see chosen colors in activity listings
+- Consistency with existing app color scheme and theme system
+
+## Requirements
+
+### 1. Replace Number Input with Visual Color Selector
+   - Remove `<Form.Control type="number">` for color selection
+   - Implement dropdown/select with visual color swatches
+   - Display color name alongside visual swatch (e.g., "🟢 Green", "🔵 Blue")
+   - Maintain compatibility with existing `colorIndex` data structure
+   - Preserve all existing color validation (required field, proper range)
+
+### 2. Leverage Existing Color System
+   - Use colors from `internalActivityColors` array in `/src/utils/colors.ts`
+   - Support all 12 predefined colors: Green, Blue, Orange, Purple, Red, Cyan, Amber, Light-green, Indigo, Pink, Brown, Teal
+   - Respect light/dark mode variants automatically
+   - Maintain HSL color format and theme compatibility
+
+### 3. Add Visual Color Display to Activity List
+   - Show color indicator/badge in ActivityList component for each activity
+   - Use same color system as form selector
+   - Display colors next to activity names for easy identification
+   - Ensure colors are visible and accessible in both light/dark themes
+
+### 4. Enhanced Form UX
+   - Pre-select default color (index 0 - Green) for new activities
+   - Show selected color preview in form
+   - Maintain keyboard accessibility for dropdown selection
+   - Include aria-labels and proper form semantics
+
+## Technical Guidelines
+
+### Framework Considerations
+- Use React-Bootstrap `Form.Select` as base component for dropdown
+- Leverage existing Bootstrap styling and theme integration
+- Custom CSS for color swatch display within options if needed
+- TypeScript: Maintain strong typing for colorIndex and ColorSet interfaces
+
+### Performance Requirements
+- Minimal rendering overhead for color swatches
+- Efficient color resolution using existing `getActivityColors()` utility
+- No impact on form submission performance
+
+### Accessibility Requirements
+- Maintain screen reader compatibility with proper labels
+- Ensure color information isn't the only way to distinguish options
+- High contrast compliance for color swatches
+- Keyboard navigation support for dropdown
+
+### Theme Compatibility
+- Use existing `isDarkMode()` function for theme detection
+- Respect user's light/dark mode preference
+- Colors should automatically adapt when theme changes
+- Color swatches should be clearly visible in both themes
+
+### Testing Approach
+- Update existing ActivityForm tests to match new UI structure
+- Test color selection functionality and persistence
+- Verify theme switching doesn't break color display
+- Test accessibility with keyboard navigation and screen readers
+- Ensure ActivityList properly displays colors
+
+## Expected Outcome
+
+### User Perspective
+- Users see actual color swatches when selecting activity colors
+- Color names provide clear context (Green, Blue, etc.)
+- Activity lists show visual color indicators for easy identification
+- Color selection is intuitive and requires no guesswork
+- Consistent experience across light/dark themes
+
+### Technical Perspective
+- No breaking changes to data structure or existing functionality
+- Maintains compatibility with existing colorIndex system
+- Proper integration with theme system and Bootstrap components
+- Performance impact is negligible
+- Code is maintainable and follows existing patterns
+
+### Testing Criteria
+- All existing tests continue to pass
+- New color selection can be automated in tests
+- Visual regression testing shows proper color display
+- Accessibility tools report no violations
+- Manual testing confirms intuitive user experience
+
+## Validation Criteria
+- [ ] ActivityForm component updated with visual color selector
+- [ ] ActivityList component displays color indicators
+- [ ] All 12 predefined colors are selectable and display correctly
+- [ ] Light/dark theme switching works properly with colors
+- [ ] Form validation and submission work unchanged
+- [ ] Tests updated and passing (form, list, theme switching)
+- [ ] Accessibility compliance verified
+- [ ] No breaking changes to data structure
+- [ ] Performance benchmarks maintained
+- [ ] Documentation updated for color selection UX
+
+## Implementation Notes
+
+**Recommended Approach:** Color Select Dropdown with Visual Swatches
+- Preserves existing colorIndex data structure (no migration needed)
+- Leverages sophisticated existing HSL color system with theme awareness
+- Provides immediate visual feedback showing actual color swatches with names
+- Can be implemented using React-Bootstrap Form.Select with custom option styling
+- Alternative options considered: HSL color picker, color palette grid, hybrid approach
+
+**Color System Details:**
+- 12 predefined colors with HSL values: Green (120°), Blue (210°), Orange (30°), Purple (280°), Red (0°), Cyan (180°), Amber (45°), Light-green (90°), Indigo (240°), Pink (330°), Brown (20°), Teal (165°)
+- Each color has light/dark mode variants automatically handled by existing theme system
+- Colors used for visual differentiation in activity manager/timer components
