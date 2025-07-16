@@ -12,7 +12,7 @@
 - None (stateful management component)
 
 ## State Management
-- `activities: Activity[]` — List of activities
+`activities: Activity[]` — List of activities (canonical type, see ActivityForm.md)
 - `showForm: boolean` — Show add/edit modal
 - `editingActivity: Activity | null` — Activity being edited
 - `showConfirm: boolean` — Show delete confirmation modal
@@ -27,8 +27,9 @@
 - `formError: string | null` — Error message for form
 
 ## Theme Compatibility
-- Uses Bootstrap classes for styling
-- Supports light/dark mode via inherited theme
+Uses Bootstrap classes for styling
+Supports light/dark mode via inherited theme
+Color sets for display are derived from `colorIndex` using `getNextAvailableColorSet`.
 
 ## Mobile Responsiveness
 - All modals and controls are responsive

@@ -11,7 +11,7 @@
 ## Props
 | Prop           | Type                | Required | Description                                 |
 |----------------|---------------------|----------|---------------------------------------------|
-| activities     | Activity[]          | Yes      | List of activities to display               |
+| activities     | Activity[]          | Yes      | List of activities to display (canonical type, see ActivityForm.md) |
 | onEdit         | (activity: Activity) => void | Yes      | Callback for editing an activity            |
 | onDelete       | (activity: Activity) => void | Yes      | Callback for deleting an activity           |
 
@@ -19,8 +19,9 @@
 - Stateless; receives all data and callbacks via props
 
 ## Theme Compatibility
-- Uses Bootstrap classes for styling
-- Inherits theme from parent
+Uses Bootstrap classes for styling
+Inherits theme from parent
+Color sets for display are derived from `colorIndex` using `getNextAvailableColorSet`.
 
 ## Mobile Responsiveness
 - Responsive layout adapts to mobile screens

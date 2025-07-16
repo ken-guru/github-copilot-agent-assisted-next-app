@@ -71,7 +71,45 @@ During final validation, discovered and resolved duplicate SplashScreen implemen
 
 ## 2025 June
 
-### ConfirmationDialog Bootstrap Modal Migration (2025-06-23)
+
+### Activity Type Integration and Color Handling Refactor (2025-07-15)
+
+**Summary:**
+Refactored all components and tests to use the canonical Activity type from `src/types/activity.ts`. Color sets are now derived from `colorIndex` using `getNextAvailableColorSet`. Updated documentation and tests for consistency. All type errors resolved and build passes.
+
+**Files Modified/Created:**
+- `/src/types/activity.ts`
+- `/src/components/ActivityButton.tsx`
+- `/src/hooks/useTimelineEntries.ts`
+- `/src/components/__tests__/ActivityButton.bootstrap.test.tsx`
+- `/src/components/__tests__/ComponentPropsInterface.test.tsx`
+- `/src/components/__tests__/ActivityButton.test.tsx`
+- `/src/hooks/__tests__/useActivityState.test.tsx`
+- `/src/hooks/__tests__/useTimelineEntries.test.tsx`
+- `/docs/components/ActivityButton.md`
+- `/docs/components/ActivityManager.md`
+- `/docs/components/ActivityForm.md`
+- `/docs/components/ActivityCrud.md`
+- `/docs/components/ActivityList.md`
+- `/README.md`
+- `/docs/MEMORY_LOG.md`
+- `/docs/logged_memories/MRTMLY-001-activity-type-integration.md`
+
+**Key Achievements:**
+- Canonical Activity type enforced across codebase
+- Color sets derived from colorIndex, not stored on Activity
+- All type errors and test failures resolved
+- Documentation and tests updated for consistency
+- Build, lint, and type-check all pass
+
+**Validation Results:**
+- Local Tests: All tests passing ✅
+- Type-check: No errors ✅
+- Build: Successful ✅
+- Lint: Only minor warnings ✅
+
+**Memory Log Reference:**
+- [MRTMLY-001-activity-type-integration.md](./logged_memories/MRTMLY-001-activity-type-integration.md)
 
 **Files Modified/Created:**
 - `/src/components/ConfirmationDialog.tsx`

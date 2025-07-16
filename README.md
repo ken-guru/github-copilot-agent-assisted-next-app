@@ -61,7 +61,18 @@ When implementing or modifying features, ensure adherence to these core function
 - Visual Feedback
   - Progress bar for ongoing activities
   - Timeline visualization
-  - Color-coded activity identification
+   - Color-coded activity identification
+      - Activities use a canonical type:
+         ```typescript
+         interface Activity {
+            id: string;
+            name: string;
+            colorIndex: number;
+            createdAt: string;
+            isActive: boolean;
+         }
+         ```
+      - Color sets for display are derived from `colorIndex` using `getNextAvailableColorSet` (see `src/utils/colors.ts`)
   - Break visualization between activities
   
 - Theme System
