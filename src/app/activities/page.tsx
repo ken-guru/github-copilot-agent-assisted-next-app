@@ -1,13 +1,13 @@
 import React from 'react';
+import ActivityCrud from '@/components/feature/ActivityCrud';
 
 /**
- * Activities management page route stub
- * Will be replaced with ActivityCrud in Phase 3
+ * Activities management page - provides full CRUD interface for managing custom activities
+ * Integrates with localStorage for persistent activity management
  */
 const ActivitiesPage: React.FC = () => (
   <main className="container py-4">
-    <h1>Manage Activities</h1>
-    <p>This is the activities management interface. (Coming soon)</p>
+    <ActivityCrud />
   </main>
 );
 
