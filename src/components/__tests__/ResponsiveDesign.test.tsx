@@ -16,9 +16,21 @@ jest.mock('../../utils/colors', () => ({
     text: '#1B5E20',
     border: '#2E7D32'
   })),
+  getActivityColorsForTheme: jest.fn(() => [
+    {
+      background: '#E8F5E9',
+      text: '#1B5E20',
+      border: '#2E7D32'
+    }
+  ]),
   isDarkMode: jest.fn(() => false),
   internalActivityColors: [],
   getThemeAppropriateColor: jest.fn((colors) => colors)
+}));
+
+// Mock the useThemeReactive hook
+jest.mock('../../hooks/useThemeReactive', () => ({
+  useThemeReactive: jest.fn(() => 'light')
 }));
 
 jest.mock('../../utils/time', () => ({
