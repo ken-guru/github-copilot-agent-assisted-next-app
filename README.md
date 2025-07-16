@@ -243,6 +243,8 @@ Key component categories:
 - [Planning Changes](./docs/PLANNED_CHANGES.md) - How to document upcoming changes
 - [Planning Template](./docs/templates/PLANNED_CHANGES_TEMPLATE.md) - Template for new change requests
 - [Memory Log](./docs/MEMORY_LOG.md) - Project history and issue resolutions
+- **[Memory Log Workflow](./docs/dev-guides/memory-log-workflow.md) - Complete guide for creating and accessing debugging knowledge**
+- **[MCP Memory Tool Usage](./docs/dev-guides/mcp-memory-tool-usage.md) - AI agent guide for semantic search and knowledge building**
 - [Time Utilities Testing Guide](./docs/dev-guides/TIME_UTILITIES_TESTING.md)
 
 ## License

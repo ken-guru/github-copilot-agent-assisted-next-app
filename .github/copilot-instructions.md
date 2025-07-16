@@ -119,6 +119,11 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - UPDATE related documentation (component docs, README) when changes affect described functionality
 
 ## MEMORY LOG PROTOCOLS [PRIORITY: HIGH]
+### Complete Workflow Reference
+- **COMPLETE GUIDE**: Follow `docs/dev-guides/memory-log-workflow.md` for comprehensive instructions
+- **AI AGENTS**: Use MCP Memory Tool first for semantic search, then markdown for detailed reference
+- **HUMAN DEVELOPERS**: Create markdown first (authoritative), then sync to MCP for AI accessibility
+
 ### File Organization
 - Store individual entries in: `docs/logged_memories/`
 - Filename format: `MRTMLY-XXX-descriptive-name.md`
@@ -133,6 +138,7 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 5. Add as LAST item
 6. NEVER overwrite existing entries
 7. Use next available sequential ID number
+8. **RECOMMENDED**: Migrate to MCP Memory Tool using `scripts/migrate-memory-logs-to-mcp.js`
 
 ### Entry Format Requirements
 - Follow established template structure
