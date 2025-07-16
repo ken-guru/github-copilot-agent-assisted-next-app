@@ -196,6 +196,13 @@ export function getActivityColors(): ColorSet[] {
   });
 }
 
+// Export a function that accepts theme parameter for reactive components
+export function getActivityColorsForTheme(theme: 'light' | 'dark'): ColorSet[] {
+  return internalActivityColors.map(colorSet => {
+    return theme === 'dark' ? colorSet.dark : colorSet.light;
+  });
+}
+
 const usedColors = new Set<number>();
 
 /**

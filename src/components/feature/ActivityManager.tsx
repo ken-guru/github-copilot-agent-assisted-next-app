@@ -132,7 +132,8 @@ export default function ActivityManager({
           onClick={() => setShowForm(true)}
           disabled={isTimeUp}
         >
-          + Add Activity
+          <i className="fas fa-plus me-2"></i>
+          Add Activity
         </button>
       )}
       

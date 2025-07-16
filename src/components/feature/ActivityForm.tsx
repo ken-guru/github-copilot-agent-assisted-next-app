@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Form, Button, Dropdown } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
 import { getColorName } from '../../utils/colorNames';
-import { getActivityColors } from '../../utils/colors';
+import { getActivityColorsForTheme } from '../../utils/colors';
 import { useTheme } from '../../contexts/theme';
 
 interface ActivityFormProps {
@@ -26,9 +26,10 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(({ act
   
   // Get theme from context - this ensures component re-renders when theme changes
   const themeContext = useTheme();
+  const theme = themeContext?.theme || 'light'; // Fallback for edge cases
   
-  // Get current theme colors for visual display - call on each render to be reactive to theme changes
-  const activityColors = getActivityColors();
+  // Get current theme colors for visual display - pass theme explicitly to be reactive
+  const activityColors = getActivityColorsForTheme(theme);
 
   // Expose form submission method to parent components
   React.useImperativeHandle(ref, () => ({
