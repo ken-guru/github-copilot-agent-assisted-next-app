@@ -23,6 +23,30 @@ The application is developed using AI-assisted techniques with these principles:
 - Theme-aware styling
 - Accessibility considerations
 
+### AI Development Enhancement
+This project leverages Model Context Protocol (MCP) tools to enhance AI-assisted development:
+- **Memory Tool**: Maintains persistent knowledge graphs for project context
+- **Sequential Thinking Tool**: Enables step-by-step problem analysis and solution development
+- **Time Tool**: Provides timezone-aware time handling for documentation and coordination
+
+**Practical Examples:**
+```javascript
+// Search existing debugging knowledge
+mcp_memory_search_nodes("component testing typescript errors")
+
+// Complex problem analysis
+mcp_sequential-th_sequentialthinking({
+  thought: "Breaking down this multi-step refactoring...",
+  // Systematic analysis with iterative refinement
+})
+
+// Timezone-aware documentation
+mcp_time_get_current_time("America/New_York")
+// Result: "2025-07-16 15:30:00 EST"
+```
+
+These tools enable more sophisticated AI assistance in debugging, planning, and implementation tasks. For complete usage guides, see [Memory Log Workflow](./docs/dev-guides/memory-log-workflow.md) and [AI Agent Quick Reference](./docs/dev-guides/ai-agent-memory-quick-reference.md).
+
 ### Change Management Approach
 ```markdown
 The project uses a documentation system for tracking changes:
@@ -235,7 +259,17 @@ Key component categories:
 - [Planning Changes](./docs/PLANNED_CHANGES.md) - How to document upcoming changes
 - [Planning Template](./docs/templates/PLANNED_CHANGES_TEMPLATE.md) - Template for new change requests
 - [Memory Log](./docs/MEMORY_LOG.md) - Project history and issue resolutions
+- **[Memory Log Workflow](./docs/dev-guides/memory-log-workflow.md) - Complete guide for creating and accessing debugging knowledge**
+- **[MCP Memory Tool Usage](./docs/dev-guides/mcp-memory-tool-usage.md) - AI agent guide for semantic search and knowledge building**
 - [Time Utilities Testing Guide](./docs/dev-guides/TIME_UTILITIES_TESTING.md)
+
+### Development Scripts
+
+- **Memory Log Synchronization**: `node scripts/migrate-memory-logs-to-mcp.js`
+  - Syncs markdown memory logs with MCP Memory Tool for AI search
+  - Use `--dry-run` to preview changes before execution
+  - Essential for maintaining hybrid markdown + MCP memory system
+  - Not a one-off tool - keep for ongoing synchronization and disaster recovery
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

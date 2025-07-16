@@ -119,6 +119,11 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - UPDATE related documentation (component docs, README) when changes affect described functionality
 
 ## MEMORY LOG PROTOCOLS [PRIORITY: HIGH]
+### Complete Workflow Reference
+- **COMPLETE GUIDE**: Follow `docs/dev-guides/memory-log-workflow.md` for comprehensive instructions
+- **AI AGENTS**: Use MCP Memory Tool first for semantic search, then markdown for detailed reference
+- **HUMAN DEVELOPERS**: Create markdown first (authoritative), then sync to MCP for AI accessibility
+
 ### File Organization
 - Store individual entries in: `docs/logged_memories/`
 - Filename format: `MRTMLY-XXX-descriptive-name.md`
@@ -133,6 +138,7 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 5. Add as LAST item
 6. NEVER overwrite existing entries
 7. Use next available sequential ID number
+8. **RECOMMENDED**: Migrate to MCP Memory Tool using `scripts/migrate-memory-logs-to-mcp.js`
 
 ### Entry Format Requirements
 - Follow established template structure
@@ -301,6 +307,16 @@ When these MCP tools are available, leverage them to enhance development workflo
 - CREATE entities for significant debugging sessions and their outcomes
 - REFERENCE knowledge graph findings in Memory Log documentation
 - MAINTAIN bidirectional references between systems
+- MIGRATE existing memory logs to MCP memory tool for AI-agent accessibility
+- USE MCP search for finding relevant historical debugging sessions
+- STORE new debugging sessions in both markdown and MCP formats during transition
+
+**Memory Log Migration Status**:
+- EXISTING LOGS: 219 memory log entries in `docs/logged_memories/`
+- MIGRATION TOOL: Use `scripts/migrate-memory-logs-to-mcp.js` for automated migration
+- POC COMPLETED: MRTMLY-001 and MRTMLY-002 successfully migrated with full entity/relation structure
+- SEARCH VALIDATED: Semantic search working effectively for AI agent queries
+- HYBRID APPROACH: Maintain both markdown files and MCP entities during transition
 
 ### Tool Combination Strategies
 **Sequential Thinking + Memory Graph**:
@@ -386,6 +402,14 @@ When these MCP tools are available, leverage them to enhance development workflo
 - CREATE scripts in `scripts/` for development, MOVE to `scripts/archive/` when done
 - DELETE duplicates - keep only one copy (preferably archived version for history)
 
+### Infrastructure Script Exceptions
+- KEEP scripts with ongoing utility in main `scripts/` directory
+- **Memory Log Sync**: `migrate-memory-logs-to-mcp.js` is infrastructure for hybrid memory system
+  - Syncs new markdown memory logs to MCP knowledge graph
+  - Serves as disaster recovery for rebuilding MCP store
+  - Essential for team onboarding and system migration
+  - NOT a one-off migration tool - retain for ongoing use
+
 ### Script Naming and Organization
 - Use descriptive names: `fix-[specific-issue]-[date].js`
 - Document script purpose in header comments
@@ -450,3 +474,8 @@ When these MCP tools are available, leverage them to enhance development workflo
 - Patterns identified
 - Future considerations
 ```
+
+#### MCP Tool Usage (when available)
+- **Sequential Thinking**: Record complex analysis steps and hypothesis testing
+- **Memory Tool**: Document patterns and solutions for future reference
+- **Time Tool**: Track debugging session duration and timezone context

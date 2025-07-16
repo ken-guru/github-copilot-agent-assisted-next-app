@@ -36,11 +36,14 @@ Describe what success looks like:
 - Testing criteria
 
 ## Validation Criteria
-- [ ] Test cases written
 - [ ] Implementation complete
-- [ ] Tests passing
-- [ ] Theme compatibility verified
+- [ ] Test cases written (if applicable to code changes)
+- [ ] Tests passing (if applicable to code changes)
+- [ ] Type checking successful (if applicable to code changes)
+- [ ] Linting successful (if applicable to code changes)
+- [ ] Theme compatibility verified (if applicable to UI changes)
 - [ ] Documentation updated
+- [ ] Validation checklist items all addressed
 ```
 
 Note: When implementing a change, copy this template and fill it out completely. The more detailed the prompt, the better the AI assistance will be in implementation.
