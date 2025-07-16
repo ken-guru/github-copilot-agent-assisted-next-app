@@ -11,15 +11,9 @@ import ThemeToggle from '@/components/ThemeToggle';
  * - Automatic light/dark theme switching
  */
 const Navigation: React.FC = () => {
-  // Safely get theme with fallback for when component is rendered outside ThemeProvider
-  let theme = 'light';
-  try {
-    const themeContext = useTheme();
-    theme = themeContext.theme;
-  } catch (error) {
-    // Fallback to light theme if no context available (e.g., in tests)
-    theme = 'light';
-  }
+  // Get theme from context - this ensures component re-renders when theme changes
+  const themeContext = useTheme();
+  const theme = themeContext?.theme || 'light'; // Fallback for edge cases
   
   // Use Bootstrap's theme-aware classes
   const navClasses = theme === 'dark' 
