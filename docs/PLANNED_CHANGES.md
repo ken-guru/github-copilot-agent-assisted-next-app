@@ -316,10 +316,10 @@ The application currently uses hardcoded activities (Homework, Reading, Play Tim
 - [x] Add unit tests for all storage operations (complete)
 
 ### Phase 2: Navigation & Routes
-- [ ] Add navigation component to layout
-- [ ] Create /activities route structure
-- [ ] Update layout integration with responsive navigation
-- [ ] Test navigation functionality across devices
+- [x] Add navigation component to layout (complete)
+- [x] Create /activities route structure (complete)
+- [x] Update layout integration with responsive navigation (complete)
+- [x] Test navigation functionality across devices (complete)
 
 ### Phase 3: Management Interface
 - [ ] Build ActivityCrud page with Bootstrap styling

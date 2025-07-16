@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { ThemeProvider } from '@/contexts/theme';
-import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater'; // This will need to be updated when the component is moved
+import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
+import Navigation from '@/components/Navigation';
 
 interface LayoutClientProps {
   children: React.ReactNode;
@@ -57,7 +58,8 @@ export function LayoutClient({ children }: LayoutClientProps) {
           onDismiss={() => setUpdateAvailable(false)}
         />
       )}
-      
+      {/* Navigation bar */}
+      <Navigation />
       {/* Main content */}
       <main className="app-container">
         {children}
