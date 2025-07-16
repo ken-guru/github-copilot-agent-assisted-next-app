@@ -1,24 +1,19 @@
 # Planned Changes
 
-This document contains specifications for upcoming changes to the application. Each change should be documented using the template format to ensure AI-assisted implementation is effective.
+This file contains specifications for upcoming changes to the application. Each change should be documented in a format suitable for AI-assisted implementation following the template in `docs/templates/PLANNED_CHANGES_TEMPLATE.md`.
 
-## Using the Template
+Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
 
-When planning a new feature or change:
+## Change Request Template Reference
 
-1. **Use the Template**: Copy the structure from [PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEMPLATE.md)
-2. **Fill Out Completely**: The more detailed the specification, the better the AI assistance
-3. **Include All Sections**: Context, Requirements, Technical Guidelines, Expected Outcome, and Validation Criteria
-4. **Move When Complete**: After implementation, move the completed change to [IMPLEMENTED_CHANGES.md](./IMPLEMENTED_CHANGES.md) with timestamp
+For new feature requests, copy and use the complete template from:
+- `docs/templates/PLANNED_CHANGES_TEMPLATE.md`
 
-## Template Reference
+The template includes all required sections:
+- Context (components affected, current behavior, user needs)
+- Requirements (detailed specifications with implementation details)
+- Technical Guidelines (framework considerations, performance, accessibility)
+- Expected Outcome (success criteria from user and technical perspectives)
+- Validation Criteria (checklist for completion verification)
 
-See [docs/templates/PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEMPLATE.md) for the complete template structure.
-
----
-
-## Current Planned Changes
-
-*No active planned changes at this time.*
-
-Use the template above to document new feature requests and changes before implementation.
+**Note:** Always use the complete template structure - never create partial specifications. Ask clarifying questions if template sections cannot be completed fully before proceeding with implementation.

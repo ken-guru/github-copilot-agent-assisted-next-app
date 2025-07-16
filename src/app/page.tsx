@@ -6,13 +6,11 @@ import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import ProgressBar from '@/components/ProgressBar';
-import ThemeToggle from '@/components/ThemeToggle';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import resetService from '@/utils/resetService';
-import styles from './page.module.css';
 
 // Main application content with loading context
 function AppContent() {
@@ -133,7 +131,7 @@ function AppContent() {
   
   return (
     <>
-      <div className={`${styles.layout} ${styles.container}`}>
+      <main className="container-fluid min-vh-100 d-flex flex-column">
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}
@@ -144,67 +142,72 @@ function AppContent() {
           onCancel={dialogActions.onCancel}
         />
         
-        <div className={styles.wrapper}>
-          <header className={styles.header}>
-            <div className={styles.headerContent}>
-              <h1 className={styles.title}>Mr. Timely</h1>
-              <ThemeToggle />
-              <div className={styles.resetButtonContainer}>
-                {appState !== 'setup' && (
-                  <button 
-                    className={styles.resetButton} 
-                    onClick={handleReset}
-                  >
-                    Reset
-                  </button>
-                )}
-              </div>
-            </div>
-          </header>
+        <div className="flex-grow-1 d-flex flex-column">
           <OfflineIndicator />
+          
+          {/* Reset button - positioned as a floating action when needed */}
+          {appState !== 'setup' && (
+            <div className="d-flex justify-content-end p-3">
+              <button 
+                className="btn btn-outline-danger"
+                onClick={handleReset}
+              >
+                <i className="bi bi-arrow-clockwise me-1"></i>
+                Reset
+              </button>
+            </div>
+          )}
           
           {/* Progress bar only rendered for activity state */}
           {timeSet && !allActivitiesCompleted && (
-            <div className={styles.progressContainer} data-testid="progress-container">
-              <ProgressBar 
-                entries={processedEntries}
-                totalDuration={totalDuration}
-                elapsedTime={elapsedTime}
-                timerActive={timerActive}
-              />
+            <div className="mx-3 mb-3" data-testid="progress-container">
+              <div className="card">
+                <div className="card-body p-3">
+                  <ProgressBar 
+                    entries={processedEntries}
+                    totalDuration={totalDuration}
+                    elapsedTime={elapsedTime}
+                    timerActive={timerActive}
+                  />
+                </div>
+              </div>
             </div>
           )}
           
           {appState === 'setup' && (
-            <div className={styles.setupGrid}>
+            <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
               <TimeSetup onTimeSet={handleTimeSet} />
             </div>
           )}
           
           {appState === 'activity' && (
-            <div className={styles.activityGrid}>
-              <ActivityManager 
-                onActivitySelect={handleActivitySelect} 
-                onActivityRemove={handleActivityRemoval}
-                currentActivityId={currentActivity?.id || null} 
-                completedActivityIds={completedActivityIds}
-                timelineEntries={processedEntries}
-                isTimeUp={isTimeUp}
-                elapsedTime={elapsedTime}
-              />
-              <Timeline 
-                entries={processedEntries}
-                totalDuration={totalDuration} 
-                elapsedTime={elapsedTime}
-                allActivitiesCompleted={allActivitiesCompleted}
-                timerActive={timerActive}
-                isTimeUp={isTimeUp}
-              />
+            <div className="row flex-grow-1 g-3 px-3 pb-3">
+              <div className="col-lg-5">
+                <ActivityManager 
+                  onActivitySelect={handleActivitySelect} 
+                  onActivityRemove={handleActivityRemoval}
+                  currentActivityId={currentActivity?.id || null} 
+                  completedActivityIds={completedActivityIds}
+                  timelineEntries={processedEntries}
+                  isTimeUp={isTimeUp}
+                  elapsedTime={elapsedTime}
+                />
+              </div>
+              <div className="col-lg-7 d-none d-lg-block">
+                <Timeline 
+                  entries={processedEntries}
+                  totalDuration={totalDuration} 
+                  elapsedTime={elapsedTime}
+                  allActivitiesCompleted={allActivitiesCompleted}
+                  timerActive={timerActive}
+                  isTimeUp={isTimeUp}
+                />
+              </div>
             </div>
           )}
           
           {appState === 'completed' && (
-            <div className={styles.completedGrid}>
+            <div className="d-flex justify-content-center flex-grow-1 p-4">
               <Summary 
                 entries={processedEntries}
                 totalDuration={totalDuration} 
@@ -214,7 +217,7 @@ function AppContent() {
             </div>
           )}
         </div>
-      </div>
+      </main>
     </>
   );
 }

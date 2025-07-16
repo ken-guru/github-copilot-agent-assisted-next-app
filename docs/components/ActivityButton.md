@@ -59,12 +59,12 @@ interface Activity {
   id: string;
   name: string;
   colorIndex: number;
-  colors?: {
-    background: string;
-    text: string;
-    border: string;
-  };
+  createdAt: string;
+  isActive: boolean;
 }
+
+// Color sets are derived from colorIndex using getNextAvailableColorSet
+// Colors are not stored directly on the Activity type
 
 interface ActivityButtonProps {
   activity: Activity;

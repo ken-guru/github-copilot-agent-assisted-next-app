@@ -1,17 +1,16 @@
 import { renderHook, act } from '@testing-library/react';
 import { useTimelineEntries } from '../useTimelineEntries';
+import { getNextAvailableColorSet } from '../../utils/colors';
 
 describe('useTimelineEntries', () => {
   const mockActivity = {
     id: '1',
     name: 'Test Activity',
     colorIndex: 0,
-    colors: {
-      background: '#fff',
-      border: '#000',
-      text: '#000'
-    }
+    createdAt: new Date().toISOString(),
+    isActive: true
   };
+  const mockColors = getNextAvailableColorSet(mockActivity.colorIndex);
 
   beforeEach(() => {
     jest.useFakeTimers();
@@ -41,7 +40,7 @@ describe('useTimelineEntries', () => {
       activityName: mockActivity.name,
       startTime: Date.now(),
       endTime: null,
-      colors: mockActivity.colors
+  colors: mockColors
     });
   });
 

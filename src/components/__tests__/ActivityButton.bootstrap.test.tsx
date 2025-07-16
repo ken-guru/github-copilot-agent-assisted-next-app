@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ActivityButton } from '../ActivityButton';
-import { Activity } from '../ActivityManager';
+import { Activity } from '../../types/activity';
+import { getNextAvailableColorSet } from '../../utils/colors';
 import { TimelineEntry } from '@/types';
 
 // Bootstrap-focused test suite for ActivityButton component
@@ -9,12 +10,11 @@ describe('ActivityButton Bootstrap Integration', () => {
   const mockActivity: Activity = {
     id: 'test-activity-1',
     name: 'Test Activity',
-    colors: {
-      background: '#E8F5E9',
-      text: '#1B5E20',
-      border: '#2E7D32'
-    }
+    colorIndex: 0,
+    createdAt: new Date().toISOString(),
+    isActive: true
   };
+  const mockColors = getNextAvailableColorSet(mockActivity.colorIndex);
 
   const mockTimelineEntries: TimelineEntry[] = [
     {
@@ -22,7 +22,8 @@ describe('ActivityButton Bootstrap Integration', () => {
       activityId: 'test-activity-1',
       activityName: 'Test Activity',
       startTime: Date.now() - 3600000, // 1 hour ago
-      endTime: Date.now() - 1800000   // 30 minutes ago
+      endTime: Date.now() - 1800000,   // 30 minutes ago
+      colors: mockColors
     }
   ];
 

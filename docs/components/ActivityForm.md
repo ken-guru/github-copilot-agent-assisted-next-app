@@ -30,7 +30,17 @@ The ActivityForm component provides a Bootstrap-powered interface for adding new
 
 - **Bootstrap Form Integration**: Uses React Bootstrap components for consistent styling
 - **Input Group Layout**: Implements Bootstrap InputGroup for seamless input-button combination
-- **Activity Creation**: Simple form interface for adding new activities
+**Activity Creation**: Simple form interface for adding new activities using the canonical Activity type:
+```typescript
+interface Activity {
+  id: string;
+  name: string;
+  colorIndex: number;
+  createdAt: string;
+  isActive: boolean;
+}
+```
+Color sets for display are derived from `colorIndex` using `getNextAvailableColorSet`.
 - **Input Validation**: Basic validation for required activity names
 - **Responsive Design**: Bootstrap's responsive utilities ensure mobile compatibility
 - **Keyboard Support**: Full keyboard navigation and form submission

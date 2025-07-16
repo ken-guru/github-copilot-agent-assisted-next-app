@@ -7,6 +7,19 @@
 ## Overview
 The `ActivityManager` component serves as the primary container for managing user activities within the application. It provides a responsive Bootstrap layout that allows users to add, select, and remove activities with proper state management and visual feedback.
 
+## Color Handling
+Activities use a canonical type:
+```typescript
+interface Activity {
+  id: string;
+  name: string;
+  colorIndex: number;
+  createdAt: string;
+  isActive: boolean;
+}
+```
+Color sets for display are derived from `colorIndex` using `getNextAvailableColorSet` from `src/utils/colors.ts`. Colors are not stored directly on the Activity object.
+
 ## Component Location
 - **File**: `src/components/ActivityManager.tsx`
 - **Type**: Layout/Container Component

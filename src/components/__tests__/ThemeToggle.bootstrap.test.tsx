@@ -222,8 +222,8 @@ describe('ThemeToggle Bootstrap Integration', () => {
       buttons.forEach(button => {
         const icon = button.querySelector('svg');
         expect(icon).toBeInTheDocument();
-        expect(icon).toHaveAttribute('width', '20');
-        expect(icon).toHaveAttribute('height', '20');
+        expect(icon).toHaveAttribute('width', '20px');
+        expect(icon).toHaveAttribute('height', '20px');
       });
     });
 
@@ -233,8 +233,8 @@ describe('ThemeToggle Bootstrap Integration', () => {
       const lightButton = screen.getByTitle('Light theme');
       const icon = lightButton.querySelector('svg');
       
-      expect(icon).toHaveAttribute('width', '20');
-      expect(icon).toHaveAttribute('height', '20');
+      expect(icon).toHaveAttribute('width', '20px');
+      expect(icon).toHaveAttribute('height', '20px');
       expect(icon).toHaveAttribute('stroke', 'currentColor');
     });
   });
@@ -306,6 +306,53 @@ describe('ThemeToggle Bootstrap Integration', () => {
       // After clicking, should change variant
       fireEvent.click(lightButton);
       expect(lightButton).toHaveClass('active');
+    });
+  });
+
+  describe('Responsive Sizing Props', () => {
+    it('renders with small size for navbar context', () => {
+      render(<ThemeToggle size="sm" variant="navbar" />);
+      
+      const buttons = screen.getAllByRole('button');
+      buttons.forEach(button => {
+        expect(button).toHaveStyle({ width: '32px', height: '32px' });
+      });
+      
+      // Check icon sizes are appropriately smaller
+      const lightButton = screen.getByTitle('Light theme');
+      const icon = lightButton.querySelector('svg');
+      expect(icon).toHaveAttribute('width', '16px');
+      expect(icon).toHaveAttribute('height', '16px');
+    });
+
+    it('renders with large size when specified', () => {
+      render(<ThemeToggle size="lg" />);
+      
+      const buttons = screen.getAllByRole('button');
+      buttons.forEach(button => {
+        expect(button).toHaveStyle({ width: '48px', height: '48px' });
+      });
+      
+      // Check icon sizes are appropriately larger
+      const lightButton = screen.getByTitle('Light theme');
+      const icon = lightButton.querySelector('svg');
+      expect(icon).toHaveAttribute('width', '24px');
+      expect(icon).toHaveAttribute('height', '24px');
+    });
+
+    it('uses default medium size when no props specified', () => {
+      render(<ThemeToggle />);
+      
+      const buttons = screen.getAllByRole('button');
+      buttons.forEach(button => {
+        expect(button).toHaveStyle({ width: '44px', height: '44px' });
+      });
+      
+      // Check default icon size
+      const lightButton = screen.getByTitle('Light theme');
+      const icon = lightButton.querySelector('svg');
+      expect(icon).toHaveAttribute('width', '20px');
+      expect(icon).toHaveAttribute('height', '20px');
     });
   });
 });

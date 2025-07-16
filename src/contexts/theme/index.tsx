@@ -48,6 +48,42 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     
     return () => clearTimeout(timer);
   }, []);
+
+  // Listen for external theme changes (from ThemeToggle or other components)
+  useEffect(() => {
+    // Listen for localStorage changes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'theme' && e.newValue && (e.newValue === 'light' || e.newValue === 'dark')) {
+        setTheme(e.newValue);
+      }
+    };
+
+    // Listen for DOM attribute changes
+    const handleDOMThemeChange = (mutations: MutationRecord[]) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+          const newTheme = document.documentElement.getAttribute('data-theme') as Theme;
+          if (newTheme && (newTheme === 'light' || newTheme === 'dark') && newTheme !== theme) {
+            setTheme(newTheme);
+          }
+        }
+      });
+    };
+
+    // Set up listeners
+    window.addEventListener('storage', handleStorageChange);
+    
+    const observer = new MutationObserver(handleDOMThemeChange);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme']
+    });
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      observer.disconnect();
+    };
+  }, [theme]);
   
   // Helper function to apply theme consistently across the app
   const applyThemeToDOM = (themeValue: Theme) => {

@@ -4,9 +4,27 @@ import { useActivityState } from '../useActivityState';
 describe('useActivityState', () => {
   // Helper function to create unique test activities for each test
   const createTestActivities = (idPrefix: string) => ({
-    activity1: { id: `${idPrefix}_1`, name: `${idPrefix} Activity 1` },
-    activity2: { id: `${idPrefix}_2`, name: `${idPrefix} Activity 2` },
-    activity3: { id: `${idPrefix}_3`, name: `${idPrefix} Activity 3` },
+    activity1: {
+      id: `${idPrefix}_1`,
+      name: `${idPrefix} Activity 1`,
+      colorIndex: 0,
+      createdAt: new Date().toISOString(),
+      isActive: true
+    },
+    activity2: {
+      id: `${idPrefix}_2`,
+      name: `${idPrefix} Activity 2`,
+      colorIndex: 1,
+      createdAt: new Date().toISOString(),
+      isActive: true
+    },
+    activity3: {
+      id: `${idPrefix}_3`,
+      name: `${idPrefix} Activity 3`,
+      colorIndex: 2,
+      createdAt: new Date().toISOString(),
+      isActive: true
+    }
   });
   
   const waitForStateUpdate = () => act(() => new Promise(resolve => setTimeout(resolve, 0)));
@@ -190,7 +208,13 @@ describe('useActivityState', () => {
       
       // Add and start an activity
       act(() => {
-        result.current.handleActivitySelect(uniqueActivity);
+        result.current.handleActivitySelect({
+          id: uniqueActivity.id,
+          name: uniqueActivity.name,
+          colorIndex: 0,
+          createdAt: new Date().toISOString(),
+          isActive: true
+        });
       });
       
       // Check that the activity is not completed since it's still running

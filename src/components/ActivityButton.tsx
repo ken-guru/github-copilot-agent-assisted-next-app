@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, Card, Badge } from 'react-bootstrap';
-import { Activity } from './ActivityManager';
+import { Activity } from '../types/activity';
+import { getActivityColorsForTheme } from '../utils/colors';
+import { useThemeReactive } from '../hooks/useThemeReactive';
 import { TimelineEntry } from '@/types';
 import { formatTime } from '@/utils/timeUtils';
 
@@ -27,7 +29,12 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
   timelineEntries = [],
   elapsedTime = 0,
 }) => {
-  const { id, name, colors } = activity;
+  const { id, name, colorIndex } = activity;
+  const theme = useThemeReactive();
+  const themeColors = getActivityColorsForTheme(theme);
+  const colors = (activity && 'colors' in activity && activity.colors)
+    ? activity.colors as import('../utils/colors').ColorSet
+    : (themeColors[colorIndex] || themeColors[0]); // Fallback to first color if index out of bounds
   const isInUse = timelineEntries?.some(entry => entry.activityId === id);
   
   const handleClick = () => {
