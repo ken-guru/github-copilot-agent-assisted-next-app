@@ -4,14 +4,11 @@ import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './ActivityForm';
+import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
+import { Activity as CanonicalActivity } from '../types/activity';
 
-export interface Activity {
-  id: string;
-  name: string;
-  completed?: boolean;
-  colors?: ColorSet;
-  colorIndex?: number;
-}
+// Use canonical Activity type
+type Activity = CanonicalActivity & { colors?: ColorSet };
 
 interface ActivityManagerProps {
   onActivitySelect: (activity: Activity | null, justAdd?: boolean) => void;
@@ -34,50 +31,17 @@ export default function ActivityManager({
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
-  const [hasInitializedActivities, setHasInitializedActivities] = useState(false);
-  
-  const getNextColorIndex = (): number => {
-    let index = 0;
-    while (assignedColorIndices.includes(index)) {
-      index++;
-    }
-    return index;
-  };
 
+  // Load activities from localStorage on mount
   useEffect(() => {
-    const defaultActivities = [
-      { id: '1', name: 'Homework', colorIndex: 0 },
-      { id: '2', name: 'Reading', colorIndex: 1 },
-      { id: '3', name: 'Play Time', colorIndex: 2 },
-      { id: '4', name: 'Chores', colorIndex: 3 }
-    ];
-
-    if (!hasInitializedActivities) {
-      setAssignedColorIndices(defaultActivities.map(a => a.colorIndex));
-      
-      // Add activities to the state machine in pending state
-      defaultActivities.forEach(activity => {
-        const activityWithColors = {
-          ...activity,
-          colors: getNextAvailableColorSet(activity.colorIndex || 0)
-        };
-        // Pass true as second argument to just add the activity without starting it
-        onActivitySelect(activityWithColors, true);
-      });
-      
-      setActivities(defaultActivities);
-      setHasInitializedActivities(true);
-    }
-  }, [hasInitializedActivities, onActivitySelect]);
-  
-  useEffect(() => {
-    setActivities(currentActivities => 
-      currentActivities.map(activity => ({
-        ...activity,
-        colors: getNextAvailableColorSet(activity.colorIndex || 0)
-      }))
-    );
-  }, []);
+    const loadedActivities = getActivities().filter(a => a.isActive);
+    setActivities(loadedActivities);
+    setAssignedColorIndices(loadedActivities.map(a => a.colorIndex));
+    // Register activities in state machine
+    loadedActivities.forEach(activity => {
+      onActivitySelect(activity, true);
+    });
+  }, [onActivitySelect]);
 
   // Listen for theme changes
   useEffect(() => {
@@ -114,19 +78,27 @@ export default function ActivityManager({
     };
   }, []);
 
+  const getNextColorIndex = (): number => {
+    let index = 0;
+    while (assignedColorIndices.includes(index)) {
+      index++;
+    }
+    return index;
+  };
+
   const handleAddActivity = (activityName: string) => {
     const nextColorIndex = getNextColorIndex();
-    
     const newActivity: Activity = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
       name: activityName,
       colorIndex: nextColorIndex,
+      createdAt: new Date().toISOString(),
+      isActive: true,
       colors: getNextAvailableColorSet(nextColorIndex)
     };
-    
     setAssignedColorIndices([...assignedColorIndices, nextColorIndex]);
     setActivities([...activities, newActivity]);
-    // Pass true as second argument to just add the activity without starting it
+    persistActivity(newActivity);
     onActivitySelect(newActivity, true);
   };
 
@@ -145,13 +117,12 @@ export default function ActivityManager({
     if (id === currentActivityId) {
       onActivitySelect(null);
     }
-    
     const activity = activities.find(a => a.id === id);
     if (activity && typeof activity.colorIndex === 'number') {
       setAssignedColorIndices(assignedColorIndices.filter(i => i !== activity.colorIndex));
     }
-    
     setActivities(activities.filter(activity => activity.id !== id));
+    persistDeleteActivity(id);
     if (onActivityRemove) {
       onActivityRemove(id);
     }

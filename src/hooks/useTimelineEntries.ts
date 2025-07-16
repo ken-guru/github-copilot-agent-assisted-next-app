@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Activity } from '@/components/ActivityManager';
+import { Activity } from '@/types/activity';
 import { getNextAvailableColorSet } from '@/utils/colors';
 import { TimelineEntry } from '@/types';
 
@@ -24,7 +24,7 @@ export function useTimelineEntries(): UseTimelineEntriesResult {
       activityName: activity.name,
       startTime: Date.now(),
       endTime: null,
-      colors: activity.colors || getNextAvailableColorSet(activity.colorIndex || 0)
+  colors: getNextAvailableColorSet(activity.colorIndex || 0)
     };
     
     setTimelineEntries(prev => [...prev, newEntry]);

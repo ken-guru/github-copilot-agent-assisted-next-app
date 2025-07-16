@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Card, Badge } from 'react-bootstrap';
-import { Activity } from './ActivityManager';
+import { Activity } from '../types/activity';
+import { getNextAvailableColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { formatTime } from '@/utils/timeUtils';
 
@@ -27,7 +28,10 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
   timelineEntries = [],
   elapsedTime = 0,
 }) => {
-  const { id, name, colors } = activity;
+  const { id, name, colorIndex } = activity;
+  const colors: import('../utils/colors').ColorSet = (activity && 'colors' in activity && activity.colors)
+    ? activity.colors as import('../utils/colors').ColorSet
+    : getNextAvailableColorSet(colorIndex);
   const isInUse = timelineEntries?.some(entry => entry.activityId === id);
   
   const handleClick = () => {

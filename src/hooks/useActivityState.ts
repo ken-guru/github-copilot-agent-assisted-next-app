@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Activity } from '@/components/ActivityManager';
+import { Activity } from '@/types/activity';
 import { useActivitiesTracking } from './useActivitiesTracking';
 import { useTimelineEntries } from './useTimelineEntries';
 import { ActivityState } from '@/utils/activityStateMachine';

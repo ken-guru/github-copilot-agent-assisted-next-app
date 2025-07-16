@@ -18,8 +18,9 @@ import TimeSetup from '../TimeSetup';
 // ColorSet is imported for types that use it indirectly
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ColorSet } from '../../utils/colors';
+import { getNextAvailableColorSet } from '../../utils/colors';
 import type { TimelineEntry } from '../../types';
-import type { Activity } from '../ActivityManager';
+import type { Activity } from '../../types/activity';
 
 describe('Component Props Interface Validation', () => {
   // Mock functions and data for testing
@@ -29,14 +30,11 @@ describe('Component Props Interface Validation', () => {
   const mockActivity: Activity = {
     id: 'test1',
     name: 'Test Activity',
-    completed: false,
-    colors: {
-      background: '#ffffff',
-      text: '#000000',
-      border: '#cccccc'
-    },
-    colorIndex: 0
+    colorIndex: 0,
+    createdAt: new Date().toISOString(),
+    isActive: true
   };
+  const mockColors = getNextAvailableColorSet(mockActivity.colorIndex);
   
   // Create properly formatted TimelineEntry objects
   const timelineEntries: TimelineEntry[] = [
@@ -46,18 +44,7 @@ describe('Component Props Interface Validation', () => {
       activityName: 'Test Activity',
       startTime: 0,
       endTime: 300,
-      colors: {
-        light: {
-          background: '#ffffff',
-          text: '#000000',
-          border: '#cccccc'
-        },
-        dark: {
-          background: '#333333',
-          text: '#ffffff',
-          border: '#666666'
-        }
-      }
+      colors: mockColors
     }
   ];
 
