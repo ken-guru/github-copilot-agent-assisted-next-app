@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/contexts/theme';
+import ThemeToggle from '@/components/ThemeToggle';
 
 /**
  * Responsive navigation bar for Timer and Activities
@@ -56,6 +57,9 @@ const Navigation: React.FC = () => {
                 <i className="bi bi-list-check me-1" aria-hidden="true"></i>
                 Activities
               </Link>
+            </li>
+            <li className="nav-item d-flex align-items-center">
+              <ThemeToggle />
             </li>
           </ul>
         </div>

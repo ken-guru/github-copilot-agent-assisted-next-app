@@ -55,6 +55,203 @@ See [docs/templates/PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEM
 
 ## Current Planned Changes
 
+### Navigation Header Consolidation & Enhancement
+
+**Context:**
+The current navigation implementation has several UX and consistency issues that need immediate attention:
+- Navigation drawer/hamburger menu doesn't actually open on mobile devices (missing Bootstrap JavaScript)
+- Double headers: new navigation bar plus existing main app header with title and theme toggle
+- Styling inconsistency between main application (custom CSS modules) and activity manager (Bootstrap container)
+- Theme toggle is separated from main navigation, reducing discoverability
+
+**Components Affected:**
+- `Navigation.tsx` - Needs Bootstrap JavaScript integration and theme toggle integration
+- `LayoutClient.tsx` - Navigation integration point
+- `page.tsx` (main app) - Remove duplicate header, adapt styling to match activity manager
+- `activities/page.tsx` - Styling consistency with main application
+- `ThemeToggle.tsx` - Integration into navigation bar
+
+**Current Issues:**
+- Navigation hamburger menu has `data-bs-toggle="collapse"` but no Bootstrap JavaScript to handle the interaction
+- Main app has `<header className={styles.header}>` with title and theme toggle that duplicates navigation functionality  
+- Main app uses CSS modules (`styles.layout`, `styles.container`) while activities page uses Bootstrap (`container py-4`)
+- Users have to hunt for theme toggle in main app header rather than having it prominently in navigation
+
+**User Needs:**
+- Single, consistent navigation header across all pages
+- Working mobile hamburger menu for responsive navigation
+- Easy access to theme toggle from any page
+- Consistent visual styling and layout patterns between timer and activities pages
+- Professional, cohesive application appearance
+
+## Requirements
+
+### 1. Bootstrap JavaScript Integration
+   - **Implementation Details:**
+     - Add Bootstrap JavaScript to enable navbar collapse functionality on mobile
+     - Ensure hamburger menu toggles navigation items on small screens
+     - Use Next.js Script component for optimal loading
+     - Initialize Bootstrap components properly in client-side context
+   - **Technical Considerations:**
+     - Bundle size impact of adding Bootstrap JS
+     - Client-side only initialization (Next.js SSR compatibility)
+     - Event listener cleanup and memory management
+     - Integration with existing theme system
+   - **Testing Requirements:**
+     - Mobile responsiveness tests for hamburger menu functionality
+     - Theme switching integration tests
+     - Accessibility tests for keyboard navigation
+
+### 2. Theme Toggle Integration into Navigation
+   - **Implementation Details:**
+     - Move ThemeToggle component into Navigation bar as a nav item
+     - Position theme toggle on the right side of navigation with other nav items
+     - Maintain existing theme toggle functionality and appearance
+     - Remove theme toggle from main application header
+     - Ensure theme toggle is accessible from all pages
+   - **Technical Considerations:**
+     - Maintain existing ThemeToggle component API and functionality
+     - Integration with Bootstrap navbar styling patterns
+     - Responsive behavior in collapsed mobile menu
+     - Icon sizing and positioning within navigation context
+   - **Testing Requirements:**
+     - Theme switching functionality tests
+     - Visual consistency tests across different screen sizes
+     - Theme persistence tests
+
+### 3. Main Application Header Removal
+   - **Implementation Details:**
+     - Remove existing header section with title and theme toggle from main app page
+     - Remove related CSS module styles (`styles.header`, `styles.headerContent`, etc.)
+     - Adjust main application layout to account for navigation bar
+     - Update reset button positioning and styling
+     - Preserve all existing functionality (reset button, offline indicator, etc.)
+   - **Technical Considerations:**
+     - Layout reflow and spacing adjustments
+     - CSS module cleanup and unused style removal
+     - Component positioning and grid layout updates
+     - Maintain responsive design principles
+   - **Testing Requirements:**
+     - Layout visual regression tests
+     - Reset functionality preservation tests
+     - Responsive design validation across screen sizes
+
+### 4. Styling Consistency Between Pages
+   - **Implementation Details:**
+     - Standardize on Bootstrap container patterns across both timer and activities pages
+     - Update main application to use Bootstrap container classes instead of custom CSS modules where appropriate
+     - Implement consistent card-based layouts for both timer components and activity management
+     - Unify spacing, typography, and visual hierarchy patterns
+     - Create shared styling patterns for common UI elements
+   - **Technical Considerations:**
+     - Gradual migration from CSS modules to Bootstrap utility classes
+     - Maintain existing responsive breakpoints and behavior
+     - Preserve theme compatibility across both styling approaches
+     - Component isolation and style encapsulation
+   - **Testing Requirements:**
+     - Visual consistency tests between pages
+     - Responsive behavior verification
+     - Theme switching consistency tests
+
+### 5. Card Component Standardization
+   - **Implementation Details:**
+     - Extract common card patterns into reusable components
+     - Apply consistent card styling to timer setup, activity selection, and activity management
+     - Use Bootstrap card components with custom styling for brand consistency
+     - Implement consistent padding, margins, and visual hierarchy
+     - Add subtle shadows and borders for depth and visual separation
+   - **Technical Considerations:**
+     - Create flexible card component API for different content types
+     - Maintain accessibility standards for card interactions
+     - Optimize for both light and dark theme variants
+     - Performance considerations for reusable component patterns
+   - **Testing Requirements:**
+     - Card component unit tests
+     - Visual consistency validation
+     - Accessibility compliance tests
+
+### 6. Enhanced Mobile Navigation Experience
+   - **Implementation Details:**
+     - Ensure hamburger menu animation and smooth transitions
+     - Optimize touch targets for mobile interaction
+     - Implement proper focus management for mobile navigation
+     - Add visual feedback for menu state changes
+     - Ensure navigation items are easily accessible on small screens
+   - **Technical Considerations:**
+     - Touch event handling and gesture recognition
+     - CSS animations and transition performance
+     - Mobile viewport considerations and safe areas
+     - Bootstrap responsive breakpoint integration
+   - **Testing Requirements:**
+     - Mobile device testing across different screen sizes
+     - Touch interaction and gesture tests
+     - Animation performance and smoothness validation
+
+## Technical Guidelines
+
+### Bootstrap Integration
+- Use Next.js Script component for Bootstrap JavaScript loading
+- Initialize Bootstrap in client-side context only
+- Maintain existing Bootstrap CSS integration
+- Optimize bundle size and loading performance
+
+### Component Architecture
+- Preserve existing component APIs and functionality
+- Use composition over inheritance for shared styling patterns
+- Maintain clear separation between layout and content components
+- Create reusable utility components for common patterns
+
+### Performance Considerations
+- Minimize JavaScript bundle size impact
+- Optimize CSS delivery and reduce unused styles
+- Maintain existing page load performance benchmarks
+- Implement efficient CSS-in-JS patterns where needed
+
+### Accessibility Requirements
+- Maintain ARIA labels and keyboard navigation patterns
+- Ensure theme toggle is accessible from all pages
+- Implement proper focus management for mobile navigation
+- Test with screen readers and keyboard-only navigation
+
+### Theme Compatibility
+- Preserve existing dark/light theme functionality
+- Ensure all new components support theme switching
+- Maintain consistent color schemes and contrast ratios
+- Test theme transitions and visual consistency
+
+## Expected Outcome
+
+### User Perspective
+- Single, professional navigation header across all application pages
+- Working mobile hamburger menu with smooth interactions
+- Easy theme switching from any page via navigation bar
+- Consistent visual design language between timer and activity management
+- Improved mobile experience with touch-friendly navigation
+
+### Technical Perspective
+- Consolidated navigation architecture with reduced duplication
+- Bootstrap JavaScript properly integrated for responsive functionality
+- Consistent styling patterns using Bootstrap utilities and custom components
+- Reduced CSS module complexity in favor of utility-first approach
+- Maintainable component architecture with shared design patterns
+
+## Validation Criteria
+- [x] Bootstrap JavaScript integrated and hamburger menu functional on mobile
+- [x] Theme toggle moved to navigation bar and accessible from all pages
+- [x] Main application header removed, duplicate functionality eliminated
+- [x] Consistent Bootstrap container styling between timer and activities pages
+- [x] Card component patterns applied consistently across application
+- [x] Mobile navigation experience smooth and touch-friendly
+- [x] All existing functionality preserved (reset, theme switching, etc.)
+- [x] Visual regression tests passing for layout consistency
+- [x] Accessibility tests passing for navigation and theme switching
+- [x] Performance benchmarks maintained with Bootstrap JavaScript integration
+- [x] Documentation updated for navigation architecture changes
+
+---
+
+## Current Planned Changes
+
 ### Activity CRUD Interface UX Improvements
 
 **Context:**
