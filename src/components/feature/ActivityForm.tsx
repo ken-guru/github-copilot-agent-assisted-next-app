@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { Form, Button, Dropdown } from 'react-bootstrap';
+import { Form, Dropdown } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
 import { getColorName } from '../../utils/colorNames';
 import { getActivityColorsForTheme } from '../../utils/colors';
-import { useTheme } from '../../contexts/theme';
+import { useThemeReactive } from '../../hooks/useThemeReactive';
 
 interface ActivityFormProps {
   activity?: Activity | null;
@@ -24,24 +24,26 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(({ act
   const [validated, setValidated] = useState(false);
   const nameInputRef = React.useRef<HTMLInputElement>(null);
   
-  // Get theme from context - this ensures component re-renders when theme changes
-  const themeContext = useTheme();
-  const theme = themeContext?.theme || 'light'; // Fallback for edge cases
+  // Get theme using new reactive hook - this ensures component re-renders when theme changes
+  const theme = useThemeReactive();
   
-  // Get current theme colors for visual display - pass theme explicitly to be reactive
+  // Get current theme colors for visual display - will be reactive to theme changes
   const activityColors = getActivityColorsForTheme(theme);
 
   // Expose form submission method to parent components
   React.useImperativeHandle(ref, () => ({
     submitForm: () => {
-      handleSubmit(new Event('submit') as any);
+      // Create a synthetic form event for programmatic submission
+      const event = {
+        preventDefault: () => {},
+        currentTarget: null as unknown as HTMLFormElement,
+      } as React.FormEvent<HTMLFormElement>;
+      handleSubmit(event);
     }
   }));
 
   React.useEffect(() => {
-    // Always log error prop changes for debugging
-    // eslint-disable-next-line no-console
-    console.log('[ActivityForm] error prop updated:', error);
+    // Focus on error input for accessibility
     if (error && nameInputRef.current) {
       nameInputRef.current.focus();
     }
@@ -68,9 +70,6 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(({ act
     });
   };
 
-  // Debug log to confirm error prop value on each render
-  // eslint-disable-next-line no-console
-  console.log('[ActivityForm] render error prop:', error);
   return (
     <Form noValidate validated={validated} onSubmit={handleSubmit} aria-label="Activity Form">
       <Form.Group controlId="activityName">

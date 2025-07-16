@@ -61,7 +61,7 @@ export default function RootLayout({
   const fontClasses = `${geistSans.variable} ${geistMono.variable}`;
   
   return (
-    <html lang="en" className="light-mode" data-theme="light" data-bs-theme="light">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -87,7 +87,7 @@ export default function RootLayout({
                   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
                   
                   // Determine effective theme
-                  let effectiveTheme = 'light'; // Default server value
+                  let effectiveTheme = 'light'; // Default fallback
                   
                   if (savedTheme === 'dark') {
                     effectiveTheme = 'dark';
@@ -98,20 +98,23 @@ export default function RootLayout({
                     effectiveTheme = 'dark';
                   }
                   
-                  // Apply theme to match what React components will set
+                  // Apply theme immediately to avoid hydration mismatch
                   if (effectiveTheme === 'dark') {
-                    root.classList.remove('light-mode');
                     root.classList.add('dark-mode', 'dark');
+                    root.classList.remove('light-mode');
                     root.setAttribute('data-theme', 'dark');
                     root.setAttribute('data-bs-theme', 'dark');
                   } else {
-                    // Ensure light theme classes are set (should already be from server)
                     root.classList.add('light-mode');
                     root.classList.remove('dark-mode', 'dark');
                     root.setAttribute('data-theme', 'light');
                     root.setAttribute('data-bs-theme', 'light');
                   }
                 } catch (e) {
+                  // Fallback to light theme on any error
+                  document.documentElement.classList.add('light-mode');
+                  document.documentElement.setAttribute('data-theme', 'light');
+                  document.documentElement.setAttribute('data-bs-theme', 'light');
                   console.error('Theme initialization error:', e);
                 }
               })();

@@ -2,7 +2,8 @@ import React from 'react';
 import { Button, ListGroup, Card } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
 import { getColorDisplay } from '../../utils/colorNames';
-import { getActivityColors } from '../../utils/colors';
+import { getActivityColorsForTheme } from '../../utils/colors';
+import { useThemeReactive } from '../../hooks/useThemeReactive';
 
 interface ActivityListProps {
   activities: Activity[];
@@ -12,8 +13,9 @@ interface ActivityListProps {
 }
 
 const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelete, onAdd }) => {
-  // Get current theme colors for visual indicators
-  const activityColors = getActivityColors();
+  // Get current theme and theme-appropriate colors for visual indicators
+  const theme = useThemeReactive();
+  const activityColors = getActivityColorsForTheme(theme);
 
   if (!activities.length) {
     return (

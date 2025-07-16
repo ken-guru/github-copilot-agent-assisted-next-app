@@ -1,55 +1,234 @@
-# Beast Mode V3 Autonomous Agent Workflow (GPT-4.1 Enhanced)
+# Critical Theme System & UI Consistency Fixes
 
-This project uses the advanced autonomous developer agent workflow, designed for elite full-stack development with enhanced multi-mode capabilities. The methodology below is integrated into all planning and implementation phases for maximum rigor, research, and never-ending problem resolution.
+**Planning Date:** 2025-07-16  
+**Status:** 🚨 **CRITICAL** - Requires Immediate Implementation  
+**Priority:** HIGHEST - User Experience Blocking Issues  
 
-## Agent Principles & Workflow
+## Context
 
-- **Never stop until the problem is fully solved and all items are checked off.**
-- **Extensive internet research is required for all third-party packages, dependencies, and best practices.**
-- **Plan, act, research, analyze, checkpoint, and prompt-generate in cycles.**
-- **Use sequential thinking and memory tools for complex problem breakdowns.**
-- **Test rigorously and repeatedly, handling all edge cases.**
-- **Update planning documents and commit in logical increments.**
-- **Communicate clearly and concisely at every step.**
+Two critical issues are preventing optimal user experience:
 
-### Workflow Steps
+1. **Hydration Mismatch Error**: Server/client theme detection creates React hydration errors
+2. **Theme Reactivity Failure**: Color swatches and other theme-dependent components don't update when users switch themes
 
-1. **Fetch Provided URLs**: Use the fetch tool for all user-provided and discovered URLs. Recursively gather all relevant information.
-2. **Deeply Understand the Problem**: Read the issue, break it down, and plan before coding. Use sequential thinking for complex tasks.
-3. **Codebase Investigation**: Explore files, search for key functions, and validate context.
-4. **Internet Research**: Use Google and official docs for every package, dependency, and best practice. Recursively fetch and read all relevant links.
-5. **Develop a Detailed Plan**: Create a markdown todo list for all steps. Check off each step as completed and continue until all are done.
-6. **Make Code Changes**: Read full file context before editing. Make small, testable, incremental changes.
-7. **Debugging**: Use error tools, print/logs, and hypothesis testing. Find and fix root causes, not just symptoms.
-8. **Test Frequently**: Run all tests after each change. Iterate until all tests pass and edge cases are covered.
-9. **Reflect and Validate**: After tests pass, review intent, add more tests if needed, and ensure robustness.
-10. **Documentation & Commit**: Update planning docs, component docs, README, and commit in logical increments.
+### Investigation Results (Using MCP Sequential Thinking & Memory Tools)
 
-### Communication Guidelines
+**Hydration Mismatch Root Cause:**
+- Server renders: `className="light-mode" data-theme="light" data-bs-theme="light"`  
+- Client detects user preference and applies: `className="dark-mode dark" data-theme="dark" data-bs-theme="dark"`
+- This creates a race condition between:
+  1. Server-side hardcoded theme in `layout.tsx`
+  2. Client-side inline script theme detection
+  3. ThemeProvider initialization with 50ms delay
 
-- Always explain what you are doing before each tool call.
-- Never ask unnecessary questions if you can act instead.
-- Use markdown for todo lists and progress tracking.
-- Maintain a casual, friendly, and professional tone.
+**Theme Reactivity Root Cause:**
+- ActivityForm uses `useTheme()` hook but color swatches still don't update
+- ThemeProvider external listeners (MutationObserver, storage events) may not trigger React re-renders
+- `getActivityColorsForTheme()` function works but components aren't re-rendering when theme changes
+- Context updates aren't propagating properly to consuming components
+
+**Additional Issues:**
+- Button padding issues may be related to CSS module styles rather than missing icons
+- Some custom button classes may override Bootstrap spacing
+
+## Requirements
+
+### 1. **Fix Hydration Mismatch with Unified Theme Detection**
+   - **Implementation Details:**
+     - Remove hardcoded theme classes from server-side HTML
+     - Implement SSR-safe theme detection that matches client-side behavior  
+     - Use `suppressHydrationWarning` for theme-dependent elements during initial render
+     - Ensure server and client render identical markup initially
+   - **Technical Approach:**
+     - Start with neutral theme state on server
+     - Apply theme only after hydration is complete
+     - Use React 18's `useLayoutEffect` for immediate theme application
+   - **Testing Requirements:**
+     - Verify no hydration warnings in browser console
+     - Test with both light and dark system preferences
+     - Validate theme persistence across page refreshes
+
+### 2. **Implement Custom Theme Hook for Reactivity**
+   - **Implementation Details:**
+     - Create `useThemeReactive()` hook that directly listens to DOM changes
+     - Use `useState` + `useEffect` pattern to force re-renders on theme changes
+     - Listen to specific DOM attributes and localStorage changes
+     - Provide theme value that triggers component re-renders
+   - **Hook Architecture:**
+     ```typescript
+     const useThemeReactive = (): 'light' | 'dark' => {
+       const [theme, setTheme] = useState<'light' | 'dark'>('light');
+       
+       useEffect(() => {
+         // Direct DOM listening logic
+         // Storage event listening
+         // Return cleanup functions
+       }, []);
+       
+       return theme;
+     };
+     ```
+   - **Technical Considerations:**
+     - Hook must be SSR-safe (check `typeof window !== 'undefined'`)
+     - Should work independently of ThemeProvider context
+     - Must trigger re-renders when theme changes occur
+   - **Testing Requirements:**
+     - Test theme switching triggers hook updates
+     - Verify component re-renders when theme changes
+     - Test SSR compatibility and hydration safety
+
+### 3. **Replace Theme Context Dependency with Direct Hook Usage**
+   - **Implementation Details:**
+     - Update ActivityForm to use `useThemeReactive()` instead of `useTheme()`
+     - Update any other components that depend on theme for rendering
+     - Keep ThemeProvider for theme toggle functionality
+     - Decouple theme detection from theme management
+   - **Migration Strategy:**
+     - Create hook first, test in isolation
+     - Gradually migrate components from context to hook
+     - Keep existing theme toggle functionality intact
+   - **Testing Requirements:**
+     - Verify color swatches update immediately on theme switch
+     - Test all theme-dependent components for reactivity
+     - Ensure theme toggle buttons still work correctly
+
+### 4. **Investigate and Fix Button Padding Issues**
+   - **Implementation Details:**
+     - Audit all CSS module button styles for unwanted padding
+     - Check Bootstrap Button overrides in custom CSS
+     - Identify specific buttons that still have padding issues
+     - Apply targeted fixes (icons or CSS adjustments)
+   - **Investigation Areas:**
+     - ActivityManager.module.css button classes
+     - Bootstrap Button component spacing overrides
+     - Custom button components with CSS module styles
+   - **Testing Requirements:**
+     - Visual regression testing for button consistency
+     - Test buttons with and without icons
+     - Verify responsive behavior on mobile devices
+
+### 5. **Optimize Theme Performance and User Experience**
+   - **Implementation Details:**
+     - Minimize theme switching delay and visual flicker
+     - Ensure smooth transitions between light and dark modes
+     - Optimize hook performance with proper dependency arrays
+     - Cache theme detection results where appropriate
+   - **Performance Targets:**
+     - Theme switch < 100ms visual update
+     - No layout shift during theme transitions
+     - Minimal re-renders for non-theme-dependent components
+   - **Testing Requirements:**
+     - Performance testing for theme switching speed
+     - Visual testing for smooth transitions
+     - Memory usage testing for hook efficiency
+
+## Technical Guidelines
+
+### Hooks-Based Architecture
+- **Primary Pattern**: Use custom hooks for theme reactivity instead of context dependency
+- **SSR Safety**: All hooks must handle server-side rendering safely
+- **Performance**: Optimize for minimal re-renders and fast theme updates
+- **Independence**: Theme detection should work independently of theme management
+
+### Hydration Safety
+- **Server Neutrality**: Server should render theme-neutral markup initially
+- **Client Application**: Apply theme immediately after hydration
+- **Suppression Strategy**: Use `suppressHydrationWarning` only where necessary
+- **Testing**: Verify zero hydration warnings in all scenarios
+
+### Theme System Architecture
+```typescript
+// Separation of concerns
+useThemeReactive()    // For components that need to re-render on theme changes
+useTheme()           // For theme toggle functionality (existing)
+ThemeProvider        // For global theme state management (existing)
+```
+
+### Performance Requirements
+- **Fast Theme Detection**: < 50ms for theme value availability
+- **Immediate Updates**: Color swatches and UI update within 100ms of theme change
+- **No Flicker**: Smooth transitions without visual artifacts
+- **Memory Efficient**: Proper cleanup of event listeners and observers
+
+### Browser Compatibility
+- **Modern Browsers**: Target Chrome 90+, Firefox 88+, Safari 14+
+- **SSR Support**: Full Next.js App Router compatibility
+- **Storage**: Graceful degradation if localStorage unavailable
+- **Media Queries**: Support for system theme preference detection
+
+## Expected Outcome
+
+### User Perspective
+- **Immediate Theme Updates**: Color swatches and all UI elements update instantly when switching themes
+- **No Console Errors**: Clean browser console without hydration warnings
+- **Consistent Button Spacing**: All buttons have appropriate padding with or without icons
+- **Smooth Experience**: Fast, flicker-free theme transitions
+- **Reliable Persistence**: Theme preference persists correctly across sessions
+
+### Technical Perspective  
+- **Zero Hydration Errors**: Server and client render identical initial markup
+- **Reactive Theme System**: Components automatically re-render when theme changes
+- **Clean Architecture**: Clear separation between theme detection and theme management
+- **Performance Optimized**: Fast theme switching with minimal computational overhead
+- **Maintainable Code**: Hooks-based approach that's easy to test and extend
+
+### Developer Experience
+- **Easy Theme Integration**: Simple hook for any component that needs theme reactivity
+- **Debugging Friendly**: Clear patterns for theme-related issues
+- **Test Coverage**: Comprehensive testing for both theme scenarios
+- **Documentation**: Clear guidelines for theme-dependent component development
+
+## Implementation Plan
+
+### Phase 1: Hook Development and Testing (Priority 1)
+- [ ] Create `useThemeReactive()` custom hook with DOM and storage listeners
+- [ ] Test hook in isolation with theme switching scenarios
+- [ ] Verify SSR safety and hydration compatibility
+- [ ] Create comprehensive test suite for hook functionality
+
+### Phase 2: Hydration Fix (Priority 1)  
+- [ ] Remove hardcoded theme classes from layout.tsx
+- [ ] Implement theme-neutral server rendering
+- [ ] Add suppressHydrationWarning for theme elements
+- [ ] Test hydration with both light and dark system preferences
+
+### Phase 3: Component Migration (Priority 2)
+- [ ] Update ActivityForm to use useThemeReactive() hook
+- [ ] Test color swatch reactivity with new hook
+- [ ] Migrate other theme-dependent components as needed
+- [ ] Verify all components update correctly on theme switch
+
+### Phase 4: Button Padding Investigation (Priority 3)
+- [ ] Audit CSS module button styles
+- [ ] Identify and fix remaining padding issues
+- [ ] Test button consistency across all components
+- [ ] Apply icons or CSS fixes as needed
+
+### Phase 5: Performance Optimization (Priority 4)
+- [ ] Optimize hook performance and memory usage
+- [ ] Minimize theme switching delay
+- [ ] Test performance across different devices
+- [ ] Fine-tune transition smoothness
+
+## Validation Criteria
+- [ ] **Critical**: Zero hydration mismatch errors in browser console
+- [ ] **Critical**: Color swatches update immediately when switching themes
+- [ ] useThemeReactive() hook implemented and tested
+- [ ] ActivityForm migrated to use reactive theme hook
+- [ ] Server renders theme-neutral markup initially
+- [ ] Client applies theme after hydration without warnings
+- [ ] Button padding issues identified and resolved
+- [ ] Theme switching performance < 100ms visual update
+- [ ] All existing theme functionality preserved
+- [ ] Comprehensive test coverage for new hook and fixes
+- [ ] Documentation updated for new theme architecture
+- [ ] Memory usage optimized with proper cleanup
+- [ ] Cross-browser compatibility verified
+- [ ] Mobile responsiveness maintained for all fixes
+
+**Implementation Notes:** This plan addresses both critical issues using a hooks-based approach as requested. The custom hook will provide reliable theme reactivity while the hydration fix will eliminate console errors and improve user experience.
 
 ---
-
-# Planned Changes
-
-This document contains specifications for upcoming changes to the application. Each change should be documented using the template format to ensure AI-assisted implementation is effective.
-
-## Using the Template
-
-When planning a new feature or change:
-
-1. **Use the Template**: Copy the structure from [PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEMPLATE.md)
-2. **Fill Out Completely**: The more detailed the specification, the better the AI assistance
-3. **Include All Sections**: Context, Requirements, Technical Guidelines, Expected Outcome, and Validation Criteria
-4. **Move When Complete**: After implementation, move the completed change to [IMPLEMENTED_CHANGES.md](./IMPLEMENTED_CHANGES.md) with timestamp
-
-## Template Reference
-
-See [docs/templates/PLANNED_CHANGES_TEMPLATE.md](./templates/PLANNED_CHANGES_TEMPLATE.md) for the complete template structure.
 
 ---
 
