@@ -24,7 +24,8 @@ describe('ActivityCrud', () => {
     render(<ActivityCrud />);
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Color/i)).toBeInTheDocument();
+    // Check for the color dropdown button instead of a specific label
+    expect(screen.getByRole('button', { name: /Green/i })).toBeInTheDocument();
   });
 
   // NOTE: React-Bootstrap modal transitions and async state updates interfere with error message rendering in RTL tests.
@@ -35,7 +36,8 @@ describe('ActivityCrud', () => {
     render(<ActivityCrud />);
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     fireEvent.change(screen.getByLabelText(/Name/i), { target: { value: 'Test Activity' } });
-    fireEvent.change(screen.getByLabelText(/Color/i), { target: { value: '2' } });
+    // The color selector is now a dropdown, but we can still interact with the hidden input
+    fireEvent.change(screen.getByLabelText(/Selected color index/i), { target: { value: '2' } });
     fireEvent.click(screen.getByRole('button', { name: /Save/i }));
     await waitFor(() => {
       expect(screen.getByText('Test Activity')).toBeInTheDocument();

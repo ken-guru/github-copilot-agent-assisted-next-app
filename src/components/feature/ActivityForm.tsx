@@ -1,7 +1,9 @@
 
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Dropdown } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
+import { getColorName } from '../../utils/colorNames';
+import { getActivityColors } from '../../utils/colors';
 
 interface ActivityFormProps {
   activity?: Activity | null;
@@ -19,6 +21,9 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ activity, onSubmit, error, 
   const [colorIndex, setColorIndex] = useState(activity?.colorIndex || 0);
   const [validated, setValidated] = useState(false);
   const nameInputRef = React.useRef<HTMLInputElement>(null);
+  
+  // Get current theme colors for visual display
+  const activityColors = getActivityColors();
 
   // Support cancel button if onCancel is provided
   const handleCancel = () => {
@@ -90,16 +95,62 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ activity, onSubmit, error, 
           onChange={e => setDescription(e.target.value)}
         />
       </Form.Group>
-      <Form.Group controlId="activityColor">
+      <Form.Group controlId="activityColor" className="mb-3">
         <Form.Label>Color</Form.Label>
-        <Form.Control
-          type="number"
-          min={0}
-          max={7}
-          value={colorIndex}
-          onChange={e => setColorIndex(Number(e.target.value))}
-          required
+        <Dropdown>
+          <Dropdown.Toggle 
+            variant="outline-secondary" 
+            id="color-dropdown"
+            className="w-100 d-flex align-items-center justify-content-between"
+            style={{ textAlign: 'left' }}
+          >
+            <div className="d-flex align-items-center">
+              <div 
+                className="me-2 rounded border"
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  backgroundColor: activityColors[colorIndex]?.background,
+                  borderColor: activityColors[colorIndex]?.border,
+                  borderWidth: '2px'
+                }}
+                aria-hidden="true"
+              ></div>
+              {getColorName(colorIndex)}
+            </div>
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu className="w-100">
+            {activityColors.map((colorSet, index) => (
+              <Dropdown.Item 
+                key={index} 
+                onClick={() => setColorIndex(index)}
+                active={index === colorIndex}
+                className="d-flex align-items-center"
+              >
+                <div 
+                  className="me-2 rounded border"
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: colorSet.background,
+                    borderColor: colorSet.border,
+                    borderWidth: '2px'
+                  }}
+                  aria-hidden="true"
+                ></div>
+                {getColorName(index)}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+        {/* Hidden input for form validation */}
+        <input 
+          type="hidden" 
+          value={colorIndex} 
+          required 
           aria-required="true"
+          aria-label="Selected color index"
         />
       </Form.Group>
       <Button type="submit" variant="primary">Save</Button>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, ListGroup, Badge } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
+import { getColorDisplay } from '../../utils/colorNames';
+import { getActivityColors } from '../../utils/colors';
 
 interface ActivityListProps {
   activities: Activity[];
@@ -9,6 +11,9 @@ interface ActivityListProps {
 }
 
 const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelete }) => {
+  // Get current theme colors for visual indicators
+  const activityColors = getActivityColors();
+
   if (!activities.length) {
     return (
       <div className="text-center py-4">
@@ -36,7 +41,20 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
             className="d-flex justify-content-between align-items-center py-3"
           >
             <div className="d-flex align-items-center">
-              <div className="me-3">
+              <div className="me-3 d-flex align-items-center">
+                {/* Color indicator */}
+                <div 
+                  className="me-2 rounded border"
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    backgroundColor: activityColors[activity.colorIndex]?.background || '#f0f0f0',
+                    borderColor: activityColors[activity.colorIndex]?.border || '#ccc',
+                    borderWidth: '2px'
+                  }}
+                  title={`Color: ${getColorDisplay(activity.colorIndex)}`}
+                  aria-label={`Activity color: ${getColorDisplay(activity.colorIndex)}`}
+                ></div>
                 <i className="fas fa-circle-check text-success"></i>
               </div>
               <div>
