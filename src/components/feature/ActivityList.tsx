@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ListGroup } from 'react-bootstrap';
+import { Button, ListGroup, Badge } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
 
 interface ActivityListProps {
@@ -10,20 +10,72 @@ interface ActivityListProps {
 
 const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelete }) => {
   if (!activities.length) {
-    return <div>No activities found</div>;
+    return (
+      <div className="text-center py-4">
+        <div className="text-muted">
+          <i className="fas fa-tasks fa-2x mb-3"></i>
+          <p>No activities found</p>
+        </div>
+      </div>
+    );
   }
+
   return (
-    <ListGroup aria-label="Activity List">
-      {activities.map(activity => (
-        <ListGroup.Item key={activity.id} className="d-flex justify-content-between align-items-center">
-          <span>{activity.name}</span>
-          <div>
-            <Button variant="outline-secondary" size="sm" onClick={() => onEdit?.(activity)} aria-label={`Edit ${activity.name}`}>Edit</Button>{' '}
-            <Button variant="outline-danger" size="sm" onClick={() => onDelete?.(activity)} aria-label={`Delete ${activity.name}`}>Delete</Button>
-          </div>
-        </ListGroup.Item>
-      ))}
-    </ListGroup>
+    <div>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h5 className="mb-0">Your Activities</h5>
+        <Badge bg="secondary" className="fs-6">
+          {activities.length} activity{activities.length !== 1 ? 'ies' : ''}
+        </Badge>
+      </div>
+      
+      <ListGroup aria-label="Activity List">
+        {activities.map(activity => (
+          <ListGroup.Item 
+            key={activity.id} 
+            className="d-flex justify-content-between align-items-center py-3"
+          >
+            <div className="d-flex align-items-center">
+              <div className="me-3">
+                <i className="fas fa-circle-check text-success"></i>
+              </div>
+              <div>
+                <h6 className="mb-1">{activity.name}</h6>
+                {activity.description && (
+                  <p className="text-muted small mb-0">{activity.description}</p>
+                )}
+                <small className="text-muted">
+                  Created: {new Date(activity.createdAt).toLocaleDateString()}
+                </small>
+              </div>
+            </div>
+            
+            <div className="d-flex gap-2">
+              <Button 
+                variant="outline-primary" 
+                size="sm" 
+                onClick={() => onEdit?.(activity)} 
+                aria-label={`Edit ${activity.name}`}
+                className="d-flex align-items-center"
+              >
+                <i className="fas fa-edit me-1"></i>
+                Edit
+              </Button>
+              <Button 
+                variant="outline-danger" 
+                size="sm" 
+                onClick={() => onDelete?.(activity)} 
+                aria-label={`Delete ${activity.name}`}
+                className="d-flex align-items-center"
+              >
+                <i className="fas fa-trash me-1"></i>
+                Delete
+              </Button>
+            </div>
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+    </div>
   );
 };
 
