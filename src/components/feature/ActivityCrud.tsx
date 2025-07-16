@@ -175,35 +175,42 @@ const ActivityCrud: React.FC = () => {
         </Modal.Footer>
       </Modal>
       {/* Export Modal */}
-      <Modal show={showExport} onHide={() => setShowExport(false)} aria-labelledby="export-modal" centered backdrop="static">
-        <Modal.Header closeButton>
-          <Modal.Title id="export-modal">Export Activities</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>You can export your activities as a JSON file below.</p>
-          {exportUrl ? (
-            <a href={exportUrl} download="activities.json" className="btn btn-success">Download JSON</a>
-          ) : (
-            <div className="text-danger">No activities to export or export failed.</div>
-          )}
-        </Modal.Body>
-      </Modal>
+        <Modal show={showExport} onHide={() => setShowExport(false)} aria-labelledby="export-modal" aria-describedby="export-modal-desc" centered backdrop="static">
+          <Modal.Header closeButton>
+            <Modal.Title id="export-modal">Export Activities</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div id="export-modal-desc">
+              <p>Export your activities as a JSON file. This file can be imported later for backup or transfer.</p>
+            </div>
+            {exportUrl ? (
+              <a href={exportUrl} download="activities.json" className="btn btn-success" aria-label="Download activities as JSON">Download JSON</a>
+            ) : (
+              <div className="text-danger" role="alert">No activities to export or export failed.</div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowExport(false)} autoFocus>Close</Button>
+          </Modal.Footer>
+        </Modal>
       {/* Import Modal */}
-      <Modal show={showImport} onHide={() => setShowImport(false)} aria-labelledby="import-modal" centered backdrop="static">
-        <Modal.Header closeButton>
-          <Modal.Title id="import-modal">Import Activities</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Select a JSON file to import activities.</p>
-          <input type="file" accept="application/json" onChange={handleImportFileChange} aria-label="Import JSON File" />
-          {importError && <div className="text-danger mt-2">{importError}</div>}
-          {importSuccess && <div className="text-success mt-2">Import successful!</div>}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowImport(false)}>Cancel</Button>
-          <Button variant="primary" onClick={handleImportSubmit}>Import</Button>
-        </Modal.Footer>
-      </Modal>
+        <Modal show={showImport} onHide={() => setShowImport(false)} aria-labelledby="import-modal" aria-describedby="import-modal-desc" centered backdrop="static">
+          <Modal.Header closeButton>
+            <Modal.Title id="import-modal">Import Activities</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div id="import-modal-desc">
+              <p>Select a JSON file to import activities. Only valid activity files will be accepted. Importing may overwrite your current activities.</p>
+            </div>
+            <input type="file" accept="application/json" onChange={handleImportFileChange} aria-label="Import JSON File" />
+            {importError && <div className="text-danger mt-2" role="alert">{importError}</div>}
+            {importSuccess && <div className="text-success mt-2" role="status">Import successful!</div>}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowImport(false)} autoFocus>Cancel</Button>
+            <Button variant="primary" onClick={handleImportSubmit}>Import</Button>
+          </Modal.Footer>
+        </Modal>
       {/* Import Overwrite Confirmation Modal */}
       <Modal show={showImportConfirm} onHide={() => setShowImportConfirm(false)} aria-labelledby="confirm-import-overwrite-modal" centered backdrop="static">
         <Modal.Header closeButton>
