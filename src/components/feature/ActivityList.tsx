@@ -24,7 +24,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
           <h5 className="mb-0">Your Activities</h5>
           {onAdd && (
             <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center px-3">
-              <i className="fas fa-plus me-2"></i>
+              <i className="bi bi-plus me-2"></i>
               Add Activity
             </Button>
           )}
@@ -32,7 +32,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
         <Card.Body>
           <div className="text-center py-4">
             <div className="text-muted">
-              <i className="fas fa-tasks fa-2x mb-3"></i>
+              <i className="bi bi-kanban fa-2x mb-3"></i>
               <p>No activities found</p>
             </div>
           </div>
@@ -47,7 +47,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
         <h5 className="mb-0">Your Activities</h5>
         {onAdd && (
           <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center px-3">
-            <i className="fas fa-plus me-2"></i>
+            <i className="bi bi-plus me-2"></i>
             Add Activity
           </Button>
         )}
@@ -74,7 +74,6 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                   title={`Color: ${getColorDisplay(activity.colorIndex)}`}
                   aria-label={`Activity color: ${getColorDisplay(activity.colorIndex)}`}
                 ></div>
-                <i className="fas fa-circle-check text-success"></i>
               </div>
               <div>
                 <h6 className="mb-1">{activity.name}</h6>
@@ -95,7 +94,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                 aria-label={`Edit ${activity.name}`}
                 className="d-flex align-items-center px-3"
               >
-                <i className="fas fa-edit me-2"></i>
+                <i className="bi bi-pencil me-2"></i>
                 Edit
               </Button>
               <Button 
@@ -105,7 +104,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                 aria-label={`Delete ${activity.name}`}
                 className="d-flex align-items-center px-3"
               >
-                <i className="fas fa-trash me-2"></i>
+                <i className="bi bi-trash me-2"></i>
                 Delete
               </Button>
             </div>
