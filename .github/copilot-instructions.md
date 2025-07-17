@@ -394,21 +394,29 @@ When implementing fixes for PR comments or issues, ALWAYS follow this establishe
 - Execute `npm run type-check` to verify TypeScript type safety
 - Address any linting or type errors
 
-**Step 5: Commit and Push**
+**Step 5: Run Cypress Tests (Optional but Recommended)**
+- Execute `npm run cypress:run` to run end-to-end tests locally
+- Only run if changes affect user workflows or cross-component interactions
+- Skip if changes are purely unit-level (covered by Jest in Step 3)
+- Address any Cypress test failures before proceeding
+- Note: This prevents waiting for GitHub CI/CD to catch e2e issues
+
+**Step 6: Commit and Push**
 - Stage changes: `git add .`
 - Commit with descriptive message explaining the fix
 - Push to feature branch: `git push origin <branch-name>`
 
-**Step 6: Verify PR Update**
+**Step 7: Verify PR Update**
 - Confirm changes appear in the PR
 - Monitor CI/CD pipeline to ensure all checks pass
 
 This procedure ensures:
 - Code quality and consistency
-- All tests pass before pushing
+- All tests pass before pushing (including e2e tests when relevant)
 - Clear commit history
 - Automated CI/CD validation
 - Proper PR documentation
+- Early detection of integration issues through local Cypress testing
 
 ### Frequent Commit Strategy
 - COMMIT early and often to maintain development momentum
