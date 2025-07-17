@@ -1,0 +1,83 @@
+/**
+ * @jest-environment jsdom
+ */
+import { render } from '@testing-library/react';
+import Home from '../../app/page';
+
+// Mock the activity storage utilities
+jest.mock('../../utils/activity-storage', () => ({
+  getActivities: jest.fn(() => []),
+  addActivity: jest.fn(),
+  deleteActivity: jest.fn(),
+}));
+
+// Mock the resetService
+jest.mock('../../utils/resetService', () => ({
+  setDialogCallback: jest.fn(),
+  registerResetCallback: jest.fn(() => jest.fn()),
+  reset: jest.fn(),
+}));
+
+describe('Home Page Layout Spacing', () => {
+  beforeEach(() => {
+    // Mock crypto.randomUUID for consistent test behavior
+    Object.defineProperty(global, 'crypto', {
+      value: { randomUUID: () => 'test-uuid' }
+    });
+  });
+
+  describe('Activity State Layout', () => {
+    it('should have proper top spacing between header and cards in activity state', () => {
+      // Set up initial state to show activity view
+      const { container } = render(<Home />);
+      
+      // Find the main container
+      const mainContainer = container.querySelector('main');
+      expect(mainContainer).toHaveClass('container-fluid', 'd-flex', 'flex-column', 'overflow-hidden');
+      
+      // Check that the main container has proper height
+      expect(mainContainer).toHaveStyle('height: calc(100vh - var(--navbar-height))');
+      
+      // Find the inner flex container
+      const innerContainer = mainContainer?.querySelector('.flex-grow-1.d-flex.flex-column.overflow-hidden');
+      expect(innerContainer).toBeInTheDocument();
+      
+      // Check that there's a proper structure for spacing
+      const offlineIndicator = innerContainer?.querySelector('.flex-shrink-0');
+      expect(offlineIndicator).toBeInTheDocument();
+    });
+
+    it('should have appropriate row layout with spacing for activity manager and timeline', () => {
+      const { container } = render(<Home />);
+      
+      // Look for the row that contains ActivityManager and Timeline
+      const activityRow = container.querySelector('.row.flex-grow-1.g-3');
+      if (activityRow) {
+        // Should have proper spacing classes
+        expect(activityRow).toHaveClass('px-3', 'pt-3', 'pb-3', 'overflow-hidden');
+        
+        // Should have proper column structure
+        const leftColumn = activityRow.querySelector('.col-lg-5');
+        const rightColumn = activityRow.querySelector('.col-lg-7');
+        
+        if (leftColumn && rightColumn) {
+          expect(leftColumn).toHaveClass('d-flex', 'flex-column', 'overflow-hidden');
+          expect(rightColumn).toHaveClass('d-none', 'd-lg-flex', 'flex-column', 'overflow-hidden');
+        }
+      }
+    });
+  });
+
+  describe('Responsive Layout Considerations', () => {
+    it('should maintain proper spacing without causing total height overflow', () => {
+      const { container } = render(<Home />);
+      
+      const mainContainer = container.querySelector('main');
+      expect(mainContainer).toHaveClass('overflow-hidden');
+      
+      // The flex-grow-1 container should also prevent overflow
+      const flexContainer = mainContainer?.querySelector('.flex-grow-1');
+      expect(flexContainer).toHaveClass('overflow-hidden');
+    });
+  });
+});

@@ -401,7 +401,7 @@ describe('ActivityManager Component', () => {
       // Check order: progress container, form column, activities list container
       expect(children[0]).toHaveClass('flex-shrink-0', 'mb-3'); // Progress bar
       expect(children[1]).toHaveAttribute('data-testid', 'activity-form-column'); // Form
-      expect(children[2]).toHaveClass('flex-grow-1', 'overflow-auto'); // Activities list
+      expect(children[2]).toHaveClass('flex-grow-1'); // Activities list (overflow now handled by inline styles)
     });
   });
 

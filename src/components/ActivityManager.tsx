@@ -187,7 +187,7 @@ export default function ActivityManager({
             </div>
             
             {/* Activities List - scrollable if needed */}
-            <div className="flex-grow-1 overflow-auto">
+            <div className="flex-grow-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
               <Row className="gy-3" data-testid="activity-list">
                 {activities.map((activity) => (
                   <Col 

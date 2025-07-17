@@ -153,7 +153,7 @@ function AppContent() {
           )}
           
           {appState === 'activity' && (
-            <div className="row flex-grow-1 g-3 px-3 pb-3 overflow-hidden">
+            <div className="row flex-grow-1 g-3 px-3 pt-3 pb-3 overflow-hidden">
               <div className="col-lg-5 d-flex flex-column overflow-hidden">
                 <ActivityManager 
                   onActivitySelect={handleActivitySelect} 
