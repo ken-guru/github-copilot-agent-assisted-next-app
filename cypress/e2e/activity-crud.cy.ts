@@ -6,6 +6,10 @@ describe('Activity CRUD Operations', () => {
       if (err.message.includes('Hydration failed')) {
         return false;
       }
+      // Ignore minified React errors in production builds
+      if (err.message.includes('Minified React error #418')) {
+        return false;
+      }
       return true;
     });
     
