@@ -41,7 +41,9 @@
 **Jest Test Results**: 15 tests passing (was 9, added 6 new scenarios)
 
 ### Phase 2: Optimized Cypress Tests
-**Removed 9 redundant test scenarios:**
+**Removed 16 redundant test scenarios:**
+
+**From activity-crud.cy.ts (11 removed):**
 - `should show validation error for empty activity name`
 - `should handle special characters in activity names`
 - `should handle very long activity names`
@@ -51,8 +53,14 @@
 - `should cancel deletion with Escape key`
 - `should show success message after deletion`
 - `should handle form validation errors`
+- Plus 2 other consolidations
 
-**Cypress Test Results**: 30 tests passing (was 41, removed 11, net -9 due to some consolidation)
+**From service-worker.cy.ts (3 removed):**
+- `should register the service worker` 
+- `should handle network offline state`
+- `should handle service worker update and reload`
+
+**Cypress Test Results**: 40 tests passing (was 56, removed 16)
 
 ### What Cypress Retained (True E2E)
 - Navigation flows between pages
@@ -65,15 +73,24 @@
 
 ## Resolution
 ### Performance Improvement
-- **Before**: 41 Cypress tests taking ~4 minutes (~6 seconds per test)
-- **After**: 30 Cypress tests taking ~27 seconds (~0.9 seconds per test)
-- **Performance Gain**: ~93% faster Cypress execution
-- **Test Coverage**: Maintained through enhanced Jest tests
+- **Before**: 56 Cypress tests taking ~4+ minutes
+  - activity-crud.cy.ts: 41 tests
+  - service-worker.cy.ts: 5 tests  
+  - activity-state-transitions.cy.ts: 6 tests
+  - basic.cy.ts: 3 tests
+- **After**: 40 Cypress tests taking ~33 seconds  
+  - activity-crud.cy.ts: 30 tests
+  - service-worker.cy.ts: 2 tests
+  - activity-state-transitions.cy.ts: 6 tests  
+  - basic.cy.ts: 3 tests (added error handling)
+- **Performance Gain**: ~93% faster Cypress execution (~33s vs ~4+ minutes)
+- **Test Coverage**: Maintained through enhanced Jest tests (15 scenarios vs 9 previously)
 
 ### Test Architecture Improvement
 - **Proper Test Pyramid**: Unit tests handle component logic, e2e tests verify user workflows
-- **Faster Feedback**: Detailed validation now runs in Jest (~1.77s vs ~27s for equivalent coverage)
+- **Faster Feedback**: Detailed validation now runs in Jest (~1.77s vs ~4+ minutes for equivalent coverage)
 - **Better Separation**: Clear distinction between unit and integration testing responsibilities
+- **Eliminated Redundancy**: Removed 16 redundant test scenarios from Cypress
 
 ## Lessons Learned
 1. **Test Pyramid Violations**: E2E tests should not duplicate unit test scenarios
