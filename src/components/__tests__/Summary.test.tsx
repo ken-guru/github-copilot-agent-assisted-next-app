@@ -544,4 +544,78 @@ describe('Summary Component', () => {
     // Clean up mock
     jest.unmock('../../utils/colors');
   });
+
+  describe('Reset Button', () => {
+    const mockTimelineEntries = createMockTimelineEntries();
+
+    it('does not render reset button when onReset prop is not provided', () => {
+      render(
+        <Summary 
+          entries={mockTimelineEntries}
+          totalDuration={3600000}
+          elapsedTime={3600000}
+          allActivitiesCompleted={true}
+        />
+      );
+      
+      expect(screen.queryByRole('button', { name: /Reset/i })).not.toBeInTheDocument();
+    });
+
+    it('renders reset button when onReset prop is provided', () => {
+      const onReset = jest.fn();
+      render(
+        <Summary 
+          entries={mockTimelineEntries}
+          totalDuration={3600000}
+          elapsedTime={3600000}
+          allActivitiesCompleted={true}
+          onReset={onReset}
+        />
+      );
+      
+      const resetButton = screen.getByRole('button', { name: /Reset/i });
+      expect(resetButton).toBeInTheDocument();
+      expect(resetButton).toHaveClass('btn-outline-danger');
+      expect(resetButton).toHaveAttribute('title', 'Reset to default activities');
+    });
+
+    it('calls onReset callback when reset button is clicked', () => {
+      const onReset = jest.fn();
+      render(
+        <Summary 
+          entries={mockTimelineEntries}
+          totalDuration={3600000}
+          elapsedTime={3600000}
+          allActivitiesCompleted={true}
+          onReset={onReset}
+        />
+      );
+      
+      const resetButton = screen.getByRole('button', { name: /Reset/i });
+      resetButton.click();
+      
+      expect(onReset).toHaveBeenCalledTimes(1);
+    });
+
+    it('has proper Bootstrap styling and icon', () => {
+      const onReset = jest.fn();
+      render(
+        <Summary 
+          entries={mockTimelineEntries}
+          totalDuration={3600000}
+          elapsedTime={3600000}
+          allActivitiesCompleted={true}
+          onReset={onReset}
+        />
+      );
+      
+      const resetButton = screen.getByRole('button', { name: /Reset/i });
+      expect(resetButton).toHaveClass('btn', 'btn-outline-danger', 'btn-sm', 'd-flex', 'align-items-center');
+      
+      // Check for icon
+      const icon = resetButton.querySelector('i.bi-arrow-clockwise');
+      expect(icon).toBeInTheDocument();
+      expect(icon).toHaveClass('me-2');
+    });
+  });
 });

@@ -1,6 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ActivityButton } from '../ActivityButton';
-import { getNextAvailableColorSet } from '../../utils/colors';
 import { jest } from '@jest/globals';
 
 describe('ActivityButton', () => {
@@ -11,7 +10,6 @@ describe('ActivityButton', () => {
     createdAt: new Date().toISOString(),
     isActive: true
   };
-  const defaultColors = getNextAvailableColorSet(defaultActivity.colorIndex);
 
   const defaultProps = {
     activity: defaultActivity,

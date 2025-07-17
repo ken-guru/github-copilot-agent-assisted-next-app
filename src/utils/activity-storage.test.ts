@@ -5,6 +5,7 @@ import {
   updateActivity,
   deleteActivity,
   validateActivity,
+  resetActivitiesToDefault,
 } from './activity-storage';
 import { Activity, DEFAULT_ACTIVITIES } from '../types/activity';
 
@@ -104,5 +105,52 @@ describe('activity-storage', () => {
     saveActivities(DEFAULT_ACTIVITIES);
     // Simulate reload
     expect(getActivities()).toEqual(DEFAULT_ACTIVITIES);
+  });
+
+  describe('resetActivitiesToDefault', () => {
+    it('should clear localStorage and restore default activities', () => {
+      // Set up some custom activities in localStorage first
+      const customActivities = [
+        {
+          id: 'custom-1',
+          name: 'Custom Activity',
+          description: 'A custom activity',
+          colorIndex: 0,
+          createdAt: new Date().toISOString(),
+          isActive: true,
+        }
+      ];
+      saveActivities(customActivities);
+      
+      // Verify custom activities are stored
+      expect(getActivities()).toEqual(customActivities);
+      
+      // Reset to defaults
+      resetActivitiesToDefault();
+      
+      // Verify localStorage now contains default activities
+      const activities = getActivities();
+      expect(activities).toHaveLength(4);
+      expect(activities[0]).toMatchObject({
+        id: '1',
+        name: 'Homework',
+        colorIndex: 0,
+        description: 'Academic work and study time',
+        isActive: true
+      });
+      expect(activities[0]?.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+    });
+
+    it('should generate fresh timestamps when resetting', () => {
+      const beforeReset = new Date();
+      resetActivitiesToDefault();
+      const afterReset = new Date();
+      
+      const activities = getActivities();
+      const firstActivityTimestamp = new Date(activities[0]?.createdAt || '');
+      
+      expect(firstActivityTimestamp.getTime()).toBeGreaterThanOrEqual(beforeReset.getTime());
+      expect(firstActivityTimestamp.getTime()).toBeLessThanOrEqual(afterReset.getTime());
+    });
   });
 });

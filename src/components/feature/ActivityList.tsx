@@ -115,47 +115,49 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
         ))}
         </ListGroup>
       </Card.Body>
-      {/* Toolbar at bottom of activities card */}
-      <Card.Footer className="bg-light">
-        <div className="d-flex gap-2 justify-content-center">
-          {onImport && (
-            <Button 
-              variant="outline-secondary" 
-              size="sm" 
-              onClick={onImport}
-              className="d-flex align-items-center px-3"
-              title="Import activities from JSON file"
-            >
-              <i className="bi bi-upload me-2"></i>
-              Import
-            </Button>
-          )}
-          {onExport && (
-            <Button 
-              variant="outline-secondary" 
-              size="sm" 
-              onClick={onExport}
-              className="d-flex align-items-center px-3"
-              title="Export activities to JSON file"
-            >
-              <i className="bi bi-download me-2"></i>
-              Export
-            </Button>
-          )}
-          {onReset && (
-            <Button 
-              variant="outline-danger" 
-              size="sm" 
-              onClick={onReset}
-              className="d-flex align-items-center px-3"
-              title="Reset to default activities"
-            >
-              <i className="bi bi-arrow-clockwise me-2"></i>
-              Reset Activities
-            </Button>
-          )}
-        </div>
-      </Card.Footer>
+      {/* Toolbar at bottom of activities card - only render if actions are available */}
+      {(onImport || onExport || onReset) && (
+        <Card.Footer className="bg-light">
+          <div className="d-flex gap-2 justify-content-center">
+            {onImport && (
+              <Button 
+                variant="outline-secondary" 
+                size="sm" 
+                onClick={onImport}
+                className="d-flex align-items-center px-3"
+                title="Import activities from JSON file"
+              >
+                <i className="bi bi-upload me-2"></i>
+                Import
+              </Button>
+            )}
+            {onExport && (
+              <Button 
+                variant="outline-secondary" 
+                size="sm" 
+                onClick={onExport}
+                className="d-flex align-items-center px-3"
+                title="Export activities to JSON file"
+              >
+                <i className="bi bi-download me-2"></i>
+                Export
+              </Button>
+            )}
+            {onReset && (
+              <Button 
+                variant="outline-danger" 
+                size="sm" 
+                onClick={onReset}
+                className="d-flex align-items-center px-3"
+                title="Reset to default activities"
+              >
+                <i className="bi bi-arrow-clockwise me-2"></i>
+                Reset Activities
+              </Button>
+            )}
+          </div>
+        </Card.Footer>
+      )}
     </Card>
   );
 };

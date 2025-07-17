@@ -3,16 +3,17 @@
  * @module activity-storage
  * @see docs/components/activity-storage.md
  */
-import { Activity, DEFAULT_ACTIVITIES } from '../types/activity';
+import { Activity } from '../types/activity';
+import defaultActivitiesConfig from '../../config/default-activities.json';
 
 const STORAGE_KEY = 'activities_v1';
 
 /**
- * Load default activities from the DEFAULT_ACTIVITIES constant
- * Uses the same configuration as defined in types/activity.ts
+ * Load default activities from configuration file
+ * Uses the configuration defined in config/default-activities.json
  */
 function loadDefaultActivities(): Activity[] {
-  return DEFAULT_ACTIVITIES.map(activity => ({
+  return defaultActivitiesConfig.defaultActivities.map(activity => ({
     ...activity,
     createdAt: new Date().toISOString(),
     isActive: true

@@ -136,7 +136,7 @@ const ActivityCrud: React.FC = () => {
       const blob = new Blob([data], { type: 'application/json' });
       setExportUrl(URL.createObjectURL(blob));
       setShowExport(true);
-    } catch (err) {
+    } catch {
       setExportUrl(null);
       setShowExport(true);
     }
@@ -181,7 +181,7 @@ const ActivityCrud: React.FC = () => {
         setShowImport(false);
         setImportSuccess(true);
       }
-    } catch (err) {
+    } catch {
       setImportError('Failed to parse file');
     }
   };
@@ -271,8 +271,6 @@ const ActivityCrud: React.FC = () => {
           )}
         </div>
       </div>
-
-      {/* Remove old Import/Export Actions section */}
 
       {/* Activity Form Modal */}
       <Modal 

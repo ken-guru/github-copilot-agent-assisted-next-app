@@ -148,16 +148,18 @@ export default function ActivityManager({
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
       <Card.Header className="d-flex justify-content-between align-items-center flex-shrink-0">
         <h5 className="mb-0">Activities</h5>
-        <Button 
-          variant="outline-danger" 
-          size="sm" 
-          onClick={handleResetSession}
-          className="d-flex align-items-center"
-          title="Reset session and return to time setup"
-        >
-          <i className="bi bi-arrow-clockwise me-2"></i>
-          Reset
-        </Button>
+        {onReset && (
+          <Button 
+            variant="outline-danger" 
+            size="sm" 
+            onClick={handleResetSession}
+            className="d-flex align-items-center"
+            title="Reset session and return to time setup"
+          >
+            <i className="bi bi-arrow-clockwise me-2"></i>
+            Reset
+          </Button>
+        )}
       </Card.Header>
       <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden p-3">
         {activities.length === 0 ? (

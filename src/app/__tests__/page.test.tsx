@@ -7,13 +7,6 @@ import { ForwardRefExoticComponent, RefAttributes } from 'react';
 import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import { LoadingProvider } from '@/contexts/LoadingContext';
 
-// Create a helper function to safely check CSS classes that might be undefined
-const safelyCheckClass = (element: HTMLElement, className?: string) => {
-  if (className) {
-    expect(element).toHaveClass(className);
-  }
-};
-
 // Store dialog props for testing
 let mockDialogProps = {
   message: '',

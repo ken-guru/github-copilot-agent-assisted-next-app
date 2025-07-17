@@ -17,7 +17,7 @@ interface ActivityFormRef {
   submitForm: () => void;
 }
 
-const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(({ activity, onSubmit, error, onCancel }, ref) => {
+const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(({ activity, onSubmit, error }, ref) => {
   const [name, setName] = useState(activity?.name || '');
   const [description, setDescription] = useState(activity?.description || '');
   const [colorIndex, setColorIndex] = useState(activity?.colorIndex || 0);
