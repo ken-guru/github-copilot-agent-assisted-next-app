@@ -144,14 +144,14 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
           )}
           {onReset && (
             <Button 
-              variant="outline-warning" 
+              variant="outline-danger" 
               size="sm" 
               onClick={onReset}
               className="d-flex align-items-center px-3"
               title="Reset to default activities"
             >
               <i className="bi bi-arrow-clockwise me-2"></i>
-              Reset
+              Reset Activities
             </Button>
           )}
         </div>

@@ -144,22 +144,6 @@ function AppContent() {
         <div className="flex-grow-1 d-flex flex-column">
           <OfflineIndicator />
           
-          {/* Reset button - positioned as a floating action when needed */}
-          {appState !== 'setup' && (
-            <div className="d-flex justify-content-end p-3">
-              <button 
-                className="btn btn-outline-danger"
-                onClick={handleReset}
-              >
-                <i className="bi bi-arrow-clockwise me-1"></i>
-                Reset
-              </button>
-            </div>
-          )}
-          
-          {/* Progress bar only rendered for activity state */}
-          {/* Progress bar moved to ActivityManager component */}
-          
           {appState === 'setup' && (
             <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
               <TimeSetup onTimeSet={handleTimeSet} />
@@ -179,7 +163,6 @@ function AppContent() {
                   elapsedTime={elapsedTime}
                   totalDuration={totalDuration}
                   timerActive={timerActive}
-                  onActivitiesReset={resetActivities}
                 />
               </div>
               <div className="col-lg-7 d-none d-lg-block">
@@ -202,6 +185,7 @@ function AppContent() {
                 totalDuration={totalDuration} 
                 elapsedTime={elapsedTime}
                 allActivitiesCompleted={allActivitiesCompleted}
+                onReset={handleReset}
               />
             </div>
           )}
