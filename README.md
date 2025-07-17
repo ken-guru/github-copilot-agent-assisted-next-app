@@ -213,21 +213,36 @@ All steps must pass without errors before deploying to Vercel. Address any warni
 ### Testing Requirements
 When implementing new features or modifying existing ones:
 ```markdown
-1. Write tests first (TDD approach)
-2. Ensure full coverage of new functionality
-3. Update existing tests when changing behavior
-4. Validate both light and dark theme scenarios
-5. Test system theme preference handling
-6. For complex browser APIs:
+1. Follow Test Pyramid Architecture:
+   - Jest for component logic, hooks, utilities (fast, comprehensive)
+   - Cypress only for complete user workflows (slow, essential)
+   
+2. Test-Driven Development (TDD):
+   - Write Jest tests before implementation
+   - Focus on edge cases and error conditions
+   - Test both light and dark theme scenarios
+   
+3. Performance Considerations:
+   - Prefer Jest over Cypress when coverage is equivalent
+   - Keep Cypress tests focused on user value
+   - Mock external dependencies in Jest tests
+
+4. Coverage Requirements:
+   - Update existing tests when changing behavior
+   - Validate accessibility compliance in Jest tests
+   - Test keyboard navigation and focus management
+   
+5. For complex browser APIs:
    - Use module-level mock functions for consistency
    - Properly restore original methods in afterEach blocks
    - Clear mock call counts between tests when needed
    - Document all testing approaches in Memory Log
-7. For service worker tests:
-   - Provide explicit mocks for navigator.serviceWorker
+   
+6. For service worker tests:
+   - Test logic in Jest (fast, reliable)
+   - Test UI interactions in Cypress (complete workflows)
    - Handle event timing with appropriate test patterns
    - Test network-awareness functionality
-   - Test update mechanisms and user notifications
 ```
 
 ## Technology Stack
@@ -279,25 +294,97 @@ Note: When using this document as a prompt for AI assistance, ensure to provide 
 
 ## Testing
 
-### Unit Testing
-Tests are run using Jest:
+This project follows a **Test Pyramid Architecture** optimized for speed, reliability, and maintainability.
 
-```bash
-npm test           # Run all tests
-npm run test:watch # Run tests in watch mode
+### Test Architecture Strategy
+
+```markdown
+🔺 Test Pyramid (Optimized for Performance)
+├── E2E Tests (Cypress) - ~16 tests, ~60 seconds
+│   ├── Complete user workflows
+│   ├── Cross-page navigation with data persistence  
+│   ├── File import/export operations
+│   └── Service worker UI interactions
+├── Integration Tests (Jest) - Component interaction testing
+│   ├── Component composition and prop passing
+│   ├── Modal focus management and keyboard navigation
+│   ├── Accessibility features and ARIA compliance
+│   └── Page-level component integration
+└── Unit Tests (Jest) - ~135+ tests, ~15 seconds
+    ├── Component logic and state management
+    ├── Hook behavior and edge cases
+    ├── Utility functions and algorithms
+    └── State machine transitions
 ```
 
-### End-to-End Testing
-This project uses Cypress for end-to-end testing:
+### Running Tests
 
+#### Jest Tests (Fast - Unit & Integration)
 ```bash
-npm run cypress       # Open Cypress Test Runner
-npm run cypress:run   # Run Cypress tests in headless mode
+npm test                    # Run all Jest tests (~15 seconds)
+npm run test:watch         # Run Jest tests in watch mode
+npm test -- --testPathPatterns="pattern"  # Run specific test patterns
+```
+
+#### Cypress Tests (Focused - End-to-End)
+```bash
+npm run cypress            # Open Cypress Test Runner (~60 seconds total)
+npm run cypress:run        # Run Cypress tests in headless mode
+```
+
+### Test Development Guidelines
+
+#### When to Use Jest vs Cypress
+
+**✅ Use Jest for:**
+- Component rendering and props testing
+- Form validation and error handling
+- Keyboard navigation and focus management
+- State management hooks (useActivityState, etc.)
+- Utility function testing
+- Accessibility compliance (ARIA, screen readers)
+- Modal interactions and lifecycle
+- Theme switching behavior
+
+**✅ Use Cypress for:**
+- Complete user workflows (Create → Read → Update → Delete)
+- Cross-page navigation with data persistence
+- File upload/download operations
+- Service worker update notifications (UI only)
+- Integration between multiple components/pages
+- Browser-specific behavior that requires real browser environment
+
+#### Testing Best Practices
+```markdown
+1. **Test-Driven Development (TDD)**
+   - Write tests before implementation
+   - Start with Jest for component logic
+   - Add Cypress only for true user workflows
+
+2. **Performance Optimization**
+   - Favor Jest over Cypress when possible (15x faster)
+   - Keep Cypress tests focused on user value
+   - Mock external dependencies in Jest tests
+
+3. **Maintainability**
+   - Use descriptive test names
+   - Group related tests in describe blocks
+   - Keep test files close to source code
 ```
 
 ### CI/CD Integration
-All tests (including Cypress E2E tests) are automatically run in our GitHub Actions CI/CD pipeline:
-- On push to main branch
-- On pull requests to main branch
+All tests are automatically run in our GitHub Actions CI/CD pipeline:
+- **Jest tests**: Run on every push and PR (fast feedback)
+- **Cypress tests**: Run on PR validation (thorough integration testing)
+- **Performance**: Total test suite ~75 seconds (down from 4+ minutes)
 
 Test artifacts (screenshots and videos) for failed Cypress tests are available in the GitHub Actions workflow.
+
+### Migration Notes
+This project recently migrated from a Cypress-heavy approach to a balanced test pyramid:
+- **Eliminated**: 32 redundant Cypress tests
+- **Added**: 35+ focused Jest tests  
+- **Performance**: 75% faster execution
+- **Coverage**: Enhanced with better edge case testing
+
+For detailed migration information, see [MRTMLY-221](./docs/logged_memories/MRTMLY-221-comprehensive-cypress-jest-migration.md).

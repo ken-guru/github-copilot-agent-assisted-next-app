@@ -48,6 +48,12 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
     }
   };
 
+  // Extract word wrap styles to avoid duplication
+  const wordWrapStyles = {
+    wordWrap: 'break-word' as const,
+    overflowWrap: 'break-word' as const,
+  };
+
   return (
     <Card 
       className={`${isCompleted ? 'border-success' : ''}`}
@@ -59,17 +65,20 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
       <Card.Body className="py-2 px-3">
         <div className="d-flex justify-content-between align-items-center">
           {/* Left side: Activity name */}
-          <div className="d-flex flex-column">
+          <div className="d-flex flex-column flex-grow-1">
             <h6 
               className={`fw-bold mb-0 ${isCompleted ? 'text-success' : ''}`}
-              style={colors ? { color: colors.text } : undefined}
+              style={colors ? { 
+                color: colors.text,
+                ...wordWrapStyles
+              } : wordWrapStyles}
             >
               {name}
             </h6>
           </div>
 
           {/* Right side: Status badge and action buttons */}
-          <div className="d-flex align-items-center gap-2" style={{ minHeight: '32px' }}>
+          <div className="d-flex align-items-center gap-2 flex-shrink-0" style={{ minHeight: '32px' }}>
             {/* Status Badge */}
             {isRunning && (
               <Badge bg="primary" className="d-flex align-items-center">
@@ -98,6 +107,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
                   size="sm"
                   onClick={handleClick}
                   disabled={isCompleted}
+                  className="text-nowrap"
                   title={isRunning ? "Complete" : "Start"}
                   aria-label={isRunning ? "Complete" : "Start"}
                   data-testid={`${isRunning ? 'complete' : 'start'}-activity-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
@@ -125,7 +135,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
                     size="sm"
                     onClick={handleRemove}
                     disabled={isInUse}
-                    className={isInUse ? "disabled" : ""}
+                    className={`text-nowrap ${isInUse ? "disabled" : ""}`}
                     title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
                     aria-label="Remove"
                     data-testid={`remove-activity-${name.toLowerCase().replace(/\s+/g, '-')}`}

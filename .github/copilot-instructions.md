@@ -13,14 +13,38 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - Communicate clearly about implementation choices and alternatives
 
 ## TESTING PROTOCOLS [PRIORITY: HIGHEST]
+### Test Pyramid Architecture
+- ✅ FOLLOW: Jest for component logic → Cypress for user workflows
+- ✅ PERFORMANCE: Prefer Jest over Cypress when coverage is equivalent (15x faster)
+- ✅ ARCHITECTURE: Unit → Integration → E2E pyramid structure
+
 ### Test-First Development
-- ✅ REQUIRED: Write tests BEFORE implementing any functionality
+- ✅ REQUIRED: Write Jest tests BEFORE implementing any functionality
 - Write tests covering basic scenarios, complex scenarios, and edge cases
 - Ask clarifying questions about expected behavior before writing tests
 - For data display, explicitly test:
   - Order of displayed items
   - Format of displayed values
   - Edge cases in the data
+
+### Jest vs Cypress Decision Matrix
+#### ✅ USE JEST FOR:
+- Component rendering and props testing
+- Form validation and error handling  
+- Keyboard navigation and focus management
+- State management hooks (useActivityState, etc.)
+- Utility function testing
+- Accessibility compliance (ARIA, screen readers)
+- Modal interactions and lifecycle
+- Theme switching behavior
+
+#### ✅ USE CYPRESS FOR:
+- Complete user workflows (Create → Read → Update → Delete)
+- Cross-page navigation with data persistence
+- File upload/download operations
+- Service worker update notifications (UI only)
+- Integration between multiple components/pages
+- Browser-specific behavior requiring real browser environment
 
 ### Test Coverage Management
 - Update all relevant tests when refactoring code
@@ -31,15 +55,23 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 ### Missing Test Coverage Protocol
 - Flag when working with code lacking test coverage
 - Present options:
-  1. Create tests immediately
-  2. Postpone test creation
+  1. Create Jest tests immediately (preferred)
+  2. Create Cypress tests only if true user workflow
+  3. Postpone test creation with justification
 - If postponement chosen, do not remind again in current session unless requested
 
 ### Test Verification
 - Remind to run test suite after ANY code changes
-- ALWAYS use terminal command: `npm run test`
+- ALWAYS use terminal command: `npm run test` for Jest tests
 - For specific test patterns use: `npm test -- --testPathPatterns="pattern"`
+- Use `npm run cypress:run` for e2e validation when needed
 - Run tests in terminal, not through other interfaces
+
+### Performance Optimization Guidelines
+- PERFORMANCE FIRST: Choose Jest over Cypress when possible (15x faster)
+- CYPRESS USAGE: Only for true user workflows that provide unique value
+- TEST PYRAMID: Maintain 85% Jest, 15% Cypress distribution
+- CI/CD EFFICIENCY: Fast Jest tests enable rapid feedback loops
 
 ### GitHub PR Check Monitoring
 - Use `gh pr checks <PR_NUMBER> --fail-fast --watch` for real-time updates

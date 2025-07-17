@@ -77,6 +77,18 @@ const ActivityCrud: React.FC = () => {
     }
   };
 
+  // Handle keyboard navigation for form modal
+  const handleFormModalKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      activityFormRef.current?.submitForm();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setShowFormRaw(false);
+      setFormError(null);
+    }
+  };
+
   const handleFormSubmit = (activity: Activity | null) => {
     if (!activity || !activity.name || !activity.name.trim()) {
       setFormError('Name is required');
@@ -259,7 +271,15 @@ const ActivityCrud: React.FC = () => {
       </div>
 
       {/* Activity Form Modal */}
-      <Modal key={formError || 'no-error'} show={showForm} onHide={() => { setShowFormRaw(false); setFormError(null); }} aria-labelledby="activity-form-modal" centered backdrop="static">
+      <Modal 
+        key={formError || 'no-error'} 
+        show={showForm} 
+        onHide={() => { setShowFormRaw(false); setFormError(null); }} 
+        aria-labelledby="activity-form-modal" 
+        centered 
+        backdrop="static"
+        onKeyDown={handleFormModalKeyDown}
+      >
         <Modal.Header closeButton>
           <Modal.Title id="activity-form-modal">{editingActivity ? 'Edit Activity' : 'Add Activity'}</Modal.Title>
         </Modal.Header>
