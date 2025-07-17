@@ -8,16 +8,18 @@ import { useThemeReactive } from '../../hooks/useThemeReactive';
 
 interface ActivityFormProps {
   activity?: Activity | null;
-  onSubmit: (activity: Activity | null) => void;
+  onSubmit?: (activity: Activity | null) => void;
+  onAddActivity?: (activity: Activity) => void;
   error?: string | null;
-  onCancel?: () => void;
+  isDisabled?: boolean;
 }
 
 interface ActivityFormRef {
   submitForm: () => void;
 }
 
-const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(({ activity, onSubmit, error }, ref) => {
+const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
+  ({ activity, onSubmit, onAddActivity, error }, ref) => {
   const [name, setName] = useState(activity?.name || '');
   const [description, setDescription] = useState(activity?.description || '');
   const [colorIndex, setColorIndex] = useState(activity?.colorIndex || 0);
@@ -57,17 +59,25 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(({ act
       if (nameInputRef.current) {
         nameInputRef.current.focus();
       }
-      onSubmit(null); // Signal error to parent
+      onSubmit?.(null); // Signal error to parent
       return;
     }
-    onSubmit({
+    
+    const activityData = {
       id: activity?.id || crypto.randomUUID(),
       name,
       description,
       colorIndex: Number(colorIndex),
       createdAt: activity?.createdAt || new Date().toISOString(),
       isActive: true,
-    });
+    };
+    
+    // Call the appropriate callback based on what's provided
+    if (onSubmit) {
+      onSubmit(activityData);
+    } else if (onAddActivity) {
+      onAddActivity(activityData);
+    }
   };
 
   return (
