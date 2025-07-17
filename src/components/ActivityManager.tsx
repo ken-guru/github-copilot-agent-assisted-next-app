@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Card, Row, Col, Alert } from 'react-bootstrap';
+import { Card, Row, Col, Alert, Button } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './ActivityForm';
+import ProgressBar from './ProgressBar';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
 
@@ -18,6 +19,11 @@ interface ActivityManagerProps {
   timelineEntries: TimelineEntry[];
   isTimeUp?: boolean;
   elapsedTime?: number;
+  // Progress bar props
+  totalDuration?: number;
+  timerActive?: boolean;
+  // Reset callback for session/timer reset
+  onReset?: () => void;
 }
 
 export default function ActivityManager({ 
@@ -27,7 +33,10 @@ export default function ActivityManager({
   completedActivityIds,
   timelineEntries,
   isTimeUp = false,
-  elapsedTime = 0
+  elapsedTime = 0,
+  totalDuration = 0,
+  timerActive = false,
+  onReset
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
@@ -128,42 +137,78 @@ export default function ActivityManager({
     }
   };
 
+  const handleResetSession = () => {
+    // Call global reset function to reset timer/session
+    if (onReset) {
+      onReset();
+    }
+  };
+
   return (
-    <Card className="h-100" data-testid="activity-manager">
-      <Card.Header>
+    <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
+      <Card.Header className="d-flex justify-content-between align-items-center flex-shrink-0">
         <h5 className="mb-0">Activities</h5>
+        {onReset && (
+          <Button 
+            variant="outline-danger" 
+            size="sm" 
+            onClick={handleResetSession}
+            className="d-flex align-items-center"
+            title="Reset session and return to time setup"
+          >
+            <i className="bi bi-arrow-clockwise me-2"></i>
+            Reset
+          </Button>
+        )}
       </Card.Header>
-      <Card.Body>
+      <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden p-3">
         {activities.length === 0 ? (
-          <Alert variant="info" className="text-center" data-testid="empty-state">
+          <Alert variant="info" className="text-center flex-shrink-0" data-testid="empty-state">
             No activities defined
           </Alert>
         ) : (
-          <Row className="gy-3" data-testid="activity-list">
-            <Col xs={12} className="mb-3" data-testid="activity-form-column">
+          <>
+            {/* Progress Bar - always visible at top */}
+            <div className="flex-shrink-0 mb-3">
+              <ProgressBar 
+                entries={timelineEntries}
+                totalDuration={totalDuration}
+                elapsedTime={elapsedTime}
+                timerActive={timerActive}
+              />
+            </div>
+            
+            {/* Activity Form */}
+            <div className="flex-shrink-0 mb-3" data-testid="activity-form-column">
               <ActivityForm
                 onAddActivity={handleAddActivity}
                 isDisabled={isTimeUp}
               />
-            </Col>
-            {activities.map((activity) => (
-              <Col 
-                key={activity.id} 
-                xs={12}
-                data-testid={`activity-column-${activity.id}`}
-              >
-                <ActivityButton
-                  activity={activity}
-                  isCompleted={completedActivityIds.includes(activity.id)}
-                  isRunning={activity.id === currentActivityId}
-                  onSelect={handleActivitySelect}
-                  onRemove={onActivityRemove ? handleRemoveActivity : undefined}
-                  timelineEntries={timelineEntries}
-                  elapsedTime={elapsedTime}
-                />
-              </Col>
-            ))}
-          </Row>
+            </div>
+            
+            {/* Activities List - scrollable if needed */}
+            <div className="flex-grow-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
+              <Row className="gy-3" data-testid="activity-list">
+                {activities.map((activity) => (
+                  <Col 
+                    key={activity.id} 
+                    xs={12}
+                    data-testid={`activity-column-${activity.id}`}
+                  >
+                    <ActivityButton
+                      activity={activity}
+                      isCompleted={completedActivityIds.includes(activity.id)}
+                      isRunning={activity.id === currentActivityId}
+                      onSelect={handleActivitySelect}
+                      onRemove={onActivityRemove ? handleRemoveActivity : undefined}
+                      timelineEntries={timelineEntries}
+                      elapsedTime={elapsedTime}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </div>
+          </>
         )}
       </Card.Body>
     </Card>

@@ -5,7 +5,6 @@ import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
-import ProgressBar from '@/components/ProgressBar';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import { useActivityState } from '@/hooks/useActivityState';
@@ -131,7 +130,7 @@ function AppContent() {
   
   return (
     <>
-      <main className="container-fluid min-vh-100 d-flex flex-column">
+      <main className="container-fluid d-flex flex-column overflow-hidden" style={{ height: 'calc(100vh - var(--navbar-height))' }}>
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}
@@ -142,37 +141,10 @@ function AppContent() {
           onCancel={dialogActions.onCancel}
         />
         
-        <div className="flex-grow-1 d-flex flex-column">
-          <OfflineIndicator />
-          
-          {/* Reset button - positioned as a floating action when needed */}
-          {appState !== 'setup' && (
-            <div className="d-flex justify-content-end p-3">
-              <button 
-                className="btn btn-outline-danger"
-                onClick={handleReset}
-              >
-                <i className="bi bi-arrow-clockwise me-1"></i>
-                Reset
-              </button>
-            </div>
-          )}
-          
-          {/* Progress bar only rendered for activity state */}
-          {timeSet && !allActivitiesCompleted && (
-            <div className="mx-3 mb-3" data-testid="progress-container">
-              <div className="card">
-                <div className="card-body p-3">
-                  <ProgressBar 
-                    entries={processedEntries}
-                    totalDuration={totalDuration}
-                    elapsedTime={elapsedTime}
-                    timerActive={timerActive}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+        <div className="flex-grow-1 d-flex flex-column overflow-hidden">
+          <div className="flex-shrink-0">
+            <OfflineIndicator />
+          </div>
           
           {appState === 'setup' && (
             <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
@@ -181,8 +153,8 @@ function AppContent() {
           )}
           
           {appState === 'activity' && (
-            <div className="row flex-grow-1 g-3 px-3 pb-3">
-              <div className="col-lg-5">
+            <div className="row flex-grow-1 g-3 px-3 pt-3 pb-3 overflow-hidden">
+              <div className="col-lg-5 d-flex flex-column overflow-hidden">
                 <ActivityManager 
                   onActivitySelect={handleActivitySelect} 
                   onActivityRemove={handleActivityRemoval}
@@ -191,9 +163,12 @@ function AppContent() {
                   timelineEntries={processedEntries}
                   isTimeUp={isTimeUp}
                   elapsedTime={elapsedTime}
+                  totalDuration={totalDuration}
+                  timerActive={timerActive}
+                  onReset={handleReset}
                 />
               </div>
-              <div className="col-lg-7 d-none d-lg-block">
+              <div className="col-lg-7 d-none d-lg-flex flex-column overflow-hidden">
                 <Timeline 
                   entries={processedEntries}
                   totalDuration={totalDuration} 
@@ -213,6 +188,7 @@ function AppContent() {
                 totalDuration={totalDuration} 
                 elapsedTime={elapsedTime}
                 allActivitiesCompleted={allActivitiesCompleted}
+                onReset={handleReset}
               />
             </div>
           )}

@@ -116,9 +116,9 @@ describe('Responsive Design Tests', () => {
         
         render(<ActivityManager {...mockProps} />);
         
-        // Check that activities use full width on mobile (xs={12})
+        // Check that activities form uses flexbox layout classes (updated from Bootstrap grid)
         const activityFormColumn = screen.getByTestId('activity-form-column');
-        expect(activityFormColumn).toHaveClass('col-12');
+        expect(activityFormColumn).toHaveClass('flex-shrink-0');
         expect(activityFormColumn).toHaveClass('mb-3');
       });
 

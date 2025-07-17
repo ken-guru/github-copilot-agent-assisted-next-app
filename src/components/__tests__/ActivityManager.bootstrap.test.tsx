@@ -98,7 +98,7 @@ describe('ActivityManager Bootstrap Integration', () => {
 
       await waitFor(() => {
         const formColumn = screen.getByTestId('activity-form-column');
-        expect(formColumn).toHaveClass('col-12', 'mb-3');
+        expect(formColumn).toHaveClass('flex-shrink-0', 'mb-3');
       });
     });
 
@@ -222,7 +222,7 @@ describe('ActivityManager Bootstrap Integration', () => {
 
         // Form should be in a column
         const formColumn = screen.getByTestId('activity-form-column');
-        expect(formColumn).toHaveClass('col-12');
+        expect(formColumn).toHaveClass('flex-shrink-0');
       });
     });
   });
@@ -309,7 +309,7 @@ describe('ActivityManager Bootstrap Integration', () => {
 
       // ActivityForm should be in its own column
       const formColumn = screen.getByTestId('activity-form-column');
-      expect(formColumn).toHaveClass('col-12', 'mb-3');
+      expect(formColumn).toHaveClass('flex-shrink-0', 'mb-3');
 
       // Form should be properly contained within Bootstrap structure
       const form = screen.getByRole('form');

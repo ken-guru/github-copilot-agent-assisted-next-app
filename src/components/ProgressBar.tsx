@@ -72,7 +72,7 @@ export default function ProgressBar({
   );
 
   return (
-    <div className={`w-100 ${isMobile ? 'd-flex flex-column' : ''}`}>
+    <div className={`w-100 ${isMobile ? 'd-flex flex-column' : ''}`} data-testid="progress-container">
       {/* Render in different order based on viewport */}
       {isMobile ? (
         <>

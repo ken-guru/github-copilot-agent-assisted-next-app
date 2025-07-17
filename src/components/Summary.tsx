@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Alert, Row, Col, ListGroup, Badge } from 'react-bootstrap';
+import { Card, Alert, Row, Col, ListGroup, Badge, Button } from 'react-bootstrap';
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 
@@ -10,6 +10,7 @@ interface SummaryProps {
   timerActive?: boolean;
   allActivitiesCompleted?: boolean;
   isTimeUp?: boolean; // Add this prop to handle time-up state
+  onReset?: () => void; // Add reset callback prop
 }
 
 export default function Summary({ 
@@ -18,7 +19,8 @@ export default function Summary({
   elapsedTime, 
   timerActive = false,
   allActivitiesCompleted = false,
-  isTimeUp = false // Add this prop to handle time-up state
+  isTimeUp = false, // Add this prop to handle time-up state
+  onReset // Add reset callback prop
 }: SummaryProps) {
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
@@ -326,6 +328,18 @@ export default function Summary({
     <Card data-testid="summary" className="summary-card h-100">
       <Card.Header className="d-flex justify-content-between align-items-center">
         <h5 className="mb-0" role="heading" aria-level={2}>Summary</h5>
+        {onReset && (
+          <Button 
+            variant="outline-danger" 
+            size="sm" 
+            onClick={onReset}
+            className="d-flex align-items-center"
+            title="Reset to default activities"
+          >
+            <i className="bi bi-arrow-clockwise me-2"></i>
+            Reset
+          </Button>
+        )}
       </Card.Header>
       
       <Card.Body data-testid="summary-body">

@@ -5,7 +5,7 @@ import { Button, Modal } from 'react-bootstrap';
 import ActivityForm from './ActivityForm';
 import ActivityList from './ActivityList';
 import { Activity } from '../../types/activity';
-import { getActivities, saveActivities, addActivity as persistActivity, updateActivity as persistUpdateActivity, deleteActivity as persistDeleteActivity } from '../../utils/activity-storage';
+import { getActivities, saveActivities, addActivity as persistActivity, updateActivity as persistUpdateActivity, deleteActivity as persistDeleteActivity, resetActivitiesToDefault } from '../../utils/activity-storage';
 
 const ActivityCrud: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -13,6 +13,7 @@ const ActivityCrud: React.FC = () => {
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showImport, setShowImport] = useState(false);
@@ -135,7 +136,7 @@ const ActivityCrud: React.FC = () => {
       const blob = new Blob([data], { type: 'application/json' });
       setExportUrl(URL.createObjectURL(blob));
       setShowExport(true);
-    } catch (err) {
+    } catch {
       setExportUrl(null);
       setShowExport(true);
     }
@@ -180,7 +181,7 @@ const ActivityCrud: React.FC = () => {
         setShowImport(false);
         setImportSuccess(true);
       }
-    } catch (err) {
+    } catch {
       setImportError('Failed to parse file');
     }
   };
@@ -208,6 +209,20 @@ const ActivityCrud: React.FC = () => {
     }
   };
 
+  const handleResetToDefault = () => {
+    setShowResetConfirm(true);
+  };
+
+  const confirmResetToDefault = () => {
+    resetActivitiesToDefault();
+    // Refresh from localStorage
+    const updatedActivities = getActivities().filter(a => a.isActive);
+    setActivities(updatedActivities);
+    setShowResetConfirm(false);
+    setSuccessMessage('Activities reset to default configuration');
+    setTimeout(() => setSuccessMessage(null), 3000);
+  };
+
   return (
     <div className="container-fluid py-4">
       {/* Success Message */}
@@ -215,7 +230,7 @@ const ActivityCrud: React.FC = () => {
         <div className="row mb-3">
           <div className="col-12">
             <div className="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
-              <i className="fas fa-check-circle me-2"></i>
+              <i className="bi bi-check-circle me-2"></i>
               {successMessage}
               <button 
                 type="button" 
@@ -234,12 +249,12 @@ const ActivityCrud: React.FC = () => {
           {activities.length === 0 ? (
             <div className="text-center py-5">
               <div className="mb-3">
-                <i className="fas fa-tasks fa-3x text-muted"></i>
+                <i className="bi bi-list-task" style={{fontSize: '3rem'}} aria-hidden="true"></i>
               </div>
               <h4 className="text-muted">No activities yet</h4>
               <p className="text-muted">Get started by creating your first activity</p>
               <Button variant="primary" onClick={handleAdd} className="d-flex align-items-center mx-auto">
-                <i className="fas fa-plus me-2"></i>
+                <i className="bi bi-plus me-2"></i>
                 Create First Activity
               </Button>
             </div>
@@ -249,24 +264,11 @@ const ActivityCrud: React.FC = () => {
               onEdit={handleEdit} 
               onDelete={handleDelete}
               onAdd={handleAdd}
+              onImport={handleImport}
+              onExport={handleExport}
+              onReset={handleResetToDefault}
             />
           )}
-        </div>
-      </div>
-
-      {/* Import/Export Actions - Moved to secondary location */}
-      <div className="row mt-3">
-        <div className="col-12">
-          <div className="d-flex gap-2 justify-content-center">
-            <Button variant="outline-secondary" onClick={handleImport} size="sm" className="d-flex align-items-center">
-              <i className="fas fa-upload me-2"></i>
-              Import
-            </Button>
-            <Button variant="outline-secondary" onClick={handleExport} size="sm" className="d-flex align-items-center">
-              <i className="fas fa-download me-2"></i>
-              Export
-            </Button>
-          </div>
         </div>
       </div>
 
@@ -294,7 +296,7 @@ const ActivityCrud: React.FC = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => { setShowFormRaw(false); setFormError(null); }} className="d-flex align-items-center">
-            <i className="fas fa-times me-2"></i>
+            <i className="bi bi-x me-2"></i>
             Cancel
           </Button>
           <Button 
@@ -302,7 +304,7 @@ const ActivityCrud: React.FC = () => {
             onClick={() => activityFormRef.current?.submitForm()} 
             className="d-flex align-items-center"
           >
-            <i className="fas fa-save me-2"></i>
+            <i className="bi bi-floppy me-2"></i>
             Save
           </Button>
         </Modal.Footer>
@@ -325,11 +327,11 @@ const ActivityCrud: React.FC = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowConfirm(false)} className="d-flex align-items-center">
-            <i className="fas fa-times me-2"></i>
+            <i className="bi bi-x me-2"></i>
             Cancel
           </Button>
           <Button variant="danger" onClick={confirmDelete} autoFocus className="d-flex align-items-center">
-            <i className="fas fa-trash me-2"></i>
+            <i className="bi bi-trash me-2"></i>
             Delete
           </Button>
         </Modal.Footer>
@@ -338,7 +340,7 @@ const ActivityCrud: React.FC = () => {
       <Modal show={showExport} onHide={() => setShowExport(false)} aria-labelledby="export-modal" aria-describedby="export-modal-desc" centered backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title id="export-modal">
-            <i className="fas fa-download me-2"></i>
+            <i className="bi bi-download me-2"></i>
             Export Activities
           </Modal.Title>
         </Modal.Header>
@@ -347,7 +349,7 @@ const ActivityCrud: React.FC = () => {
             <p className="mb-2">Export your activities as a JSON file for backup or transfer to another device.</p>
             {activities.length > 0 && (
               <p className="text-muted small mb-0">
-                <i className="fas fa-info-circle me-1"></i>
+                <i className="bi bi-info-circle me-1"></i>
                 Exporting {activities.length} activity{activities.length !== 1 ? 'ies' : ''}
               </p>
             )}
@@ -360,20 +362,20 @@ const ActivityCrud: React.FC = () => {
                 className="btn btn-success d-flex align-items-center justify-content-center"
                 aria-label="Download activities as JSON"
               >
-                <i className="fas fa-file-download me-2"></i>
+                <i className="bi bi-download me-2"></i>
                 Download activities.json
               </a>
             </div>
           ) : (
             <div className="alert alert-warning d-flex align-items-center" role="alert">
-              <i className="fas fa-exclamation-triangle me-2"></i>
+              <i className="bi bi-exclamation-triangle me-2"></i>
               No activities to export. Create some activities first.
             </div>
           )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowExport(false)} autoFocus className="d-flex align-items-center">
-            <i className="fas fa-times me-2"></i>
+            <i className="bi bi-x me-2"></i>
             Close
           </Button>
         </Modal.Footer>
@@ -382,7 +384,7 @@ const ActivityCrud: React.FC = () => {
       <Modal show={showImport} onHide={() => setShowImport(false)} aria-labelledby="import-modal" aria-describedby="import-modal-desc" centered backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title id="import-modal">
-            <i className="fas fa-upload me-2"></i>
+            <i className="bi bi-upload me-2"></i>
             Import Activities
           </Modal.Title>
         </Modal.Header>
@@ -390,7 +392,7 @@ const ActivityCrud: React.FC = () => {
           <div id="import-modal-desc" className="mb-3">
             <p className="mb-2">Select a JSON file to import activities from a previous export.</p>
             <div className="alert alert-info d-flex align-items-start" role="note">
-              <i className="fas fa-info-circle me-2 mt-1"></i>
+              <i className="bi bi-info-circle me-2 mt-1"></i>
               <div>
                 <strong>Important:</strong> Importing will replace all your current activities. 
                 Make sure to export your current activities first if you want to keep them.
@@ -411,25 +413,25 @@ const ActivityCrud: React.FC = () => {
 
           {importError && (
             <div className="alert alert-danger d-flex align-items-center" role="alert">
-              <i className="fas fa-exclamation-circle me-2"></i>
+              <i className="bi bi-exclamation-circle me-2"></i>
               {importError}
             </div>
           )}
           
           {importSuccess && (
             <div className="alert alert-success d-flex align-items-center" role="status">
-              <i className="fas fa-check-circle me-2"></i>
+              <i className="bi bi-check-circle me-2"></i>
               Import successful!
             </div>
           )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowImport(false)} className="d-flex align-items-center">
-            <i className="fas fa-times me-2"></i>
+            <i className="bi bi-x me-2"></i>
             Cancel
           </Button>
           <Button variant="primary" onClick={handleImportSubmit} disabled={!importFile} className="d-flex align-items-center">
-            <i className="fas fa-upload me-2"></i>
+            <i className="bi bi-upload me-2"></i>
             Import Activities
           </Button>
         </Modal.Footer>
@@ -450,13 +452,13 @@ const ActivityCrud: React.FC = () => {
       >
         <Modal.Header closeButton>
           <Modal.Title id="confirm-import-overwrite-modal">
-            <i className="fas fa-exclamation-triangle text-warning me-2"></i>
+            <i className="bi bi-exclamation-triangle text-warning me-2"></i>
             Replace All Activities?
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="alert alert-warning d-flex align-items-start" role="alert">
-            <i className="fas fa-exclamation-triangle me-2 mt-1"></i>
+            <i className="bi bi-exclamation-triangle me-2 mt-1"></i>
             <div>
               <strong>This will replace all your current activities.</strong>
               <br />
@@ -467,12 +469,64 @@ const ActivityCrud: React.FC = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowImportConfirm(false)} className="d-flex align-items-center">
-            <i className="fas fa-times me-2"></i>
+            <i className="bi bi-x me-2"></i>
             Cancel
           </Button>
           <Button variant="danger" onClick={confirmImportOverwrite} autoFocus className="d-flex align-items-center">
-            <i className="fas fa-upload me-2"></i>
+            <i className="bi bi-upload me-2"></i>
             Replace Activities
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* Reset Activities Confirmation Modal */}
+      <Modal 
+        show={showResetConfirm} 
+        onHide={() => setShowResetConfirm(false)} 
+        aria-labelledby="confirm-reset-activities-modal" 
+        centered 
+        backdrop="static"
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            confirmResetToDefault();
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            setShowResetConfirm(false);
+          }
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="confirm-reset-activities-modal">
+            <i className="bi bi-exclamation-triangle text-warning me-2"></i>
+            Reset All Activities?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="alert alert-warning d-flex align-items-start" role="alert">
+            <i className="bi bi-exclamation-triangle me-2 mt-1"></i>
+            <div>
+              <strong>This will delete all your current activities and replace them with the default set.</strong>
+              <br />
+              This action cannot be undone. Any custom activities you&apos;ve created will be permanently lost.
+            </div>
+          </div>
+          <p className="mb-2">The default activities are:</p>
+          <ul className="mb-3">
+            <li>Homework</li>
+            <li>Reading</li>
+            <li>Play Time</li>
+            <li>Chores</li>
+          </ul>
+          <p className="mb-0">Do you want to continue with the reset?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowResetConfirm(false)} className="d-flex align-items-center">
+            <i className="bi bi-x me-2"></i>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmResetToDefault} autoFocus className="d-flex align-items-center">
+            <i className="bi bi-arrow-clockwise me-2"></i>
+            Reset Activities
           </Button>
         </Modal.Footer>
       </Modal>

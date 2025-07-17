@@ -7,13 +7,6 @@ import { ForwardRefExoticComponent, RefAttributes } from 'react';
 import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import { LoadingProvider } from '@/contexts/LoadingContext';
 
-// Create a helper function to safely check CSS classes that might be undefined
-const safelyCheckClass = (element: HTMLElement, className?: string) => {
-  if (className) {
-    expect(element).toHaveClass(className);
-  }
-};
-
 // Store dialog props for testing
 let mockDialogProps = {
   message: '',
@@ -253,7 +246,7 @@ describe('Home Page', () => {
       // Since we've moved the title to Navigation component and removed the main header,
       // we should verify the main content is properly structured
       const mainContainer = screen.getByRole('main');
-      expect(mainContainer).toHaveClass('container-fluid', 'min-vh-100', 'd-flex', 'flex-column');
+      expect(mainContainer).toHaveClass('container-fluid', 'd-flex', 'flex-column', 'overflow-hidden');
     });
   });
 });

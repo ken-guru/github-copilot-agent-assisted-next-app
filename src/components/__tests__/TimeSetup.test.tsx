@@ -122,11 +122,26 @@ describe('TimeSetup Component', () => {
   it('should handle empty or invalid inputs gracefully', () => {
     render(<TimeSetup onTimeSet={mockOnTimeSet} />);
     
-    // Don't set any values (defaults to 0)
+    // Don't change any values (defaults to 1 minute due to UX improvement)
     const submitButton = screen.getByRole('button', { name: 'Set Time' });
     fireEvent.click(submitButton);
     
-    // Should pass 0 seconds
+    // Should pass 60 seconds (1 minute default)
+    expect(mockOnTimeSet).toHaveBeenCalledWith(60);
+  });
+
+  it('should allow setting zero duration when user explicitly sets all inputs to zero', () => {
+    render(<TimeSetup onTimeSet={mockOnTimeSet} />);
+    
+    // Explicitly set all inputs to zero
+    fireEvent.change(screen.getByLabelText('Hours'), { target: { value: '0' } });
+    fireEvent.change(screen.getByLabelText('Minutes'), { target: { value: '0' } });
+    fireEvent.change(screen.getByLabelText('Seconds'), { target: { value: '0' } });
+    
+    const submitButton = screen.getByRole('button', { name: 'Set Time' });
+    fireEvent.click(submitButton);
+    
+    // Should pass 0 seconds when explicitly set
     expect(mockOnTimeSet).toHaveBeenCalledWith(0);
   });
 });

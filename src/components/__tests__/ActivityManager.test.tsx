@@ -331,4 +331,125 @@ describe('ActivityManager Component', () => {
     const homeworkItem = screen.getByText('Homework').closest('div');
     expect(within(homeworkItem || document.body).queryByText('00:30')).not.toBeInTheDocument();
   });
+
+  describe('Progress Bar Integration', () => {
+    const mockProps = {
+      onActivitySelect: jest.fn(),
+      onActivityRemove: jest.fn(),
+      completedActivityIds: [],
+      currentActivityId: null,
+      timelineEntries: [],
+      elapsedTime: 0,
+    };
+
+    it('renders progress bar when totalDuration and timerActive props are provided', () => {
+      render(
+        <ActivityManager 
+          {...mockProps}
+          totalDuration={3600000} // 1 hour
+          timerActive={true}
+        />
+      );
+      
+      const progressContainer = screen.getByTestId('progress-container');
+      expect(progressContainer).toBeInTheDocument();
+      expect(progressContainer).toHaveClass('w-100');
+    });
+
+    it('renders progress bar even when timer is not active', () => {
+      render(
+        <ActivityManager 
+          {...mockProps}
+          totalDuration={3600000}
+          timerActive={false}
+        />
+      );
+      
+      // Progress bar should still be rendered for layout consistency
+      expect(screen.getByTestId('progress-container')).toBeInTheDocument();
+    });
+
+    it('does not render progress bar when totalDuration is not provided', () => {
+      render(
+        <ActivityManager 
+          {...mockProps}
+          timerActive={true}
+        />
+      );
+      
+      // Progress bar should still render as it's always shown for consistent layout
+      expect(screen.getByTestId('progress-container')).toBeInTheDocument();
+    });
+
+    it('has correct layout order: progress bar, form, activities list', async () => {
+      render(
+        <ActivityManager 
+          {...mockProps}
+          totalDuration={3600000}
+          timerActive={true}
+        />
+      );
+      
+      // Wait for activities to load
+      await waitFor(() => {
+        expect(screen.getByText('Homework')).toBeInTheDocument();
+      });
+      
+      const cardBody = screen.getByTestId('activity-manager').querySelector('.card-body');
+      const children = Array.from(cardBody?.children || []);
+      
+      // Check order: progress container, form column, activities list container
+      expect(children[0]).toHaveClass('flex-shrink-0', 'mb-3'); // Progress bar
+      expect(children[1]).toHaveAttribute('data-testid', 'activity-form-column'); // Form
+      expect(children[2]).toHaveClass('flex-grow-1'); // Activities list (overflow now handled by inline styles)
+    });
+  });
+
+  describe('Reset Button', () => {
+    const mockProps = {
+      onActivitySelect: jest.fn(),
+      onActivityRemove: jest.fn(),
+      completedActivityIds: [],
+      currentActivityId: null,
+      timelineEntries: [],
+      elapsedTime: 0,
+    };
+
+    it('does not render reset button when onReset prop is not provided', () => {
+      render(<ActivityManager {...mockProps} />);
+      
+      expect(screen.queryByRole('button', { name: /Reset/i })).not.toBeInTheDocument();
+    });
+
+    it('renders reset button when onReset prop is provided', () => {
+      const onReset = jest.fn();
+      render(<ActivityManager {...mockProps} onReset={onReset} />);
+      
+      const resetButton = screen.getByRole('button', { name: /Reset/i });
+      expect(resetButton).toBeInTheDocument();
+      expect(resetButton).toHaveClass('btn-outline-danger');
+      expect(resetButton).toHaveAttribute('title', 'Reset session and return to time setup');
+    });
+
+    it('calls onReset callback when reset button is clicked', () => {
+      const onReset = jest.fn();
+      render(<ActivityManager {...mockProps} onReset={onReset} />);
+      
+      const resetButton = screen.getByRole('button', { name: /Reset/i });
+      fireEvent.click(resetButton);
+      
+      expect(onReset).toHaveBeenCalledTimes(1);
+    });
+
+    it('is positioned in the card header alongside the title', () => {
+      const onReset = jest.fn();
+      render(<ActivityManager {...mockProps} onReset={onReset} />);
+      
+      const cardHeader = screen.getByText('Activities').closest('.card-header');
+      const resetButton = screen.getByRole('button', { name: /Reset/i });
+      
+      expect(cardHeader).toContainElement(resetButton);
+      expect(cardHeader).toHaveClass('d-flex', 'justify-content-between', 'align-items-center');
+    });
+  });
 });

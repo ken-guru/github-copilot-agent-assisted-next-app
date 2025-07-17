@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -18,6 +18,35 @@ export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>('light');
+  
+  // Helper function to set Bootstrap theme on body element
+  const setBodyTheme = useCallback((themeValue: Theme) => {
+    if (document.body) {
+      document.body.setAttribute('data-bs-theme', themeValue);
+    }
+  }, []);
+
+  // Helper function to apply theme consistently across the app
+  const applyThemeToDOM = useCallback((themeValue: Theme) => {
+    const root = document.documentElement;
+    const currentTheme = root.getAttribute('data-theme');
+    
+    // Only update if the theme is actually changing
+    if (themeValue !== currentTheme) {
+      if (themeValue === 'dark') {
+        root.classList.add('dark-mode', 'dark');
+        root.classList.remove('light-mode');
+      } else {
+        root.classList.add('light-mode');
+        root.classList.remove('dark-mode', 'dark');
+      }
+      
+      root.setAttribute('data-theme', themeValue);
+      root.setAttribute('data-bs-theme', themeValue);
+      // Also set on body for Bootstrap Modal portals
+      setBodyTheme(themeValue);
+    }
+  }, [setBodyTheme]);
   
   // Initialize theme from localStorage on mount
   useEffect(() => {
@@ -47,28 +76,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }, 50); // Slightly longer delay to let ThemeToggle initialize first
     
     return () => clearTimeout(timer);
-  }, []);
-  
-  // Helper function to apply theme consistently across the app
-  const applyThemeToDOM = (themeValue: Theme) => {
-    const root = document.documentElement;
-    const currentTheme = root.getAttribute('data-theme');
-    
-    // Only update if the theme is actually changing
-    if (themeValue !== currentTheme) {
-      if (themeValue === 'dark') {
-        root.classList.add('dark-mode');
-        root.classList.add('dark');
-        root.classList.remove('light-mode');
-        root.setAttribute('data-theme', 'dark');
-      } else {
-        root.classList.add('light-mode');
-        root.classList.remove('dark-mode');
-        root.classList.remove('dark');
-        root.setAttribute('data-theme', 'light');
-      }
-    }
-  };
+  }, [applyThemeToDOM]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';

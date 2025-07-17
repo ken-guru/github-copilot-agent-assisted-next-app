@@ -80,12 +80,20 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
         root.classList.remove('light-mode');
         root.setAttribute('data-theme', 'dark'); // For ThemeContext
         root.setAttribute('data-bs-theme', 'dark'); // For Bootstrap dark mode
+        // Also set on body for Bootstrap Modal portals (check if body exists)
+        if (document.body) {
+          document.body.setAttribute('data-bs-theme', 'dark');
+        }
       } else {
         root.classList.add('light-mode');
         root.classList.remove('dark-mode');
         root.classList.remove('dark');
         root.setAttribute('data-theme', 'light'); // For ThemeContext
         root.setAttribute('data-bs-theme', 'light'); // For Bootstrap light mode
+        // Also set on body for Bootstrap Modal portals (check if body exists)
+        if (document.body) {
+          document.body.setAttribute('data-bs-theme', 'light');
+        }
       }
     }
 

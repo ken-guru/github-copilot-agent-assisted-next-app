@@ -3,9 +3,22 @@
  * @module activity-storage
  * @see docs/components/activity-storage.md
  */
-import { Activity, DEFAULT_ACTIVITIES } from '../types/activity';
+import { Activity } from '../types/activity';
+import defaultActivitiesConfig from '../../config/default-activities.json';
 
 const STORAGE_KEY = 'activities_v1';
+
+/**
+ * Load default activities from configuration file
+ * Uses the configuration defined in config/default-activities.json
+ */
+function loadDefaultActivities(): Activity[] {
+  return defaultActivitiesConfig.defaultActivities.map(activity => ({
+    ...activity,
+    createdAt: new Date().toISOString(),
+    isActive: true
+  }));
+}
 
 /**
  * Get all activities from localStorage, or fallback to defaults
@@ -14,7 +27,7 @@ const STORAGE_KEY = 'activities_v1';
 export function getActivities(): Activity[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_ACTIVITIES;
+    if (!raw) return loadDefaultActivities();
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) throw new Error('Corrupted data');
     // Validate each activity
@@ -24,7 +37,7 @@ export function getActivities(): Activity[] {
     throw new Error('Invalid activity structure');
   } catch {
     // Fallback to defaults on error
-    return DEFAULT_ACTIVITIES;
+    return loadDefaultActivities();
   }
 }
 
@@ -96,4 +109,13 @@ export function validateActivity(activity: unknown): activity is Activity {
     typeof a.createdAt === 'string' &&
     typeof a.isActive === 'boolean'
   );
+}
+
+/**
+ * Reset activities to default configuration
+ * Clears localStorage and replaces with fresh default activities
+ */
+export function resetActivitiesToDefault(): void {
+  const defaultActivities = loadDefaultActivities();
+  saveActivities(defaultActivities);
 }
