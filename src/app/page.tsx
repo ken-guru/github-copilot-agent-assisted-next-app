@@ -130,7 +130,7 @@ function AppContent() {
   
   return (
     <>
-      <main className="container-fluid min-vh-100 d-flex flex-column">
+      <main className="container-fluid vh-100 d-flex flex-column overflow-hidden">
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}
@@ -141,8 +141,10 @@ function AppContent() {
           onCancel={dialogActions.onCancel}
         />
         
-        <div className="flex-grow-1 d-flex flex-column">
-          <OfflineIndicator />
+        <div className="flex-grow-1 d-flex flex-column overflow-hidden">
+          <div className="flex-shrink-0">
+            <OfflineIndicator />
+          </div>
           
           {appState === 'setup' && (
             <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
@@ -151,8 +153,8 @@ function AppContent() {
           )}
           
           {appState === 'activity' && (
-            <div className="row flex-grow-1 g-3 px-3 pb-3">
-              <div className="col-lg-5">
+            <div className="row flex-grow-1 g-3 px-3 pb-3 overflow-hidden">
+              <div className="col-lg-5 d-flex flex-column overflow-hidden">
                 <ActivityManager 
                   onActivitySelect={handleActivitySelect} 
                   onActivityRemove={handleActivityRemoval}
@@ -163,9 +165,10 @@ function AppContent() {
                   elapsedTime={elapsedTime}
                   totalDuration={totalDuration}
                   timerActive={timerActive}
+                  onActivitiesReset={resetActivities}
                 />
               </div>
-              <div className="col-lg-7 d-none d-lg-block">
+              <div className="col-lg-7 d-none d-lg-flex flex-column overflow-hidden">
                 <Timeline 
                   entries={processedEntries}
                   totalDuration={totalDuration} 

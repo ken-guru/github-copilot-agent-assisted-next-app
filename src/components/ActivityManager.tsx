@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Card, Row, Col, Alert } from 'react-bootstrap';
+import { Card, Row, Col, Alert, Button } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './ActivityForm';
 import ProgressBar from './ProgressBar';
-import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
+import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity, resetActivitiesToDefault } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
 
 // Use canonical Activity type
@@ -22,6 +22,8 @@ interface ActivityManagerProps {
   // Progress bar props
   totalDuration?: number;
   timerActive?: boolean;
+  // Reset callback
+  onActivitiesReset?: () => void;
 }
 
 export default function ActivityManager({ 
@@ -33,7 +35,8 @@ export default function ActivityManager({
   isTimeUp = false,
   elapsedTime = 0,
   totalDuration = 0,
-  timerActive = false
+  timerActive = false,
+  onActivitiesReset
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
@@ -134,28 +137,68 @@ export default function ActivityManager({
     }
   };
 
+  const handleResetActivities = () => {
+    // Reset to default activities
+    resetActivitiesToDefault();
+    
+    // Reload activities from storage
+    const loadedActivities = getActivities().filter(a => a.isActive);
+    setActivities(loadedActivities);
+    setAssignedColorIndices(loadedActivities.map(a => a.colorIndex));
+    
+    // Register activities in state machine
+    loadedActivities.forEach(activity => {
+      onActivitySelect(activity, true);
+    });
+    
+    // Call parent reset if provided
+    if (onActivitiesReset) {
+      onActivitiesReset();
+    }
+  };
+
   return (
-    <Card className="h-100" data-testid="activity-manager">
-      <Card.Header>
+    <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
+      <Card.Header className="d-flex justify-content-between align-items-center flex-shrink-0">
         <h5 className="mb-0">Activities</h5>
+        <Button 
+          variant="outline-danger" 
+          size="sm" 
+          onClick={handleResetActivities}
+          className="d-flex align-items-center"
+          title="Reset to default activities"
+        >
+          <i className="bi bi-arrow-clockwise me-2"></i>
+          Reset
+        </Button>
       </Card.Header>
-      <Card.Body>
+      <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden p-3">
         {activities.length === 0 ? (
-          <Alert variant="info" className="text-center" data-testid="empty-state">
+          <Alert variant="info" className="text-center flex-shrink-0" data-testid="empty-state">
             No activities defined
           </Alert>
         ) : (
-          <div className="d-flex flex-column h-100">
+          <>
+            {/* Progress Bar - always visible at top */}
+            <div className="flex-shrink-0 mb-3">
+              <ProgressBar 
+                entries={timelineEntries}
+                totalDuration={totalDuration}
+                elapsedTime={elapsedTime}
+                timerActive={timerActive}
+              />
+            </div>
+            
             {/* Activity Form */}
-            <div className="mb-3">
+            <div className="flex-shrink-0 mb-3">
               <ActivityForm
                 onAddActivity={handleAddActivity}
                 isDisabled={isTimeUp}
               />
             </div>
             
-            {/* Activities List */}
-            <div className="flex-grow-1 mb-3">
+            {/* Activities List - scrollable if needed */}
+            <div className="flex-grow-1 overflow-auto">
               <Row className="gy-3" data-testid="activity-list">
                 {activities.map((activity) => (
                   <Col 
@@ -176,17 +219,7 @@ export default function ActivityManager({
                 ))}
               </Row>
             </div>
-            
-            {/* Progress Bar - always visible to prevent layout jumping */}
-            <div className="mb-0">
-              <ProgressBar 
-                entries={timelineEntries}
-                totalDuration={totalDuration}
-                elapsedTime={elapsedTime}
-                timerActive={timerActive}
-              />
-            </div>
-          </div>
+          </>
         )}
       </Card.Body>
     </Card>
