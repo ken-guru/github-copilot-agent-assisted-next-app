@@ -11,10 +11,11 @@ This directory contains comprehensive documentation for the activity tracking ap
 
 ### Development Guides
 - **[dev-guides/](./dev-guides/)** - Development best practices and guides
+  - **[test-pyramid-architecture.md](./dev-guides/test-pyramid-architecture.md)** - Complete testing strategy with Jest vs Cypress decision matrix
   - **[memory-log-workflow.md](./dev-guides/memory-log-workflow.md)** - Complete workflow for debugging knowledge management
   - **[mcp-memory-tool-usage.md](./dev-guides/mcp-memory-tool-usage.md)** - AI agent guide for semantic search and knowledge building
   - **[ai-agent-memory-quick-reference.md](./dev-guides/ai-agent-memory-quick-reference.md)** - Quick reference for AI agents
-  - **[human-developer-memory-quick-reference.md](./dev-guides/human-developer-memory-quick-reference.md)** - Quick reference for human developers
+  - **[human-developer-memory-quick-reference.md](./dev-guides/human-developer-quick-reference.md)** - Quick reference for human developers
   - Time utilities testing and implementation
   - Development workflow guidelines
 
@@ -56,11 +57,19 @@ This directory contains comprehensive documentation for the activity tracking ap
 4. **Document process**: Create entry in **[logged_memories/](./logged_memories/)**
 5. **Sync to MCP**: Run migration script for AI agent accessibility
 
+### Writing Tests
+1. **Review testing strategy**: Start with **[test-pyramid-architecture.md](./dev-guides/test-pyramid-architecture.md)**
+2. **Choose test type**: Use Jest vs Cypress decision matrix
+3. **Follow examples**: Reference provided test patterns for consistency
+4. **Optimize performance**: Prefer Jest for 85% of test coverage
+5. **Run test suite**: `npm test` for Jest, `npm run cypress:run` for e2e
+
 ### AI-Assisted Development Notes
 
 This documentation structure is specifically designed to support AI-assisted development:
 - **Templates provide consistent structure** for effective AI prompting
 - **Planning template** (`templates/PLANNED_CHANGES_TEMPLATE.md`) must be used for all new feature requests
+- **Test Pyramid Architecture** (`dev-guides/test-pyramid-architecture.md`) provides clear Jest vs Cypress guidelines
 - **Memory log prevents repeated debugging efforts** by documenting solutions and approaches
 - **Component docs include implementation context** for AI modifications
 - **Change planning uses prompt-friendly format** for implementation assistance
