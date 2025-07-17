@@ -117,7 +117,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
       </Card.Body>
       {/* Toolbar at bottom of activities card - only render if actions are available */}
       {(onImport || onExport || onReset) && (
-        <Card.Footer className="bg-light">
+        <Card.Footer className={theme === 'dark' ? 'bg-dark text-light' : 'bg-light'}>
           <div className="d-flex gap-2 justify-content-center">
             {onImport && (
               <Button 

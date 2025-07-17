@@ -124,7 +124,7 @@ describe('ActivityList', () => {
       const footer = resetButton.closest('.card-footer');
       const buttonContainer = resetButton.parentElement;
       
-      expect(footer).toHaveClass('bg-light');
+      expect(footer).toHaveClass('bg-light'); // Light theme default
       expect(buttonContainer).toHaveClass('d-flex', 'gap-2', 'justify-content-center');
       expect(resetButton).toHaveClass('d-flex', 'align-items-center', 'px-3');
     });
