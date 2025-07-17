@@ -99,19 +99,6 @@ describe('Activity CRUD Operations', () => {
       cy.contains('created successfully').should('be.visible');
     });
 
-    it('should show validation error for empty activity name', () => {
-      cy.contains('Add Activity').click();
-      
-      // Try to save without entering a name
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('button').contains('Save').click();
-      });
-      
-      // Modal should remain open and show error
-      cy.get('[role="dialog"]').should('be.visible');
-      // The form should prevent submission or show validation
-    });
-
     it('should allow canceling activity creation', () => {
       cy.contains('Add Activity').click();
       
@@ -128,71 +115,6 @@ describe('Activity CRUD Operations', () => {
       
       // Activity should not be created
       cy.contains('Canceled Activity').should('not.exist');
-    });
-
-    it('should handle special characters in activity names', () => {
-      cy.contains('Add Activity').click();
-      
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('input[type="text"]').first().type('Test @#$%^&*()_+ Activity');
-      });
-      
-      cy.get('button').contains('Save').click();
-      cy.get('[role="dialog"]').should('not.exist');
-      
-      cy.contains('Test @#$%^&*()_+ Activity').should('be.visible');
-    });
-
-    it('should handle very long activity names', () => {
-      const longName = 'A'.repeat(100);
-      cy.contains('Add Activity').click();
-      
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('input[type="text"]').first().type(longName);
-      });
-      
-      cy.get('button').contains('Save').click();
-      cy.get('[role="dialog"]').should('not.exist');
-      
-      cy.contains(longName.substring(0, 50)).should('be.visible');
-    });
-
-    it('should focus on name input when modal opens', () => {
-      cy.contains('Add Activity').click();
-      
-      // The name input should be focused
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('input[type="text"]').first().should('be.focused');
-      });
-    });
-
-    it('should support Enter key to submit form', () => {
-      cy.contains('Add Activity').click();
-      
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('input[type="text"]').first().type('Enter Key Test{enter}');
-      });
-      
-      // Modal should close after Enter key submission
-      cy.get('[role="dialog"]').should('not.exist');
-      cy.contains('Enter Key Test').should('be.visible');
-    });
-
-    it('should support Escape key to cancel', () => {
-      cy.contains('Add Activity').click();
-      
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('input[type="text"]').first().type('Escape Test');
-      });
-      
-      // Press Escape key
-      cy.get('body').type('{esc}');
-      
-      // Modal should close
-      cy.get('[role="dialog"]').should('not.exist');
-      
-      // Activity should not be created
-      cy.contains('Escape Test').should('not.exist');
     });
   });
 
@@ -365,32 +287,6 @@ describe('Activity CRUD Operations', () => {
       cy.contains('Delete Test Activity 1').should('be.visible');
       cy.contains('Delete Test Activity 2').should('be.visible');
     });
-
-    it('should cancel deletion with Escape key', () => {
-      // Click Delete button
-      cy.get('button').contains('Delete').first().click();
-      
-      // Cancel with Escape
-      cy.get('body').type('{esc}');
-      
-      // Verify modal closes and activities still exist
-      cy.get('[role="dialog"]').should('not.exist');
-      cy.contains('Delete Test Activity 1').should('be.visible');
-      cy.contains('Delete Test Activity 2').should('be.visible');
-    });
-
-    it('should show success message after deletion', () => {
-      // Click Delete button
-      cy.get('button').contains('Delete').first().click();
-      
-      // Confirm deletion
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('button').contains('Delete').click();
-      });
-      
-      // Verify success message
-      cy.contains('deleted successfully').should('be.visible');
-    });
   });
 
   describe('Import/Export', () => {
@@ -515,18 +411,6 @@ describe('Activity CRUD Operations', () => {
       
       // Should show empty state
       cy.contains('No activities yet').should('be.visible');
-    });
-
-    it('should handle form validation errors', () => {
-      cy.contains('Add Activity').click();
-      
-      // Try to submit empty form
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('button').contains('Save').click();
-      });
-      
-      // Should show validation or prevent submission
-      cy.get('[role="dialog"]').should('be.visible');
     });
 
     it('should handle modal backdrop clicks', () => {

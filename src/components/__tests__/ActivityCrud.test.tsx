@@ -28,9 +28,21 @@ describe('ActivityCrud', () => {
     expect(screen.getByRole('button', { name: /Green/i })).toBeInTheDocument();
   });
 
-  // NOTE: React-Bootstrap modal transitions and async state updates interfere with error message rendering in RTL tests.
-  // The error handling works in real usage, but cannot be reliably detected in tests. See docs/KNOWN_BUGS.md for details.
-  it.skip('validates required fields', () => {});
+  it('validates required fields when trying to save empty activity', async () => {
+    render(<ActivityCrud />);
+    fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
+    
+    // Try to save without entering a name
+    fireEvent.click(screen.getByRole('button', { name: /Save/i }));
+    
+    // Modal should remain open (activity not created)
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+    
+    // Verify validation error appears using testid
+    expect(screen.getByTestId('activity-form-error')).toBeInTheDocument();
+  });
 
   it('creates a new activity', async () => {
     render(<ActivityCrud />);
@@ -78,6 +90,70 @@ describe('ActivityCrud', () => {
         expect(screen.queryByText(DEFAULT_ACTIVITIES[0].name)).not.toBeInTheDocument();
       }
     });
+  });
+
+  it('handles special characters in activity names', async () => {
+    render(<ActivityCrud />);
+    fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
+    fireEvent.change(screen.getByLabelText(/Name/i), { 
+      target: { value: 'Test @#$%^&*()_+ Activity' } 
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Save/i }));
+    
+    await waitFor(() => {
+      expect(screen.getByText('Test @#$%^&*()_+ Activity')).toBeInTheDocument();
+    });
+  });
+
+  it('handles very long activity names', async () => {
+    const longName = 'A'.repeat(100);
+    render(<ActivityCrud />);
+    fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
+    fireEvent.change(screen.getByLabelText(/Name/i), { 
+      target: { value: longName } 
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Save/i }));
+    
+    await waitFor(() => {
+      expect(screen.getByText(longName)).toBeInTheDocument();
+    });
+  });
+
+  it('focuses on name input when modal opens', () => {
+    render(<ActivityCrud />);
+    fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
+    
+    const nameInput = screen.getByLabelText(/Name/i);
+    expect(nameInput).toHaveFocus();
+  });
+
+  it('supports Enter key to submit form', async () => {
+    render(<ActivityCrud />);
+    fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
+    
+    const nameInput = screen.getByLabelText(/Name/i);
+    fireEvent.change(nameInput, { target: { value: 'Enter Key Test' } });
+    fireEvent.keyDown(nameInput, { key: 'Enter', code: 'Enter' });
+    
+    await waitFor(() => {
+      expect(screen.getByText('Enter Key Test')).toBeInTheDocument();
+    });
+  });
+
+  it('supports Escape key to cancel', async () => {
+    render(<ActivityCrud />);
+    fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
+    
+    const nameInput = screen.getByLabelText(/Name/i);
+    fireEvent.change(nameInput, { target: { value: 'Escape Test' } });
+    fireEvent.keyDown(nameInput, { key: 'Escape', code: 'Escape' });
+    
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+    
+    // Activity should not be created
+    expect(screen.queryByText('Escape Test')).not.toBeInTheDocument();
   });
 
   it('exports activities as JSON', () => {
