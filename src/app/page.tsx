@@ -130,7 +130,7 @@ function AppContent() {
   
   return (
     <>
-      <main className="container-fluid d-flex flex-column overflow-hidden" style={{ height: 'calc(100vh - 56px)' }}>
+      <main className="container-fluid d-flex flex-column overflow-hidden" style={{ height: 'calc(100vh - var(--navbar-height))' }}>
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}
