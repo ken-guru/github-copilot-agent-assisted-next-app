@@ -5,7 +5,7 @@ import { Button, Modal } from 'react-bootstrap';
 import ActivityForm from './ActivityForm';
 import ActivityList from './ActivityList';
 import { Activity } from '../../types/activity';
-import { getActivities, saveActivities, addActivity as persistActivity, updateActivity as persistUpdateActivity, deleteActivity as persistDeleteActivity } from '../../utils/activity-storage';
+import { getActivities, saveActivities, addActivity as persistActivity, updateActivity as persistUpdateActivity, deleteActivity as persistDeleteActivity, resetActivitiesToDefault } from '../../utils/activity-storage';
 
 const ActivityCrud: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -208,6 +208,15 @@ const ActivityCrud: React.FC = () => {
     }
   };
 
+  const handleResetToDefault = () => {
+    resetActivitiesToDefault();
+    // Refresh from localStorage
+    const updatedActivities = getActivities().filter(a => a.isActive);
+    setActivities(updatedActivities);
+    setSuccessMessage('Activities reset to default configuration');
+    setTimeout(() => setSuccessMessage(null), 3000);
+  };
+
   return (
     <div className="container-fluid py-4">
       {/* Success Message */}
@@ -249,26 +258,15 @@ const ActivityCrud: React.FC = () => {
               onEdit={handleEdit} 
               onDelete={handleDelete}
               onAdd={handleAdd}
+              onImport={handleImport}
+              onExport={handleExport}
+              onReset={handleResetToDefault}
             />
           )}
         </div>
       </div>
 
-      {/* Import/Export Actions - Moved to secondary location */}
-      <div className="row mt-3">
-        <div className="col-12">
-          <div className="d-flex gap-2 justify-content-center">
-            <Button variant="outline-secondary" onClick={handleImport} size="sm" className="d-flex align-items-center">
-              <i className="fas fa-upload me-2"></i>
-              Import
-            </Button>
-            <Button variant="outline-secondary" onClick={handleExport} size="sm" className="d-flex align-items-center">
-              <i className="fas fa-download me-2"></i>
-              Export
-            </Button>
-          </div>
-        </div>
-      </div>
+      {/* Remove old Import/Export Actions section */}
 
       {/* Activity Form Modal */}
       <Modal 

@@ -8,7 +8,7 @@ interface TimeSetupProps {
 export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   const [setupMode, setSetupMode] = useState<'duration' | 'deadline'>('duration');
   const [hours, setHours] = useState<number>(0);
-  const [minutes, setMinutes] = useState<number>(0);
+  const [minutes, setMinutes] = useState<number>(1); // Default to 1 minute
   const [seconds, setSeconds] = useState<number>(0);
   const [deadlineTime, setDeadlineTime] = useState<string>('');
 

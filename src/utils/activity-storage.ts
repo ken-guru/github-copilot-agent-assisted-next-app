@@ -8,13 +8,25 @@ import { Activity, DEFAULT_ACTIVITIES } from '../types/activity';
 const STORAGE_KEY = 'activities_v1';
 
 /**
+ * Load default activities from the DEFAULT_ACTIVITIES constant
+ * Uses the same configuration as defined in types/activity.ts
+ */
+function loadDefaultActivities(): Activity[] {
+  return DEFAULT_ACTIVITIES.map(activity => ({
+    ...activity,
+    createdAt: new Date().toISOString(),
+    isActive: true
+  }));
+}
+
+/**
  * Get all activities from localStorage, or fallback to defaults
  * Handles corrupted data and versioning
  */
 export function getActivities(): Activity[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_ACTIVITIES;
+    if (!raw) return loadDefaultActivities();
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) throw new Error('Corrupted data');
     // Validate each activity
@@ -24,7 +36,7 @@ export function getActivities(): Activity[] {
     throw new Error('Invalid activity structure');
   } catch {
     // Fallback to defaults on error
-    return DEFAULT_ACTIVITIES;
+    return loadDefaultActivities();
   }
 }
 
@@ -96,4 +108,13 @@ export function validateActivity(activity: unknown): activity is Activity {
     typeof a.createdAt === 'string' &&
     typeof a.isActive === 'boolean'
   );
+}
+
+/**
+ * Reset activities to default configuration
+ * Clears localStorage and replaces with fresh default activities
+ */
+export function resetActivitiesToDefault(): void {
+  const defaultActivities = loadDefaultActivities();
+  saveActivities(defaultActivities);
 }

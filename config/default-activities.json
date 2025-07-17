@@ -1,0 +1,28 @@
+{
+  "defaultActivities": [
+    {
+      "id": "1",
+      "name": "Homework",
+      "description": "Academic work and study time",
+      "colorIndex": 0
+    },
+    {
+      "id": "2", 
+      "name": "Reading",
+      "description": "Reading books, articles, or educational materials",
+      "colorIndex": 1
+    },
+    {
+      "id": "3",
+      "name": "Play Time", 
+      "description": "Recreation and leisure activities",
+      "colorIndex": 2
+    },
+    {
+      "id": "4",
+      "name": "Chores",
+      "description": "Household tasks and responsibilities", 
+      "colorIndex": 3
+    }
+  ]
+}

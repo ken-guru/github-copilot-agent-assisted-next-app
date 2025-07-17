@@ -10,9 +10,12 @@ interface ActivityListProps {
   onEdit?: (activity: Activity) => void;
   onDelete?: (activity: Activity) => void;
   onAdd?: () => void; // New prop for Add Activity button
+  onImport?: () => void; // New prop for Import button
+  onExport?: () => void; // New prop for Export button
+  onReset?: () => void; // New prop for Reset button
 }
 
-const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelete, onAdd }) => {
+const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelete, onAdd, onImport, onExport, onReset }) => {
   // Get current theme and theme-appropriate colors for visual indicators
   const theme = useThemeReactive();
   const activityColors = getActivityColorsForTheme(theme);
@@ -112,6 +115,47 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
         ))}
         </ListGroup>
       </Card.Body>
+      {/* Toolbar at bottom of activities card */}
+      <Card.Footer className="bg-light">
+        <div className="d-flex gap-2 justify-content-center">
+          {onImport && (
+            <Button 
+              variant="outline-secondary" 
+              size="sm" 
+              onClick={onImport}
+              className="d-flex align-items-center px-3"
+              title="Import activities from JSON file"
+            >
+              <i className="bi bi-upload me-2"></i>
+              Import
+            </Button>
+          )}
+          {onExport && (
+            <Button 
+              variant="outline-secondary" 
+              size="sm" 
+              onClick={onExport}
+              className="d-flex align-items-center px-3"
+              title="Export activities to JSON file"
+            >
+              <i className="bi bi-download me-2"></i>
+              Export
+            </Button>
+          )}
+          {onReset && (
+            <Button 
+              variant="outline-warning" 
+              size="sm" 
+              onClick={onReset}
+              className="d-flex align-items-center px-3"
+              title="Reset to default activities"
+            >
+              <i className="bi bi-arrow-clockwise me-2"></i>
+              Reset
+            </Button>
+          )}
+        </div>
+      </Card.Footer>
     </Card>
   );
 };

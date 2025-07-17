@@ -5,7 +5,6 @@ import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
-import ProgressBar from '@/components/ProgressBar';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import { useActivityState } from '@/hooks/useActivityState';
@@ -159,20 +158,7 @@ function AppContent() {
           )}
           
           {/* Progress bar only rendered for activity state */}
-          {timeSet && !allActivitiesCompleted && (
-            <div className="mx-3 mb-3" data-testid="progress-container">
-              <div className="card">
-                <div className="card-body p-3">
-                  <ProgressBar 
-                    entries={processedEntries}
-                    totalDuration={totalDuration}
-                    elapsedTime={elapsedTime}
-                    timerActive={timerActive}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Progress bar moved to ActivityManager component */}
           
           {appState === 'setup' && (
             <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
@@ -191,6 +177,9 @@ function AppContent() {
                   timelineEntries={processedEntries}
                   isTimeUp={isTimeUp}
                   elapsedTime={elapsedTime}
+                  totalDuration={totalDuration}
+                  timerActive={timerActive}
+                  onActivitiesReset={resetActivities}
                 />
               </div>
               <div className="col-lg-7 d-none d-lg-block">

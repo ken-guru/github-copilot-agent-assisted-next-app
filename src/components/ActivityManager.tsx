@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Card, Row, Col, Alert } from 'react-bootstrap';
+import { Card, Row, Col, Alert, Button } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './ActivityForm';
-import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
+import ProgressBar from './ProgressBar';
+import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity, resetActivitiesToDefault } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
 
 // Use canonical Activity type
@@ -18,6 +19,11 @@ interface ActivityManagerProps {
   timelineEntries: TimelineEntry[];
   isTimeUp?: boolean;
   elapsedTime?: number;
+  // Progress bar props
+  totalDuration?: number;
+  timerActive?: boolean;
+  // Reset callback
+  onActivitiesReset?: () => void;
 }
 
 export default function ActivityManager({ 
@@ -27,7 +33,10 @@ export default function ActivityManager({
   completedActivityIds,
   timelineEntries,
   isTimeUp = false,
-  elapsedTime = 0
+  elapsedTime = 0,
+  totalDuration = 0,
+  timerActive = false,
+  onActivitiesReset
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
@@ -128,12 +137,54 @@ export default function ActivityManager({
     }
   };
 
+  const handleResetActivities = () => {
+    // Reset to default activities
+    resetActivitiesToDefault();
+    
+    // Reload activities from storage
+    const loadedActivities = getActivities().filter(a => a.isActive);
+    setActivities(loadedActivities);
+    setAssignedColorIndices(loadedActivities.map(a => a.colorIndex));
+    
+    // Register activities in state machine
+    loadedActivities.forEach(activity => {
+      onActivitySelect(activity, true);
+    });
+    
+    // Call parent reset if provided
+    if (onActivitiesReset) {
+      onActivitiesReset();
+    }
+  };
+
   return (
     <Card className="h-100" data-testid="activity-manager">
-      <Card.Header>
+      <Card.Header className="d-flex justify-content-between align-items-center">
         <h5 className="mb-0">Activities</h5>
+        <Button 
+          variant="outline-secondary" 
+          size="sm" 
+          onClick={handleResetActivities}
+          className="d-flex align-items-center"
+          title="Reset to default activities"
+        >
+          <i className="bi bi-arrow-clockwise me-2"></i>
+          Reset
+        </Button>
       </Card.Header>
       <Card.Body>
+        {/* Progress bar - only show when timer is active and has duration */}
+        {totalDuration > 0 && timerActive && (
+          <div className="mb-4">
+            <ProgressBar 
+              entries={timelineEntries}
+              totalDuration={totalDuration}
+              elapsedTime={elapsedTime}
+              timerActive={timerActive}
+            />
+          </div>
+        )}
+        
         {activities.length === 0 ? (
           <Alert variant="info" className="text-center" data-testid="empty-state">
             No activities defined
