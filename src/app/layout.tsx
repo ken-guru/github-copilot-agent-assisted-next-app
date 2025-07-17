@@ -104,17 +104,22 @@ export default function RootLayout({
                     root.classList.remove('light-mode');
                     root.setAttribute('data-theme', 'dark');
                     root.setAttribute('data-bs-theme', 'dark');
+                    // Also set on body for Bootstrap Modal portals
+                    document.body.setAttribute('data-bs-theme', 'dark');
                   } else {
                     root.classList.add('light-mode');
                     root.classList.remove('dark-mode', 'dark');
                     root.setAttribute('data-theme', 'light');
                     root.setAttribute('data-bs-theme', 'light');
+                    // Also set on body for Bootstrap Modal portals
+                    document.body.setAttribute('data-bs-theme', 'light');
                   }
                 } catch (e) {
                   // Fallback to light theme on any error
                   document.documentElement.classList.add('light-mode');
                   document.documentElement.setAttribute('data-theme', 'light');
                   document.documentElement.setAttribute('data-bs-theme', 'light');
+                  document.body.setAttribute('data-bs-theme', 'light');
                   console.error('Theme initialization error:', e);
                 }
               })();

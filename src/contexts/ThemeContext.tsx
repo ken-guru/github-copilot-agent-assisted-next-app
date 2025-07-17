@@ -61,11 +61,17 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         root.classList.add('dark');
         root.classList.remove('light-mode');
         root.setAttribute('data-theme', 'dark');
+        root.setAttribute('data-bs-theme', 'dark');
+        // Also set on body for Bootstrap Modal portals
+        document.body.setAttribute('data-bs-theme', 'dark');
       } else {
         root.classList.add('light-mode');
         root.classList.remove('dark-mode');
         root.classList.remove('dark');
         root.setAttribute('data-theme', 'light');
+        root.setAttribute('data-bs-theme', 'light');
+        // Also set on body for Bootstrap Modal portals
+        document.body.setAttribute('data-bs-theme', 'light');
       }
     }
   };
