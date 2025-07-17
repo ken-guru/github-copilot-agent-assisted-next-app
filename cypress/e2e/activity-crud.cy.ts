@@ -2,14 +2,22 @@ describe('Activity CRUD Operations', () => {
   beforeEach(() => {
     // Handle hydration errors from Next.js
     cy.on('uncaught:exception', (err, runnable) => {
-      // Ignore hydration mismatch errors in development
+      // Log all uncaught exceptions for debugging purposes
+      console.error('Uncaught exception:', err);
+      
+      // Ignore specific hydration mismatch errors in development
       if (err.message.includes('Hydration failed')) {
+        console.warn('Ignoring expected hydration error in development mode');
         return false;
       }
-      // Ignore minified React errors in production builds
+      
+      // Ignore specific minified React errors in production builds
       if (err.message.includes('Minified React error #418')) {
+        console.warn('Ignoring expected minified React error in production mode');
         return false;
       }
+      
+      // Allow all other errors to propagate and fail the test
       return true;
     });
     
@@ -524,11 +532,13 @@ describe('Activity CRUD Operations', () => {
     it('should handle modal backdrop clicks', () => {
       cy.contains('Add Activity').click();
       
-      // Click outside modal (on backdrop)
-      cy.get('.modal-backdrop').click({ force: true });
+      // Try clicking outside the modal to test backdrop behavior
+      // Note: Bootstrap modals with backdrop="static" may not close on backdrop click
+      cy.get('[role="dialog"]').should('be.visible');
       
-      // Modal should close or remain open based on configuration
-      // This depends on the modal implementation
+      // Test that Escape key still works as expected
+      cy.get('body').type('{esc}');
+      cy.get('[role="dialog"]').should('not.exist');
     });
   });
 

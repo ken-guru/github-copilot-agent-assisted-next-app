@@ -48,6 +48,12 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
     }
   };
 
+  // Extract word wrap styles to avoid duplication
+  const wordWrapStyles = {
+    wordWrap: 'break-word' as const,
+    overflowWrap: 'break-word' as const,
+  };
+
   return (
     <Card 
       className={`${isCompleted ? 'border-success' : ''}`}
@@ -64,12 +70,8 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
               className={`fw-bold mb-0 ${isCompleted ? 'text-success' : ''}`}
               style={colors ? { 
                 color: colors.text,
-                wordWrap: 'break-word',
-                overflowWrap: 'break-word'
-              } : { 
-                wordWrap: 'break-word',
-                overflowWrap: 'break-word'
-              }}
+                ...wordWrapStyles
+              } : wordWrapStyles}
             >
               {name}
             </h6>
