@@ -5,7 +5,7 @@ import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './ActivityForm';
 import ProgressBar from './ProgressBar';
-import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity, resetActivitiesToDefault } from '../utils/activity-storage';
+import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
 
 // Use canonical Activity type
@@ -22,8 +22,8 @@ interface ActivityManagerProps {
   // Progress bar props
   totalDuration?: number;
   timerActive?: boolean;
-  // Reset callback
-  onActivitiesReset?: () => void;
+  // Reset callback for session/timer reset
+  onReset?: () => void;
 }
 
 export default function ActivityManager({ 
@@ -36,7 +36,7 @@ export default function ActivityManager({
   elapsedTime = 0,
   totalDuration = 0,
   timerActive = false,
-  onActivitiesReset
+  onReset
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
@@ -137,23 +137,10 @@ export default function ActivityManager({
     }
   };
 
-  const handleResetActivities = () => {
-    // Reset to default activities
-    resetActivitiesToDefault();
-    
-    // Reload activities from storage
-    const loadedActivities = getActivities().filter(a => a.isActive);
-    setActivities(loadedActivities);
-    setAssignedColorIndices(loadedActivities.map(a => a.colorIndex));
-    
-    // Register activities in state machine
-    loadedActivities.forEach(activity => {
-      onActivitySelect(activity, true);
-    });
-    
-    // Call parent reset if provided
-    if (onActivitiesReset) {
-      onActivitiesReset();
+  const handleResetSession = () => {
+    // Call global reset function to reset timer/session
+    if (onReset) {
+      onReset();
     }
   };
 
@@ -164,9 +151,9 @@ export default function ActivityManager({
         <Button 
           variant="outline-danger" 
           size="sm" 
-          onClick={handleResetActivities}
+          onClick={handleResetSession}
           className="d-flex align-items-center"
-          title="Reset to default activities"
+          title="Reset session and return to time setup"
         >
           <i className="bi bi-arrow-clockwise me-2"></i>
           Reset
@@ -190,7 +177,7 @@ export default function ActivityManager({
             </div>
             
             {/* Activity Form */}
-            <div className="flex-shrink-0 mb-3">
+            <div className="flex-shrink-0 mb-3" data-testid="activity-form-column">
               <ActivityForm
                 onAddActivity={handleAddActivity}
                 isDisabled={isTimeUp}

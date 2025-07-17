@@ -253,7 +253,7 @@ describe('Home Page', () => {
       // Since we've moved the title to Navigation component and removed the main header,
       // we should verify the main content is properly structured
       const mainContainer = screen.getByRole('main');
-      expect(mainContainer).toHaveClass('container-fluid', 'min-vh-100', 'd-flex', 'flex-column');
+      expect(mainContainer).toHaveClass('container-fluid', 'vh-100', 'd-flex', 'flex-column', 'overflow-hidden');
     });
   });
 });

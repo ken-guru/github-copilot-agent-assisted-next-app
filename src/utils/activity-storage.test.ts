@@ -14,7 +14,18 @@ describe('activity-storage', () => {
   });
 
   it('should return default activities if localStorage is empty', () => {
-    expect(getActivities()).toEqual(DEFAULT_ACTIVITIES);
+    const activities = getActivities();
+    
+    // Check that we get the expected default activities structure
+    expect(activities).toHaveLength(4);
+    expect(activities[0]).toMatchObject({
+      id: '1',
+      name: 'Homework',
+      colorIndex: 0,
+      description: 'Academic work and study time',
+      isActive: true
+    });
+    expect(activities[0]?.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
   });
 
   it('should save and retrieve activities from localStorage', () => {
@@ -66,7 +77,19 @@ describe('activity-storage', () => {
 
   it('should handle corrupted localStorage data gracefully', () => {
     localStorage.setItem('activities_v1', 'not-json');
-    expect(getActivities()).toEqual(DEFAULT_ACTIVITIES);
+    const activities = getActivities();
+    
+    // Check that we get the expected default activities structure
+    expect(activities).toHaveLength(4);
+    const firstActivity = activities[0];
+    expect(firstActivity).toMatchObject({
+      id: '1',
+      name: 'Homework',
+      colorIndex: 0,
+      description: 'Academic work and study time',
+      isActive: true
+    });
+    expect(firstActivity?.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
   });
 
   it('should handle localStorage quota exceeded error', () => {

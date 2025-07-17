@@ -165,7 +165,7 @@ function AppContent() {
                   elapsedTime={elapsedTime}
                   totalDuration={totalDuration}
                   timerActive={timerActive}
-                  onActivitiesReset={resetActivities}
+                  onReset={handleReset}
                 />
               </div>
               <div className="col-lg-7 d-none d-lg-flex flex-column overflow-hidden">

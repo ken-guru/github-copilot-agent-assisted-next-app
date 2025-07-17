@@ -13,6 +13,7 @@ const ActivityCrud: React.FC = () => {
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showImport, setShowImport] = useState(false);
@@ -209,10 +210,15 @@ const ActivityCrud: React.FC = () => {
   };
 
   const handleResetToDefault = () => {
+    setShowResetConfirm(true);
+  };
+
+  const confirmResetToDefault = () => {
     resetActivitiesToDefault();
     // Refresh from localStorage
     const updatedActivities = getActivities().filter(a => a.isActive);
     setActivities(updatedActivities);
+    setShowResetConfirm(false);
     setSuccessMessage('Activities reset to default configuration');
     setTimeout(() => setSuccessMessage(null), 3000);
   };
@@ -471,6 +477,58 @@ const ActivityCrud: React.FC = () => {
           <Button variant="danger" onClick={confirmImportOverwrite} autoFocus className="d-flex align-items-center">
             <i className="fas fa-upload me-2"></i>
             Replace Activities
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* Reset Activities Confirmation Modal */}
+      <Modal 
+        show={showResetConfirm} 
+        onHide={() => setShowResetConfirm(false)} 
+        aria-labelledby="confirm-reset-activities-modal" 
+        centered 
+        backdrop="static"
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            confirmResetToDefault();
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            setShowResetConfirm(false);
+          }
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="confirm-reset-activities-modal">
+            <i className="fas fa-exclamation-triangle text-warning me-2"></i>
+            Reset All Activities?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="alert alert-warning d-flex align-items-start" role="alert">
+            <i className="fas fa-exclamation-triangle me-2 mt-1"></i>
+            <div>
+              <strong>This will delete all your current activities and replace them with the default set.</strong>
+              <br />
+              This action cannot be undone. Any custom activities you&apos;ve created will be permanently lost.
+            </div>
+          </div>
+          <p className="mb-2">The default activities are:</p>
+          <ul className="mb-3">
+            <li>Homework</li>
+            <li>Reading</li>
+            <li>Play Time</li>
+            <li>Chores</li>
+          </ul>
+          <p className="mb-0">Do you want to continue with the reset?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowResetConfirm(false)} className="d-flex align-items-center">
+            <i className="fas fa-times me-2"></i>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmResetToDefault} autoFocus className="d-flex align-items-center">
+            <i className="fas fa-arrow-clockwise me-2"></i>
+            Reset Activities
           </Button>
         </Modal.Footer>
       </Modal>
