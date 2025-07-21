@@ -6,7 +6,7 @@ import ActivityForm from './ActivityForm';
 import ActivityList from './ActivityList';
 import { Activity } from '../../types/activity';
 import { getActivities, saveActivities, addActivity as persistActivity, updateActivity as persistUpdateActivity, deleteActivity as persistDeleteActivity, resetActivitiesToDefault } from '../../utils/activity-storage';
-import { exportActivities, importActivities, previewImport } from '../../utils/activity-import-export';
+import { exportActivities, importActivities } from '../../utils/activity-import-export';
 
 const ActivityCrud: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);

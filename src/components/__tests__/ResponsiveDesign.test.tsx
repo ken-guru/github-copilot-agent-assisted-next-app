@@ -23,6 +23,7 @@ jest.mock('../../utils/colors', () => ({
       border: '#2E7D32'
     }
   ]),
+  getSmartColorIndex: jest.fn(() => 0), // Mock the new smart color selection
   isDarkMode: jest.fn(() => false),
   internalActivityColors: [],
   getThemeAppropriateColor: jest.fn((colors) => colors)
