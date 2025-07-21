@@ -108,7 +108,8 @@ describe('activity-import-export', () => {
       const exported = exportActivities(activities, { activeOnly: true });
 
       expect(exported).toHaveLength(1);
-      expect(exported[0].name).toBe('Active Activity');
+      expect(exported[0]).toBeDefined();
+      expect(exported[0]!.name).toBe('Active Activity');
     });
 
     it('should handle empty activity array', () => {
@@ -240,10 +241,15 @@ describe('activity-import-export', () => {
 
       const imported = importActivities(importData);
 
-      expect(imported[0].colorIndex).toBe(0);
-      expect(imported[1].colorIndex).toBe(1);
-      expect(imported[2].colorIndex).toBe(2);
-      expect(imported[3].colorIndex).toBe(10); // Preserve existing colorIndex
+      expect(imported).toHaveLength(4);
+      expect(imported[0]).toBeDefined();
+      expect(imported[1]).toBeDefined();
+      expect(imported[2]).toBeDefined();
+      expect(imported[3]).toBeDefined();
+      expect(imported[0]!.colorIndex).toBe(0);
+      expect(imported[1]!.colorIndex).toBe(1);
+      expect(imported[2]!.colorIndex).toBe(2);
+      expect(imported[3]!.colorIndex).toBe(10); // Preserve existing colorIndex
     });
 
     it('should preserve existing isActive values if present', () => {
@@ -264,9 +270,13 @@ describe('activity-import-export', () => {
 
       const imported = importActivities(importData);
 
-      expect(imported[0].isActive).toBe(true);
-      expect(imported[1].isActive).toBe(false);
-      expect(imported[2].isActive).toBe(true); // Default value
+      expect(imported).toHaveLength(3);
+      expect(imported[0]).toBeDefined();
+      expect(imported[1]).toBeDefined();
+      expect(imported[2]).toBeDefined();
+      expect(imported[0]!.isActive).toBe(true);
+      expect(imported[1]!.isActive).toBe(false);
+      expect(imported[2]!.isActive).toBe(true); // Default value
     });
 
     it('should handle existing activity options', () => {
@@ -290,8 +300,11 @@ describe('activity-import-export', () => {
         colorStartIndex: 1
       });
 
-      expect(imported[0].colorIndex).toBe(1); // Start from index 1
-      expect(imported[1].colorIndex).toBe(2);
+      expect(imported).toHaveLength(2);
+      expect(imported[0]).toBeDefined();
+      expect(imported[1]).toBeDefined();
+      expect(imported[0]!.colorIndex).toBe(1); // Start from index 1
+      expect(imported[1]!.colorIndex).toBe(2);
     });
 
     it('should throw error for invalid import data', () => {
@@ -336,9 +349,13 @@ describe('activity-import-export', () => {
 
       const imported = importActivities(importData);
 
-      expect(imported[0].id).toBe('valid-id-1');
-      expect(imported[1].id).toBe(mockUUID);
-      expect(imported[2].id).toBe(mockUUID);
+      expect(imported).toHaveLength(3);
+      expect(imported[0]).toBeDefined();
+      expect(imported[1]).toBeDefined();
+      expect(imported[2]).toBeDefined();
+      expect(imported[0]!.id).toBe('valid-id-1');
+      expect(imported[1]!.id).toBe(mockUUID);
+      expect(imported[2]!.id).toBe(mockUUID);
     });
 
     it('should use fallback ID generation when crypto.randomUUID is unavailable', () => {
@@ -355,8 +372,10 @@ describe('activity-import-export', () => {
       
       const imported = importActivities(importData);
       
-      expect(imported[0].id).toBe('imported-1642781400000-0');
-      expect(imported[0].name).toBe('Test Activity');
+      expect(imported).toHaveLength(1);
+      expect(imported[0]).toBeDefined();
+      expect(imported[0]!.id).toBe('imported-1642781400000-0');
+      expect(imported[0]!.name).toBe('Test Activity');
       
       // Restore original functions
       global.crypto.randomUUID = originalRandomUUID;
