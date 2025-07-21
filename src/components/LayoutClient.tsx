@@ -4,6 +4,7 @@ import Script from 'next/script';
 import { ThemeProvider } from '@/contexts/theme';
 import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
 import Navigation from '@/components/Navigation';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
 
 // Add TypeScript interface for the global window object
 declare global {
@@ -79,6 +80,9 @@ export function LayoutClient({ children }: LayoutClientProps) {
       <ServiceWorkerUpdater 
         onUpdate={handleUpdate} 
       />
+      
+      {/* Global offline indicator - visible across all app states */}
+      <OfflineIndicator />
       
       {/* Main navigation */}
       <Navigation />

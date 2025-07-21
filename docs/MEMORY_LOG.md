@@ -244,3 +244,5 @@ These logs serve as historical context to understand why certain decisions were 
 220. [MRTMLY-220: Cypress React Error 418 Fix](./logged_memories/MRTMLY-220-cypress-react-error-418-fix.md) - #debugging #cypress #react #production #ci-cd
 221. [MRTMLY-221-complete-test-migration-and-architecture-documentation](./logged_memories/MRTMLY-220-complete-test-migration-and-architecture-documentation.md) - #testing #migration #performance #documentation #jest
 245. [MRTMLY-245: Navigation Complexity Reduction - Issue #245 Implementation](./logged_memories/MRTMLY-245-navigation-complexity-reduction.md) - #ui-improvement #navigation #responsive #simplification #bootstrap
+246. [MRTMLY-247: Critical Offline Behavior Fix - Issue #247](./logged_memories/MRTMLY-247-critical-offline-behavior-fix.md) - #critical #debugging #service-worker #offline #pwa
+247. [MRTMLY-248: GitHub Copilot PR Review Comment Resolution](./logged_memories/MRTMLY-248-github-copilot-pr-review-resolution.md) - #pr-review #github-copilot #code-quality #offline-behavior #architecture #testing
