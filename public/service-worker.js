@@ -4,6 +4,9 @@ const CACHE_NAME_PREFIX = 'github-copilot-agent-assisted-next-app';
 const CACHE_NAME = 'github-copilot-agent-assisted-next-app-v6';
 const APP_SHELL_CACHE_NAME = 'app-shell-v6';
 
+// Update check interval constant (30 minutes in milliseconds)
+const UPDATE_CHECK_INTERVAL = 30 * 60 * 1000;
+
 // Offline page template for better code organization
 const OFFLINE_PAGE_TEMPLATE = `<!DOCTYPE html>
             <html lang="en">

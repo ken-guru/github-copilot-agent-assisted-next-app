@@ -62,10 +62,13 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 
 ### Test Verification
 - Remind to run test suite after ANY code changes
-- ALWAYS use VS Code tasks when available: `run_vs_code_task` with "shell: Run all Jest tests"
-- For specific test patterns use: `npm test -- --testPathPatterns="pattern"` via `run_in_terminal`
-- Use `npm run cypress:run` for e2e validation when needed
-- PREFER VS Code tasks over direct terminal commands for consistency and better integration
+- ALWAYS use terminal commands via `run_in_terminal` for reliable execution:
+  - `npm test` for full Jest test suite
+  - `npm test -- --testPathPatterns="pattern"` for specific test patterns
+  - `npm run lint` for linting checks
+  - `npm run type-check` for TypeScript validation
+  - `npm run cypress:run` for e2e validation when needed
+- AVOID VS Code tasks for test execution as they can cause hanging/incomplete output issues
 
 ### Terminal Command Guidelines
 - **NEVER run interactive commands** that require user input to complete
@@ -243,18 +246,15 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 ### Deployment Verification Checklist
 - Type checking:
   ```bash
-  # Use VS Code tasks when available, fallback to terminal commands
-  run_vs_code_task (preferred) or npm run type-check / npm run tsc
+  npm run type-check
   ```
 - Linting:
   ```bash
-  # Use VS Code tasks when available, fallback to terminal commands  
-  run_vs_code_task (preferred) or npm run lint
+  npm run lint
   ```
 - Tests:
   ```bash
-  # Use VS Code tasks when available, fallback to terminal commands
-  run_vs_code_task with "shell: Run all Jest tests" (preferred) or npm run test
+  npm test
   ```
 
 ### Verification Process

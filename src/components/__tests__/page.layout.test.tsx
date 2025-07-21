@@ -42,9 +42,9 @@ describe('Home Page Layout Spacing', () => {
       const innerContainer = mainContainer?.querySelector('.flex-grow-1.d-flex.flex-column.overflow-hidden');
       expect(innerContainer).toBeInTheDocument();
       
-      // Check that there's a proper structure for spacing
-      const offlineIndicator = innerContainer?.querySelector('.flex-shrink-0');
-      expect(offlineIndicator).toBeInTheDocument();
+      // The offline indicator is now global (in LayoutClient), so we just verify the structure
+      // Check that the inner container is ready for proper layout spacing
+      expect(innerContainer).toHaveClass('flex-grow-1', 'd-flex', 'flex-column', 'overflow-hidden');
     });
 
     it('should have appropriate row layout with spacing for activity manager and timeline', () => {

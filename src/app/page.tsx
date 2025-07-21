@@ -5,7 +5,6 @@ import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
-import { OfflineIndicator } from '@/components/OfflineIndicator';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
@@ -142,10 +141,6 @@ function AppContent() {
         />
         
         <div className="flex-grow-1 d-flex flex-column overflow-hidden">
-          <div className="flex-shrink-0">
-            <OfflineIndicator />
-          </div>
-          
           {appState === 'setup' && (
             <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
               <TimeSetup onTimeSet={handleTimeSet} />
