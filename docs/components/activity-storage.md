@@ -34,18 +34,31 @@ This utility provides localStorage-based CRUD operations for customizable activi
 
 ## Usage Examples
 ```typescript
-import { getActivities, addActivity, updateActivity, deleteActivity } from '../utils/activity-storage';
+import { getActivities, addActivity, updateActivity, deleteActivity, importActivities, exportActivities } from '../utils/activity-storage';
 
+// Standard CRUD
 const activities = getActivities();
 addActivity({ ... });
 updateActivity({ ... });
 deleteActivity('id');
+
+// Importing incomplete activities (auto-populates missing fields)
+const imported = importActivities([
+  { name: 'Only Name' },
+  { name: 'Reading', colorIndex: 1 },
+  { name: 'Play Time', description: 'Fun' },
+]);
+saveActivities(imported);
+
+// Exporting activities (omit isActive field)
+const exported = exportActivities(getActivities());
 ```
 
 ## Known Limitations / Edge Cases
 - Soft deletion only (isActive flag)
 - No cloud sync (local only)
 - Handles localStorage errors gracefully
+- Import auto-fills missing fields; invalid or empty names are auto-generated
 
 ## Change History
 - 2025-07-16: Initial implementation and documentation
@@ -71,11 +84,14 @@ Soft deletes an activity by id (sets isActive to false).
 ### validateActivity(activity: unknown): activity is Activity
 Validates the structure of an activity object.
 
+### importActivities(imported: Partial<Activity>[]): Activity[]
+Imports an array of possibly incomplete activity objects, auto-populating missing fields with sensible defaults.
+
+### exportActivities(activities: Activity[], omitIsActive = true): Omit<Activity, 'isActive'>[] | Activity[]
+Exports activities, omitting the isActive field by default for user-friendly JSON.
+
 ---
 
 ## Planned Enhancements
-- Export/import functionality for backup
 - Data migration/versioning support
 - Integration with ActivityManager and ActivityCrud
-
----
