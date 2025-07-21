@@ -30,7 +30,7 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 ### Jest vs Cypress Decision Matrix
 #### ✅ USE JEST FOR:
 - Component rendering and props testing
-- Form validation and error handling  
+- Form validation and error handling
 - Keyboard navigation and focus management
 - State management hooks (useActivityState, etc.)
 - Utility function testing
@@ -66,6 +66,18 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 - For specific test patterns use: `npm test -- --testPathPatterns="pattern"`
 - Use `npm run cypress:run` for e2e validation when needed
 - Run tests in terminal, not through other interfaces
+
+### Terminal Command Guidelines
+- **NEVER run interactive commands** that require user input to complete
+- **AVOID commands that open pagers** (less, more, man pages) without proper flags
+- **PREVENT hanging commands** that wait for user selection or navigation
+- **USE non-interactive flags** when available:
+  - `gh pr view --json` instead of `gh pr view` (which opens pager)
+  - `git log --oneline -n 5` instead of `git log` (which opens pager)
+  - `cat file.txt` instead of `less file.txt` or `more file.txt`
+  - `--no-pager` flag for git commands when needed
+- **CHECK command completion** - ensure all commands return to prompt
+- **TERMINATE hanging commands** immediately if they don't complete within reasonable time
 
 ### Performance Optimization Guidelines
 - PERFORMANCE FIRST: Choose Jest over Cypress when possible (15x faster)
@@ -199,7 +211,7 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 
 ### Large-Scale Reorganization Protocol
 - BEFORE starting: Document reorganization plan and scope
-- CREATE backup/mapping strategy for reference preservation  
+- CREATE backup/mapping strategy for reference preservation
 - PLAN systematic approach to reference updates
 - EXECUTE reorganization with validation checkpoints
 - VALIDATE all links and references after completion

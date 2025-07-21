@@ -6,6 +6,7 @@ import ActivityForm from './ActivityForm';
 import ActivityList from './ActivityList';
 import { Activity } from '../../types/activity';
 import { getActivities, saveActivities, addActivity as persistActivity, updateActivity as persistUpdateActivity, deleteActivity as persistDeleteActivity, resetActivitiesToDefault } from '../../utils/activity-storage';
+import { exportActivities, importActivities, previewImport } from '../../utils/activity-import-export';
 
 const ActivityCrud: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -132,7 +133,9 @@ const ActivityCrud: React.FC = () => {
       return;
     }
     try {
-      const data = JSON.stringify(activities, null, 2);
+      // Use the new export utility that excludes isActive field by default
+      const exportData = exportActivities(activities);
+      const data = JSON.stringify(exportData, null, 2);
       const blob = new Blob([data], { type: 'application/json' });
       setExportUrl(URL.createObjectURL(blob));
       setShowExport(true);
@@ -165,24 +168,30 @@ const ActivityCrud: React.FC = () => {
     try {
       const text = await importFile.text();
       const imported = JSON.parse(text);
-      if (!Array.isArray(imported) || !imported.every(a => a.id && a.name)) {
-        setImportError('Invalid file format');
-        return;
-      }
+
+      // Use the new import utility that handles auto-population of missing fields
+      const processedActivities = importActivities(imported, {
+        existingActivities: activities,
+        colorStartIndex: 0
+      });
+
       // Confirm overwrite if activities exist
       if (activities.length > 0) {
         setShowImportConfirm(true);
       } else {
         // Save imported activities to localStorage
-        saveActivities(imported);
+        saveActivities(processedActivities);
         // Refresh from localStorage
         const updatedActivities = getActivities().filter(a => a.isActive);
         setActivities(updatedActivities);
         setShowImport(false);
         setImportSuccess(true);
+        setSuccessMessage(`Successfully imported ${processedActivities.length} activities`);
+        setTimeout(() => setSuccessMessage(null), 3000);
       }
-    } catch {
-      setImportError('Failed to parse file');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to parse file';
+      setImportError(errorMessage);
     }
   };
 
@@ -191,18 +200,26 @@ const ActivityCrud: React.FC = () => {
       importFile.text().then(text => {
         try {
           const imported = JSON.parse(text);
+
+          // Use the new import utility that handles auto-population of missing fields
+          const processedActivities = importActivities(imported, {
+            existingActivities: activities,
+            colorStartIndex: 0
+          });
+
           // Save imported activities to localStorage (overwrites existing)
-          saveActivities(imported);
+          saveActivities(processedActivities);
           // Refresh from localStorage
           const updatedActivities = getActivities().filter(a => a.isActive);
           setActivities(updatedActivities);
           setShowImportConfirm(false);
           setShowImport(false);
           setImportSuccess(true);
-          setSuccessMessage(`Successfully imported ${imported.length} activities`);
+          setSuccessMessage(`Successfully imported ${processedActivities.length} activities`);
           setTimeout(() => setSuccessMessage(null), 3000);
-        } catch {
-          setImportError('Failed to parse file');
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Failed to parse file';
+          setImportError(errorMessage);
           setShowImportConfirm(false);
         }
       });
@@ -232,9 +249,9 @@ const ActivityCrud: React.FC = () => {
             <div className="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
               <i className="bi bi-check-circle me-2"></i>
               {successMessage}
-              <button 
-                type="button" 
-                className="btn-close" 
+              <button
+                type="button"
+                className="btn-close"
                 aria-label="Close"
                 onClick={() => setSuccessMessage(null)}
               ></button>
@@ -259,9 +276,9 @@ const ActivityCrud: React.FC = () => {
               </Button>
             </div>
           ) : (
-            <ActivityList 
-              activities={activities} 
-              onEdit={handleEdit} 
+            <ActivityList
+              activities={activities}
+              onEdit={handleEdit}
               onDelete={handleDelete}
               onAdd={handleAdd}
               onImport={handleImport}
@@ -273,12 +290,12 @@ const ActivityCrud: React.FC = () => {
       </div>
 
       {/* Activity Form Modal */}
-      <Modal 
-        key={formError || 'no-error'} 
-        show={showForm} 
-        onHide={() => { setShowFormRaw(false); setFormError(null); }} 
-        aria-labelledby="activity-form-modal" 
-        centered 
+      <Modal
+        key={formError || 'no-error'}
+        show={showForm}
+        onHide={() => { setShowFormRaw(false); setFormError(null); }}
+        aria-labelledby="activity-form-modal"
+        centered
         backdrop="static"
         onKeyDown={handleFormModalKeyDown}
       >
@@ -299,9 +316,9 @@ const ActivityCrud: React.FC = () => {
             <i className="bi bi-x me-2"></i>
             Cancel
           </Button>
-          <Button 
-            variant="primary" 
-            onClick={() => activityFormRef.current?.submitForm()} 
+          <Button
+            variant="primary"
+            onClick={() => activityFormRef.current?.submitForm()}
             className="d-flex align-items-center"
           >
             <i className="bi bi-floppy me-2"></i>
@@ -310,11 +327,11 @@ const ActivityCrud: React.FC = () => {
         </Modal.Footer>
       </Modal>
       {/* Delete Confirmation Modal */}
-      <Modal 
-        show={showConfirm} 
-        onHide={() => setShowConfirm(false)} 
-        aria-labelledby="confirm-delete-modal" 
-        centered 
+      <Modal
+        show={showConfirm}
+        onHide={() => setShowConfirm(false)}
+        aria-labelledby="confirm-delete-modal"
+        centered
         backdrop="static"
         onKeyDown={handleConfirmKeyDown}
       >
@@ -356,9 +373,9 @@ const ActivityCrud: React.FC = () => {
           </div>
           {exportUrl ? (
             <div className="d-grid">
-              <a 
-                href={exportUrl} 
-                download="activities.json" 
+              <a
+                href={exportUrl}
+                download="activities.json"
                 className="btn btn-success d-flex align-items-center justify-content-center"
                 aria-label="Download activities as JSON"
               >
@@ -394,19 +411,19 @@ const ActivityCrud: React.FC = () => {
             <div className="alert alert-info d-flex align-items-start" role="note">
               <i className="bi bi-info-circle me-2 mt-1"></i>
               <div>
-                <strong>Important:</strong> Importing will replace all your current activities. 
+                <strong>Important:</strong> Importing will replace all your current activities.
                 Make sure to export your current activities first if you want to keep them.
               </div>
             </div>
           </div>
-          
+
           <div className="mb-3">
             <label className="form-label fw-bold">Select JSON file:</label>
-            <input 
-              type="file" 
+            <input
+              type="file"
               className="form-control"
-              accept="application/json,.json" 
-              onChange={handleImportFileChange} 
+              accept="application/json,.json"
+              onChange={handleImportFileChange}
               aria-label="Import JSON File"
             />
           </div>
@@ -417,7 +434,7 @@ const ActivityCrud: React.FC = () => {
               {importError}
             </div>
           )}
-          
+
           {importSuccess && (
             <div className="alert alert-success d-flex align-items-center" role="status">
               <i className="bi bi-check-circle me-2"></i>
@@ -437,11 +454,11 @@ const ActivityCrud: React.FC = () => {
         </Modal.Footer>
       </Modal>
       {/* Import Overwrite Confirmation Modal */}
-      <Modal 
-        show={showImportConfirm} 
-        onHide={() => setShowImportConfirm(false)} 
-        aria-labelledby="confirm-import-overwrite-modal" 
-        centered 
+      <Modal
+        show={showImportConfirm}
+        onHide={() => setShowImportConfirm(false)}
+        aria-labelledby="confirm-import-overwrite-modal"
+        centered
         backdrop="static"
         onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === 'Enter') {
@@ -479,11 +496,11 @@ const ActivityCrud: React.FC = () => {
         </Modal.Footer>
       </Modal>
       {/* Reset Activities Confirmation Modal */}
-      <Modal 
-        show={showResetConfirm} 
-        onHide={() => setShowResetConfirm(false)} 
-        aria-labelledby="confirm-reset-activities-modal" 
-        centered 
+      <Modal
+        show={showResetConfirm}
+        onHide={() => setShowResetConfirm(false)}
+        aria-labelledby="confirm-reset-activities-modal"
+        centered
         backdrop="static"
         onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === 'Enter') {

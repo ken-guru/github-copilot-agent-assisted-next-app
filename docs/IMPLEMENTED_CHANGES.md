@@ -4,6 +4,55 @@ This file contains a record of changes that have been implemented in the applica
 
 ## 2025 July
 
+### JSON Import/Export Improvements - COMPLETED (2025-07-25)
+
+**Summary:**
+Successfully implemented enhancements to activity JSON import/export functionality addressing issue #242. The changes include removing the `isActive` field from exports by default and allowing import of incomplete JSON objects with auto-population of missing fields.
+
+**Issue Resolved:**
+- **Issue #242**: Enhanced JSON import/export functionality for activities
+
+**Key Implementation Details:**
+
+**New Utility Module:**
+- `src/utils/activity-import-export.ts` - Dedicated utility module with comprehensive import/export functionality
+  - `exportActivities()` - Exports activities without `isActive` field by default, with options for customization
+  - `importActivities()` - Handles incomplete JSON objects with intelligent field auto-population
+  - `previewImport()` - Provides import validation and preview capability
+  - Comprehensive TypeScript interfaces for type safety
+
+**Enhanced ActivityCrud Component:**
+- Updated `src/components/feature/ActivityCrud.tsx` to use new import/export utilities
+- Improved error handling with detailed error messages from import validation
+- Enhanced user feedback with better import success messages
+
+**Comprehensive Test Coverage:**
+- `src/utils/activity-import-export.test.ts` - 18 comprehensive Jest tests covering:
+  - Export functionality with and without `isActive` field
+  - Import with complete, partial, and minimal activity objects
+  - Auto-population of missing fields (id, colorIndex, createdAt, isActive)
+  - Error handling for invalid data formats
+  - Integration scenarios and backwards compatibility
+
+**Key Features:**
+- **Clean Exports**: JSON exports exclude internal `isActive` field by default
+- **Flexible Imports**: Accepts minimal JSON with only `name` field required
+- **Auto-Population**: Intelligently fills missing fields with appropriate defaults
+- **Type Safety**: Full TypeScript support with proper interfaces
+- **Error Handling**: Clear, actionable error messages for invalid import data
+- **Backwards Compatibility**: Existing export files continue to work
+
+**Test Results:**
+- All 18 new tests passing
+- All existing ActivityCrud tests (15) continue to pass
+- Linting and type checking successful
+
+**Technical Approach:**
+- Test-Driven Development (TDD) methodology followed
+- Created comprehensive test suite before implementation
+- Modular utility design for reusability and maintainability
+- Preserved existing UI/UX patterns while enhancing functionality
+
 ### Comprehensive UI Fixes and Testing Suite - COMPLETED (2025-07-16)
 
 **Summary:**
@@ -254,7 +303,7 @@ Successfully implemented comprehensive Activity Customization system using brows
 
 **Key Achievements:**
 - **Complete Activity System**: Users can create, edit, delete, and manage custom activities
-- **Visual Color Selection**: Replaced number input with Bootstrap dropdown showing actual HSL color swatches  
+- **Visual Color Selection**: Replaced number input with Bootstrap dropdown showing actual HSL color swatches
 - **localStorage Integration**: All activity data persists locally with zero external dependencies
 - **Professional UI**: React-Bootstrap components with comprehensive accessibility support
 - **Import/Export**: JSON-based backup/restore functionality with file validation
@@ -300,14 +349,14 @@ Successfully implemented comprehensive Activity Customization system using brows
 
 **Validation Results:**
 - **Local Tests**: All 759 tests passing across 89 test suites ✅
-- **CI Pipeline**: All checks successful including build, lint, type-check ✅  
+- **CI Pipeline**: All checks successful including build, lint, type-check ✅
 - **Cross-Device**: Responsive functionality verified on mobile and desktop ✅
 - **Accessibility**: WCAG compliance verified with screen reader testing ✅
 - **Performance**: Instant loading and smooth interactions confirmed ✅
 
 **Memory Log References:**
 - Activity Type Integration and Color Handling Refactor
-- Navigation Header Consolidation & Enhancement  
+- Navigation Header Consolidation & Enhancement
 - Activity CRUD Interface UX Improvements
 - Activity Color Selection UX Enhancement
 - Activity Management Interface Design Improvements
@@ -349,7 +398,7 @@ Successfully completed comprehensive refactoring of the Next.js project structur
 src/
 ├── app/              # Next.js App Router files
 ├── components/       # All UI components
-├── hooks/           # React custom hooks  
+├── hooks/           # React custom hooks
 ├── contexts/        # React context providers
 ├── utils/           # Utility functions (consolidated from lib/)
 └── types/           # TypeScript type definitions
@@ -470,7 +519,7 @@ Refactored all components and tests to use the canonical Activity type from `src
 
 **Changes:**
 - Fixed type safety issues in theme-aware components (Summary.tsx and Timeline.tsx)
-- Added proper conditional type guards for theme-specific color objects  
+- Added proper conditional type guards for theme-specific color objects
 - Added appropriate ESLint disable comments for empty interfaces
 - Fixed unused variable warnings across multiple components
 - Converted appropriate `let` declarations to `const` in colors.ts
@@ -651,7 +700,7 @@ Refactored all components and tests to use the canonical Activity type from `src
 ### Service Worker Registration Refactoring Complete (2023-12-01)
 
 **Files Modified/Created:**
-- `/src/utils/serviceWorkerCore.ts` 
+- `/src/utils/serviceWorkerCore.ts`
 - `/src/utils/serviceWorkerUpdates.ts`
 - `/src/utils/serviceWorkerErrors.ts`
 - `/src/utils/serviceWorkerRetry.ts`
