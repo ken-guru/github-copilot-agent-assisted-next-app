@@ -1,5 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" fill="none">
-  <rect width="192" height="192" fill="#000000"/>
-  <text x="50%" y="50%" font-family="Arial" font-size="19.2" fill="white" text-anchor="middle" dominant-baseline="middle">Mr. Timely</text>
-  <text x="50%" y="65%" font-family="Arial" font-size="12.8" fill="white" text-anchor="middle" dominant-baseline="middle">192×192</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <!-- Background circle with gradient -->
+  <defs>
+    <radialGradient id="grad192" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3730a3;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Main background circle -->
+  <circle cx="96" cy="96" r="67.19999999999999" fill="url(#grad192)" stroke="#1e1b4b" stroke-width="3.84"/>
+  
+  <!-- Clock face -->
+  <circle cx="96" cy="96" r="57.599999999999994" fill="#ffffff" stroke="#374151" stroke-width="1.92"/>
+  
+  <!-- Hour markers -->
+  <line x1="96" y1="47.040000000000006" x2="96" y2="52.800000000000004" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  <line x1="120.48" y1="53.59939623071389" x2="117.6" y2="58.587702556512255" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  <line x1="138.4006037692861" y1="71.52000000000001" x2="133.41229744348774" y2="74.4" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  <line x1="144.95999999999998" y1="96" x2="139.2" y2="96" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  <line x1="138.4006037692861" y1="120.47999999999999" x2="133.41229744348774" y2="117.6" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  <line x1="120.48" y1="138.4006037692861" x2="117.6" y2="133.41229744348774" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  <line x1="96" y1="144.95999999999998" x2="96" y2="139.2" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  <line x1="71.52000000000001" y1="138.4006037692861" x2="74.4" y2="133.41229744348774" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  <line x1="53.599396230713886" y1="120.47999999999999" x2="58.587702556512255" y2="117.6" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  <line x1="47.040000000000006" y1="96" x2="52.800000000000004" y2="96" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  <line x1="53.59939623071389" y1="71.52" x2="58.587702556512255" y2="74.4" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  <line x1="71.51999999999998" y1="53.5993962307139" x2="74.39999999999998" y2="58.58770255651226" stroke="#374151" stroke-width="1.536" stroke-linecap="round"/>
+  
+  <!-- Clock hands pointing to 3:00 (representing time management) -->
+  <!-- Hour hand -->
+  <line x1="96" y1="96" x2="124.8" y2="96" stroke="#dc2626" stroke-width="2.88" stroke-linecap="round"/>
+  <!-- Minute hand -->
+  <line x1="96" y1="96" x2="96" y2="55.68000000000001" stroke="#dc2626" stroke-width="1.92" stroke-linecap="round"/>
+  
+  <!-- Center dot -->
+  <circle cx="96" cy="96" r="3.84" fill="#dc2626"/>
 </svg>

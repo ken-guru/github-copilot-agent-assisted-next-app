@@ -23,7 +23,7 @@ jest.mock('@/components/ThemeToggle', () => {
 const mockUsePathname = usePathname as jest.MockedFunction<typeof usePathname>;
 
 describe('Navigation - Active State Management', () => {
-  const renderNavigation = (theme: 'light' | 'dark' = 'light') => {
+  const renderNavigation = () => {
     return render(
       <ThemeProvider>
         <Navigation />
@@ -105,7 +105,7 @@ describe('Navigation - Active State Management', () => {
   describe('Theme Integration with Active States', () => {
     it('should maintain active state styling in dark theme', () => {
       mockUsePathname.mockReturnValue('/');
-      renderNavigation('dark');
+      renderNavigation();
       
       const timerLink = screen.getByTestId('timer-nav-item').querySelector('.nav-link');
       expect(timerLink).toHaveClass('active');
@@ -113,7 +113,7 @@ describe('Navigation - Active State Management', () => {
 
     it('should maintain active state styling in light theme', () => {
       mockUsePathname.mockReturnValue('/activities');
-      renderNavigation('light');
+      renderNavigation();
       
       const activitiesLink = screen.getByTestId('activities-nav-item').querySelector('.nav-link');
       expect(activitiesLink).toHaveClass('active');
