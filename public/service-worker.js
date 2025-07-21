@@ -52,9 +52,10 @@ const PRECACHE_ASSETS = [
   '/manifest.json',
   '/favicon.ico', 
   '/favicon.svg',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
-  '/icons/apple-touch-icon.png'
+  '/icons/icon-192x192.svg',
+  '/icons/icon-512x512.svg',
+  '/icons/apple-touch-icon.svg',
+  '/icons/offline-image.svg'
 ];
 
 // App shell resources that are critical for offline functionality
