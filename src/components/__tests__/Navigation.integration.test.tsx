@@ -24,19 +24,19 @@ describe('Navigation Integration', () => {
   it('should render navigation with proper Bootstrap structure', () => {
     renderWithTheme(<Navigation />);
     
-    // Check for Bootstrap navbar classes
+    // Check for Bootstrap navbar classes (simplified - no expand-lg)
     const navbar = screen.getByRole('navigation');
-    expect(navbar).toHaveClass('navbar', 'navbar-expand-lg');
+    expect(navbar).toHaveClass('navbar');
+    // No longer has navbar-expand-lg due to simplification (Issue #245)
+    expect(navbar).not.toHaveClass('navbar-expand-lg');
     
     // Check for navbar brand
     const brand = screen.getByText('Mr. Timely');
     expect(brand).toBeInTheDocument();
     
-    // Check for hamburger toggle button
-    const toggleButton = screen.getByRole('button', { name: /toggle navigation/i });
-    expect(toggleButton).toHaveClass('navbar-toggler');
-    expect(toggleButton).toHaveAttribute('data-bs-toggle', 'collapse');
-    expect(toggleButton).toHaveAttribute('data-bs-target', '#navbarNav');
+    // No longer has hamburger toggle button (Issue #245 - simplified navigation)
+    const toggleButton = screen.queryByRole('button', { name: /toggle navigation/i });
+    expect(toggleButton).not.toBeInTheDocument();
   });
 
   it('should render navigation links', () => {
