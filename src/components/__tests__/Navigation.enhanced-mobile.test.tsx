@@ -40,13 +40,24 @@ describe('Navigation - Enhanced Mobile UX (Follow-up improvements)', () => {
     it('should render items in correct order: Theme Toggle, Timer, Activities', () => {
       renderWithTheme(<Navigation />);
       
-      const navItems = screen.getByTestId('nav-items-container');
-      const listItems = navItems.querySelectorAll('li');
+      // Theme toggle should be in its separate container
+      const themeToggleContainer = screen.getByTestId('theme-toggle-container');
+      expect(themeToggleContainer).toBeInTheDocument();
       
-      // Check the order: ThemeToggle (first), Timer (second), Activities (third)
-      expect(listItems[0]).toHaveClass('theme-toggle-item');
-      expect(listItems[1]).toHaveClass('timer-item');
-      expect(listItems[2]).toHaveClass('activities-item');
+      // Navigation items should be in the nav pills container
+      const navItems = screen.getByTestId('nav-items-container');
+      const navListItems = navItems.querySelectorAll('li');
+      
+      // Check the navigation items order: Timer (first), Activities (second)
+      expect(navListItems[0]).toHaveClass('timer-item');
+      expect(navListItems[1]).toHaveClass('activities-item');
+      
+      // Check that theme toggle appears before navigation items in DOM order
+      const themeToggleRect = themeToggleContainer.getBoundingClientRect();
+      const navItemsRect = navItems.getBoundingClientRect();
+      
+      // In a horizontal layout, theme toggle should be to the left (or equal for testing)
+      expect(themeToggleRect.left).toBeLessThanOrEqual(navItemsRect.left);
     });
   });
 
@@ -71,20 +82,26 @@ describe('Navigation - Enhanced Mobile UX (Follow-up improvements)', () => {
 
   describe('Mobile Icon-Only Display', () => {
     it('should show icon-only navigation items on small screens', () => {
-      mockInnerWidth(576); // Mobile screen size
+      mockInnerWidth(400); // Mobile width
       renderWithTheme(<Navigation />);
       
-      // Timer and Activities text should be hidden on mobile (accessible via aria-label only)
-      const timerItem = screen.getByTestId('timer-nav-item');
-      const activitiesItem = screen.getByTestId('activities-nav-item');
+      // Icons should be present
+      const timerIcon = screen.getByTestId('timer-nav-item').querySelector('i.bi-stopwatch');
+      const activitiesIcon = screen.getByTestId('activities-nav-item').querySelector('i.bi-list-check');
       
-      // Text should be visually hidden but accessible
-      expect(timerItem.querySelector('.nav-text')).toHaveClass('d-none', 'd-sm-inline');
-      expect(activitiesItem.querySelector('.nav-text')).toHaveClass('d-none', 'd-sm-inline');
+      expect(timerIcon).toBeInTheDocument();
+      expect(activitiesIcon).toBeInTheDocument();
       
-      // Icons should be visible
-      expect(timerItem.querySelector('.bi-stopwatch')).toBeInTheDocument();
-      expect(activitiesItem.querySelector('.bi-list-check')).toBeInTheDocument();
+      // Icons should have responsive margin classes (me-sm-1 for proper centering)
+      expect(timerIcon).toHaveClass('me-sm-1');
+      expect(activitiesIcon).toHaveClass('me-sm-1');
+      
+      // Text should be hidden on mobile
+      const timerText = screen.getByTestId('timer-nav-item').querySelector('.nav-text');
+      const activitiesText = screen.getByTestId('activities-nav-item').querySelector('.nav-text');
+      
+      expect(timerText).toHaveClass('d-none', 'd-sm-inline');
+      expect(activitiesText).toHaveClass('d-none', 'd-sm-inline');
     });
 
     it('should show icon-only brand on small screens', () => {

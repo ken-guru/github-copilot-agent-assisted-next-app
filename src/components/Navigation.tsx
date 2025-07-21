@@ -1,21 +1,27 @@
 import React from 'react';
 import Link from 'next/link';
-import { useTheme } from '@/contexts/theme';
+import { usePathname } from 'next/navigation';
+import { useTheme } from '@/contexts/ThemeContext';
 import ThemeToggle from '@/components/ThemeToggle';
 
 /**
- * Enhanced simplified navigation bar 
- * - Bootstrap styling with theme awareness
- * - No collapsible dropdown - always shows all items inline
+ * Enhanced navigation with active state management and tab-like styling
+ * - Bootstrap nav pills for active state indication
+ * - Visual separation between theme toggle and navigation items
+ * - Tab-like appearance extending into header space
  * - Mobile-friendly with icon-only display on small screens
- * - Reordered items: Theme Toggle, Timer, Activities
- * - Automatic light/dark theme switching
- * Issue #245: Removed dropdown complexity + mobile UX enhancements
+ * - Automatic light/dark theme switching with proper active state styling
+ * Issue #245: Removed dropdown complexity + active state UX improvements
  */
 const Navigation: React.FC = () => {
-  // Get theme from context - this ensures component re-renders when theme changes
+  // Get theme from context and current pathname for active state
   const themeContext = useTheme();
-  const theme = themeContext?.theme || 'light'; // Fallback for edge cases
+  const theme = themeContext?.theme || 'light'; 
+  const pathname = usePathname();
+  
+  // Determine active states based on current path
+  const isTimerActive = pathname === '/';
+  const isActivitiesActive = pathname === '/activities';
   
   // Use Bootstrap's theme-aware classes (removed navbar-expand-lg for always-expanded behavior)
   const navClasses = theme === 'dark' 
@@ -32,33 +38,44 @@ const Navigation: React.FC = () => {
           </span>
         </Link>
         
-        {/* Enhanced always-visible navigation - no collapse/dropdown, reordered items */}
-        <ul className="navbar-nav d-flex flex-row align-items-center" data-testid="nav-items-container">
-          {/* Theme Toggle - First item */}
-          <li className="nav-item me-3 theme-toggle-item">
+        {/* Navigation with separated theme toggle and nav pills */}
+        <div className="d-flex align-items-center">
+          {/* Theme Toggle - Visually separated from navigation */}
+          <div className="theme-toggle-separator me-4" data-testid="theme-toggle-container">
             <ThemeToggle size="sm" variant="navbar" />
-          </li>
+          </div>
           
-          {/* Timer - Second item */}
-          <li className="nav-item me-3 timer-item" data-testid="timer-nav-item">
-            <Link className="nav-link" href="/">
-              <span aria-label="Go to Timer">
-                <i className="bi bi-stopwatch me-1" aria-hidden="true"></i>
-                <span className="nav-text d-none d-sm-inline">Timer</span>
-              </span>
-            </Link>
-          </li>
-          
-          {/* Activities - Third item */}
-          <li className="nav-item activities-item" data-testid="activities-nav-item">
-            <Link className="nav-link" href="/activities">
-              <span aria-label="Go to Activities Management">
-                <i className="bi bi-list-check me-1" aria-hidden="true"></i>
-                <span className="nav-text d-none d-sm-inline">Activities</span>
-              </span>
-            </Link>
-          </li>
-        </ul>
+          {/* Navigation Items - Using Bootstrap nav pills for tab-like appearance */}
+          <ul className="nav nav-pills nav-items-group" data-testid="nav-items-container">
+            {/* Timer - First navigation item */}
+            <li className="nav-item timer-item" data-testid="timer-nav-item">
+              <Link 
+                className={`nav-link ${isTimerActive ? 'active' : ''}`} 
+                href="/"
+                aria-current={isTimerActive ? 'page' : undefined}
+              >
+                <span aria-label="Go to Timer">
+                  <i className="bi bi-stopwatch me-sm-1" aria-hidden="true"></i>
+                  <span className="nav-text d-none d-sm-inline">Timer</span>
+                </span>
+              </Link>
+            </li>
+            
+            {/* Activities - Second navigation item */}
+            <li className="nav-item activities-item" data-testid="activities-nav-item">
+              <Link 
+                className={`nav-link ${isActivitiesActive ? 'active' : ''}`} 
+                href="/activities"
+                aria-current={isActivitiesActive ? 'page' : undefined}
+              >
+                <span aria-label="Go to Activities Management">
+                  <i className="bi bi-list-check me-sm-1" aria-hidden="true"></i>
+                  <span className="nav-text d-none d-sm-inline">Activities</span>
+                </span>
+              </Link>
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
   );
