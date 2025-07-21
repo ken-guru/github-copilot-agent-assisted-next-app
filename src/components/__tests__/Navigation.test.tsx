@@ -13,11 +13,19 @@ describe('Navigation', () => {
   it('has accessible ARIA labels', () => {
     render(<Navigation />);
     expect(screen.getByLabelText('Main navigation')).toBeInTheDocument();
-    expect(screen.getByLabelText('Toggle navigation')).toBeInTheDocument();
+    // No longer has toggle navigation button - removed for simplification (Issue #245)
+    expect(screen.getByLabelText('Go to Timer')).toBeInTheDocument();
+    expect(screen.getByLabelText('Go to Activities Management')).toBeInTheDocument();
   });
 
-  it('is responsive (has navbar-toggler)', () => {
+  it('is simplified (no navbar-toggler needed)', () => {
     render(<Navigation />);
-    expect(screen.getByRole('button', { name: /toggle navigation/i })).toBeInTheDocument();
+    // Verify simplified navigation doesn't have toggle button (Issue #245 fix)
+    const toggleButton = screen.queryByRole('button', { name: /toggle navigation/i });
+    expect(toggleButton).not.toBeInTheDocument();
+    
+    // All navigation items should be visible
+    expect(screen.getByText('Timer')).toBeInTheDocument();
+    expect(screen.getByText('Activities')).toBeInTheDocument();
   });
 });
