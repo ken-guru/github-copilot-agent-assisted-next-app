@@ -37,6 +37,7 @@ export function useServiceWorker() {
       return;
     }
 
+    // Declare interval in useEffect scope so cleanup can access it
     let updateInterval: NodeJS.Timeout | null = null;
 
     const registerServiceWorker = async () => {
@@ -86,7 +87,7 @@ export function useServiceWorker() {
           }
         });
 
-        // Check for updates periodically but don't be too aggressive
+        // Check for updates periodically but don't be too aggressive  
         updateInterval = setInterval(async () => {
           try {
             await registration.update();
@@ -94,7 +95,7 @@ export function useServiceWorker() {
           } catch (error) {
             console.error('Error checking for service worker updates:', error);
           }
-        }, UPDATE_CHECK_INTERVAL); // Check every 30 minutes instead of every hour
+        }, UPDATE_CHECK_INTERVAL); // Check every 30 minutes
 
       } catch (error) {
         console.error('Error during service worker registration:', error);
@@ -106,7 +107,7 @@ export function useServiceWorker() {
     // Register when the window loads to avoid competing for resources
     window.addEventListener('load', registerServiceWorker);
 
-    // Clean up
+    // Cleanup function - now properly clears the interval
     return () => {
       window.removeEventListener('load', registerServiceWorker);
       if (updateInterval) {
