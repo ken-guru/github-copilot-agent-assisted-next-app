@@ -40,7 +40,7 @@ describe('activity-import-export', () => {
       ];
 
       const exported = exportActivities(activities);
-      
+
       expect(exported).toHaveLength(2);
       expect(exported[0]).toEqual({
         id: '1',
@@ -56,7 +56,7 @@ describe('activity-import-export', () => {
         colorIndex: 1,
         createdAt: '2025-07-21T11:00:00.000Z'
       });
-      
+
       // Ensure isActive is not included
       expect(exported[0]).not.toHaveProperty('isActive');
       expect(exported[1]).not.toHaveProperty('isActive');
@@ -75,7 +75,7 @@ describe('activity-import-export', () => {
       ];
 
       const exported = exportActivities(activities, { includeIsActive: true });
-      
+
       expect(exported).toHaveLength(1);
       expect(exported[0]).toEqual({
         id: '1',
@@ -106,7 +106,7 @@ describe('activity-import-export', () => {
       ];
 
       const exported = exportActivities(activities, { activeOnly: true });
-      
+
       expect(exported).toHaveLength(1);
       expect(exported[0].name).toBe('Active Activity');
     });
@@ -128,7 +128,7 @@ describe('activity-import-export', () => {
       ];
 
       const exported = exportActivities(activities);
-      
+
       expect(exported[0]).toEqual({
         id: '1',
         name: 'Simple Activity',
@@ -151,7 +151,7 @@ describe('activity-import-export', () => {
       ];
 
       const imported = importActivities(importData);
-      
+
       expect(imported).toHaveLength(1);
       expect(imported[0]).toEqual({
         id: '1',
@@ -170,7 +170,7 @@ describe('activity-import-export', () => {
       ];
 
       const imported = importActivities(importData);
-      
+
       expect(imported).toHaveLength(2);
       expect(imported[0]).toEqual({
         id: mockUUID,
@@ -197,7 +197,7 @@ describe('activity-import-export', () => {
       ];
 
       const imported = importActivities(importData);
-      
+
       expect(imported[0]).toEqual({
         id: mockUUID,
         name: 'Partial Activity',
@@ -220,7 +220,7 @@ describe('activity-import-export', () => {
       ];
 
       const imported = importActivities(importData);
-      
+
       expect(imported[0]).toEqual({
         id: mockUUID,
         name: 'Test Activity',
@@ -239,7 +239,7 @@ describe('activity-import-export', () => {
       ];
 
       const imported = importActivities(importData);
-      
+
       expect(imported[0].colorIndex).toBe(0);
       expect(imported[1].colorIndex).toBe(1);
       expect(imported[2].colorIndex).toBe(2);
@@ -253,7 +253,7 @@ describe('activity-import-export', () => {
           isActive: true
         },
         {
-          name: 'Inactive Activity', 
+          name: 'Inactive Activity',
           isActive: false
         },
         {
@@ -263,7 +263,7 @@ describe('activity-import-export', () => {
       ];
 
       const imported = importActivities(importData);
-      
+
       expect(imported[0].isActive).toBe(true);
       expect(imported[1].isActive).toBe(false);
       expect(imported[2].isActive).toBe(true); // Default value
@@ -285,11 +285,11 @@ describe('activity-import-export', () => {
         { name: 'New Activity 2' }
       ];
 
-      const imported = importActivities(importData, { 
+      const imported = importActivities(importData, {
         existingActivities,
-        colorStartIndex: 1 
+        colorStartIndex: 1
       });
-      
+
       expect(imported[0].colorIndex).toBe(1); // Start from index 1
       expect(imported[1].colorIndex).toBe(2);
     });
@@ -335,10 +335,32 @@ describe('activity-import-export', () => {
       ];
 
       const imported = importActivities(importData);
-      
+
       expect(imported[0].id).toBe('valid-id-1');
       expect(imported[1].id).toBe(mockUUID);
       expect(imported[2].id).toBe(mockUUID);
+    });
+
+    it('should use fallback ID generation when crypto.randomUUID is unavailable', () => {
+      // Mock crypto.randomUUID to return undefined to test fallback
+      const originalRandomUUID = global.crypto.randomUUID;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (global.crypto as any).randomUUID = undefined;
+
+      // Also mock Date.now since Date constructor is mocked
+      const originalDateNow = Date.now;
+      Date.now = jest.fn(() => 1642781400000); // Fixed timestamp
+
+      const importData = [{ name: 'Test Activity' }];
+      
+      const imported = importActivities(importData);
+      
+      expect(imported[0].id).toBe('imported-1642781400000-0');
+      expect(imported[0].name).toBe('Test Activity');
+      
+      // Restore original functions
+      global.crypto.randomUUID = originalRandomUUID;
+      Date.now = originalDateNow;
     });
   });
 
@@ -357,10 +379,10 @@ describe('activity-import-export', () => {
 
       // Export without isActive
       const exported = exportActivities(originalActivities);
-      
+
       // Import should restore full structure
       const imported = importActivities(exported);
-      
+
       expect(imported[0]).toEqual({
         id: '1',
         name: 'Original Activity',
@@ -384,7 +406,7 @@ describe('activity-import-export', () => {
       ];
 
       const imported = importActivities(oldExportFormat);
-      
+
       expect(imported[0]).toEqual({
         id: '1',
         name: 'Old Format Activity',
