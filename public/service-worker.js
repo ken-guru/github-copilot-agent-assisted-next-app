@@ -1,8 +1,8 @@
 // Service Worker for Mr. Timely
 
+const CACHE_NAME_PREFIX = 'github-copilot-agent-assisted-next-app';
 const CACHE_NAME = 'github-copilot-agent-assisted-next-app-v6';
 const APP_SHELL_CACHE_NAME = 'app-shell-v6';
-const OFFLINE_URL = '/index.html';
 
 // Offline page template for better code organization
 const OFFLINE_PAGE_TEMPLATE = `<!DOCTYPE html>
@@ -11,6 +11,7 @@ const OFFLINE_PAGE_TEMPLATE = `<!DOCTYPE html>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <title>Offline - Mr. Timely</title>
+              <link rel="icon" href="/favicon.svg" type="image/svg+xml">
               <style>
                 body { 
                   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -18,6 +19,7 @@ const OFFLINE_PAGE_TEMPLATE = `<!DOCTYPE html>
                   background: #f8f9fa; color: #212529;
                 }
                 .offline-container { max-width: 600px; margin: 0 auto; }
+                .offline-icon { width: 64px; height: 64px; margin: 1rem 0; opacity: 0.7; }
                 .btn { 
                   background: #007bff; color: white; border: none; 
                   padding: 0.75rem 1.5rem; border-radius: 0.375rem;
@@ -28,6 +30,7 @@ const OFFLINE_PAGE_TEMPLATE = `<!DOCTYPE html>
             </head>
             <body>
               <div class="offline-container">
+                <img src="/icons/offline-image.svg" alt="Offline" class="offline-icon" />
                 <h1>You are offline</h1>
                 <p>Mr. Timely is currently unavailable. Please check your internet connection and try again.</p>
                 <button class="btn" onclick="window.location.reload()">Try Again</button>
@@ -35,6 +38,12 @@ const OFFLINE_PAGE_TEMPLATE = `<!DOCTYPE html>
               </div>
             </body>
             </html>`;
+
+// Pre-built offline Response for better performance
+const OFFLINE_RESPONSE = new Response(OFFLINE_PAGE_TEMPLATE, {
+  status: 200,
+  headers: { 'Content-Type': 'text/html; charset=utf-8' }
+});
 
 // Assets to cache immediately on install
 const PRECACHE_ASSETS = [
@@ -98,7 +107,7 @@ self.addEventListener('install', (event) => {
         // Only skip waiting if this is a fresh install, not an update
         const existingCaches = await caches.keys();
         const hasOldCache = existingCaches.some(name => 
-          name.includes('github-copilot-agent-assisted-next-app') && name !== CACHE_NAME
+          name.startsWith(CACHE_NAME_PREFIX) && name !== CACHE_NAME
         );
         
         if (!hasOldCache) {
@@ -225,13 +234,7 @@ self.addEventListener('fetch', (event) => {
           }
           
           // If everything fails, return a comprehensive offline page
-          return new Response(
-            OFFLINE_PAGE_TEMPLATE,
-            {
-              status: 200,
-              headers: { 'Content-Type': 'text/html; charset=utf-8' }
-            }
-          );
+          return OFFLINE_RESPONSE.clone();
         }
       })()
     );
@@ -433,7 +436,7 @@ async function clearOldCaches() {
     const oldCaches = cacheKeys.filter(key => 
       key !== CACHE_NAME && 
       key !== APP_SHELL_CACHE_NAME &&
-      (key.includes('mr-timely') || key.includes('github-copilot-agent-assisted-next-app'))
+      key.startsWith(CACHE_NAME_PREFIX)
     );
     
     await Promise.all(oldCaches.map(key => caches.delete(key)));

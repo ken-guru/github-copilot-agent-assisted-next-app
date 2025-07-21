@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 
+// Update check interval (30 minutes)
+const UPDATE_CHECK_INTERVAL = 30 * 60 * 1000;
+
 type ServiceWorkerStatus = 
   | 'pending'
   | 'registering'
@@ -33,6 +36,8 @@ export function useServiceWorker() {
       setStatus('unsupported');
       return;
     }
+
+    let updateInterval: NodeJS.Timeout | null = null;
 
     const registerServiceWorker = async () => {
       try {
@@ -82,17 +87,14 @@ export function useServiceWorker() {
         });
 
         // Check for updates periodically but don't be too aggressive
-        const updateInterval = setInterval(async () => {
+        updateInterval = setInterval(async () => {
           try {
             await registration.update();
             console.log('Service worker checked for updates');
           } catch (error) {
             console.error('Error checking for service worker updates:', error);
           }
-        }, 30 * 60 * 1000); // Check every 30 minutes instead of every hour
-
-        // Clean up interval on unmount
-        return () => clearInterval(updateInterval);
+        }, UPDATE_CHECK_INTERVAL); // Check every 30 minutes instead of every hour
 
       } catch (error) {
         console.error('Error during service worker registration:', error);
@@ -107,6 +109,9 @@ export function useServiceWorker() {
     // Clean up
     return () => {
       window.removeEventListener('load', registerServiceWorker);
+      if (updateInterval) {
+        clearInterval(updateInterval);
+      }
     };
   }, []);
 
