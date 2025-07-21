@@ -4,6 +4,55 @@ This file contains a record of changes that have been implemented in the applica
 
 ## 2025 July
 
+### JSON Import/Export Improvements - COMPLETED (2025-07-25)
+
+**Summary:**
+Successfully implemented enhancements to activity JSON import/export functionality addressing issue #242. The changes include removing the `isActive` field from exports by default and allowing import of incomplete JSON objects with auto-population of missing fields.
+
+**Issue Resolved:**
+- **Issue #242**: Enhanced JSON import/export functionality for activities
+
+**Key Implementation Details:**
+
+**New Utility Module:**
+- `src/utils/activity-import-export.ts` - Dedicated utility module with comprehensive import/export functionality
+  - `exportActivities()` - Exports activities without `isActive` field by default, with options for customization
+  - `importActivities()` - Handles incomplete JSON objects with intelligent field auto-population
+  - `previewImport()` - Provides import validation and preview capability
+  - Comprehensive TypeScript interfaces for type safety
+
+**Enhanced ActivityCrud Component:**
+- Updated `src/components/feature/ActivityCrud.tsx` to use new import/export utilities
+- Improved error handling with detailed error messages from import validation
+- Enhanced user feedback with better import success messages
+
+**Comprehensive Test Coverage:**
+- `src/utils/activity-import-export.test.ts` - 18 comprehensive Jest tests covering:
+  - Export functionality with and without `isActive` field
+  - Import with complete, partial, and minimal activity objects
+  - Auto-population of missing fields (id, colorIndex, createdAt, isActive)
+  - Error handling for invalid data formats
+  - Integration scenarios and backwards compatibility
+
+**Key Features:**
+- **Clean Exports**: JSON exports exclude internal `isActive` field by default
+- **Flexible Imports**: Accepts minimal JSON with only `name` field required
+- **Auto-Population**: Intelligently fills missing fields with appropriate defaults
+- **Type Safety**: Full TypeScript support with proper interfaces
+- **Error Handling**: Clear, actionable error messages for invalid import data
+- **Backwards Compatibility**: Existing export files continue to work
+
+**Test Results:**
+- All 18 new tests passing
+- All existing ActivityCrud tests (15) continue to pass
+- Linting and type checking successful
+
+**Technical Approach:**
+- Test-Driven Development (TDD) methodology followed
+- Created comprehensive test suite before implementation
+- Modular utility design for reusability and maintainability
+- Preserved existing UI/UX patterns while enhancing functionality
+
 ### Comprehensive UI Fixes and Testing Suite - COMPLETED (2025-07-16)
 
 **Summary:**

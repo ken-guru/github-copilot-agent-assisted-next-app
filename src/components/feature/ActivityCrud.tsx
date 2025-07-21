@@ -6,6 +6,7 @@ import ActivityForm from './ActivityForm';
 import ActivityList from './ActivityList';
 import { Activity } from '../../types/activity';
 import { getActivities, saveActivities, addActivity as persistActivity, updateActivity as persistUpdateActivity, deleteActivity as persistDeleteActivity, resetActivitiesToDefault } from '../../utils/activity-storage';
+import { exportActivities, importActivities, previewImport } from '../../utils/activity-import-export';
 
 const ActivityCrud: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -132,7 +133,9 @@ const ActivityCrud: React.FC = () => {
       return;
     }
     try {
-      const data = JSON.stringify(activities, null, 2);
+      // Use the new export utility that excludes isActive field by default
+      const exportData = exportActivities(activities);
+      const data = JSON.stringify(exportData, null, 2);
       const blob = new Blob([data], { type: 'application/json' });
       setExportUrl(URL.createObjectURL(blob));
       setShowExport(true);
@@ -165,24 +168,30 @@ const ActivityCrud: React.FC = () => {
     try {
       const text = await importFile.text();
       const imported = JSON.parse(text);
-      if (!Array.isArray(imported) || !imported.every(a => a.id && a.name)) {
-        setImportError('Invalid file format');
-        return;
-      }
+      
+      // Use the new import utility that handles auto-population of missing fields
+      const processedActivities = importActivities(imported, { 
+        existingActivities: activities,
+        colorStartIndex: 0 
+      });
+      
       // Confirm overwrite if activities exist
       if (activities.length > 0) {
         setShowImportConfirm(true);
       } else {
         // Save imported activities to localStorage
-        saveActivities(imported);
+        saveActivities(processedActivities);
         // Refresh from localStorage
         const updatedActivities = getActivities().filter(a => a.isActive);
         setActivities(updatedActivities);
         setShowImport(false);
         setImportSuccess(true);
+        setSuccessMessage(`Successfully imported ${processedActivities.length} activities`);
+        setTimeout(() => setSuccessMessage(null), 3000);
       }
-    } catch {
-      setImportError('Failed to parse file');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to parse file';
+      setImportError(errorMessage);
     }
   };
 
@@ -191,18 +200,26 @@ const ActivityCrud: React.FC = () => {
       importFile.text().then(text => {
         try {
           const imported = JSON.parse(text);
+          
+          // Use the new import utility that handles auto-population of missing fields
+          const processedActivities = importActivities(imported, { 
+            existingActivities: activities,
+            colorStartIndex: 0 
+          });
+          
           // Save imported activities to localStorage (overwrites existing)
-          saveActivities(imported);
+          saveActivities(processedActivities);
           // Refresh from localStorage
           const updatedActivities = getActivities().filter(a => a.isActive);
           setActivities(updatedActivities);
           setShowImportConfirm(false);
           setShowImport(false);
           setImportSuccess(true);
-          setSuccessMessage(`Successfully imported ${imported.length} activities`);
+          setSuccessMessage(`Successfully imported ${processedActivities.length} activities`);
           setTimeout(() => setSuccessMessage(null), 3000);
-        } catch {
-          setImportError('Failed to parse file');
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Failed to parse file';
+          setImportError(errorMessage);
           setShowImportConfirm(false);
         }
       });
