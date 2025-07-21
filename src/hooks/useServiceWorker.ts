@@ -10,6 +10,21 @@ type ServiceWorkerStatus =
 export function useServiceWorker() {
   const [status, setStatus] = useState<ServiceWorkerStatus>('pending');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
+
+  // Function to manually update cache
+  const updateCache = async () => {
+    if (registration?.active) {
+      registration.active.postMessage({ type: 'UPDATE_CACHE' });
+    }
+  };
+
+  // Function to clear old caches
+  const clearOldCaches = async () => {
+    if (registration?.active) {
+      registration.active.postMessage({ type: 'CLEAR_OLD_CACHES' });
+    }
+  };
 
   useEffect(() => {
     // Check if service workers are supported
@@ -23,39 +38,61 @@ export function useServiceWorker() {
       try {
         setStatus('registering');
         
-        // Unregister any existing service workers first to ensure clean state
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        for (const registration of registrations) {
-          await registration.unregister();
-        }
-
-        // Register new service worker
+        // Check if service worker is already registered
+        const existingRegistration = await navigator.serviceWorker.getRegistration();
+        
         const swUrl = '/service-worker.js';
-        const registration = await navigator.serviceWorker.register(swUrl);
+        let registration: ServiceWorkerRegistration;
+        
+        if (existingRegistration) {
+          // Update existing registration instead of unregistering
+          console.log('Updating existing service worker registration');
+          await existingRegistration.update();
+          registration = existingRegistration;
+        } else {
+          // Register new service worker
+          console.log('Registering new service worker');
+          registration = await navigator.serviceWorker.register(swUrl);
+        }
         
         console.log('Service Worker registered with scope:', registration.scope);
+        setRegistration(registration);
         
-        // Force update if needed
+        // Handle service worker updates without forcing page reload
+        if (registration.waiting) {
+          console.log('New service worker is waiting, will activate on next visit');
+        }
+        
         if (registration.installing) {
           registration.installing.addEventListener('statechange', (event) => {
-            if ((event.target as ServiceWorker).state === 'activated') {
-              // Force reload once activated to ensure latest version is used
-              window.location.reload();
+            const worker = event.target as ServiceWorker;
+            if (worker.state === 'installed') {
+              console.log('Service worker installed and ready');
             }
           });
         }
         
         setStatus('registered');
 
-        // Check for updates every hour
-        setInterval(async () => {
+        // Listen for service worker messages
+        navigator.serviceWorker.addEventListener('message', (event) => {
+          if (event.data.type === 'CACHE_UPDATED') {
+            console.log('Service worker cache updated:', event.data.message);
+          }
+        });
+
+        // Check for updates periodically but don't be too aggressive
+        const updateInterval = setInterval(async () => {
           try {
             await registration.update();
             console.log('Service worker checked for updates');
           } catch (error) {
             console.error('Error checking for service worker updates:', error);
           }
-        }, 60 * 60 * 1000);
+        }, 30 * 60 * 1000); // Check every 30 minutes instead of every hour
+
+        // Clean up interval on unmount
+        return () => clearInterval(updateInterval);
 
       } catch (error) {
         console.error('Error during service worker registration:', error);
@@ -73,5 +110,10 @@ export function useServiceWorker() {
     };
   }, []);
 
-  return { status, errorMessage };
+  return { 
+    status, 
+    errorMessage, 
+    updateCache, 
+    clearOldCaches 
+  };
 }
