@@ -4,6 +4,38 @@ const CACHE_NAME = 'github-copilot-agent-assisted-next-app-v6';
 const APP_SHELL_CACHE_NAME = 'app-shell-v6';
 const OFFLINE_URL = '/index.html';
 
+// Offline page template for better code organization
+const OFFLINE_PAGE_TEMPLATE = `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Offline - Mr. Timely</title>
+              <style>
+                body { 
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                  text-align: center; padding: 2rem; margin: 0;
+                  background: #f8f9fa; color: #212529;
+                }
+                .offline-container { max-width: 600px; margin: 0 auto; }
+                .btn { 
+                  background: #007bff; color: white; border: none; 
+                  padding: 0.75rem 1.5rem; border-radius: 0.375rem;
+                  cursor: pointer; margin: 0.5rem;
+                }
+                .btn:hover { background: #0056b3; }
+              </style>
+            </head>
+            <body>
+              <div class="offline-container">
+                <h1>You are offline</h1>
+                <p>Mr. Timely is currently unavailable. Please check your internet connection and try again.</p>
+                <button class="btn" onclick="window.location.reload()">Try Again</button>
+                <button class="btn" onclick="window.location.href='/'">Go Home</button>
+              </div>
+            </body>
+            </html>`;
+
 // Assets to cache immediately on install
 const PRECACHE_ASSETS = [
   '/',
@@ -194,36 +226,7 @@ self.addEventListener('fetch', (event) => {
           
           // If everything fails, return a comprehensive offline page
           return new Response(
-            `<!DOCTYPE html>
-            <html lang="en">
-            <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Offline - Mr. Timely</title>
-              <style>
-                body { 
-                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                  text-align: center; padding: 2rem; margin: 0;
-                  background: #f8f9fa; color: #212529;
-                }
-                .offline-container { max-width: 600px; margin: 0 auto; }
-                .btn { 
-                  background: #007bff; color: white; border: none; 
-                  padding: 0.75rem 1.5rem; border-radius: 0.375rem;
-                  cursor: pointer; margin: 0.5rem;
-                }
-                .btn:hover { background: #0056b3; }
-              </style>
-            </head>
-            <body>
-              <div class="offline-container">
-                <h1>You are offline</h1>
-                <p>Mr. Timely is currently unavailable. Please check your internet connection and try again.</p>
-                <button class="btn" onclick="window.location.reload()">Try Again</button>
-                <button class="btn" onclick="window.location.href='/'">Go Home</button>
-              </div>
-            </body>
-            </html>`,
+            OFFLINE_PAGE_TEMPLATE,
             {
               status: 200,
               headers: { 'Content-Type': 'text/html; charset=utf-8' }
@@ -340,8 +343,8 @@ self.addEventListener('fetch', (event) => {
 // Message handling for service worker commands
 self.addEventListener('message', (event) => {
   // Allow messages from same origin for security
-  if (event.origin && event.origin !== location.origin) {
-    console.warn('[ServiceWorker] Ignored message from untrusted origin:', event.origin);
+  if (!event.origin || event.origin !== location.origin) {
+    console.warn('[ServiceWorker] Ignored message from untrusted or undefined origin:', event.origin);
     return;
   }
 
@@ -380,10 +383,17 @@ async function cacheUrls(urls) {
     
     for (const url of urls) {
       try {
-        const response = await fetch(url);
+        // Validate URL is from same origin to prevent client-side request forgery
+        const urlObj = new URL(url, location.origin);
+        if (urlObj.origin !== location.origin) {
+          console.warn('[ServiceWorker] Ignored cross-origin URL:', url);
+          continue;
+        }
+        
+        const response = await fetch(urlObj.href);
         if (response.ok) {
-          await cache.put(url, response);
-          console.log('[ServiceWorker] Cached dynamic URL:', url);
+          await cache.put(urlObj.href, response);
+          console.log('[ServiceWorker] Cached dynamic URL:', urlObj.href);
         }
       } catch (error) {
         console.warn('[ServiceWorker] Failed to cache URL:', url, error.message);
