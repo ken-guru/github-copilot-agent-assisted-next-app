@@ -58,20 +58,29 @@ createClockIcon(192, path.join(iconsDir, 'icon-192x192.svg'));
 createClockIcon(512, path.join(iconsDir, 'icon-512x512.svg'));
 createClockIcon(180, path.join(iconsDir, 'apple-touch-icon.svg'));
 
-// For demonstration, copy SVG as PNG (in production you'd convert properly)
-// The SVG versions will work fine for web app icons
-fs.copyFileSync(
-  path.join(iconsDir, 'icon-192x192.svg'),
-  path.join(iconsDir, 'icon-192x192.png')
-);
-fs.copyFileSync(
-  path.join(iconsDir, 'icon-512x512.svg'),
-  path.join(iconsDir, 'icon-512x512.png')
-);
-fs.copyFileSync(
-  path.join(iconsDir, 'apple-touch-icon.svg'),
-  path.join(iconsDir, 'apple-touch-icon.png')
-);
+// Instead of copying SVG files as PNG, we need to create direct SVG references in the manifest
+// Modern browsers support SVG icons in manifests
+// Let's update the manifest.json to use SVG files directly
+const manifestPath = path.join(process.cwd(), 'public', 'manifest.json');
+const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+
+manifest.icons = [
+  {
+    "src": "/icons/icon-192x192.svg",
+    "sizes": "192x192",
+    "type": "image/svg+xml",
+    "purpose": "any maskable"
+  },
+  {
+    "src": "/icons/icon-512x512.svg",
+    "sizes": "512x512",
+    "type": "image/svg+xml",
+    "purpose": "any maskable"
+  }
+];
+
+fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+console.log('Updated manifest.json to use SVG icons');
 
 // Create favicon.ico equivalent as SVG
 const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
