@@ -4,12 +4,13 @@ import { useTheme } from '@/contexts/theme';
 import ThemeToggle from '@/components/ThemeToggle';
 
 /**
- * Simplified navigation bar for Timer and Activities
+ * Enhanced simplified navigation bar 
  * - Bootstrap styling with theme awareness
  * - No collapsible dropdown - always shows all items inline
- * - Mobile-friendly with responsive flexbox layout
+ * - Mobile-friendly with icon-only display on small screens
+ * - Reordered items: Theme Toggle, Timer, Activities
  * - Automatic light/dark theme switching
- * Issue #245: Removed dropdown complexity for simple navigation needs
+ * Issue #245: Removed dropdown complexity + mobile UX enhancements
  */
 const Navigation: React.FC = () => {
   // Get theme from context - this ensures component re-renders when theme changes
@@ -25,30 +26,37 @@ const Navigation: React.FC = () => {
     <nav className={navClasses} aria-label="Main navigation">
       <div className="container-fluid d-flex justify-content-between align-items-center flex-wrap">
         <Link className="navbar-brand" href="/">
-          <i className="bi bi-clock me-2" aria-hidden="true"></i>
-          Mr. Timely
+          <span data-testid="navbar-brand">
+            <i className="bi bi-clock me-2" aria-hidden="true"></i>
+            <span className="brand-text d-none d-sm-inline">Mr. Timely</span>
+          </span>
         </Link>
         
-        {/* Simplified always-visible navigation - no collapse/dropdown */}
-        <ul className="navbar-nav d-flex flex-row align-items-center">
-          <li className="nav-item me-3">
+        {/* Enhanced always-visible navigation - no collapse/dropdown, reordered items */}
+        <ul className="navbar-nav d-flex flex-row align-items-center" data-testid="nav-items-container">
+          {/* Theme Toggle - First item */}
+          <li className="nav-item me-3 theme-toggle-item">
+            <ThemeToggle size="sm" variant="navbar" />
+          </li>
+          
+          {/* Timer - Second item */}
+          <li className="nav-item me-3 timer-item" data-testid="timer-nav-item">
             <Link className="nav-link" href="/">
               <span aria-label="Go to Timer">
                 <i className="bi bi-stopwatch me-1" aria-hidden="true"></i>
-                Timer
+                <span className="nav-text d-none d-sm-inline">Timer</span>
               </span>
             </Link>
           </li>
-          <li className="nav-item me-3">
+          
+          {/* Activities - Third item */}
+          <li className="nav-item activities-item" data-testid="activities-nav-item">
             <Link className="nav-link" href="/activities">
               <span aria-label="Go to Activities Management">
                 <i className="bi bi-list-check me-1" aria-hidden="true"></i>
-                Activities
+                <span className="nav-text d-none d-sm-inline">Activities</span>
               </span>
             </Link>
-          </li>
-          <li className="nav-item d-flex align-items-center">
-            <ThemeToggle size="sm" variant="navbar" />
           </li>
         </ul>
       </div>
