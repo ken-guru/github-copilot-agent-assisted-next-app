@@ -71,11 +71,11 @@ describe('ActivityManager Component', () => {
     );
     
     // Type in a new activity name
-    const input = screen.getByPlaceholderText('New activity name');
+    const input = screen.getByLabelText('Name');
     fireEvent.change(input, { target: { value: 'New Test Activity' } });
     
-    // Click the Add button
-    fireEvent.click(screen.getByText('Add'));
+    // Click the Add Activity button
+    fireEvent.click(screen.getByText('Add Activity'));
     
     // New activity should appear in the list
     expect(await screen.findByText('New Test Activity')).toBeInTheDocument();
@@ -99,11 +99,11 @@ describe('ActivityManager Component', () => {
     );
     
     // Type in a new activity name
-    const input = screen.getByPlaceholderText('New activity name');
+    const input = screen.getByLabelText('Name');
     fireEvent.change(input, { target: { value: 'New Test Activity' } });
     
-    // Click the Add button
-    fireEvent.click(screen.getByText('Add'));
+    // Click the Add Activity button
+    fireEvent.click(screen.getByText('Add Activity'));
 
     // Should call onActivitySelect with the new activity and justAdd=true
     expect(mockOnActivitySelect).toHaveBeenCalledWith(
@@ -245,12 +245,12 @@ describe('ActivityManager Component', () => {
       />
     );
     
-    // Add button should be disabled
-    const addButton = screen.getByText('Add');
+    // Add Activity button should be disabled
+    const addButton = screen.getByText('Add Activity');
     expect(addButton).toBeDisabled();
     
-    // Input should have different placeholder
-    const input = screen.getByPlaceholderText('Time is up!');
+    // Name input should be disabled
+    const input = screen.getByLabelText('Name');
     expect(input).toBeDisabled();
   });
   

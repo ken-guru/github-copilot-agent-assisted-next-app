@@ -3,7 +3,7 @@ import { Card, Row, Col, Alert, Button } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
-import ActivityForm from './ActivityForm';
+import ActivityForm from './feature/ActivityForm';
 import ProgressBar from './ProgressBar';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
@@ -87,28 +87,16 @@ export default function ActivityManager({
     };
   }, []);
 
-  const getNextColorIndex = (): number => {
-    let index = 0;
-    while (assignedColorIndices.includes(index)) {
-      index++;
-    }
-    return index;
-  };
-
-  const handleAddActivity = (activityName: string) => {
-    const nextColorIndex = getNextColorIndex();
-    const newActivity: Activity = {
-      id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
-      name: activityName,
-      colorIndex: nextColorIndex,
-      createdAt: new Date().toISOString(),
-      isActive: true,
-      colors: getNextAvailableColorSet(nextColorIndex)
+  const handleAddActivity = (newActivity: Activity) => {
+    // Activity already has smart color selection from the form
+    const activityWithColors: Activity = {
+      ...newActivity,
+      colors: getNextAvailableColorSet(newActivity.colorIndex)
     };
-    setAssignedColorIndices([...assignedColorIndices, nextColorIndex]);
-    setActivities([...activities, newActivity]);
-    persistActivity(newActivity);
-    onActivitySelect(newActivity, true);
+    setAssignedColorIndices([...assignedColorIndices, newActivity.colorIndex]);
+    setActivities([...activities, activityWithColors]);
+    persistActivity(newActivity); // Persist without the colors property which is UI-only
+    onActivitySelect(activityWithColors, true);
   };
 
   const handleActivitySelect = (activity: Activity) => {
@@ -183,6 +171,7 @@ export default function ActivityManager({
               <ActivityForm
                 onAddActivity={handleAddActivity}
                 isDisabled={isTimeUp}
+                existingActivities={activities}
               />
             </div>
             

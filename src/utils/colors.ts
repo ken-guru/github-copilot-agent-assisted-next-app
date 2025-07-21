@@ -467,6 +467,43 @@ export function validateContrast(
 }
 
 /**
+ * Get the smartest color index for a new activity based on existing activities.
+ * Returns the first unused color, or if all colors are used, the color used least frequently.
+ * This ensures equal distribution of colors across activities.
+ * 
+ * @param existingActivities - Array of existing activities to analyze
+ * @returns The optimal color index (0-11) for the new activity
+ */
+export function getSmartColorIndex(existingActivities: { colorIndex: number }[]): number {
+  const totalColors = internalActivityColors.length; // Should be 12
+  
+  // Count usage of each color index
+  const colorUsageCount = new Array(totalColors).fill(0);
+  
+  // Count how many times each color is used
+  existingActivities.forEach(activity => {
+    const colorIndex = activity.colorIndex;
+    // Only count valid color indices
+    if (typeof colorIndex === 'number' && colorIndex >= 0 && colorIndex < totalColors) {
+      colorUsageCount[colorIndex]++;
+    }
+  });
+  
+  // Find the first unused color (count = 0)
+  const unusedColorIndex = colorUsageCount.findIndex(count => count === 0);
+  if (unusedColorIndex !== -1) {
+    return unusedColorIndex;
+  }
+  
+  // All colors are used, find the one used least frequently
+  const minUsageCount = Math.min(...colorUsageCount);
+  const leastUsedColorIndex = colorUsageCount.findIndex(count => count === minUsageCount);
+  
+  // Should always find one, but fallback to 0 just in case
+  return leastUsedColorIndex !== -1 ? leastUsedColorIndex : 0;
+}
+
+/**
  * Validates that all required CSS theme variables are defined and non-empty.
  * Returns a boolean indicating whether all CSS variables are properly set.
  * 

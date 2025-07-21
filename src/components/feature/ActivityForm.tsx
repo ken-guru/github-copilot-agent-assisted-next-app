@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
-import { Form, Dropdown } from 'react-bootstrap';
+import { Form, Dropdown, Button } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
 import { getColorName } from '../../utils/colorNames';
-import { getActivityColorsForTheme } from '../../utils/colors';
+import { getActivityColorsForTheme, getSmartColorIndex } from '../../utils/colors';
 import { useThemeReactive } from '../../hooks/useThemeReactive';
 
 interface ActivityFormProps {
@@ -12,6 +12,7 @@ interface ActivityFormProps {
   onAddActivity?: (activity: Activity) => void;
   error?: string | null;
   isDisabled?: boolean;
+  existingActivities?: Activity[]; // New prop for smart color selection
 }
 
 interface ActivityFormRef {
@@ -19,10 +20,12 @@ interface ActivityFormRef {
 }
 
 const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
-  ({ activity, onSubmit, onAddActivity, error }, ref) => {
+  ({ activity, onSubmit, onAddActivity, error, existingActivities = [], isDisabled = false }, ref) => {
   const [name, setName] = useState(activity?.name || '');
   const [description, setDescription] = useState(activity?.description || '');
-  const [colorIndex, setColorIndex] = useState(activity?.colorIndex || 0);
+  // Use smart color selection for default if no activity is provided
+  const defaultColorIndex = activity?.colorIndex ?? getSmartColorIndex(existingActivities);
+  const [colorIndex, setColorIndex] = useState(defaultColorIndex);
   const [validated, setValidated] = useState(false);
   const nameInputRef = React.useRef<HTMLInputElement>(null);
   
@@ -77,6 +80,12 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
       onSubmit(activityData);
     } else if (onAddActivity) {
       onAddActivity(activityData);
+      // Clear form after successful add
+      setName('');
+      setDescription('');
+      // Reset to smart color selection for next activity
+      setColorIndex(getSmartColorIndex([...existingActivities, activityData]));
+      setValidated(false);
     }
   };
 
@@ -93,6 +102,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
           autoFocus
           ref={nameInputRef}
           isInvalid={!!error}
+          disabled={isDisabled}
         />
         <Form.Control.Feedback type="invalid" data-testid="activity-form-error">
           {error ? error : ''}
@@ -108,6 +118,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
           type="text"
           value={description}
           onChange={e => setDescription(e.target.value)}
+          disabled={isDisabled}
         />
       </Form.Group>
       <Form.Group controlId="activityColor" className="mb-3">
@@ -118,6 +129,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
             id="color-dropdown"
             className="w-100 d-flex align-items-center justify-content-between"
             style={{ textAlign: 'left' }}
+            disabled={isDisabled}
           >
             <div className="d-flex align-items-center">
               <div 
@@ -168,6 +180,16 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
           aria-label="Selected color index"
         />
       </Form.Group>
+      
+      {/* Submit button */}
+      <Button 
+        type="submit" 
+        variant="primary" 
+        disabled={isDisabled}
+        className="w-100"
+      >
+        Add Activity
+      </Button>
     </Form>
   );
 });

@@ -272,9 +272,9 @@ describe('ActivityManager Bootstrap Integration', () => {
       });
 
       // Add a new activity
-      const input = screen.getByPlaceholderText('New activity name');
+      const input = screen.getByLabelText('Name');
       fireEvent.change(input, { target: { value: 'Test Activity' } });
-      fireEvent.click(screen.getByText('Add'));
+      fireEvent.click(screen.getByText('Add Activity'));
 
       await waitFor(() => {
         expect(screen.getByText('Test Activity')).toBeInTheDocument();
