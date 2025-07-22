@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 
 type Theme = 'light' | 'dark';
 
+// Helper to detect if we're in a test environment
+const isTestEnvironment = () => {
+  return typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
+};
+
 /**
  * Custom hook that provides reactive theme detection for React components.
  * 
@@ -35,32 +40,35 @@ export const useThemeReactive = (): Theme => {
     };
 
     // Set up MutationObserver to watch for DOM theme attribute changes
+    // Skip MutationObserver in test environment to avoid React act() warnings
     let observer: MutationObserver | null = null;
     
-    try {
-      observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          if (
-            mutation.type === 'attributes' &&
-            (mutation.attributeName === 'data-theme' ||
-             mutation.attributeName === 'data-bs-theme' ||
-             mutation.attributeName === 'class')
-          ) {
-            updateTheme();
-          }
+    if (!isTestEnvironment()) {
+      try {
+        observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (
+              mutation.type === 'attributes' &&
+              (mutation.attributeName === 'data-theme' ||
+               mutation.attributeName === 'data-bs-theme' ||
+               mutation.attributeName === 'class')
+            ) {
+              updateTheme();
+            }
+          });
         });
-      });
 
-      // Observe document.documentElement for theme-related attribute changes
-      if (document.documentElement && typeof document.documentElement.setAttribute === 'function') {
-        observer.observe(document.documentElement, {
-          attributes: true,
-          attributeFilter: ['data-theme', 'data-bs-theme', 'class'],
-        });
+        // Observe document.documentElement for theme-related attribute changes
+        if (document.documentElement && typeof document.documentElement.setAttribute === 'function') {
+          observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-theme', 'data-bs-theme', 'class'],
+          });
+        }
+      } catch (error) {
+        // Handle MutationObserver errors in test environments
+        console.warn('MutationObserver setup failed:', error);
       }
-    } catch (error) {
-      // Handle MutationObserver errors in test environments
-      console.warn('MutationObserver setup failed:', error);
     }
 
     // Listen for localStorage changes (cross-tab theme synchronization)

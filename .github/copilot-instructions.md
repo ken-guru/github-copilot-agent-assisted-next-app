@@ -3,6 +3,39 @@
 ## PREAMBLE
 This document contains guidelines for GitHub Copilot to follow when assisting with this project. The instructions are organized by category with clear priorities to ensure consistent, quality assistance. Follow ALL instructions carefully.
 
+## CRITICAL WORKFLOW RULES [PRIORITY: ABSOLUTE HIGHEST]
+### Issue Resolution Continuity Protocol
+**NEVER identify an issue and then forget to resolve it after committing.**
+
+#### The Problem Pattern to AVOID:
+1. Identify a specific issue (e.g., "simplified form logic needs debugging")
+2. Commit current progress 
+3. **FORGET** to continue working on the identified issue
+4. Move on to other tasks, leaving the issue unresolved
+
+#### MANDATORY Resolution Protocol:
+When you identify ANY issue or debugging need:
+
+1. **EXPLICITLY STATE** the next action required
+2. **IMMEDIATELY AFTER COMMITTING**: Continue with the identified issue resolution
+3. **NEVER END** a response by just committing without addressing identified issues
+4. **USE CLEAR TRANSITION LANGUAGE**: 
+   - "Now that changes are committed, let me debug the simplified form logic..."
+   - "With progress saved, I'll investigate why the description field still shows..."
+   - "Commit complete. Continuing with the identified issue..."
+
+#### Session Memory Management:
+- **DOCUMENT UNRESOLVED ISSUES** in commit messages for context preservation
+- **START NEXT ACTIONS** with explicit reference to previously identified issues
+- **MAINTAIN ISSUE TRACKING** throughout the debugging session
+- **CREATE MEMORY LOG ENTRIES** for complex debugging sessions with identified issues
+
+#### Enforcement Guidelines:
+- ⚠️ **CRITICAL**: This rule supersedes all other commit guidelines
+- 🔄 **CONTINUOUS FLOW**: Identification → Commit → **IMMEDIATE CONTINUATION** → Resolution
+- 📝 **EXPLICIT COMMUNICATION**: Always state what you will work on next after committing
+- ✅ **COMPLETION VERIFICATION**: Only end work when issues are fully resolved, not just identified
+
 ## CORE PRINCIPLES [PRIORITY: HIGHEST]
 - Always write tests before implementing functionality
 - Maintain thorough documentation with each code change
@@ -185,7 +218,18 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 5. Add as LAST item
 6. NEVER overwrite existing entries
 7. Use next available sequential ID number
-8. **RECOMMENDED**: Migrate to MCP Memory Tool using `scripts/migrate-memory-logs-to-mcp.js`
+8. **REQUIRED**: Always add memory entries to MCP Memory Tool for AI agent accessibility
+   - Use `mcp_memory_create_entities` and `mcp_memory_create_relations` tools
+   - Create entities for debugging sessions, patterns, components, and memory logs
+   - Establish relationships between entities to build knowledge graph
+   - This enables semantic search and persistent knowledge across sessions
+
+### MCP Memory Tool Integration
+- **MANDATORY**: All debugging sessions, fixes, and significant insights MUST be added to MCP
+- **DUAL STORAGE**: Maintain both markdown files (authoritative) and MCP entities (searchable)
+- **AI ACCESSIBILITY**: MCP enables AI agents to find relevant context from previous work
+- **RELATIONSHIP MAPPING**: Connect related debugging sessions, patterns, and components
+- **SEMANTIC SEARCH**: Use MCP search to find relevant historical context before starting new work
 
 ### Entry Format Requirements
 - Follow established template structure
@@ -431,6 +475,38 @@ This procedure ensures:
 - Automated CI/CD validation
 - Proper PR documentation
 - Early detection of integration issues through local Cypress testing
+
+### Issue Resolution Continuity Protocol
+**NEVER identify an issue and then forget to resolve it after committing.**
+
+#### The Problem Pattern to AVOID:
+1. Identify a specific issue (e.g., "simplified form logic needs debugging")
+2. Commit current progress 
+3. **FORGET** to continue working on the identified issue
+4. Move on to other tasks, leaving the issue unresolved
+
+#### MANDATORY Resolution Protocol:
+When you identify ANY issue or debugging need:
+
+1. **EXPLICITLY STATE** the next action required
+2. **IMMEDIATELY AFTER COMMITTING**: Continue with the identified issue resolution
+3. **NEVER END** a response by just committing without addressing identified issues
+4. **USE CLEAR TRANSITION LANGUAGE**: 
+   - "Now that changes are committed, let me debug the simplified form logic..."
+   - "With progress saved, I'll investigate why the description field still shows..."
+   - "Commit complete. Continuing with the identified issue..."
+
+#### Session Memory Management:
+- **DOCUMENT UNRESOLVED ISSUES** in commit messages for context preservation
+- **START NEXT ACTIONS** with explicit reference to previously identified issues
+- **MAINTAIN ISSUE TRACKING** throughout the debugging session
+- **CREATE MEMORY LOG ENTRIES** for complex debugging sessions with identified issues
+
+#### Enforcement Guidelines:
+- ⚠️ **CRITICAL**: This rule supersedes all other commit guidelines
+- 🔄 **CONTINUOUS FLOW**: Identification → Commit → **IMMEDIATE CONTINUATION** → Resolution
+- 📝 **EXPLICIT COMMUNICATION**: Always state what you will work on next after committing
+- ✅ **COMPLETION VERIFICATION**: Only end work when issues are fully resolved, not just identified
 
 ### Frequent Commit Strategy
 - COMMIT early and often to maintain development momentum

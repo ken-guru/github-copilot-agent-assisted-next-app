@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useThemeReactive } from '@/hooks/useThemeReactive';
 import ThemeToggle from '@/components/ThemeToggle';
 
 /**
@@ -14,9 +14,8 @@ import ThemeToggle from '@/components/ThemeToggle';
  * Issue #245: Removed dropdown complexity + active state UX improvements
  */
 const Navigation: React.FC = () => {
-  // Get theme from context and current pathname for active state
-  const themeContext = useTheme();
-  const theme = themeContext?.theme || 'light'; 
+  // Get theme reactively to ensure component responds to theme changes (fixes issue #252)
+  const theme = useThemeReactive(); 
   const pathname = usePathname();
   
   // Determine active states based on current path

@@ -13,6 +13,7 @@ interface ActivityFormProps {
   error?: string | null;
   isDisabled?: boolean;
   existingActivities?: Activity[]; // New prop for smart color selection
+  isSimplified?: boolean; // New prop to determine if form should be simplified (timeline context vs modal context)
 }
 
 interface ActivityFormRef {
@@ -20,7 +21,7 @@ interface ActivityFormRef {
 }
 
 const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
-  ({ activity, onSubmit, onAddActivity, error, existingActivities = [], isDisabled = false }, ref) => {
+  ({ activity, onSubmit, onAddActivity, error, existingActivities = [], isDisabled = false, isSimplified = false }, ref) => {
   const [name, setName] = useState(activity?.name || '');
   const [description, setDescription] = useState(activity?.description || '');
   // Use smart color selection for default if no activity is provided
@@ -58,20 +59,33 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setValidated(true);
-    if (!name || !name.trim()) {
-      if (nameInputRef.current) {
+    if (!name || !name.trim() || isDisabled) {
+      if (nameInputRef.current && !isDisabled) {
         nameInputRef.current.focus();
       }
       onSubmit?.(null); // Signal error to parent
       return;
     }
     
+    // Generate ID and timestamp safely to prevent hydration issues
+    // Only generate ID when actually submitting, not during render
+    const generateId = () => {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+      // Fallback that's deterministic during SSR
+      return `activity-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    };
+    
+    const activityId = activity?.id || generateId();
+    const timestamp = activity?.createdAt || new Date().toISOString();
+    
     const activityData = {
-      id: activity?.id || crypto.randomUUID(),
-      name,
-      description,
+      id: activityId,
+      name: name.trim(), // Trim the name
+      description: isSimplified ? '' : description, // Auto-empty description in simplified mode
       colorIndex: Number(colorIndex),
-      createdAt: activity?.createdAt || new Date().toISOString(),
+      createdAt: timestamp,
       isActive: true,
     };
     
@@ -103,6 +117,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
           ref={nameInputRef}
           isInvalid={!!error}
           disabled={isDisabled}
+          placeholder={isSimplified ? "Quick add activity name" : undefined}
         />
         <Form.Control.Feedback type="invalid" data-testid="activity-form-error">
           {error ? error : ''}
@@ -112,74 +127,81 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
           <div data-testid="activity-form-error-message" style={{ color: 'red', marginTop: 4 }}>{error}</div>
         )}
       </Form.Group>
-      <Form.Group controlId="activityDescription">
-        <Form.Label>Description</Form.Label>
-        <Form.Control
-          type="text"
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-          disabled={isDisabled}
-        />
-      </Form.Group>
-      <Form.Group controlId="activityColor" className="mb-3">
-        <Form.Label>Color</Form.Label>
-        <Dropdown>
-          <Dropdown.Toggle 
-            variant="outline-secondary" 
-            id="color-dropdown"
-            className="w-100 d-flex align-items-center justify-content-between"
-            style={{ textAlign: 'left' }}
-            disabled={isDisabled}
-          >
-            <div className="d-flex align-items-center">
-              <div 
-                className="me-2 rounded border"
-                style={{
-                  width: '20px',
-                  height: '20px',
-                  backgroundColor: activityColors[colorIndex]?.background,
-                  borderColor: activityColors[colorIndex]?.border,
-                  borderWidth: '2px'
-                }}
-                aria-hidden="true"
-              ></div>
-              {getColorName(colorIndex)}
-            </div>
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu className="w-100">
-            {activityColors.map((colorSet, index) => (
-              <Dropdown.Item 
-                key={index} 
-                onClick={() => setColorIndex(index)}
-                active={index === colorIndex}
-                className="d-flex align-items-center"
+      
+      {/* Only show description and color fields in full mode (not simplified) */}
+      {!isSimplified && (
+        <div>
+          <Form.Group controlId="activityDescription">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              type="text"
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              disabled={isDisabled}
+            />
+          </Form.Group>
+          <Form.Group controlId="activityColor" className="mb-3">
+            <Form.Label>Color</Form.Label>
+            <Dropdown>
+              <Dropdown.Toggle 
+                variant="outline-secondary" 
+                id="activityColor"
+                className="w-100 d-flex align-items-center justify-content-between"
+                style={{ textAlign: 'left' }}
+                disabled={isDisabled}
+                aria-describedby="activityColor"
               >
-                <div 
-                  className="me-2 rounded border"
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: colorSet.background,
-                    borderColor: colorSet.border,
-                    borderWidth: '2px'
-                  }}
-                  aria-hidden="true"
-                ></div>
-                {getColorName(index)}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-        {/* Hidden input for form validation */}
-        <input 
-          type="hidden" 
-          value={colorIndex} 
-          required 
-          aria-required="true"
-          aria-label="Selected color index"
-        />
-      </Form.Group>
+                <div className="d-flex align-items-center">
+                  <div 
+                    className="me-2 rounded border"
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      backgroundColor: activityColors[colorIndex]?.background,
+                      borderColor: activityColors[colorIndex]?.border,
+                      borderWidth: '2px'
+                    }}
+                    aria-hidden="true"
+                  ></div>
+                  {getColorName(colorIndex)}
+                </div>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu className="w-100">
+                {activityColors.map((colorSet, index) => (
+                  <Dropdown.Item 
+                    key={index} 
+                    onClick={() => setColorIndex(index)}
+                    active={index === colorIndex}
+                    className="d-flex align-items-center"
+                  >
+                    <div 
+                      className="me-2 rounded border"
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        backgroundColor: colorSet.background,
+                        borderColor: colorSet.border,
+                        borderWidth: '2px'
+                      }}
+                      aria-hidden="true"
+                    ></div>
+                    {getColorName(index)}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+            {/* Hidden input for form validation */}
+            <input 
+              type="hidden" 
+              value={colorIndex} 
+              required 
+              aria-required="true"
+              aria-label="Selected color index"
+            />
+          </Form.Group>
+        </div>
+      )}
       
       {/* Submit button */}
       <Button 

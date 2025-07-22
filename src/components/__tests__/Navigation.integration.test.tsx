@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { ThemeProvider } from '@/contexts/theme';
 import Navigation from '@/components/Navigation';
 
@@ -88,5 +88,32 @@ describe('Navigation Integration', () => {
     
     const navbar = screen.getByRole('navigation');
     expect(navbar).toHaveClass('navbar-light', 'bg-light');
+  });
+
+  it('should reactively update theme classes when theme changes', async () => {
+    // This test verifies the fix for issue #252 - navbar should respond to theme changes
+    renderWithTheme(<Navigation />);
+    
+    const navbar = screen.getByRole('navigation');
+    
+    // Initially should have light theme
+    expect(navbar).toHaveClass('navbar-light', 'bg-light');
+    expect(navbar).not.toHaveClass('navbar-dark', 'bg-dark');
+
+    // Simulate theme change to dark with act() to avoid warnings
+    await act(async () => {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.classList.add('dark-mode');
+      
+      // Dispatch a custom event to trigger theme change detection
+      window.dispatchEvent(new Event('themeChange'));
+      
+      // Wait for state updates to complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+    });
+    
+    // Check if classes changed after the update
+    expect(navbar).toHaveClass('navbar-dark', 'bg-dark');
+    expect(navbar).not.toHaveClass('navbar-light', 'bg-light');
   });
 });

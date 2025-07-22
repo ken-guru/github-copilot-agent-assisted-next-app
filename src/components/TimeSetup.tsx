@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Form, Button, Row, Col, ButtonGroup } from 'react-bootstrap';
 
 interface TimeSetupProps {
@@ -11,9 +11,18 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   const [minutes, setMinutes] = useState<number>(1); // Default to 1 minute
   const [seconds, setSeconds] = useState<number>(0);
   const [deadlineTime, setDeadlineTime] = useState<string>('');
+  const [isClient, setIsClient] = useState(false);
+
+  // Prevent hydration mismatch by only running time calculations on the client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Only calculate time on the client to prevent hydration mismatch
+    if (!isClient) return;
     
     let durationInSeconds = 0;
     
@@ -78,7 +87,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                   type="number"
                   id="hours"
                   min="0"
-                  value={hours}
+                  value={isClient ? (hours || 0).toString() : "0"}
                   onChange={(e) => setHours(parseInt(e.target.value) || 0)}
                 />
               </Col>
@@ -89,7 +98,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                   id="minutes"
                   min="0"
                   max="59"
-                  value={minutes}
+                  value={isClient ? (minutes || 1).toString() : "1"}
                   onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
                 />
               </Col>
@@ -100,7 +109,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                   id="seconds"
                   min="0"
                   max="59"
-                  value={seconds}
+                  value={isClient ? (seconds || 0).toString() : "0"}
                   onChange={(e) => setSeconds(parseInt(e.target.value) || 0)}
                 />
               </Col>
@@ -111,8 +120,8 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
               <Form.Control
                 type="time"
                 id="deadlineTime"
-                value={deadlineTime}
-                onChange={(e) => setDeadlineTime(e.target.value)}
+                value={isClient ? (deadlineTime || '') : ''}
+                onChange={(e) => setDeadlineTime(e.target.value || '')}
               />
             </div>
           )}
