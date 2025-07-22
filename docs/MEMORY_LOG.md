@@ -247,3 +247,4 @@ These logs serve as historical context to understand why certain decisions were 
 246. [MRTMLY-247: Critical Offline Behavior Fix - Issue #247](./logged_memories/MRTMLY-247-critical-offline-behavior-fix.md) - #critical #debugging #service-worker #offline #pwa
 247. [MRTMLY-248: GitHub Copilot PR Review Comment Resolution](./logged_memories/MRTMLY-248-github-copilot-pr-review-resolution.md) - #pr-review #github-copilot #code-quality #offline-behavior #architecture #testing
 248. [MRTMLY-220: Issues #252 & #253 - Navbar Theme Responsiveness & Simplified Activity Form](./logged_memories/MRTMLY-220-navbar-theme-and-simplified-form-fixes.md) - #bug-fix #ux-enhancement #theme-responsiveness #form-simplification #tdd
+249. [MRTMLY-221: Project Cleanup - Testing Warnings and Code Quality Fixes](./logged_memories/MRTMLY-221-project-cleanup-testing-warnings-fixes.md) - #testing #react-warnings #code-quality #cleanup #act-warnings

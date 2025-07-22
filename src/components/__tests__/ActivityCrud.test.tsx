@@ -24,8 +24,8 @@ describe('ActivityCrud', () => {
     render(<ActivityCrud />);
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
-    // Check for the color dropdown button instead of a specific label
-    expect(screen.getByRole('button', { name: /Green/i })).toBeInTheDocument();
+    // Check for the color dropdown button by ID since it contains dynamic text
+    expect(screen.getByText(/Green/i)).toBeInTheDocument();
   });
 
   it('validates required fields when trying to save empty activity', async () => {

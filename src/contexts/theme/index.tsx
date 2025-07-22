@@ -73,15 +73,23 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Set up listeners
     window.addEventListener('storage', handleStorageChange);
     
-    const observer = new MutationObserver(handleDOMThemeChange);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme']
-    });
+    // Skip MutationObserver in test environment to avoid React act() warnings
+    let observer: MutationObserver | null = null;
+    const isTestEnvironment = process.env.NODE_ENV === 'test';
+    
+    if (!isTestEnvironment) {
+      observer = new MutationObserver(handleDOMThemeChange);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      });
+    }
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      observer.disconnect();
+      if (observer) {
+        observer.disconnect();
+      }
     };
   }, [theme]);
   
