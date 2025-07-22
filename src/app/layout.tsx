@@ -6,6 +6,7 @@ import "../../styles/globals.css"; // Core theme variables and global utilities
 import "./globals.css"; // App-specific styles that use the theme variables
 import { Metadata, Viewport } from "next";
 import { LayoutClient } from "../components/LayoutClient";
+import ClientProviders from "./ClientProviders";
 import Script from "next/script";
 
 // Font configuration
@@ -68,7 +69,6 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="manifest" href="/manifest.json" />
-        
         {/* Theme initialization script - runs before React hydration */}
         <script
           dangerouslySetInnerHTML={{
@@ -78,17 +78,13 @@ export default function RootLayout({
                 if (typeof window === 'undefined' || typeof document === 'undefined') {
                   return;
                 }
-
                 try {
                   const root = document.documentElement;
-                  
                   // Get theme preference - check localStorage first, then system preference
                   const savedTheme = localStorage.getItem('theme');
                   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-                  
                   // Determine effective theme
                   let effectiveTheme = 'light'; // Default fallback
-                  
                   if (savedTheme === 'dark') {
                     effectiveTheme = 'dark';
                   } else if (savedTheme === 'light') {
@@ -97,7 +93,6 @@ export default function RootLayout({
                     // No saved preference, use system preference
                     effectiveTheme = 'dark';
                   }
-                  
                   // Apply theme immediately to avoid hydration mismatch
                   if (effectiveTheme === 'dark') {
                     root.classList.add('dark-mode', 'dark');
@@ -134,9 +129,11 @@ export default function RootLayout({
         />
       </head>
       <body className={fontClasses}>
-        <LayoutClient>
-          {children}
-        </LayoutClient>
+        <ClientProviders>
+          <LayoutClient>
+            {children}
+          </LayoutClient>
+        </ClientProviders>
         {/* Service worker registration script - moved here from useServiceWorker hook */}
         <Script
           id="register-service-worker"
