@@ -37,29 +37,32 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
-  
+
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
   );
-  
+
+
+  // Toast logic moved to top-level hooks (must be after isOvertime is defined)
+
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors?: TimelineEntry['colors']) => {
     if (!colors) return undefined;
-    
+
     // If we already have theme-specific colors, use those directly
     if ('light' in colors && 'dark' in colors) {
       return currentTheme === 'dark' ? colors.dark : colors.light;
     }
-    
+
     // Otherwise, extract hue from current color and find closest theme-aware color
     // Type assertion needed for TypeScript since we've confirmed it's a ColorSet
     const colorSet = colors as ColorSet;
     const hue = extractHueFromHsl(colorSet.background);
-    
+
     // Find the closest matching color set in internalActivityColors
     const closestColorSet = findClosestColorSet(hue, colorSet);
-    
+
     // Return the appropriate theme version with null checks
     if (!closestColorSet) {
       return {
@@ -68,16 +71,16 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
         border: 'var(--border-color)'
       };
     }
-    
-    return currentTheme === 'dark' 
-      ? closestColorSet.dark 
+
+    return currentTheme === 'dark'
+      ? closestColorSet.dark
       : closestColorSet.light;
   };
-  
+
   // Helper to extract hue from HSL color
   const extractHueFromHsl = (hslColor: string | undefined): number => {
     if (!hslColor) return 0;
-    
+
     try {
       const hueMatch = hslColor.match(/hsl\(\s*(\d+)/);
       if (hueMatch && hueMatch[1]) {
@@ -89,7 +92,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       return 0;
     }
   };
-  
+
   // Find the closest color set by hue
   const findClosestColorSet = (hue: number, originalColors: ColorSet) => {
     // If we can't determine hue from the color, use a fallback
@@ -97,73 +100,73 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       // Default to blue if we can't determine the hue
       return internalActivityColors[1]; // Blue color set
     }
-    
+
     // Find the closest matching hue in our color sets
     let closestMatch = internalActivityColors[0];
     let smallestDiff = 360;
-    
+
     internalActivityColors.forEach(colorSet => {
       const lightColorHue = extractHueFromHsl(colorSet.light.background);
       const hueDiff = Math.abs(lightColorHue - hue);
-      
+
       // Handle hue circle wraparound (e.g., 350 is closer to 10 than 300)
       const wrappedHueDiff = Math.min(hueDiff, 360 - hueDiff);
-      
+
       if (wrappedHueDiff < smallestDiff) {
         smallestDiff = wrappedHueDiff;
         closestMatch = colorSet;
       }
     });
-    
+
     return closestMatch;
   };
-  
+
   // Effect to listen for theme changes
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
+
     // Function to handle theme changes
     const handleThemeChange = () => {
       setCurrentTheme(isDarkMode() ? 'dark' : 'light');
     };
-    
+
     // Initial check
     handleThemeChange();
-    
+
     // Set up MutationObserver to watch for class changes on document.documentElement
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (
-          mutation.type === 'attributes' && 
+          mutation.type === 'attributes' &&
           mutation.attributeName === 'class'
         ) {
           handleThemeChange();
         }
       });
     });
-    
+
     observer.observe(document.documentElement, { attributes: true });
-    
+
     // Also listen for system preference changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     mediaQuery.addEventListener('change', handleThemeChange);
-    
+
     // Clean up
     return () => {
       observer.disconnect();
       mediaQuery.removeEventListener('change', handleThemeChange);
     };
   }, []);
-  
+
   // Update current elapsed time when prop changes
   useEffect(() => {
     setCurrentElapsedTime(initialElapsedTime);
   }, [initialElapsedTime]);
-  
+
   // Single interval effect for all time-based updates
   useEffect(() => {
     let timeoutId: NodeJS.Timeout | null = null;
-    
+
     const updateTime = () => {
       if (hasEntries && entries.length > 0 && entries[0]) {
         const firstEntry = entries[0];
@@ -180,7 +183,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       updateTime(); // Initial update
       timeoutId = setInterval(updateTime, 1000);
     }
-    
+
     return () => {
       if (timeoutId) {
         clearInterval(timeoutId);
@@ -189,12 +192,25 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     };
   }, [timerActive, hasEntries, entries]);
 
+
   // Calculate time remaining display
   const timeLeft = totalDuration - currentElapsedTime;
   const isOvertime = timeLeft < 0;
   const timeDisplay = timerActive 
     ? `${isOvertime ? 'Overtime: ' : 'Time Left: '}${formatTimeHuman(Math.abs(timeLeft) * 1000)}`
     : `Timer ready: ${formatTimeHuman(totalDuration * 1000)}`;
+
+  // Toast logic (must be after isOvertime is defined)
+  const { showToast } = useToast();
+  const overtimeToastShown = useRef(false);
+  useEffect(() => {
+    if (isOvertime && !overtimeToastShown.current) {
+      showToast('warning', 'Overtime: You have exceeded your planned time limit.');
+      overtimeToastShown.current = true;
+    } else if (!isOvertime) {
+      overtimeToastShown.current = false;
+    }
+  }, [isOvertime, showToast]);
 
   // Calculate effective duration for timeline - dynamically adjust if in overtime
   const effectiveDuration = useMemo(() => {
@@ -306,20 +322,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       </Card.Header>
         
 
-        {/* Overtime notification as toast */}
-        {(() => {
-          const { showToast } = useToast();
-          const overtimeToastShown = useRef(false);
-          useEffect(() => {
-            if (isOvertime && !overtimeToastShown.current) {
-              showToast('warning', 'Overtime: You have exceeded your planned time limit.');
-              overtimeToastShown.current = true;
-            } else if (!isOvertime) {
-              overtimeToastShown.current = false;
-            }
-          }, [isOvertime, showToast]);
-          return null;
-        })()}
+  {/* Overtime notification as toast is now handled by top-level effect */}
         
         <Card.Body className="p-0 flex-grow-1 d-flex flex-column overflow-hidden">
           <div className={`${styles.timelineContainer} timeline-container position-relative`}>
