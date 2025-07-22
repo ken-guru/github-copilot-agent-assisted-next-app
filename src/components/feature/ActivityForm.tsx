@@ -130,7 +130,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
       
       {/* Only show description and color fields in full mode (not simplified) */}
       {!isSimplified && (
-        <>
+        <div>
           <Form.Group controlId="activityDescription">
             <Form.Label>Description</Form.Label>
             <Form.Control
@@ -200,7 +200,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
               aria-label="Selected color index"
             />
           </Form.Group>
-        </>
+        </div>
       )}
       
       {/* Submit button */}
