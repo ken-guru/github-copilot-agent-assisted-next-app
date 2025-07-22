@@ -1,4 +1,4 @@
-describe('Simplified Activity Form', () => {
+describe('Activity Form Context-Based Behavior', () => {
   beforeEach(() => {
     // Ignore hydration errors that don't affect functionality
     cy.on('uncaught:exception', (err, runnable) => {
@@ -17,17 +17,17 @@ describe('Simplified Activity Form', () => {
     });
   });
 
-  it('shows full form when no activity is selected', () => {
-    // Should show all form fields when no activity is running
+  it('timeline form is always simplified - shows only name field', () => {
+    // Timeline context form should always be simplified (only name field)
     cy.get('[data-testid="activity-form-column"]').within(() => {
       cy.get('input[id="activityName"]').should('be.visible');
-      cy.get('input[id="activityDescription"]').should('be.visible');
-      cy.get('button[id="activityColor"]').should('be.visible');
+      cy.get('input[id="activityDescription"]').should('not.exist');
+      cy.get('button[id="activityColor"]').should('not.exist');
     });
   });
 
   it('shows simplified form when activity is selected', () => {
-    // First add and select an activity
+    // First add an activity
     cy.get('[data-testid="activity-form-column"]').within(() => {
       cy.get('input[id="activityName"]').type('Test Activity');
       cy.get('button[type="submit"]').click();
@@ -38,7 +38,7 @@ describe('Simplified Activity Form', () => {
       cy.contains('Test Activity').click();
     });
 
-    // Now the form should be simplified - only name field visible
+    // Form remains simplified even when activity is selected
     cy.get('[data-testid="activity-form-column"]').within(() => {
       cy.get('input[id="activityName"]').should('be.visible');
       cy.get('input[id="activityDescription"]').should('not.exist');
@@ -47,29 +47,26 @@ describe('Simplified Activity Form', () => {
   });
 
   it('allows adding quick activities with simplified form', () => {
-    // First add and select an activity to get simplified form
-    cy.get('[data-testid="activity-form-column"]').within(() => {
-      cy.get('input[id="activityName"]').type('Initial Activity');
-      cy.get('button[type="submit"]').click();
-    });
-
-    cy.get('[data-testid="activity-list"]').within(() => {
-      cy.contains('Initial Activity').click();
-    });
-
-    // Add another activity using simplified form
+    // Add an activity using simplified form
     cy.get('[data-testid="activity-form-column"]').within(() => {
       cy.get('input[id="activityName"]').type('Quick Activity');
       cy.get('button[type="submit"]').click();
     });
 
-    // Verify the quick activity was added to the list
+    // Verify the activity was added to the list
     cy.get('[data-testid="activity-list"]').within(() => {
       cy.contains('Quick Activity').should('exist');
     });
+    
+    // Form should still be simplified after adding
+    cy.get('[data-testid="activity-form-column"]').within(() => {
+      cy.get('input[id="activityName"]').should('be.visible');
+      cy.get('input[id="activityDescription"]').should('not.exist');
+      cy.get('button[id="activityColor"]').should('not.exist');
+    });
   });
 
-  it('shows full form again when no activity is running', () => {
+  it('timeline form remains simplified when activity is deselected', () => {
     // Add and select an activity
     cy.get('[data-testid="activity-form-column"]').within(() => {
       cy.get('input[id="activityName"]').type('Test Activity');
@@ -90,11 +87,11 @@ describe('Simplified Activity Form', () => {
       cy.contains('Test Activity').click();
     });
 
-    // Form should be full again
+    // Timeline form should still be simplified after deselection
     cy.get('[data-testid="activity-form-column"]').within(() => {
       cy.get('input[id="activityName"]').should('be.visible');
-      cy.get('input[id="activityDescription"]').should('be.visible');
-      cy.get('button[id="activityColor"]').should('be.visible');
+      cy.get('input[id="activityDescription"]').should('not.exist');
+      cy.get('button[id="activityColor"]').should('not.exist');
     });
   });
 });

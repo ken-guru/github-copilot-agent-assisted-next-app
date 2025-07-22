@@ -6,7 +6,6 @@ import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
-import ClientOnly from '@/components/ClientOnly';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import resetService from '@/utils/resetService';

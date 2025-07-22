@@ -92,7 +92,7 @@ describe('ActivityForm', () => {
     
     expect(screen.getByRole('textbox', { name: /name/i })).toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: /description/i })).toBeInTheDocument();
-    expect(screen.getByRole('button')).toBeInTheDocument(); // Color dropdown button
+    expect(screen.getByRole('button', { name: /color/i })).toBeInTheDocument(); // Color dropdown button
   });
 
   it('should auto-populate description as empty in simplified mode', () => {
