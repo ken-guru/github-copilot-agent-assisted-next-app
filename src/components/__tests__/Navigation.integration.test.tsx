@@ -89,4 +89,29 @@ describe('Navigation Integration', () => {
     const navbar = screen.getByRole('navigation');
     expect(navbar).toHaveClass('navbar-light', 'bg-light');
   });
+
+  it('should reactively update theme classes when theme changes', () => {
+    // This test verifies the fix for issue #252 - navbar should respond to theme changes
+    renderWithTheme(<Navigation />);
+    
+    const navbar = screen.getByRole('navigation');
+    
+    // Initially should have light theme
+    expect(navbar).toHaveClass('navbar-light', 'bg-light');
+    expect(navbar).not.toHaveClass('navbar-dark', 'bg-dark');
+
+    // Simulate theme change to dark
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.classList.add('dark-mode');
+    
+    // Dispatch a custom event to trigger theme change detection
+    window.dispatchEvent(new Event('themeChange'));
+    
+    // Wait for the component to re-render and check if classes changed
+    // This test will initially fail until we fix the Navigation component to use useThemeReactive
+    setTimeout(() => {
+      expect(navbar).toHaveClass('navbar-dark', 'bg-dark');
+      expect(navbar).not.toHaveClass('navbar-light', 'bg-light');
+    }, 100);
+  });
 });

@@ -171,6 +171,7 @@ export default function ActivityManager({
               <ActivityForm
                 onAddActivity={handleAddActivity}
                 isDisabled={isTimeUp}
+                isTimerRunning={timerActive}
                 existingActivities={activities}
               />
             </div>

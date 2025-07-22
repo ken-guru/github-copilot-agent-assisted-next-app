@@ -13,6 +13,7 @@ interface ActivityFormProps {
   error?: string | null;
   isDisabled?: boolean;
   existingActivities?: Activity[]; // New prop for smart color selection
+  isTimerRunning?: boolean; // New prop for simplified mode when timers are running
 }
 
 interface ActivityFormRef {
@@ -20,7 +21,7 @@ interface ActivityFormRef {
 }
 
 const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
-  ({ activity, onSubmit, onAddActivity, error, existingActivities = [], isDisabled = false }, ref) => {
+  ({ activity, onSubmit, onAddActivity, error, existingActivities = [], isDisabled = false, isTimerRunning = false }, ref) => {
   const [name, setName] = useState(activity?.name || '');
   const [description, setDescription] = useState(activity?.description || '');
   // Use smart color selection for default if no activity is provided
@@ -69,7 +70,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
     const activityData = {
       id: activity?.id || crypto.randomUUID(),
       name,
-      description,
+      description: isTimerRunning ? '' : description, // Auto-empty description when timer running
       colorIndex: Number(colorIndex),
       createdAt: activity?.createdAt || new Date().toISOString(),
       isActive: true,
@@ -103,6 +104,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
           ref={nameInputRef}
           isInvalid={!!error}
           disabled={isDisabled}
+          placeholder={isTimerRunning ? "Quick add activity name" : undefined}
         />
         <Form.Control.Feedback type="invalid" data-testid="activity-form-error">
           {error ? error : ''}
@@ -112,74 +114,81 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
           <div data-testid="activity-form-error-message" style={{ color: 'red', marginTop: 4 }}>{error}</div>
         )}
       </Form.Group>
-      <Form.Group controlId="activityDescription">
-        <Form.Label>Description</Form.Label>
-        <Form.Control
-          type="text"
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-          disabled={isDisabled}
-        />
-      </Form.Group>
-      <Form.Group controlId="activityColor" className="mb-3">
-        <Form.Label>Color</Form.Label>
-        <Dropdown>
-          <Dropdown.Toggle 
-            variant="outline-secondary" 
-            id="color-dropdown"
-            className="w-100 d-flex align-items-center justify-content-between"
-            style={{ textAlign: 'left' }}
-            disabled={isDisabled}
-          >
-            <div className="d-flex align-items-center">
-              <div 
-                className="me-2 rounded border"
-                style={{
-                  width: '20px',
-                  height: '20px',
-                  backgroundColor: activityColors[colorIndex]?.background,
-                  borderColor: activityColors[colorIndex]?.border,
-                  borderWidth: '2px'
-                }}
-                aria-hidden="true"
-              ></div>
-              {getColorName(colorIndex)}
-            </div>
-          </Dropdown.Toggle>
-
-          <Dropdown.Menu className="w-100">
-            {activityColors.map((colorSet, index) => (
-              <Dropdown.Item 
-                key={index} 
-                onClick={() => setColorIndex(index)}
-                active={index === colorIndex}
-                className="d-flex align-items-center"
+      
+      {/* Only show description and color fields when timer is NOT running */}
+      {!isTimerRunning && (
+        <>
+          <Form.Group controlId="activityDescription">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              type="text"
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              disabled={isDisabled}
+            />
+          </Form.Group>
+          <Form.Group controlId="activityColor" className="mb-3">
+            <Form.Label>Color</Form.Label>
+            <Dropdown>
+              <Dropdown.Toggle 
+                variant="outline-secondary" 
+                id="activityColor"
+                className="w-100 d-flex align-items-center justify-content-between"
+                style={{ textAlign: 'left' }}
+                disabled={isDisabled}
+                aria-describedby="activityColor"
               >
-                <div 
-                  className="me-2 rounded border"
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: colorSet.background,
-                    borderColor: colorSet.border,
-                    borderWidth: '2px'
-                  }}
-                  aria-hidden="true"
-                ></div>
-                {getColorName(index)}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-        {/* Hidden input for form validation */}
-        <input 
-          type="hidden" 
-          value={colorIndex} 
-          required 
-          aria-required="true"
-          aria-label="Selected color index"
-        />
-      </Form.Group>
+                <div className="d-flex align-items-center">
+                  <div 
+                    className="me-2 rounded border"
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      backgroundColor: activityColors[colorIndex]?.background,
+                      borderColor: activityColors[colorIndex]?.border,
+                      borderWidth: '2px'
+                    }}
+                    aria-hidden="true"
+                  ></div>
+                  {getColorName(colorIndex)}
+                </div>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu className="w-100">
+                {activityColors.map((colorSet, index) => (
+                  <Dropdown.Item 
+                    key={index} 
+                    onClick={() => setColorIndex(index)}
+                    active={index === colorIndex}
+                    className="d-flex align-items-center"
+                  >
+                    <div 
+                      className="me-2 rounded border"
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        backgroundColor: colorSet.background,
+                        borderColor: colorSet.border,
+                        borderWidth: '2px'
+                      }}
+                      aria-hidden="true"
+                    ></div>
+                    {getColorName(index)}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+            {/* Hidden input for form validation */}
+            <input 
+              type="hidden" 
+              value={colorIndex} 
+              required 
+              aria-required="true"
+              aria-label="Selected color index"
+            />
+          </Form.Group>
+        </>
+      )}
       
       {/* Submit button */}
       <Button 
