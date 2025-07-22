@@ -1,5 +1,6 @@
 import { render, screen, cleanup } from '@testing-library/react';
 import Summary from '../Summary';
+import { ToastProvider } from '../ToastNotificationProvider';
 import { TimelineEntry } from '@/types';
 
 // Mock TimelineEntry data
@@ -45,12 +46,14 @@ describe('Summary Component', () => {
       const elapsedTime = 5400; // 1h 30m actually spent
       
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
       
       // Check for the metric names
@@ -88,12 +91,14 @@ describe('Summary Component', () => {
       }];
 
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={3600}
-          elapsedTime={0}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={3600}
+            elapsedTime={0}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const spentTime = screen.getByText('Spent Time').nextSibling;
@@ -118,12 +123,14 @@ describe('Summary Component', () => {
       }];
 
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={3600}
-          elapsedTime={1800}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={3600}
+            elapsedTime={1800}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const spentTime = screen.getByText('Spent Time').nextSibling;
@@ -143,12 +150,14 @@ describe('Summary Component', () => {
       }];
 
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={3600}
-          elapsedTime={1800}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={3600}
+            elapsedTime={1800}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const spentTime = screen.getByText('Spent Time').nextSibling;
@@ -178,15 +187,17 @@ describe('Summary Component', () => {
       const elapsedTime = 3602; // Just 2 seconds over
       
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
-      
-      expect(screen.getByText('You took 2s more than planned')).toBeInTheDocument();
+      // Toast should appear with the message
+      expect(screen.getByTestId('global-toast')).toHaveTextContent('You took 2s more than planned');
       expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('2s');
     });
 
@@ -196,15 +207,16 @@ describe('Summary Component', () => {
       const elapsedTime = 3540; // 1 minute early
       
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
-      
-      expect(screen.getByText('Amazing! You finished 1m 0s earlier than planned!')).toBeInTheDocument();
+      expect(screen.getByTestId('global-toast')).toHaveTextContent('Amazing! You finished 1m 0s earlier than planned!');
       expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('0s');
     });
   });
@@ -214,16 +226,17 @@ describe('Summary Component', () => {
       const entries = createMockTimelineEntries();
       
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={3600}
-          elapsedTime={3600}
-          allActivitiesCompleted={true}
-          isTimeUp={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={3600}
+            elapsedTime={3600}
+            allActivitiesCompleted={true}
+            isTimeUp={true}
+          />
+        </ToastProvider>
       );
-      
-      expect(screen.getByText("Time's up! Review your completed activities below.")).toBeInTheDocument();
+      expect(screen.getByTestId('global-toast')).toHaveTextContent("Time's up! Review your completed activities below.");
     });
 
     it('should handle time up with overtime', () => {
@@ -236,16 +249,17 @@ describe('Summary Component', () => {
       }];
       
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={3600}
-          elapsedTime={3900}
-          allActivitiesCompleted={true}
-          isTimeUp={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={3600}
+            elapsedTime={3900}
+            allActivitiesCompleted={true}
+            isTimeUp={true}
+          />
+        </ToastProvider>
       );
-      
-      expect(screen.getByText("Time's up! Review your completed activities below.")).toBeInTheDocument();
+      expect(screen.getByTestId('global-toast')).toHaveTextContent("Time's up! Review your completed activities below.");
       expect(screen.getByText('Overtime').nextSibling).toHaveTextContent('5m 0s');
     });
   });
@@ -269,12 +283,14 @@ describe('Summary Component', () => {
       const renderStart = performance.now();
       
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={360000} // 100 hours
-          elapsedTime={360000}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={360000} // 100 hours
+            elapsedTime={360000}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const renderTime = performance.now() - renderStart;
@@ -308,12 +324,14 @@ describe('Summary Component', () => {
       }];
 
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={maxDuration}
-          elapsedTime={maxDuration}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={maxDuration}
+            elapsedTime={maxDuration}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       // Verify the component doesn't break with maximum values
@@ -352,12 +370,14 @@ describe('Summary Component', () => {
       ];
 
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={7200}
-          elapsedTime={7200}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={7200}
+            elapsedTime={7200}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       // Get all activity names in order
@@ -407,12 +427,14 @@ describe('Summary Component', () => {
       ];
 
       render(
-        <Summary 
-          entries={entries}
-          totalDuration={9000}
-          elapsedTime={9000}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={entries}
+            totalDuration={9000}
+            elapsedTime={9000}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       // Get all activity names in order
@@ -454,12 +476,14 @@ describe('Summary Component', () => {
     
     // Render with light mode (default)
     render(
-      <Summary 
-        entries={mockEntries}
-        totalDuration={1000}
-        elapsedTime={500}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={mockEntries}
+          totalDuration={1000}
+          elapsedTime={500}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
     
     // Verify component renders successfully with light mode colors
@@ -524,12 +548,14 @@ describe('Summary Component', () => {
       
       // Render the component with the test case configuration
       render(
-        <Summary 
-          entries={mockEntries}
-          totalDuration={testCase.totalDuration}
-          elapsedTime={testCase.elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={mockEntries}
+            totalDuration={testCase.totalDuration}
+            elapsedTime={testCase.elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
       
       // Verify the expected message appears
@@ -550,12 +576,14 @@ describe('Summary Component', () => {
 
     it('does not render reset button when onReset prop is not provided', () => {
       render(
-        <Summary 
-          entries={mockTimelineEntries}
-          totalDuration={3600000}
-          elapsedTime={3600000}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={mockTimelineEntries}
+            totalDuration={3600000}
+            elapsedTime={3600000}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
       
       expect(screen.queryByRole('button', { name: /Reset/i })).not.toBeInTheDocument();
@@ -564,13 +592,15 @@ describe('Summary Component', () => {
     it('renders reset button when onReset prop is provided', () => {
       const onReset = jest.fn();
       render(
-        <Summary 
-          entries={mockTimelineEntries}
-          totalDuration={3600000}
-          elapsedTime={3600000}
-          allActivitiesCompleted={true}
-          onReset={onReset}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={mockTimelineEntries}
+            totalDuration={3600000}
+            elapsedTime={3600000}
+            allActivitiesCompleted={true}
+            onReset={onReset}
+          />
+        </ToastProvider>
       );
       
       const resetButton = screen.getByRole('button', { name: /Reset/i });
@@ -582,13 +612,15 @@ describe('Summary Component', () => {
     it('calls onReset callback when reset button is clicked', () => {
       const onReset = jest.fn();
       render(
-        <Summary 
-          entries={mockTimelineEntries}
-          totalDuration={3600000}
-          elapsedTime={3600000}
-          allActivitiesCompleted={true}
-          onReset={onReset}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={mockTimelineEntries}
+            totalDuration={3600000}
+            elapsedTime={3600000}
+            allActivitiesCompleted={true}
+            onReset={onReset}
+          />
+        </ToastProvider>
       );
       
       const resetButton = screen.getByRole('button', { name: /Reset/i });
@@ -600,13 +632,15 @@ describe('Summary Component', () => {
     it('has proper Bootstrap styling and icon', () => {
       const onReset = jest.fn();
       render(
-        <Summary 
-          entries={mockTimelineEntries}
-          totalDuration={3600000}
-          elapsedTime={3600000}
-          allActivitiesCompleted={true}
-          onReset={onReset}
-        />
+        <ToastProvider>
+          <Summary 
+            entries={mockTimelineEntries}
+            totalDuration={3600000}
+            elapsedTime={3600000}
+            allActivitiesCompleted={true}
+            onReset={onReset}
+          />
+        </ToastProvider>
       );
       
       const resetButton = screen.getByRole('button', { name: /Reset/i });

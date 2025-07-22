@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import ActivityManager from '../ActivityManager';
+import { ToastProvider } from '../ToastNotificationProvider';
 
 // Mock utils and setup
 jest.mock('../../utils/colors', () => ({
@@ -34,13 +35,15 @@ describe('ActivityManager Bootstrap Integration', () => {
   describe('Bootstrap Container Structure', () => {
     it('renders with Bootstrap Card structure', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       const container = screen.getByTestId('activity-manager');
@@ -49,13 +52,15 @@ describe('ActivityManager Bootstrap Integration', () => {
 
     it('renders heading with Bootstrap Card Header', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       const heading = screen.getByRole('heading', { name: 'Activities' });
@@ -68,13 +73,15 @@ describe('ActivityManager Bootstrap Integration', () => {
 
     it('renders activity list with Bootstrap structure', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       await waitFor(() => {
@@ -87,13 +94,15 @@ describe('ActivityManager Bootstrap Integration', () => {
   describe('Bootstrap Layout Components', () => {
     it('renders ActivityForm in proper Bootstrap column', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       await waitFor(() => {
@@ -104,13 +113,15 @@ describe('ActivityManager Bootstrap Integration', () => {
 
     it('renders each activity in full-width Bootstrap column', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       await waitFor(() => {
@@ -128,13 +139,15 @@ describe('ActivityManager Bootstrap Integration', () => {
 
     it('applies full-width layout classes correctly', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       await waitFor(() => {
@@ -179,13 +192,15 @@ describe('ActivityManager Bootstrap Integration', () => {
   describe('Bootstrap Spacing and Layout', () => {
     it('maintains Bootstrap spacing utilities', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       const container = screen.getByTestId('activity-manager');
@@ -202,13 +217,15 @@ describe('ActivityManager Bootstrap Integration', () => {
 
     it('applies proper Bootstrap grid structure', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       await waitFor(() => {
@@ -230,13 +247,15 @@ describe('ActivityManager Bootstrap Integration', () => {
   describe('Bootstrap Full-Width Layout', () => {
     it('handles full-width column behavior correctly', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       await waitFor(() => {
@@ -258,13 +277,15 @@ describe('ActivityManager Bootstrap Integration', () => {
 
     it('maintains Bootstrap structure during activity interactions', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       await waitFor(() => {
@@ -298,13 +319,15 @@ describe('ActivityManager Bootstrap Integration', () => {
   describe('Bootstrap Integration with Child Components', () => {
     it('maintains Bootstrap structure with ActivityForm integration', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       // ActivityForm should be in its own column
@@ -318,13 +341,15 @@ describe('ActivityManager Bootstrap Integration', () => {
 
     it('maintains Bootstrap structure with ActivityButton integration', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       await waitFor(() => {
@@ -346,13 +371,15 @@ describe('ActivityManager Bootstrap Integration', () => {
   describe('Bootstrap Theme Integration', () => {
     it('applies Bootstrap theme classes consistently', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       const container = screen.getByTestId('activity-manager');
@@ -369,13 +396,15 @@ describe('ActivityManager Bootstrap Integration', () => {
 
     it('maintains Bootstrap consistency during state changes', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       await waitFor(() => {
@@ -399,13 +428,15 @@ describe('ActivityManager Bootstrap Integration', () => {
   describe('Bootstrap Accessibility Features', () => {
     it('maintains proper Bootstrap accessibility with container structure', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       // Container should have proper structure
@@ -425,13 +456,15 @@ describe('ActivityManager Bootstrap Integration', () => {
 
     it('preserves activity accessibility within Bootstrap grid', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       await waitFor(() => {
@@ -454,13 +487,15 @@ describe('ActivityManager Bootstrap Integration', () => {
   describe('Bootstrap Overflow and Scrolling', () => {
     it('handles Bootstrap card overflow properly', async () => {
       render(
-        <ActivityManager 
-          onActivitySelect={mockOnActivitySelect}
-          onActivityRemove={mockOnActivityRemove}
-          currentActivityId={null}
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            onActivitySelect={mockOnActivitySelect}
+            onActivityRemove={mockOnActivityRemove}
+            currentActivityId={null}
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
 
       const container = screen.getByTestId('activity-manager');

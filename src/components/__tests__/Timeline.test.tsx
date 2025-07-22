@@ -1,6 +1,7 @@
 /// <reference types="@testing-library/jest-dom" />
 import { render, screen } from '@testing-library/react';
 import Timeline from '../Timeline';
+import { ToastProvider } from '../ToastNotificationProvider';
 import { TimelineEntry } from '@/types';
 
 describe('Timeline Component', () => {
@@ -22,13 +23,15 @@ describe('Timeline Component', () => {
   // Helper function to render timeline with standard props
   const renderTimeline = (entries: TimelineEntry[], props = {}) => {
     return render(
-      <Timeline 
-        entries={entries}
-        totalDuration={3600}
-        elapsedTime={30}
-        timerActive={true}
-        {...props}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={entries}
+          totalDuration={3600}
+          elapsedTime={30}
+          timerActive={true}
+          {...props}
+        />
+      </ToastProvider>
     );
   };
 
@@ -80,8 +83,11 @@ describe('Timeline Component', () => {
       isTimeUp: true
     });
     
-    expect(screen.getByTestId('overtime-alert')).toBeInTheDocument();
-    expect(screen.getByTestId('overtime-section')).toBeInTheDocument();
+  // Overtime toast should be present
+  const toast = screen.getByTestId('global-toast');
+  expect(toast).toBeInTheDocument();
+  expect(toast).toHaveTextContent(/overtime/i);
+  expect(screen.getByTestId('overtime-section')).toBeInTheDocument();
     
     const timeMarkers = screen.getAllByTestId('time-marker');
     expect(timeMarkers.length).toBeGreaterThan(0);

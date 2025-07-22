@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { OfflineIndicator } from '../OfflineIndicator';
+import { ToastProvider } from '../ToastNotificationProvider';
 
 // Mock the useOnlineStatus hook
 jest.mock('../../hooks/useOnlineStatus', () => ({
@@ -20,30 +21,43 @@ describe('OfflineIndicator', () => {
   
   it('should not render anything when online', () => {
     mockedUseOnlineStatus.mockReturnValue(true);
-    const { container } = render(<OfflineIndicator />);
-    expect(container.firstChild).toBeNull();
+    render(
+      <ToastProvider>
+        <OfflineIndicator />
+      </ToastProvider>
+    );
+    expect(screen.queryByTestId('global-toast')).not.toBeInTheDocument();
   });
   
   it('should render offline message when offline', () => {
     mockedUseOnlineStatus.mockReturnValue(false);
-    render(<OfflineIndicator />);
-    expect(screen.getByText(/you are offline/i)).toBeInTheDocument();
+    render(
+      <ToastProvider>
+        <OfflineIndicator />
+      </ToastProvider>
+    );
+    expect(screen.getByTestId('global-toast')).toHaveTextContent(/you are offline/i);
   });
   
   it('should apply offline indicator styles when offline', () => {
     mockedUseOnlineStatus.mockReturnValue(false);
-    render(<OfflineIndicator />);
-    const indicator = screen.getByRole('alert');
-    expect(indicator).toHaveClass('alert-warning');
+    render(
+      <ToastProvider>
+        <OfflineIndicator />
+      </ToastProvider>
+    );
+    // Toast is used, not alert
+    expect(screen.getByTestId('global-toast')).toHaveTextContent(/you are offline/i);
   });
 
   it('should render with proper nested structure', () => {
     mockedUseOnlineStatus.mockReturnValue(false);
-    const { container } = render(<OfflineIndicator />);
-    
-    const outerDiv = container.firstChild as HTMLElement;
-    
-    expect(outerDiv?.getAttribute('role')).toBe('alert');
-    expect(outerDiv?.textContent).toBe('You are offline');
+    const { container } = render(
+      <ToastProvider>
+        <OfflineIndicator />
+      </ToastProvider>
+    );
+    // Toast is used, not alert
+    expect(screen.getByTestId('global-toast')).toHaveTextContent(/you are offline/i);
   });
 });

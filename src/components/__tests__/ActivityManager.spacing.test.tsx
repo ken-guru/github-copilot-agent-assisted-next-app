@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { ToastProvider } from '../ToastNotificationProvider';
 import ActivityManager from '../ActivityManager';
 import { TimelineEntry } from '@/types';
 
@@ -26,7 +27,11 @@ describe('ActivityManager Spacing and Layout', () => {
 
   describe('Container Layout and Overflow', () => {
     it('should have proper flex classes and overflow handling', () => {
-      render(<ActivityManager {...defaultProps} />);
+      render(
+        <ToastProvider>
+          <ActivityManager {...defaultProps} />
+        </ToastProvider>
+      );
       
       const container = screen.getByTestId('activity-manager');
       expect(container).toHaveClass('h-100', 'd-flex', 'flex-column');
@@ -47,7 +52,11 @@ describe('ActivityManager Spacing and Layout', () => {
       const getItemSpy = jest.spyOn(Storage.prototype, 'getItem');
       getItemSpy.mockReturnValue(JSON.stringify(activitiesData));
       
-      render(<ActivityManager {...defaultProps} />);
+      render(
+        <ToastProvider>
+          <ActivityManager {...defaultProps} />
+        </ToastProvider>
+      );
       
       const cardBody = screen.getByTestId('activity-manager').querySelector('.card-body');
       const children = Array.from(cardBody?.children || []);
@@ -72,7 +81,11 @@ describe('ActivityManager Spacing and Layout', () => {
       const getItemSpy = jest.spyOn(Storage.prototype, 'getItem');
       getItemSpy.mockReturnValue(JSON.stringify(activitiesData));
       
-      render(<ActivityManager {...defaultProps} />);
+      render(
+        <ToastProvider>
+          <ActivityManager {...defaultProps} />
+        </ToastProvider>
+      );
       
       const cardBody = screen.getByTestId('activity-manager').querySelector('.card-body');
       const children = Array.from(cardBody?.children || []);
@@ -92,7 +105,11 @@ describe('ActivityManager Spacing and Layout', () => {
 
   describe('Card Body Padding', () => {
     it('should have appropriate padding that maintains consistent spacing', () => {
-      render(<ActivityManager {...defaultProps} />);
+      render(
+        <ToastProvider>
+          <ActivityManager {...defaultProps} />
+        </ToastProvider>
+      );
       
       const cardBody = screen.getByTestId('activity-manager').querySelector('.card-body');
       expect(cardBody).toHaveClass('p-3');

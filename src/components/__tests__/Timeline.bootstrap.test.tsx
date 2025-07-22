@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Timeline from '../Timeline';
+import { ToastProvider } from '../ToastNotificationProvider';
 import { TimelineEntry } from '@/types';
 
 describe('Timeline Bootstrap Integration', () => {
@@ -22,13 +23,15 @@ describe('Timeline Bootstrap Integration', () => {
   // Helper function to render timeline with standard props
   const renderTimeline = (entries: TimelineEntry[], props = {}) => {
     return render(
-      <Timeline 
-        entries={entries}
-        totalDuration={3600}
-        elapsedTime={30}
-        timerActive={true}
-        {...props}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={entries}
+          totalDuration={3600}
+          elapsedTime={30}
+          timerActive={true}
+          {...props}
+        />
+      </ToastProvider>
     );
   };
 
@@ -159,7 +162,7 @@ describe('Timeline Bootstrap Integration', () => {
   });
 
   describe('Bootstrap Alert Integration', () => {
-    it('renders overtime warning as Bootstrap Alert', () => {
+    it('renders overtime warning as a floating toast', () => {
       const overtimeEntries: TimelineEntry[] = [
         {
           id: '1',
@@ -174,41 +177,17 @@ describe('Timeline Bootstrap Integration', () => {
           }
         }
       ];
-      
-      renderTimeline(overtimeEntries, {
-        elapsedTime: 4000,
-        isTimeUp: true
-      });
-      
-      const alert = screen.getByTestId('overtime-alert');
-      expect(alert).toHaveClass('alert');
-      expect(alert).toHaveClass('alert-warning');
-    });
 
-    it('uses proper Alert styling for warnings', () => {
-      const overtimeEntries: TimelineEntry[] = [
-        {
-          id: '1',
-          activityId: 'activity-1',
-          activityName: 'Task 1',
-          startTime: FIXED_TIME - 4000 * 1000,
-          endTime: FIXED_TIME,
-          colors: {
-            background: '#E8F5E9',
-            text: '#1B5E20',
-            border: '#2E7D32'
-          }
-        }
-      ];
-      
       renderTimeline(overtimeEntries, {
         elapsedTime: 4000,
         isTimeUp: true
       });
-      
-      const alert = screen.getByTestId('overtime-alert');
-      expect(alert).toHaveClass('alert-warning');
-      expect(alert).toHaveAttribute('role', 'alert');
+
+      // The overtime warning should now be shown as a floating toast
+      const toast = screen.getByTestId('global-toast');
+      expect(toast).toBeInTheDocument();
+      expect(toast).toHaveTextContent(/overtime/i);
+      expect(toast).toHaveClass('toast');
     });
   });
 
@@ -380,7 +359,7 @@ describe('Timeline Bootstrap Integration', () => {
       expect(heading).toHaveAttribute('aria-level', '2');
     });
 
-    it('preserves Bootstrap alert accessibility', () => {
+    it('preserves Bootstrap alert accessibility (toast-based)', () => {
       const overtimeEntries: TimelineEntry[] = [
         {
           id: '1',
@@ -395,14 +374,16 @@ describe('Timeline Bootstrap Integration', () => {
           }
         }
       ];
-      
+
       renderTimeline(overtimeEntries, {
         elapsedTime: 4000,
         isTimeUp: true
       });
-      
-      const alert = screen.getByTestId('overtime-alert');
-      expect(alert).toHaveAttribute('role', 'alert');
+
+      const toast = screen.getByTestId('global-toast');
+      expect(toast).toBeInTheDocument();
+      expect(toast).toHaveAttribute('role', 'alert');
+      expect(toast).toHaveTextContent(/overtime/i);
     });
 
     it('maintains proper semantic structure with Bootstrap', () => {

@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import ActivityManager from '../ActivityManager';
+import { ToastProvider } from '../ToastNotificationProvider';
 import * as colorUtils from '../../utils/colors';
 import { DEFAULT_ACTIVITIES } from '../../types/activity';
 
@@ -38,13 +39,15 @@ describe('ActivityManager Component', () => {
   
   it('should render default activities on mount', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
-        onActivityRemove={mockOnActivityRemove}
-        currentActivityId={null}
-        completedActivityIds={[]}
-        timelineEntries={[]}
-      />
+      <ToastProvider>
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+        />
+      </ToastProvider>
     );
     
     // It should render the heading
@@ -61,13 +64,15 @@ describe('ActivityManager Component', () => {
   
   it('should allow adding a new activity', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
-        onActivityRemove={mockOnActivityRemove}
-        currentActivityId={null}
-        completedActivityIds={[]}
-        timelineEntries={[]}
-      />
+      <ToastProvider>
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+        />
+      </ToastProvider>
     );
     
     // Type in a new activity name
@@ -89,13 +94,15 @@ describe('ActivityManager Component', () => {
 
   it('should add activity in pending state without starting it', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
-        onActivityRemove={mockOnActivityRemove}
-        currentActivityId={null}
-        completedActivityIds={[]}
-        timelineEntries={[]}
-      />
+      <ToastProvider>
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+        />
+      </ToastProvider>
     );
     
     // Type in a new activity name
@@ -116,13 +123,15 @@ describe('ActivityManager Component', () => {
   
   it('should mark an activity as completed when clicking Complete', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
-        onActivityRemove={mockOnActivityRemove}
-        currentActivityId="1" // Homework is current
-        completedActivityIds={[]}
-        timelineEntries={[]}
-      />
+      <ToastProvider>
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId="1" // Homework is current
+          completedActivityIds={[]}
+          timelineEntries={[]}
+        />
+      </ToastProvider>
     );
     
     // Wait for activities to render
@@ -142,13 +151,15 @@ describe('ActivityManager Component', () => {
   
   it('should show completed activities with completed styling', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
-        onActivityRemove={mockOnActivityRemove}
-        currentActivityId={null}
-        completedActivityIds={['1']} // Homework is completed
-        timelineEntries={[]}
-      />
+      <ToastProvider>
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={['1']} // Homework is completed
+          timelineEntries={[]}
+        />
+      </ToastProvider>
     );
     
     // Wait for activities to render
@@ -173,13 +184,15 @@ describe('ActivityManager Component', () => {
   
   it('should allow removing an activity', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
-        onActivityRemove={mockOnActivityRemove}
-        currentActivityId={null}
-        completedActivityIds={[]}
-        timelineEntries={[]}
-      />
+      <ToastProvider>
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+        />
+      </ToastProvider>
     );
     
     // Wait for activities to render
@@ -209,13 +222,15 @@ describe('ActivityManager Component', () => {
     ];
     
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
-        onActivityRemove={mockOnActivityRemove}
-        currentActivityId={null}
-        completedActivityIds={[]}
-        timelineEntries={timelineEntries}
-      />
+      <ToastProvider>
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={timelineEntries}
+        />
+      </ToastProvider>
     );
     
     // Wait for activities to render
@@ -235,14 +250,16 @@ describe('ActivityManager Component', () => {
   
   it('should disable adding activities when time is up', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
-        onActivityRemove={mockOnActivityRemove}
-        currentActivityId={null}
-        completedActivityIds={[]}
-        timelineEntries={[]}
-        isTimeUp={true}
-      />
+      <ToastProvider>
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          isTimeUp={true}
+        />
+      </ToastProvider>
     );
     
     // Add Activity button should be disabled
@@ -256,13 +273,15 @@ describe('ActivityManager Component', () => {
   
   it('should start an activity when clicking Start', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
-        onActivityRemove={mockOnActivityRemove}
-        currentActivityId={null}
-        completedActivityIds={[]}
-        timelineEntries={[]}
-      />
+      <ToastProvider>
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId={null}
+          completedActivityIds={[]}
+          timelineEntries={[]}
+        />
+      </ToastProvider>
     );
     
     // Wait for activities to render and initialization to complete
@@ -291,14 +310,16 @@ describe('ActivityManager Component', () => {
   
   it('should pass elapsedTime to running activity', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
-        onActivityRemove={mockOnActivityRemove}
-        currentActivityId="1" // Homework is running
-        completedActivityIds={[]}
-        timelineEntries={[]}
-        elapsedTime={30}
-      />
+      <ToastProvider>
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId="1" // Homework is running
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          elapsedTime={30}
+        />
+      </ToastProvider>
     );
     
     // Wait for activities to render
@@ -312,14 +333,16 @@ describe('ActivityManager Component', () => {
   
   it('should not show timer for non-running activities', async () => {
     render(
-      <ActivityManager 
-        onActivitySelect={mockOnActivitySelect}
-        onActivityRemove={mockOnActivityRemove}
-        currentActivityId="2" // Reading is running
-        completedActivityIds={[]}
-        timelineEntries={[]}
-        elapsedTime={30}
-      />
+      <ToastProvider>
+        <ActivityManager 
+          onActivitySelect={mockOnActivitySelect}
+          onActivityRemove={mockOnActivityRemove}
+          currentActivityId="2" // Reading is running
+          completedActivityIds={[]}
+          timelineEntries={[]}
+          elapsedTime={30}
+        />
+      </ToastProvider>
     );
     
     // Wait for activities to render and find the Homework item
@@ -344,11 +367,13 @@ describe('ActivityManager Component', () => {
 
     it('renders progress bar when totalDuration and timerActive props are provided', () => {
       render(
-        <ActivityManager 
-          {...mockProps}
-          totalDuration={3600000} // 1 hour
-          timerActive={true}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            {...mockProps}
+            totalDuration={3600000} // 1 hour
+            timerActive={true}
+          />
+        </ToastProvider>
       );
       
       const progressContainer = screen.getByTestId('progress-container');
@@ -358,11 +383,13 @@ describe('ActivityManager Component', () => {
 
     it('renders progress bar even when timer is not active', () => {
       render(
-        <ActivityManager 
-          {...mockProps}
-          totalDuration={3600000}
-          timerActive={false}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            {...mockProps}
+            totalDuration={3600000}
+            timerActive={false}
+          />
+        </ToastProvider>
       );
       
       // Progress bar should still be rendered for layout consistency
@@ -371,10 +398,12 @@ describe('ActivityManager Component', () => {
 
     it('does not render progress bar when totalDuration is not provided', () => {
       render(
-        <ActivityManager 
-          {...mockProps}
-          timerActive={true}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            {...mockProps}
+            timerActive={true}
+          />
+        </ToastProvider>
       );
       
       // Progress bar should still render as it's always shown for consistent layout
@@ -383,11 +412,13 @@ describe('ActivityManager Component', () => {
 
     it('has correct layout order: progress bar, form, activities list', async () => {
       render(
-        <ActivityManager 
-          {...mockProps}
-          totalDuration={3600000}
-          timerActive={true}
-        />
+        <ToastProvider>
+          <ActivityManager 
+            {...mockProps}
+            totalDuration={3600000}
+            timerActive={true}
+          />
+        </ToastProvider>
       );
       
       // Wait for activities to load
@@ -416,14 +447,22 @@ describe('ActivityManager Component', () => {
     };
 
     it('does not render reset button when onReset prop is not provided', () => {
-      render(<ActivityManager {...mockProps} />);
+      render(
+        <ToastProvider>
+          <ActivityManager {...mockProps} />
+        </ToastProvider>
+      );
       
       expect(screen.queryByRole('button', { name: /Reset/i })).not.toBeInTheDocument();
     });
 
     it('renders reset button when onReset prop is provided', () => {
       const onReset = jest.fn();
-      render(<ActivityManager {...mockProps} onReset={onReset} />);
+      render(
+        <ToastProvider>
+          <ActivityManager {...mockProps} onReset={onReset} />
+        </ToastProvider>
+      );
       
       const resetButton = screen.getByRole('button', { name: /Reset/i });
       expect(resetButton).toBeInTheDocument();
@@ -433,7 +472,11 @@ describe('ActivityManager Component', () => {
 
     it('calls onReset callback when reset button is clicked', () => {
       const onReset = jest.fn();
-      render(<ActivityManager {...mockProps} onReset={onReset} />);
+      render(
+        <ToastProvider>
+          <ActivityManager {...mockProps} onReset={onReset} />
+        </ToastProvider>
+      );
       
       const resetButton = screen.getByRole('button', { name: /Reset/i });
       fireEvent.click(resetButton);
@@ -443,7 +486,11 @@ describe('ActivityManager Component', () => {
 
     it('is positioned in the card header alongside the title', () => {
       const onReset = jest.fn();
-      render(<ActivityManager {...mockProps} onReset={onReset} />);
+      render(
+        <ToastProvider>
+          <ActivityManager {...mockProps} onReset={onReset} />
+        </ToastProvider>
+      );
       
       const cardHeader = screen.getByText('Activities').closest('.card-header');
       const resetButton = screen.getByRole('button', { name: /Reset/i });

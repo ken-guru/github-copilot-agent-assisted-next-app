@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import Summary from '../Summary';
+import { ToastProvider } from '../ToastNotificationProvider';
 import { TimelineEntry } from '@/types';
 
 // Mock TimelineEntry data for testing
@@ -45,12 +46,14 @@ describe('Summary Bootstrap Integration', () => {
   describe('Bootstrap Card Structure', () => {
     it('renders with Bootstrap Card structure', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const card = screen.getByTestId('summary');
@@ -59,12 +62,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('renders with Bootstrap Card Body', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const cardBody = screen.getByTestId('summary-body');
@@ -73,12 +78,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('applies proper Bootstrap Card classes', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const card = screen.getByTestId('summary');
@@ -87,58 +94,68 @@ describe('Summary Bootstrap Integration', () => {
   });
 
   describe('Bootstrap Alert for Status Messages', () => {
-    it('renders status message with Bootstrap Alert', () => {
+    it('renders status message as a toast when overtime', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime + 300000} // 5 minutes overtime
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime + 300000} // 5 minutes overtime
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
-
-      const statusAlert = screen.getByTestId('summary-status');
-      expect(statusAlert).toHaveClass('alert');
+      const toast = screen.getByTestId('global-toast');
+      expect(toast).toBeInTheDocument();
+      expect(toast).toHaveClass('toast', 'bg-warning', 'show');
+      expect(toast).toHaveAttribute('role', 'alert');
+      expect(toast).toHaveTextContent(/more than planned/i);
     });
 
-    it('applies correct Bootstrap Alert variant for late status', () => {
+    it('renders correct toast variant for late status (warning)', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime + 600000} // 10 minutes overtime
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime + 600000} // 10 minutes overtime
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
-
-      const statusAlert = screen.getByTestId('summary-status');
-      expect(statusAlert).toHaveClass('alert', 'alert-warning');
+      const toast = screen.getByTestId('global-toast');
+      expect(toast).toHaveClass('bg-warning');
+      expect(toast).toHaveTextContent(/more than planned/i);
     });
 
-    it('applies correct Bootstrap Alert variant for early status', () => {
+    it('renders correct toast variant for early status (success)', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime - 300000} // 5 minutes under
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime - 300000} // 5 minutes under
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
-
-      const statusAlert = screen.getByTestId('summary-status');
-      expect(statusAlert).toHaveClass('alert', 'alert-success');
+      const toast = screen.getByTestId('global-toast');
+      expect(toast).toHaveClass('bg-success');
+      expect(toast).toHaveTextContent(/earlier than planned/i);
     });
   });
 
   describe('Bootstrap Grid for Stats', () => {
     it('renders stats with Bootstrap Row and Col structure', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const statsGrid = screen.getByTestId('stats-grid');
@@ -147,12 +164,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('renders stat cards with Bootstrap Column classes', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const statCards = screen.getAllByTestId(/^stat-card-/);
@@ -163,12 +182,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('renders individual stat cards with Bootstrap Card classes', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const plannedTimeCard = screen.getByTestId('stat-card-planned');
@@ -180,12 +201,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('displays all four stat categories', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       expect(screen.getByTestId('stat-card-planned')).toBeInTheDocument();
@@ -198,12 +221,14 @@ describe('Summary Bootstrap Integration', () => {
   describe('Bootstrap List Group for Activities', () => {
     it('renders activity list with Bootstrap List Group', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const activityList = screen.getByTestId('activity-list');
@@ -212,12 +237,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('renders activity items with Bootstrap List Group Item classes', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const activityItems = screen.getAllByTestId(/^activity-summary-item-/);
@@ -228,12 +255,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('renders activity list heading with Bootstrap typography', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const heading = screen.getByTestId('activity-list-heading');
@@ -244,12 +273,14 @@ describe('Summary Bootstrap Integration', () => {
   describe('Bootstrap Typography and Spacing', () => {
     it('applies Bootstrap spacing utilities', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const cardBody = screen.getByTestId('summary-body');
@@ -261,12 +292,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('uses Bootstrap typography for stat labels and values', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const statLabels = screen.getAllByTestId(/^stat-label-/);
@@ -284,12 +317,14 @@ describe('Summary Bootstrap Integration', () => {
   describe('Bootstrap Responsive Behavior', () => {
     it('applies responsive column classes for stats grid', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const statCards = screen.getAllByTestId(/^stat-card-/);
@@ -301,12 +336,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('maintains responsive layout structure', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const statsGrid = screen.getByTestId('stats-grid');
@@ -320,12 +357,14 @@ describe('Summary Bootstrap Integration', () => {
   describe('Bootstrap Theme Integration', () => {
     it('maintains Bootstrap theme classes consistently', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const card = screen.getByTestId('summary');
@@ -337,12 +376,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('preserves custom activity colors within Bootstrap structure', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const homeworkItem = screen.getByTestId('activity-summary-item-activity-1');
@@ -356,12 +397,14 @@ describe('Summary Bootstrap Integration', () => {
   describe('Bootstrap Accessibility Features', () => {
     it('maintains proper Bootstrap accessibility with Card structure', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const card = screen.getByTestId('summary');
@@ -373,12 +416,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('preserves accessibility within Bootstrap List Group', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const activityList = screen.getByTestId('activity-list');
@@ -392,27 +437,33 @@ describe('Summary Bootstrap Integration', () => {
   describe('Bootstrap Conditional Rendering', () => {
     it('does not render when activities not completed and time not up', () => {
       const { container } = render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={false}
-          isTimeUp={false}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={false}
+            isTimeUp={false}
+          />
+        </ToastProvider>
       );
-
-      expect(container.firstChild).toBeNull();
+      // The only thing that may be present is the toast container, which may be empty
+      // So assert that there is no summary card and no global toast
+      expect(screen.queryByTestId('summary')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('global-toast')).not.toBeInTheDocument();
     });
 
     it('renders when time is up even if activities not completed', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={false}
-          isTimeUp={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={false}
+            isTimeUp={true}
+          />
+        </ToastProvider>
       );
 
       const card = screen.getByTestId('summary');
@@ -421,12 +472,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('renders activity list only when activities exist', () => {
       render(
-        <Summary
-          entries={[]}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={[]}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const card = screen.getByTestId('summary');
@@ -440,12 +493,14 @@ describe('Summary Bootstrap Integration', () => {
   describe('Bootstrap Data Display', () => {
     it('displays formatted duration values correctly', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       // Check that stat values are displayed
@@ -457,12 +512,14 @@ describe('Summary Bootstrap Integration', () => {
 
     it('displays activity durations with proper Bootstrap typography', () => {
       render(
-        <Summary
-          entries={mockEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          allActivitiesCompleted={true}
-        />
+        <ToastProvider>
+          <Summary
+            entries={mockEntries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={true}
+          />
+        </ToastProvider>
       );
 
       const activityItems = screen.getAllByTestId(/^activity-summary-item-/);

@@ -11,6 +11,7 @@ import { jest } from '@jest/globals';
 // Import from relative paths to match the project structure
 import { ActivityButton } from '../ActivityButton';
 import ActivityManager from '../ActivityManager';
+import { ToastProvider } from '../ToastNotificationProvider';
 import ProgressBar from '../ProgressBar';
 import ThemeToggle from '../ThemeToggle';
 import TimeSetup from '../TimeSetup';
@@ -80,29 +81,33 @@ describe('Component Props Interface Validation', () => {
   describe('ActivityManager', () => {
     it('renders with required props only', () => {
       const { container } = render(
-        <ActivityManager
-          onActivitySelect={mockFn}
-          currentActivityId="test1"
-          completedActivityIds={[]}
-          timelineEntries={[]}
-        />
+        <ToastProvider>
+          <ActivityManager
+            onActivitySelect={mockFn}
+            currentActivityId="test1"
+            completedActivityIds={[]}
+            timelineEntries={[]}
+          />
+        </ToastProvider>
       );
       expect(container).toBeInTheDocument();
     });
 
     it('renders with all props', () => {
       const { container } = render(
-        <ActivityManager
-          onActivitySelect={mockFn}
-          onActivityRemove={mockFn}
-          currentActivityId="test1"
-          completedActivityIds={['test2']}
-          // Convert the timeline entries to the expected format for this component
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          timelineEntries={timelineEntries as any}
-          isTimeUp={false}
-          elapsedTime={600}
-        />
+        <ToastProvider>
+          <ActivityManager
+            onActivitySelect={mockFn}
+            onActivityRemove={mockFn}
+            currentActivityId="test1"
+            completedActivityIds={['test2']}
+            // Convert the timeline entries to the expected format for this component
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            timelineEntries={timelineEntries as any}
+            isTimeUp={false}
+            elapsedTime={600}
+          />
+        </ToastProvider>
       );
       expect(container).toBeInTheDocument();
     });

@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, within, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Summary from '../Summary';
+import { ToastProvider } from '../ToastNotificationProvider';
 import { TimelineEntry } from '@/types';
 
 // Create timeline entries for testing chronological order
@@ -36,12 +37,14 @@ describe('Summary Activity Order', () => {
     ]);
     
     render(
-      <Summary 
-        entries={entries}
-        totalDuration={2000}
-        elapsedTime={2000}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={entries}
+          totalDuration={2000}
+          elapsedTime={2000}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
     
     // Get all activity items by data-testid
@@ -66,12 +69,14 @@ describe('Summary Activity Order', () => {
     ]);
     
     render(
-      <Summary 
-        entries={entries}
-        totalDuration={2000}
-        elapsedTime={2000}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={entries}
+          totalDuration={2000}
+          elapsedTime={2000}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
     
     // Get all activity items by data-testid
@@ -99,12 +104,14 @@ describe('Summary Activity Order', () => {
     cleanup();
     
     const { unmount } = render(
-      <Summary 
-        entries={entries}
-        totalDuration={2000}
-        elapsedTime={2000}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={entries}
+          totalDuration={2000}
+          elapsedTime={2000}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
     
     // Get all activity items by data-testid
@@ -130,12 +137,14 @@ describe('Summary Activity Order', () => {
     
     // Re-render the component
     render(
-      <Summary 
-        entries={entries}
-        totalDuration={2000}
-        elapsedTime={2000}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={entries}
+          totalDuration={2000}
+          elapsedTime={2000}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
     
     // Get all activity items after re-render
@@ -158,57 +167,65 @@ describe('Summary Activity Order', () => {
       { name: 'Activity 1', startTime: 1000, duration: 300 },
       { name: 'Activity 2', startTime: 1100, duration: 200 }
     ]);
-    
+
+    const totalDuration = 2000;
+    const elapsedTime = 2000;
     const { rerender } = render(
-      <Summary 
-        entries={entries}
-        totalDuration={2000}
-        elapsedTime={2000}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={entries}
+          totalDuration={totalDuration}
+          elapsedTime={elapsedTime}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
-    
+
     // Get all activity items by data-testid
     let activityItems = screen.getAllByTestId(/^activity-summary-item-/);
-    
+
     // Extract activity names from the name elements
     let activityNames = activityItems.map(item => {
       const nameElement = within(item).getByTestId(/^activity-name-/);
       return nameElement.textContent;
     });
-    
+
     // Verify initial chronological order
     expect(activityNames).toEqual(['Activity 1', 'Activity 2', 'Activity 3']);
-    
+
     // Re-render with same props (simulating a parent component re-render)
     rerender(
-      <Summary 
-        entries={entries}
-        totalDuration={2000}
-        elapsedTime={2000}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary
+          entries={entries}
+          totalDuration={totalDuration}
+          elapsedTime={elapsedTime}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
-    
+
     // Check order after re-render
     activityItems = screen.getAllByTestId(/^activity-summary-item-/);
     activityNames = activityItems.map(item => {
       const nameElement = within(item).getByTestId(/^activity-name-/);
       return nameElement.textContent;
     });
-    
+
     // Verify order is maintained after re-render
     expect(activityNames).toEqual(['Activity 1', 'Activity 2', 'Activity 3']);
   });
   
   it('should handle empty activity list gracefully', () => {
     render(
-      <Summary 
-        entries={[]}
-        totalDuration={1000}
-        elapsedTime={1000}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={[]}
+          totalDuration={1000}
+          elapsedTime={1000}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
     
     // With empty entries, the Summary component might not render at all

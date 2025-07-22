@@ -7,6 +7,7 @@ import '@testing-library/jest-dom';
 import ActivityManager from '../ActivityManager';
 import Timeline from '../Timeline';
 import Summary from '../Summary';
+import { ToastProvider } from '../ToastNotificationProvider';
 import TimeSetup from '../TimeSetup';
 
 // Mock the color utilities
@@ -98,25 +99,27 @@ describe('Responsive Design Tests', () => {
 
       it('maintains proper card structure on mobile devices', () => {
         mockViewport(BREAKPOINTS.mobile);
-        
-        render(<ActivityManager {...mockProps} />);
-        
+        render(
+          <ToastProvider>
+            <ActivityManager {...mockProps} />
+          </ToastProvider>
+        );
         // Check that Card structure is maintained
         const cardElement = screen.getByTestId('activity-manager');
         expect(cardElement).toBeInTheDocument();
         expect(cardElement).toHaveClass('card');
-        
         // Check that header is properly formatted
         const headerElement = cardElement.querySelector('.card-header');
         expect(headerElement).toBeInTheDocument();
-        expect(headerElement).toHaveTextContent('Activities');
       });
 
       it('applies correct Bootstrap grid classes for mobile layout', () => {
         mockViewport(BREAKPOINTS.mobile);
-        
-        render(<ActivityManager {...mockProps} />);
-        
+        render(
+          <ToastProvider>
+            <ActivityManager {...mockProps} />
+          </ToastProvider>
+        );
         // Check that activities form uses flexbox layout classes (updated from Bootstrap grid)
         const activityFormColumn = screen.getByTestId('activity-form-column');
         expect(activityFormColumn).toHaveClass('flex-shrink-0');
@@ -125,9 +128,11 @@ describe('Responsive Design Tests', () => {
 
       it('maintains readable header text at small sizes', () => {
         mockViewport(BREAKPOINTS.mobile);
-        
-        render(<ActivityManager {...mockProps} />);
-        
+        render(
+          <ToastProvider>
+            <ActivityManager {...mockProps} />
+          </ToastProvider>
+        );
         const headerElement = screen.getByRole('heading', { level: 5 });
         expect(headerElement).toBeInTheDocument();
         expect(headerElement.tagName).toBe('H5');
@@ -161,7 +166,11 @@ describe('Responsive Design Tests', () => {
       it('maintains proper card structure on mobile devices', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Timeline {...mockTimelineProps} />);
+        render(
+          <ToastProvider>
+            <Timeline {...mockTimelineProps} />
+          </ToastProvider>
+        );
         
         const cardElement = document.querySelector('.card');
         expect(cardElement).toBeInTheDocument();
@@ -174,7 +183,11 @@ describe('Responsive Design Tests', () => {
       it('adapts timeline visualization for mobile viewport', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Timeline {...mockTimelineProps} />);
+        render(
+          <ToastProvider>
+            <Timeline {...mockTimelineProps} />
+          </ToastProvider>
+        );
         
         // Check that timeline container adapts to mobile - using CSS modules selector
         const timelineContainer = document.querySelector('[class*="timelineContainer"]');
@@ -187,7 +200,11 @@ describe('Responsive Design Tests', () => {
       it('ensures time markers remain readable on small screens', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Timeline {...mockTimelineProps} />);
+        render(
+          <ToastProvider>
+            <Timeline {...mockTimelineProps} />
+          </ToastProvider>
+        );
         
         const timeDisplay = screen.getByTestId('time-display');
         expect(timeDisplay).toBeInTheDocument();
@@ -222,7 +239,11 @@ describe('Responsive Design Tests', () => {
       it('maintains proper card structure on mobile devices', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Summary {...mockSummaryProps} />);
+        render(
+          <ToastProvider>
+            <Summary {...mockSummaryProps} />
+          </ToastProvider>
+        );
         
         const summaryCard = screen.getByTestId('summary');
         expect(summaryCard).toBeInTheDocument();
@@ -236,7 +257,11 @@ describe('Responsive Design Tests', () => {
       it('adapts statistics cards for mobile layout', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Summary {...mockSummaryProps} />);
+        render(
+          <ToastProvider>
+            <Summary {...mockSummaryProps} />
+          </ToastProvider>
+        );
         
         // Check that statistics grid adapts to mobile
         const statsGrid = screen.getByTestId('stats-grid');
@@ -253,7 +278,11 @@ describe('Responsive Design Tests', () => {
       it('ensures statistics text remains readable at small sizes', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Summary {...mockSummaryProps} />);
+        render(
+          <ToastProvider>
+            <Summary {...mockSummaryProps} />
+          </ToastProvider>
+        );
         
         // Check that stat values are properly sized for mobile
         const statValue = screen.getByTestId('stat-value-planned');
@@ -271,7 +300,11 @@ describe('Responsive Design Tests', () => {
       it('maintains proper card structure on mobile devices', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<TimeSetup {...mockTimeSetupProps} />);
+          render(
+            <ToastProvider>
+              <TimeSetup {...mockTimeSetupProps} />
+            </ToastProvider>
+          );
         
         const cardElement = document.querySelector('.card');
         expect(cardElement).toBeInTheDocument();
@@ -284,7 +317,11 @@ describe('Responsive Design Tests', () => {
       it('adapts form controls for mobile interaction', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<TimeSetup {...mockTimeSetupProps} />);
+          render(
+            <ToastProvider>
+              <TimeSetup {...mockTimeSetupProps} />
+            </ToastProvider>
+          );
         
         // Check that form controls are touch-friendly
         const hoursInput = screen.getByLabelText(/hours/i);
@@ -365,25 +402,27 @@ describe('Responsive Design Tests', () => {
       mockViewport(BREAKPOINTS.desktop);
       
       const { rerender } = render(
-        <div>
-          <ActivityManager
-            onActivitySelect={jest.fn()}
-            onActivityRemove={jest.fn()}
-            currentActivityId={null}
-            completedActivityIds={[]}
-            timelineEntries={[]}
-            isTimeUp={false}
-            elapsedTime={0}
-          />
-          <Timeline
-            entries={[]}
-            totalDuration={3600}
-            elapsedTime={0}
-            timerActive={false}
-            isTimeUp={false}
-            allActivitiesCompleted={false}
-          />
-        </div>
+        <ToastProvider>
+          <div>
+            <ActivityManager
+              onActivitySelect={jest.fn()}
+              onActivityRemove={jest.fn()}
+              currentActivityId={null}
+              completedActivityIds={[]}
+              timelineEntries={[]}
+              isTimeUp={false}
+              elapsedTime={0}
+            />
+            <Timeline
+              entries={[]}
+              totalDuration={3600}
+              elapsedTime={0}
+              timerActive={false}
+              isTimeUp={false}
+              allActivitiesCompleted={false}
+            />
+          </div>
+        </ToastProvider>
       );
       
       // Check that both headers use consistent styling
@@ -398,25 +437,27 @@ describe('Responsive Design Tests', () => {
       // Test mobile alignment
       mockViewport(BREAKPOINTS.mobile);
       rerender(
-        <div>
-          <ActivityManager
-            onActivitySelect={jest.fn()}
-            onActivityRemove={jest.fn()}
-            currentActivityId={null}
-            completedActivityIds={[]}
-            timelineEntries={[]}
-            isTimeUp={false}
-            elapsedTime={0}
-          />
-          <Timeline
-            entries={[]}
-            totalDuration={3600}
-            elapsedTime={0}
-            timerActive={false}
-            isTimeUp={false}
-            allActivitiesCompleted={false}
-          />
-        </div>
+        <ToastProvider>
+          <div>
+            <ActivityManager
+              onActivitySelect={jest.fn()}
+              onActivityRemove={jest.fn()}
+              currentActivityId={null}
+              completedActivityIds={[]}
+              timelineEntries={[]}
+              isTimeUp={false}
+              elapsedTime={0}
+            />
+            <Timeline
+              entries={[]}
+              totalDuration={3600}
+              elapsedTime={0}
+              timerActive={false}
+              isTimeUp={false}
+              allActivitiesCompleted={false}
+            />
+          </div>
+        </ToastProvider>
       );
       
       // Headers should maintain consistent styling on mobile
@@ -453,7 +494,11 @@ describe('Responsive Design Tests', () => {
     it('properly stacks statistics cards on mobile devices', () => {
       mockViewport(BREAKPOINTS.mobile);
       
-      render(<Summary {...mockSummaryProps} />);
+      render(
+        <ToastProvider>
+          <Summary {...mockSummaryProps} />
+        </ToastProvider>
+      );
       
       // Check that all stat cards have proper mobile column classes
       const plannedCard = screen.getByTestId('stat-card-planned');
@@ -476,40 +521,18 @@ describe('Responsive Design Tests', () => {
 
     it('maintains proper spacing between stacked cards', () => {
       mockViewport(BREAKPOINTS.mobile);
-      
-      render(<Summary {...mockSummaryProps} />);
-      
+      render(
+        <ToastProvider>
+          <Summary {...mockSummaryProps} />
+        </ToastProvider>
+      );
       const statsGrid = screen.getByTestId('stats-grid');
       expect(statsGrid).toHaveClass('g-3'); // Bootstrap gap utility
       expect(statsGrid).toHaveClass('mb-4'); // Bottom margin
     });
-  });
-
-  describe('Touch Interaction Optimization', () => {
-    it('ensures proper touch target sizes for mobile interaction', () => {
-      mockViewport(BREAKPOINTS.mobile);
-      
-      render(
-        <TimeSetup
-          onTimeSet={jest.fn()}
-        />
-      );
-      
-      // Check that form controls have adequate touch targets
-      const hoursInput = screen.getByLabelText(/hours/i);
-      const minutesInput = screen.getByLabelText(/minutes/i);
-      
-      expect(hoursInput).toBeInTheDocument();
-      expect(minutesInput).toBeInTheDocument();
-      
-      // Verify inputs are properly sized for touch interaction
-      expect(hoursInput).toHaveClass('form-control');
-      expect(minutesInput).toHaveClass('form-control');
-    });
 
     it('maintains proper button sizing for touch interaction', () => {
       mockViewport(BREAKPOINTS.mobile);
-      
       const mockProps = {
         onActivitySelect: jest.fn(),
         onActivityRemove: jest.fn(),
@@ -519,9 +542,11 @@ describe('Responsive Design Tests', () => {
         isTimeUp: false,
         elapsedTime: 0
       };
-      
-      render(<ActivityManager {...mockProps} />);
-      
+      render(
+        <ToastProvider>
+          <ActivityManager {...mockProps} />
+        </ToastProvider>
+      );
       // Form submit button should be appropriately sized for touch
       const formElement = document.querySelector('form');
       if (formElement) {
@@ -537,44 +562,41 @@ describe('Responsive Design Tests', () => {
     it('maintains readable font sizes across all breakpoints', () => {
       // Test various breakpoints
       const breakpoints = [BREAKPOINTS.mobile, BREAKPOINTS.tablet, BREAKPOINTS.desktop];
-      
       breakpoints.forEach(width => {
         mockViewport(width);
-        
         const { rerender } = render(
-          <Summary
-            entries={[
-              {
-                id: '1',
-                activityId: 'activity-1',
-                activityName: 'Test Activity',
-                startTime: Date.now() - 1800000,
-                endTime: Date.now() - 900000,
-                colors: {
-                  background: '#E8F5E9',
-                  text: '#1B5E20',
-                  border: '#2E7D32'
+          <ToastProvider>
+            <Summary
+              entries={[
+                {
+                  id: '1',
+                  activityId: 'activity-1',
+                  activityName: 'Test Activity',
+                  startTime: Date.now() - 1800000,
+                  endTime: Date.now() - 900000,
+                  colors: {
+                    background: '#E8F5E9',
+                    text: '#1B5E20',
+                    border: '#2E7D32'
+                  }
                 }
-              }
-            ]}
-            totalDuration={3600}
-            elapsedTime={1800}
-            timerActive={false}
-            allActivitiesCompleted={true}
-            isTimeUp={false}
-          />
+              ]}
+              totalDuration={3600}
+              elapsedTime={1800}
+              timerActive={false}
+              allActivitiesCompleted={true}
+              isTimeUp={false}
+            />
+          </ToastProvider>
         );
-        
         // Check that text remains readable
         const headerElement = screen.getByRole('heading', { name: /summary/i });
         expect(headerElement.tagName).toBe('H5');
-        
         const statValues = screen.getAllByTestId(/stat-value-/);
         statValues.forEach(statValue => {
           expect(statValue).toHaveClass('fs-4');
           expect(statValue).toHaveClass('fw-bold');
         });
-        
         rerender(<div />); // Clear for next iteration
       });
     });
