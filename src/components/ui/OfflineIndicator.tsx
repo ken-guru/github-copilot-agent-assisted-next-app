@@ -15,6 +15,10 @@ export interface OfflineIndicatorProps {}
  */
 export function OfflineIndicator({}: OfflineIndicatorProps): React.ReactElement | null {
   const isOnline = useOnlineStatus();
+  if (typeof window !== 'undefined') {
+    // eslint-disable-next-line no-console
+    console.log('[OfflineIndicator] isOnline:', isOnline, 'testOnlineStatus:', (window as any).__testOnlineStatus);
+  }
   const [mounted, setMounted] = useState(false);
 
   // Handle SSR

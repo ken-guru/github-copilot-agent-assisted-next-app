@@ -53,29 +53,49 @@ describe('Service Worker E2E Integration', () => {
   });
 
   it('should handle complete offline/online state transition workflow', () => {
-    cy.visit('/');
-    
-    // Complete offline workflow
-    cy.window().then((win) => {
-      Object.defineProperty(win.navigator, 'onLine', { value: false, configurable: true });
-      win.dispatchEvent(new win.Event('offline'));
+    cy.visit('/', {
+      onBeforeLoad(win) {
+        (win as any).__testOnlineStatus = true;
+        (win as any).setTestOnlineStatus = (status: any) => {
+          (win as any).__testOnlineStatus = status;
+        };
+      }
     });
-    
+    // Wait for app to mount
+    cy.get('body').should('be.visible');
+    cy.wait(500); // Give React time to mount and attach listeners
+
+    // Complete offline workflow (use test-only API)
+    cy.window().then((win) => {
+      if (typeof (win as any).setTestOnlineStatus === 'function') {
+        (win as any).setTestOnlineStatus(false);
+        cy.log('Set test online status to false');
+        cy.window().then((w) => cy.log('Current test online status: ' + (w as any).__testOnlineStatus));
+      } else {
+        throw new Error('setTestOnlineStatus not found');
+      }
+    });
+    cy.wait(100); // Wait for React to process offline event
+
     // Verify offline UI appears and is usable
-    cy.get('[data-testid="offline-indicator"]').should('be.visible');
-    
+    cy.get('[data-testid="offline-indicator"]', { timeout: 2000 }).should('be.visible');
+
     // Test that app still functions in offline mode (if applicable)
     // This is where we test the actual user experience during offline
-    
-    // Complete online workflow
+
+    // Complete online workflow (use test-only API)
     cy.window().then((win) => {
-      Object.defineProperty(win.navigator, 'onLine', { value: true, configurable: true });
-      win.dispatchEvent(new win.Event('online'));
+      if (typeof (win as any).setTestOnlineStatus === 'function') {
+        (win as any).setTestOnlineStatus(true);
+      } else {
+        throw new Error('setTestOnlineStatus not found');
+      }
     });
-    
+    cy.wait(100); // Wait for React to process online event
+
     // Verify online state restoration
     cy.get('[data-testid="offline-indicator"]').should('not.exist');
-    
+
     // Verify that app functionality is fully restored
     cy.get('body').should('be.visible'); // App should be fully functional
   });
