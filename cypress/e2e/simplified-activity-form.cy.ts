@@ -8,7 +8,7 @@ describe('Activity Form Context-Based Behavior', () => {
     });
     
     cy.visit('/');
-    // Set up time first - required to see activity management
+    // Set up time first - required to see activity management interface
     // Use more specific selector for the duration input in TimeSetup
     cy.get('[data-testid="time-setup"]').within(() => {
       cy.get('input[type="number"]').first().clear();
