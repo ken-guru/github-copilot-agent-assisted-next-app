@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Alert, Row, Col, ListGroup, Badge, Button } from 'react-bootstrap';
+import React, { useEffect, useState, useRef } from 'react';
+import { Card, Row, Col, ListGroup, Badge, Button } from 'react-bootstrap';
+import { useToast } from './ToastNotificationProvider';
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 
@@ -315,12 +316,26 @@ export default function Summary({
 
   const status = getStatusMessage();
   const stats = calculateActivityStats();
-  
+  const { showToast } = useToast();
+  const lastStatusRef = useRef<string | null>(null);
+
+  // Show toast when status message changes
+  useEffect(() => {
+    if (status && status.message && lastStatusRef.current !== status.message) {
+      const variant = getBootstrapVariant(status.className);
+      showToast(
+        variant === 'success' ? 'success' : variant === 'warning' ? 'warning' : 'info',
+        status.message
+      );
+      lastStatusRef.current = status.message;
+    }
+  }, [status, showToast]);
+
   // Early return modified to handle isTimeUp case
   if ((!allActivitiesCompleted && !isTimeUp) || !stats) {
     return null;
   }
-  
+
   const overtime = calculateOvertime();
   const activityTimes = calculateActivityTimes();
 
@@ -341,13 +356,7 @@ export default function Summary({
           </Button>
         )}
       </Card.Header>
-      
       <Card.Body data-testid="summary-body">
-        {status && (
-          <Alert variant={getBootstrapVariant(status.className)} className="mb-3" data-testid="summary-status">
-            {status.message}
-          </Alert>
-        )}
         <Row className="stats-grid g-3 mb-4" data-testid="stats-grid">
           <Col xs={6} md={3} data-testid="stat-card-planned">
             <Card className="text-center h-100">
@@ -357,7 +366,6 @@ export default function Summary({
               </Card.Body>
             </Card>
           </Col>
-          
           <Col xs={6} md={3} data-testid="stat-card-spent">
             <Card className="text-center h-100">
               <Card.Body className="text-center">
@@ -366,7 +374,6 @@ export default function Summary({
               </Card.Body>
             </Card>
           </Col>
-          
           <Col xs={6} md={3} data-testid="stat-card-idle">
             <Card className="text-center h-100">
               <Card.Body className="text-center">
@@ -375,7 +382,6 @@ export default function Summary({
               </Card.Body>
             </Card>
           </Col>
-          
           <Col xs={6} md={3} data-testid="stat-card-overtime">
             <Card className="text-center h-100">
               <Card.Body className="text-center">
@@ -385,7 +391,6 @@ export default function Summary({
             </Card>
           </Col>
         </Row>
-
         {activityTimes.length > 0 && (
           <div className="mt-4">
             <h3 className="h5 mb-3" data-testid="activity-list-heading">Time Spent per Activity</h3>
@@ -395,7 +400,6 @@ export default function Summary({
                 const themeColors = activity.colors ? 
                   getThemeAppropriateColor(activity.colors) || activity.colors : 
                   undefined;
-                
                 return (
                   <ListGroup.Item 
                     key={activity.id}

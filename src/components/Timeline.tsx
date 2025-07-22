@@ -1,5 +1,6 @@
-import React, { useMemo, useEffect, useState } from 'react';
-import { Row, Col, Card, Badge, Alert } from 'react-bootstrap';
+import React, { useMemo, useEffect, useState, useRef } from 'react';
+import { Row, Col, Card, Badge } from 'react-bootstrap';
+import { useToast } from './ToastNotificationProvider';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
@@ -304,12 +305,21 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
         </Row>
       </Card.Header>
         
-        {/* Overtime alert for consistent warning placement */}
-        {isOvertime && (
-          <Alert variant="warning" className="mb-0 border-0 border-bottom rounded-0" data-testid="overtime-alert">
-            <strong>Overtime:</strong> You have exceeded your planned time limit.
-          </Alert>
-        )}
+
+        {/* Overtime notification as toast */}
+        {(() => {
+          const { showToast } = useToast();
+          const overtimeToastShown = useRef(false);
+          useEffect(() => {
+            if (isOvertime && !overtimeToastShown.current) {
+              showToast('warning', 'Overtime: You have exceeded your planned time limit.');
+              overtimeToastShown.current = true;
+            } else if (!isOvertime) {
+              overtimeToastShown.current = false;
+            }
+          }, [isOvertime, showToast]);
+          return null;
+        })()}
         
         <Card.Body className="p-0 flex-grow-1 d-flex flex-column overflow-hidden">
           <div className={`${styles.timelineContainer} timeline-container position-relative`}>

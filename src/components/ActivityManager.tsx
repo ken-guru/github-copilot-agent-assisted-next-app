@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Card, Row, Col, Alert, Button } from 'react-bootstrap';
+import { useState, useEffect, useRef } from 'react';
+import { Card, Row, Col, Button } from 'react-bootstrap';
+
+import { useToast } from './ToastNotificationProvider';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
@@ -133,6 +135,18 @@ export default function ActivityManager({
     }
   };
 
+  const { showToast } = useToast();
+  const emptyToastShown = useRef(false);
+
+  useEffect(() => {
+    if (activities.length === 0 && !emptyToastShown.current) {
+      showToast('info', 'No activities defined');
+      emptyToastShown.current = true;
+    } else if (activities.length > 0) {
+      emptyToastShown.current = false;
+    }
+  }, [activities.length, showToast]);
+
   return (
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
       <Card.Header className="d-flex justify-content-between align-items-center flex-shrink-0">
@@ -152,9 +166,7 @@ export default function ActivityManager({
       </Card.Header>
       <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden p-3">
         {activities.length === 0 ? (
-          <Alert variant="info" className="text-center flex-shrink-0" data-testid="empty-state">
-            No activities defined
-          </Alert>
+          <div className="text-center flex-shrink-0" data-testid="empty-state" />
         ) : (
           <>
             {/* Progress Bar - always visible at top */}
@@ -166,7 +178,6 @@ export default function ActivityManager({
                 timerActive={timerActive}
               />
             </div>
-            
             {/* Activity Form */}
             <div className="flex-shrink-0 mb-3" data-testid="activity-form-column">
               <ClientOnly fallback={<div style={{ height: '200px' }} />}>
@@ -178,7 +189,6 @@ export default function ActivityManager({
                 />
               </ClientOnly>
             </div>
-            
             {/* Activities List - scrollable if needed */}
             <div className="flex-grow-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
               <Row className="gy-3" data-testid="activity-list">
