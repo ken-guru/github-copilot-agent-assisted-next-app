@@ -59,8 +59,8 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setValidated(true);
-    if (!name || !name.trim()) {
-      if (nameInputRef.current) {
+    if (!name || !name.trim() || isDisabled) {
+      if (nameInputRef.current && !isDisabled) {
         nameInputRef.current.focus();
       }
       onSubmit?.(null); // Signal error to parent
@@ -69,7 +69,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
     
     const activityData = {
       id: activity?.id || crypto.randomUUID(),
-      name,
+      name: name.trim(), // Trim the name
       description: isTimerRunning ? '' : description, // Auto-empty description when timer running
       colorIndex: Number(colorIndex),
       createdAt: activity?.createdAt || new Date().toISOString(),
