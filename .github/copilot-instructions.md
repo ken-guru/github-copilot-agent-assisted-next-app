@@ -1,7 +1,83 @@
+```instructions
 # GitHub Copilot Instructions
 
 ## PREAMBLE
 This document contains guidelines for GitHub Copilot to follow when assisting with this project. The instructions are organized by category with clear priorities to ensure consistent, quality assistance. Follow ALL instructions carefully.
+
+## PROJECT ARCHITECTURE ESSENTIALS [PRIORITY: CRITICAL]
+**Read this section first for immediate productivity in the codebase.**
+
+### Core Architecture Patterns
+This is a **Next.js 15 + React 19 + Bootstrap 5 + TypeScript** activity tracking application with these architectural patterns:
+
+#### Activity State Machine (`src/utils/activityStateMachine.ts`)
+```typescript
+// Activity lifecycle: PENDING → RUNNING → COMPLETED/REMOVED
+// Only ONE activity can be RUNNING at a time
+// State machine enforces valid transitions and business rules
+// Used by useActivitiesTracking hook for state management
+```
+
+#### Hook-Based State Architecture
+```
+useActivityState (main orchestrator)
+├── useActivitiesTracking (state machine wrapper)
+└── useTimelineEntries (timeline management)
+```
+
+#### Theme System (`src/contexts/ThemeContext.tsx`)
+- **CSS Variables** + **Bootstrap data-bs-theme** for theming
+- **Light/Dark/System** modes with localStorage persistence
+- **DOM Updates**: `data-theme`, `data-bs-theme` attributes on `html` and `body`
+- **Critical**: Theme changes require both CSS variables AND Bootstrap attribute updates
+
+#### Component Migration Status
+- **✅ MIGRATED**: All UI components use React-Bootstrap components
+- **🔧 PATTERN**: Custom components wrap Bootstrap for consistent theming
+- **📍 LOCATION**: `src/components/` (organized by UI vs business logic)
+
+### Key Integration Points
+#### Service Worker Architecture (`public/service-worker.js`)
+```javascript
+// Offline-first PWA with update notifications
+// ServiceWorkerUpdater component manages lifecycle
+// Caches Next.js static assets + app shell
+// Custom offline fallback page generation
+```
+
+#### Color System (`src/utils/colors.ts`)
+```typescript
+// HSL-based color generation with getNextAvailableColorSet()
+// Activities use colorIndex for consistent color assignment
+// Theme-aware saturation/lightness adjustments
+```
+
+#### Test Architecture (Jest + Cypress)
+```
+85% Jest (fast unit/integration) + 15% Cypress (e2e workflows)
+- Jest: Component logic, hooks, utilities, accessibility
+- Cypress: Complete user workflows, cross-page navigation
+- Performance: 15x faster with Jest-first approach
+```
+
+### Critical File Locations
+```
+src/
+├── hooks/useActivityState.ts      # Main state orchestrator
+├── utils/activityStateMachine.ts  # Business logic core
+├── contexts/ThemeContext.tsx      # Theme management
+└── components/                    # Bootstrap-wrapped components
+
+docs/
+├── PLANNED_CHANGES.md            # AI-ready change specs
+├── MEMORY_LOG.md                 # Debugging knowledge index
+├── logged_memories/              # Detailed debugging sessions
+└── templates/                    # Change planning templates
+
+scripts/
+├── migrate-memory-logs-to-mcp.js # MCP knowledge sync (keep)
+└── check-markdown-links.js       # Link validation tool
+```
 
 ## CRITICAL WORKFLOW RULES [PRIORITY: ABSOLUTE HIGHEST]
 ### Issue Resolution Continuity Protocol
