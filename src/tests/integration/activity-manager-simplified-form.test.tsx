@@ -5,17 +5,16 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ActivityManager from '../../components/ActivityManager';
 import { Activity } from '../../types/activity';
+import * as activityStorage from '../../utils/activity-storage';
 
 // Mock the storage utilities
-const mockGetActivities = jest.fn((): Activity[] => []);
-const mockAddActivity = jest.fn();
-const mockDeleteActivity = jest.fn();
-
 jest.mock('../../utils/activity-storage', () => ({
-  getActivities: mockGetActivities,
-  addActivity: mockAddActivity,
-  deleteActivity: mockDeleteActivity
+  getActivities: jest.fn((): Activity[] => []),
+  addActivity: jest.fn(),
+  deleteActivity: jest.fn()
 }));
+
+const mockActivityStorage = jest.mocked(activityStorage);
 
 // Mock the theme hook
 jest.mock('../../hooks/useThemeReactive', () => ({
@@ -62,8 +61,21 @@ describe('ActivityManager Simplified Form Integration', () => {
   });
 
   describe('Timeline Context (Simplified Form)', () => {
-    it('renders simplified activity form in timeline context', async () => {
-      render(<ActivityManager {...defaultProps} />);
+    it('renders simplified activity form in timeline context when activities exist', async () => {
+      // Provide some activities so the form renders
+      mockActivityStorage.getActivities.mockReturnValue([
+        {
+          id: 'test-1',
+          name: 'Test Activity',
+          description: 'Test',
+          colorIndex: 0,
+          createdAt: new Date().toISOString(),
+          isActive: true
+        }
+      ]);
+
+      const { rerender } = render(<ActivityManager {...defaultProps} />);
+      rerender(<ActivityManager {...defaultProps} />);
 
       // Wait for component to load
       await waitFor(() => {
@@ -85,7 +97,20 @@ describe('ActivityManager Simplified Form Integration', () => {
     });
 
     it('allows adding activities through simplified form', async () => {
-      render(<ActivityManager {...defaultProps} />);
+      // Start with some activities so the form renders
+      mockActivityStorage.getActivities.mockReturnValue([
+        {
+          id: 'existing-1',
+          name: 'Existing Activity',
+          description: 'Test',
+          colorIndex: 0,
+          createdAt: new Date().toISOString(),
+          isActive: true
+        }
+      ]);
+
+      const { rerender } = render(<ActivityManager {...defaultProps} />);
+      rerender(<ActivityManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId('activity-form-column')).toBeInTheDocument();
@@ -114,7 +139,20 @@ describe('ActivityManager Simplified Form Integration', () => {
     });
 
     it('maintains simplified form after adding activity', async () => {
-      render(<ActivityManager {...defaultProps} />);
+      // Start with existing activities so form renders
+      mockActivityStorage.getActivities.mockReturnValue([
+        {
+          id: 'existing-1',
+          name: 'Existing Activity',
+          description: 'Test',
+          colorIndex: 0,
+          createdAt: new Date().toISOString(),
+          isActive: true
+        }
+      ]);
+
+      const { rerender } = render(<ActivityManager {...defaultProps} />);
+      rerender(<ActivityManager {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId('activity-form-column')).toBeInTheDocument();
@@ -136,7 +174,25 @@ describe('ActivityManager Simplified Form Integration', () => {
     });
 
     it('handles disabled state when time is up', async () => {
-      render(
+      // Start with activities so form renders
+      mockActivityStorage.getActivities.mockReturnValue([
+        {
+          id: 'existing-1',
+          name: 'Existing Activity',
+          description: 'Test',
+          colorIndex: 0,
+          createdAt: new Date().toISOString(),
+          isActive: true
+        }
+      ]);
+
+      const { rerender } = render(
+        <ActivityManager 
+          {...defaultProps} 
+          isTimeUp={true}
+        />
+      );
+      rerender(
         <ActivityManager 
           {...defaultProps} 
           isTimeUp={true}
@@ -156,7 +212,27 @@ describe('ActivityManager Simplified Form Integration', () => {
     });
 
     it('shows progress bar alongside simplified form', async () => {
-      render(
+      // Start with activities so form renders
+      mockActivityStorage.getActivities.mockReturnValue([
+        {
+          id: 'existing-1',
+          name: 'Existing Activity',
+          description: 'Test',
+          colorIndex: 0,
+          createdAt: new Date().toISOString(),
+          isActive: true
+        }
+      ]);
+
+      const { rerender } = render(
+        <ActivityManager 
+          {...defaultProps}
+          timerActive={true}
+          elapsedTime={1800} // 30 minutes
+          totalDuration={3600} // 60 minutes
+        />
+      );
+      rerender(
         <ActivityManager 
           {...defaultProps}
           timerActive={true}
@@ -183,7 +259,7 @@ describe('ActivityManager Simplified Form Integration', () => {
   describe('Activity List Integration', () => {
     it('shows activity list alongside simplified form when activities exist', async () => {
       // Mock existing activities
-      mockGetActivities.mockReturnValue([
+      mockActivityStorage.getActivities.mockReturnValue([
         {
           id: 'activity-1',
           name: 'Existing Activity',
@@ -213,6 +289,9 @@ describe('ActivityManager Simplified Form Integration', () => {
     });
 
     it('shows empty state when no activities exist', async () => {
+      // Ensure mock returns empty array
+      mockActivityStorage.getActivities.mockReturnValue([]);
+      
       render(<ActivityManager {...defaultProps} />);
 
       await waitFor(() => {
@@ -220,6 +299,9 @@ describe('ActivityManager Simplified Form Integration', () => {
       });
 
       expect(screen.getByText(/no activities defined/i)).toBeInTheDocument();
+      
+      // Form should NOT be present in empty state
+      expect(screen.queryByTestId('activity-form-column')).not.toBeInTheDocument();
     });
   });
 

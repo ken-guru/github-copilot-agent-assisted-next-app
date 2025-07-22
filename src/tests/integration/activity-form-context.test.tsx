@@ -171,7 +171,7 @@ describe('ActivityForm Context-Based Behavior', () => {
       // All fields should be visible
       expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/color/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /color/i })).toBeInTheDocument(); // Color dropdown button
       
       // Should not have simplified placeholder
       expect(screen.queryByPlaceholderText(/quick add activity name/i)).not.toBeInTheDocument();
@@ -257,7 +257,7 @@ describe('ActivityForm Context-Based Behavior', () => {
       // All fields should now be visible
       expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/color/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /color/i })).toBeInTheDocument(); // Color dropdown button
 
       // Name should be preserved
       expect(screen.getByLabelText(/name/i)).toHaveValue('Test Activity');
@@ -274,7 +274,7 @@ describe('ActivityForm Context-Based Behavior', () => {
         />
       );
 
-      expect(screen.getByText('Test error message')).toBeInTheDocument();
+      expect(screen.getByTestId('activity-form-error')).toHaveTextContent('Test error message');
     });
 
     it('focuses name input when error occurs', () => {
