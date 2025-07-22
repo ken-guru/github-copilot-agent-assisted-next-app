@@ -5,6 +5,7 @@ import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './feature/ActivityForm';
 import ProgressBar from './ProgressBar';
+import ClientOnly from './ClientOnly';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
 
@@ -168,12 +169,14 @@ export default function ActivityManager({
             
             {/* Activity Form */}
             <div className="flex-shrink-0 mb-3" data-testid="activity-form-column">
-              <ActivityForm
-                onAddActivity={handleAddActivity}
-                isDisabled={isTimeUp}
-                isTimerRunning={timerActive}
-                existingActivities={activities}
-              />
+              <ClientOnly fallback={<div style={{ height: '200px' }} />}>
+                <ActivityForm
+                  onAddActivity={handleAddActivity}
+                  isDisabled={isTimeUp}
+                  isTimerRunning={timerActive}
+                  existingActivities={activities}
+                />
+              </ClientOnly>
             </div>
             
             {/* Activities List - scrollable if needed */}
