@@ -130,12 +130,15 @@ beforeAll(() => {
   });
 });
 
+import { ToastProvider } from '@/components/ToastNotificationProvider';
 // Helper function to render Home component with required providers
 const renderHome = () => {
   return render(
-    <LoadingProvider>
-      <Home />
-    </LoadingProvider>
+    <ToastProvider>
+      <LoadingProvider>
+        <Home />
+      </LoadingProvider>
+    </ToastProvider>
   );
 };
 
