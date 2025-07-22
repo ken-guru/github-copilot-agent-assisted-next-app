@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
-import { waitForElementToBeRemoved } from '@testing-library/react';
+
 import { OfflineIndicator } from '../OfflineIndicator';
 import { ToastProvider } from '../ToastNotificationProvider';
 

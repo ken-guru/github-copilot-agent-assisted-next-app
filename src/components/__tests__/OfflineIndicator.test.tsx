@@ -52,7 +52,7 @@ describe('OfflineIndicator', () => {
 
   it('should render with proper nested structure', () => {
     mockedUseOnlineStatus.mockReturnValue(false);
-    const { container } = render(
+  render(
       <ToastProvider>
         <OfflineIndicator />
       </ToastProvider>

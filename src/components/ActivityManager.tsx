@@ -166,7 +166,9 @@ export default function ActivityManager({
       </Card.Header>
       <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden p-3">
         {activities.length === 0 ? (
-          <div className="text-center flex-shrink-0" data-testid="empty-state" />
+          <div className="text-center flex-shrink-0 text-muted fst-italic" data-testid="empty-state">
+            No activities defined. Add a new activity to get started.
+          </div>
         ) : (
           <>
             {/* Progress Bar - always visible at top */}

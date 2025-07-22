@@ -186,4 +186,3 @@ describe('Timeline Break Visualization', () => {
     })).toBeInTheDocument();
   });
 });
-// Removed stray duplicated render block at end of file

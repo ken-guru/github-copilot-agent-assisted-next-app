@@ -258,7 +258,10 @@ describe('ActivityManager Simplified Form Integration', () => {
       await waitFor(() => {
         expect(screen.getByTestId('empty-state')).toBeInTheDocument();
       });
-      expect(screen.getByText(/no activities defined/i)).toBeInTheDocument();
+      // Check the empty state message specifically
+      expect(screen.getByTestId('empty-state')).toHaveTextContent('No activities defined. Add a new activity to get started.');
+      // Check the toast message is present as well
+      expect(screen.getByText('No activities defined')).toBeInTheDocument();
       expect(screen.queryByTestId('activity-form-column')).not.toBeInTheDocument();
     });
   });

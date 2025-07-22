@@ -436,7 +436,7 @@ describe('Summary Bootstrap Integration', () => {
 
   describe('Bootstrap Conditional Rendering', () => {
     it('does not render when activities not completed and time not up', () => {
-      const { container } = render(
+    render(
         <ToastProvider>
           <Summary
             entries={mockEntries}

@@ -33,23 +33,26 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       <ToastContainer position="bottom-end" className="p-3 position-fixed" style={{ zIndex: 1055 }}>
-        {toasts.map(({ id, type, message }) => (
-          <Toast
-            key={id}
-            bg={type === 'error' ? 'danger' : type}
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-            data-testid="global-toast"
-            autohide
-            delay={5000}
-          >
-            <Toast.Body>
-              <strong className="me-2 visually-hidden">{type.charAt(0).toUpperCase() + type.slice(1)}:</strong>
-              {message}
-            </Toast.Body>
-          </Toast>
-        ))}
+        {toasts.map(({ id, type, message }) => {
+          const isAlert = type === 'error' || type === 'warning';
+          return (
+            <Toast
+              key={id}
+              bg={type === 'error' ? 'danger' : type}
+              role={isAlert ? 'alert' : 'status'}
+              aria-live={isAlert ? 'assertive' : 'polite'}
+              aria-atomic="true"
+              data-testid="global-toast"
+              autohide
+              delay={5000}
+            >
+              <Toast.Body>
+                <strong className="me-2 visually-hidden">{type.charAt(0).toUpperCase() + type.slice(1)}:</strong>
+                {message}
+              </Toast.Body>
+            </Toast>
+          );
+        })}
       </ToastContainer>
     </ToastContext.Provider>
   );
