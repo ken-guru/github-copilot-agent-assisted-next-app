@@ -1,4 +1,4 @@
-````instructions
+```instructions
 # GitHub Copilot Instructions
 
 ## PREAMBLE
