@@ -173,7 +173,7 @@ export default function ActivityManager({
                 <ActivityForm
                   onAddActivity={handleAddActivity}
                   isDisabled={isTimeUp}
-                  isTimerRunning={timerActive}
+                  isSimplified={true} // Always simplified in timeline context
                   existingActivities={activities}
                 />
               </ClientOnly>

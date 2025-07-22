@@ -32,7 +32,7 @@ describe('ActivityForm - Simplified Mode', () => {
 
   const simplifiedProps = {
     ...defaultProps,
-    isTimerRunning: true, // This prop doesn't exist yet, but will after our fix
+    isSimplified: true, // Use isSimplified prop for timeline/simplified context
   };
 
   beforeEach(() => {
@@ -73,8 +73,8 @@ describe('ActivityForm - Simplified Mode', () => {
     });
   });
 
-  describe('Simplified form mode (when timers are running)', () => {
-    it('should show only name field when isTimerRunning is true', () => {
+  describe('Simplified form mode (timeline context)', () => {
+    it('should show only name field when isSimplified is true', () => {
       // This test will fail initially until we implement the simplified mode
       render(<ActivityForm {...simplifiedProps} />);
       
@@ -134,7 +134,7 @@ describe('ActivityForm - Simplified Mode', () => {
       expect(screen.getByLabelText('Color')).toBeInTheDocument();
       
       // Switch to simplified mode
-      rerender(<ActivityForm {...defaultProps} isTimerRunning={true} />);
+      rerender(<ActivityForm {...defaultProps} isSimplified={true} />);
       
       // Should now be in simplified mode
       expect(screen.queryByLabelText('Description')).not.toBeInTheDocument();
@@ -150,7 +150,7 @@ describe('ActivityForm - Simplified Mode', () => {
       fireEvent.change(nameInput, { target: { value: 'Test Activity' } });
       
       // Switch to simplified mode
-      rerender(<ActivityForm {...defaultProps} isTimerRunning={true} />);
+      rerender(<ActivityForm {...defaultProps} isSimplified={true} />);
       
       // Name should be preserved
       const simplifiedNameInput = screen.getByLabelText('Name');

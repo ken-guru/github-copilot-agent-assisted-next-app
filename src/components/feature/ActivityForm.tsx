@@ -13,7 +13,7 @@ interface ActivityFormProps {
   error?: string | null;
   isDisabled?: boolean;
   existingActivities?: Activity[]; // New prop for smart color selection
-  isTimerRunning?: boolean; // New prop for simplified mode when timers are running
+  isSimplified?: boolean; // New prop to determine if form should be simplified (timeline context vs modal context)
 }
 
 interface ActivityFormRef {
@@ -21,7 +21,7 @@ interface ActivityFormRef {
 }
 
 const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
-  ({ activity, onSubmit, onAddActivity, error, existingActivities = [], isDisabled = false, isTimerRunning = false }, ref) => {
+  ({ activity, onSubmit, onAddActivity, error, existingActivities = [], isDisabled = false, isSimplified = false }, ref) => {
   const [name, setName] = useState(activity?.name || '');
   const [description, setDescription] = useState(activity?.description || '');
   // Use smart color selection for default if no activity is provided
@@ -74,7 +74,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
     const activityData = {
       id: activityId,
       name: name.trim(), // Trim the name
-      description: isTimerRunning ? '' : description, // Auto-empty description when timer running
+      description: isSimplified ? '' : description, // Auto-empty description in simplified mode
       colorIndex: Number(colorIndex),
       createdAt: timestamp,
       isActive: true,
@@ -108,7 +108,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
           ref={nameInputRef}
           isInvalid={!!error}
           disabled={isDisabled}
-          placeholder={isTimerRunning ? "Quick add activity name" : undefined}
+          placeholder={isSimplified ? "Quick add activity name" : undefined}
         />
         <Form.Control.Feedback type="invalid" data-testid="activity-form-error">
           {error ? error : ''}
@@ -119,8 +119,8 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
         )}
       </Form.Group>
       
-      {/* Only show description and color fields when timer is NOT running */}
-      {!isTimerRunning && (
+      {/* Only show description and color fields in full mode (not simplified) */}
+      {!isSimplified && (
         <>
           <Form.Group controlId="activityDescription">
             <Form.Label>Description</Form.Label>

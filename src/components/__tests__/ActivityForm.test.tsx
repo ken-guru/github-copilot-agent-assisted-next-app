@@ -6,7 +6,7 @@ describe('ActivityForm', () => {
   const defaultProps = {
     onAddActivity: jest.fn(),
     isDisabled: false,
-    isTimerRunning: false,
+    isSimplified: false,
     existingActivities: [],
   };
 
@@ -79,43 +79,38 @@ describe('ActivityForm', () => {
   });
 
   describe('Simplified form when timer is running', () => {
-    it('shows only name field when timer is running', () => {
-      render(<ActivityForm {...defaultProps} isTimerRunning={true} />);
-      
-      // Name field should be visible
-      expect(screen.getByRole('textbox', { name: /name/i })).toBeInTheDocument();
-      
-      // Description and color fields should NOT be visible
-      expect(screen.queryByRole('textbox', { name: /description/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /color/i })).not.toBeInTheDocument();
-    });
+    it('should hide description and color fields in simplified mode', () => {
+    render(<ActivityForm {...defaultProps} isSimplified={true} />);
+    
+    expect(screen.getByRole('textbox', { name: /name/i })).toBeInTheDocument();
+    expect(screen.queryByRole('textbox', { name: /description/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /color/i })).not.toBeInTheDocument();
+  });
 
-    it('shows all fields when timer is not running', () => {
-      render(<ActivityForm {...defaultProps} isTimerRunning={false} />);
-      
-      // All fields should be visible
-      expect(screen.getByRole('textbox', { name: /name/i })).toBeInTheDocument();
-      expect(screen.getByRole('textbox', { name: /description/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /color/i })).toBeInTheDocument();
-    });
+  it('should show all fields in full mode', () => {
+    render(<ActivityForm {...defaultProps} isSimplified={false} />);
+    
+    expect(screen.getByRole('textbox', { name: /name/i })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /description/i })).toBeInTheDocument();
+    expect(screen.getByRole('button')).toBeInTheDocument(); // Color dropdown button
+  });
 
-    it('auto-assigns color when timer is running and form is submitted', () => {
-      const mockOnAddActivity = jest.fn();
-      render(<ActivityForm {...defaultProps} isTimerRunning={true} onAddActivity={mockOnAddActivity} />);
-      
-      const input = screen.getByRole('textbox');
-      const form = screen.getByRole('form');
-
-      fireEvent.change(input, { target: { value: 'Quick Activity' } });
-      fireEvent.submit(form);
-
-      // Should call onAddActivity with auto-assigned color
-      expect(mockOnAddActivity).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'Quick Activity',
-          colorIndex: expect.any(Number),
-        })
-      );
-    });
+  it('should auto-populate description as empty in simplified mode', () => {
+    const mockOnAddActivity = jest.fn();
+    render(<ActivityForm {...defaultProps} isSimplified={true} onAddActivity={mockOnAddActivity} />);
+    
+    const nameInput = screen.getByRole('textbox', { name: /name/i });
+    const submitButton = screen.getByRole('button', { name: /add activity/i });
+    
+    fireEvent.change(nameInput, { target: { value: 'Test Activity' } });
+    fireEvent.click(submitButton);
+    
+    expect(mockOnAddActivity).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'Test Activity',
+        description: '', // Should be empty in simplified mode
+      })
+    );
+  });
   });
 });

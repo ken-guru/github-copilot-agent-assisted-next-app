@@ -160,7 +160,7 @@ function AppContent() {
                   isTimeUp={isTimeUp}
                   elapsedTime={elapsedTime}
                   totalDuration={totalDuration}
-                  timerActive={currentActivity !== null} // Use currentActivity instead of timerActive for simplified form
+                  timerActive={timerActive}
                   onReset={handleReset}
                 />
               </div>
