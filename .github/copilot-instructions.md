@@ -185,7 +185,18 @@ This document contains guidelines for GitHub Copilot to follow when assisting wi
 5. Add as LAST item
 6. NEVER overwrite existing entries
 7. Use next available sequential ID number
-8. **RECOMMENDED**: Migrate to MCP Memory Tool using `scripts/migrate-memory-logs-to-mcp.js`
+8. **REQUIRED**: Always add memory entries to MCP Memory Tool for AI agent accessibility
+   - Use `mcp_memory_create_entities` and `mcp_memory_create_relations` tools
+   - Create entities for debugging sessions, patterns, components, and memory logs
+   - Establish relationships between entities to build knowledge graph
+   - This enables semantic search and persistent knowledge across sessions
+
+### MCP Memory Tool Integration
+- **MANDATORY**: All debugging sessions, fixes, and significant insights MUST be added to MCP
+- **DUAL STORAGE**: Maintain both markdown files (authoritative) and MCP entities (searchable)
+- **AI ACCESSIBILITY**: MCP enables AI agents to find relevant context from previous work
+- **RELATIONSHIP MAPPING**: Connect related debugging sessions, patterns, and components
+- **SEMANTIC SEARCH**: Use MCP search to find relevant historical context before starting new work
 
 ### Entry Format Requirements
 - Follow established template structure
