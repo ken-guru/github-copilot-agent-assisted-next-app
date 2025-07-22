@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Dropdown, Button } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
 import { getColorName } from '../../utils/colorNames';
@@ -28,7 +28,13 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
   const defaultColorIndex = activity?.colorIndex ?? getSmartColorIndex(existingActivities);
   const [colorIndex, setColorIndex] = useState(defaultColorIndex);
   const [validated, setValidated] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const nameInputRef = React.useRef<HTMLInputElement>(null);
+  
+  // Fix hydration issues by ensuring client-side operations happen after mount
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   // Get theme using new reactive hook - this ensures component re-renders when theme changes
   const theme = useThemeReactive();
@@ -68,11 +74,11 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
     }
     
     const activityData = {
-      id: activity?.id || crypto.randomUUID(),
+      id: activity?.id || (isClient ? crypto.randomUUID() : ''),
       name: name.trim(), // Trim the name
       description: isTimerRunning ? '' : description, // Auto-empty description when timer running
       colorIndex: Number(colorIndex),
-      createdAt: activity?.createdAt || new Date().toISOString(),
+      createdAt: activity?.createdAt || (isClient ? new Date().toISOString() : ''),
       isActive: true,
     };
     

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Form, Button, Row, Col, ButtonGroup } from 'react-bootstrap';
 
 interface TimeSetupProps {
@@ -11,9 +11,18 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   const [minutes, setMinutes] = useState<number>(1); // Default to 1 minute
   const [seconds, setSeconds] = useState<number>(0);
   const [deadlineTime, setDeadlineTime] = useState<string>('');
+  const [isClient, setIsClient] = useState(false);
+
+  // Prevent hydration mismatch by only running time calculations on the client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Only calculate time on the client to prevent hydration mismatch
+    if (!isClient) return;
     
     let durationInSeconds = 0;
     
