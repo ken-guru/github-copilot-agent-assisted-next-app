@@ -68,7 +68,16 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
     }
     
     // Generate ID and timestamp safely to prevent hydration issues
-    const activityId = activity?.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : `temp-${Math.random()}`);
+    // Only generate ID when actually submitting, not during render
+    const generateId = () => {
+      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+      // Fallback that's deterministic during SSR
+      return `activity-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    };
+    
+    const activityId = activity?.id || generateId();
     const timestamp = activity?.createdAt || new Date().toISOString();
     
     const activityData = {
