@@ -73,6 +73,16 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
+              // Ensure ServiceWorkerUpdaterAPI is available for Cypress before React mounts
+              if (typeof window !== 'undefined' && window.Cypress && !window.ServiceWorkerUpdaterAPI) {
+                window.ServiceWorkerUpdaterAPI = {
+                  setUpdateAvailable: function(isAvailable) {
+                    window.dispatchEvent(new CustomEvent('serviceWorkerUpdateAvailable', {
+                      detail: { message: isAvailable ? 'A new version is available. Please refresh to update.' : '' }
+                    }));
+                  }
+                };
+              }
               (function() {
                 // Don't run during SSR
                 if (typeof window === 'undefined' || typeof document === 'undefined') {
