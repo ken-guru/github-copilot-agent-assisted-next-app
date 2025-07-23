@@ -79,7 +79,7 @@ describe('ActivityForm - Simplified Mode', () => {
       render(<ActivityForm {...simplifiedProps} />);
       
       // Should show only name field
-      expect(screen.getByLabelText('Name')).toBeInTheDocument();
+      expect(screen.getByLabelText('Activity name')).toBeInTheDocument();
       
       // Should NOT show description or color fields
       expect(screen.queryByLabelText('Description')).not.toBeInTheDocument();
@@ -90,7 +90,7 @@ describe('ActivityForm - Simplified Mode', () => {
       // This test will fail initially until we implement the simplified mode
       render(<ActivityForm {...simplifiedProps} />);
       
-      const nameInput = screen.getByLabelText('Name');
+      const nameInput = screen.getByLabelText('Activity name');
       fireEvent.change(nameInput, { target: { value: 'Quick Activity' } });
       
       const form = screen.getByRole('form');
@@ -110,7 +110,7 @@ describe('ActivityForm - Simplified Mode', () => {
     it('should still respect isDisabled prop in simplified mode', () => {
       render(<ActivityForm {...simplifiedProps} isDisabled={true} />);
       
-      const nameInput = screen.getByLabelText('Name');
+      const nameInput = screen.getByLabelText('Activity name');
       
       expect(nameInput).toBeDisabled();
       // No submit button to test anymore - it's handled by modal footer
@@ -119,7 +119,7 @@ describe('ActivityForm - Simplified Mode', () => {
     it('should show placeholder indicating quick add mode', () => {
       render(<ActivityForm {...simplifiedProps} />);
       
-      const nameInput = screen.getByLabelText('Name');
+      const nameInput = screen.getByLabelText('Activity name');
       expect(nameInput).toHaveAttribute('placeholder', expect.stringContaining('Quick'));
     });
   });
@@ -138,7 +138,7 @@ describe('ActivityForm - Simplified Mode', () => {
       // Should now be in simplified mode
       expect(screen.queryByLabelText('Description')).not.toBeInTheDocument();
       expect(screen.queryByLabelText('Color')).not.toBeInTheDocument();
-      expect(screen.getByLabelText('Name')).toBeInTheDocument();
+      expect(screen.getByLabelText('Activity name')).toBeInTheDocument();
     });
 
     it('should maintain form data when switching modes', () => {
@@ -152,7 +152,7 @@ describe('ActivityForm - Simplified Mode', () => {
       rerender(<ActivityForm {...defaultProps} isSimplified={true} />);
       
       // Name should be preserved
-      const simplifiedNameInput = screen.getByLabelText('Name');
+      const simplifiedNameInput = screen.getByLabelText('Activity name');
       expect(simplifiedNameInput).toHaveValue('Test Activity');
     });
   });

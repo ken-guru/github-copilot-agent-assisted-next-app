@@ -71,7 +71,7 @@ describe('ActivityManager Component', () => {
     );
     
     // Type in a new activity name
-    const input = screen.getByLabelText('Name');
+    const input = screen.getByLabelText('Activity name');
     fireEvent.change(input, { target: { value: 'New Test Activity' } });
     
     // Click the Add Activity button
@@ -99,7 +99,7 @@ describe('ActivityManager Component', () => {
     );
     
     // Type in a new activity name
-    const input = screen.getByLabelText('Name');
+    const input = screen.getByLabelText('Activity name');
     fireEvent.change(input, { target: { value: 'New Test Activity' } });
     
     // Click the Add Activity button
@@ -250,7 +250,7 @@ describe('ActivityManager Component', () => {
     expect(addButton).toBeDisabled();
     
     // Name input should be disabled
-    const input = screen.getByLabelText('Name');
+    const input = screen.getByLabelText('Activity name');
     expect(input).toBeDisabled();
   });
   

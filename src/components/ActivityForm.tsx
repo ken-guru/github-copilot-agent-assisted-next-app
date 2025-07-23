@@ -32,7 +32,7 @@ const ActivityForm: React.FC<ActivityFormProps> = ({ onAddActivity, isDisabled }
           variant="primary"
           disabled={isDisabled}
         >
-          Add
+          Add Activity
         </Button>
       </InputGroup>
     </Form>
