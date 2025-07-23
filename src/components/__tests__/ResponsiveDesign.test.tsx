@@ -382,7 +382,6 @@ describe('Responsive Design Tests', () => {
               totalDuration={3600}
               elapsedTime={0}
               timerActive={false}
-              isTimeUp={false}
               allActivitiesCompleted={false}
             />
           </div>
@@ -417,7 +416,6 @@ describe('Responsive Design Tests', () => {
               totalDuration={3600}
               elapsedTime={0}
               timerActive={false}
-              isTimeUp={false}
               allActivitiesCompleted={false}
             />
           </div>
