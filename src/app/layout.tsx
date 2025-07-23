@@ -147,10 +147,7 @@ export default function RootLayout({
                 window.addEventListener('load', function() {
                   console.log('[SW Registration] Starting service worker registration');
                   
-                  // Add cache-busting parameter to ensure fresh SW file
-                  const swUrl = '/service-worker.js?v=' + Date.now();
-                  
-                  navigator.serviceWorker.register(swUrl, {
+                  navigator.serviceWorker.register('/service-worker.js', {
                     updateViaCache: 'none' // Don't cache the service worker file
                   })
                     .then(function(registration) {
@@ -169,13 +166,25 @@ export default function RootLayout({
                         
                         // Check immediately and then periodically
                         checkForUpdates();
-                        setInterval(checkForUpdates, 30000);
+                        const updateIntervalId = setInterval(checkForUpdates, 30000);
+                        
+                        // Clear the interval when the page unloads to prevent memory leaks
+                        window.addEventListener('beforeunload', () => {
+                          clearInterval(updateIntervalId);
+                        });
                         
                         // Also check when page becomes visible
-                        document.addEventListener('visibilitychange', () => {
+                        const handleVisibilityChange = () => {
                           if (!document.hidden) {
                             setTimeout(checkForUpdates, 1000);
                           }
+                        };
+                        
+                        document.addEventListener('visibilitychange', handleVisibilityChange);
+                        
+                        // Clean up visibility listener on unload
+                        window.addEventListener('beforeunload', () => {
+                          document.removeEventListener('visibilitychange', handleVisibilityChange);
                         });
                       }
                     })

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/update-service-worker-version.js && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
@@ -14,7 +14,8 @@
     "cypress:headless": "cypress run --headless",
     "type-check": "tsc --noEmit",
     "clean-build": "node scripts/clean-build.js",
-    "clean-build:full": "node scripts/clean-build.js --full"
+    "clean-build:full": "node scripts/clean-build.js --full",
+    "update-sw-version": "node scripts/update-service-worker-version.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.7",

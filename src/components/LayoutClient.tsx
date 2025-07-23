@@ -23,6 +23,11 @@ export function LayoutClient({ children }: LayoutClientProps) {
     if ('serviceWorker' in navigator) {
       console.log('[LayoutClient] Setting up service worker update detection');
       
+      // Controller change handler - define once and clean up properly
+      const handleControllerChange = () => {
+        console.log('[LayoutClient] Service worker controller changed');
+      };
+      
       // Check for existing service worker with updates
       navigator.serviceWorker.ready.then((registration) => {
         console.log('[LayoutClient] Service worker ready, setting up update listeners');
@@ -60,10 +65,16 @@ export function LayoutClient({ children }: LayoutClientProps) {
         console.error('[LayoutClient] Service worker ready failed:', error);
       });
       
-      // Also listen for controller changes to detect when SW takes control
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        console.log('[LayoutClient] Service worker controller changed');
-      });
+      // Add controller change listener
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+      
+      // Cleanup function to remove event listeners
+      return () => {
+        // Check if removeEventListener exists (not available in test environment)
+        if (navigator.serviceWorker.removeEventListener) {
+          navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+        }
+      };
     }
   }, []);
   

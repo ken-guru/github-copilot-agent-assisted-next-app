@@ -1,8 +1,9 @@
 // Service Worker for Mr. Timely
 
 const CACHE_NAME_PREFIX = 'github-copilot-agent-assisted-next-app';
-// Use build timestamp for cache versioning
-const BUILD_VERSION = '7-' + new Date().getTime();
+// Use consistent version - will be replaced at build time or deployment
+// This ensures consistent cache versioning across all instances
+const BUILD_VERSION = '0.1.0-1753266392531'; // Format: package.version-increment
 const CACHE_NAME = `${CACHE_NAME_PREFIX}-v${BUILD_VERSION}`;
 const APP_SHELL_CACHE_NAME = `app-shell-v${BUILD_VERSION}`;
 
