@@ -270,3 +270,26 @@ a {
 .fade-out {
   animation: fadeOut 0.3s ease-in-out forwards;
 }
+
+/* Consistent Card Header Heights */
+.card-header-consistent {
+  height: 4rem; /* Fixed height instead of min-height */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+/* Ensure content within card headers aligns properly */
+.card-header-consistent h5 {
+  margin: 0;
+  line-height: 1.2;
+}
+
+.card-header-consistent .btn {
+  flex-shrink: 0;
+}
+
+.card-header-consistent .badge {
+  flex-shrink: 0;
+}

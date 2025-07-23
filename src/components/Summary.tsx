@@ -326,7 +326,7 @@ export default function Summary({
 
   return (
     <Card data-testid="summary" className="summary-card h-100">
-      <Card.Header className="d-flex justify-content-between align-items-center">
+      <Card.Header className="card-header-consistent">
         <h5 className="mb-0" role="heading" aria-level={2}>Summary</h5>
         {onReset && (
           <Button 

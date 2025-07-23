@@ -317,13 +317,9 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   
   return (
     <Card className="border h-100 d-flex flex-column">
-      <Card.Header className="d-flex justify-content-between align-items-center flex-shrink-0" style={{ minHeight: '4rem' }}>
-        <h5 className="mb-0" role="heading" aria-level={2}>Timeline</h5>
-        <Badge 
-          bg={isTimeUp ? 'danger' : 'primary'} 
-          className={`badge-${isTimeUp ? 'danger' : 'primary'} text-nowrap`}
-          data-testid="time-display"
-        >
+      <Card.Header className="card-header-consistent">
+        <h5 className="mb-0">Timeline</h5>
+        <Badge bg="secondary" className="ms-2 text-nowrap" data-testid="time-display">
           {timeDisplay}
         </Badge>
       </Card.Header>

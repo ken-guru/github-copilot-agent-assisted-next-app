@@ -135,7 +135,7 @@ export default function ActivityManager({
 
   return (
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
-      <Card.Header className="d-flex justify-content-between align-items-center flex-shrink-0">
+      <Card.Header className="card-header-consistent">
         <h5 className="mb-0">Activities</h5>
         {onReset && (
           <Button 

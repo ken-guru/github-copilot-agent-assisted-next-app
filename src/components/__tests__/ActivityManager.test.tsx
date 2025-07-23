@@ -449,7 +449,7 @@ describe('ActivityManager Component', () => {
       const resetButton = screen.getByRole('button', { name: /Reset/i });
       
       expect(cardHeader).toContainElement(resetButton);
-      expect(cardHeader).toHaveClass('d-flex', 'justify-content-between', 'align-items-center');
+      expect(cardHeader).toHaveClass('card-header-consistent');
     });
   });
 });

@@ -323,7 +323,7 @@ describe('Responsive Design Tests', () => {
       
       render(
         <Card>
-          <Card.Header>
+          <Card.Header className="card-header-consistent">
             <h5 className="mb-0">Test Card</h5>
           </Card.Header>
           <Alert variant="info" className="mb-0 border-0 border-bottom rounded-0" data-testid="card-alert">

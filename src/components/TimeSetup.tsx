@@ -54,7 +54,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
 
   return (
     <Card className="mb-4" data-testid="time-setup">
-      <Card.Header>
+      <Card.Header className="card-header-consistent">
         <h5 className="mb-0">Set Time</h5>
       </Card.Header>
       

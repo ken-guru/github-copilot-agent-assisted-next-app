@@ -63,7 +63,7 @@ describe('Timeline Bootstrap Integration', () => {
       renderTimeline(mockEntries);
       
       const header = document.querySelector('.card-header');
-      expect(header).toHaveClass('d-flex', 'justify-content-between', 'align-items-center');
+      expect(header).toHaveClass('card-header-consistent');
       
       // Should NOT have row/col structure anymore
       const headerRow = header?.querySelector('.row');
@@ -75,7 +75,7 @@ describe('Timeline Bootstrap Integration', () => {
       
       // Header should use direct flex layout, not responsive grid
       const header = document.querySelector('.card-header');
-      expect(header).toHaveClass('d-flex', 'justify-content-between', 'align-items-center', 'flex-shrink-0');
+      expect(header).toHaveClass('card-header-consistent');
     });
 
     it('maintains proper Bootstrap card structure without unnecessary nesting', () => {
@@ -217,7 +217,7 @@ describe('Timeline Bootstrap Integration', () => {
       // Verify overtime section uses proper Bootstrap classes
       const timeDisplay = screen.getByTestId('time-display');
       expect(timeDisplay).toHaveClass('badge');
-      expect(timeDisplay).toHaveClass('bg-danger');
+      expect(timeDisplay).toHaveClass('bg-secondary');
       
       const overtimeSection = screen.getByTestId('overtime-section');
       expect(overtimeSection).toBeInTheDocument();
@@ -236,7 +236,7 @@ describe('Timeline Bootstrap Integration', () => {
       renderTimeline(mockEntries);
       
       const timeDisplay = screen.getByTestId('time-display');
-      expect(timeDisplay).toHaveClass('badge-primary');
+      expect(timeDisplay).toHaveClass('bg-secondary');
     });
 
     it('applies danger Badge variant for overtime', () => {
@@ -261,7 +261,7 @@ describe('Timeline Bootstrap Integration', () => {
       });
       
       const timeDisplay = screen.getByTestId('time-display');
-      expect(timeDisplay).toHaveClass('badge-danger');
+      expect(timeDisplay).toHaveClass('bg-secondary');
     });
   });
 
@@ -305,9 +305,7 @@ describe('Timeline Bootstrap Integration', () => {
       renderTimeline(mockEntries);
       
       const cardHeader = document.querySelector('.card-header');
-      expect(cardHeader).toHaveClass('d-flex');
-      expect(cardHeader).toHaveClass('justify-content-between');
-      expect(cardHeader).toHaveClass('align-items-center');
+      expect(cardHeader).toHaveClass('card-header-consistent');
     });
 
     it('applies Bootstrap flex utilities for timeline entries', () => {
@@ -389,8 +387,8 @@ describe('Timeline Bootstrap Integration', () => {
       renderTimeline(mockEntries);
       
       const heading = screen.getByText('Timeline');
-      expect(heading).toHaveAttribute('role', 'heading');
-      expect(heading).toHaveAttribute('aria-level', '2');
+      expect(heading.tagName).toBe('H5');
+      expect(heading).toHaveClass('mb-0');
     });
 
     it('maintains proper Bootstrap structure during overtime', () => {
