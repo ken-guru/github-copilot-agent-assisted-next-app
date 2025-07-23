@@ -1,50 +1,69 @@
 {
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "github_token",
-      "description": "GitHub Personal Access Token",
-      "password": true
-    }
-  ],
-  "servers": {
-    "github": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-e",
-        "GITHUB_PERSONAL_ACCESS_TOKEN",
-        "ghcr.io/github/github-mcp-server"
-      ],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_token}"
-      }
-    },
-    "time": {
-      "command": "docker",
-      "args": ["run", "-i", "--rm", "mcp/time"]
-    },
-    "sequential-thinking": {
-      "command": "docker",
-      "args": [
-        "run",
-        "--rm",
-        "-i",
-        "mcp/sequentialthinking"
-      ]
-    },
-    "memory": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "-v",
-        "claude-memory:/app/dist",
-        "--rm",
-        "mcp/memory"
-      ]
-    }
-  }
+	"servers": {
+		"github": {
+			"command": "docker",
+			"args": [
+				"run",
+				"-i",
+				"--rm",
+				"-e",
+				"GITHUB_PERSONAL_ACCESS_TOKEN",
+				"ghcr.io/github/github-mcp-server"
+			],
+			"env": {
+				"GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_token}"
+			},
+			"type": "stdio"
+		},
+		"time": {
+			"command": "docker",
+			"args": [
+				"run",
+				"-i",
+				"--rm",
+				"mcp/time"
+			],
+			"type": "stdio"
+		},
+		"sequential-thinking": {
+			"command": "docker",
+			"args": [
+				"run",
+				"--rm",
+				"-i",
+				"mcp/sequentialthinking"
+			],
+			"type": "stdio"
+		},
+		"memory": {
+			"command": "docker",
+			"args": [
+				"run",
+				"-i",
+				"-v",
+				"claude-memory:/app/dist",
+				"--rm",
+				"mcp/memory"
+			],
+			"type": "stdio"
+		},
+		"playwright": {
+			"command": "docker",
+			"args": [
+				"run",
+				"-i",
+				"--rm",
+				"mcp/playwright"
+			],
+			"type": "stdio"
+		}
+	},
+	"inputs": [
+		{
+			"type": "promptString",
+			"id": "github_token",
+			"description": "GitHub Personal Access Token",
+			"password": true
+		}
+	]
 }
