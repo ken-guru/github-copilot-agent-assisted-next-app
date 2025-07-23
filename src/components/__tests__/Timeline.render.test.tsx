@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import Timeline from '../Timeline';
 import { TimelineEntry } from '@/types';
+import { ToastProvider } from '@/contexts/ToastContext';
 
 describe('Timeline Component Rendering', () => {
   let dateNowSpy: jest.SpyInstance;
@@ -39,24 +40,28 @@ describe('Timeline Component Rendering', () => {
       },
     ];
     render(
-      <Timeline 
-        entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={1800}
-        timerActive={true}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={mockEntries}
+          totalDuration={3600}
+          elapsedTime={1800}
+          timerActive={true}
+        />
+      </ToastProvider>
     );
     expect(screen.getByTestId('timeline-activity-name')).toBeInTheDocument();
   });
   
   it('should render an empty state when no entries are present', () => {
     render(
-      <Timeline 
-        entries={[]}
-        totalDuration={3600}
-        elapsedTime={0}
-        timerActive={false}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={[]}
+          totalDuration={3600}
+          elapsedTime={0}
+          timerActive={false}
+        />
+      </ToastProvider>
     );
     expect(screen.getByText('No activities started yet')).toBeInTheDocument();
   });
@@ -80,13 +85,15 @@ describe('Timeline Component Rendering', () => {
     ];
     
     render(
-      <Timeline 
-        entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={4000}
-        timerActive={true}
-        isTimeUp={true}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={mockEntries}
+          totalDuration={3600}
+          elapsedTime={4000}
+          timerActive={true}
+          isTimeUp={true}
+        />
+      </ToastProvider>
     );
     
     expect(screen.getByTestId('overtime-alert')).toBeInTheDocument();

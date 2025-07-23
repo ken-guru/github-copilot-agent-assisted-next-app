@@ -2,6 +2,7 @@
 import { render, screen } from '@testing-library/react';
 import Timeline from '../Timeline';
 import { TimelineEntry } from '@/types';
+import { ToastProvider } from '@/contexts/ToastContext';
 
 describe('Timeline Component', () => {
   let dateNowSpy: jest.SpyInstance;
@@ -22,13 +23,15 @@ describe('Timeline Component', () => {
   // Helper function to render timeline with standard props
   const renderTimeline = (entries: TimelineEntry[], props = {}) => {
     return render(
-      <Timeline 
-        entries={entries}
-        totalDuration={3600}
-        elapsedTime={30}
-        timerActive={true}
-        {...props}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={entries}
+          totalDuration={3600}
+          elapsedTime={30}
+          timerActive={true}
+          {...props}
+        />
+      </ToastProvider>
     );
   };
 
