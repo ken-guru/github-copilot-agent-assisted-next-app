@@ -55,9 +55,9 @@ export default function TimeSetup({
   initialDeadlineTime
 }: TimeSetupProps) {
   const [setupMode, setSetupMode] = useState<'duration' | 'deadline'>(initialMode || 'duration');
-  const [hours, setHours] = useState<number>(initialHours);
-  const [minutes, setMinutes] = useState<number>(initialMinutes);
-  const [seconds, setSeconds] = useState<number>(initialSeconds);
+  const [hours, setHours] = useState<string>(initialHours.toString());
+  const [minutes, setMinutes] = useState<string>(initialMinutes.toString());
+  const [seconds, setSeconds] = useState<string>(initialSeconds.toString());
   
   // Initialize deadline time with current time if not provided
   const [deadlineTime, setDeadlineTime] = useState<string>(
@@ -70,12 +70,12 @@ export default function TimeSetup({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     let durationInSeconds = 0;
-    
     if (setupMode === 'duration') {
-      durationInSeconds = hours * 3600 + minutes * 60 + seconds;
-      
+      const h = hours === '' ? 0 : parseInt(hours);
+      const m = minutes === '' ? 0 : parseInt(minutes);
+      const s = seconds === '' ? 0 : parseInt(seconds);
+      durationInSeconds = h * 3600 + m * 60 + s;
       // Validate duration input
       if (durationInSeconds <= 0) {
         setHasError(true);
@@ -86,7 +86,6 @@ export default function TimeSetup({
       // Convert the time string to today's date with that time
       const now = new Date();
       const [hoursStr, minutesStr] = deadlineTime.split(':');
-      
       const deadlineDate = new Date(
         now.getFullYear(),
         now.getMonth(),
@@ -94,15 +93,12 @@ export default function TimeSetup({
         parseInt(hoursStr || '0'),
         parseInt(minutesStr || '0')
       );
-      
       // If the deadline is in the past, assume it's for tomorrow
       if (deadlineDate <= now) {
         deadlineDate.setDate(deadlineDate.getDate() + 1);
       }
-      
       // Calculate seconds until deadline
       durationInSeconds = Math.max(0, Math.floor((deadlineDate.getTime() - now.getTime()) / 1000));
-      
       // Validate deadline input
       if (durationInSeconds <= 0) {
         setHasError(true);
@@ -110,11 +106,9 @@ export default function TimeSetup({
         return;
       }
     }
-    
     // Clear any previous errors
     setHasError(false);
     setErrorMessage('');
-    
     // Call the callback with the calculated duration
     onTimeSet(durationInSeconds);
   };
@@ -126,12 +120,10 @@ export default function TimeSetup({
     setErrorMessage('');
   };
 
-  const handleNumberInput = (value: string, setter: React.Dispatch<React.SetStateAction<number>>) => {
-    const parsed = parseInt(value);
-    if (!isNaN(parsed) && parsed >= 0) {
-      setter(parsed);
-    } else {
-      setter(0);
+  const handleNumberInput = (value: string, setter: React.Dispatch<React.SetStateAction<string>>) => {
+    // Allow empty string for controlled input
+    if (value === '' || (/^\d+$/.test(value) && parseInt(value) >= 0)) {
+      setter(value);
     }
   };
 
@@ -167,6 +159,7 @@ export default function TimeSetup({
                 min="0"
                 value={hours}
                 onChange={(e) => handleNumberInput(e.target.value, setHours)}
+                onBlur={() => { if (hours === '') setHours('0'); }}
                 className={`${styles.input} ${hasError ? styles.inputError : ''}`}
               />
             </div>
@@ -181,6 +174,7 @@ export default function TimeSetup({
                 step="1"
                 value={minutes}
                 onChange={(e) => handleNumberInput(e.target.value, setMinutes)}
+                onBlur={() => { if (minutes === '') setMinutes('0'); }}
                 className={`${styles.input} ${hasError ? styles.inputError : ''}`}
               />
             </div>
@@ -194,6 +188,7 @@ export default function TimeSetup({
                 max="59"
                 value={seconds}
                 onChange={(e) => handleNumberInput(e.target.value, setSeconds)}
+                onBlur={() => { if (seconds === '') setSeconds('0'); }}
                 className={`${styles.input} ${hasError ? styles.inputError : ''}`}
               />
             </div>
@@ -216,7 +211,7 @@ export default function TimeSetup({
         <button 
           type="submit" 
           className={styles.submitButton}
-          disabled={setupMode === 'duration' && hours === 0 && minutes === 0 && seconds === 0}
+          disabled={setupMode === 'duration' && (parseInt(hours || '0') === 0 && parseInt(minutes || '0') === 0 && parseInt(seconds || '0') === 0)}
         >
           Start Timer
         </button>
