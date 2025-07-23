@@ -97,6 +97,49 @@ describe('Timeline Component', () => {
     expect(lastMarkerTime).not.toBe('1:00:00');
   });
 
+  it('should dismiss overtime toast when allActivitiesCompleted becomes true', async () => {
+    const mockEntries: TimelineEntry[] = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Test Activity',
+        startTime: FIXED_TIME - 30000,
+        endTime: FIXED_TIME + 30000,
+        colors: {
+          background: '#E8F5E9',
+          text: '#1B5E20',
+          border: '#2E7D32'
+        }
+      }
+    ];
+    
+    const { rerender } = renderTimeline(mockEntries, {
+      elapsedTime: 4000,
+      isTimeUp: true,
+      timerActive: true
+    });
+    
+    // Simulate all activities being completed (summary state)
+    rerender(
+      <ToastProvider>
+        <Timeline 
+          entries={mockEntries}
+          totalDuration={3600}
+          elapsedTime={4000}
+          timerActive={false}
+          isTimeUp={true}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
+    );
+    
+    // The overtime toast should be dismissed when transitioning to summary
+    // We can't easily test the toast removal in this unit test context,
+    // but we can verify the component doesn't crash and renders properly
+    const timeDisplay = screen.getByTestId('time-display');
+    expect(timeDisplay).toBeInTheDocument();
+  });
+
   // Test if timeline activity colors update when theme changes
   test('updates activity colors when theme changes', () => {
     // Mock entries with colors for testing

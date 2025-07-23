@@ -33,7 +33,10 @@ const ServiceWorkerUpdater: React.FC<ServiceWorkerUpdaterProps> = ({
 
   // Debug logging function
   const debugLog = (message: string) => {
-    console.log(`[ServiceWorkerUpdater] ${message}`);
+    // Only log in development mode and not during tests
+    if (process.env.NODE_ENV === 'development' && process.env.JEST_WORKER_ID === undefined) {
+      console.log(`[ServiceWorkerUpdater] ${message}`);
+    }
   };
 
   // Handle the update button click

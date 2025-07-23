@@ -35,7 +35,7 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
 }
 
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
-  const { addToast } = useToast();
+  const { addToast, removeToast } = useToast();
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
   const [overtimeToastId, setOvertimeToastId] = useState<string | null>(null);
@@ -216,6 +216,14 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       setOvertimeToastId(null);
     }
   }, [isOvertime, overtimeToastId, timerActive, addToast]);
+
+  // Auto-dismiss overtime toast when all activities are completed (summary state)
+  useEffect(() => {
+    if (allActivitiesCompleted && overtimeToastId) {
+      removeToast(overtimeToastId);
+      setOvertimeToastId(null);
+    }
+  }, [allActivitiesCompleted, overtimeToastId, removeToast]);
 
   // Calculate effective duration for timeline - dynamically adjust if in overtime
   const effectiveDuration = useMemo(() => {

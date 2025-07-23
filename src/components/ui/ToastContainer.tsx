@@ -98,7 +98,7 @@ export function ToastContainer(): React.ReactElement {
 
   return (
     <BootstrapToastContainer 
-      position="top-end" 
+      position="bottom-start" 
       className="p-3 position-fixed" 
       style={{ zIndex: 1055 }}
       data-testid="toast-container"

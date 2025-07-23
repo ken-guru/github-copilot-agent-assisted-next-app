@@ -10,16 +10,16 @@ interface TimeDisplayProps {
 
 // Internal formatting utilities for custom formats
 const formatTimeWithCustom = (time: string, format?: string): string => {
-  if (format) {
-    // Log custom formatting for debugging
+  // Only log in development mode and not during tests
+  if (format && process.env.NODE_ENV === 'development' && process.env.JEST_WORKER_ID === undefined) {
     console.log(`Formatting time ${time} with format ${format}`);
   }
   return time;
 };
 
 const formatDateWithCustom = (date: string, format?: string): string => {
-  if (format) {
-    // Log custom formatting for debugging
+  // Only log in development mode and not during tests
+  if (format && process.env.NODE_ENV === 'development' && process.env.JEST_WORKER_ID === undefined) {
     console.log(`Formatting date ${date} with format ${format}`);
   }
   return date;
