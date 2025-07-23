@@ -31,9 +31,14 @@ const ServiceWorkerUpdater: React.FC<ServiceWorkerUpdaterProps> = ({
 }) => {
   const [updateAvailable, setUpdateAvailable] = useState<boolean>(false);
 
-  // Debug logging function
+  // Debug logging function (only logs in development or Cypress)
   const debugLog = (message: string) => {
-    console.log(`[ServiceWorkerUpdater] ${message}`);
+    if (
+      (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+      (typeof window !== 'undefined' && window.Cypress)
+    ) {
+      console.log(`[ServiceWorkerUpdater] ${message}`);
+    }
   };
 
   // Handle the update button click

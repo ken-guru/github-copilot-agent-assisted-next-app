@@ -5,9 +5,14 @@ import styles from './not-found.module.css';
 import { useEffect } from 'react';
 
 export default function NotFound() {
-  // Log the 404 for debugging
+  // Log the 404 for debugging only in dev or Cypress
   useEffect(() => {
-    console.log('404 page rendered - page not found');
+    if (
+      (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+      (typeof window !== 'undefined' && window.Cypress)
+    ) {
+      console.log('404 page rendered - page not found');
+    }
   }, []);
 
   return (

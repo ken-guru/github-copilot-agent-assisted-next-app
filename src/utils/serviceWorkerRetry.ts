@@ -73,7 +73,12 @@ export async function checkValidServiceWorker(swUrl: string): Promise<boolean> {
     return true;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (_error) {
-    console.log('Network is offline. App is running in offline mode.');
+    if (
+      (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+      (typeof window !== 'undefined' && window.Cypress)
+    ) {
+      console.log('Network is offline. App is running in offline mode.');
+    }
     return false;
   }
 }

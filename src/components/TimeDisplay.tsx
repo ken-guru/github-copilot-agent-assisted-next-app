@@ -11,16 +11,26 @@ interface TimeDisplayProps {
 // Internal formatting utilities for custom formats
 const formatTimeWithCustom = (time: string, format?: string): string => {
   if (format) {
-    // Log custom formatting for debugging
-    console.log(`Formatting time ${time} with format ${format}`);
+    // Log custom formatting for debugging only in dev or Cypress
+    if (
+      (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+      (typeof window !== 'undefined' && window.Cypress)
+    ) {
+      console.log(`Formatting time ${time} with format ${format}`);
+    }
   }
   return time;
 };
 
 const formatDateWithCustom = (date: string, format?: string): string => {
   if (format) {
-    // Log custom formatting for debugging
-    console.log(`Formatting date ${date} with format ${format}`);
+    // Log custom formatting for debugging only in dev or Cypress
+    if (
+      (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+      (typeof window !== 'undefined' && window.Cypress)
+    ) {
+      console.log(`Formatting date ${date} with format ${format}`);
+    }
   }
   return date;
 };

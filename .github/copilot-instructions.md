@@ -348,6 +348,12 @@ When you identify ANY issue or debugging need:
 - VALIDATE ID consistency with automated tools
 
 ## CODE QUALITY STANDARDS [PRIORITY: HIGH]
+### Debug Output Suppression
+**MANDATORY:** Avoid unnecessary debug console output (console.log/info/warn/error) in committed code unless required for test assertions or error reporting. 
+- Debug output should only be present in development or Cypress environments, and must be conditionally suppressed in production and test runs.
+- Remove or suppress all debug console output before committing unless explicitly required for CI/CD, error handling, or test validation.
+- Review all components, utilities, and service worker scripts for noisy logs before finalizing PRs.
+- If debug output is needed for troubleshooting, add a clear comment and ensure it is removed or suppressed before merging to main.
 ### Large File Refactoring
 - IDENTIFY files exceeding 200 lines
 - SUGGEST logical refactoring options:

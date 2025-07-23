@@ -7,7 +7,12 @@ describe('Next.js Config', () => {
       const hasTurboConfig = !!nextConfig.turbopack;
 
       // This is now an informative test rather than an assertion
-      console.info(`Configuration status: webpack=${hasWebpackConfig}, turbopack=${hasTurboConfig}`);
+      if (
+        (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+        (typeof window !== 'undefined' && window.Cypress)
+      ) {
+        console.info(`Configuration status: webpack=${hasWebpackConfig}, turbopack=${hasTurboConfig}`);
+      }
       
       // We still expect one of them to be configured
       expect(hasWebpackConfig || hasTurboConfig).toBe(true);
@@ -17,7 +22,12 @@ describe('Next.js Config', () => {
   describe('turbopack configuration', () => {
     test('should check turbopack configuration when available', () => {
       if (!nextConfig.turbopack) {
-        console.info('Skipping turbopack tests - turbopack is not configured');
+        if (
+          (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+          (typeof window !== 'undefined' && window.Cypress)
+        ) {
+          console.info('Skipping turbopack tests - turbopack is not configured');
+        }
         return;
       }
       
@@ -31,7 +41,12 @@ describe('Next.js Config', () => {
         // Just verify that rules is an object with properties
         expect(typeof nextConfig.turbopack.rules).toBe('object');
         // Document the current rules state for informational purposes
-        console.info(`Turbopack rules keys: ${Object.keys(nextConfig.turbopack.rules).join(', ') || 'no keys'}`);
+        if (
+          (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') ||
+          (typeof window !== 'undefined' && window.Cypress)
+        ) {
+          console.info(`Turbopack rules keys: ${Object.keys(nextConfig.turbopack.rules).join(', ') || 'no keys'}`);
+        }
       }
     });
   });
