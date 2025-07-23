@@ -7,8 +7,10 @@ import ActivityList from './ActivityList';
 import { Activity } from '../../types/activity';
 import { getActivities, saveActivities, addActivity as persistActivity, updateActivity as persistUpdateActivity, deleteActivity as persistDeleteActivity, resetActivitiesToDefault } from '../../utils/activity-storage';
 import { exportActivities, importActivities } from '../../utils/activity-import-export';
+import { useToast } from '@/contexts/ToastContext';
 
 const ActivityCrud: React.FC = () => {
+  const { addToast } = useToast();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [showForm, setShowFormRaw] = useState(false);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
@@ -19,12 +21,9 @@ const ActivityCrud: React.FC = () => {
   const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [showImport, setShowImport] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   // Import modal state
   const [showImportConfirm, setShowImportConfirm] = useState(false);
-  const [importError, setImportError] = useState<string | null>(null);
   const [importFile, setImportFile] = useState<File | null>(null);
-  const [importSuccess, setImportSuccess] = useState(false);
 
   // Create ref for ActivityForm to trigger submit from modal footer
   const activityFormRef = React.useRef<{ submitForm: () => void }>(null);
@@ -63,8 +62,10 @@ const ActivityCrud: React.FC = () => {
       setShowConfirm(false);
       setActivityToDelete(null);
       // Show success message
-      setSuccessMessage(`Activity "${activityToDelete.name}" deleted successfully`);
-      setTimeout(() => setSuccessMessage(null), 3000);
+      addToast({
+        message: `Activity "${activityToDelete.name}" deleted successfully`,
+        variant: 'success'
+      });
     }
   };
 
@@ -104,7 +105,10 @@ const ActivityCrud: React.FC = () => {
       // Refresh from localStorage to get current state
       const updatedActivities = getActivities().filter(a => a.isActive);
       setActivities(updatedActivities);
-      setSuccessMessage(`Activity "${activity.name}" updated successfully`);
+      addToast({
+        message: `Activity "${activity.name}" updated successfully`,
+        variant: 'success'
+      });
     } else {
       // Add new activity to localStorage
       const newActivity = {
@@ -117,12 +121,14 @@ const ActivityCrud: React.FC = () => {
       // Refresh from localStorage to get current state
       const updatedActivities = getActivities().filter(a => a.isActive);
       setActivities(updatedActivities);
-      setSuccessMessage(`Activity "${activity.name}" created successfully`);
+      addToast({
+        message: `Activity "${activity.name}" created successfully`,
+        variant: 'success'
+      });
     }
     setShowFormRaw(false);
     setEditingActivity(null);
-    // Auto-hide success message after 3 seconds
-    setTimeout(() => setSuccessMessage(null), 3000);
+    // Toast handles timing automatically
   };
 
   // Export modal: error handling for empty/malformed data
@@ -148,21 +154,20 @@ const ActivityCrud: React.FC = () => {
   // Import modal logic
   const handleImport = () => {
     setShowImport(true);
-    setImportError(null);
     setImportFile(null);
-    setImportSuccess(false);
   };
 
   const handleImportFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setImportError(null);
-    setImportSuccess(false);
     const file = e.target.files?.[0] || null;
     setImportFile(file);
   };
 
   const handleImportSubmit = async () => {
     if (!importFile) {
-      setImportError('No file selected');
+      addToast({
+        message: 'No file selected',
+        variant: 'error'
+      });
       return;
     }
     try {
@@ -185,13 +190,17 @@ const ActivityCrud: React.FC = () => {
         const updatedActivities = getActivities().filter(a => a.isActive);
         setActivities(updatedActivities);
         setShowImport(false);
-        setImportSuccess(true);
-        setSuccessMessage(`Successfully imported ${processedActivities.length} activities`);
-        setTimeout(() => setSuccessMessage(null), 3000);
+        addToast({
+          message: `Successfully imported ${processedActivities.length} activities`,
+          variant: 'success'
+        });
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to parse file';
-      setImportError(errorMessage);
+      addToast({
+        message: errorMessage,
+        variant: 'error'
+      });
     }
   };
 
@@ -214,12 +223,16 @@ const ActivityCrud: React.FC = () => {
           setActivities(updatedActivities);
           setShowImportConfirm(false);
           setShowImport(false);
-          setImportSuccess(true);
-          setSuccessMessage(`Successfully imported ${processedActivities.length} activities`);
-          setTimeout(() => setSuccessMessage(null), 3000);
+          addToast({
+            message: `Successfully imported ${processedActivities.length} activities`,
+            variant: 'success'
+          });
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Failed to parse file';
-          setImportError(errorMessage);
+          addToast({
+            message: errorMessage,
+            variant: 'error'
+          });
           setShowImportConfirm(false);
         }
       });
@@ -236,30 +249,14 @@ const ActivityCrud: React.FC = () => {
     const updatedActivities = getActivities().filter(a => a.isActive);
     setActivities(updatedActivities);
     setShowResetConfirm(false);
-    setSuccessMessage('Activities reset to default configuration');
-    setTimeout(() => setSuccessMessage(null), 3000);
+    addToast({
+      message: 'Activities reset to default configuration',
+      variant: 'success'
+    });
   };
 
   return (
     <div className="container-fluid py-4">
-      {/* Success Message */}
-      {successMessage && (
-        <div className="row mb-3">
-          <div className="col-12">
-            <div className="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
-              <i className="bi bi-check-circle me-2"></i>
-              {successMessage}
-              <button
-                type="button"
-                className="btn-close"
-                aria-label="Close"
-                onClick={() => setSuccessMessage(null)}
-              ></button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Activities List Section */}
       <div className="row">
         <div className="col-12">
@@ -427,20 +424,6 @@ const ActivityCrud: React.FC = () => {
               aria-label="Import JSON File"
             />
           </div>
-
-          {importError && (
-            <div className="alert alert-danger d-flex align-items-center" role="alert">
-              <i className="bi bi-exclamation-circle me-2"></i>
-              {importError}
-            </div>
-          )}
-
-          {importSuccess && (
-            <div className="alert alert-success d-flex align-items-center" role="status">
-              <i className="bi bi-check-circle me-2"></i>
-              Import successful!
-            </div>
-          )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowImport(false)} className="d-flex align-items-center">

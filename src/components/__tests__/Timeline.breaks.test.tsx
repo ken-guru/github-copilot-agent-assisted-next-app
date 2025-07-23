@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import Timeline from '../Timeline';
 import { TimelineEntry } from '../../types';
+import { ToastProvider } from '@/contexts/ToastContext';
 
 // Fixed timestamp for consistent testing
 const FIXED_TIME = 1609459200000; // 2021-01-01 00:00:00
@@ -35,13 +36,15 @@ describe('Timeline Break Visualization', () => {
     ];
 
     render(
-      <Timeline 
-        entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={60}
-        timerActive={true}
-        allActivitiesCompleted={false}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={mockEntries}
+          totalDuration={3600}
+          elapsedTime={60}
+          timerActive={true}
+          allActivitiesCompleted={false}
+        />
+      </ToastProvider>
     );
 
     // Should show a break entry with the correct duration (10 seconds)
@@ -68,13 +71,15 @@ describe('Timeline Break Visualization', () => {
     ];
 
     render(
-      <Timeline 
-        entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={120}
-        timerActive={true}
-        allActivitiesCompleted={false}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={mockEntries}
+          totalDuration={3600}
+          elapsedTime={120}
+          timerActive={true}
+          allActivitiesCompleted={false}
+        />
+      </ToastProvider>
     );
 
     // Initially shows 30 seconds
@@ -123,13 +128,15 @@ describe('Timeline Break Visualization', () => {
     ];
 
     render(
-      <Timeline 
-        entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={180}
-        timerActive={true}
-        allActivitiesCompleted={false}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={mockEntries}
+          totalDuration={3600}
+          elapsedTime={180}
+          timerActive={true}
+          allActivitiesCompleted={false}
+        />
+      </ToastProvider>
     );
 
     // Should show the first break (30s between Task 1 and Task 2)
@@ -161,13 +168,15 @@ describe('Timeline Break Visualization', () => {
     ];
 
     const { rerender } = render(
-      <Timeline 
-        entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={180}
-        timerActive={true}
-        allActivitiesCompleted={false}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={mockEntries}
+          totalDuration={3600}
+          elapsedTime={180}
+          timerActive={true}
+          allActivitiesCompleted={false}
+        />
+      </ToastProvider>
     );
 
     // Initially shows 1 minute break
@@ -193,13 +202,15 @@ describe('Timeline Break Visualization', () => {
     ];
 
     rerender(
-      <Timeline 
-        entries={updatedEntries}
-        totalDuration={3600}
-        elapsedTime={180}
-        timerActive={true}
-        allActivitiesCompleted={false}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={updatedEntries}
+          totalDuration={3600}
+          elapsedTime={180}
+          timerActive={true}
+          allActivitiesCompleted={false}
+        />
+      </ToastProvider>
     );
 
     // Break duration should be fixed at 1:00 (the time between the end of Task 1 and start of Task 2)
@@ -241,13 +252,15 @@ describe('Timeline Break Visualization', () => {
     ];
 
     render(
-      <Timeline 
-        entries={mockEntries}
-        totalDuration={3600}
-        elapsedTime={60}
-        timerActive={true}
-        allActivitiesCompleted={false}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={mockEntries}
+          totalDuration={3600}
+          elapsedTime={60}
+          timerActive={true}
+          allActivitiesCompleted={false}
+        />
+      </ToastProvider>
     );
 
     // Should show a break entry with the correct duration (1 second)

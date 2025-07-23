@@ -120,6 +120,7 @@ When you identify ANY issue or debugging need:
 - **NEVER push code that fails CI/CD pipeline tests**
 - **Ensure all code passes npm run test, npm run lint, npm run type-check, and npm run build before commits**
 - Communicate clearly about implementation choices and alternatives
+- **🚨 CRITICAL SECURITY**: NEVER insert any code into files that exposes local filesystem structure, absolute paths, or folder structures outside the repository. Repository-relative paths are acceptable, but external filesystem details must never be committed to files.
 
 ## TESTING PROTOCOLS [PRIORITY: HIGHEST]
 ### Test Pyramid Architecture
@@ -146,14 +147,18 @@ When you identify ANY issue or debugging need:
 - Accessibility compliance (ARIA, screen readers)
 - Modal interactions and lifecycle
 - Theme switching behavior
+- **DETAILED UI INTERACTIONS**: Toast notifications, alert handling, component state changes
+- **COMPONENT INTEGRATION**: How components work together within single page contexts
+- **ERROR HANDLING**: Form validation, API error states, edge cases
 
 #### ✅ USE CYPRESS FOR:
-- Complete user workflows (Create → Read → Update → Delete)
+- **HIGH-LEVEL USER WORKFLOWS ONLY**: Complete end-to-end user journeys that span multiple components/pages
+- **CORE BUSINESS FLOWS**: Critical paths users take to accomplish primary application goals
 - Cross-page navigation with data persistence
 - File upload/download operations
 - Service worker update notifications (UI only)
-- Integration between multiple components/pages
 - Browser-specific behavior requiring real browser environment
+- **AVOID DETAILED UI TESTING**: Don't test individual component states, form validation details, or UI element specifics
 
 ### Test Coverage Management
 - Update all relevant tests when refactoring code

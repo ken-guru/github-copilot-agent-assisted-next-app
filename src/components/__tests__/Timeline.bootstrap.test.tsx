@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Timeline from '../Timeline';
 import { TimelineEntry } from '@/types';
+import { ToastProvider } from '@/contexts/ToastContext';
 
 describe('Timeline Bootstrap Integration', () => {
   let dateNowSpy: jest.SpyInstance;
@@ -22,13 +23,15 @@ describe('Timeline Bootstrap Integration', () => {
   // Helper function to render timeline with standard props
   const renderTimeline = (entries: TimelineEntry[], props = {}) => {
     return render(
-      <Timeline 
-        entries={entries}
-        totalDuration={3600}
-        elapsedTime={30}
-        timerActive={true}
-        {...props}
-      />
+      <ToastProvider>
+        <Timeline 
+          entries={entries}
+          totalDuration={3600}
+          elapsedTime={30}
+          timerActive={true}
+          {...props}
+        />
+      </ToastProvider>
     );
   };
 
@@ -159,7 +162,7 @@ describe('Timeline Bootstrap Integration', () => {
   });
 
   describe('Bootstrap Alert Integration', () => {
-    it('renders overtime warning as Bootstrap Alert', () => {
+    it('renders overtime scenario with proper time display', () => {
       const overtimeEntries: TimelineEntry[] = [
         {
           id: '1',
@@ -180,12 +183,14 @@ describe('Timeline Bootstrap Integration', () => {
         isTimeUp: true
       });
       
-      const alert = screen.getByTestId('overtime-alert');
-      expect(alert).toHaveClass('alert');
-      expect(alert).toHaveClass('alert-warning');
+      // Verify overtime time display is shown
+      const timeDisplay = screen.getByTestId('time-display');
+      expect(timeDisplay).toBeInTheDocument();
+      expect(timeDisplay).toHaveClass('badge');
+      expect(timeDisplay.textContent).toContain('Overtime');
     });
 
-    it('uses proper Alert styling for warnings', () => {
+    it('displays overtime with proper Bootstrap styling', () => {
       const overtimeEntries: TimelineEntry[] = [
         {
           id: '1',
@@ -206,9 +211,13 @@ describe('Timeline Bootstrap Integration', () => {
         isTimeUp: true
       });
       
-      const alert = screen.getByTestId('overtime-alert');
-      expect(alert).toHaveClass('alert-warning');
-      expect(alert).toHaveAttribute('role', 'alert');
+      // Verify overtime section uses proper Bootstrap classes
+      const timeDisplay = screen.getByTestId('time-display');
+      expect(timeDisplay).toHaveClass('badge');
+      expect(timeDisplay).toHaveClass('bg-danger');
+      
+      const overtimeSection = screen.getByTestId('overtime-section');
+      expect(overtimeSection).toBeInTheDocument();
     });
   });
 
@@ -380,7 +389,7 @@ describe('Timeline Bootstrap Integration', () => {
       expect(heading).toHaveAttribute('aria-level', '2');
     });
 
-    it('preserves Bootstrap alert accessibility', () => {
+    it('maintains proper Bootstrap structure during overtime', () => {
       const overtimeEntries: TimelineEntry[] = [
         {
           id: '1',
@@ -401,8 +410,14 @@ describe('Timeline Bootstrap Integration', () => {
         isTimeUp: true
       });
       
-      const alert = screen.getByTestId('overtime-alert');
-      expect(alert).toHaveAttribute('role', 'alert');
+      // Verify Bootstrap structure is maintained
+      const timeDisplay = screen.getByTestId('time-display');
+      expect(timeDisplay).toHaveClass('badge');
+      
+      // Verify timeline structure remains intact
+      const timelineContainer = document.querySelector('.card');
+      expect(timelineContainer).toBeInTheDocument();
+      expect(timelineContainer).toHaveClass('card');
     });
 
     it('maintains proper semantic structure with Bootstrap', () => {

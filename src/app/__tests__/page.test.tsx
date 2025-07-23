@@ -6,6 +6,7 @@ import resetService, { DialogCallback } from '@/utils/resetService';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
 import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import { LoadingProvider } from '@/contexts/LoadingContext';
+import { ToastProvider } from '@/contexts/ToastContext';
 
 // Store dialog props for testing
 let mockDialogProps = {
@@ -134,7 +135,9 @@ beforeAll(() => {
 const renderHome = () => {
   return render(
     <LoadingProvider>
-      <Home />
+      <ToastProvider>
+        <Home />
+      </ToastProvider>
     </LoadingProvider>
   );
 };

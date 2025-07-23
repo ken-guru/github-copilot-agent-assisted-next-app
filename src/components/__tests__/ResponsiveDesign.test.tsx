@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Card, Alert } from 'react-bootstrap';
 import '@testing-library/jest-dom';
+import { ToastProvider } from '@/contexts/ToastContext';
 
 // Import the components we need to test for responsive design
 import ActivityManager from '../ActivityManager';
@@ -161,7 +162,7 @@ describe('Responsive Design Tests', () => {
       it('maintains proper card structure on mobile devices', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Timeline {...mockTimelineProps} />);
+        render(<ToastProvider><Timeline {...mockTimelineProps} /></ToastProvider>);
         
         const cardElement = document.querySelector('.card');
         expect(cardElement).toBeInTheDocument();
@@ -174,7 +175,7 @@ describe('Responsive Design Tests', () => {
       it('adapts timeline visualization for mobile viewport', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Timeline {...mockTimelineProps} />);
+        render(<ToastProvider><Timeline {...mockTimelineProps} /></ToastProvider>);
         
         // Check that timeline container adapts to mobile - using CSS modules selector
         const timelineContainer = document.querySelector('[class*="timelineContainer"]');
@@ -187,7 +188,7 @@ describe('Responsive Design Tests', () => {
       it('ensures time markers remain readable on small screens', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Timeline {...mockTimelineProps} />);
+        render(<ToastProvider><Timeline {...mockTimelineProps} /></ToastProvider>);
         
         const timeDisplay = screen.getByTestId('time-display');
         expect(timeDisplay).toBeInTheDocument();
@@ -365,25 +366,27 @@ describe('Responsive Design Tests', () => {
       mockViewport(BREAKPOINTS.desktop);
       
       const { rerender } = render(
-        <div>
-          <ActivityManager
-            onActivitySelect={jest.fn()}
-            onActivityRemove={jest.fn()}
-            currentActivityId={null}
-            completedActivityIds={[]}
-            timelineEntries={[]}
-            isTimeUp={false}
-            elapsedTime={0}
-          />
-          <Timeline
-            entries={[]}
-            totalDuration={3600}
-            elapsedTime={0}
-            timerActive={false}
-            isTimeUp={false}
-            allActivitiesCompleted={false}
-          />
-        </div>
+        <ToastProvider>
+          <div>
+            <ActivityManager
+              onActivitySelect={jest.fn()}
+              onActivityRemove={jest.fn()}
+              currentActivityId={null}
+              completedActivityIds={[]}
+              timelineEntries={[]}
+              isTimeUp={false}
+              elapsedTime={0}
+            />
+            <Timeline
+              entries={[]}
+              totalDuration={3600}
+              elapsedTime={0}
+              timerActive={false}
+              isTimeUp={false}
+              allActivitiesCompleted={false}
+            />
+          </div>
+        </ToastProvider>
       );
       
       // Check that both headers use consistent styling
@@ -398,25 +401,27 @@ describe('Responsive Design Tests', () => {
       // Test mobile alignment
       mockViewport(BREAKPOINTS.mobile);
       rerender(
-        <div>
-          <ActivityManager
-            onActivitySelect={jest.fn()}
-            onActivityRemove={jest.fn()}
-            currentActivityId={null}
-            completedActivityIds={[]}
-            timelineEntries={[]}
-            isTimeUp={false}
-            elapsedTime={0}
-          />
-          <Timeline
-            entries={[]}
-            totalDuration={3600}
-            elapsedTime={0}
-            timerActive={false}
-            isTimeUp={false}
-            allActivitiesCompleted={false}
-          />
-        </div>
+        <ToastProvider>
+          <div>
+            <ActivityManager
+              onActivitySelect={jest.fn()}
+              onActivityRemove={jest.fn()}
+              currentActivityId={null}
+              completedActivityIds={[]}
+              timelineEntries={[]}
+              isTimeUp={false}
+              elapsedTime={0}
+            />
+            <Timeline
+              entries={[]}
+              totalDuration={3600}
+              elapsedTime={0}
+              timerActive={false}
+              isTimeUp={false}
+              allActivitiesCompleted={false}
+            />
+          </div>
+        </ToastProvider>
       );
       
       // Headers should maintain consistent styling on mobile

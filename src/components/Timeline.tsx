@@ -1,10 +1,11 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import { Row, Col, Card, Badge, Alert } from 'react-bootstrap';
+import { Row, Col, Card, Badge } from 'react-bootstrap';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { TimelineEntry } from '@/types';
+import { useToast } from '@/contexts/ToastContext';
 
 interface TimelineProps {
   entries: TimelineEntry[];
@@ -34,8 +35,10 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
 }
 
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
+  const { addToast, removeToast } = useToast();
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
+  const [overtimeToastId, setOvertimeToastId] = useState<string | null>(null);
   
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
@@ -195,6 +198,33 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     ? `${isOvertime ? 'Overtime: ' : 'Time Left: '}${formatTimeHuman(Math.abs(timeLeft) * 1000)}`
     : `Timer ready: ${formatTimeHuman(totalDuration * 1000)}`;
 
+  // Handle overtime toast - persistent warning when overtime occurs
+  useEffect(() => {
+    if (isOvertime && !overtimeToastId && timerActive) {
+      // Add persistent overtime toast
+      const toastId = addToast({
+        message: 'Overtime: You have exceeded your planned time limit.',
+        variant: 'warning',
+        persistent: true,
+        autoDismiss: false
+      });
+      setOvertimeToastId(toastId);
+    } else if (!isOvertime && overtimeToastId) {
+      // Remove overtime toast when no longer in overtime
+      // Note: We don't automatically remove it here since it's persistent
+      // The user needs to manually dismiss it
+      setOvertimeToastId(null);
+    }
+  }, [isOvertime, overtimeToastId, timerActive, addToast]);
+
+  // Auto-dismiss overtime toast when all activities are completed (summary state)
+  useEffect(() => {
+    if (allActivitiesCompleted && overtimeToastId) {
+      removeToast(overtimeToastId);
+      setOvertimeToastId(null);
+    }
+  }, [allActivitiesCompleted, overtimeToastId, removeToast]);
+
   // Calculate effective duration for timeline - dynamically adjust if in overtime
   const effectiveDuration = useMemo(() => {
     if (isOvertime) {
@@ -303,13 +333,6 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
           </Col>
         </Row>
       </Card.Header>
-        
-        {/* Overtime alert for consistent warning placement */}
-        {isOvertime && (
-          <Alert variant="warning" className="mb-0 border-0 border-bottom rounded-0" data-testid="overtime-alert">
-            <strong>Overtime:</strong> You have exceeded your planned time limit.
-          </Alert>
-        )}
         
         <Card.Body className="p-0 flex-grow-1 d-flex flex-column overflow-hidden">
           <div className={`${styles.timelineContainer} timeline-container position-relative`}>
