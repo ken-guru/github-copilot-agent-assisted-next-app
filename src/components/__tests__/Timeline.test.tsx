@@ -83,7 +83,10 @@ describe('Timeline Component', () => {
       isTimeUp: true
     });
     
-    expect(screen.getByTestId('overtime-alert')).toBeInTheDocument();
+    // Verify overtime time display is shown
+    const timeDisplay = screen.getByTestId('time-display');
+    expect(timeDisplay).toBeInTheDocument();
+    expect(timeDisplay.textContent).toContain('Overtime');
     expect(screen.getByTestId('overtime-section')).toBeInTheDocument();
     
     const timeMarkers = screen.getAllByTestId('time-marker');

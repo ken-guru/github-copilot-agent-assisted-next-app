@@ -3,6 +3,9 @@ import { Toast, ToastContainer as BootstrapToastContainer } from 'react-bootstra
 import { useToast } from '@/contexts/ToastContext';
 import { ToastMessage } from '@/types/toast';
 
+// Animation timing constant for toast fade out
+const TOAST_FADE_OUT_DURATION = 200; // milliseconds
+
 interface ToastItemProps {
   toast: ToastMessage;
   onRemove: (id: string) => void;
@@ -18,7 +21,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps): React.ReactElement {
 
     const timer = setTimeout(() => {
       setIsVisible(false);
-      setTimeout(() => onRemove(toast.id), 200); // Allow fade out animation
+      setTimeout(() => onRemove(toast.id), TOAST_FADE_OUT_DURATION); // Allow fade out animation
     }, toast.duration || 5000);
 
     return () => clearTimeout(timer);
@@ -26,7 +29,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps): React.ReactElement {
 
   const handleClose = () => {
     setIsVisible(false);
-    setTimeout(() => onRemove(toast.id), 200); // Allow fade out animation
+    setTimeout(() => onRemove(toast.id), TOAST_FADE_OUT_DURATION); // Allow fade out animation
   };
 
   const getBootstrapVariant = (variant: ToastMessage['variant']): string => {

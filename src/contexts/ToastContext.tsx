@@ -42,7 +42,7 @@ export function ToastProvider({ children }: ToastProviderProps): React.ReactElem
   const [state, dispatch] = useReducer(toastReducer, { toasts: [] });
 
   const addToast = useCallback((toastData: Omit<ToastMessage, 'id'>): string => {
-    const id = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
     const toast: ToastMessage = {
       id,
       autoDismiss: true,

@@ -9,7 +9,7 @@ export interface ToastMessage {
 
 export interface ToastContextType {
   toasts: ToastMessage[];
-  addToast: (message: Omit<ToastMessage, 'id'>) => string;
+  addToast: (toastData: Omit<ToastMessage, 'id'>) => string;
   removeToast: (id: string) => void;
   clearAllToasts: () => void;
 }

@@ -2,26 +2,36 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import ActivityCrud from '../feature/ActivityCrud'; // Ensure this file exists and is exported correctly
 import { DEFAULT_ACTIVITIES } from '../../types/activity';
+import { ToastProvider } from '@/contexts/ToastContext';
 
 // NOTE: React-Bootstrap modal transitions and async state updates interfere with error message rendering in RTL tests.
 // The error handling works in real usage, but cannot be reliably detected in tests. See docs/KNOWN_BUGS.md for details.
 
+// Helper function to render ActivityCrud with ToastProvider
+const renderActivityCrud = () => {
+  return render(
+    <ToastProvider>
+      <ActivityCrud />
+    </ToastProvider>
+  );
+};
+
 describe('ActivityCrud', () => {
   it('renders the activity list and form', () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     expect(screen.getByText(/Your Activities/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Add Activity/i })).toBeInTheDocument();
   });
 
   it('shows default activities on first load', () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     DEFAULT_ACTIVITIES.forEach(activity => {
       expect(screen.getByText(activity.name)).toBeInTheDocument();
     });
   });
 
   it('opens the add activity form', () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
     // Check for the color dropdown button by ID since it contains dynamic text
@@ -29,7 +39,7 @@ describe('ActivityCrud', () => {
   });
 
   it('validates required fields when trying to save empty activity', async () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     
     // Try to save without entering a name
@@ -45,7 +55,7 @@ describe('ActivityCrud', () => {
   });
 
   it('creates a new activity', async () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     fireEvent.change(screen.getByLabelText(/Name/i), { target: { value: 'Test Activity' } });
     // The color selector is now a dropdown, but we can still interact with the hidden input
@@ -57,7 +67,7 @@ describe('ActivityCrud', () => {
   });
 
   it('edits an activity', async () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     const editButtons = screen.getAllByRole('button', { name: /Edit/i });
     if (editButtons.length > 0) {
       const editBtn = editButtons[0];
@@ -73,7 +83,7 @@ describe('ActivityCrud', () => {
   });
 
   it('deletes an activity with confirmation', async () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     const deleteButtons = screen.getAllByRole('button', { name: /Delete/i });
     if (deleteButtons.length > 0) {
       const deleteBtn = deleteButtons[0];
@@ -93,7 +103,7 @@ describe('ActivityCrud', () => {
   });
 
   it('handles special characters in activity names', async () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     fireEvent.change(screen.getByLabelText(/Name/i), { 
       target: { value: 'Test @#$%^&*()_+ Activity' } 
@@ -107,7 +117,7 @@ describe('ActivityCrud', () => {
 
   it('handles very long activity names', async () => {
     const longName = 'A'.repeat(100);
-    render(<ActivityCrud />);
+    renderActivityCrud();
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     fireEvent.change(screen.getByLabelText(/Name/i), { 
       target: { value: longName } 
@@ -120,7 +130,7 @@ describe('ActivityCrud', () => {
   });
 
   it('focuses on name input when modal opens', () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     
     const nameInput = screen.getByLabelText(/Name/i);
@@ -128,7 +138,7 @@ describe('ActivityCrud', () => {
   });
 
   it('supports Enter key to submit form', async () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     
     const nameInput = screen.getByLabelText(/Name/i);
@@ -141,7 +151,7 @@ describe('ActivityCrud', () => {
   });
 
   it('supports Escape key to cancel', async () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     
     const nameInput = screen.getByLabelText(/Name/i);
@@ -157,13 +167,13 @@ describe('ActivityCrud', () => {
   });
 
   it('exports activities as JSON', () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     fireEvent.click(screen.getByRole('button', { name: /Export/i }));
     expect(screen.getByText(/Download/i)).toBeInTheDocument();
   });
 
   it('imports activities from JSON', async () => {
-    render(<ActivityCrud />);
+    renderActivityCrud();
     fireEvent.click(screen.getByRole('button', { name: /Import/i }));
     // Simulate file upload and import logic here
     // ...
@@ -173,7 +183,7 @@ describe('ActivityCrud', () => {
   it('handles localStorage errors gracefully', async () => {
     // Simulate localStorage quota exceeded or disabled
     // ...
-    render(<ActivityCrud />);
+    renderActivityCrud();
     // expect error message to be shown
   });
 });
