@@ -1,12 +1,12 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ToastProvider } from '@/contexts/ToastContext';
+import { ToastProvider, useToast } from '@/contexts/ToastContext';
 import { ToastContainer } from '@/components/ui/ToastContainer';
 
 // Mock component to trigger toasts for testing
 function TestComponent() {
-  const { addToast } = require('@/contexts/ToastContext').useToast();
+  const { addToast } = useToast();
   
   return (
     <div>

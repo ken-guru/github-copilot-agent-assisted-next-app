@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ToastProvider, useToast } from '@/contexts/ToastContext';
-import { ToastMessage } from '@/types/toast';
 
 // Test component to interact with the toast context
 function TestComponent() {
@@ -262,7 +261,7 @@ describe('ToastContext', () => {
 
   it('should throw error when useToast is used outside ToastProvider', () => {
     const TestComponentOutsideProvider = () => {
-      const { addToast } = useToast();
+      useToast(); // This should throw
       return <div>This should throw</div>;
     };
 
