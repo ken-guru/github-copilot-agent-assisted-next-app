@@ -35,6 +35,16 @@ export function OfflineIndicator(): React.ReactElement | null {
   if (isOnline) {
     return null;
   }
-  // Render nothing, toast handles notification
-  return null;
+  // Render a persistent offline indicator for E2E and accessibility
+  return (
+    <div
+      data-testid="offline-indicator"
+      className="alert alert-warning text-center mb-0"
+      role="status"
+      aria-live="polite"
+      style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 2000 }}
+    >
+      <span className="visually-hidden">Offline:</span> You are offline
+    </div>
+  );
 }

@@ -1,38 +1,37 @@
+
 import { useState, useEffect } from 'react';
 
-/**
- * Custom hook to track online/offline status
- * @returns {boolean} Current online status (true if online, false if offline)
- */
-export function useOnlineStatus(): boolean {
+interface WindowWithTestOnlineStatus extends Window {
+  __testOnlineStatus?: boolean;
+  setTestOnlineStatus?: (status: boolean) => void;
+  Cypress?: unknown;
+}
 
+export function useOnlineStatus(): boolean {
   // Support test override for Cypress
   const getInitialOnline = () => {
-    if (typeof window !== 'undefined' && (window as any).__testOnlineStatus !== undefined) {
-      return (window as any).__testOnlineStatus;
+    if (typeof window !== 'undefined' && (window as WindowWithTestOnlineStatus).__testOnlineStatus !== undefined) {
+      return (window as WindowWithTestOnlineStatus).__testOnlineStatus as boolean;
     }
     return typeof window === 'undefined' ? true : navigator.onLine;
   };
   const [isOnline, setIsOnline] = useState<boolean>(getInitialOnline());
 
-
   useEffect(() => {
-    // Update initial state on mount to ensure accuracy
     setIsOnline(getInitialOnline());
 
-    // Handler for online/offline events: always read navigator.onLine or test override
     const handleStatusChange = () => {
-      if ((window as any).__testOnlineStatus !== undefined) {
-        setIsOnline((window as any).__testOnlineStatus);
+      if ((window as WindowWithTestOnlineStatus).__testOnlineStatus !== undefined) {
+        setIsOnline((window as WindowWithTestOnlineStatus).__testOnlineStatus as boolean);
       } else {
         setIsOnline(navigator.onLine);
       }
     };
 
     // Expose test-only setter for Cypress
-    if (typeof window !== 'undefined' && (window as any).Cypress) {
-      (window as any).setTestOnlineStatus = (status: boolean) => {
-        (window as any).__testOnlineStatus = status;
+    if (typeof window !== 'undefined' && (window as WindowWithTestOnlineStatus).Cypress) {
+      (window as WindowWithTestOnlineStatus).setTestOnlineStatus = (status: boolean) => {
+        (window as WindowWithTestOnlineStatus).__testOnlineStatus = status;
         setIsOnline(status);
       };
     }
@@ -43,9 +42,9 @@ export function useOnlineStatus(): boolean {
     return () => {
       window.removeEventListener('online', handleStatusChange);
       window.removeEventListener('offline', handleStatusChange);
-      if (typeof window !== 'undefined' && (window as any).setTestOnlineStatus) {
-        delete (window as any).setTestOnlineStatus;
-        delete (window as any).__testOnlineStatus;
+      if (typeof window !== 'undefined' && (window as WindowWithTestOnlineStatus).setTestOnlineStatus) {
+        delete (window as WindowWithTestOnlineStatus).setTestOnlineStatus;
+        delete (window as WindowWithTestOnlineStatus).__testOnlineStatus;
       }
     };
   }, []);

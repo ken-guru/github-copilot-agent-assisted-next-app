@@ -1,24 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import styles from './OfflineIndicator.module.css';
 
-/**
- * Props for the OfflineIndicator component
- * This component currently doesn't accept any props, but the interface is defined
- * for future extensibility and consistency
- */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface OfflineIndicatorProps {}
-
-/**
- * Component that displays an offline indicator when the user loses network connectivity
- */
-export function OfflineIndicator({}: OfflineIndicatorProps): React.ReactElement | null {
+export function OfflineIndicator(): React.ReactElement | null {
   const isOnline = useOnlineStatus();
-  if (typeof window !== 'undefined') {
-    // eslint-disable-next-line no-console
-    console.log('[OfflineIndicator] isOnline:', isOnline, 'testOnlineStatus:', (window as any).__testOnlineStatus);
-  }
   const [mounted, setMounted] = useState(false);
 
   // Handle SSR
@@ -30,7 +16,6 @@ export function OfflineIndicator({}: OfflineIndicatorProps): React.ReactElement 
   if (!mounted) {
     return null;
   }
-  
   // Don't render anything if online
   if (isOnline) {
     return null;
