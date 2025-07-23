@@ -120,6 +120,7 @@ When you identify ANY issue or debugging need:
 - **NEVER push code that fails CI/CD pipeline tests**
 - **Ensure all code passes npm run test, npm run lint, npm run type-check, and npm run build before commits**
 - Communicate clearly about implementation choices and alternatives
+- **🚨 CRITICAL SECURITY**: NEVER insert any code into files that exposes local filesystem structure, absolute paths, or folder structures outside the repository. Repository-relative paths are acceptable, but external filesystem details must never be committed to files.
 
 ## TESTING PROTOCOLS [PRIORITY: HIGHEST]
 ### Test Pyramid Architecture
