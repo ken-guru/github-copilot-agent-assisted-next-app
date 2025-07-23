@@ -387,7 +387,12 @@ const ActivityCrud: React.FC = () => {
               Download activities.json
             </a>
           ) : null}
-          <Button variant="secondary" onClick={() => setShowExport(false)} className="d-flex align-items-center">
+          <Button 
+            variant="secondary" 
+            onClick={() => setShowExport(false)} 
+            autoFocus 
+            className="d-flex align-items-center"
+          >
             <i className="bi bi-x me-2"></i>
             Close
           </Button>
