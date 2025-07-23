@@ -178,6 +178,7 @@ export default function TimeSetup({
                 id="minutes"
                 min="0"
                 max="59"
+                step="1"
                 value={minutes}
                 onChange={(e) => handleNumberInput(e.target.value, setMinutes)}
                 className={`${styles.input} ${hasError ? styles.inputError : ''}`}
