@@ -127,7 +127,6 @@ describe('Timeline Component', () => {
           totalDuration={3600}
           elapsedTime={4000}
           timerActive={false}
-          isTimeUp={true}
           allActivitiesCompleted={true}
         />
       </ToastProvider>
