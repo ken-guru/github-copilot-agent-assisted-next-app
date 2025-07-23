@@ -288,5 +288,28 @@ describe('TimeSetup Bootstrap Integration', () => {
       const cardBody = form.closest('.card-body');
       expect(cardBody).toBeInTheDocument();
     });
+
+    it('allows setting 0 minutes and nonzero seconds', () => {
+      render(<TimeSetup onTimeSet={mockOnTimeSet} />);
+      // Set 0 minutes, 30 seconds
+      fireEvent.change(screen.getByLabelText('Minutes'), { target: { value: '0' } });
+      fireEvent.change(screen.getByLabelText('Seconds'), { target: { value: '30' } });
+      // Submit
+      fireEvent.click(screen.getByRole('button', { name: 'Set Time' }));
+      // Should call with 30 seconds
+      expect(mockOnTimeSet).toHaveBeenCalledWith(30);
+    });
+
+    it('allows setting all fields to zero and starts timer (overtime)', () => {
+      render(<TimeSetup onTimeSet={mockOnTimeSet} />);
+      // Set all fields to zero
+      fireEvent.change(screen.getByLabelText('Hours'), { target: { value: '0' } });
+      fireEvent.change(screen.getByLabelText('Minutes'), { target: { value: '0' } });
+      fireEvent.change(screen.getByLabelText('Seconds'), { target: { value: '0' } });
+      // Submit
+      fireEvent.click(screen.getByRole('button', { name: 'Set Time' }));
+      // Should call with 0 seconds (overtime)
+      expect(mockOnTimeSet).toHaveBeenCalledWith(0);
+    });
   });
 });
