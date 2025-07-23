@@ -162,10 +162,6 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
             <Form.Control.Feedback type="invalid" data-testid="activity-form-error">
               {error ? error : ''}
             </Form.Control.Feedback>
-            {/* Always render a visible error message below the name input for accessibility and testability */}
-            {error && (
-              <div data-testid="activity-form-error-message" style={{ color: 'red', marginTop: 4 }}>{error}</div>
-            )}
           </Form.Group>
           
           <Form.Group controlId="activityDescription">

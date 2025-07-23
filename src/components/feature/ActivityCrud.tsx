@@ -351,7 +351,27 @@ const ActivityCrud: React.FC = () => {
         </Modal.Footer>
       </Modal>
       {/* Export Modal */}
-      <Modal show={showExport} onHide={() => setShowExport(false)} aria-labelledby="export-modal" aria-describedby="export-modal-desc" centered backdrop="static">
+      <Modal 
+        show={showExport} 
+        onHide={() => setShowExport(false)} 
+        aria-labelledby="export-modal" 
+        aria-describedby="export-modal-desc" 
+        centered 
+        backdrop="static"
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === 'Enter' && exportUrl) {
+            e.preventDefault();
+            // Trigger download by programmatically clicking the download link
+            const downloadLink = document.querySelector('a[download="activities.json"]') as HTMLAnchorElement;
+            if (downloadLink) {
+              downloadLink.click();
+            }
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            setShowExport(false);
+          }
+        }}
+      >
         <Modal.Header closeButton>
           <Modal.Title id="export-modal">
             <i className="bi bi-download me-2"></i>
@@ -376,26 +396,26 @@ const ActivityCrud: React.FC = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
+          <Button 
+            variant="secondary" 
+            onClick={() => setShowExport(false)} 
+            className="d-flex align-items-center"
+          >
+            <i className="bi bi-x me-2"></i>
+            Close
+          </Button>
           {exportUrl ? (
             <a
               href={exportUrl}
               download="activities.json"
               className="btn btn-success d-flex align-items-center justify-content-center"
               aria-label="Download activities as JSON"
+              autoFocus
             >
               <i className="bi bi-download me-2"></i>
               Download activities.json
             </a>
           ) : null}
-          <Button 
-            variant="secondary" 
-            onClick={() => setShowExport(false)} 
-            autoFocus 
-            className="d-flex align-items-center"
-          >
-            <i className="bi bi-x me-2"></i>
-            Close
-          </Button>
         </Modal.Footer>
       </Modal>
       {/* Import Modal */}
