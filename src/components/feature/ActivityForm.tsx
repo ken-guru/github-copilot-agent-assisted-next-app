@@ -203,15 +203,17 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
         </div>
       )}
       
-      {/* Submit button */}
-      <Button 
-        type="submit" 
-        variant="primary" 
-        disabled={isDisabled}
-        className="w-100"
-      >
-        Add Activity
-      </Button>
+      {/* Submit button - only show for standalone usage (not in modal) */}
+      {onAddActivity && (
+        <Button 
+          type="submit" 
+          variant="primary" 
+          disabled={isDisabled}
+          className="w-100"
+        >
+          Add Activity
+        </Button>
+      )}
     </Form>
   );
 });

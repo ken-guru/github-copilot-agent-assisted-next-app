@@ -111,10 +111,9 @@ describe('ActivityForm - Simplified Mode', () => {
       render(<ActivityForm {...simplifiedProps} isDisabled={true} />);
       
       const nameInput = screen.getByLabelText('Name');
-      const submitButton = screen.getByRole('button', { name: /add/i });
       
       expect(nameInput).toBeDisabled();
-      expect(submitButton).toBeDisabled();
+      // No submit button to test anymore - it's handled by modal footer
     });
 
     it('should show placeholder indicating quick add mode', () => {

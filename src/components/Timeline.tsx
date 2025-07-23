@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import { Row, Col, Card, Badge } from 'react-bootstrap';
+import { Card, Badge } from 'react-bootstrap';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
@@ -318,20 +318,14 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   return (
     <Card className="border h-100 d-flex flex-column">
       <Card.Header className="d-flex justify-content-between align-items-center flex-shrink-0">
-        <Row className="g-3 w-100">
-          <Col>
-            <h5 className="mb-0" role="heading" aria-level={2}>Timeline</h5>
-          </Col>
-          <Col xs="auto">
-            <Badge 
-              bg={isTimeUp ? 'danger' : 'primary'} 
-              className={`badge-${isTimeUp ? 'danger' : 'primary'} text-nowrap`}
-              data-testid="time-display"
-            >
-              {timeDisplay}
-            </Badge>
-          </Col>
-        </Row>
+        <h5 className="mb-0" role="heading" aria-level={2}>Timeline</h5>
+        <Badge 
+          bg={isTimeUp ? 'danger' : 'primary'} 
+          className={`badge-${isTimeUp ? 'danger' : 'primary'} text-nowrap`}
+          data-testid="time-display"
+        >
+          {timeDisplay}
+        </Badge>
       </Card.Header>
         
         <Card.Body className="p-0 flex-grow-1 d-flex flex-column overflow-hidden">

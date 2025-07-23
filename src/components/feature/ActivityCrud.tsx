@@ -368,19 +368,7 @@ const ActivityCrud: React.FC = () => {
               </p>
             )}
           </div>
-          {exportUrl ? (
-            <div className="d-grid">
-              <a
-                href={exportUrl}
-                download="activities.json"
-                className="btn btn-success d-flex align-items-center justify-content-center"
-                aria-label="Download activities as JSON"
-              >
-                <i className="bi bi-download me-2"></i>
-                Download activities.json
-              </a>
-            </div>
-          ) : (
+          {!exportUrl && activities.length === 0 && (
             <div className="alert alert-warning d-flex align-items-center" role="alert">
               <i className="bi bi-exclamation-triangle me-2"></i>
               No activities to export. Create some activities first.
@@ -388,7 +376,18 @@ const ActivityCrud: React.FC = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowExport(false)} autoFocus className="d-flex align-items-center">
+          {exportUrl ? (
+            <a
+              href={exportUrl}
+              download="activities.json"
+              className="btn btn-success d-flex align-items-center justify-content-center"
+              aria-label="Download activities as JSON"
+            >
+              <i className="bi bi-download me-2"></i>
+              Download activities.json
+            </a>
+          ) : null}
+          <Button variant="secondary" onClick={() => setShowExport(false)} className="d-flex align-items-center">
             <i className="bi bi-x me-2"></i>
             Close
           </Button>

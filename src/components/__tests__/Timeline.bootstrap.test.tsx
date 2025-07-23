@@ -59,34 +59,37 @@ describe('Timeline Bootstrap Integration', () => {
       expect(container).toHaveClass('card');
     });
 
-    it('uses Bootstrap Row and Column layout for header', () => {
+    it('uses Bootstrap flex layout for header instead of Row/Column', () => {
       renderTimeline(mockEntries);
       
-      const headerRow = document.querySelector('.row');
-      expect(headerRow).toBeInTheDocument();
+      const header = document.querySelector('.card-header');
+      expect(header).toHaveClass('d-flex', 'justify-content-between', 'align-items-center');
       
-      const columns = document.querySelectorAll('.col, .col-auto');
-      expect(columns.length).toBeGreaterThan(0);
+      // Should NOT have row/col structure anymore
+      const headerRow = header?.querySelector('.row');
+      expect(headerRow).not.toBeInTheDocument();
     });
 
-    it('applies Bootstrap responsive classes', () => {
+    it('applies proper Bootstrap classes for header layout', () => {
       renderTimeline(mockEntries);
       
-      // Should have responsive Bootstrap classes for different screen sizes
-      const responsiveElements = document.querySelectorAll('[class*="col-"], [class*="row"]');
-      expect(responsiveElements.length).toBeGreaterThan(0);
+      // Header should use direct flex layout, not responsive grid
+      const header = document.querySelector('.card-header');
+      expect(header).toHaveClass('d-flex', 'justify-content-between', 'align-items-center', 'flex-shrink-0');
     });
 
-    it('maintains proper Bootstrap card structure', () => {
+    it('maintains proper Bootstrap card structure without unnecessary nesting', () => {
       renderTimeline(mockEntries);
       
       const container = document.querySelector('.card');
-      const row = container?.querySelector('.row');
-      const cols = row?.querySelectorAll('.col, .col-auto');
+      const header = container?.querySelector('.card-header');
       
       expect(container).toBeInTheDocument();
-      expect(row).toBeInTheDocument();
-      expect(cols?.length).toBeGreaterThan(0);
+      expect(header).toBeInTheDocument();
+      
+      // Should NOT have nested row/col structure
+      const row = header?.querySelector('.row');
+      expect(row).not.toBeInTheDocument();
     });
   });
 
@@ -288,11 +291,12 @@ describe('Timeline Bootstrap Integration', () => {
       expect(container).toHaveClass('h-100'); // Bootstrap height utility
     });
 
-    it('uses Bootstrap gap utilities for spacing', () => {
+    it('does not use Bootstrap gap utilities since Row/Col removed', () => {
       renderTimeline(mockEntries);
       
+      // No row structure anymore, so no gap utilities to test
       const row = document.querySelector('.row');
-      expect(row).toHaveClass('g-3'); // Bootstrap gap utility
+      expect(row).not.toBeInTheDocument();
     });
   });
 
