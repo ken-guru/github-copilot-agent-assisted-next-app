@@ -137,7 +137,7 @@ export default function RootLayout({
         <LayoutClient>
           {children}
         </LayoutClient>
-        {/* Service worker registration script - moved here from useServiceWorker hook */}
+        {/* Service worker registration script with improved update detection */}
         <Script
           id="register-service-worker"
           strategy="afterInteractive"
@@ -145,12 +145,42 @@ export default function RootLayout({
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/service-worker.js')
+                  console.log('[SW Registration] Starting service worker registration');
+                  
+                  // Add cache-busting parameter to ensure fresh SW file
+                  const swUrl = '/service-worker.js?v=' + Date.now();
+                  
+                  navigator.serviceWorker.register(swUrl, {
+                    updateViaCache: 'none' // Don't cache the service worker file
+                  })
                     .then(function(registration) {
-                      console.log('Service Worker registered with scope:', registration.scope);
+                      console.log('[SW Registration] Service Worker registered with scope:', registration.scope);
+                      
+                      // Check for updates every 30 seconds when page is visible
+                      if (registration.update) {
+                        const checkForUpdates = () => {
+                          if (!document.hidden) {
+                            console.log('[SW Registration] Checking for updates');
+                            registration.update().catch(e => 
+                              console.log('[SW Registration] Update check failed:', e.message)
+                            );
+                          }
+                        };
+                        
+                        // Check immediately and then periodically
+                        checkForUpdates();
+                        setInterval(checkForUpdates, 30000);
+                        
+                        // Also check when page becomes visible
+                        document.addEventListener('visibilitychange', () => {
+                          if (!document.hidden) {
+                            setTimeout(checkForUpdates, 1000);
+                          }
+                        });
+                      }
                     })
                     .catch(function(error) {
-                      console.error('Service Worker registration failed:', error);
+                      console.error('[SW Registration] Service Worker registration failed:', error);
                     });
                 });
               }

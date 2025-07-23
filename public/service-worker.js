@@ -1,8 +1,12 @@
 // Service Worker for Mr. Timely
 
 const CACHE_NAME_PREFIX = 'github-copilot-agent-assisted-next-app';
-const CACHE_NAME = 'github-copilot-agent-assisted-next-app-v6';
-const APP_SHELL_CACHE_NAME = 'app-shell-v6';
+// Use build timestamp for cache versioning
+const BUILD_VERSION = '7-' + new Date().getTime();
+const CACHE_NAME = `${CACHE_NAME_PREFIX}-v${BUILD_VERSION}`;
+const APP_SHELL_CACHE_NAME = `app-shell-v${BUILD_VERSION}`;
+
+console.log('[ServiceWorker] Cache version:', BUILD_VERSION);
 
 // Offline page template for better code organization
 const OFFLINE_PAGE_TEMPLATE = `<!DOCTYPE html>
@@ -105,18 +109,10 @@ self.addEventListener('install', (event) => {
         
         console.log('[ServiceWorker] All critical assets cached');
         
-        // Only skip waiting if this is a fresh install, not an update
-        const existingCaches = await caches.keys();
-        const hasOldCache = existingCaches.some(name => 
-          name.startsWith(CACHE_NAME_PREFIX) && name !== CACHE_NAME
-        );
-        
-        if (!hasOldCache) {
-          console.log('[ServiceWorker] Fresh install, taking control immediately');
-          self.skipWaiting();
-        } else {
-          console.log('[ServiceWorker] Update detected, waiting for activation');
-        }
+        // For updates, always skip waiting to ensure immediate activation
+        // This ensures users get updates as soon as they're available
+        console.log('[ServiceWorker] Skipping waiting for immediate activation');
+        self.skipWaiting();
       } catch (error) {
         console.error('[ServiceWorker] Cache setup failed:', error);
         // Even if caching fails, skip waiting to avoid blocking
@@ -346,6 +342,8 @@ self.addEventListener('fetch', (event) => {
 
 // Message handling for service worker commands
 self.addEventListener('message', (event) => {
+  console.log('[ServiceWorker] Received message:', event.data);
+  
   // Allow messages from same origin for security
   if (!event.origin || event.origin !== location.origin) {
     console.warn('[ServiceWorker] Ignored message from untrusted or undefined origin:', event.origin);
@@ -356,7 +354,7 @@ self.addEventListener('message', (event) => {
 
   switch (type) {
     case 'SKIP_WAITING':
-      console.log('[ServiceWorker] Received SKIP_WAITING message');
+      console.log('[ServiceWorker] Received SKIP_WAITING message, skipping waiting');
       self.skipWaiting();
       break;
       
