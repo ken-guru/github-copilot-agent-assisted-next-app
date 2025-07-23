@@ -409,6 +409,38 @@ When you identify ANY issue or debugging need:
 - RUN `node scripts/check-markdown-links.js` for link validation
 
 ## MCP TOOL USAGE GUIDELINES [PRIORITY: HIGH]
+### Playwright Browser Automation Tool
+**Purpose**: Automated browser-based UI testing, bug reproduction, accessibility checks, and workflow validation
+**When to Use**:
+- Reproducing UI bugs that require real browser interaction (e.g., input field issues, stepper bugs)
+- Validating form behavior, keyboard navigation, and accessibility
+- Capturing screenshots or snapshots of UI state for debugging/documentation
+- Automating user workflows for regression testing
+- Verifying cross-browser compatibility and edge cases
+
+**Usage Guidelines**:
+- USE Playwright MCP tool to interact with the running app via browser automation
+- LOCATE and manipulate DOM elements (inputs, buttons, etc.) to reproduce and diagnose issues
+- CAPTURE console logs, screenshots, and accessibility snapshots for analysis
+- AUTOMATE user actions (typing, clicking, stepping, etc.) to validate UI behavior
+- DOCUMENT findings and use them to inform code fixes and test updates
+
+**Example Applications**:
+- Reproducing and debugging input field issues (e.g., minutes field not accepting zero)
+- Validating accessibility and keyboard navigation
+- Automating regression tests for critical user workflows
+- Capturing UI state for documentation and code review
+
+**Integration with Other MCP Tools**:
+- USE Playwright in combination with Jest/Cypress for comprehensive test coverage
+- DOCUMENT Playwright findings in Memory Log and debugging documentation
+- REFERENCE Playwright results in PRs and code reviews for transparency
+
+**Best Practices**:
+- Always verify UI bugs in a real browser using Playwright before proposing fixes
+- Use Playwright to automate edge case scenarios that are hard to test manually
+- Capture and share Playwright results for collaborative debugging and review
+
 ### Enhanced Problem-Solving Tools
 When these MCP tools are available, leverage them to enhance development workflows and problem-solving capabilities:
 
