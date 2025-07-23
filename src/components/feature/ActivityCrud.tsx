@@ -80,6 +80,18 @@ const ActivityCrud: React.FC = () => {
     }
   };
 
+  // Trigger download programmatically (for keyboard navigation)
+  const triggerDownload = () => {
+    if (exportUrl) {
+      const link = document.createElement('a');
+      link.href = exportUrl;
+      link.download = 'activities.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   // Handle keyboard navigation for form modal
   const handleFormModalKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -361,11 +373,7 @@ const ActivityCrud: React.FC = () => {
         onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === 'Enter' && exportUrl) {
             e.preventDefault();
-            // Trigger download by programmatically clicking the download link
-            const downloadLink = document.querySelector('a[download="activities.json"]') as HTMLAnchorElement;
-            if (downloadLink) {
-              downloadLink.click();
-            }
+            triggerDownload();
           } else if (e.key === 'Escape') {
             e.preventDefault();
             setShowExport(false);
@@ -400,6 +408,7 @@ const ActivityCrud: React.FC = () => {
             variant="secondary" 
             onClick={() => setShowExport(false)} 
             className="d-flex align-items-center"
+            autoFocus
           >
             <i className="bi bi-x me-2"></i>
             Close

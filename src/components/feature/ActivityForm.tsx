@@ -6,6 +6,9 @@ import { getColorName } from '../../utils/colorNames';
 import { getActivityColorsForTheme, getSmartColorIndex } from '../../utils/colors';
 import { useThemeReactive } from '../../hooks/useThemeReactive';
 
+// Constants
+const PLACEHOLDER_TEXT = "Quick add activity name";
+
 interface ActivityFormProps {
   activity?: Activity | null;
   onSubmit?: (activity: Activity | null) => void;
@@ -119,7 +122,7 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
               ref={nameInputRef}
               isInvalid={!!error}
               disabled={isDisabled}
-              placeholder="Quick add activity name"
+              placeholder={PLACEHOLDER_TEXT}
               aria-label="Activity name"
             />
             {onAddActivity && (
@@ -246,13 +249,6 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
             </Button>
           )}
         </>
-      )}
-      
-      {/* Error display for simplified mode */}
-      {isSimplified && error && (
-        <div data-testid="activity-form-error-message" className="text-danger mt-2" style={{ fontSize: '0.875rem' }}>
-          {error}
-        </div>
       )}
     </Form>
   );

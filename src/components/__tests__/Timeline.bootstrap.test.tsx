@@ -182,8 +182,7 @@ describe('Timeline Bootstrap Integration', () => {
       ];
       
       renderTimeline(overtimeEntries, {
-        elapsedTime: 4000,
-        isTimeUp: true
+        elapsedTime: 4000
       });
       
       // Verify overtime time display is shown
@@ -210,8 +209,7 @@ describe('Timeline Bootstrap Integration', () => {
       ];
       
       renderTimeline(overtimeEntries, {
-        elapsedTime: 4000,
-        isTimeUp: true
+        elapsedTime: 4000
       });
       
       // Verify overtime section uses proper Bootstrap classes
@@ -256,8 +254,7 @@ describe('Timeline Bootstrap Integration', () => {
       ];
       
       renderTimeline(overtimeEntries, {
-        elapsedTime: 4000,
-        isTimeUp: true
+        elapsedTime: 4000
       });
       
       const timeDisplay = screen.getByTestId('time-display');
@@ -408,8 +405,7 @@ describe('Timeline Bootstrap Integration', () => {
       ];
       
       renderTimeline(overtimeEntries, {
-        elapsedTime: 4000,
-        isTimeUp: true
+        elapsedTime: 4000
       });
       
       // Verify Bootstrap structure is maintained
@@ -460,8 +456,7 @@ describe('Timeline Bootstrap Integration', () => {
       ];
       
       renderTimeline(overtimeEntries, {
-        elapsedTime: 4000,
-        isTimeUp: true
+        elapsedTime: 4000
       });
       
       const overtimeSection = screen.getByTestId('overtime-section');

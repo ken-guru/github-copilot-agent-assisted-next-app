@@ -11,7 +11,6 @@ interface TimelineProps {
   entries: TimelineEntry[];
   totalDuration: number;
   elapsedTime: number;
-  isTimeUp?: boolean;
   timerActive?: boolean;
   allActivitiesCompleted?: boolean;
 }
@@ -34,7 +33,7 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
   }
 }
 
-export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
+export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
   const { addToast, removeToast } = useToast();
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
