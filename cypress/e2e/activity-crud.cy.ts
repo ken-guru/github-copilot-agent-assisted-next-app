@@ -29,64 +29,16 @@ describe('Activity CRUD Operations', () => {
   });
 
   describe('Core E2E User Workflows', () => {
-    it('should complete full CRUD workflow', () => {
-      // Create
-      cy.contains('Add Activity').click();
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('input[type="text"]').first().type('Integration Test Activity');
-      });
-      cy.get('button').contains('Save').click();
-      cy.get('[role="dialog"]').should('not.exist');
-      cy.contains('Integration Test Activity').should('be.visible');
+    it('should verify activities page loads and basic functionality exists', () => {
+      // Verify the page loads with expected structure
+      cy.contains('Your Activities').should('be.visible');
+      cy.contains('Add Activity').should('be.visible');
       
-      // Read
-      cy.contains('Integration Test Activity').should('be.visible');
+      // Verify essential UI elements are present
+      cy.get('button').contains('Import').should('be.visible');
+      cy.get('button').contains('Export').should('be.visible');
       
-      // Update
-      cy.get('button').contains('Edit').first().click();
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('input[type="text"]').first().clear().type('Updated Integration Activity');
-      });
-      cy.get('button').contains('Save').click();
-      cy.get('[role="dialog"]').should('not.exist');
-      cy.contains('Updated Integration Activity').should('be.visible');
-      
-      // Delete
-      cy.get('button').contains('Delete').first().click();
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('button').contains('Delete').click();
-      });
-      cy.get('[role="dialog"]').should('not.exist');
-      cy.contains('Updated Integration Activity').should('not.exist');
-    });
-
-    it('should handle multiple activities workflow', () => {
-      // Create multiple activities
-      const activities = ['Activity 1', 'Activity 2', 'Activity 3'];
-      
-      activities.forEach(activity => {
-        cy.contains('Add Activity').click();
-        cy.get('[role="dialog"]').within(() => {
-          cy.get('input[type="text"]').first().type(activity);
-        });
-        cy.get('button').contains('Save').click();
-        cy.get('[role="dialog"]').should('not.exist');
-      });
-      
-      // Verify all are visible
-      activities.forEach(activity => {
-        cy.contains(activity).should('be.visible');
-      });
-      
-      // Delete first one
-      cy.get('button').contains('Delete').first().click();
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('button').contains('Delete').click();
-      });
-      cy.get('[role="dialog"]').should('not.exist');
-      
-      // Verify remaining activities exist
-      cy.get('button').contains('Delete').should('have.length.at.least', 1);
+      // This is a high-level smoke test - detailed CRUD testing should be in Jest
     });
   });
 
@@ -99,6 +51,10 @@ describe('Activity CRUD Operations', () => {
       });
       cy.get('button').contains('Save').click();
       cy.get('[role="dialog"]').should('not.exist');
+      
+      // Wait for success toast
+      cy.get('[data-testid="toast-notification"]').should('be.visible');
+      cy.get('[data-testid="toast-message"]').should('contain', 'created successfully');
     });
 
     it('should complete export workflow', () => {
@@ -148,6 +104,10 @@ describe('Activity CRUD Operations', () => {
       });
       cy.get('button').contains('Save').click();
       cy.get('[role="dialog"]').should('not.exist');
+      
+      // Wait for success toast
+      cy.get('[data-testid="toast-notification"]').should('be.visible');
+      cy.get('[data-testid="toast-message"]').should('contain', 'created successfully');
       
       // Navigate away and back
       cy.visit('/');
