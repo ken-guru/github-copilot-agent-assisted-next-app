@@ -80,6 +80,18 @@ const ActivityCrud: React.FC = () => {
     }
   };
 
+  // Trigger download programmatically (for keyboard navigation)
+  const triggerDownload = () => {
+    if (exportUrl) {
+      const link = document.createElement('a');
+      link.href = exportUrl;
+      link.download = 'activities.json';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   // Handle keyboard navigation for form modal
   const handleFormModalKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -351,7 +363,23 @@ const ActivityCrud: React.FC = () => {
         </Modal.Footer>
       </Modal>
       {/* Export Modal */}
-      <Modal show={showExport} onHide={() => setShowExport(false)} aria-labelledby="export-modal" aria-describedby="export-modal-desc" centered backdrop="static">
+      <Modal 
+        show={showExport} 
+        onHide={() => setShowExport(false)} 
+        aria-labelledby="export-modal" 
+        aria-describedby="export-modal-desc" 
+        centered 
+        backdrop="static"
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === 'Enter' && exportUrl) {
+            e.preventDefault();
+            triggerDownload();
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            setShowExport(false);
+          }
+        }}
+      >
         <Modal.Header closeButton>
           <Modal.Title id="export-modal">
             <i className="bi bi-download me-2"></i>
@@ -368,19 +396,7 @@ const ActivityCrud: React.FC = () => {
               </p>
             )}
           </div>
-          {exportUrl ? (
-            <div className="d-grid">
-              <a
-                href={exportUrl}
-                download="activities.json"
-                className="btn btn-success d-flex align-items-center justify-content-center"
-                aria-label="Download activities as JSON"
-              >
-                <i className="bi bi-download me-2"></i>
-                Download activities.json
-              </a>
-            </div>
-          ) : (
+          {!exportUrl && activities.length === 0 && (
             <div className="alert alert-warning d-flex align-items-center" role="alert">
               <i className="bi bi-exclamation-triangle me-2"></i>
               No activities to export. Create some activities first.
@@ -388,10 +404,27 @@ const ActivityCrud: React.FC = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowExport(false)} autoFocus className="d-flex align-items-center">
+          <Button 
+            variant="secondary" 
+            onClick={() => setShowExport(false)} 
+            className="d-flex align-items-center"
+            autoFocus
+          >
             <i className="bi bi-x me-2"></i>
             Close
           </Button>
+          {exportUrl ? (
+            <a
+              href={exportUrl}
+              download="activities.json"
+              className="btn btn-success d-flex align-items-center justify-content-center"
+              aria-label="Download activities as JSON"
+              autoFocus
+            >
+              <i className="bi bi-download me-2"></i>
+              Download activities.json
+            </a>
+          ) : null}
         </Modal.Footer>
       </Modal>
       {/* Import Modal */}

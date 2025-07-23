@@ -71,7 +71,7 @@ describe('ActivityManager Component', () => {
     );
     
     // Type in a new activity name
-    const input = screen.getByLabelText('Name');
+    const input = screen.getByLabelText('Activity name');
     fireEvent.change(input, { target: { value: 'New Test Activity' } });
     
     // Click the Add Activity button
@@ -99,7 +99,7 @@ describe('ActivityManager Component', () => {
     );
     
     // Type in a new activity name
-    const input = screen.getByLabelText('Name');
+    const input = screen.getByLabelText('Activity name');
     fireEvent.change(input, { target: { value: 'New Test Activity' } });
     
     // Click the Add Activity button
@@ -250,7 +250,7 @@ describe('ActivityManager Component', () => {
     expect(addButton).toBeDisabled();
     
     // Name input should be disabled
-    const input = screen.getByLabelText('Name');
+    const input = screen.getByLabelText('Activity name');
     expect(input).toBeDisabled();
   });
   
@@ -449,7 +449,7 @@ describe('ActivityManager Component', () => {
       const resetButton = screen.getByRole('button', { name: /Reset/i });
       
       expect(cardHeader).toContainElement(resetButton);
-      expect(cardHeader).toHaveClass('d-flex', 'justify-content-between', 'align-items-center');
+      expect(cardHeader).toHaveClass('card-header-consistent');
     });
   });
 });

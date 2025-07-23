@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
-import { Row, Col, Card, Badge } from 'react-bootstrap';
+import { Card, Badge } from 'react-bootstrap';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
@@ -11,7 +11,6 @@ interface TimelineProps {
   entries: TimelineEntry[];
   totalDuration: number;
   elapsedTime: number;
-  isTimeUp?: boolean;
   timerActive?: boolean;
   allActivitiesCompleted?: boolean;
 }
@@ -34,7 +33,7 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
   }
 }
 
-export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, isTimeUp = false, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
+export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
   const { addToast, removeToast } = useToast();
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
@@ -317,21 +316,11 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   
   return (
     <Card className="border h-100 d-flex flex-column">
-      <Card.Header className="d-flex justify-content-between align-items-center flex-shrink-0">
-        <Row className="g-3 w-100">
-          <Col>
-            <h5 className="mb-0" role="heading" aria-level={2}>Timeline</h5>
-          </Col>
-          <Col xs="auto">
-            <Badge 
-              bg={isTimeUp ? 'danger' : 'primary'} 
-              className={`badge-${isTimeUp ? 'danger' : 'primary'} text-nowrap`}
-              data-testid="time-display"
-            >
-              {timeDisplay}
-            </Badge>
-          </Col>
-        </Row>
+      <Card.Header className="card-header-consistent">
+        <h5 className="mb-0">Timeline</h5>
+        <Badge bg="secondary" className="ms-2 text-nowrap" data-testid="time-display">
+          {timeDisplay}
+        </Badge>
       </Card.Header>
         
         <Card.Body className="p-0 flex-grow-1 d-flex flex-column overflow-hidden">

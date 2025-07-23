@@ -272,7 +272,7 @@ describe('ActivityManager Bootstrap Integration', () => {
       });
 
       // Add a new activity
-      const input = screen.getByLabelText('Name');
+      const input = screen.getByLabelText('Activity name');
       fireEvent.change(input, { target: { value: 'Test Activity' } });
       fireEvent.click(screen.getByText('Add Activity'));
 

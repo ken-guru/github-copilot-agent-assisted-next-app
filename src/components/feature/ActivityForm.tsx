@@ -1,10 +1,13 @@
 
 import React, { useState } from 'react';
-import { Form, Dropdown, Button } from 'react-bootstrap';
+import { Form, Dropdown, Button, InputGroup } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
 import { getColorName } from '../../utils/colorNames';
 import { getActivityColorsForTheme, getSmartColorIndex } from '../../utils/colors';
 import { useThemeReactive } from '../../hooks/useThemeReactive';
+
+// Constants
+const PLACEHOLDER_TEXT = "Quick add activity name";
 
 interface ActivityFormProps {
   activity?: Activity | null;
@@ -105,32 +108,65 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
 
   return (
     <Form noValidate validated={validated} onSubmit={handleSubmit} aria-label="Activity Form">
-      <Form.Group controlId="activityName">
-        <Form.Label>Name</Form.Label>
-        <Form.Control
-          type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          required
-          aria-required="true"
-          autoFocus
-          ref={nameInputRef}
-          isInvalid={!!error}
-          disabled={isDisabled}
-          placeholder={isSimplified ? "Quick add activity name" : undefined}
-        />
-        <Form.Control.Feedback type="invalid" data-testid="activity-form-error">
-          {error ? error : ''}
-        </Form.Control.Feedback>
-        {/* Always render a visible error message below the name input for accessibility and testability */}
-        {error && (
-          <div data-testid="activity-form-error-message" style={{ color: 'red', marginTop: 4 }}>{error}</div>
-        )}
-      </Form.Group>
-      
-      {/* Only show description and color fields in full mode (not simplified) */}
-      {!isSimplified && (
-        <div>
+      {isSimplified ? (
+        // Simplified inline layout for timeline/compact usage
+        <>
+          <InputGroup data-testid="activity-form-input-group">
+            <Form.Control
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
+              aria-required="true"
+              autoFocus
+              ref={nameInputRef}
+              isInvalid={!!error}
+              disabled={isDisabled}
+              placeholder={PLACEHOLDER_TEXT}
+              aria-label="Activity name"
+            />
+            {onAddActivity && (
+              <Button 
+                type="submit"
+                variant="primary"
+                disabled={isDisabled}
+              >
+                Add Activity
+              </Button>
+            )}
+          </InputGroup>
+          {/* Error message for simplified mode */}
+          {error && (
+            <div 
+              data-testid="activity-form-error" 
+              className="text-danger mt-2" 
+              style={{ fontSize: '0.875rem' }}
+            >
+              {error}
+            </div>
+          )}
+        </>
+      ) : (
+        // Full vertical layout for modal usage
+        <>
+          <Form.Group controlId="activityName">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
+              aria-required="true"
+              autoFocus
+              ref={nameInputRef}
+              isInvalid={!!error}
+              disabled={isDisabled}
+            />
+            <Form.Control.Feedback type="invalid" data-testid="activity-form-error">
+              {error ? error : ''}
+            </Form.Control.Feedback>
+          </Form.Group>
+          
           <Form.Group controlId="activityDescription">
             <Form.Label>Description</Form.Label>
             <Form.Control
@@ -200,18 +236,20 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
               aria-label="Selected color index"
             />
           </Form.Group>
-        </div>
+          
+          {/* Submit button - only show for standalone usage (not in modal) */}
+          {onAddActivity && (
+            <Button 
+              type="submit" 
+              variant="primary" 
+              disabled={isDisabled}
+              className="w-100"
+            >
+              Add Activity
+            </Button>
+          )}
+        </>
       )}
-      
-      {/* Submit button */}
-      <Button 
-        type="submit" 
-        variant="primary" 
-        disabled={isDisabled}
-        className="w-100"
-      >
-        Add Activity
-      </Button>
     </Form>
   );
 });

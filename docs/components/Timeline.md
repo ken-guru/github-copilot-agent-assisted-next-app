@@ -178,7 +178,7 @@ return (
   totalDuration={1800}     // 30 minutes in seconds
   elapsedTime={2400}       // 40 minutes in seconds (10 minutes overtime)
   timerActive={true}
-  isTimeUp={true}          // Triggers Bootstrap Alert for overtime warning
+  allActivitiesCompleted={false}
 />
 ```
 

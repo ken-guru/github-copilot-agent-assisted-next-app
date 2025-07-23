@@ -91,7 +91,6 @@ describe('Timeline Component Rendering', () => {
           totalDuration={3600}
           elapsedTime={4000}
           timerActive={true}
-          isTimeUp={true}
         />
       </ToastProvider>
     );

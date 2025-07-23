@@ -14,10 +14,24 @@ describe('ActivityForm', () => {
     jest.clearAllMocks();
   });
 
-  it('renders input and add button', () => {
+  it('renders input with submit button when onAddActivity provided', () => {
     render(<ActivityForm {...defaultProps} />);
     expect(screen.getByRole('textbox', { name: /name/i })).toBeInTheDocument();
+    // Submit button should be present when onAddActivity callback is provided (standalone usage)
     expect(screen.getByText('Add Activity')).toBeInTheDocument();
+  });
+
+  it('renders input without submit button when only onSubmit provided (modal usage)', () => {
+    const modalProps = {
+      onSubmit: jest.fn(),
+      isDisabled: false,
+      isSimplified: false,
+      existingActivities: [],
+    };
+    render(<ActivityForm {...modalProps} />);
+    expect(screen.getByRole('textbox', { name: /name/i })).toBeInTheDocument();
+    // Submit button should not be present when only onSubmit is provided (modal usage)
+    expect(screen.queryByText('Add Activity')).not.toBeInTheDocument();
   });
 
   it('shows "Time is up!" placeholder when disabled', () => {
@@ -26,10 +40,10 @@ describe('ActivityForm', () => {
     expect(screen.getByRole('textbox', { name: /name/i })).toBeDisabled();
   });
 
-  it('disables input and button when isDisabled is true', () => {
+  it('disables input when isDisabled is true', () => {
     render(<ActivityForm {...defaultProps} isDisabled={true} />);
     expect(screen.getByRole('textbox', { name: /name/i })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /add activity/i })).toBeDisabled();
+    // No submit button to test anymore
   });
 
   it('calls onAddActivity with trimmed input value when form is submitted', () => {
@@ -100,10 +114,10 @@ describe('ActivityForm', () => {
     render(<ActivityForm {...defaultProps} isSimplified={true} onAddActivity={mockOnAddActivity} />);
     
     const nameInput = screen.getByRole('textbox', { name: /name/i });
-    const submitButton = screen.getByRole('button', { name: /add activity/i });
+    const form = screen.getByRole('form');
     
     fireEvent.change(nameInput, { target: { value: 'Test Activity' } });
-    fireEvent.click(submitButton);
+    fireEvent.submit(form);
     
     expect(mockOnAddActivity).toHaveBeenCalledWith(
       expect.objectContaining({

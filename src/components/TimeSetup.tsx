@@ -54,7 +54,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
 
   return (
     <Card className="mb-4" data-testid="time-setup">
-      <Card.Header>
+      <Card.Header className="card-header-consistent">
         <h5 className="mb-0">Set Time</h5>
       </Card.Header>
       
@@ -78,7 +78,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
           </Button>
         </ButtonGroup>
         
-        <Form onSubmit={handleSubmit} role="form">
+        <Form onSubmit={handleSubmit} role="form" id="time-setup-form">
           {setupMode === 'duration' ? (
             <Row className="g-3" data-testid="duration-inputs">
               <Col xs={12} md={4} data-testid="hours-input-group">
@@ -115,7 +115,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
               </Col>
             </Row>
           ) : (
-            <div className="mb-3" data-testid="deadline-input-group">
+            <div data-testid="deadline-input-group">
               <Form.Label htmlFor="deadlineTime">Deadline Time</Form.Label>
               <Form.Control
                 type="time"
@@ -125,16 +125,19 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
               />
             </div>
           )}
-          
-          <Button
-            type="submit"
-            variant="success"
-            className="w-100 mt-3"
-          >
-            Set Time
-          </Button>
         </Form>
       </Card.Body>
+      
+      <Card.Footer>
+        <Button
+          type="submit"
+          variant="success"
+          className="w-100"
+          form="time-setup-form"
+        >
+          Set Time
+        </Button>
+      </Card.Footer>
     </Card>
   );
 }

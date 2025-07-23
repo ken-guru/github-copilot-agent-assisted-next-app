@@ -323,7 +323,7 @@ describe('Responsive Design Tests', () => {
       
       render(
         <Card>
-          <Card.Header>
+          <Card.Header className="card-header-consistent">
             <h5 className="mb-0">Test Card</h5>
           </Card.Header>
           <Alert variant="info" className="mb-0 border-0 border-bottom rounded-0" data-testid="card-alert">
@@ -382,7 +382,6 @@ describe('Responsive Design Tests', () => {
               totalDuration={3600}
               elapsedTime={0}
               timerActive={false}
-              isTimeUp={false}
               allActivitiesCompleted={false}
             />
           </div>
@@ -417,7 +416,6 @@ describe('Responsive Design Tests', () => {
               totalDuration={3600}
               elapsedTime={0}
               timerActive={false}
-              isTimeUp={false}
               allActivitiesCompleted={false}
             />
           </div>

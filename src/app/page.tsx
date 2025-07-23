@@ -170,7 +170,6 @@ function AppContent() {
                   elapsedTime={elapsedTime}
                   allActivitiesCompleted={allActivitiesCompleted}
                   timerActive={timerActive}
-                  isTimeUp={isTimeUp}
                 />
               </div>
             </div>

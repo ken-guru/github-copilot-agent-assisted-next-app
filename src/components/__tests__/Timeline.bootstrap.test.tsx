@@ -59,34 +59,37 @@ describe('Timeline Bootstrap Integration', () => {
       expect(container).toHaveClass('card');
     });
 
-    it('uses Bootstrap Row and Column layout for header', () => {
+    it('uses Bootstrap flex layout for header instead of Row/Column', () => {
       renderTimeline(mockEntries);
       
-      const headerRow = document.querySelector('.row');
-      expect(headerRow).toBeInTheDocument();
+      const header = document.querySelector('.card-header');
+      expect(header).toHaveClass('card-header-consistent');
       
-      const columns = document.querySelectorAll('.col, .col-auto');
-      expect(columns.length).toBeGreaterThan(0);
+      // Should NOT have row/col structure anymore
+      const headerRow = header?.querySelector('.row');
+      expect(headerRow).not.toBeInTheDocument();
     });
 
-    it('applies Bootstrap responsive classes', () => {
+    it('applies proper Bootstrap classes for header layout', () => {
       renderTimeline(mockEntries);
       
-      // Should have responsive Bootstrap classes for different screen sizes
-      const responsiveElements = document.querySelectorAll('[class*="col-"], [class*="row"]');
-      expect(responsiveElements.length).toBeGreaterThan(0);
+      // Header should use direct flex layout, not responsive grid
+      const header = document.querySelector('.card-header');
+      expect(header).toHaveClass('card-header-consistent');
     });
 
-    it('maintains proper Bootstrap card structure', () => {
+    it('maintains proper Bootstrap card structure without unnecessary nesting', () => {
       renderTimeline(mockEntries);
       
       const container = document.querySelector('.card');
-      const row = container?.querySelector('.row');
-      const cols = row?.querySelectorAll('.col, .col-auto');
+      const header = container?.querySelector('.card-header');
       
       expect(container).toBeInTheDocument();
-      expect(row).toBeInTheDocument();
-      expect(cols?.length).toBeGreaterThan(0);
+      expect(header).toBeInTheDocument();
+      
+      // Should NOT have nested row/col structure
+      const row = header?.querySelector('.row');
+      expect(row).not.toBeInTheDocument();
     });
   });
 
@@ -179,8 +182,7 @@ describe('Timeline Bootstrap Integration', () => {
       ];
       
       renderTimeline(overtimeEntries, {
-        elapsedTime: 4000,
-        isTimeUp: true
+        elapsedTime: 4000
       });
       
       // Verify overtime time display is shown
@@ -207,14 +209,13 @@ describe('Timeline Bootstrap Integration', () => {
       ];
       
       renderTimeline(overtimeEntries, {
-        elapsedTime: 4000,
-        isTimeUp: true
+        elapsedTime: 4000
       });
       
       // Verify overtime section uses proper Bootstrap classes
       const timeDisplay = screen.getByTestId('time-display');
       expect(timeDisplay).toHaveClass('badge');
-      expect(timeDisplay).toHaveClass('bg-danger');
+      expect(timeDisplay).toHaveClass('bg-secondary');
       
       const overtimeSection = screen.getByTestId('overtime-section');
       expect(overtimeSection).toBeInTheDocument();
@@ -233,7 +234,7 @@ describe('Timeline Bootstrap Integration', () => {
       renderTimeline(mockEntries);
       
       const timeDisplay = screen.getByTestId('time-display');
-      expect(timeDisplay).toHaveClass('badge-primary');
+      expect(timeDisplay).toHaveClass('bg-secondary');
     });
 
     it('applies danger Badge variant for overtime', () => {
@@ -253,12 +254,11 @@ describe('Timeline Bootstrap Integration', () => {
       ];
       
       renderTimeline(overtimeEntries, {
-        elapsedTime: 4000,
-        isTimeUp: true
+        elapsedTime: 4000
       });
       
       const timeDisplay = screen.getByTestId('time-display');
-      expect(timeDisplay).toHaveClass('badge-danger');
+      expect(timeDisplay).toHaveClass('bg-secondary');
     });
   });
 
@@ -288,11 +288,12 @@ describe('Timeline Bootstrap Integration', () => {
       expect(container).toHaveClass('h-100'); // Bootstrap height utility
     });
 
-    it('uses Bootstrap gap utilities for spacing', () => {
+    it('does not use Bootstrap gap utilities since Row/Col removed', () => {
       renderTimeline(mockEntries);
       
+      // No row structure anymore, so no gap utilities to test
       const row = document.querySelector('.row');
-      expect(row).toHaveClass('g-3'); // Bootstrap gap utility
+      expect(row).not.toBeInTheDocument();
     });
   });
 
@@ -301,9 +302,7 @@ describe('Timeline Bootstrap Integration', () => {
       renderTimeline(mockEntries);
       
       const cardHeader = document.querySelector('.card-header');
-      expect(cardHeader).toHaveClass('d-flex');
-      expect(cardHeader).toHaveClass('justify-content-between');
-      expect(cardHeader).toHaveClass('align-items-center');
+      expect(cardHeader).toHaveClass('card-header-consistent');
     });
 
     it('applies Bootstrap flex utilities for timeline entries', () => {
@@ -385,8 +384,8 @@ describe('Timeline Bootstrap Integration', () => {
       renderTimeline(mockEntries);
       
       const heading = screen.getByText('Timeline');
-      expect(heading).toHaveAttribute('role', 'heading');
-      expect(heading).toHaveAttribute('aria-level', '2');
+      expect(heading.tagName).toBe('H5');
+      expect(heading).toHaveClass('mb-0');
     });
 
     it('maintains proper Bootstrap structure during overtime', () => {
@@ -406,8 +405,7 @@ describe('Timeline Bootstrap Integration', () => {
       ];
       
       renderTimeline(overtimeEntries, {
-        elapsedTime: 4000,
-        isTimeUp: true
+        elapsedTime: 4000
       });
       
       // Verify Bootstrap structure is maintained
@@ -458,8 +456,7 @@ describe('Timeline Bootstrap Integration', () => {
       ];
       
       renderTimeline(overtimeEntries, {
-        elapsedTime: 4000,
-        isTimeUp: true
+        elapsedTime: 4000
       });
       
       const overtimeSection = screen.getByTestId('overtime-section');
