@@ -25,6 +25,8 @@ interface ActivityManagerProps {
   timerActive?: boolean;
   // Reset callback for session/timer reset
   onReset?: () => void;
+  // Extend duration callback for adding 1 minute
+  onExtendDuration?: () => void;
 }
 
 export default function ActivityManager({ 
@@ -37,7 +39,8 @@ export default function ActivityManager({
   elapsedTime = 0,
   totalDuration = 0,
   timerActive = false,
-  onReset
+  onReset,
+  onExtendDuration
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
@@ -126,6 +129,12 @@ export default function ActivityManager({
     }
   };
 
+  const handleExtendDuration = () => {
+    if (onExtendDuration) {
+      onExtendDuration();
+    }
+  };
+
   const handleResetSession = () => {
     // Call global reset function to reset timer/session
     if (onReset) {
@@ -137,18 +146,32 @@ export default function ActivityManager({
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0">Activities</h5>
-        {onReset && (
-          <Button 
-            variant="outline-danger" 
-            size="sm" 
-            onClick={handleResetSession}
-            className="d-flex align-items-center"
-            title="Reset session and return to time setup"
-          >
-            <i className="bi bi-arrow-clockwise me-2"></i>
-            Reset
-          </Button>
-        )}
+        <div className="d-flex gap-2">
+          {onExtendDuration && (
+            <Button 
+              variant="outline-primary" 
+              size="sm" 
+              onClick={handleExtendDuration}
+              className="d-flex align-items-center"
+              title="Add 1 minute to session duration"
+            >
+              <i className="bi bi-plus-circle me-2"></i>
+              +1 min
+            </Button>
+          )}
+          {onReset && (
+            <Button 
+              variant="outline-danger" 
+              size="sm" 
+              onClick={handleResetSession}
+              className="d-flex align-items-center"
+              title="Reset session and return to time setup"
+            >
+              <i className="bi bi-arrow-clockwise me-2"></i>
+              Reset
+            </Button>
+          )}
+        </div>
       </Card.Header>
       <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden p-3">
         {activities.length === 0 ? (

@@ -37,6 +37,7 @@ function AppContent() {
     timerActive,
     startTimer,
     resetTimer,
+    extendDuration: clearTimeUpState,
   } = useTimerState({
     totalDuration,
     isCompleted: allActivitiesCompleted
@@ -112,6 +113,18 @@ function AppContent() {
     setTimeSet(true);
   };
   
+  const handleExtendDuration = () => {
+    if (elapsedTime <= totalDuration) {
+      // Normal case: just add 1 minute
+      setTotalDuration(totalDuration + 60);
+    } else {
+      // Overtime case: set duration to elapsed time + 1 minute
+      setTotalDuration(elapsedTime + 60);
+    }
+    // Clear the time up state
+    clearTimeUpState();
+  };
+  
   const handleReset = async () => {
     await resetService.reset();
   };
@@ -161,6 +174,7 @@ function AppContent() {
                   totalDuration={totalDuration}
                   timerActive={timerActive}
                   onReset={handleReset}
+                  onExtendDuration={handleExtendDuration}
                 />
               </div>
               <div className="col-lg-7 d-none d-lg-flex flex-column overflow-hidden">
