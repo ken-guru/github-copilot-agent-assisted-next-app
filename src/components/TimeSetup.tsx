@@ -8,7 +8,7 @@ interface TimeSetupProps {
 export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   const [setupMode, setSetupMode] = useState<'duration' | 'deadline'>('duration');
   const [hours, setHours] = useState<number>(0);
-  const [minutes, setMinutes] = useState<number>(1); // Default to 1 minute
+  const [minutes, setMinutes] = useState<number>(0); // Allow zero minutes
   const [seconds, setSeconds] = useState<number>(0);
   const [deadlineTime, setDeadlineTime] = useState<string>('');
   const [isClient, setIsClient] = useState(false);
@@ -87,8 +87,11 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                   type="number"
                   id="hours"
                   min="0"
-                  value={isClient ? (hours || 0).toString() : "0"}
-                  onChange={(e) => setHours(parseInt(e.target.value) || 0)}
+                  value={isClient ? hours.toString() : "0"}
+                  onChange={(e) => {
+                    const parsedValue = parseInt(e.target.value, 10);
+                    setHours(isNaN(parsedValue) ? 0 : parsedValue);
+                  }}
                 />
               </Col>
               <Col xs={12} md={4} data-testid="minutes-input-group">
@@ -98,8 +101,11 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                   id="minutes"
                   min="0"
                   max="59"
-                  value={isClient ? (minutes || 1).toString() : "1"}
-                  onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
+                  value={isClient ? minutes.toString() : "0"}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value, 10);
+                    setMinutes(isNaN(value) ? 0 : value);
+                  }}
                 />
               </Col>
               <Col xs={12} md={4} data-testid="seconds-input-group">
@@ -109,8 +115,11 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                   id="seconds"
                   min="0"
                   max="59"
-                  value={isClient ? (seconds || 0).toString() : "0"}
-                  onChange={(e) => setSeconds(parseInt(e.target.value) || 0)}
+                  value={isClient ? seconds.toString() : "0"}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value, 10);
+                    setSeconds(isNaN(value) ? 0 : value);
+                  }}
                 />
               </Col>
             </Row>

@@ -122,12 +122,12 @@ describe('TimeSetup Component', () => {
   it('should handle empty or invalid inputs gracefully', () => {
     render(<TimeSetup onTimeSet={mockOnTimeSet} />);
     
-    // Don't change any values (defaults to 1 minute due to UX improvement)
+    // Don't change any values (defaults to 0 for all fields)
     const submitButton = screen.getByRole('button', { name: 'Set Time' });
     fireEvent.click(submitButton);
     
-    // Should pass 60 seconds (1 minute default)
-    expect(mockOnTimeSet).toHaveBeenCalledWith(60);
+    // Should pass 0 seconds (new default behavior)
+    expect(mockOnTimeSet).toHaveBeenCalledWith(0);
   });
 
   it('should allow setting zero duration when user explicitly sets all inputs to zero', () => {
