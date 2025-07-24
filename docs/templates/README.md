@@ -1,68 +1,147 @@
 # Documentation Templates
 
-This directory contains standardized templates for consistent project documentation. These templates ensure comprehensive documentation and enable effective AI-assisted development.
+This directory contains templates for various types of documentation used throughout the project.
 
 ## Available Templates
 
-### [PLANNED_CHANGES_TEMPLATE.md](./PLANNED_CHANGES_TEMPLATE.md)
-**Purpose**: Structure for documenting upcoming feature requests and changes
-**Usage**: Copy this template when adding new planned changes to `docs/PLANNED_CHANGES.md`
-**Key Sections**:
-- Context (components affected, current behavior, user needs)
-- Requirements (detailed specifications with implementation details)
-- Technical Guidelines (framework considerations, performance, accessibility)
-- Expected Outcome (success criteria from user and technical perspectives)
-- Validation Criteria (checklist for completion verification)
+### Component Documentation Template
+**File**: `COMPONENT_DOCUMENTATION_TEMPLATE.md`
+**Purpose**: Standardized format for documenting React components
+**Usage**: Copy and fill out when creating new component documentation in `docs/components/`
 
-**AI-Assisted Development**: This template format is specifically designed for effective AI assistance in implementation.
-
-### [COMPONENT_DOCUMENTATION_TEMPLATE.md](./COMPONENT_DOCUMENTATION_TEMPLATE.md)
-**Purpose**: Comprehensive documentation for React components
-**Usage**: Create component documentation in `docs/components/` using this template
 **Key Sections**:
-- Props documentation (types, defaults)
+- Navigation and overview
+- Props documentation with types and defaults
 - State management approach
-- Theme compatibility
-- Mobile responsiveness details
-- Accessibility considerations
+- Theme compatibility details
+- Mobile responsiveness considerations
+- Accessibility features
 - Test coverage summary
-- Usage examples
+- Usage examples (basic and advanced)
+- Known limitations and edge cases
+- Change history
 
-### [UTILITY_PROPOSAL_TEMPLATE.md](./UTILITY_PROPOSAL_TEMPLATE.md)
-**Purpose**: Structured proposals for new utility functions
-**Usage**: Use when proposing new utility functions for review
+### Planned Changes Template
+**File**: `PLANNED_CHANGES_TEMPLATE.md`
+**Purpose**: Structured format for documenting upcoming features and changes
+**Usage**: Copy and fill out when planning new features or significant changes
+
 **Key Sections**:
-- Implementation details with JSDoc
-- Usage examples and edge cases
-- Alternative approaches considered
+- Context and background
+- Detailed requirements
+- Technical guidelines
+- Expected outcomes
+- Validation criteria
+
+### Debugging Session Template
+**File**: `DEBUGGING_SESSION_TEMPLATE.md`
+**Purpose**: Standardized format for documenting debugging sessions and issue resolution
+**Usage**: Copy and fill out when creating memory log entries for complex debugging sessions
+
+**Key Sections**:
+- Issue description and initial state
+- Debug process with investigation steps
+- Solution attempts (successful and failed)
+- Final resolution and implementation
+- Lessons learned and future considerations
+- MCP tool usage when available
+
+### Utility Proposal Template
+**File**: `UTILITY_PROPOSAL_TEMPLATE.md`
+**Purpose**: Format for proposing new utility functions or improvements
+**Usage**: Copy and fill out when suggesting new utilities or enhancements
+
+**Key Sections**:
+- Problem statement
+- Proposed solution
+- Implementation approach
 - Testing strategy
-- Integration with existing utilities
+- Integration considerations
+
+## Workflow Templates
+
+### GitHub Issue Resolution Workflow
+**File**: `../workflows/github-issue-resolution.md`
+**Purpose**: Complete step-by-step process for resolving GitHub issues using MCP tools
+**Usage**: Reference when working on any GitHub issue
+
+**Key Features**:
+- MCP tool integration examples
+- Branch protection protocols
+- Quality gate requirements
+- Iterative resolution process
+
+### Commit Procedures
+**File**: `../workflows/commit-procedures.md`
+**Purpose**: Standard procedures for committing code changes and PR fixes
+**Usage**: Follow when making any code commits
+
+**Key Features**:
+- Standard PR fix procedure
+- Issue resolution continuity protocol
+- Quality assurance checklist
+- Commit message formatting
+
+### Testing Procedures
+**File**: `../workflows/testing-procedures.md`
+**Purpose**: Comprehensive testing strategies and Jest vs Cypress decision matrix
+**Usage**: Reference when writing tests or deciding on testing approach
+
+**Key Features**:
+- Test pyramid architecture
+- Performance optimization guidelines
+- Testing best practices
+- Quality gate requirements
+
+### Code Quality Checklist
+**File**: `../workflows/code-quality-checklist.md`
+**Purpose**: Code quality standards and verification procedures
+**Usage**: Use as final checklist before considering any development work complete
+
+**Key Features**:
+- Deployment verification checklist
+- Security standards
+- Performance standards
+- Accessibility requirements
 
 ## Template Usage Guidelines
 
-1. **Copy the Template**: Always start with the complete template structure
-2. **Fill Out All Sections**: Incomplete documentation reduces effectiveness
-3. **Be Specific**: The more detailed the documentation, the better the AI assistance
-4. **Update When Changed**: Keep documentation current with implementation
-5. **Follow Naming Conventions**: Use consistent file naming as shown in templates
+### For AI-Assisted Development
+- Use complete template structures for optimal AI assistance
+- Fill out all sections thoroughly before implementation
+- Ask clarifying questions if any section cannot be completed
+- Templates are designed to provide comprehensive context for AI agents
+- Reference workflow templates for systematic issue resolution
 
-## For AI Agents
+### For Human Developers
+- Templates provide consistency across documentation
+- Use as checklists to ensure comprehensive coverage
+- Modify templates as needed for specific use cases
+- Keep templates updated with project evolution
+- Follow workflow templates for reliable development processes
 
-When working with this project:
-- **Always use templates** for new documentation
-- **REQUIRED: Use PLANNED_CHANGES_TEMPLATE.md** for ALL new feature requests - never implement without using the template
-- **Copy the complete template structure** - never create partial specifications 
-- **Fill out ALL sections** before proceeding with implementation
-- **Ask clarifying questions** if any template section cannot be completed
-- **Reference existing templates** to understand expected documentation quality
-- **Suggest template improvements** when patterns emerge that aren't covered
-- **Maintain template consistency** across all project documentation
-- **Validate template compliance** before beginning any implementation work
+### Template Maintenance
+- Review templates quarterly for relevance and completeness
+- Update based on lessons learned from usage
+- Ensure templates align with current project standards
+- Add new templates as documentation needs evolve
 
-### MCP Tool Integration
+## Integration with Planning Process
 
-When MCP (Model Context Protocol) tools are available, enhance documentation workflows:
-- **Memory Tool**: Store template patterns and documentation relationships in knowledge graph
-- **Sequential Thinking Tool**: Use for complex template design and documentation architecture decisions
-- **Time Tool**: Add timezone-aware timestamps to documentation creation and updates
-- **Combined Usage**: Leverage all tools together for comprehensive documentation planning and maintenance
+Templates integrate with the project's change management approach:
+1. **Planning Phase**: Use appropriate template to document requirements
+2. **Implementation Phase**: Reference workflow templates during development
+3. **Quality Assurance**: Use code quality checklist for verification
+4. **Documentation Phase**: Complete template with final implementation details
+5. **Archival Phase**: Move completed templates to appropriate archive locations
+
+## MCP Tool Integration
+
+Templates are designed to work seamlessly with Model Context Protocol (MCP) tools:
+- **GitHub Tools**: Issue analysis and PR management workflows
+- **Sequential Thinking**: Complex problem analysis templates
+- **Memory Tools**: Knowledge persistence and retrieval patterns
+- **Playwright Tools**: Issue verification procedures
+- **Time Tools**: Timezone-aware documentation practices
+
+For more information on the complete planning and documentation workflow, see the [Memory Log Workflow Guide](../dev-guides/memory-log-workflow.md).

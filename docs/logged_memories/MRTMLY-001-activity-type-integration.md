@@ -31,4 +31,4 @@
 - Use automated tools to locate and fix type mismatches across large codebases.
 
 ---
-[Back to MEMORY_LOG.md](../../MEMORY_LOG.md)
+[Back to MEMORY_LOG.md](../MEMORY_LOG.md)

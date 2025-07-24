@@ -25,27 +25,34 @@ The application is developed using AI-assisted techniques with these principles:
 
 ### AI Development Enhancement
 This project leverages Model Context Protocol (MCP) tools to enhance AI-assisted development:
-- **Memory Tool**: Maintains persistent knowledge graphs for project context
-- **Sequential Thinking Tool**: Enables step-by-step problem analysis and solution development
-- **Time Tool**: Provides timezone-aware time handling for documentation and coordination
+- **GitHub Tools**: [Documentation](https://github.com/github/github-mcp-server) - Issue/PR management and analysis
+- **Sequential Thinking**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking) - Complex problem analysis
+- **Memory Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) - Knowledge persistence and retrieval
+- **Time Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/time) - Timezone-aware handling
+- **Playwright Tools**: [Documentation](https://github.com/executeautomation/mcp-playwright) - Browser automation and UI verification
+
+**Key Workflow**: [GitHub Issue Resolution](./docs/workflows/github-issue-resolution.md)
 
 **Practical Examples:**
-```javascript
-// Search existing debugging knowledge
-mcp_memory_search_nodes("component testing typescript errors")
+```bash
+# Issue analysis with GitHub tools
+mcp_github_get_issue(issue_number=123)
+mcp_github_get_issue_comments(issue_number=123)
 
-// Complex problem analysis
+# Complex problem breakdown
 mcp_sequential-th_sequentialthinking({
-  thought: "Breaking down this multi-step refactoring...",
-  // Systematic analysis with iterative refinement
+  thought: "Breaking down this issue: components affected, user impact, root cause..."
 })
 
-// Timezone-aware documentation
-mcp_time_get_current_time("America/New_York")
-// Result: "2025-07-16 15:30:00 EST"
+# Search existing solutions
+mcp_memory_search_nodes(query="similar debugging patterns")
+
+# UI verification
+mcp_playwright_browser_navigate(url="http://localhost:3000")
+mcp_playwright_browser_snapshot()
 ```
 
-These tools enable more sophisticated AI assistance in debugging, planning, and implementation tasks. For complete usage guides, see [Memory Log Workflow](./docs/dev-guides/memory-log-workflow.md) and [AI Agent Quick Reference](./docs/dev-guides/ai-agent-memory-quick-reference.md).
+These tools enable systematic issue resolution and enhanced AI assistance. For complete usage guides, see [GitHub Issue Resolution Workflow](./docs/workflows/github-issue-resolution.md) and [Memory Log Workflow](./docs/dev-guides/memory-log-workflow.md).
 
 ### Change Management Approach
 ```markdown
@@ -67,6 +74,8 @@ The project uses a documentation system for tracking changes:
    - Records test implementation strategies and lessons learned
    - Preserves institutional knowledge about effective approaches
    - Should be consulted before addressing recurring issues
+
+For GitHub issue resolution, follow the systematic workflow: docs/workflows/github-issue-resolution.md
 ```
 
 ## Core Features
@@ -271,6 +280,10 @@ Key component categories:
 
 ### Development Resources
 
+- [GitHub Issue Resolution Workflow](./docs/workflows/github-issue-resolution.md) - **Complete step-by-step process for resolving GitHub issues with MCP tools**
+- [Commit Procedures](./docs/workflows/commit-procedures.md) - Standard procedures for code commits and PR fixes
+- [Testing Procedures](./docs/workflows/testing-procedures.md) - Jest vs Cypress decision matrix and testing strategies
+- [Code Quality Checklist](./docs/workflows/code-quality-checklist.md) - Final verification before deployment
 - [Planning Changes](./docs/PLANNED_CHANGES.md) - How to document upcoming changes
 - [Planning Template](./docs/templates/PLANNED_CHANGES_TEMPLATE.md) - Template for new change requests
 - [Memory Log](./docs/MEMORY_LOG.md) - Project history and issue resolutions
