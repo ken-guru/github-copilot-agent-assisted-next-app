@@ -80,6 +80,32 @@ scripts/
 ```
 
 ## CRITICAL WORKFLOW RULES [PRIORITY: ABSOLUTE HIGHEST]
+### Branch Protection and Development Workflow
+**NEVER commit directly to the main branch - it is protected.**
+
+#### Mandatory Branch Creation Protocol:
+1. **ALWAYS create a new feature branch** before starting work on any issue
+2. **Branch naming convention**: `fix-[issue-number]-[brief-description]` or `feature-[brief-description]`
+3. **Work exclusively on feature branches** - main branch is protected and requires PR reviews
+4. **Create PRs into main** - all changes must go through the pull request process
+5. **Never attempt `git push origin main`** - this will be rejected by branch protection
+
+#### Application Issue Verification Protocol:
+**Use Playwright MCP tool to verify and understand issues before implementing fixes.**
+
+When working on reported bugs or issues:
+1. **FIRST**: Use Playwright MCP browser tools to navigate to the application and reproduce the issue
+2. **VERIFY**: Confirm the issue exists and understand the exact user experience
+3. **DOCUMENT**: Take screenshots or record the problematic behavior if needed
+4. **THEN**: Proceed with implementing the fix based on verified understanding
+
+Available Playwright MCP tools for issue verification:
+- `mcp_playwright_browser_navigate` - Navigate to specific pages
+- `mcp_playwright_browser_snapshot` - Capture accessibility snapshots for interaction
+- `mcp_playwright_browser_click` - Test user interactions
+- `mcp_playwright_browser_type` - Test form inputs and user data entry
+- `mcp_playwright_browser_take_screenshot` - Document current state or issues
+
 ### Issue Resolution Continuity Protocol
 **NEVER identify an issue and then forget to resolve it after committing.**
 
