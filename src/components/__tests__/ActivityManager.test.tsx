@@ -453,7 +453,7 @@ describe('ActivityManager Component', () => {
     });
   });
 
-  describe('Extend Duration Button (+1 min)', () => {
+  describe('Extend Duration Button (1 min)', () => {
     const mockProps = {
       onActivitySelect: jest.fn(),
       onActivityRemove: jest.fn(),
@@ -463,39 +463,39 @@ describe('ActivityManager Component', () => {
       elapsedTime: 0,
     };
 
-    it('does not render +1 min button when onExtendDuration prop is not provided', () => {
+    it('does not render 1 min button when onExtendDuration prop is not provided', () => {
       render(<ActivityManager {...mockProps} />);
       
-      expect(screen.queryByRole('button', { name: /\+1 min/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /1 min/i })).not.toBeInTheDocument();
     });
 
-    it('renders +1 min button when onExtendDuration prop is provided', () => {
+    it('renders 1 min button when onExtendDuration prop is provided', () => {
       const onExtendDuration = jest.fn();
       render(<ActivityManager {...mockProps} onExtendDuration={onExtendDuration} />);
       
-      const extendButton = screen.getByRole('button', { name: /\+1 min/i });
+      const extendButton = screen.getByRole('button', { name: /1 min/i });
       expect(extendButton).toBeInTheDocument();
       expect(extendButton).toHaveClass('btn-outline-primary');
       expect(extendButton).toHaveAttribute('title', 'Add 1 minute to session duration');
     });
 
-    it('calls onExtendDuration callback when +1 min button is clicked', () => {
+    it('calls onExtendDuration callback when 1 min button is clicked', () => {
       const onExtendDuration = jest.fn();
       render(<ActivityManager {...mockProps} onExtendDuration={onExtendDuration} />);
       
-      const extendButton = screen.getByRole('button', { name: /\+1 min/i });
+      const extendButton = screen.getByRole('button', { name: /1 min/i });
       fireEvent.click(extendButton);
       
       expect(onExtendDuration).toHaveBeenCalledTimes(1);
     });
 
-    it('positions +1 min button before reset button in card header', () => {
+    it('positions 1 min button before reset button in card header', () => {
       const onReset = jest.fn();
       const onExtendDuration = jest.fn();
       render(<ActivityManager {...mockProps} onReset={onReset} onExtendDuration={onExtendDuration} />);
       
       const cardHeader = screen.getByText('Activities').closest('.card-header');
-      const extendButton = screen.getByRole('button', { name: /\+1 min/i });
+      const extendButton = screen.getByRole('button', { name: /1 min/i });
       const resetButton = screen.getByRole('button', { name: /Reset/i });
       
       expect(cardHeader).toContainElement(extendButton);
@@ -507,11 +507,11 @@ describe('ActivityManager Component', () => {
       expect(buttons?.[1]).toBe(resetButton);
     });
 
-    it('displays appropriate icon in +1 min button', () => {
+    it('displays appropriate icon in 1 min button', () => {
       const onExtendDuration = jest.fn();
       render(<ActivityManager {...mockProps} onExtendDuration={onExtendDuration} />);
       
-      const extendButton = screen.getByRole('button', { name: /\+1 min/i });
+      const extendButton = screen.getByRole('button', { name: /1 min/i });
       const icon = extendButton.querySelector('i.bi-plus-circle');
       
       expect(icon).toBeInTheDocument();

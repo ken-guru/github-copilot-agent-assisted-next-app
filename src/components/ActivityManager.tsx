@@ -156,7 +156,7 @@ export default function ActivityManager({
               title="Add 1 minute to session duration"
             >
               <i className="bi bi-plus-circle me-2"></i>
-              +1 min
+              1 min
             </Button>
           )}
           {onReset && (
