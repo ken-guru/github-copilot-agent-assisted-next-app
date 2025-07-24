@@ -43,7 +43,7 @@ src/components/                    # Bootstrap-wrapped components
 - **Create PRs into main** - all changes require PR reviews
 
 ### Complete Issue Resolution Process
-**📚 Detailed Workflow**: [../docs/workflows/github-issue-resolution.md](../docs/workflows/github-issue-resolution.md)
+**📚 Detailed Workflow**: [/docs/workflows/github-issue-resolution.md](../docs/workflows/github-issue-resolution.md)
 
 1. **Analyze Issue** → Use GitHub MCP tools + Sequential Thinking
 2. **Verify Problem** → Use Playwright MCP tools for UI issues  

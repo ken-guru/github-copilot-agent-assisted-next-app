@@ -11,6 +11,14 @@ Ensure you have access to these MCP tools:
 - **Memory Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/memory)
 - **Playwright Automation**: [Documentation](https://github.com/executeautomation/mcp-playwright)
 
+## Repository Configuration
+
+For all MCP GitHub tool examples in this document:
+- **REPO_OWNER**: `ken-guru`
+- **REPO_NAME**: `github-copilot-agent-assisted-next-app`
+
+When using this workflow in other repositories, update these values accordingly.
+
 ## Workflow Steps
 
 ### Step 1: Issue Analysis and Understanding

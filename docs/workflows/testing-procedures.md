@@ -29,7 +29,7 @@ This document outlines comprehensive testing strategies, including the Jest vs C
 - Accessibility compliance (ARIA, screen readers)
 - Modal interactions and lifecycle
 - Theme switching behavior
-- **DETAILED UI INTERACTIONS**: Toast notifications, alert handling, component state changes
+- **DETAILED UI INTERACTIONS**: Toast notifications for successful activity creation, confirmation dialog handling for activity deletion, ActivityButton state changes during transitions
 - **COMPONENT INTEGRATION**: How components work together within single page contexts
 - **ERROR HANDLING**: Form validation, API error states, edge cases
 
