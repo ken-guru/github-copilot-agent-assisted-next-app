@@ -210,11 +210,10 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       setOvertimeToastId(toastId);
     } else if (!isOvertime && overtimeToastId) {
       // Remove overtime toast when no longer in overtime
-      // Note: We don't automatically remove it here since it's persistent
-      // The user needs to manually dismiss it
+      removeToast(overtimeToastId);
       setOvertimeToastId(null);
     }
-  }, [isOvertime, overtimeToastId, timerActive, addToast]);
+  }, [isOvertime, overtimeToastId, timerActive, addToast, removeToast]);
 
   // Auto-dismiss overtime toast when all activities are completed (summary state)
   useEffect(() => {
@@ -223,6 +222,15 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       setOvertimeToastId(null);
     }
   }, [allActivitiesCompleted, overtimeToastId, removeToast]);
+
+  // Cleanup overtime toast on component unmount (handles reset to setup)
+  useEffect(() => {
+    return () => {
+      if (overtimeToastId) {
+        removeToast(overtimeToastId);
+      }
+    };
+  }, [overtimeToastId, removeToast]);
 
   // Calculate effective duration for timeline - dynamically adjust if in overtime
   const effectiveDuration = useMemo(() => {

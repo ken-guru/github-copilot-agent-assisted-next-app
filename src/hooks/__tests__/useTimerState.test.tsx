@@ -133,4 +133,73 @@ describe('useTimerState', () => {
       expect(result.current.timerActive).toBe(true);
     });
   });
+
+  describe('extend duration functionality', () => {
+    it('should clear isTimeUp when extendDuration is called during overtime', () => {
+      const { result } = renderHook(() => useTimerState({ totalDuration: 30 }));
+      
+      act(() => {
+        result.current.startTimer();
+        jest.advanceTimersByTime(31000); // 31 seconds (overtime)
+      });
+      
+      expect(result.current.isTimeUp).toBe(true);
+      
+      act(() => {
+        result.current.extendDuration();
+      });
+      
+      expect(result.current.isTimeUp).toBe(false);
+    });
+
+    it('should continue running timer after extending duration', () => {
+      const { result } = renderHook(() => useTimerState({ totalDuration: 30 }));
+      
+      act(() => {
+        result.current.startTimer();
+        jest.advanceTimersByTime(10000); // 10 seconds
+      });
+      
+      const elapsedBeforeExtend = result.current.elapsedTime;
+      
+      act(() => {
+        result.current.extendDuration();
+        jest.advanceTimersByTime(5000); // additional 5 seconds
+      });
+      
+      expect(result.current.elapsedTime).toBe(elapsedBeforeExtend + 5);
+      expect(result.current.timerActive).toBe(true);
+    });
+
+    it('should work correctly when called multiple times', () => {
+      const { result } = renderHook(() => useTimerState({ totalDuration: 30 }));
+      
+      act(() => {
+        result.current.startTimer();
+        jest.advanceTimersByTime(35000); // 35 seconds (overtime)
+      });
+      
+      expect(result.current.isTimeUp).toBe(true);
+      
+      act(() => {
+        result.current.extendDuration();
+      });
+      
+      expect(result.current.isTimeUp).toBe(false);
+      
+      // Advance more time to trigger overtime again
+      act(() => {
+        jest.advanceTimersByTime(10000); // 10 more seconds
+      });
+      
+      // Should trigger overtime again
+      expect(result.current.isTimeUp).toBe(true);
+      
+      act(() => {
+        result.current.extendDuration();
+      });
+      
+      expect(result.current.isTimeUp).toBe(false);
+    });
+  });
 });

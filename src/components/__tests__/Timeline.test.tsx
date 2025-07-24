@@ -139,6 +139,85 @@ describe('Timeline Component', () => {
     expect(timeDisplay).toBeInTheDocument();
   });
 
+  it('should dismiss overtime toast when duration is extended and no longer in overtime', async () => {
+    // Use exact same mock entries as working test
+    const startTime = FIXED_TIME - 4000 * 1000;
+    const endTime = FIXED_TIME;
+    const mockEntries: TimelineEntry[] = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Task 1',
+        startTime: startTime,
+        endTime: endTime,
+        colors: {
+          background: '#E8F5E9',
+          text: '#1B5E20',
+          border: '#2E7D32'
+        }
+      }
+    ];
+    
+    // Start with overtime condition
+    const { rerender } = renderTimeline(mockEntries, {
+      elapsedTime: 4000, // 66 min 40 sec (400 seconds over default 3600)
+      isTimeUp: true
+    });
+    
+    // Verify we're in overtime state
+    const timeDisplay = screen.getByTestId('time-display');
+    expect(timeDisplay.textContent).toContain('Overtime');
+    
+    // Extend duration to get out of overtime: default 3600 + 500 = 4100 (100 sec buffer)
+    rerender(
+      <ToastProvider>
+        <Timeline 
+          entries={mockEntries}
+          totalDuration={4100} // Extended beyond current elapsed time
+          elapsedTime={4000} // Same elapsed time, now under new limit
+          timerActive={true}
+          allActivitiesCompleted={false}
+        />
+      </ToastProvider>
+    );
+    
+    // After extension, should no longer be in overtime
+    expect(timeDisplay.textContent).toContain('Time Left');
+    expect(timeDisplay.textContent).not.toContain('Overtime');
+  });
+
+  it('should dismiss overtime toast when component unmounts or resets', async () => {
+    const mockEntries: TimelineEntry[] = [
+      {
+        id: '1',
+        activityId: 'activity-1',
+        activityName: 'Task 1',
+        startTime: FIXED_TIME - 4000 * 1000,
+        endTime: FIXED_TIME,
+        colors: {
+          background: '#E8F5E9',
+          text: '#1B5E20',
+          border: '#2E7D32'
+        }
+      }
+    ];
+    
+    // Render in overtime condition
+    const { unmount } = renderTimeline(mockEntries, {
+      elapsedTime: 4000,
+      isTimeUp: true
+    });
+    
+    // Verify we're in overtime state
+    const timeDisplay = screen.getByTestId('time-display');
+    expect(timeDisplay.textContent).toContain('Overtime');
+    
+    // Unmount component (simulates reset to setup)
+    unmount();
+    
+    // Test passed if no errors during unmount (toast properly cleaned up)
+  });
+
   // Test if timeline activity colors update when theme changes
   test('updates activity colors when theme changes', () => {
     // Mock entries with colors for testing

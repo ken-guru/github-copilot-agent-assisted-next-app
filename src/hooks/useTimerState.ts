@@ -19,6 +19,20 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
     setTimerActive(false);
   }, []);
 
+  const extendDuration = useCallback(() => {
+    // Clear isTimeUp state when extending duration
+    setIsTimeUp(false);
+  }, []);
+
+  // Effect to update isTimeUp when totalDuration changes
+  useEffect(() => {
+    if (timerActive && elapsedTime >= totalDuration) {
+      setIsTimeUp(true);
+    } else if (timerActive && elapsedTime < totalDuration) {
+      setIsTimeUp(false);
+    }
+  }, [totalDuration, elapsedTime, timerActive]);
+
   useEffect(() => {
     if (isCompleted) {
       stopTimer();
@@ -61,6 +75,7 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
     timerActive,
     startTimer,
     stopTimer,
-    resetTimer
+    resetTimer,
+    extendDuration
   };
 }
