@@ -29,6 +29,7 @@ export const useThemeReactive = (): Theme => {
   // Sync theme immediately after mount and set up listeners
   // Combined useEffect to avoid race conditions and unnecessary re-renders
   useEffect(() => {
+    // Immediately detect and set the correct theme on mount
     const detectedTheme = detectCurrentTheme();
     setTheme(detectedTheme);
     
