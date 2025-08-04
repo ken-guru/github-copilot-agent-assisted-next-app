@@ -25,30 +25,16 @@ export const useThemeReactive = (): Theme => {
   // Initialize with a consistent default to avoid hydration mismatches
   // During SSR, always start with 'light', then sync with DOM on client
   const [theme, setTheme] = useState<Theme>('light');
-  
-  // Track if we're on the client to avoid SSR/client mismatches
-  const [isClient, setIsClient] = useState(false);
 
-  // Set client flag and sync theme immediately after mount
+  // Sync theme immediately after mount and set up listeners
+  // Combined useEffect to avoid race conditions and unnecessary re-renders
   useEffect(() => {
-    setIsClient(true);
     const detectedTheme = detectCurrentTheme();
     setTheme(detectedTheme);
-  }, []);
-
-  useEffect(() => {
+    
     // Skip if running on server
     if (typeof window === 'undefined') {
       return;
-    }
-
-    // Immediately check theme on mount to handle any hydration mismatches
-    // Only run after client flag is set to ensure we're on the client
-    if (isClient) {
-      const currentTheme = detectCurrentTheme();
-      if (currentTheme !== theme) {
-        setTheme(currentTheme);
-      }
     }
 
     // Update theme state when detected theme changes
@@ -113,7 +99,7 @@ export const useThemeReactive = (): Theme => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('themeChange', handleThemeChange);
     };
-  }, [isClient, theme]); // Add isClient and theme as dependencies
+  }, []); // Only depend on mount to avoid unnecessary re-renders
 
   return theme;
 };
