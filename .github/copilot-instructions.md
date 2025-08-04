@@ -70,8 +70,8 @@ mcp_memory_search_nodes(query="similar issue keywords")
 
 ### Issue Verification (UI/UX Issues)
 ```bash
-# Navigate and reproduce
-mcp_playwright_browser_navigate(url="http://localhost:3000")
+# Navigate and reproduce (use network IP, not localhost, for MCP Playwright tools)
+mcp_playwright_browser_navigate(url="http://192.168.86.30:3000")
 mcp_playwright_browser_snapshot()
 mcp_playwright_browser_take_screenshot(filename="issue-<NUMBER>-current-state.png")
 ```
