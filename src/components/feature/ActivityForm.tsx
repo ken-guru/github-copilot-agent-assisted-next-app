@@ -13,6 +13,8 @@ interface ActivityFormProps {
   activity?: Activity | null;
   onSubmit?: (activity: Activity | null) => void;
   onAddActivity?: (activity: Activity) => void;
+  onFormValuesChange?: (values: { name: string; description: string }) => void;
+  preservedValues?: { name: string; description: string };
   error?: string | null;
   isDisabled?: boolean;
   existingActivities?: Activity[]; // New prop for smart color selection
@@ -24,9 +26,16 @@ interface ActivityFormRef {
 }
 
 const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormProps>(
-  ({ activity, onSubmit, onAddActivity, error, existingActivities = [], isDisabled = false, isSimplified = false }, ref) => {
-  const [name, setName] = useState(activity?.name || '');
-  const [description, setDescription] = useState(activity?.description || '');
+  ({ activity, onSubmit, onAddActivity, onFormValuesChange, preservedValues, error, existingActivities = [], isDisabled = false, isSimplified = false }, ref) => {
+  // Initialize with preserved values if available, otherwise use activity or defaults
+  const [name, setName] = useState(() => {
+    if (preservedValues?.name) return preservedValues.name;
+    return activity?.name || '';
+  });
+  const [description, setDescription] = useState(() => {
+    if (preservedValues?.description) return preservedValues.description;
+    return activity?.description || '';
+  });
   // Use smart color selection for default if no activity is provided
   const defaultColorIndex = activity?.colorIndex ?? getSmartColorIndex(existingActivities);
   const [colorIndex, setColorIndex] = useState(defaultColorIndex);
@@ -58,21 +67,12 @@ const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormPr
     }
   }, [error]);
 
+  // Notify parent of form value changes for state preservation
   React.useEffect(() => {
-    // Auto-focus when form becomes enabled (e.g., after overtime ends)
-    if (!isDisabled && nameInputRef.current && document.activeElement !== nameInputRef.current) {
-      // Only focus if no other input element currently has focus
-      const activeElement = document.activeElement;
-      const isAnyInputFocused = activeElement && (
-        activeElement.tagName === 'INPUT' || 
-        activeElement.tagName === 'TEXTAREA' || 
-        activeElement.tagName === 'SELECT'
-      );
-      if (!isAnyInputFocused) {
-        nameInputRef.current.focus();
-      }
+    if (onFormValuesChange) {
+      onFormValuesChange({ name, description });
     }
-  }, [isDisabled]);
+  }, [name, description, onFormValuesChange]);
 
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -284,7 +284,9 @@ const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormPr
     prevProps.activity === nextProps.activity &&
     prevProps.error === nextProps.error &&
     prevProps.onSubmit === nextProps.onSubmit &&
-    prevProps.onAddActivity === nextProps.onAddActivity
+    prevProps.onAddActivity === nextProps.onAddActivity &&
+    prevProps.onFormValuesChange === nextProps.onFormValuesChange &&
+    JSON.stringify(prevProps.preservedValues) === JSON.stringify(nextProps.preservedValues)
   );
 });
 

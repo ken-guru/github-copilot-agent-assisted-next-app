@@ -46,6 +46,15 @@ export default function ActivityManager({
   const [activities, setActivities] = useState<Activity[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
+  
+  // State preservation for form values during unmount/remount cycles
+  const [preservedFormValues, setPreservedFormValues] = useState<{
+    name: string;
+    description: string;
+  }>({
+    name: '',
+    description: ''
+  });
 
   // Load activities from localStorage on mount
   useEffect(() => {
@@ -103,6 +112,9 @@ export default function ActivityManager({
     setActivities(prev => [...prev, activityWithColors]);
     persistActivity(newActivity); // Persist without the colors property which is UI-only
     onActivitySelect(activityWithColors, true);
+    
+    // Clear preserved form values after successful submission
+    setPreservedFormValues({ name: '', description: '' });
   }, [onActivitySelect]);
 
   const handleActivitySelect = useCallback((activity: Activity) => {
@@ -138,11 +150,18 @@ export default function ActivityManager({
   }, [onExtendDuration]);
 
   const handleResetSession = useCallback(() => {
+    // Clear preserved form values on session reset
+    setPreservedFormValues({ name: '', description: '' });
     // Call global reset function to reset timer/session
     if (onReset) {
       onReset();
     }
   }, [onReset]);
+
+  // Callback to update preserved form values as user types
+  const handleFormValuesChange = useCallback((values: { name: string; description: string }) => {
+    setPreservedFormValues(values);
+  }, []);
 
   // Calculate overtime status - show overtime if elapsed time exceeds total duration
   // This handles both zero-duration starts and normal overtime scenarios
@@ -201,26 +220,23 @@ export default function ActivityManager({
               />
             </div>
             
-            {/* Activity Form with Overtime Warning Overlay */}
+            {/* Activity Form or Overtime Warning */}
             <div className="flex-shrink-0 mb-3" data-testid="activity-form-column">
               <ClientOnly fallback={<div style={{ height: '200px' }} />}>
-                <div className="position-relative">
-                  {/* Always render ActivityForm to prevent unmounting */}
+                {isOvertime ? (
+                  <OvertimeWarning 
+                    timeOverage={timeOverage}
+                  />
+                ) : (
                   <ActivityForm
                     onAddActivity={handleAddActivity}
-                    isDisabled={isTimeUp || isOvertime}
+                    onFormValuesChange={handleFormValuesChange}
+                    preservedValues={preservedFormValues}
+                    isDisabled={isTimeUp}
                     isSimplified={true} // Always simplified in timeline context
                     existingActivities={activities}
                   />
-                  {/* Overlay overtime warning when in overtime */}
-                  {isOvertime && (
-                    <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: 'rgba(255, 193, 7, 0.1)', backdropFilter: 'blur(1px)', zIndex: 10 }}>
-                      <OvertimeWarning 
-                        timeOverage={timeOverage}
-                      />
-                    </div>
-                  )}
-                </div>
+                )}
               </ClientOnly>
             </div>
             
