@@ -19,7 +19,7 @@ const OvertimeWarning: React.FC<OvertimeWarningProps> = ({
 
   return (
     <div 
-      className="mb-3 p-2 border border-warning rounded bg-warning-subtle d-flex align-items-center"
+      className="p-2 border border-warning rounded bg-warning-subtle d-flex align-items-center"
       data-testid="overtime-warning" 
       role="alert"
       style={{ minHeight: '38px' }} // Match input height
