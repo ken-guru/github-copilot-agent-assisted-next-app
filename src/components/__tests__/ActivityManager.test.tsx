@@ -564,11 +564,11 @@ describe('ActivityManager Component', () => {
       expect(screen.getByText('Overtime by 5m 0s')).toBeInTheDocument();
     });
 
-    it('passes onExtendDuration callback to OvertimeWarning', () => {
+    it('shows extend duration button in header during overtime', () => {
       const mockExtend = jest.fn();
       render(<ActivityManager {...overtimeProps} onExtendDuration={mockExtend} />);
       
-      const extendButton = screen.getByRole('button', { name: /add 1 min/i });
+      const extendButton = screen.getByRole('button', { name: /1 min/i });
       fireEvent.click(extendButton);
       
       expect(mockExtend).toHaveBeenCalledTimes(1);

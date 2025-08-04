@@ -1,17 +1,12 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import OvertimeWarning from '../OvertimeWarning';
 
 describe('OvertimeWarning Component', () => {
   const defaultProps = {
     timeOverage: 125, // 2 minutes 5 seconds
-    onExtendDuration: jest.fn()
   };
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
 
   it('renders overtime warning message', () => {
     render(<OvertimeWarning {...defaultProps} />);
@@ -20,45 +15,21 @@ describe('OvertimeWarning Component', () => {
   });
 
   it('formats overtime display correctly for seconds only', () => {
-    render(<OvertimeWarning timeOverage={45} onExtendDuration={defaultProps.onExtendDuration} />);
+    render(<OvertimeWarning timeOverage={45} />);
     
     expect(screen.getByText('Overtime by 45s')).toBeInTheDocument();
   });
 
   it('formats overtime display correctly for minutes and seconds', () => {
-    render(<OvertimeWarning timeOverage={185} onExtendDuration={defaultProps.onExtendDuration} />);
+    render(<OvertimeWarning timeOverage={185} />);
     
     expect(screen.getByText('Overtime by 3m 5s')).toBeInTheDocument();
   });
 
   it('formats overtime display correctly for exact minutes', () => {
-    render(<OvertimeWarning timeOverage={120} onExtendDuration={defaultProps.onExtendDuration} />);
+    render(<OvertimeWarning timeOverage={120} />);
     
     expect(screen.getByText('Overtime by 2m 0s')).toBeInTheDocument();
-  });
-
-  it('renders extend duration button when callback provided', () => {
-    render(<OvertimeWarning {...defaultProps} />);
-    
-    const extendButton = screen.getByRole('button', { name: /add 1 min/i });
-    expect(extendButton).toBeInTheDocument();
-    expect(extendButton).toHaveAttribute('title', 'Add 1 minute to continue');
-  });
-
-  it('does not render extend duration button when callback not provided', () => {
-    render(<OvertimeWarning timeOverage={125} />);
-    
-    expect(screen.queryByRole('button', { name: /add 1 min/i })).not.toBeInTheDocument();
-  });
-
-  it('calls onExtendDuration when extend button clicked', () => {
-    const mockExtend = jest.fn();
-    render(<OvertimeWarning timeOverage={125} onExtendDuration={mockExtend} />);
-    
-    const extendButton = screen.getByRole('button', { name: /add 1 min/i });
-    fireEvent.click(extendButton);
-    
-    expect(mockExtend).toHaveBeenCalledTimes(1);
   });
 
   it('has proper accessibility attributes', () => {
@@ -72,35 +43,50 @@ describe('OvertimeWarning Component', () => {
     expect(icon).toHaveAttribute('aria-hidden', 'true');
   });
 
-  it('has consistent layout styling to match ActivityForm', () => {
+  it('has Bootstrap toast-like styling', () => {
     render(<OvertimeWarning {...defaultProps} />);
     
     const warning = screen.getByTestId('overtime-warning');
-    expect(warning).toHaveClass('mb-3');
+    expect(warning).toHaveClass('mb-3', 'p-2', 'border', 'border-warning', 'rounded', 'bg-warning-subtle', 'd-flex', 'align-items-center');
+    expect(warning).toHaveStyle('min-height: 38px');
+  });
+
+  it('displays warning icon and text correctly', () => {
+    render(<OvertimeWarning {...defaultProps} />);
     
-    const inputGroup = warning.querySelector('.input-group');
-    expect(inputGroup).toBeInTheDocument();
+    const warning = screen.getByTestId('overtime-warning');
+    const icon = warning.querySelector('i.bi-exclamation-triangle-fill');
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveClass('me-2', 'text-warning');
+    
+    const text = warning.querySelector('small.text-warning-emphasis');
+    expect(text).toBeInTheDocument();
+    expect(text).toHaveClass('mb-0');
   });
 
   it('handles zero overtime gracefully', () => {
-    render(<OvertimeWarning timeOverage={0} onExtendDuration={defaultProps.onExtendDuration} />);
+    render(<OvertimeWarning timeOverage={0} />);
     
     expect(screen.getByText('Overtime by 0s')).toBeInTheDocument();
   });
 
-  it('displays compact InputGroup styling', () => {
+  it('has consistent min-height to prevent layout shifting', () => {
     render(<OvertimeWarning {...defaultProps} />);
     
     const warning = screen.getByTestId('overtime-warning');
-    expect(warning).toHaveClass('mb-3');
+    expect(warning).toHaveStyle('min-height: 38px');
+  });
+
+  it('uses Bootstrap warning color scheme', () => {
+    render(<OvertimeWarning {...defaultProps} />);
     
-    const inputGroup = warning.querySelector('.input-group');
-    expect(inputGroup).toBeInTheDocument();
+    const warning = screen.getByTestId('overtime-warning');
+    expect(warning).toHaveClass('border-warning', 'bg-warning-subtle');
     
-    const formControl = warning.querySelector('.form-control');
-    expect(formControl).toHaveClass('text-warning');
+    const icon = warning.querySelector('i');
+    expect(icon).toHaveClass('text-warning');
     
-    const button = screen.getByRole('button', { name: /add 1 min/i });
-    expect(button).toHaveClass('btn-outline-primary');
+    const text = warning.querySelector('small');
+    expect(text).toHaveClass('text-warning-emphasis');
   });
 });

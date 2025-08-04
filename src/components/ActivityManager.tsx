@@ -201,7 +201,6 @@ export default function ActivityManager({
               <ClientOnly fallback={<div style={{ height: '200px' }} />}>
                 {isOvertime ? (
                   <OvertimeWarning 
-                    onExtendDuration={onExtendDuration}
                     timeOverage={timeOverage}
                   />
                 ) : (
