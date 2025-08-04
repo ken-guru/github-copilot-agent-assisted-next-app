@@ -517,4 +517,127 @@ describe('ActivityManager Component', () => {
       expect(icon).toBeInTheDocument();
     });
   });
+
+  describe('Overtime Warning Integration', () => {
+    const baseMockProps = {
+      onActivitySelect: mockOnActivitySelect,
+      onActivityRemove: mockOnActivityRemove,
+      currentActivityId: null,
+      completedActivityIds: [],
+      timelineEntries: [],
+      timerActive: true
+    };
+
+    const overtimeProps = {
+      ...baseMockProps,
+      totalDuration: 1800, // 30 minutes
+      elapsedTime: 2100,   // 35 minutes (5 minutes overtime)
+      onExtendDuration: jest.fn()
+    };
+
+    it('shows ActivityForm when not in overtime', () => {
+      const normalProps = {
+        ...baseMockProps,
+        totalDuration: 1800, // 30 minutes
+        elapsedTime: 1500,   // 25 minutes (not overtime)
+      };
+
+      render(<ActivityManager {...normalProps} />);
+      
+      // Should show activity form, not overtime warning
+      expect(screen.queryByTestId('overtime-warning')).not.toBeInTheDocument();
+      expect(screen.getByTestId('activity-form')).toBeInTheDocument();
+    });
+
+    it('shows OvertimeWarning when in overtime', () => {
+      render(<ActivityManager {...overtimeProps} />);
+      
+      // Should show overtime warning, not activity form
+      expect(screen.getByTestId('overtime-warning')).toBeInTheDocument();
+      expect(screen.queryByTestId('activity-form')).not.toBeInTheDocument();
+    });
+
+    it('calculates overtime duration correctly', () => {
+      render(<ActivityManager {...overtimeProps} />);
+      
+      // 5 minutes overtime = 300 seconds = 5m 0s
+      expect(screen.getByText('5m 0s over planned time')).toBeInTheDocument();
+    });
+
+    it('passes onExtendDuration callback to OvertimeWarning', () => {
+      const mockExtend = jest.fn();
+      render(<ActivityManager {...overtimeProps} onExtendDuration={mockExtend} />);
+      
+      const extendButton = screen.getByRole('button', { name: /add 1 min/i });
+      fireEvent.click(extendButton);
+      
+      expect(mockExtend).toHaveBeenCalledTimes(1);
+    });
+
+    it('switches back to ActivityForm when overtime ends', () => {
+      const { rerender } = render(<ActivityManager {...overtimeProps} />);
+      
+      // Initially in overtime - should show warning
+      expect(screen.getByTestId('overtime-warning')).toBeInTheDocument();
+      expect(screen.queryByTestId('activity-form')).not.toBeInTheDocument();
+      
+      // Update props to no longer be in overtime
+      const noOvertimeProps = {
+        ...overtimeProps,
+        elapsedTime: 1700 // 28 minutes 20 seconds (not overtime)
+      };
+      
+      rerender(<ActivityManager {...noOvertimeProps} />);
+      
+      // Should now show activity form, not warning
+      expect(screen.queryByTestId('overtime-warning')).not.toBeInTheDocument();
+      expect(screen.getByTestId('activity-form')).toBeInTheDocument();
+    });
+
+    it('handles zero total duration gracefully', () => {
+      const zeroProps = {
+        ...baseMockProps,
+        totalDuration: 0,
+        elapsedTime: 100,
+      };
+
+      render(<ActivityManager {...zeroProps} />);
+      
+      // With zero duration, should show activity form (not overtime)
+      expect(screen.queryByTestId('overtime-warning')).not.toBeInTheDocument();
+      expect(screen.getByTestId('activity-form')).toBeInTheDocument();
+    });
+
+    it('handles negative elapsed time gracefully', () => {
+      const negativeProps = {
+        ...baseMockProps,
+        totalDuration: 1800,
+        elapsedTime: -100,
+      };
+
+      render(<ActivityManager {...negativeProps} />);
+      
+      // With negative elapsed time, should show activity form (not overtime)
+      expect(screen.queryByTestId('overtime-warning')).not.toBeInTheDocument();
+      expect(screen.getByTestId('activity-form')).toBeInTheDocument();
+    });
+
+    it('maintains consistent layout height between form and warning', () => {
+      const { rerender } = render(<ActivityManager {...baseMockProps} />);
+      
+      // Get container element when showing form
+      const formContainer = screen.getByTestId('activity-form-column');
+      const formHeight = formContainer.getBoundingClientRect().height;
+      
+      // Switch to overtime
+      rerender(<ActivityManager {...overtimeProps} />);
+      
+      // Container should still exist with same structure
+      const warningContainer = screen.getByTestId('activity-form-column');
+      const warningHeight = warningContainer.getBoundingClientRect().height;
+      
+      // Heights should be similar (allowing for small differences due to content)
+      expect(Math.abs(warningHeight - formHeight)).toBeLessThan(50);
+    });
+  });
 });

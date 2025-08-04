@@ -107,7 +107,13 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
   };
 
   return (
-    <Form noValidate validated={validated} onSubmit={handleSubmit} aria-label="Activity Form">
+    <Form 
+      noValidate 
+      validated={validated} 
+      onSubmit={handleSubmit} 
+      aria-label="Activity Form"
+      data-testid="activity-form"
+    >
       {isSimplified ? (
         // Simplified inline layout for timeline/compact usage
         <>

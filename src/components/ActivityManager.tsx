@@ -4,6 +4,7 @@ import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import ActivityForm from './feature/ActivityForm';
+import OvertimeWarning from './OvertimeWarning';
 import ProgressBar from './ProgressBar';
 import ClientOnly from './ClientOnly';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
@@ -142,6 +143,10 @@ export default function ActivityManager({
     }
   };
 
+  // Calculate overtime status
+  const isOvertime = totalDuration > 0 && elapsedTime > totalDuration;
+  const timeOverage = isOvertime ? Math.floor(elapsedTime - totalDuration) : 0;
+
   return (
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
       <Card.Header className="card-header-consistent">
@@ -190,15 +195,22 @@ export default function ActivityManager({
               />
             </div>
             
-            {/* Activity Form */}
+            {/* Activity Form or Overtime Warning */}
             <div className="flex-shrink-0 mb-3" data-testid="activity-form-column">
               <ClientOnly fallback={<div style={{ height: '200px' }} />}>
-                <ActivityForm
-                  onAddActivity={handleAddActivity}
-                  isDisabled={isTimeUp}
-                  isSimplified={true} // Always simplified in timeline context
-                  existingActivities={activities}
-                />
+                {isOvertime ? (
+                  <OvertimeWarning 
+                    onExtendDuration={onExtendDuration}
+                    timeOverage={timeOverage}
+                  />
+                ) : (
+                  <ActivityForm
+                    onAddActivity={handleAddActivity}
+                    isDisabled={isTimeUp}
+                    isSimplified={true} // Always simplified in timeline context
+                    existingActivities={activities}
+                  />
+                )}
               </ClientOnly>
             </div>
             

@@ -153,7 +153,7 @@ function AppContent() {
           onCancel={dialogActions.onCancel}
         />
         
-        <div className="flex-grow-1 d-flex flex-column overflow-x-hidden overflow-y-auto" style={{ paddingBottom: 'var(--toast-safe-area, 80px)' }}>
+        <div className="flex-grow-1 d-flex flex-column overflow-x-hidden overflow-y-auto">
           {appState === 'setup' && (
             <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
               <TimeSetup onTimeSet={handleTimeSet} />

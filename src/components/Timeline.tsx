@@ -5,7 +5,6 @@ import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { TimelineEntry } from '@/types';
-import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 
 interface TimelineProps {
   entries: TimelineEntry[];
@@ -34,10 +33,8 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
 }
 
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
-  const { addResponsiveToast, removeToast } = useResponsiveToast();
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
-  const [overtimeToastId, setOvertimeToastId] = useState<string | null>(null);
   
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
@@ -196,42 +193,6 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   const timeDisplay = timerActive 
     ? `${isOvertime ? 'Overtime: ' : 'Time Left: '}${formatTimeHuman(Math.abs(timeLeft) * 1000)}`
     : `Timer ready: ${formatTimeHuman(totalDuration * 1000)}`;
-
-  // Handle overtime toast - persistent warning when overtime occurs
-  useEffect(() => {
-    if (isOvertime && !overtimeToastId && timerActive) {
-      // Add persistent overtime toast with mobile-friendly message
-      const toastId = addResponsiveToast({
-        message: 'Overtime: You have exceeded your planned time limit.',
-        mobileMessage: 'Overtime!',
-        variant: 'warning',
-        persistent: true,
-        autoDismiss: false
-      });
-      setOvertimeToastId(toastId);
-    } else if (!isOvertime && overtimeToastId) {
-      // Remove overtime toast when no longer in overtime
-      removeToast(overtimeToastId);
-      setOvertimeToastId(null);
-    }
-  }, [isOvertime, overtimeToastId, timerActive, addResponsiveToast, removeToast]);
-
-  // Auto-dismiss overtime toast when all activities are completed (summary state)
-  useEffect(() => {
-    if (allActivitiesCompleted && overtimeToastId) {
-      removeToast(overtimeToastId);
-      setOvertimeToastId(null);
-    }
-  }, [allActivitiesCompleted, overtimeToastId, removeToast]);
-
-  // Cleanup overtime toast on component unmount (handles reset to setup)
-  useEffect(() => {
-    return () => {
-      if (overtimeToastId) {
-        removeToast(overtimeToastId);
-      }
-    };
-  }, [overtimeToastId, removeToast]);
 
   // Calculate effective duration for timeline - dynamically adjust if in overtime
   const effectiveDuration = useMemo(() => {
