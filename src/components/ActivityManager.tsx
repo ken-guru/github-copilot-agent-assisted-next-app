@@ -1,11 +1,10 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Card, Row, Col, Alert, Button } from 'react-bootstrap';
+import { useState, useEffect, useCallback } from 'react';
+import { Card, Row, Col, Button } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
-import ActivityForm from './feature/ActivityForm';
-import OvertimeWarning from './OvertimeWarning';
-import ProgressBar from './ProgressBar';
+import TimerProgressSection from './TimerProgressSection';
+import ActivityFormSection from './ActivityFormSection';
 import ClientOnly from './ClientOnly';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
@@ -158,31 +157,7 @@ export default function ActivityManager({
   // Calculate overtime status - show overtime if elapsed time exceeds total duration
   // This handles both zero-duration starts and normal overtime scenarios
   const isOvertime = elapsedTime > totalDuration;
-
-  // Memoize ActivityForm to prevent re-renders during timer updates
-  const MemoizedActivityForm = useMemo(() => {
-    return (
-      <ActivityForm
-        onAddActivity={handleAddActivity}
-        onFormValuesChange={handleFormValuesChange}
-        preservedValues={preservedFormValues}
-        isDisabled={isTimeUp}
-        isSimplified={true} // Always simplified in timeline context
-        existingActivities={activities}
-      />
-    );
-  }, [
-    handleAddActivity,
-    handleFormValuesChange,
-    preservedFormValues,
-    isTimeUp,
-    activities
-  ]);
-  
-  // Memoize timeOverage calculation to prevent unnecessary re-renders
-  const timeOverage = useMemo(() => {
-    return isOvertime ? Math.floor(elapsedTime - totalDuration) : 0;
-  }, [isOvertime, elapsedTime, totalDuration]);
+  const timeOverage = isOvertime ? Math.floor(elapsedTime - totalDuration) : 0;
 
   return (
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
@@ -216,59 +191,49 @@ export default function ActivityManager({
         </div>
       </Card.Header>
       <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden p-3">
-        {activities.length === 0 ? (
-          <Alert variant="info" className="text-center flex-shrink-0" data-testid="empty-state">
-            No activities defined
-          </Alert>
-        ) : (
-          <>
-            {/* Progress Bar - always visible at top */}
-            <div className="flex-shrink-0 mb-3">
-              <ProgressBar 
-                entries={timelineEntries}
-                totalDuration={totalDuration}
-                elapsedTime={elapsedTime}
-                timerActive={timerActive}
-              />
-            </div>
-            
-            {/* Activity Form or Overtime Warning */}
-            <div className="flex-shrink-0 mb-3" data-testid="activity-form-column">
-              <ClientOnly fallback={<div style={{ height: '200px' }} />}>
-                {isOvertime ? (
-                  <OvertimeWarning 
-                    timeOverage={timeOverage}
-                  />
-                ) : (
-                  MemoizedActivityForm
-                )}
-              </ClientOnly>
-            </div>
-            
-            {/* Activities List - scrollable if needed */}
-            <div className="flex-grow-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
-              <Row className="gy-3" data-testid="activity-list">
-                {activities.map((activity) => (
-                  <Col 
-                    key={activity.id} 
-                    xs={12}
-                    data-testid={`activity-column-${activity.id}`}
-                  >
-                    <ActivityButton
-                      activity={activity}
-                      isCompleted={completedActivityIds.includes(activity.id)}
-                      isRunning={activity.id === currentActivityId}
-                      onSelect={handleActivitySelect}
-                      onRemove={onActivityRemove ? handleRemoveActivity : undefined}
-                      timelineEntries={timelineEntries}
-                      elapsedTime={elapsedTime}
-                    />
-                  </Col>
-                ))}
-              </Row>
-            </div>
-          </>
-        )}
+        {/* Timer Progress Section - isolated from activity form */}
+        <TimerProgressSection
+          entries={timelineEntries}
+          totalDuration={totalDuration}
+          elapsedTime={elapsedTime}
+          timerActive={timerActive}
+        />
+        
+        {/* Activity Form Section - isolated from timer updates */}
+        <ActivityFormSection
+          activities={activities}
+          currentActivityId={currentActivityId}
+          isTimeUp={isTimeUp}
+          preservedFormValues={preservedFormValues}
+          onAddActivity={handleAddActivity}
+          onFormValuesChange={handleFormValuesChange}
+          showOvertimeWarning={isOvertime}
+          timeOverage={timeOverage}
+          isSimplified={timerActive || (activities.length > 0 && timelineEntries.length === 0)} // Simplified when timer is active or when activities exist but timer hasn't started
+        />
+        
+        {/* Activities List - scrollable if needed */}
+        <div className="flex-grow-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
+          <Row className="gy-3" data-testid="activity-list">
+            {activities.map((activity) => (
+              <Col 
+                key={activity.id} 
+                xs={12}
+                data-testid={`activity-column-${activity.id}`}
+              >
+                <ActivityButton
+                  activity={activity}
+                  isCompleted={completedActivityIds.includes(activity.id)}
+                  isRunning={activity.id === currentActivityId}
+                  onSelect={handleActivitySelect}
+                  onRemove={onActivityRemove ? handleRemoveActivity : undefined}
+                  timelineEntries={timelineEntries}
+                  elapsedTime={elapsedTime}
+                />
+              </Col>
+            ))}
+          </Row>
+        </div>
       </Card.Body>
     </Card>
   );
