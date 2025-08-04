@@ -52,6 +52,7 @@ src/components/                    # Bootstrap-wrapped components
 5. **Quality Checks** → All tests, lint, type-check must pass
 6. **Create PR** → Good title/description referencing issue
 7. **Monitor & Iterate** → Address CI/CD failures and code review comments
+8. **Complete Verification** → **NEVER consider work finished until ALL PR checks pass**
 
 ### Issue Understanding with MCP Tools
 ```bash
@@ -70,8 +71,8 @@ mcp_memory_search_nodes(query="similar issue keywords")
 
 ### Issue Verification (UI/UX Issues)
 ```bash
-# Navigate and reproduce
-mcp_playwright_browser_navigate(url="http://localhost:3000")
+# Navigate and reproduce (use network IP, not localhost, for MCP Playwright tools)
+mcp_playwright_browser_navigate(url="http://192.168.86.30:3000")
 mcp_playwright_browser_snapshot()
 mcp_playwright_browser_take_screenshot(filename="issue-<NUMBER>-current-state.png")
 ```
@@ -105,6 +106,28 @@ mcp_memory_search_nodes() → find similar solutions
 - Explicitly state next actions before committing
 - Continue immediately after commit with identified issues
 - Document unresolved issues in commit messages
+
+### PR Completion Requirements
+**🚨 CRITICAL: NEVER consider work finished until ALL PR checks pass.**
+- Monitor CI/CD pipeline status continuously
+- Address all failing tests, linting errors, and type-check failures
+- Respond to all code review comments before marking work complete
+- **MANDATORY GitHub Copilot Review Protocol**: If you request a GitHub Copilot code review, you MUST wait for the review comments and address ALL unresolved feedback before considering work complete
+- Use MCP GitHub tools to track PR status and check completion
+- Work remains incomplete until all automated and manual checks succeed
+
+#### GitHub Copilot Code Review Workflow
+When a GitHub Copilot code review is requested:
+1. **Request Review**: Create PR and request GitHub Copilot review
+2. **WAIT**: Do not mark work complete until review comments arrive
+3. **Address UNRESOLVED Feedback**: Systematically respond to unresolved review comments only
+   - Use `mcp_github_get_pull_request_comments` to retrieve all feedback
+   - **CRITICAL**: Only address comments that are NOT already resolved on GitHub
+   - **SKIP**: Comments marked as "Resolved" or "Outdated" on GitHub do not need re-addressing
+   - Address code quality suggestions, optimization recommendations, and best practice improvements for unresolved comments only
+   - Make all requested changes for unresolved feedback and verify they don't break existing functionality
+4. **Validate Changes**: Run full test suite after addressing unresolved feedback
+5. **Complete**: Only after ALL unresolved review feedback is addressed and validated can work be considered finished
 
 ### Quality Gates (All Must Pass)
 ```bash
@@ -172,6 +195,7 @@ When given a GitHub issue number:
 7. ✅ **Quality**: Pass all quality gates before pushing
 8. ✅ **PR**: Create PR with clear title/description referencing issue
 9. ✅ **Monitor**: Watch CI/CD and address code review comments iteratively
-10. ✅ **Document**: Update memory logs and planning documents
+10. ✅ **Complete GitHub Copilot Review**: If GitHub Copilot review requested, WAIT for feedback and address ALL unresolved comments
+11. ✅ **Document**: Update memory logs and planning documents
 
-**Remember**: The goal is complete issue resolution, not just implementation. Use MCP tools throughout the process for enhanced development efficiency.
+**🚨 CRITICAL**: If you request a GitHub Copilot code review, you MUST wait for the review comments and address ALL unresolved feedback before considering the work finished. The goal is complete issue resolution with all quality checks passed, not just implementation.

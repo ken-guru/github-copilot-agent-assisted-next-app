@@ -13,6 +13,8 @@ interface ActivityFormProps {
   activity?: Activity | null;
   onSubmit?: (activity: Activity | null) => void;
   onAddActivity?: (activity: Activity) => void;
+  onFormValuesChange?: (values: { name: string; description: string }) => void;
+  preservedValues?: { name: string; description: string };
   error?: string | null;
   isDisabled?: boolean;
   existingActivities?: Activity[]; // New prop for smart color selection
@@ -23,10 +25,17 @@ interface ActivityFormRef {
   submitForm: () => void;
 }
 
-const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
-  ({ activity, onSubmit, onAddActivity, error, existingActivities = [], isDisabled = false, isSimplified = false }, ref) => {
-  const [name, setName] = useState(activity?.name || '');
-  const [description, setDescription] = useState(activity?.description || '');
+const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormProps>(
+  ({ activity, onSubmit, onAddActivity, onFormValuesChange, preservedValues, error, existingActivities = [], isDisabled = false, isSimplified = false }, ref) => {
+  // Initialize with preserved values if available, otherwise use activity or defaults
+  const [name, setName] = useState(() => {
+    if (preservedValues?.name) return preservedValues.name;
+    return activity?.name || '';
+  });
+  const [description, setDescription] = useState(() => {
+    if (preservedValues?.description) return preservedValues.description;
+    return activity?.description || '';
+  });
   // Use smart color selection for default if no activity is provided
   const defaultColorIndex = activity?.colorIndex ?? getSmartColorIndex(existingActivities);
   const [colorIndex, setColorIndex] = useState(defaultColorIndex);
@@ -57,6 +66,13 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
       nameInputRef.current.focus();
     }
   }, [error]);
+
+  // Notify parent of form value changes for state preservation
+  React.useEffect(() => {
+    if (onFormValuesChange) {
+      onFormValuesChange({ name, description });
+    }
+  }, [name, description, onFormValuesChange]);
 
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -107,7 +123,13 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
   };
 
   return (
-    <Form noValidate validated={validated} onSubmit={handleSubmit} aria-label="Activity Form">
+    <Form 
+      noValidate 
+      validated={validated} 
+      onSubmit={handleSubmit} 
+      aria-label="Activity Form"
+      data-testid="activity-form"
+    >
       {isSimplified ? (
         // Simplified inline layout for timeline/compact usage
         <>
@@ -251,6 +273,36 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
         </>
       )}
     </Form>
+  );
+}), (prevProps, nextProps) => {
+  // Custom comparison function for React.memo - optimized for performance
+  // Only re-render if these specific props change
+  
+  // Efficient shallow comparison for preservedValues object
+  const preservedValuesEqual = () => {
+    if (prevProps.preservedValues === nextProps.preservedValues) return true;
+    if (!prevProps.preservedValues || !nextProps.preservedValues) return false;
+    
+    const prevKeys = Object.keys(prevProps.preservedValues) as Array<keyof typeof prevProps.preservedValues>;
+    const nextKeys = Object.keys(nextProps.preservedValues) as Array<keyof typeof nextProps.preservedValues>;
+    
+    if (prevKeys.length !== nextKeys.length) return false;
+    
+    return prevKeys.every(key => 
+      prevProps.preservedValues![key] === nextProps.preservedValues![key]
+    );
+  };
+  
+  return (
+    prevProps.isDisabled === nextProps.isDisabled &&
+    prevProps.isSimplified === nextProps.isSimplified &&
+    prevProps.existingActivities === nextProps.existingActivities &&
+    prevProps.activity === nextProps.activity &&
+    prevProps.error === nextProps.error &&
+    prevProps.onSubmit === nextProps.onSubmit &&
+    prevProps.onAddActivity === nextProps.onAddActivity &&
+    prevProps.onFormValuesChange === nextProps.onFormValuesChange &&
+    preservedValuesEqual()
   );
 });
 

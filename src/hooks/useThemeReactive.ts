@@ -16,18 +16,23 @@ const isTestEnvironment = () => {
  * Unlike the ThemeProvider context, this hook works independently and guarantees
  * component updates by using React's useState to trigger re-renders.
  * 
+ * Fixes Issue #272: Ensures proper hydration by detecting DOM theme synchronously
+ * and avoiding hydration mismatches between server and client rendering.
+ * 
  * @returns The current theme ('light' | 'dark')
  */
 export const useThemeReactive = (): Theme => {
-  // Initialize with detected theme or fallback to 'light'
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') {
-      return 'light'; // SSR safe default
-    }
-    return detectCurrentTheme();
-  });
+  // Initialize with a consistent default to avoid hydration mismatches
+  // During SSR, always start with 'light', then sync with DOM on client
+  const [theme, setTheme] = useState<Theme>('light');
 
+  // Sync theme immediately after mount and set up listeners
+  // Combined useEffect to avoid race conditions and unnecessary re-renders
   useEffect(() => {
+    // Immediately detect and set the correct theme on mount
+    const detectedTheme = detectCurrentTheme();
+    setTheme(detectedTheme);
+    
     // Skip if running on server
     if (typeof window === 'undefined') {
       return;
@@ -35,8 +40,8 @@ export const useThemeReactive = (): Theme => {
 
     // Update theme state when detected theme changes
     const updateTheme = () => {
-      const currentTheme = detectCurrentTheme();
-      setTheme(currentTheme);
+      const detectedTheme = detectCurrentTheme();
+      setTheme(detectedTheme);
     };
 
     // Set up MutationObserver to watch for DOM theme attribute changes
@@ -95,7 +100,7 @@ export const useThemeReactive = (): Theme => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('themeChange', handleThemeChange);
     };
-  }, []);
+  }, []); // Empty dependency array: run once after mount only
 
   return theme;
 };
@@ -103,6 +108,7 @@ export const useThemeReactive = (): Theme => {
 /**
  * Detects the current theme from DOM attributes and localStorage.
  * Prioritizes DOM data-theme attribute over localStorage for accuracy.
+ * Improved for Issue #272: Better synchronous detection during hydration
  */
 function detectCurrentTheme(): Theme {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -111,7 +117,7 @@ function detectCurrentTheme(): Theme {
 
   try {
     // Priority 1: Check DOM data-theme attribute (most reliable)
-    const domTheme = document.documentElement?.dataset?.theme;
+    const domTheme = document.documentElement?.getAttribute?.('data-theme');
     if (domTheme === 'dark' || domTheme === 'light') {
       return domTheme;
     }
@@ -122,12 +128,12 @@ function detectCurrentTheme(): Theme {
       return bsTheme;
     }
 
-    // Priority 3: Check className for theme indicators
+    // Priority 3: Check className for theme indicators (improved detection)
     const className = document.documentElement?.className || '';
     if (className.includes('dark-mode') || className.includes('dark')) {
       return 'dark';
     }
-    if (className.includes('light-mode') || className.includes('light')) {
+    if (className.includes('light-mode')) {
       return 'light';
     }
 

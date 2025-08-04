@@ -33,18 +33,18 @@ describe('Home Page Layout Spacing', () => {
       
       // Find the main container
       const mainContainer = container.querySelector('main');
-      expect(mainContainer).toHaveClass('container-fluid', 'd-flex', 'flex-column', 'overflow-hidden');
+      expect(mainContainer).toHaveClass('container-fluid', 'd-flex', 'flex-column', 'overflow-x-hidden', 'overflow-y-auto');
       
       // Check that the main container has proper height
       expect(mainContainer).toHaveStyle('height: calc(100vh - var(--navbar-height))');
       
-      // Find the inner flex container
-      const innerContainer = mainContainer?.querySelector('.flex-grow-1.d-flex.flex-column.overflow-hidden');
+      // Find the inner flex container (updated for new overflow classes)
+      const innerContainer = mainContainer?.querySelector('.flex-grow-1.d-flex.flex-column.overflow-x-hidden.overflow-y-auto');
       expect(innerContainer).toBeInTheDocument();
       
       // The offline indicator is now global (in LayoutClient), so we just verify the structure
       // Check that the inner container is ready for proper layout spacing
-      expect(innerContainer).toHaveClass('flex-grow-1', 'd-flex', 'flex-column', 'overflow-hidden');
+      expect(innerContainer).toHaveClass('flex-grow-1', 'd-flex', 'flex-column', 'overflow-x-hidden', 'overflow-y-auto');
     });
 
     it('should have appropriate row layout with spacing for activity manager and timeline', () => {
@@ -73,11 +73,11 @@ describe('Home Page Layout Spacing', () => {
       const { container } = render(<Home />);
       
       const mainContainer = container.querySelector('main');
-      expect(mainContainer).toHaveClass('overflow-hidden');
+      expect(mainContainer).toHaveClass('overflow-x-hidden', 'overflow-y-auto');
       
-      // The flex-grow-1 container should also prevent overflow
+      // The flex-grow-1 container should also enable scrolling for mobile
       const flexContainer = mainContainer?.querySelector('.flex-grow-1');
-      expect(flexContainer).toHaveClass('overflow-hidden');
+      expect(flexContainer).toHaveClass('overflow-x-hidden', 'overflow-y-auto');
     });
   });
 });

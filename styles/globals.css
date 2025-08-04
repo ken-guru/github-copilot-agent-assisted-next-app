@@ -293,3 +293,15 @@ a {
 .card-header-consistent .badge {
   flex-shrink: 0;
 }
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  /* Ensure toast containers don't interfere with mobile scrolling */
+  .toast-container {
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+@media (max-width: 576px) {
+  /* Additional small screen adjustments can be added here */
+}

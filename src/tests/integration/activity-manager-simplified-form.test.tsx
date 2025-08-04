@@ -173,7 +173,7 @@ describe('ActivityManager Simplified Form Integration', () => {
       });
     });
 
-    it('handles disabled state when time is up', async () => {
+    it('keeps form enabled when time is up', async () => {
       // Start with activities so form renders
       mockActivityStorage.getActivities.mockReturnValue([
         {
@@ -203,12 +203,12 @@ describe('ActivityManager Simplified Form Integration', () => {
         expect(screen.getByTestId('activity-form-column')).toBeInTheDocument();
       });
 
-      // Form should be disabled
+      // Form should remain enabled when time is up
       const nameInput = screen.getByLabelText(/name/i);
       const addButton = screen.getByRole('button', { name: /add activity/i });
 
-      expect(nameInput).toBeDisabled();
-      expect(addButton).toBeDisabled();
+      expect(nameInput).not.toBeDisabled();
+      expect(addButton).not.toBeDisabled();
     });
 
     it('shows progress bar alongside simplified form', async () => {

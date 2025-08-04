@@ -32,9 +32,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
   const { id, name, colorIndex } = activity;
   const theme = useThemeReactive();
   const themeColors = getActivityColorsForTheme(theme);
-  const colors = (activity && 'colors' in activity && activity.colors)
-    ? activity.colors as import('../utils/colors').ColorSet
-    : (themeColors[colorIndex] || themeColors[0]); // Fallback to first color if index out of bounds
+  const colors = themeColors[colorIndex] || themeColors[0]; // Fallback to first color if index out of bounds
   const isInUse = timelineEntries?.some(entry => entry.activityId === id);
   
   const handleClick = () => {

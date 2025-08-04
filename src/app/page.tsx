@@ -142,7 +142,7 @@ function AppContent() {
   
   return (
     <>
-      <main className="container-fluid d-flex flex-column overflow-hidden" style={{ height: 'calc(100vh - var(--navbar-height))' }}>
+      <main className="container-fluid d-flex flex-column overflow-x-hidden overflow-y-auto" style={{ height: 'calc(100vh - var(--navbar-height))' }}>
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}
@@ -153,7 +153,7 @@ function AppContent() {
           onCancel={dialogActions.onCancel}
         />
         
-        <div className="flex-grow-1 d-flex flex-column overflow-hidden">
+        <div className="flex-grow-1 d-flex flex-column overflow-x-hidden overflow-y-auto">
           {appState === 'setup' && (
             <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
               <TimeSetup onTimeSet={handleTimeSet} />
@@ -161,8 +161,8 @@ function AppContent() {
           )}
           
           {appState === 'activity' && (
-            <div className="row flex-grow-1 g-3 px-3 pt-3 pb-3 overflow-hidden">
-              <div className="col-lg-5 d-flex flex-column overflow-hidden">
+            <div className="row flex-grow-1 g-3 px-3 pt-3 pb-3 overflow-x-hidden overflow-y-auto">
+              <div className="col-lg-5 d-flex flex-column overflow-x-hidden overflow-y-auto">
                 <ActivityManager 
                   onActivitySelect={handleActivitySelect} 
                   onActivityRemove={handleActivityRemoval}

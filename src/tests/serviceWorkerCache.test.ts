@@ -1,4 +1,11 @@
 // filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/src/tests/serviceWorkerCache.test.ts
+// Service Worker Cache tests
+// 
+// Empty export statement ensures this file is treated as a module by TypeScript
+// to avoid global scope issues. This prevents the test file from being treated
+// as a global script which could cause type conflicts with other files.
+export {};
+
 describe('Service Worker Cache', () => {
   // Define types for our mocks to make TypeScript happy
   type MockResponse = Partial<Response> & { 

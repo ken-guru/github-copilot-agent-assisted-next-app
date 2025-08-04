@@ -5,6 +5,9 @@
  * the Next.js project structure refactoring.
  */
 
+// Project structure refactoring validation tests
+export {};
+
 describe('Project Structure Refactoring', () => {
   describe('Import Paths Validation', () => {
     test('should import components from src/components', async () => {

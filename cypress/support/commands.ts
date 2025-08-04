@@ -5,6 +5,10 @@
 /**
  * Sets the navigator.onLine property to true and triggers an online event
  */
+// Custom Cypress commands and type definitions
+
+import './e2e';
+
 Cypress.Commands.add('setOnline', () => {
   cy.log('Setting browser to online mode');
   cy.window().then((win) => {
