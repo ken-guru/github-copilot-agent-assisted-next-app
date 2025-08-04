@@ -561,7 +561,7 @@ describe('ActivityManager Component', () => {
       render(<ActivityManager {...overtimeProps} />);
       
       // 5 minutes overtime = 300 seconds = 5m 0s
-      expect(screen.getByText('5m 0s over planned time')).toBeInTheDocument();
+      expect(screen.getByText('Overtime by 5m 0s')).toBeInTheDocument();
     });
 
     it('passes onExtendDuration callback to OvertimeWarning', () => {
@@ -603,9 +603,11 @@ describe('ActivityManager Component', () => {
 
       render(<ActivityManager {...zeroProps} />);
       
-      // With zero duration, should show activity form (not overtime)
-      expect(screen.queryByTestId('overtime-warning')).not.toBeInTheDocument();
-      expect(screen.getByTestId('activity-form')).toBeInTheDocument();
+      // With zero duration and elapsed time > 0, should show overtime warning
+      // This is the fix for issue #2 - starting activity with 0 seconds available
+      expect(screen.getByTestId('overtime-warning')).toBeInTheDocument();
+      expect(screen.queryByTestId('activity-form')).not.toBeInTheDocument();
+      expect(screen.getByText('Overtime by 1m 40s')).toBeInTheDocument();
     });
 
     it('handles negative elapsed time gracefully', () => {

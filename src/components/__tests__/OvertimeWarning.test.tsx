@@ -16,26 +16,25 @@ describe('OvertimeWarning Component', () => {
   it('renders overtime warning message', () => {
     render(<OvertimeWarning {...defaultProps} />);
     
-    expect(screen.getByText('Overtime!')).toBeInTheDocument();
-    expect(screen.getByText('2m 5s over planned time')).toBeInTheDocument();
+    expect(screen.getByText('Overtime by 2m 5s')).toBeInTheDocument();
   });
 
   it('formats overtime display correctly for seconds only', () => {
     render(<OvertimeWarning timeOverage={45} onExtendDuration={defaultProps.onExtendDuration} />);
     
-    expect(screen.getByText('45s over planned time')).toBeInTheDocument();
+    expect(screen.getByText('Overtime by 45s')).toBeInTheDocument();
   });
 
   it('formats overtime display correctly for minutes and seconds', () => {
     render(<OvertimeWarning timeOverage={185} onExtendDuration={defaultProps.onExtendDuration} />);
     
-    expect(screen.getByText('3m 5s over planned time')).toBeInTheDocument();
+    expect(screen.getByText('Overtime by 3m 5s')).toBeInTheDocument();
   });
 
   it('formats overtime display correctly for exact minutes', () => {
     render(<OvertimeWarning timeOverage={120} onExtendDuration={defaultProps.onExtendDuration} />);
     
-    expect(screen.getByText('2m 0s over planned time')).toBeInTheDocument();
+    expect(screen.getByText('Overtime by 2m 0s')).toBeInTheDocument();
   });
 
   it('renders extend duration button when callback provided', () => {
@@ -66,7 +65,7 @@ describe('OvertimeWarning Component', () => {
     render(<OvertimeWarning {...defaultProps} />);
     
     const warning = screen.getByTestId('overtime-warning');
-    expect(warning).toHaveClass('alert-warning');
+    expect(warning).toHaveAttribute('role', 'alert');
     
     const icon = warning.querySelector('i[aria-hidden="true"]');
     expect(icon).toBeInTheDocument();
@@ -78,24 +77,30 @@ describe('OvertimeWarning Component', () => {
     
     const warning = screen.getByTestId('overtime-warning');
     expect(warning).toHaveClass('mb-3');
-    expect(warning).toHaveClass('d-flex');
-    expect(warning).toHaveClass('align-items-center');
-    expect(warning).toHaveClass('justify-content-between');
+    
+    const inputGroup = warning.querySelector('.input-group');
+    expect(inputGroup).toBeInTheDocument();
   });
 
   it('handles zero overtime gracefully', () => {
     render(<OvertimeWarning timeOverage={0} onExtendDuration={defaultProps.onExtendDuration} />);
     
-    expect(screen.getByText('0s over planned time')).toBeInTheDocument();
+    expect(screen.getByText('Overtime by 0s')).toBeInTheDocument();
   });
 
-  it('displays Bootstrap warning variant styling', () => {
+  it('displays compact InputGroup styling', () => {
     render(<OvertimeWarning {...defaultProps} />);
     
     const warning = screen.getByTestId('overtime-warning');
-    expect(warning).toHaveClass('alert-warning');
+    expect(warning).toHaveClass('mb-3');
+    
+    const inputGroup = warning.querySelector('.input-group');
+    expect(inputGroup).toBeInTheDocument();
+    
+    const formControl = warning.querySelector('.form-control');
+    expect(formControl).toHaveClass('text-warning');
     
     const button = screen.getByRole('button', { name: /add 1 min/i });
-    expect(button).toHaveClass('btn-outline-warning');
+    expect(button).toHaveClass('btn-outline-primary');
   });
 });

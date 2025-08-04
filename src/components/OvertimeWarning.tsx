@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Button } from 'react-bootstrap';
+import { InputGroup, Button } from 'react-bootstrap';
 
 interface OvertimeWarningProps {
   onExtendDuration?: () => void;
@@ -20,33 +20,24 @@ const OvertimeWarning: React.FC<OvertimeWarningProps> = ({
   };
 
   return (
-    <Alert 
-      variant="warning" 
-      className="mb-3 d-flex align-items-center justify-content-between"
-      data-testid="overtime-warning"
-    >
-      <div className="d-flex align-items-center">
-        <i className="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
-        <div>
-          <strong>Overtime!</strong>
-          <div className="small text-muted">
-            {formatOvertime(timeOverage)} over planned time
-          </div>
+    <div className="mb-3" data-testid="overtime-warning" role="alert">
+      <InputGroup>
+        <div className="form-control d-flex align-items-center text-warning">
+          <i className="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
+          <strong>Overtime by {formatOvertime(timeOverage)}</strong>
         </div>
-      </div>
-      {onExtendDuration && (
-        <Button 
-          variant="outline-warning" 
-          size="sm"
-          onClick={onExtendDuration}
-          className="ms-2 flex-shrink-0"
-          title="Add 1 minute to continue"
-        >
-          <i className="bi bi-plus-circle me-1"></i>
-          Add 1 min
-        </Button>
-      )}
-    </Alert>
+        {onExtendDuration && (
+          <Button 
+            variant="outline-primary"
+            onClick={onExtendDuration}
+            title="Add 1 minute to continue"
+          >
+            <i className="bi bi-plus-circle me-1"></i>
+            Add 1 min
+          </Button>
+        )}
+      </InputGroup>
+    </div>
   );
 };
 

@@ -143,8 +143,9 @@ export default function ActivityManager({
     }
   };
 
-  // Calculate overtime status
-  const isOvertime = totalDuration > 0 && elapsedTime > totalDuration;
+  // Calculate overtime status - show overtime if elapsed time exceeds total duration
+  // This handles both zero-duration starts and normal overtime scenarios
+  const isOvertime = elapsedTime > totalDuration;
   const timeOverage = isOvertime ? Math.floor(elapsedTime - totalDuration) : 0;
 
   return (
