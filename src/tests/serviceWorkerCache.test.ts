@@ -1,4 +1,7 @@
 // filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/src/tests/serviceWorkerCache.test.ts
+// Service Worker Cache tests
+export {};
+
 describe('Service Worker Cache', () => {
   // Define types for our mocks to make TypeScript happy
   type MockResponse = Partial<Response> & { 
