@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useToast } from '@/contexts/ToastContext';
 import { ToastMessage } from '@/types/toast';
-
-// Bootstrap MD breakpoint constant for consistency
-const BOOTSTRAP_MD_BREAKPOINT = 768;
+import { BOOTSTRAP_MD_BREAKPOINT } from '@/constants/breakpoints';
 
 /**
  * Hook that provides responsive toast messages - shorter on mobile devices

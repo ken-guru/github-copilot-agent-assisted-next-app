@@ -44,8 +44,6 @@ export default function ActivityManager({
   onExtendDuration
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
   
   // State preservation for form values during unmount/remount cycles
   const [preservedFormValues, setPreservedFormValues] = useState<{
@@ -60,7 +58,6 @@ export default function ActivityManager({
   useEffect(() => {
     const loadedActivities = getActivities().filter(a => a.isActive);
     setActivities(loadedActivities);
-    setAssignedColorIndices(loadedActivities.map(a => a.colorIndex));
     // Register activities in state machine
     loadedActivities.forEach(activity => {
       onActivitySelect(activity, true);
@@ -108,7 +105,6 @@ export default function ActivityManager({
       ...newActivity,
       colors: getNextAvailableColorSet(newActivity.colorIndex)
     };
-    setAssignedColorIndices(prev => [...prev, newActivity.colorIndex]);
     setActivities(prev => [...prev, activityWithColors]);
     persistActivity(newActivity); // Persist without the colors property which is UI-only
     onActivitySelect(activityWithColors, true);
@@ -132,16 +128,12 @@ export default function ActivityManager({
     if (id === currentActivityId) {
       onActivitySelect(null);
     }
-    const activity = activities.find(a => a.id === id);
-    if (activity && typeof activity.colorIndex === 'number') {
-      setAssignedColorIndices(prev => prev.filter(i => i !== activity.colorIndex));
-    }
     setActivities(prev => prev.filter(activity => activity.id !== id));
     persistDeleteActivity(id);
     if (onActivityRemove) {
       onActivityRemove(id);
     }
-  }, [currentActivityId, onActivitySelect, activities, onActivityRemove]);
+  }, [currentActivityId, onActivitySelect, onActivityRemove]);
 
   const handleExtendDuration = useCallback(() => {
     if (onExtendDuration) {
@@ -166,6 +158,26 @@ export default function ActivityManager({
   // Calculate overtime status - show overtime if elapsed time exceeds total duration
   // This handles both zero-duration starts and normal overtime scenarios
   const isOvertime = elapsedTime > totalDuration;
+
+  // Memoize ActivityForm to prevent re-renders during timer updates
+  const MemoizedActivityForm = useMemo(() => {
+    return (
+      <ActivityForm
+        onAddActivity={handleAddActivity}
+        onFormValuesChange={handleFormValuesChange}
+        preservedValues={preservedFormValues}
+        isDisabled={isTimeUp}
+        isSimplified={true} // Always simplified in timeline context
+        existingActivities={activities}
+      />
+    );
+  }, [
+    handleAddActivity,
+    handleFormValuesChange,
+    preservedFormValues,
+    isTimeUp,
+    activities
+  ]);
   
   // Memoize timeOverage calculation to prevent unnecessary re-renders
   const timeOverage = useMemo(() => {
@@ -228,14 +240,7 @@ export default function ActivityManager({
                     timeOverage={timeOverage}
                   />
                 ) : (
-                  <ActivityForm
-                    onAddActivity={handleAddActivity}
-                    onFormValuesChange={handleFormValuesChange}
-                    preservedValues={preservedFormValues}
-                    isDisabled={isTimeUp}
-                    isSimplified={true} // Always simplified in timeline context
-                    existingActivities={activities}
-                  />
+                  MemoizedActivityForm
                 )}
               </ClientOnly>
             </div>

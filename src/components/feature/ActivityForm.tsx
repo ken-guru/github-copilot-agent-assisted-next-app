@@ -275,8 +275,24 @@ const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormPr
     </Form>
   );
 }), (prevProps, nextProps) => {
-  // Custom comparison function for React.memo
+  // Custom comparison function for React.memo - optimized for performance
   // Only re-render if these specific props change
+  
+  // Efficient shallow comparison for preservedValues object
+  const preservedValuesEqual = () => {
+    if (prevProps.preservedValues === nextProps.preservedValues) return true;
+    if (!prevProps.preservedValues || !nextProps.preservedValues) return false;
+    
+    const prevKeys = Object.keys(prevProps.preservedValues) as Array<keyof typeof prevProps.preservedValues>;
+    const nextKeys = Object.keys(nextProps.preservedValues) as Array<keyof typeof nextProps.preservedValues>;
+    
+    if (prevKeys.length !== nextKeys.length) return false;
+    
+    return prevKeys.every(key => 
+      prevProps.preservedValues![key] === nextProps.preservedValues![key]
+    );
+  };
+  
   return (
     prevProps.isDisabled === nextProps.isDisabled &&
     prevProps.isSimplified === nextProps.isSimplified &&
@@ -286,7 +302,7 @@ const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormPr
     prevProps.onSubmit === nextProps.onSubmit &&
     prevProps.onAddActivity === nextProps.onAddActivity &&
     prevProps.onFormValuesChange === nextProps.onFormValuesChange &&
-    JSON.stringify(prevProps.preservedValues) === JSON.stringify(nextProps.preservedValues)
+    preservedValuesEqual()
   );
 });
 
