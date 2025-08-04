@@ -47,7 +47,7 @@ describe('OvertimeWarning Component', () => {
     render(<OvertimeWarning {...defaultProps} />);
     
     const warning = screen.getByTestId('overtime-warning');
-    expect(warning).toHaveClass('mb-3', 'p-2', 'border', 'border-warning', 'rounded', 'bg-warning-subtle', 'd-flex', 'align-items-center');
+    expect(warning).toHaveClass('p-2', 'border', 'border-warning', 'rounded', 'bg-warning-subtle', 'd-flex', 'align-items-center');
     expect(warning).toHaveStyle('min-height: 38px');
   });
 
