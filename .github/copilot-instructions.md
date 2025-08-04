@@ -112,7 +112,7 @@ mcp_memory_search_nodes() → find similar solutions
 - Monitor CI/CD pipeline status continuously
 - Address all failing tests, linting errors, and type-check failures
 - Respond to all code review comments before marking work complete
-- **MANDATORY GitHub Copilot Review Protocol**: If you request a GitHub Copilot code review, you MUST wait for the review comments and address ALL feedback before considering work complete
+- **MANDATORY GitHub Copilot Review Protocol**: If you request a GitHub Copilot code review, you MUST wait for the review comments and address ALL unresolved feedback before considering work complete
 - Use MCP GitHub tools to track PR status and check completion
 - Work remains incomplete until all automated and manual checks succeed
 
@@ -120,12 +120,14 @@ mcp_memory_search_nodes() → find similar solutions
 When a GitHub Copilot code review is requested:
 1. **Request Review**: Create PR and request GitHub Copilot review
 2. **WAIT**: Do not mark work complete until review comments arrive
-3. **Address ALL Feedback**: Systematically respond to every review comment
+3. **Address UNRESOLVED Feedback**: Systematically respond to unresolved review comments only
    - Use `mcp_github_get_pull_request_comments` to retrieve all feedback
-   - Address code quality suggestions, optimization recommendations, and best practice improvements
-   - Make all requested changes and verify they don't break existing functionality
-4. **Validate Changes**: Run full test suite after addressing feedback
-5. **Complete**: Only after ALL review feedback is addressed and validated can work be considered finished
+   - **CRITICAL**: Only address comments that are NOT already resolved on GitHub
+   - **SKIP**: Comments marked as "Resolved" or "Outdated" on GitHub do not need re-addressing
+   - Address code quality suggestions, optimization recommendations, and best practice improvements for unresolved comments only
+   - Make all requested changes for unresolved feedback and verify they don't break existing functionality
+4. **Validate Changes**: Run full test suite after addressing unresolved feedback
+5. **Complete**: Only after ALL unresolved review feedback is addressed and validated can work be considered finished
 
 ### Quality Gates (All Must Pass)
 ```bash
@@ -193,7 +195,7 @@ When given a GitHub issue number:
 7. ✅ **Quality**: Pass all quality gates before pushing
 8. ✅ **PR**: Create PR with clear title/description referencing issue
 9. ✅ **Monitor**: Watch CI/CD and address code review comments iteratively
-10. ✅ **Complete GitHub Copilot Review**: If GitHub Copilot review requested, WAIT for feedback and address ALL comments
+10. ✅ **Complete GitHub Copilot Review**: If GitHub Copilot review requested, WAIT for feedback and address ALL unresolved comments
 11. ✅ **Document**: Update memory logs and planning documents
 
-**🚨 CRITICAL**: If you request a GitHub Copilot code review, you MUST wait for the review comments and address ALL feedback before considering the work finished. The goal is complete issue resolution with all quality checks passed, not just implementation.
+**🚨 CRITICAL**: If you request a GitHub Copilot code review, you MUST wait for the review comments and address ALL unresolved feedback before considering the work finished. The goal is complete issue resolution with all quality checks passed, not just implementation.
