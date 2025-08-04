@@ -10,8 +10,6 @@ type Activity = CanonicalActivity & { colors?: ColorSet };
 
 interface ActivityFormSectionProps {
   activities: Activity[];
-  currentActivityId: string | null;
-  isTimeUp: boolean;
   preservedFormValues: { name: string; description: string; } | null;
   onAddActivity: (activity: Activity) => void;
   onFormValuesChange: (values: { name: string; description: string; }) => void;
@@ -27,8 +25,6 @@ interface ActivityFormSectionProps {
  */
 const ActivityFormSection = React.memo<ActivityFormSectionProps>(({
   activities,
-  currentActivityId,
-  isTimeUp,
   preservedFormValues,
   onAddActivity,
   onFormValuesChange,
@@ -43,10 +39,10 @@ const ActivityFormSection = React.memo<ActivityFormSectionProps>(({
       onAddActivity={onAddActivity}
       preservedValues={preservedFormValues || undefined}
       onFormValuesChange={onFormValuesChange}
-      isDisabled={!!currentActivityId || isTimeUp}
+      isDisabled={false} // Form should always be enabled when visible
       isSimplified={isSimplified}
     />
-  ), [activities, onAddActivity, preservedFormValues, onFormValuesChange, currentActivityId, isTimeUp, isSimplified]);
+  ), [activities, onAddActivity, preservedFormValues, onFormValuesChange, isSimplified]);
 
   if (activities.length === 0) {
     return (
@@ -71,10 +67,9 @@ const ActivityFormSection = React.memo<ActivityFormSectionProps>(({
   );
 }, (prevProps, nextProps) => {
   // Custom comparison - exclude timer-related props to prevent form re-renders
+  // Form is always enabled when visible, so currentActivityId and isTimeUp don't affect form state
   return (
     prevProps.activities === nextProps.activities &&
-    prevProps.currentActivityId === nextProps.currentActivityId &&
-    prevProps.isTimeUp === nextProps.isTimeUp &&
     prevProps.preservedFormValues === nextProps.preservedFormValues &&
     prevProps.onAddActivity === nextProps.onAddActivity &&
     prevProps.onFormValuesChange === nextProps.onFormValuesChange &&

@@ -202,8 +202,6 @@ export default function ActivityManager({
         {/* Activity Form Section - isolated from timer updates */}
         <ActivityFormSection
           activities={activities}
-          currentActivityId={currentActivityId}
-          isTimeUp={isTimeUp}
           preservedFormValues={preservedFormValues}
           onAddActivity={handleAddActivity}
           onFormValuesChange={handleFormValuesChange}

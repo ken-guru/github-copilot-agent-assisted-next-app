@@ -233,7 +233,7 @@ describe('ActivityManager Component', () => {
     expect(removeButtons[1]).not.toBeDisabled();
   });
   
-  it('should disable adding activities when time is up', async () => {
+  it('should keep form enabled when time is up', async () => {
     render(
       <ActivityManager 
         onActivitySelect={mockOnActivitySelect}
@@ -245,13 +245,34 @@ describe('ActivityManager Component', () => {
       />
     );
     
-    // Add Activity button should be disabled
+    // Add Activity button should remain enabled
     const addButton = screen.getByText('Add Activity');
-    expect(addButton).toBeDisabled();
+    expect(addButton).not.toBeDisabled();
     
-    // Name input should be disabled
+    // Name input should remain enabled
     const input = screen.getByLabelText('Activity name');
-    expect(input).toBeDisabled();
+    expect(input).not.toBeDisabled();
+  });
+  
+  it('should hide form and show overtime warning during overtime', async () => {
+    render(
+      <ActivityManager 
+        onActivitySelect={mockOnActivitySelect}
+        onActivityRemove={mockOnActivityRemove}
+        currentActivityId={null}
+        completedActivityIds={[]}
+        timelineEntries={[]}
+        elapsedTime={120} // 2 minutes elapsed
+        totalDuration={60} // 1 minute total duration = overtime
+      />
+    );
+    
+    // Form should be hidden during overtime
+    expect(screen.queryByLabelText('Activity name')).not.toBeInTheDocument();
+    expect(screen.queryByText('Add Activity')).not.toBeInTheDocument();
+    
+    // Overtime warning should be shown instead
+    expect(screen.getByText(/overtime/i)).toBeInTheDocument();
   });
   
   it('should start an activity when clicking Start', async () => {
