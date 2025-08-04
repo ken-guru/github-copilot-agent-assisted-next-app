@@ -201,21 +201,26 @@ export default function ActivityManager({
               />
             </div>
             
-            {/* Activity Form or Overtime Warning */}
+            {/* Activity Form with Overtime Warning Overlay */}
             <div className="flex-shrink-0 mb-3" data-testid="activity-form-column">
               <ClientOnly fallback={<div style={{ height: '200px' }} />}>
-                {isOvertime ? (
-                  <OvertimeWarning 
-                    timeOverage={timeOverage}
-                  />
-                ) : (
+                <div className="position-relative">
+                  {/* Always render ActivityForm to prevent unmounting */}
                   <ActivityForm
                     onAddActivity={handleAddActivity}
-                    isDisabled={isTimeUp}
+                    isDisabled={isTimeUp || isOvertime}
                     isSimplified={true} // Always simplified in timeline context
                     existingActivities={activities}
                   />
-                )}
+                  {/* Overlay overtime warning when in overtime */}
+                  {isOvertime && (
+                    <div className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: 'rgba(255, 193, 7, 0.1)', backdropFilter: 'blur(1px)', zIndex: 10 }}>
+                      <OvertimeWarning 
+                        timeOverage={timeOverage}
+                      />
+                    </div>
+                  )}
+                </div>
               </ClientOnly>
             </div>
             

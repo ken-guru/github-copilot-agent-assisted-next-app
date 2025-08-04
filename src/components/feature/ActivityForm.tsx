@@ -58,6 +58,22 @@ const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormPr
     }
   }, [error]);
 
+  React.useEffect(() => {
+    // Auto-focus when form becomes enabled (e.g., after overtime ends)
+    if (!isDisabled && nameInputRef.current && document.activeElement !== nameInputRef.current) {
+      // Only focus if no other input element currently has focus
+      const activeElement = document.activeElement;
+      const isAnyInputFocused = activeElement && (
+        activeElement.tagName === 'INPUT' || 
+        activeElement.tagName === 'TEXTAREA' || 
+        activeElement.tagName === 'SELECT'
+      );
+      if (!isAnyInputFocused) {
+        nameInputRef.current.focus();
+      }
+    }
+  }, [isDisabled]);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
