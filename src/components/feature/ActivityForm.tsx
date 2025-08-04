@@ -266,7 +266,9 @@ const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormPr
     prevProps.isSimplified === nextProps.isSimplified &&
     prevProps.existingActivities === nextProps.existingActivities &&
     prevProps.activity === nextProps.activity &&
-    prevProps.error === nextProps.error
+    prevProps.error === nextProps.error &&
+    prevProps.onSubmit === nextProps.onSubmit &&
+    prevProps.onAddActivity === nextProps.onAddActivity
   );
 });
 

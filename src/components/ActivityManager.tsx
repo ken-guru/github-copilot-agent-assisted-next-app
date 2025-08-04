@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Card, Row, Col, Alert, Button } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
@@ -44,6 +44,7 @@ export default function ActivityManager({
   onExtendDuration
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [assignedColorIndices, setAssignedColorIndices] = useState<number[]>([]);
 
   // Load activities from localStorage on mount
@@ -92,19 +93,19 @@ export default function ActivityManager({
     };
   }, []);
 
-  const handleAddActivity = (newActivity: Activity) => {
+  const handleAddActivity = useCallback((newActivity: Activity) => {
     // Activity already has smart color selection from the form
     const activityWithColors: Activity = {
       ...newActivity,
       colors: getNextAvailableColorSet(newActivity.colorIndex)
     };
-    setAssignedColorIndices([...assignedColorIndices, newActivity.colorIndex]);
-    setActivities([...activities, activityWithColors]);
+    setAssignedColorIndices(prev => [...prev, newActivity.colorIndex]);
+    setActivities(prev => [...prev, activityWithColors]);
     persistActivity(newActivity); // Persist without the colors property which is UI-only
     onActivitySelect(activityWithColors, true);
-  };
+  }, [onActivitySelect]);
 
-  const handleActivitySelect = (activity: Activity) => {
+  const handleActivitySelect = useCallback((activity: Activity) => {
     if (activity.id === currentActivityId) {
       onActivitySelect(null);
     } else {
@@ -113,35 +114,35 @@ export default function ActivityManager({
         colors: activity.colors || getNextAvailableColorSet(activity.colorIndex || 0)
       });
     }
-  };
+  }, [currentActivityId, onActivitySelect]);
 
-  const handleRemoveActivity = (id: string) => {
+  const handleRemoveActivity = useCallback((id: string) => {
     if (id === currentActivityId) {
       onActivitySelect(null);
     }
     const activity = activities.find(a => a.id === id);
     if (activity && typeof activity.colorIndex === 'number') {
-      setAssignedColorIndices(assignedColorIndices.filter(i => i !== activity.colorIndex));
+      setAssignedColorIndices(prev => prev.filter(i => i !== activity.colorIndex));
     }
-    setActivities(activities.filter(activity => activity.id !== id));
+    setActivities(prev => prev.filter(activity => activity.id !== id));
     persistDeleteActivity(id);
     if (onActivityRemove) {
       onActivityRemove(id);
     }
-  };
+  }, [currentActivityId, onActivitySelect, activities, onActivityRemove]);
 
-  const handleExtendDuration = () => {
+  const handleExtendDuration = useCallback(() => {
     if (onExtendDuration) {
       onExtendDuration();
     }
-  };
+  }, [onExtendDuration]);
 
-  const handleResetSession = () => {
+  const handleResetSession = useCallback(() => {
     // Call global reset function to reset timer/session
     if (onReset) {
       onReset();
     }
-  };
+  }, [onReset]);
 
   // Calculate overtime status - show overtime if elapsed time exceeds total duration
   // This handles both zero-duration starts and normal overtime scenarios
