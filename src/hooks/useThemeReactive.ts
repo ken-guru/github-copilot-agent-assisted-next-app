@@ -99,7 +99,7 @@ export const useThemeReactive = (): Theme => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('themeChange', handleThemeChange);
     };
-  }, []); // Only depend on mount to avoid unnecessary re-renders
+  }, []); // Empty dependency array: run once after mount only
 
   return theme;
 };

@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { useToast } from '@/contexts/ToastContext';
 import { ToastMessage } from '@/types/toast';
 
+// Bootstrap MD breakpoint constant for consistency
+const BOOTSTRAP_MD_BREAKPOINT = 768;
+
 /**
  * Hook that provides responsive toast messages - shorter on mobile devices
  */
@@ -11,7 +14,7 @@ export function useResponsiveToast() {
 
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < BOOTSTRAP_MD_BREAKPOINT);
     };
 
     checkIsMobile();

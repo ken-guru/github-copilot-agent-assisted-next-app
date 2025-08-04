@@ -85,8 +85,7 @@ export function deleteActivity(id: string): void {
   const activities = getActivities();
   const idx = activities.findIndex(a => a.id === id);
   if (idx !== -1 && activities[idx]) {
-    const activity = activities[idx]!; // Non-null assertion since we checked above
-    activities[idx] = { ...activity, isActive: false };
+    activities[idx] = { ...activities[idx], isActive: false };
     try {
       saveActivities(activities);
     } catch {
