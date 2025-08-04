@@ -23,7 +23,7 @@ interface ActivityFormRef {
   submitForm: () => void;
 }
 
-const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
+const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormProps>(
   ({ activity, onSubmit, onAddActivity, error, existingActivities = [], isDisabled = false, isSimplified = false }, ref) => {
   const [name, setName] = useState(activity?.name || '');
   const [description, setDescription] = useState(activity?.description || '');
@@ -257,6 +257,16 @@ const ActivityForm = React.forwardRef<ActivityFormRef, ActivityFormProps>(
         </>
       )}
     </Form>
+  );
+}), (prevProps, nextProps) => {
+  // Custom comparison function for React.memo
+  // Only re-render if these specific props change
+  return (
+    prevProps.isDisabled === nextProps.isDisabled &&
+    prevProps.isSimplified === nextProps.isSimplified &&
+    prevProps.existingActivities === nextProps.existingActivities &&
+    prevProps.activity === nextProps.activity &&
+    prevProps.error === nextProps.error
   );
 });
 

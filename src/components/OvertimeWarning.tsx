@@ -5,7 +5,7 @@ interface OvertimeWarningProps {
   timeOverage: number; // Time in seconds over the limit
 }
 
-const OvertimeWarning: React.FC<OvertimeWarningProps> = ({ 
+const OvertimeWarning: React.FC<OvertimeWarningProps> = React.memo(({ 
   timeOverage 
 }) => {
   const formatOvertime = (seconds: number): string => {
@@ -30,6 +30,8 @@ const OvertimeWarning: React.FC<OvertimeWarningProps> = ({
       </small>
     </div>
   );
-};
+});
+
+OvertimeWarning.displayName = 'OvertimeWarning';
 
 export default OvertimeWarning;

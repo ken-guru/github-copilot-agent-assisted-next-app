@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, Row, Col, Alert, Button } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
@@ -146,7 +146,11 @@ export default function ActivityManager({
   // Calculate overtime status - show overtime if elapsed time exceeds total duration
   // This handles both zero-duration starts and normal overtime scenarios
   const isOvertime = elapsedTime > totalDuration;
-  const timeOverage = isOvertime ? Math.floor(elapsedTime - totalDuration) : 0;
+  
+  // Memoize timeOverage calculation to prevent unnecessary re-renders
+  const timeOverage = useMemo(() => {
+    return isOvertime ? Math.floor(elapsedTime - totalDuration) : 0;
+  }, [isOvertime, elapsedTime, totalDuration]);
 
   return (
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
