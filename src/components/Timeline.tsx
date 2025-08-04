@@ -5,7 +5,7 @@ import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { TimelineEntry } from '@/types';
-import { useToast } from '@/contexts/ToastContext';
+import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 
 interface TimelineProps {
   entries: TimelineEntry[];
@@ -34,7 +34,7 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
 }
 
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
-  const { addToast, removeToast } = useToast();
+  const { addResponsiveToast, removeToast } = useResponsiveToast();
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
   const [overtimeToastId, setOvertimeToastId] = useState<string | null>(null);
@@ -200,9 +200,10 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   // Handle overtime toast - persistent warning when overtime occurs
   useEffect(() => {
     if (isOvertime && !overtimeToastId && timerActive) {
-      // Add persistent overtime toast
-      const toastId = addToast({
+      // Add persistent overtime toast with mobile-friendly message
+      const toastId = addResponsiveToast({
         message: 'Overtime: You have exceeded your planned time limit.',
+        mobileMessage: 'Overtime!',
         variant: 'warning',
         persistent: true,
         autoDismiss: false
@@ -213,7 +214,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       removeToast(overtimeToastId);
       setOvertimeToastId(null);
     }
-  }, [isOvertime, overtimeToastId, timerActive, addToast, removeToast]);
+  }, [isOvertime, overtimeToastId, timerActive, addResponsiveToast, removeToast]);
 
   // Auto-dismiss overtime toast when all activities are completed (summary state)
   useEffect(() => {

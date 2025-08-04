@@ -2,6 +2,7 @@
 :root {
   /* Layout variables */
   --navbar-height: 56px; /* Bootstrap navbar standard height */
+  --toast-safe-area: 80px; /* Space to prevent toast overlap on mobile */
   
   /* Core theme colors - light theme defaults */
   --bg-primary: #ffffff;
@@ -292,4 +293,22 @@ a {
 
 .card-header-consistent .badge {
   flex-shrink: 0;
+}
+
+/* Mobile responsive toast safe area */
+@media (max-width: 768px) {
+  :root {
+    --toast-safe-area: 100px; /* Larger safe area on mobile for better UX */
+  }
+  
+  /* Ensure toast containers don't interfere with mobile scrolling */
+  .toast-container {
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+@media (max-width: 576px) {
+  :root {
+    --toast-safe-area: 120px; /* Even larger safe area on small mobile screens */
+  }
 }

@@ -52,6 +52,7 @@ src/components/                    # Bootstrap-wrapped components
 5. **Quality Checks** → All tests, lint, type-check must pass
 6. **Create PR** → Good title/description referencing issue
 7. **Monitor & Iterate** → Address CI/CD failures and code review comments
+8. **Complete Verification** → **NEVER consider work finished until ALL PR checks pass**
 
 ### Issue Understanding with MCP Tools
 ```bash
@@ -105,6 +106,14 @@ mcp_memory_search_nodes() → find similar solutions
 - Explicitly state next actions before committing
 - Continue immediately after commit with identified issues
 - Document unresolved issues in commit messages
+
+### PR Completion Requirements
+**🚨 CRITICAL: NEVER consider work finished until ALL PR checks pass.**
+- Monitor CI/CD pipeline status continuously
+- Address all failing tests, linting errors, and type-check failures
+- Respond to all code review comments before marking work complete
+- Use MCP GitHub tools to track PR status and check completion
+- Work remains incomplete until all automated and manual checks succeed
 
 ### Quality Gates (All Must Pass)
 ```bash
