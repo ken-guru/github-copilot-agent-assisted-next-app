@@ -17,7 +17,6 @@ interface ActivityManagerProps {
   currentActivityId: string | null;
   completedActivityIds: string[];
   timelineEntries: TimelineEntry[];
-  isTimeUp?: boolean;
   elapsedTime?: number;
   // Progress bar props
   totalDuration?: number;
@@ -34,7 +33,6 @@ export default function ActivityManager({
   currentActivityId, 
   completedActivityIds,
   timelineEntries,
-  // isTimeUp = false,  // Currently unused in this component
   elapsedTime = 0,
   totalDuration = 0,
   timerActive = false,

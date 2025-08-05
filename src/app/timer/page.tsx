@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { LoadingProvider, useLoading } from '@/contexts/loading';
 import ActivityManager from '@/components/ActivityManager';
@@ -52,7 +52,6 @@ function TimerPageContent() {
   
   const {
     elapsedTime,
-    isTimeUp,
     timerActive,
     startTimer,
     resetTimer,
@@ -166,7 +165,6 @@ function TimerPageContent() {
                 currentActivityId={currentActivity?.id || null} 
                 completedActivityIds={completedActivityIds}
                 timelineEntries={processedEntries}
-                isTimeUp={isTimeUp}
                 elapsedTime={elapsedTime}
                 totalDuration={totalDuration}
                 timerActive={timerActive}
@@ -194,7 +192,9 @@ function TimerPageContent() {
 export default function TimerPage() {
   return (
     <LoadingProvider initialLoadingState={false}>
-      <TimerPageContent />
+      <Suspense fallback={<div>Loading...</div>}>
+        <TimerPageContent />
+      </Suspense>
     </LoadingProvider>
   );
 }
