@@ -64,9 +64,9 @@ function TimerPageContent() {
   // Navigate to summary when all activities are completed
   useEffect(() => {
     if (allActivitiesCompleted) {
-      router.push('/summary');
+      router.push(`/summary?t=${totalDuration}`);
     }
-  }, [allActivitiesCompleted, router]);
+  }, [allActivitiesCompleted, totalDuration, router]);
 
   // Initialize app and hide loading screen
   useEffect(() => {

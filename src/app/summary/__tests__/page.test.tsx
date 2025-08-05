@@ -9,6 +9,12 @@ jest.mock('next/navigation', () => ({
     push: jest.fn(),
     replace: jest.fn(),
   })),
+  useSearchParams: jest.fn(() => ({
+    get: jest.fn((key: string) => {
+      if (key === 't') return '120'; // Mock time parameter
+      return null;
+    }),
+  })),
 }));
 
 // Mock the shared hooks

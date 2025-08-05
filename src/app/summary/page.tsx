@@ -1,6 +1,6 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { LoadingProvider, useLoading } from '@/contexts/loading';
 import Summary from '@/components/Summary';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
@@ -12,19 +12,33 @@ import resetService from '@/utils/resetService';
 function SummaryPageContent() {
   const { setIsLoading } = useLoading();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
   
-  const [totalDuration] = useState(0); // Default duration for summary
+  // Parse time parameter from URL (defaults to 60 seconds if not provided)
+  const getTimeFromParams = useCallback(() => {
+    const timeParam = searchParams.get('t');
+    if (!timeParam) return 60; // Default to 1 minute
+    
+    const parsedTime = parseInt(timeParam, 10);
+    if (isNaN(parsedTime) || parsedTime <= 0) {
+      return 60; // Default to 1 minute for invalid/negative values
+    }
+    
+    return parsedTime;
+  }, [searchParams]);
+
+  const [totalDuration] = useState(getTimeFromParams);
   
   const {
     timelineEntries,
-    completedActivityIds,
     allActivitiesCompleted,
     resetActivities,
   } = useActivityState();
   
   const {
     elapsedTime,
+    isTimeUp,
     resetTimer,
   } = useTimerState({
     totalDuration,
@@ -101,8 +115,8 @@ function SummaryPageContent() {
     endTime: entry.endTime === undefined ? null : entry.endTime
   }));
 
-  // Check if this is an empty state (no completed activities)
-  const isEmpty = timelineEntries.length === 0 || completedActivityIds.length === 0;
+  // Check if this is an empty state (no timeline entries with activities)
+  const isEmpty = timelineEntries.length === 0 || !timelineEntries.some(entry => entry.activityId);
   
   return (
     <>
@@ -142,6 +156,7 @@ function SummaryPageContent() {
                 totalDuration={totalDuration} 
                 elapsedTime={elapsedTime}
                 allActivitiesCompleted={allActivitiesCompleted}
+                isTimeUp={isTimeUp}
                 onReset={handleReset}
               />
             </div>
@@ -156,7 +171,9 @@ function SummaryPageContent() {
 export default function SummaryPage() {
   return (
     <LoadingProvider initialLoadingState={false}>
-      <SummaryPageContent />
+      <Suspense fallback={<div>Loading...</div>}>
+        <SummaryPageContent />
+      </Suspense>
     </LoadingProvider>
   );
 }
