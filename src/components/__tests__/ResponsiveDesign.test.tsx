@@ -374,7 +374,6 @@ describe('Responsive Design Tests', () => {
               currentActivityId={null}
               completedActivityIds={[]}
               timelineEntries={[]}
-              isTimeUp={false}
               elapsedTime={0}
             />
             <Timeline
@@ -408,7 +407,6 @@ describe('Responsive Design Tests', () => {
               currentActivityId={null}
               completedActivityIds={[]}
               timelineEntries={[]}
-              isTimeUp={false}
               elapsedTime={0}
             />
             <Timeline

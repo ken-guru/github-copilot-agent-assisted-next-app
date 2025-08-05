@@ -241,7 +241,6 @@ describe('ActivityManager Component', () => {
         currentActivityId={null}
         completedActivityIds={[]}
         timelineEntries={[]}
-        isTimeUp={true}
       />
     );
     

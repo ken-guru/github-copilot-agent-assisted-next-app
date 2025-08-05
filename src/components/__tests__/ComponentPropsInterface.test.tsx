@@ -100,7 +100,6 @@ describe('Component Props Interface Validation', () => {
           // Convert the timeline entries to the expected format for this component
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           timelineEntries={timelineEntries as any}
-          isTimeUp={false}
           elapsedTime={600}
         />
       );

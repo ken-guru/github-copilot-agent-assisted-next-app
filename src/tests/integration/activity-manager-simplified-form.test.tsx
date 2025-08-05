@@ -189,13 +189,11 @@ describe('ActivityManager Simplified Form Integration', () => {
       const { rerender } = render(
         <ActivityManager 
           {...defaultProps} 
-          isTimeUp={true}
         />
       );
       rerender(
         <ActivityManager 
           {...defaultProps} 
-          isTimeUp={true}
         />
       );
 
