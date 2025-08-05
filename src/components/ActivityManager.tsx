@@ -5,7 +5,6 @@ import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import TimerProgressSection from './TimerProgressSection';
 import ActivityFormSection from './ActivityFormSection';
-import ClientOnly from './ClientOnly';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
 
@@ -35,7 +34,7 @@ export default function ActivityManager({
   currentActivityId, 
   completedActivityIds,
   timelineEntries,
-  isTimeUp = false,
+  // isTimeUp = false,  // Currently unused in this component
   elapsedTime = 0,
   totalDuration = 0,
   timerActive = false,

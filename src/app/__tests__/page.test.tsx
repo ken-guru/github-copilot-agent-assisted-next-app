@@ -8,6 +8,15 @@ import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/Con
 import { LoadingProvider } from '@/contexts/LoadingContext';
 import { ToastProvider } from '@/contexts/ToastContext';
 
+// Mock Next.js navigation
+const mockPush = jest.fn();
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: mockPush,
+    replace: jest.fn(),
+  })),
+}));
+
 // Store dialog props for testing
 let mockDialogProps = {
   message: '',
@@ -87,35 +96,6 @@ jest.mock('@/utils/resetService', () => {
 // Cast the mocked service
 const mockedResetService = resetService as unknown as MockResetService;
 
-// Mock the hooks with reset functionality
-const mockResetActivities = jest.fn();
-const mockResetTimer = jest.fn();
-
-// Set up useActivityState mock with reusable implementation
-const mockUseActivityState = jest.fn().mockImplementation(() => ({
-  currentActivity: null,
-  timelineEntries: [],
-  completedActivityIds: [],
-  allActivitiesCompleted: false,
-  handleActivitySelect: jest.fn(),
-  handleActivityRemoval: jest.fn(),
-  resetActivities: mockResetActivities,
-}));
-
-jest.mock('@/hooks/useActivityState', () => ({
-  useActivityState: () => mockUseActivityState(),
-}));
-
-jest.mock('@/hooks/useTimerState', () => ({
-  useTimerState: () => ({
-    elapsedTime: 0,
-    isTimeUp: false,
-    timerActive: false,
-    startTimer: jest.fn(),
-    resetTimer: mockResetTimer,
-  }),
-}));
-
 // Mock HTMLDialogElement functionality
 HTMLDialogElement.prototype.showModal = jest.fn();
 HTMLDialogElement.prototype.close = jest.fn();
@@ -153,48 +133,33 @@ describe('Home Page', () => {
     };
   });
 
-  it('should not show reset button in setup state', () => {
+  it('should always show TimeSetup component in setup state', () => {
     renderHome();
     
-    expect(screen.queryByText('Reset')).not.toBeInTheDocument();
+    expect(screen.getByTestId('time-setup')).toBeInTheDocument();
   });
 
-  it('should show reset button after time is set', () => {
+  it('should navigate to timer page when time is set', () => {
     renderHome();
     
     // Find and trigger the TimeSetup component
     const timeSetupButton = screen.getByRole('button', { name: /set time/i });
     fireEvent.click(timeSetupButton);
     
-    expect(screen.getByText('Reset')).toBeInTheDocument();
+    // Should navigate to /timer with duration parameter (0 seconds is the default since no time was set)
+    expect(mockPush).toHaveBeenCalledWith('/timer?t=0');
   });
 
-  it('should call resetService when reset is clicked', () => {
+  it('should not show reset button in setup state', () => {
     renderHome();
     
-    // Set initial time to move past setup state
-    const timeSetupButton = screen.getByRole('button', { name: /set time/i });
-    fireEvent.click(timeSetupButton);
-    
-    // Click reset button
-    const resetButton = screen.getByText('Reset');
-    fireEvent.click(resetButton);
-    
-    expect(mockedResetService.reset).toHaveBeenCalled();
+    expect(screen.queryByText('Reset')).not.toBeInTheDocument();
   });
 
-  it('should register reset callbacks and dialog callback with resetService', () => {
+  it('should register dialog callback with resetService', () => {
     renderHome();
     
-    expect(mockedResetService.registerResetCallback).toHaveBeenCalled();
     expect(mockedResetService.setDialogCallback).toHaveBeenCalled();
-    
-    // Simulate reset service execution of callbacks
-    mockedResetService.executeCallbacks();
-    
-    // Check that reset functions were called through callbacks
-    expect(mockResetActivities).toHaveBeenCalled();
-    expect(mockResetTimer).toHaveBeenCalled();
   });
 
   it('should provide a working dialog callback to resetService', async () => {
@@ -239,14 +204,14 @@ describe('Home Page', () => {
   });
 
   describe('Mobile Header Layout', () => {
-    it('should render navigation with brand in main layout', () => {
+    it('should render main layout structure correctly', () => {
       // Mock window dimensions for mobile
       window.innerWidth = 480;
       window.innerHeight = 800;
       
       renderHome();
       
-      // Since we've moved the title to Navigation component and removed the main header,
+      // Since we've simplified the page to only show TimeSetup,
       // we should verify the main content is properly structured
       const mainContainer = screen.getByRole('main');
       expect(mainContainer).toHaveClass('container-fluid', 'd-flex', 'flex-column', 'overflow-x-hidden', 'overflow-y-auto');
@@ -254,66 +219,3 @@ describe('Home Page', () => {
   });
 });
 
-describe('Progress Element Visibility', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-  
-  it('should show progress container in activity state', () => {
-    // Mock activity state (timeSet = true, !allActivitiesCompleted)
-    jest.spyOn(React, 'useState').mockImplementationOnce(() => [true, jest.fn()]);
-    mockUseActivityState.mockImplementationOnce(() => ({
-      currentActivity: { id: '1', name: 'Test Activity' },
-      timelineEntries: [{ id: '1', activityId: '1', activityName: 'Test Activity', startTime: 0 }],
-      completedActivityIds: [],
-      allActivitiesCompleted: false,
-      handleActivitySelect: jest.fn(),
-      handleActivityRemoval: jest.fn(),
-      resetActivities: mockResetActivities,
-    }));
-    
-    renderHome();
-    
-    // In activity state, progress container should be present
-    const progressContainer = screen.getByTestId('progress-container');
-    expect(progressContainer).toBeInTheDocument();
-  });
-  
-  it('should not show progress container in setup state', () => {
-    // Mock for setup state (timeSet = false)
-    jest.spyOn(React, 'useState').mockImplementationOnce(() => [false, jest.fn()]);
-    
-    renderHome();
-    
-    // In setup state, progress container should not be rendered
-    const progressContainer = screen.queryByTestId('progress-container');
-    
-    // Since our conditionally rendered progress bar should only appear
-    // in the activity state, it should not be in the document in setup state
-    expect(progressContainer).not.toBeInTheDocument();
-  });
-  
-  it('should not show progress container in completed state', () => {
-    // Mock for completed state (timeSet = true, allActivitiesCompleted = true)
-    jest.spyOn(React, 'useState').mockImplementationOnce(() => [true, jest.fn()]);
-    
-    mockUseActivityState.mockImplementationOnce(() => ({
-      currentActivity: null,
-      timelineEntries: [],
-      completedActivityIds: ['1'],
-      allActivitiesCompleted: true,
-      handleActivitySelect: jest.fn(),
-      handleActivityRemoval: jest.fn(),
-      resetActivities: mockResetActivities,
-    }));
-    
-    renderHome();
-    
-    // In completed state, progress container should not be rendered
-    const progressContainer = screen.queryByTestId('progress-container');
-    
-    // Since our conditionally rendered progress bar should only appear
-    // in the activity state, it should not be in the document in completed state
-    expect(progressContainer).not.toBeInTheDocument();
-  });
-});

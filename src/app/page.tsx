@@ -1,47 +1,16 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { LoadingProvider, useLoading } from '@/contexts/loading';
 import TimeSetup from '@/components/TimeSetup';
-import ActivityManager from '@/components/ActivityManager';
-import Timeline from '@/components/Timeline';
-import Summary from '@/components/Summary';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
-import { useActivityState } from '@/hooks/useActivityState';
-import { useTimerState } from '@/hooks/useTimerState';
 import resetService from '@/utils/resetService';
 
 // Main application content with loading context
 function AppContent() {
   const { setIsLoading } = useLoading();
-  const [timeSet, setTimeSet] = useState(false);
-  const [totalDuration, setTotalDuration] = useState(0);
+  const router = useRouter();
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
-  
-  const {
-    currentActivity,
-    timelineEntries,
-    completedActivityIds,
-    allActivitiesCompleted,
-    handleActivitySelect,
-    handleActivityRemoval,
-    resetActivities,
-  } = useActivityState({
-    onTimerStart: () => {
-      if (!timerActive) startTimer();
-    }
-  });
-  
-  const {
-    elapsedTime,
-    isTimeUp,
-    timerActive,
-    startTimer,
-    resetTimer,
-    extendDuration: clearTimeUpState,
-  } = useTimerState({
-    totalDuration,
-    isCompleted: allActivitiesCompleted
-  });
 
   // Initialize app and hide loading screen after initialization is complete
   useEffect(() => {
@@ -95,50 +64,10 @@ function AppContent() {
     onCancel: () => {}
   });
   
-  // Register all reset callbacks
-  useEffect(() => {
-    const unregisterCallbacks = resetService.registerResetCallback(() => {
-      setTimeSet(false);
-      setTotalDuration(0);
-      resetActivities();
-      resetTimer();
-    });
-    
-    // Clean up on component unmount
-    return unregisterCallbacks;
-  }, [resetActivities, resetTimer]);
-  
   const handleTimeSet = (durationInSeconds: number) => {
-    setTotalDuration(durationInSeconds);
-    setTimeSet(true);
+    // Navigate to timer page with duration as query parameter
+    router.push(`/timer?t=${durationInSeconds}`);
   };
-  
-  const handleExtendDuration = () => {
-    if (elapsedTime <= totalDuration) {
-      // Normal case: just add 1 minute
-      setTotalDuration(totalDuration + 60);
-    } else {
-      // Overtime case: set duration to elapsed time + 1 minute
-      setTotalDuration(elapsedTime + 60);
-    }
-    // Clear the time up state
-    clearTimeUpState();
-  };
-  
-  const handleReset = async () => {
-    await resetService.reset();
-  };
-  
-  const appState = !timeSet 
-    ? 'setup' 
-    : allActivitiesCompleted 
-      ? 'completed' 
-      : 'activity';
-  
-  const processedEntries = timelineEntries.map(entry => ({
-    ...entry,
-    endTime: entry.endTime === undefined ? null : entry.endTime
-  }));
   
   return (
     <>
@@ -154,52 +83,9 @@ function AppContent() {
         />
         
         <div className="flex-grow-1 d-flex flex-column overflow-x-hidden overflow-y-auto">
-          {appState === 'setup' && (
-            <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
-              <TimeSetup onTimeSet={handleTimeSet} />
-            </div>
-          )}
-          
-          {appState === 'activity' && (
-            <div className="row flex-grow-1 g-3 px-3 pt-3 pb-3 overflow-x-hidden overflow-y-auto">
-              <div className="col-lg-5 d-flex flex-column overflow-x-hidden overflow-y-auto">
-                <ActivityManager 
-                  onActivitySelect={handleActivitySelect} 
-                  onActivityRemove={handleActivityRemoval}
-                  currentActivityId={currentActivity?.id || null} 
-                  completedActivityIds={completedActivityIds}
-                  timelineEntries={processedEntries}
-                  isTimeUp={isTimeUp}
-                  elapsedTime={elapsedTime}
-                  totalDuration={totalDuration}
-                  timerActive={timerActive}
-                  onReset={handleReset}
-                  onExtendDuration={handleExtendDuration}
-                />
-              </div>
-              <div className="col-lg-7 d-none d-lg-flex flex-column overflow-hidden">
-                <Timeline 
-                  entries={processedEntries}
-                  totalDuration={totalDuration} 
-                  elapsedTime={elapsedTime}
-                  allActivitiesCompleted={allActivitiesCompleted}
-                  timerActive={timerActive}
-                />
-              </div>
-            </div>
-          )}
-          
-          {appState === 'completed' && (
-            <div className="d-flex justify-content-center flex-grow-1 p-4">
-              <Summary 
-                entries={processedEntries}
-                totalDuration={totalDuration} 
-                elapsedTime={elapsedTime}
-                allActivitiesCompleted={allActivitiesCompleted}
-                onReset={handleReset}
-              />
-            </div>
-          )}
+          <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
+            <TimeSetup onTimeSet={handleTimeSet} />
+          </div>
         </div>
       </main>
     </>

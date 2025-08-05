@@ -4,6 +4,14 @@
 import { render } from '@testing-library/react';
 import Home from '../../app/page';
 
+// Mock Next.js navigation
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+  })),
+}));
+
 // Mock the activity storage utilities
 jest.mock('../../utils/activity-storage', () => ({
   getActivities: jest.fn(() => []),
@@ -13,9 +21,12 @@ jest.mock('../../utils/activity-storage', () => ({
 
 // Mock the resetService
 jest.mock('../../utils/resetService', () => ({
-  setDialogCallback: jest.fn(),
-  registerResetCallback: jest.fn(() => jest.fn()),
-  reset: jest.fn(),
+  __esModule: true,
+  default: {
+    setDialogCallback: jest.fn(),
+    registerResetCallback: jest.fn(() => jest.fn()),
+    reset: jest.fn(),
+  },
 }));
 
 describe('Home Page Layout Spacing', () => {
