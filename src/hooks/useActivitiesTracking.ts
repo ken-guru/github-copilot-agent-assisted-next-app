@@ -1,8 +1,40 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { ActivityStateMachine, ActivityState } from '@/utils/activityStateMachine';
+
+const ACTIVITY_TRACKING_STORAGE_KEY = 'activity_tracking_state_v1';
 
 // Determine if we're in a test environment
 const isTestEnvironment = process && process.env && process.env.NODE_ENV === 'test';
+
+// Helper functions for localStorage persistence
+const loadActivityTrackingFromStorage = () => {
+  if (typeof window === 'undefined' || isTestEnvironment) return null;
+  
+  try {
+    const stored = localStorage.getItem(ACTIVITY_TRACKING_STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.warn('Failed to load activity tracking state from localStorage:', error);
+  }
+  
+  return null;
+};
+
+const saveActivityTrackingToStorage = (state: {
+  completedActivityIds: string[];
+  removedActivityIds: string[];
+  hasActuallyStartedActivity: boolean;
+}) => {
+  if (typeof window === 'undefined' || isTestEnvironment) return;
+  
+  try {
+    localStorage.setItem(ACTIVITY_TRACKING_STORAGE_KEY, JSON.stringify(state));
+  } catch (error) {
+    console.warn('Failed to save activity tracking state to localStorage:', error);
+  }
+};
 
 export interface UseActivitiesTrackingResult {
   activities: Set<string>;
@@ -23,7 +55,7 @@ export interface UseActivitiesTrackingResult {
 }
 
 /**
- * Hook to manage activities tracking state using ActivityStateMachine
+ * Hook to manage activities tracking state using ActivityStateMachine with localStorage persistence
  * This hook is responsible for tracking which activities exist,
  * which have been started, completed, or removed.
  */
@@ -31,13 +63,32 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
   // State machine to manage activity states
   const stateMachine = useRef(new ActivityStateMachine()).current;
   
+  // Load initial state from localStorage
+  const initialState = loadActivityTrackingFromStorage();
+  
   // Local state for compatibility with existing API
   const [activities, setActivities] = useState<Set<string>>(new Set());
-  const [completedActivityIds, setCompletedActivityIds] = useState<string[]>([]);
-  const [removedActivityIds, setRemovedActivityIds] = useState<string[]>([]);
-  const [hasActuallyStartedActivity, setHasActuallyStartedActivity] = useState(false);
+  const [completedActivityIds, setCompletedActivityIds] = useState<string[]>(
+    initialState?.completedActivityIds || []
+  );
+  const [removedActivityIds, setRemovedActivityIds] = useState<string[]>(
+    initialState?.removedActivityIds || []
+  );
+  const [hasActuallyStartedActivity, setHasActuallyStartedActivity] = useState(
+    initialState?.hasActuallyStartedActivity || false
+  );
   const [startedActivityIds, setStartedActivityIds] = useState<Set<string>>(new Set());
   const [allActivityIds, setAllActivityIds] = useState<Set<string>>(new Set());
+  
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    const stateToSave = {
+      completedActivityIds,
+      removedActivityIds,
+      hasActuallyStartedActivity,
+    };
+    saveActivityTrackingToStorage(stateToSave);
+  }, [completedActivityIds, removedActivityIds, hasActuallyStartedActivity]);
   
   // Helper to update local state from state machine
   const updateLocalStateFromMachine = useCallback(() => {
@@ -237,6 +288,15 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
   const resetActivities = useCallback(() => {
     stateMachine.reset();
     updateLocalStateFromMachine();
+    
+    // Clear localStorage when resetting
+    if (typeof window !== 'undefined' && !isTestEnvironment) {
+      try {
+        localStorage.removeItem(ACTIVITY_TRACKING_STORAGE_KEY);
+      } catch (error) {
+        console.warn('Failed to clear activity tracking state from localStorage:', error);
+      }
+    }
   }, [stateMachine, updateLocalStateFromMachine]);
   
   // New methods that directly use the state machine

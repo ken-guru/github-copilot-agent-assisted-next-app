@@ -15,10 +15,14 @@ describe('useTimelineEntries', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2024-01-01'));
+    // Clear localStorage before each test
+    localStorage.clear();
   });
 
   afterEach(() => {
     jest.useRealTimers();
+    // Clear localStorage after each test
+    localStorage.clear();
   });
 
   it('should initialize with empty timeline', () => {
