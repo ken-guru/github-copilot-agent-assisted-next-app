@@ -76,6 +76,9 @@ const BREAKPOINTS = {
 };
 
 describe('Responsive Design Tests', () => {
+  // Ensure components depending on ToastContext are wrapped
+  const renderWithProviders = (ui: React.ReactElement) => render(<ToastProvider>{ui}</ToastProvider>);
+
   beforeEach(() => {
     // Reset viewport to desktop size before each test
     mockViewport(BREAKPOINTS.desktop);
@@ -223,7 +226,7 @@ describe('Responsive Design Tests', () => {
       it('maintains proper card structure on mobile devices', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Summary {...mockSummaryProps} />);
+  renderWithProviders(<Summary {...mockSummaryProps} />);
         
         const summaryCard = screen.getByTestId('summary');
         expect(summaryCard).toBeInTheDocument();
@@ -237,7 +240,7 @@ describe('Responsive Design Tests', () => {
       it('adapts statistics cards for mobile layout', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Summary {...mockSummaryProps} />);
+  renderWithProviders(<Summary {...mockSummaryProps} />);
         
         // Check that statistics grid adapts to mobile
         const statsGrid = screen.getByTestId('stats-grid');
@@ -254,7 +257,7 @@ describe('Responsive Design Tests', () => {
       it('ensures statistics text remains readable at small sizes', () => {
         mockViewport(BREAKPOINTS.mobile);
         
-        render(<Summary {...mockSummaryProps} />);
+  renderWithProviders(<Summary {...mockSummaryProps} />);
         
         // Check that stat values are properly sized for mobile
         const statValue = screen.getByTestId('stat-value-planned');
@@ -456,7 +459,7 @@ describe('Responsive Design Tests', () => {
     it('properly stacks statistics cards on mobile devices', () => {
       mockViewport(BREAKPOINTS.mobile);
       
-      render(<Summary {...mockSummaryProps} />);
+  renderWithProviders(<Summary {...mockSummaryProps} />);
       
       // Check that all stat cards have proper mobile column classes
       const plannedCard = screen.getByTestId('stat-card-planned');
@@ -480,7 +483,7 @@ describe('Responsive Design Tests', () => {
     it('maintains proper spacing between stacked cards', () => {
       mockViewport(BREAKPOINTS.mobile);
       
-      render(<Summary {...mockSummaryProps} />);
+  renderWithProviders(<Summary {...mockSummaryProps} />);
       
       const statsGrid = screen.getByTestId('stats-grid');
       expect(statsGrid).toHaveClass('g-3'); // Bootstrap gap utility
@@ -545,6 +548,7 @@ describe('Responsive Design Tests', () => {
         mockViewport(width);
         
         const { rerender } = render(
+          <ToastProvider>
           <Summary
             entries={[
               {
@@ -566,6 +570,7 @@ describe('Responsive Design Tests', () => {
             allActivitiesCompleted={true}
             isTimeUp={false}
           />
+          </ToastProvider>
         );
         
         // Check that text remains readable

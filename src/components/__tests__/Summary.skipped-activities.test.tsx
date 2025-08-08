@@ -1,10 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import Summary from '../Summary';
+import { ToastProvider } from '@/contexts/ToastContext';
+
+const renderWithProviders = (ui: React.ReactElement) => render(<ToastProvider>{ui}</ToastProvider>);
 
 describe('Summary - skipped activities section', () => {
   it('renders skipped activities with names from storage when all activities completed', () => {
-    render(
+  renderWithProviders(
       <Summary
         entries={[]}
         totalDuration={60}
@@ -24,7 +27,7 @@ describe('Summary - skipped activities section', () => {
   });
 
   it('does not render skipped section when none skipped', () => {
-    render(
+  renderWithProviders(
       <Summary
         entries={[]}
         totalDuration={60}

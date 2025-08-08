@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Card, Alert, Row, Col, ListGroup, Badge, Button } from 'react-bootstrap';
+import { Card, Alert, Row, Col, ListGroup, Badge, Button, Spinner } from 'react-bootstrap';
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { getActivities } from '@/utils/activity-storage';
+import { isAuthenticatedClient } from '@/utils/auth/client';
+import { useToast } from '@/contexts/ToastContext';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -25,6 +27,10 @@ export default function Summary({
   onReset, // Add reset callback prop
   skippedActivityIds = []
 }: SummaryProps) {
+  const { addToast } = useToast();
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
+  const canUseAI = isAuthenticatedClient();
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
@@ -349,6 +355,52 @@ export default function Summary({
     <Card data-testid="summary" className="summary-card h-100">
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0" role="heading" aria-level={2}>Summary</h5>
+        <div className="d-flex gap-2 align-items-center">
+        {canUseAI && (!aiSummary) && (
+          <Button
+            variant="outline-primary"
+            size="sm"
+            disabled={aiLoading}
+            onClick={async () => {
+              try {
+                setAiLoading(true);
+                const payload = {
+                  plannedTime: totalDuration,
+                  timeSpent: elapsedTime,
+                  overtime: calculateOvertime(),
+                  idle: calculateActivityStats().idleTime,
+                  perActivity: calculateActivityTimes().map(a => ({ id: a.id, name: a.name, duration: a.duration })),
+                  skippedIds: skippedActivities.map(s => s.id)
+                };
+                const res = await fetch('/api/ai/summary', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!res.ok) {
+                  const data = (await res.json().catch(() => ({}))) as unknown;
+                  const message = (typeof data === 'object' && data && 'error' in data && typeof (data as { error?: unknown }).error === 'string')
+                    ? (data as { error: string }).error
+                    : 'Failed to get AI summary';
+                  throw new Error(message);
+                }
+                const data = (await res.json()) as unknown;
+                const summary = ((): string => {
+                  if (typeof data === 'object' && data && 'summary' in (data as Record<string, unknown>)) {
+                    const v = (data as Record<string, unknown>).summary;
+                    return typeof v === 'string' ? v : '';
+                  }
+                  return '';
+                })();
+                setAiSummary(summary);
+              } catch (e: unknown) {
+                const message = e instanceof Error ? e.message : 'AI summary failed';
+                addToast({ message, variant: 'error' });
+              } finally {
+                setAiLoading(false);
+              }
+            }}
+            title="Generate AI summary"
+          >
+            {aiLoading ? (<><Spinner size="sm" className="me-2" animation="border" />Summarizing…</>) : 'AI Summary'}
+          </Button>
+        )}
         {onReset && (
           <Button 
             variant="outline-danger" 
@@ -361,6 +413,7 @@ export default function Summary({
             Reset
           </Button>
         )}
+        </div>
       </Card.Header>
       
       <Card.Body data-testid="summary-body">
@@ -443,6 +496,13 @@ export default function Summary({
                 );
               })}
             </ListGroup>
+          </div>
+        )}
+
+        {aiSummary && (
+          <div className="mt-4" data-testid="ai-summary">
+            <h3 className="h6 mb-2">AI Summary</h3>
+            <Alert variant="info">{aiSummary}</Alert>
           </div>
         )}
 

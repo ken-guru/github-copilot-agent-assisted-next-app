@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useThemeReactive } from '@/hooks/useThemeReactive';
 import ThemeToggle from '@/components/ThemeToggle';
+import { isAuthenticatedClient } from '@/utils/auth/client';
 
 /**
  * Enhanced navigation with active state management and tab-like styling
@@ -21,6 +22,8 @@ const Navigation: React.FC = () => {
   // Determine active states based on current path
   const isTimerActive = pathname === '/';
   const isActivitiesActive = pathname === '/activities';
+  const isAIActive = pathname === '/ai';
+  const showAI = isAuthenticatedClient();
   
   // Use Bootstrap's theme-aware classes (removed navbar-expand-lg for always-expanded behavior)
   const navClasses = theme === 'dark' 
@@ -73,6 +76,22 @@ const Navigation: React.FC = () => {
                 </span>
               </Link>
             </li>
+
+              {/* AI - Conditional navigation item */}
+              {showAI && (
+                <li className="nav-item ai-item" data-testid="ai-nav-item">
+                  <Link
+                    className={`nav-link ${isAIActive ? 'active' : ''}`}
+                    href="/ai"
+                    aria-current={isAIActive ? 'page' : undefined}
+                  >
+                    <span aria-label="Go to AI Planner">
+                      <i className="bi bi-stars me-sm-1" aria-hidden="true"></i>
+                      <span className="nav-text d-none d-sm-inline">AI</span>
+                    </span>
+                  </Link>
+                </li>
+              )}
           </ul>
         </div>
       </div>
