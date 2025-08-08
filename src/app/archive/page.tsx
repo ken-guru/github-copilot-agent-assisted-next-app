@@ -64,7 +64,7 @@ export default function ArchivePage() {
                 <tr key={summary.id}>
                   <td>{summary.id}</td>
                   <td>
-                    <pre style={{ margin: 0, fontSize: '0.9em' }}>
+                    <pre className="archive-summary-json">
                       {JSON.stringify(summary, null, 2)}
                     </pre>
                   </td>

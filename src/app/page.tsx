@@ -1,4 +1,5 @@
 'use client';
+import type { TimelineEntry } from '../types/index';
 import { useState, useEffect, useRef } from 'react';
 import { writeActivitySummary } from '../utils/firebase-summary';
 import { Activity } from '../types/activity';
@@ -115,7 +116,8 @@ function AppContent() {
       ? 'completed'
       : 'activity';
 
-  const processedEntries = timelineEntries.map((entry: any) => ({
+  // Use TimelineEntry type for timeline entries
+  const processedEntries: TimelineEntry[] = timelineEntries.map((entry) => ({
     ...entry,
     endTime: entry.endTime === undefined ? null : entry.endTime
   }));
@@ -128,8 +130,8 @@ function AppContent() {
     console.log('[AppContent] timer state', { totalDuration, elapsedTime, timerActive });
     if (appState === 'completed' && processedEntries.length > 0 && totalDuration > 0 && elapsedTime > 0) {
       const activities: Activity[] = processedEntries
-        .filter((e: any) => e.activityId && e.activityName)
-        .map((e: any) => ({
+        .filter((e: TimelineEntry) => e.activityId && e.activityName)
+        .map((e: TimelineEntry) => ({
           id: e.activityId || '',
           name: e.activityName || '',
           description: e.description || '',
@@ -147,7 +149,7 @@ function AppContent() {
       };
       // eslint-disable-next-line no-console
       console.log('[AppContent] useEffect writing summary', summary);
-      writeActivitySummary(summary).catch((err: any) => {
+      writeActivitySummary(summary).catch((err: unknown) => {
         // eslint-disable-next-line no-console
         console.error('Failed to write summary to Firebase:', err);
       });

@@ -1,3 +1,13 @@
+/* Archive summary JSON styling for accessibility */
+.archive-summary-json {
+  margin: 0;
+  font-size: 0.9em;
+  font-family: Menlo, Monaco, 'Liberation Mono', 'Consolas', monospace;
+  background: none;
+  color: inherit;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
 /* Global styles for the application */
 :root {
   /* Layout variables */

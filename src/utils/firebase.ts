@@ -49,6 +49,6 @@ export async function getFirebaseAnalytics() {
 export async function logDebugEvent(eventName: string, params?: Record<string, unknown>) {
   const analytics = await getFirebaseAnalytics();
   if (analytics) {
-    logEvent(analytics, eventName, params as Record<string, unknown>);
+    logEvent(analytics, eventName, params);
   }
 }
