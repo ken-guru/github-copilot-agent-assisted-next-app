@@ -1,6 +1,19 @@
 /* Archive summary JSON styling for accessibility */
 .archive-summary-json {
   margin: 0;
+  font-size: 0.9rem;
+  font-family: var(--bs-font-monospace, monospace);
+  word-break: break-word;
+  white-space: pre-wrap;
+  color: var(--bs-body-color, #212529);
+  background: var(--bs-light-bg-subtle, #f8f9fa);
+  border-radius: var(--bs-border-radius, 0.375rem);
+  padding: 0.5rem 0.75rem;
+  line-height: 1.4;
+}
+/* Archive summary JSON styling for accessibility */
+.archive-summary-json {
+  margin: 0;
   font-size: 0.9em;
   font-family: Menlo, Monaco, 'Liberation Mono', 'Consolas', monospace;
   background: none;
