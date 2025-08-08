@@ -53,9 +53,10 @@
   ],
   "exclude": [
     "node_modules",
+  "cypress/**",
     ".next",
-    "cypress/e2e/**/*.ts",
-    "**/*.cy.ts",
-    "**/*.cy.tsx"
+  "cypress/e2e/**/*.ts",
+  "**/*.cy.ts",
+  "**/*.cy.tsx"
   ]
 }

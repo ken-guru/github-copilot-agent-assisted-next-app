@@ -9,6 +9,14 @@ jest.mock('../serviceWorkerErrors', () => ({
 
 describe('Service Worker Updates', () => {
   // Create properly typed mock objects
+  const createMockCookieStoreManager = (): CookieStoreManager => ({
+    get: jest.fn(),
+    set: jest.fn(),
+    delete: jest.fn(),
+    subscribe: jest.fn(),
+    unsubscribe: jest.fn(),
+    getSubscriptions: jest.fn().mockResolvedValue([])
+  } as unknown as CookieStoreManager);
   
   beforeEach(() => {
     // Spy on console functions only
@@ -49,7 +57,7 @@ describe('Service Worker Updates', () => {
   });
 
   it('should call onUpdate when there is a waiting worker', () => {
-    const mockRegistration = ({
+  const mockRegistration = ({
       waiting: {} as ServiceWorker,
       installing: null,
       active: {} as ServiceWorker,
@@ -65,8 +73,8 @@ describe('Service Worker Updates', () => {
       addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
       dispatchEvent: jest.fn(),
-      // Added for newer DOM lib typings
-      cookies: {} as unknown as CookieStoreManager
+  // Added for newer DOM lib typings
+  cookies: createMockCookieStoreManager()
     } as unknown) as ServiceWorkerRegistration;
     const onSuccess = jest.fn();
     const onUpdate = jest.fn();
@@ -88,7 +96,7 @@ describe('Service Worker Updates', () => {
       postMessage: jest.fn()
     };
     
-    const mockRegistration = ({
+  const mockRegistration = ({
       waiting: null,
       installing: mockInstallingWorker,
       active: {
@@ -111,8 +119,8 @@ describe('Service Worker Updates', () => {
       showNotification: jest.fn(),
       addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
-      cookies: {} as unknown as CookieStoreManager
+  dispatchEvent: jest.fn(),
+  cookies: createMockCookieStoreManager()
     } as unknown) as ServiceWorkerRegistration;
     
     const onSuccess = jest.fn();
@@ -142,7 +150,7 @@ describe('Service Worker Updates', () => {
     });
 
     // Fix the mock registration to properly trigger onUpdate with a waiting worker
-    const mockRegistration = ({
+  const mockRegistration = ({
       waiting: createMockServiceWorker("activated"), // Set waiting to activate onUpdate
       installing: null,
       active: createMockServiceWorker("activated"),
@@ -166,8 +174,8 @@ describe('Service Worker Updates', () => {
       index: null,
       dispatchEvent: jest.fn(),
       addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      cookies: {} as unknown as CookieStoreManager
+  removeEventListener: jest.fn(),
+  cookies: createMockCookieStoreManager()
     } as unknown) as ServiceWorkerRegistration;
     
     handleRegistration(mockRegistration, { onSuccess, onUpdate });
@@ -177,7 +185,7 @@ describe('Service Worker Updates', () => {
 
   it('should update service worker when called', async () => {
     // Create a fully typed mock registration
-    const mockRegistration = ({
+  const mockRegistration = ({
       waiting: null,
       installing: null,
       active: {} as ServiceWorker,
@@ -191,9 +199,9 @@ describe('Service Worker Updates', () => {
       getNotifications: jest.fn(),
       showNotification: jest.fn(),
       addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
-      cookies: {} as unknown as CookieStoreManager
+  removeEventListener: jest.fn(),
+  dispatchEvent: jest.fn(),
+  cookies: createMockCookieStoreManager()
     } as unknown) as ServiceWorkerRegistration;
     
     await checkForUpdates(mockRegistration);
@@ -202,7 +210,7 @@ describe('Service Worker Updates', () => {
   
   it('should handle update errors', async () => {
     // Create another properly typed mock with failing update
-    const mockRegistration = ({
+  const mockRegistration = ({
       waiting: null,
       installing: null,
       active: {} as ServiceWorker,
@@ -216,9 +224,9 @@ describe('Service Worker Updates', () => {
       getNotifications: jest.fn(),
       showNotification: jest.fn(),
       addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
-      cookies: {} as unknown as CookieStoreManager
+  removeEventListener: jest.fn(),
+  dispatchEvent: jest.fn(),
+  cookies: createMockCookieStoreManager()
     } as unknown) as ServiceWorkerRegistration;
     
     await expect(checkForUpdates(mockRegistration)).resolves.not.toThrow();
