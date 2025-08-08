@@ -409,7 +409,9 @@ export default function Summary({
 
         {activityTimes.length > 0 && (
           <div className="mt-4">
-            <h3 className="h5 mb-3" data-testid="activity-list-heading">Time Spent per Activity</h3>
+            <h3 className="h5 mb-3" data-testid="activity-list-heading">
+              Time Spent per Activity
+            </h3>
             <ListGroup className="list-group-flush" data-testid="activity-list">
               {activityTimes.map((activity) => {
                 // Get theme-appropriate colors
@@ -434,7 +436,7 @@ export default function Summary({
                     >
                       {activity.name}
                     </span>
-                    <Badge bg="secondary" className="activity-time ms-auto">
+                    <Badge bg="primary" className="activity-time ms-auto text-bg-primary shadow-none">
                       {formatDuration(activity.duration)}
                     </Badge>
                   </ListGroup.Item>
@@ -450,8 +452,8 @@ export default function Summary({
             <ListGroup className="list-group-flush">
               {skippedActivities.map(item => (
                 <ListGroup.Item key={item.id} className="d-flex justify-content-between align-items-center">
-                  <span data-testid={`skipped-activity-name-${item.id}`}>{item.name}</span>
-                  <Badge bg="secondary">Skipped</Badge>
+                  <span className="text-body-secondary" data-testid={`skipped-activity-name-${item.id}`}>{item.name}</span>
+                  <Badge bg="light" text="secondary" className="border fw-normal">Skipped</Badge>
                 </ListGroup.Item>
               ))}
             </ListGroup>

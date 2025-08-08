@@ -469,7 +469,9 @@ describe('Summary Bootstrap Integration', () => {
       activityItems.forEach(item => {
         expect(item).toHaveClass('list-group-item');
         const timeElement = item.querySelector('.ms-auto');
-        expect(timeElement).toHaveClass('badge', 'bg-secondary');
+        // Verify it's a Bootstrap badge; allow variant changes (primary/text-bg-primary)
+        expect(timeElement).toHaveClass('badge');
+        expect(timeElement?.className).toMatch(/bg-primary|text-bg-primary/);
       });
     });
   });

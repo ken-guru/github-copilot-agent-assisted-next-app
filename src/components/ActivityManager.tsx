@@ -260,23 +260,28 @@ export default function ActivityManager({
           {hiddenActivities.length > 0 && (
             <div className="mt-3">
               <Button
-                variant="link"
+                variant="outline-secondary"
                 size="sm"
-                className="p-0"
+                className="d-inline-flex align-items-center hidden-activities-toggle"
                 onClick={() => setShowHiddenList(v => !v)}
                 data-testid="toggle-hidden-activities"
               >
+                <i className={`bi ${showHiddenList ? 'bi-eye-slash' : 'bi-eye'} me-2`} />
                 {showHiddenList ? 'Hide' : 'Show'} {hiddenActivities.length} hidden {hiddenActivities.length === 1 ? 'activity' : 'activities'}
               </Button>
 
               {showHiddenList && (
-                <div className="mt-2" data-testid="hidden-activities-panel">
+                <div
+                  className="hidden-activities-panel bg-body-tertiary border rounded-3 p-2 mt-2"
+                  data-testid="hidden-activities-panel"
+                >
                   {hiddenActivities.map((activity) => (
                     <div key={activity.id} className="d-flex justify-content-between align-items-center py-1">
-                      <span>{activity.name}</span>
+                      <span className="text-body-secondary small">{activity.name}</span>
                       <Button
                         variant="outline-secondary"
                         size="sm"
+                        className="px-2 py-1"
                         onClick={() => handleRestoreActivity(activity.id)}
                         data-testid={`restore-activity-${activity.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
                       >
