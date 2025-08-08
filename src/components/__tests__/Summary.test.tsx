@@ -1,6 +1,7 @@
 import { render, screen, cleanup } from '@testing-library/react';
 import Summary from '../Summary';
 import { TimelineEntry } from '@/types';
+import { ToastProvider } from '@/contexts/ToastContext';
 
 // Mock TimelineEntry data
 const createMockTimelineEntries = (): TimelineEntry[] => [
@@ -38,13 +39,17 @@ const createMockTimelineEntries = (): TimelineEntry[] => [
 ];
 
 describe('Summary Component', () => {
+  // Helper to ensure required providers are present
+  const renderWithProviders = (ui: React.ReactElement) =>
+    render(<ToastProvider>{ui}</ToastProvider>);
+
   describe('Time Metrics Display', () => {
     it('should render activity summary with time metrics', () => {
       const entries = createMockTimelineEntries();
       const totalDuration = 3600; // 1 hour planned
       const elapsedTime = 5400; // 1h 30m actually spent
       
-      render(
+      renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={totalDuration}
@@ -87,7 +92,7 @@ describe('Summary Component', () => {
         }
       }];
 
-      render(
+  renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={3600}
@@ -117,7 +122,7 @@ describe('Summary Component', () => {
         }
       }];
 
-      render(
+  renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={3600}
@@ -142,7 +147,7 @@ describe('Summary Component', () => {
         endTime: 1000000 + 1800000, // 30 minutes break
       }];
 
-      render(
+  renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={3600}
@@ -177,7 +182,7 @@ describe('Summary Component', () => {
       const totalDuration = 3600;
       const elapsedTime = 3602; // Just 2 seconds over
       
-      render(
+  renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={totalDuration}
@@ -195,7 +200,7 @@ describe('Summary Component', () => {
       const totalDuration = 3600;
       const elapsedTime = 3540; // 1 minute early
       
-      render(
+  renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={totalDuration}
@@ -213,7 +218,7 @@ describe('Summary Component', () => {
     it('should show time up message when time is up', () => {
       const entries = createMockTimelineEntries();
       
-      render(
+  renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={3600}
@@ -235,7 +240,7 @@ describe('Summary Component', () => {
         endTime: 1000000 + 3900000, // 1h 5m
       }];
       
-      render(
+  renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={3600}
@@ -268,7 +273,7 @@ describe('Summary Component', () => {
 
       const renderStart = performance.now();
       
-      render(
+  renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={360000} // 100 hours
@@ -307,7 +312,7 @@ describe('Summary Component', () => {
         endTime: maxDuration,
       }];
 
-      render(
+  renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={maxDuration}
@@ -351,7 +356,7 @@ describe('Summary Component', () => {
         }
       ];
 
-      render(
+  renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={7200}
@@ -406,7 +411,7 @@ describe('Summary Component', () => {
         }
       ];
 
-      render(
+  renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={9000}
@@ -453,7 +458,7 @@ describe('Summary Component', () => {
     }));
     
     // Render with light mode (default)
-    render(
+  renderWithProviders(
       <Summary 
         entries={mockEntries}
         totalDuration={1000}
@@ -523,7 +528,7 @@ describe('Summary Component', () => {
       }));
       
       // Render the component with the test case configuration
-      render(
+  renderWithProviders(
         <Summary 
           entries={mockEntries}
           totalDuration={testCase.totalDuration}
@@ -549,7 +554,7 @@ describe('Summary Component', () => {
     const mockTimelineEntries = createMockTimelineEntries();
 
     it('does not render reset button when onReset prop is not provided', () => {
-      render(
+  renderWithProviders(
         <Summary 
           entries={mockTimelineEntries}
           totalDuration={3600000}
@@ -563,7 +568,7 @@ describe('Summary Component', () => {
 
     it('renders reset button when onReset prop is provided', () => {
       const onReset = jest.fn();
-      render(
+  renderWithProviders(
         <Summary 
           entries={mockTimelineEntries}
           totalDuration={3600000}
@@ -581,7 +586,7 @@ describe('Summary Component', () => {
 
     it('calls onReset callback when reset button is clicked', () => {
       const onReset = jest.fn();
-      render(
+  renderWithProviders(
         <Summary 
           entries={mockTimelineEntries}
           totalDuration={3600000}
@@ -599,7 +604,7 @@ describe('Summary Component', () => {
 
     it('has proper Bootstrap styling and icon', () => {
       const onReset = jest.fn();
-      render(
+  renderWithProviders(
         <Summary 
           entries={mockTimelineEntries}
           totalDuration={3600000}
@@ -607,7 +612,7 @@ describe('Summary Component', () => {
           allActivitiesCompleted={true}
           onReset={onReset}
         />
-      );
+  );
       
       const resetButton = screen.getByRole('button', { name: /Reset/i });
       expect(resetButton).toHaveClass('btn', 'btn-outline-danger', 'btn-sm', 'd-flex', 'align-items-center');

@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import Summary from '../Summary';
 import { TimelineEntry } from '@/types';
+import { ToastProvider } from '@/contexts/ToastContext';
 
 // Mock TimelineEntry data for testing
 const createMockTimelineEntries = (): TimelineEntry[] => [
@@ -37,6 +38,10 @@ const createMockTimelineEntries = (): TimelineEntry[] => [
   }
 ];
 
+const renderWithProviders = (ui: React.ReactElement) => {
+  return render(<ToastProvider>{ui}</ToastProvider>);
+};
+
 describe('Summary Bootstrap Integration', () => {
   const mockEntries = createMockTimelineEntries();
   const totalDuration = 5400000; // 90 minutes
@@ -44,7 +49,7 @@ describe('Summary Bootstrap Integration', () => {
 
   describe('Bootstrap Card Structure', () => {
     it('renders with Bootstrap Card structure', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -58,7 +63,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('renders with Bootstrap Card Body', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -72,7 +77,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('applies proper Bootstrap Card classes', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -88,7 +93,7 @@ describe('Summary Bootstrap Integration', () => {
 
   describe('Bootstrap Alert for Status Messages', () => {
     it('renders status message with Bootstrap Alert', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -102,7 +107,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('applies correct Bootstrap Alert variant for late status', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -116,7 +121,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('applies correct Bootstrap Alert variant for early status', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -132,7 +137,7 @@ describe('Summary Bootstrap Integration', () => {
 
   describe('Bootstrap Grid for Stats', () => {
     it('renders stats with Bootstrap Row and Col structure', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -146,7 +151,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('renders stat cards with Bootstrap Column classes', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -162,7 +167,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('renders individual stat cards with Bootstrap Card classes', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -179,7 +184,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('displays all four stat categories', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -197,7 +202,7 @@ describe('Summary Bootstrap Integration', () => {
 
   describe('Bootstrap List Group for Activities', () => {
     it('renders activity list with Bootstrap List Group', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -211,7 +216,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('renders activity items with Bootstrap List Group Item classes', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -227,7 +232,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('renders activity list heading with Bootstrap typography', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -243,7 +248,7 @@ describe('Summary Bootstrap Integration', () => {
 
   describe('Bootstrap Typography and Spacing', () => {
     it('applies Bootstrap spacing utilities', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -260,7 +265,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('uses Bootstrap typography for stat labels and values', () => {
-      render(
+      renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -283,7 +288,7 @@ describe('Summary Bootstrap Integration', () => {
 
   describe('Bootstrap Responsive Behavior', () => {
     it('applies responsive column classes for stats grid', () => {
-      render(
+      renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -300,7 +305,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('maintains responsive layout structure', () => {
-      render(
+      renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -319,7 +324,7 @@ describe('Summary Bootstrap Integration', () => {
 
   describe('Bootstrap Theme Integration', () => {
     it('maintains Bootstrap theme classes consistently', () => {
-      render(
+      renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -336,7 +341,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('preserves custom activity colors within Bootstrap structure', () => {
-      render(
+      renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -355,7 +360,7 @@ describe('Summary Bootstrap Integration', () => {
 
   describe('Bootstrap Accessibility Features', () => {
     it('maintains proper Bootstrap accessibility with Card structure', () => {
-      render(
+      renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -372,7 +377,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('preserves accessibility within Bootstrap List Group', () => {
-      render(
+      renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -391,7 +396,7 @@ describe('Summary Bootstrap Integration', () => {
 
   describe('Bootstrap Conditional Rendering', () => {
     it('does not render when activities not completed and time not up', () => {
-      const { container } = render(
+  const { container } = renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -405,7 +410,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('renders when time is up even if activities not completed', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -420,7 +425,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('renders activity list only when activities exist', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={[]}
           totalDuration={totalDuration}
@@ -439,7 +444,7 @@ describe('Summary Bootstrap Integration', () => {
 
   describe('Bootstrap Data Display', () => {
     it('displays formatted duration values correctly', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
@@ -456,7 +461,7 @@ describe('Summary Bootstrap Integration', () => {
     });
 
     it('displays activity durations with proper Bootstrap typography', () => {
-      render(
+  renderWithProviders(
         <Summary
           entries={mockEntries}
           totalDuration={totalDuration}
