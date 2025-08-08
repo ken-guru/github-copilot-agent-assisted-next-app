@@ -96,11 +96,14 @@ function trackInstallation(
 /**
  * Check for service worker updates
  */
-export function checkForUpdates(registration: ServiceWorkerRegistration): Promise<void> {
-  return registration.update()
-    .catch(error => {
-      console.error('Service worker update failed:', error);
-      console.warn('Update failure might be related to fetch or MIME type issues');
-      handleServiceWorkerError(error);
-    });
+export async function checkForUpdates(
+  registration: ServiceWorkerRegistration
+): Promise<void> {
+  try {
+    await registration.update();
+  } catch (error) {
+    console.error('Service worker update failed:', error);
+    console.warn('Update failure might be related to fetch or MIME type issues');
+    handleServiceWorkerError(error as Error);
+  }
 }

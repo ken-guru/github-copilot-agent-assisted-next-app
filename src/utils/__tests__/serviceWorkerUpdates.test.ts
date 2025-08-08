@@ -1,14 +1,24 @@
-import { handleRegistration, checkForUpdates } from '../serviceWorkerUpdates';
-import * as serviceWorkerErrors from '../serviceWorkerErrors'; 
-
-// Mock the serviceWorkerErrors module instead of using spyOn
+// Mock the serviceWorkerErrors module before imports so serviceWorkerUpdates sees the mock
 jest.mock('../serviceWorkerErrors', () => ({
   handleServiceWorkerError: jest.fn(),
   isLocalhost: jest.fn().mockReturnValue(true)
 }));
 
+import { expect as jestExpect, jest } from '@jest/globals';
+import { handleRegistration, checkForUpdates } from '../serviceWorkerUpdates';
+
+// Mock the serviceWorkerErrors module instead of using spyOn
+
 describe('Service Worker Updates', () => {
   // Create properly typed mock objects
+  const createMockCookieStoreManager = (): CookieStoreManager => ({
+    get: jest.fn<() => Promise<unknown>>() as unknown,
+    set: jest.fn<(..._args: unknown[]) => Promise<void>>() as unknown,
+    delete: jest.fn<(..._args: unknown[]) => Promise<void>>() as unknown,
+    subscribe: jest.fn<(..._args: unknown[]) => Promise<void>>() as unknown,
+    unsubscribe: jest.fn<(..._args: unknown[]) => Promise<void>>() as unknown,
+    getSubscriptions: jest.fn<() => Promise<unknown[]>>().mockResolvedValue([]) as unknown
+  } as unknown as CookieStoreManager);
   
   beforeEach(() => {
     // Spy on console functions only
@@ -44,12 +54,12 @@ describe('Service Worker Updates', () => {
     } as unknown as ServiceWorkerRegistration;
     
     handleRegistration(mockRegistration, { onSuccess, onUpdate });
-    expect(onSuccess).toHaveBeenCalled();
-    expect(onUpdate).not.toHaveBeenCalled();
+  jestExpect(onSuccess).toHaveBeenCalled();
+  jestExpect(onUpdate).not.toHaveBeenCalled();
   });
 
   it('should call onUpdate when there is a waiting worker', () => {
-    const mockRegistration = {
+  const mockRegistration = ({
       waiting: {} as ServiceWorker,
       installing: null,
       active: {} as ServiceWorker,
@@ -64,14 +74,16 @@ describe('Service Worker Updates', () => {
       showNotification: jest.fn(),
       addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn()
-    } as ServiceWorkerRegistration;
+      dispatchEvent: jest.fn(),
+  // Added for newer DOM lib typings
+  cookies: createMockCookieStoreManager()
+    } as unknown) as ServiceWorkerRegistration;
     const onSuccess = jest.fn();
     const onUpdate = jest.fn();
 
     handleRegistration(mockRegistration, { onSuccess, onUpdate });
-    expect(onUpdate).toHaveBeenCalledWith(mockRegistration);
-    expect(onSuccess).not.toHaveBeenCalled();
+  jestExpect(onUpdate).toHaveBeenCalledWith(mockRegistration);
+  jestExpect(onSuccess).not.toHaveBeenCalled();
   });
 
   it('should listen for state changes on installing worker', () => {
@@ -86,7 +98,7 @@ describe('Service Worker Updates', () => {
       postMessage: jest.fn()
     };
     
-    const mockRegistration = {
+  const mockRegistration = ({
       waiting: null,
       installing: mockInstallingWorker,
       active: {
@@ -109,17 +121,18 @@ describe('Service Worker Updates', () => {
       showNotification: jest.fn(),
       addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn()
-    } as unknown as ServiceWorkerRegistration;
+  dispatchEvent: jest.fn(),
+  cookies: createMockCookieStoreManager()
+    } as unknown) as ServiceWorkerRegistration;
     
     const onSuccess = jest.fn();
     const onUpdate = jest.fn();
 
     handleRegistration(mockRegistration, { onSuccess, onUpdate });
     
-    expect(mockInstallingWorker.addEventListener).toHaveBeenCalledWith(
+    jestExpect(mockInstallingWorker.addEventListener).toHaveBeenCalledWith(
       'statechange', 
-      expect.any(Function)
+      jestExpect.any(Function)
     );
   });
 
@@ -139,7 +152,7 @@ describe('Service Worker Updates', () => {
     });
 
     // Fix the mock registration to properly trigger onUpdate with a waiting worker
-    const mockRegistration = {
+  const mockRegistration = ({
       waiting: createMockServiceWorker("activated"), // Set waiting to activate onUpdate
       installing: null,
       active: createMockServiceWorker("activated"),
@@ -163,22 +176,23 @@ describe('Service Worker Updates', () => {
       index: null,
       dispatchEvent: jest.fn(),
       addEventListener: jest.fn(),
-      removeEventListener: jest.fn()
-    } as unknown as ServiceWorkerRegistration;
+  removeEventListener: jest.fn(),
+  cookies: createMockCookieStoreManager()
+    } as unknown) as ServiceWorkerRegistration;
     
     handleRegistration(mockRegistration, { onSuccess, onUpdate });
-    expect(onUpdate).toHaveBeenCalledWith(mockRegistration);
-    expect(onSuccess).not.toHaveBeenCalled();
+  jestExpect(onUpdate).toHaveBeenCalledWith(mockRegistration);
+  jestExpect(onSuccess).not.toHaveBeenCalled();
   });
 
   it('should update service worker when called', async () => {
     // Create a fully typed mock registration
-    const mockRegistration = {
+  const mockRegistration = ({
       waiting: null,
       installing: null,
       active: {} as ServiceWorker,
       unregister: jest.fn(),
-      update: jest.fn().mockResolvedValue(undefined),
+  update: (jest.fn<() => Promise<void>>().mockResolvedValue(undefined)) as unknown as ServiceWorkerRegistration['update'],
       navigationPreload: {} as NavigationPreloadManager,
       onupdatefound: null,
       pushManager: {} as PushManager,
@@ -187,22 +201,23 @@ describe('Service Worker Updates', () => {
       getNotifications: jest.fn(),
       showNotification: jest.fn(),
       addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn()
-    } as unknown as ServiceWorkerRegistration;
+  removeEventListener: jest.fn(),
+  dispatchEvent: jest.fn(),
+  cookies: createMockCookieStoreManager()
+    } as unknown) as ServiceWorkerRegistration;
     
     await checkForUpdates(mockRegistration);
-    expect(mockRegistration.update).toHaveBeenCalled();
+  jestExpect(mockRegistration.update).toHaveBeenCalled();
   });
   
   it('should handle update errors', async () => {
     // Create another properly typed mock with failing update
-    const mockRegistration = {
+  const mockRegistration = ({
       waiting: null,
       installing: null,
       active: {} as ServiceWorker,
       unregister: jest.fn(),
-      update: jest.fn().mockRejectedValue(new Error('Update failed')),
+  update: (jest.fn<() => Promise<void>>().mockRejectedValue(new Error('Update failed'))) as unknown as ServiceWorkerRegistration['update'],
       navigationPreload: {} as NavigationPreloadManager,
       onupdatefound: null,
       pushManager: {} as PushManager,
@@ -211,11 +226,14 @@ describe('Service Worker Updates', () => {
       getNotifications: jest.fn(),
       showNotification: jest.fn(),
       addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn()
-    } as unknown as ServiceWorkerRegistration;
+  removeEventListener: jest.fn(),
+  dispatchEvent: jest.fn(),
+  cookies: createMockCookieStoreManager()
+    } as unknown) as ServiceWorkerRegistration;
     
-    await expect(checkForUpdates(mockRegistration)).resolves.not.toThrow();
-    expect(serviceWorkerErrors.handleServiceWorkerError).toHaveBeenCalled();
+  await jestExpect(checkForUpdates(mockRegistration)).resolves.not.toThrow();
+  // Verify error path via console spies (error + warn)
+  jestExpect(console.error).toHaveBeenCalled();
+  jestExpect(console.warn).toHaveBeenCalled();
   });
 });

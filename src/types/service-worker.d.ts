@@ -6,6 +6,19 @@ declare global {
     Request: typeof Request;
   }
   
+  /**
+   * Minimal CookieStoreManager typing used by tests to satisfy DOM lib updates.
+   * If the DOM lib already provides this, interface merging will extend it safely.
+   */
+  interface CookieStoreManager {
+    get(name: string): Promise<unknown>;
+    set(...args: unknown[]): Promise<void>;
+    delete(...args: unknown[]): Promise<void>;
+    subscribe(...args: unknown[]): Promise<void>;
+    unsubscribe(...args: unknown[]): Promise<void>;
+    getSubscriptions(): Promise<unknown[]>;
+  }
+  
   interface MockRequest extends Request {
     cache?: string;
     credentials?: RequestCredentials;

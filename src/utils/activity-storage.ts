@@ -84,14 +84,16 @@ export function updateActivity(activity: Activity): void {
 export function deleteActivity(id: string): void {
   const activities = getActivities();
   const idx = activities.findIndex(a => a.id === id);
-  if (idx !== -1 && activities[idx]) {
-    activities[idx] = { ...activities[idx], isActive: false };
-    try {
-      saveActivities(activities);
-    } catch {
-      // Handle quota exceeded or localStorage disabled
-      // Optionally log error or notify user
-    }
+  if (idx === -1) return;
+  const current = activities[idx];
+  if (!current) return;
+  // Mutate in place to preserve exact Activity shape
+  current.isActive = false;
+  try {
+    saveActivities(activities);
+  } catch {
+    // Handle quota exceeded or localStorage disabled
+    // Optionally log error or notify user
   }
 }
 
