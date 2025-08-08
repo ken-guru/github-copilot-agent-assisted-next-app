@@ -319,9 +319,13 @@ export default function Summary({
   const status = getStatusMessage();
   const stats = calculateActivityStats();
 
+  // Stable content-based key for skippedActivityIds to avoid identity-only recalculations
+  const skippedKey = useMemo(() => (skippedActivityIds ? skippedActivityIds.join('|') : ''), [skippedActivityIds]);
+
   // Build skipped activities list with names from storage (must not be conditional)
-  const skippedActivities = useMemo(() => {
-    if (!skippedActivityIds || skippedActivityIds.length === 0) return [] as { id: string; name: string }[];
+  // Use a content-based dependency to avoid recalculations on array reference changes
+  const skippedActivities = useMemo<{ id: string; name: string }[]>(() => {
+    if (!skippedKey) return [];
     const namesById = new Map<string, string>();
     try {
       const all = getActivities();
@@ -329,8 +333,9 @@ export default function Summary({
     } catch {
       // ignore storage errors; fall back to id as name
     }
-    return skippedActivityIds.map(id => ({ id, name: namesById.get(id) || id }));
-  }, [skippedActivityIds]);
+    const ids = skippedKey.split('|').filter(Boolean);
+    return ids.map(id => ({ id, name: namesById.get(id) || id }));
+  }, [skippedKey]);
 
   // Early return modified to handle isTimeUp case
   if ((!allActivitiesCompleted && !isTimeUp) || !stats) {
