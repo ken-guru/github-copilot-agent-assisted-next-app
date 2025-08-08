@@ -56,6 +56,11 @@
 				"mcp/playwright"
 			],
 			"type": "stdio"
+		},
+		"context7": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["-y", "@upstash/context7-mcp"]
 		}
 	},
 	"inputs": [

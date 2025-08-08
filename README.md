@@ -171,11 +171,55 @@ docs/                 # Project documentation
 
 ## Development Setup
 
+
 ### Environment Requirements
 ```bash
 Node.js (Latest LTS)
 npm or yarn
 ```
+
+### Firebase Integration Setup
+
+#### 1. Environment Variables
+
+Create a `.env.local` file (not committed) for local development, or set these variables in the Vercel dashboard for production:
+
+```
+# See .env.example for all required keys
+NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-app.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_DATABASE_URL=https://your-app.firebaseio.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-app-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-app.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your-measurement-id
+```
+
+**Reference:** `.env.example` in the project root.
+
+#### 2. Firebase Usage
+
+- The app uses Firebase Realtime Database to store activity summaries as JSON objects.
+- Firebase is initialized in `src/utils/firebase.ts` using the above environment variables.
+- To write a summary, use the utility in `src/utils/firebase-summary.ts`:
+
+```typescript
+import { writeActivitySummary } from '@/utils/firebase-summary';
+// ...
+await writeActivitySummary(summaryObject);
+```
+
+#### 3. Security & Best Practices
+
+- Never commit `.env.local` or secrets to version control.
+- Restrict database access via Firebase security rules.
+- For Vercel, set all `NEXT_PUBLIC_FIREBASE_*` variables in the dashboard.
+
+#### 4. Testing Firebase Integration
+
+- Jest tests for the summary write utility are in `src/utils/__tests__/firebase-summary.test.ts`.
+- These tests mock Firebase and do not require real credentials.
 
 ### Installation Commands
 ```bash

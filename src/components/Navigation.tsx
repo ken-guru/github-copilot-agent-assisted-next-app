@@ -21,6 +21,7 @@ const Navigation: React.FC = () => {
   // Determine active states based on current path
   const isTimerActive = pathname === '/';
   const isActivitiesActive = pathname === '/activities';
+  const isArchiveActive = pathname === '/archive';
   
   // Use Bootstrap's theme-aware classes (removed navbar-expand-lg for always-expanded behavior)
   const navClasses = theme === 'dark' 
@@ -59,7 +60,6 @@ const Navigation: React.FC = () => {
                 </span>
               </Link>
             </li>
-            
             {/* Activities - Second navigation item */}
             <li className="nav-item activities-item" data-testid="activities-nav-item">
               <Link 
@@ -70,6 +70,19 @@ const Navigation: React.FC = () => {
                 <span aria-label="Go to Activities Management">
                   <i className="bi bi-list-check me-sm-1" aria-hidden="true"></i>
                   <span className="nav-text d-none d-sm-inline">Activities</span>
+                </span>
+              </Link>
+            </li>
+            {/* Archive - Third navigation item */}
+            <li className="nav-item archive-item" data-testid="archive-nav-item">
+              <Link 
+                className={`nav-link ${isArchiveActive ? 'active' : ''}`} 
+                href="/archive"
+                aria-current={isArchiveActive ? 'page' : undefined}
+              >
+                <span aria-label="Go to Archive">
+                  <i className="bi bi-archive me-sm-1" aria-hidden="true"></i>
+                  <span className="nav-text d-none d-sm-inline">Archive</span>
                 </span>
               </Link>
             </li>
