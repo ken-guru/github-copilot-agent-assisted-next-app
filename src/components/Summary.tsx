@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card, Alert, Row, Col, ListGroup, Badge, Button } from 'react-bootstrap';
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
+import { getActivities } from '@/utils/activity-storage';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -11,6 +12,7 @@ interface SummaryProps {
   allActivitiesCompleted?: boolean;
   isTimeUp?: boolean; // Add this prop to handle time-up state
   onReset?: () => void; // Add reset callback prop
+  skippedActivityIds?: string[]; // Activities skipped/hidden during session
 }
 
 export default function Summary({ 
@@ -20,7 +22,8 @@ export default function Summary({
   timerActive = false,
   allActivitiesCompleted = false,
   isTimeUp = false, // Add this prop to handle time-up state
-  onReset // Add reset callback prop
+  onReset, // Add reset callback prop
+  skippedActivityIds = []
 }: SummaryProps) {
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
@@ -323,6 +326,19 @@ export default function Summary({
   
   const overtime = calculateOvertime();
   const activityTimes = calculateActivityTimes();
+  
+  // Build skipped activities list with names from storage
+  const skippedActivities = useMemo(() => {
+    if (!skippedActivityIds || skippedActivityIds.length === 0) return [] as { id: string; name: string }[];
+    let namesById = new Map<string, string>();
+    try {
+      const all = getActivities();
+      for (const a of all) namesById.set(a.id, a.name);
+    } catch {
+      // ignore storage errors; fall back to id as name
+    }
+    return skippedActivityIds.map(id => ({ id, name: namesById.get(id) || id }));
+  }, [skippedActivityIds]);
 
   return (
     <Card data-testid="summary" className="summary-card h-100">
@@ -419,6 +435,20 @@ export default function Summary({
                   </ListGroup.Item>
                 );
               })}
+            </ListGroup>
+          </div>
+        )}
+
+        {skippedActivities.length > 0 && (
+          <div className="mt-4" data-testid="skipped-activities">
+            <h3 className="h6 mb-2">Skipped activities ({skippedActivities.length})</h3>
+            <ListGroup className="list-group-flush">
+              {skippedActivities.map(item => (
+                <ListGroup.Item key={item.id} className="d-flex justify-content-between align-items-center">
+                  <span data-testid={`skipped-activity-name-${item.id}`}>{item.name}</span>
+                  <Badge bg="secondary">Skipped</Badge>
+                </ListGroup.Item>
+              ))}
             </ListGroup>
           </div>
         )}

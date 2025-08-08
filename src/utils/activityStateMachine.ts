@@ -34,6 +34,29 @@ export class ActivityStateMachine {
   }
 
   /**
+   * Restores an activity from REMOVED back to PENDING state
+   * @param id Unique identifier for the activity
+   * @throws Error if activity doesn't exist or transition is invalid
+   */
+  restoreActivity(id: string): void {
+    const activity = this.states.get(id);
+
+    if (!activity) {
+      throw new Error(`Activity with ID ${id} not found`);
+    }
+
+    if (activity.state !== 'REMOVED') {
+      throw new Error(`Cannot restore activity ${id} from ${activity.state} state`);
+    }
+
+    this.states.set(id, {
+      ...activity,
+      state: 'PENDING',
+      removedAt: undefined
+    });
+  }
+
+  /**
    * Adds a new activity in PENDING state
    * @param id Unique identifier for the activity
    * @param throwOnExisting Whether to throw an error if activity already exists (default: true)

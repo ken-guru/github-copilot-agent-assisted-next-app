@@ -14,8 +14,10 @@ type Activity = CanonicalActivity & { colors?: ColorSet };
 interface ActivityManagerProps {
   onActivitySelect: (activity: Activity | null, justAdd?: boolean) => void;
   onActivityRemove?: (activityId: string) => void;
+  onActivityRestore?: (activityId: string) => void;
   currentActivityId: string | null;
   completedActivityIds: string[];
+  removedActivityIds?: string[];
   timelineEntries: TimelineEntry[];
   isTimeUp?: boolean;
   elapsedTime?: number;
@@ -31,8 +33,10 @@ interface ActivityManagerProps {
 export default function ActivityManager({ 
   onActivitySelect, 
   onActivityRemove,
+  onActivityRestore,
   currentActivityId, 
   completedActivityIds,
+  removedActivityIds = [],
   timelineEntries,
   elapsedTime = 0,
   totalDuration = 0,
@@ -41,6 +45,7 @@ export default function ActivityManager({
   onExtendDuration
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [showHiddenList, setShowHiddenList] = useState(false);
   
   // State preservation for form values during unmount/remount cycles
   const [preservedFormValues, setPreservedFormValues] = useState<{
@@ -122,15 +127,30 @@ export default function ActivityManager({
   }, [currentActivityId, onActivitySelect]);
 
   const handleRemoveActivity = useCallback((id: string) => {
-    if (id === currentActivityId) {
-      onActivitySelect(null);
+    if (timerActive) {
+      // Session-only hide/skip: do NOT persist delete
+      if (id === currentActivityId) {
+        onActivitySelect(null);
+      }
+      if (onActivityRemove) {
+        onActivityRemove(id);
+      }
+    } else {
+      // CRUD-like behavior (not typical for this component, but preserve existing logic)
+      if (id === currentActivityId) {
+        onActivitySelect(null);
+      }
+      setActivities(prev => prev.filter(activity => activity.id !== id));
+      persistDeleteActivity(id);
+      if (onActivityRemove) {
+        onActivityRemove(id);
+      }
     }
-    setActivities(prev => prev.filter(activity => activity.id !== id));
-    persistDeleteActivity(id);
-    if (onActivityRemove) {
-      onActivityRemove(id);
-    }
-  }, [currentActivityId, onActivitySelect, onActivityRemove]);
+  }, [currentActivityId, onActivitySelect, onActivityRemove, timerActive]);
+
+  const handleRestoreActivity = useCallback((id: string) => {
+    onActivityRestore?.(id);
+  }, [onActivityRestore]);
 
   const handleExtendDuration = useCallback(() => {
     if (onExtendDuration) {
@@ -141,6 +161,7 @@ export default function ActivityManager({
   const handleResetSession = useCallback(() => {
     // Clear preserved form values on session reset
     setPreservedFormValues({ name: '', description: '' });
+  setShowHiddenList(false);
     // Call global reset function to reset timer/session
     if (onReset) {
       onReset();
@@ -156,6 +177,11 @@ export default function ActivityManager({
   // This handles both zero-duration starts and normal overtime scenarios
   const isOvertime = elapsedTime > totalDuration;
   const timeOverage = isOvertime ? Math.floor(elapsedTime - totalDuration) : 0;
+
+  // Derived lists
+  const hiddenSet = new Set(removedActivityIds);
+  const visibleActivities = activities.filter(a => !hiddenSet.has(a.id));
+  const hiddenActivities = activities.filter(a => hiddenSet.has(a.id));
 
   return (
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
@@ -211,7 +237,7 @@ export default function ActivityManager({
         {/* Activities List - scrollable if needed */}
         <div className="flex-grow-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
           <Row className="gy-3" data-testid="activity-list">
-            {activities.map((activity) => (
+            {visibleActivities.map((activity) => (
               <Col 
                 key={activity.id} 
                 xs={12}
@@ -229,6 +255,39 @@ export default function ActivityManager({
               </Col>
             ))}
           </Row>
+
+          {/* Hidden activities control */}
+          {hiddenActivities.length > 0 && (
+            <div className="mt-3">
+              <Button
+                variant="link"
+                size="sm"
+                className="p-0"
+                onClick={() => setShowHiddenList(v => !v)}
+                data-testid="toggle-hidden-activities"
+              >
+                {showHiddenList ? 'Hide' : 'Show'} {hiddenActivities.length} hidden {hiddenActivities.length === 1 ? 'activity' : 'activities'}
+              </Button>
+
+              {showHiddenList && (
+                <div className="mt-2" data-testid="hidden-activities-panel">
+                  {hiddenActivities.map((activity) => (
+                    <div key={activity.id} className="d-flex justify-content-between align-items-center py-1">
+                      <span>{activity.name}</span>
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        onClick={() => handleRestoreActivity(activity.id)}
+                        data-testid={`restore-activity-${activity.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                      >
+                        Restore
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </Card.Body>
     </Card>
