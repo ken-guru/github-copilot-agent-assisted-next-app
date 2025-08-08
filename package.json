@@ -12,7 +12,7 @@
     "cypress": "cypress open",
     "cypress:run": "cypress run",
     "cypress:headless": "cypress run --headless",
-    "type-check": "tsc --noEmit",
+  "type-check": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit",
     "clean-build": "node scripts/clean-build.js",
     "clean-build:full": "node scripts/clean-build.js --full",
     "update-sw-version": "node scripts/update-service-worker-version.js"

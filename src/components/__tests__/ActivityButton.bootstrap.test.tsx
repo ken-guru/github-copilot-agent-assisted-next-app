@@ -67,9 +67,9 @@ describe('ActivityButton Bootstrap Integration', () => {
     it('should use Bootstrap button sizes appropriately', () => {
       render(<ActivityButton {...defaultProps} />);
       
-      const button = screen.getByRole('button', { name: /start/i });
-      // Should use appropriate Bootstrap button size (default or small)
-      expect(button).toHaveClass(/btn(-sm)?$/);
+  const button = screen.getByRole('button', { name: /start/i });
+  // Should use appropriate Bootstrap button size (default or small)
+  expect(button.className).toMatch(/(^|\s)btn(-sm)?(\s|$)/);
     });
   });
 
@@ -109,8 +109,8 @@ describe('ActivityButton Bootstrap Integration', () => {
     it('should use Bootstrap typography classes for activity name', () => {
       render(<ActivityButton {...defaultProps} />);
       
-      const activityName = screen.getByText(mockActivity.name);
-      expect(activityName).toHaveClass(/h[1-6]|fs-[1-6]|fw-bold/);
+  const activityName = screen.getByText(mockActivity.name);
+  expect(activityName.className).toMatch(/(^|\s)(h[1-6]|fs-[1-6]|fw-bold)(\s|$)/);
     });
 
     it('should use Bootstrap high-contrast text for timer display', () => {
@@ -125,8 +125,8 @@ describe('ActivityButton Bootstrap Integration', () => {
     it('should use Bootstrap typography utilities for status indicators', () => {
       render(<ActivityButton {...defaultProps} isCompleted={true} />);
       
-      const completedIndicator = screen.getByLabelText('Completed');
-      expect(completedIndicator).toHaveClass(/text-success|badge|badge-success/);
+  const completedIndicator = screen.getByLabelText('Completed');
+  expect(completedIndicator.className).toMatch(/(^|\s)(text-success|badge|badge-success)(\s|$)/);
     });
   });
 
@@ -148,13 +148,13 @@ describe('ActivityButton Bootstrap Integration', () => {
       const { rerender } = render(<ActivityButton {...defaultProps} isRunning={true} />);
       
       // Running badge should be primary or info
-      let badge = document.querySelector('.badge');
-      expect(badge).toHaveClass(/badge-primary|badge-info|bg-primary|bg-info/);
+  let badge = document.querySelector('.badge');
+  expect(badge?.className ?? '').toMatch(/(^|\s)(badge-primary|badge-info|bg-primary|bg-info)(\s|$)/);
 
       // Completed badge should be success
       rerender(<ActivityButton {...defaultProps} isCompleted={true} />);
-      badge = document.querySelector('.badge');
-      expect(badge).toHaveClass(/badge-success|bg-success/);
+  badge = document.querySelector('.badge');
+  expect(badge?.className ?? '').toMatch(/(^|\s)(badge-success|bg-success)(\s|$)/);
     });
   });
 

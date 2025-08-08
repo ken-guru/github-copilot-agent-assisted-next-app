@@ -34,7 +34,6 @@ export default function ActivityManager({
   currentActivityId, 
   completedActivityIds,
   timelineEntries,
-  isTimeUp: _isTimeUp = false,
   elapsedTime = 0,
   totalDuration = 0,
   timerActive = false,

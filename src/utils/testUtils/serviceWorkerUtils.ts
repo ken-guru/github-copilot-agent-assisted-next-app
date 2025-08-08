@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 /**
  * Service Worker testing utilities
  * 
@@ -26,7 +27,7 @@ export function mockServiceWorker(options: MockServiceWorkerOptions = {}) {
   const originalServiceWorker = global.navigator.serviceWorker;
   
   // Mock for postMessage function
-  const postMessageMock = jest.fn();
+  const postMessageMock = jest.fn<(..._args: unknown[]) => void>();
   
   // Maps to store event listeners
   const globalListeners = new Map<string, ServiceWorkerEventListener[]>();
@@ -45,15 +46,15 @@ export function mockServiceWorker(options: MockServiceWorkerOptions = {}) {
     },
     scope: '/',
     updateFound: false,
-    update: jest.fn().mockResolvedValue(undefined),
-    unregister: jest.fn().mockResolvedValue(true),
-    addEventListener: jest.fn((event, callback) => {
+  update: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+  unregister: jest.fn<() => Promise<boolean>>().mockResolvedValue(true),
+  addEventListener: jest.fn((event: string, callback: ServiceWorkerEventListener) => {
       if (!registrationListeners.has(event)) {
         registrationListeners.set(event, []);
       }
       registrationListeners.get(event)?.push(callback);
     }),
-    removeEventListener: jest.fn((event, callback) => {
+  removeEventListener: jest.fn((event: string, callback: ServiceWorkerEventListener) => {
       const eventListeners = registrationListeners.get(event) || [];
       const index = eventListeners.indexOf(callback);
       if (index !== -1) {
@@ -68,24 +69,24 @@ export function mockServiceWorker(options: MockServiceWorkerOptions = {}) {
     scriptURL: '/service-worker.js',
     state: 'activated',
     postMessage: postMessageMock,
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
+  addEventListener: jest.fn<(..._args: unknown[]) => void>(),
+  removeEventListener: jest.fn<(..._args: unknown[]) => void>(),
   };
   
   // Mock navigator.serviceWorker
   const mockServiceWorkerContainer = {
     controller: mockController,
     ready: Promise.resolve(mockRegistration),
-    register: jest.fn().mockResolvedValue(mockRegistration),
-    getRegistration: jest.fn().mockResolvedValue(mockRegistration),
-    getRegistrations: jest.fn().mockResolvedValue([mockRegistration]),
-    addEventListener: jest.fn((event, callback) => {
+  register: jest.fn<() => Promise<typeof mockRegistration>>().mockResolvedValue(mockRegistration),
+  getRegistration: jest.fn<() => Promise<typeof mockRegistration>>().mockResolvedValue(mockRegistration),
+  getRegistrations: jest.fn<() => Promise<typeof mockRegistration[]>>().mockResolvedValue([mockRegistration]),
+  addEventListener: jest.fn((event: string, callback: ServiceWorkerEventListener) => {
       if (!globalListeners.has(event)) {
         globalListeners.set(event, []);
       }
       globalListeners.get(event)?.push(callback);
     }),
-    removeEventListener: jest.fn((event, callback) => {
+  removeEventListener: jest.fn((event: string, callback: ServiceWorkerEventListener) => {
       const eventListeners = globalListeners.get(event) || [];
       const index = eventListeners.indexOf(callback);
       if (index !== -1) {
@@ -188,19 +189,19 @@ export function mockOnlineStatus() {
   
   // Override window.addEventListener
   const originalAddEventListener = window.addEventListener;
-  window.addEventListener = jest.fn((event, listener) => {
+  window.addEventListener = jest.fn((event: string, listener: EventListenerOrEventListenerObject) => {
     if (event === 'online') {
       onlineListeners.push(listener as EventListener);
     } else if (event === 'offline') {
       offlineListeners.push(listener as EventListener);
     } else {
-      originalAddEventListener.call(window, event, listener);
+      originalAddEventListener.call(window, event as string, listener as EventListenerOrEventListenerObject);
     }
   });
   
   // Override window.removeEventListener
   const originalRemoveEventListener = window.removeEventListener;
-  window.removeEventListener = jest.fn((event, listener) => {
+  window.removeEventListener = jest.fn((event: string, listener: EventListenerOrEventListenerObject) => {
     if (event === 'online') {
       const index = onlineListeners.indexOf(listener as EventListener);
       if (index !== -1) {
@@ -212,7 +213,7 @@ export function mockOnlineStatus() {
         offlineListeners.splice(index, 1);
       }
     } else {
-      originalRemoveEventListener.call(window, event, listener);
+      originalRemoveEventListener.call(window, event as string, listener as EventListenerOrEventListenerObject);
     }
   });
   

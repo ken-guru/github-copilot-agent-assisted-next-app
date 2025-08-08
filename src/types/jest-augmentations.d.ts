@@ -1,6 +1,12 @@
 // Jest/Expect augmentations to support objectContaining, any, and toHaveProperty typings
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// Map global expect to Jest's expect type to avoid Chai Assertion bleed-through
+type JestExpectType = typeof import('@jest/globals')['expect'];
+declare global {
+  const expect: JestExpectType;
+}
+
 // Augment the expect module (Jest v30)
 declare module 'expect' {
   interface ExpectStatic {
@@ -17,13 +23,6 @@ declare global {
   namespace jest {
     interface Matchers<R> {
       toHaveProperty(path: string, value?: any): R;
-    }
-  }
-
-  // Also extend Chai Assertion, since our project mixes Chai/Jest assertions in some contexts
-  namespace Chai {
-    interface Assertion {
-      toHaveProperty(path: string, value?: any): Assertion;
     }
   }
 }
