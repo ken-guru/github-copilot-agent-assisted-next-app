@@ -318,19 +318,11 @@ export default function Summary({
 
   const status = getStatusMessage();
   const stats = calculateActivityStats();
-  
-  // Early return modified to handle isTimeUp case
-  if ((!allActivitiesCompleted && !isTimeUp) || !stats) {
-    return null;
-  }
-  
-  const overtime = calculateOvertime();
-  const activityTimes = calculateActivityTimes();
-  
-  // Build skipped activities list with names from storage
+
+  // Build skipped activities list with names from storage (must not be conditional)
   const skippedActivities = useMemo(() => {
     if (!skippedActivityIds || skippedActivityIds.length === 0) return [] as { id: string; name: string }[];
-    let namesById = new Map<string, string>();
+    const namesById = new Map<string, string>();
     try {
       const all = getActivities();
       for (const a of all) namesById.set(a.id, a.name);
@@ -339,6 +331,14 @@ export default function Summary({
     }
     return skippedActivityIds.map(id => ({ id, name: namesById.get(id) || id }));
   }, [skippedActivityIds]);
+
+  // Early return modified to handle isTimeUp case
+  if ((!allActivitiesCompleted && !isTimeUp) || !stats) {
+    return null;
+  }
+
+  const overtime = calculateOvertime();
+  const activityTimes = calculateActivityTimes();
 
   return (
     <Card data-testid="summary" className="summary-card h-100">
