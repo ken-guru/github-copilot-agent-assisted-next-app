@@ -40,14 +40,14 @@
     "types": [
       "node",
       "jest",
-      "@testing-library/jest-dom",
-      "cypress"
+      "@testing-library/jest-dom"
     ]
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "next-env.d.ts",
+    "src/types/jest-augmentations.d.ts",
     "src/types/jest.d.ts",
     ".next/types/**/*.ts"
   ],
