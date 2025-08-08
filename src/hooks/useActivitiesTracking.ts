@@ -15,6 +15,7 @@ export interface UseActivitiesTrackingResult {
   startActivity: (activityId: string) => void;
   completeActivity: (activityId: string) => void;
   removeActivity: (activityId: string) => void;
+  restoreActivity: (activityId: string) => void;
   resetActivities: () => void;
   // New methods for the state machine
   getCurrentActivity: () => ActivityState | null;
@@ -233,6 +234,27 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
       }
     }
   }, [stateMachine, updateLocalStateFromMachine]);
+
+  const restoreActivity = useCallback((activityId: string) => {
+    try {
+      const activityState = stateMachine.getActivityState(activityId);
+      if (!activityState) {
+        if (!isTestEnvironment) {
+          console.warn(`Cannot restore non-existent activity ${activityId}`);
+        }
+        return;
+      }
+
+      if (activityState.state === 'REMOVED') {
+        stateMachine.restoreActivity(activityId);
+        updateLocalStateFromMachine();
+      }
+    } catch (error) {
+      if (!isTestEnvironment) {
+        console.warn(`Failed to restore activity ${activityId}:`, error);
+      }
+    }
+  }, [stateMachine, updateLocalStateFromMachine]);
   
   const resetActivities = useCallback(() => {
     stateMachine.reset();
@@ -263,6 +285,7 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
     startActivity,
     completeActivity,
     removeActivity,
+  restoreActivity,
     resetActivities,
     // New methods
     getCurrentActivity,

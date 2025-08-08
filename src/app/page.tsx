@@ -21,9 +21,11 @@ function AppContent() {
     currentActivity,
     timelineEntries,
     completedActivityIds,
+  removedActivityIds,
     allActivitiesCompleted,
     handleActivitySelect,
     handleActivityRemoval,
+  restoreActivity,
     resetActivities,
   } = useActivityState({
     onTimerStart: () => {
@@ -166,8 +168,10 @@ function AppContent() {
                 <ActivityManager 
                   onActivitySelect={handleActivitySelect} 
                   onActivityRemove={handleActivityRemoval}
+                  onActivityRestore={restoreActivity}
                   currentActivityId={currentActivity?.id || null} 
                   completedActivityIds={completedActivityIds}
+                  removedActivityIds={removedActivityIds}
                   timelineEntries={processedEntries}
                   isTimeUp={isTimeUp}
                   elapsedTime={elapsedTime}
@@ -196,6 +200,7 @@ function AppContent() {
                 totalDuration={totalDuration} 
                 elapsedTime={elapsedTime}
                 allActivitiesCompleted={allActivitiesCompleted}
+                skippedActivityIds={removedActivityIds}
                 onReset={handleReset}
               />
             </div>
