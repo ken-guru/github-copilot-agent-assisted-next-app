@@ -19,6 +19,7 @@ export async function POST(req: Request) {
   }
 
   const enableMock = process.env.AI_ENABLE_MOCK === 'true';
+  const fallbackOn429 = process.env.AI_FALLBACK_ON_429 !== 'false';
   if (!process.env.OPENAI_API_KEY) {
     if (enableMock) {
       return NextResponse.json({ summary: generateMockSummary(body) }, { headers: { 'X-AI-Mode': 'mock' } });
@@ -38,9 +39,11 @@ export async function POST(req: Request) {
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : 'AI summary failed';
     console.warn('[AI Summary] OpenAI error:', message);
-    if (enableMock || /(?:429|insufficient_quota)/i.test(message)) {
+    const is429 = /(?:429|insufficient_quota)/i.test(message);
+    if (enableMock || (fallbackOn429 && is429)) {
       return NextResponse.json({ summary: generateMockSummary(body) }, { headers: { 'X-AI-Mode': 'mock' } });
     }
-    return NextResponse.json({ error: message }, { status: 502, headers: { 'X-AI-Mode': 'error' } });
+    const status = /\b(\d{3})\b/.test(message) ? Number((message.match(/\b(\d{3})\b/) || [])[0]) : (is429 ? 429 : 502);
+    return NextResponse.json({ error: message }, { status, headers: { 'X-AI-Mode': 'error' } });
   }
 }

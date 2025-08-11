@@ -206,6 +206,7 @@ yarn test:watch
 1) Copy .env.example to .env.local and set variables as needed:
    - AI_ENABLE_MOCK=true (recommended for local dev)
    - OPENAI_API_KEY= (optional for live OpenAI; required in production)
+   - AI_FALLBACK_ON_429=true (default). Set to false to surface real 429 errors instead of mock fallback.
 
 2) Start the app and open /ai.
    - If unauthenticated, click "Enable AI (dev)" to set a temporary cookie (ai_auth=1).

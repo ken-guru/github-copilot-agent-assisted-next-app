@@ -32,6 +32,7 @@ export async function POST(req: Request) {
   }
 
   const enableMock = process.env.AI_ENABLE_MOCK === 'true';
+  const fallbackOn429 = process.env.AI_FALLBACK_ON_429 !== 'false';
   // If API key missing, allow mock mode in dev
   if (!process.env.OPENAI_API_KEY) {
     if (enableMock) {
@@ -58,10 +59,12 @@ export async function POST(req: Request) {
     // Server-side debug to help diagnose why mock may be returned
     console.warn('[AI Plan] OpenAI error:', message);
     // If quota/429 or mock enabled, return mock plan
-    if (enableMock || /(?:429|insufficient_quota)/i.test(message)) {
+  const is429 = /(?:429|insufficient_quota)/i.test(message);
+  if (enableMock || (fallbackOn429 && is429)) {
       const plan = generateMockPlan(userPrompt);
       return NextResponse.json(plan, { headers: { 'X-AI-Mode': 'mock' } });
     }
-    return NextResponse.json({ error: message }, { status: 502, headers: { 'X-AI-Mode': 'error' } });
+  const status = /\b(\d{3})\b/.test(message) ? Number((message.match(/\b(\d{3})\b/) || [])[0]) : (is429 ? 429 : 502);
+  return NextResponse.json({ error: message }, { status, headers: { 'X-AI-Mode': 'error' } });
   }
 }
