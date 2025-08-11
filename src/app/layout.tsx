@@ -144,54 +144,72 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  console.log('[SW Registration] Starting service worker registration');
-                  
-                  navigator.serviceWorker.register('/service-worker.js', {
-                    updateViaCache: 'none' // Don't cache the service worker file
-                  })
-                    .then(function(registration) {
-                      console.log('[SW Registration] Service Worker registered with scope:', registration.scope);
-                      
-                      // Check for updates every 30 seconds when page is visible
-                      if (registration.update) {
-                        const checkForUpdates = () => {
-                          if (!document.hidden) {
-                            console.log('[SW Registration] Checking for updates');
-                            registration.update().catch(e => 
-                              console.log('[SW Registration] Update check failed:', e.message)
-                            );
-                          }
-                        };
-                        
-                        // Check immediately and then periodically
-                        checkForUpdates();
-                        const updateIntervalId = setInterval(checkForUpdates, 30000);
-                        
-                        // Clear the interval when the page unloads to prevent memory leaks
-                        window.addEventListener('beforeunload', () => {
-                          clearInterval(updateIntervalId);
-                        });
-                        
-                        // Also check when page becomes visible
-                        const handleVisibilityChange = () => {
-                          if (!document.hidden) {
-                            setTimeout(checkForUpdates, 1000);
-                          }
-                        };
-                        
-                        document.addEventListener('visibilitychange', handleVisibilityChange);
-                        
-                        // Clean up visibility listener on unload
-                        window.addEventListener('beforeunload', () => {
-                          document.removeEventListener('visibilitychange', handleVisibilityChange);
-                        });
-                      }
+                const isLocalhost = Boolean(
+                  window.location.hostname === 'localhost' ||
+                  window.location.hostname === '127.0.0.1' ||
+                  window.location.hostname.endsWith('.local')
+                );
+
+                if (isLocalhost) {
+                  // In development on localhost: ensure no service worker controls the page
+                  navigator.serviceWorker.getRegistrations().then((regs) => {
+                    regs.forEach((r) => r.unregister());
+                  }).catch(() => {});
+                  if (window.caches && caches.keys) {
+                    caches.keys().then((keys) => keys.forEach((k) => caches.delete(k))).catch(() => {});
+                  }
+                  console.log('[SW Registration] Disabled on localhost: unregistered SWs and cleared caches');
+                } else {
+                  // Production/preview: register the service worker
+                  window.addEventListener('load', function() {
+                    console.log('[SW Registration] Starting service worker registration');
+                    
+                    navigator.serviceWorker.register('/service-worker.js', {
+                      updateViaCache: 'none' // Don't cache the service worker file
                     })
-                    .catch(function(error) {
-                      console.error('[SW Registration] Service Worker registration failed:', error);
-                    });
-                });
+                      .then(function(registration) {
+                        console.log('[SW Registration] Service Worker registered with scope:', registration.scope);
+                        
+                        // Check for updates every 30 seconds when page is visible
+                        if (registration.update) {
+                          const checkForUpdates = () => {
+                            if (!document.hidden) {
+                              console.log('[SW Registration] Checking for updates');
+                              registration.update().catch(e => 
+                                console.log('[SW Registration] Update check failed:', e.message)
+                              );
+                            }
+                          };
+                          
+                          // Check immediately and then periodically
+                          checkForUpdates();
+                          const updateIntervalId = setInterval(checkForUpdates, 30000);
+                          
+                          // Clear the interval when the page unloads to prevent memory leaks
+                          window.addEventListener('beforeunload', () => {
+                            clearInterval(updateIntervalId);
+                          });
+                          
+                          // Also check when page becomes visible
+                          const handleVisibilityChange = () => {
+                            if (!document.hidden) {
+                              setTimeout(checkForUpdates, 1000);
+                            }
+                          };
+                          
+                          document.addEventListener('visibilitychange', handleVisibilityChange);
+                          
+                          // Clean up visibility listener on unload
+                          window.addEventListener('beforeunload', () => {
+                            document.removeEventListener('visibilitychange', handleVisibilityChange);
+                          });
+                        }
+                      })
+                      .catch(function(error) {
+                        console.error('[SW Registration] Service Worker registration failed:', error);
+                      });
+                  });
+                }
               }
             `
           }}

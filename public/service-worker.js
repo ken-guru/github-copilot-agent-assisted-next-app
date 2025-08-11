@@ -1,9 +1,22 @@
 // Service Worker for Mr. Timely
 
+// In development on localhost, avoid intercepting requests entirely
+try {
+  const isLocalhost = self && self.location && (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1');
+  if (isLocalhost) {
+    // Add a no-op fetch listener to explicitly bypass handling in dev
+    self.addEventListener('fetch', () => {});
+    // Early exit so the rest of the SW logic doesn't run in dev
+    // Note: registration is disabled from the app in dev, this is an extra safeguard
+  }
+} catch (_) {
+  // Ignore errors accessing self in some environments
+}
+
 const CACHE_NAME_PREFIX = 'github-copilot-agent-assisted-next-app';
 // Use consistent version - will be replaced at build time or deployment
 // This ensures consistent cache versioning across all instances
-const BUILD_VERSION = '0.1.0-1754661798931'; // Format: package.version-increment
+const BUILD_VERSION = '0.1.0-1754914538679'; // Format: package.version-increment
 const CACHE_NAME = `${CACHE_NAME_PREFIX}-v${BUILD_VERSION}`;
 const APP_SHELL_CACHE_NAME = `app-shell-v${BUILD_VERSION}`;
 

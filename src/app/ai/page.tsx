@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Form, Spinner, Alert } from 'react-bootstrap';
 import { useToast } from '@/contexts/ToastContext';
@@ -12,9 +12,16 @@ export default function AIPlannerPage() {
   const [prompt, setPrompt] = useState('I want a 30-minute study sprint on React and JavaScript, plus a 10-minute break.');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const isAuthed = useMemo(() => isAuthenticatedClient(), []);
+  // Determine auth after hydration to avoid SSR false negatives
+  const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
 
   useEffect(() => {
+    // Evaluate cookie on client only
+    setIsAuthed(isAuthenticatedClient());
+  }, []);
+
+  useEffect(() => {
+    if (isAuthed === null) return; // wait for hydration check
     if (!isAuthed) {
       // Redirect unauthenticated users to home for now (placeholder for login flow)
       router.replace('/');
