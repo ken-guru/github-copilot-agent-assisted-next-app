@@ -200,6 +200,26 @@ npm run test:watch
 yarn test:watch
 ```
 
+### AI Feature (Issue #307) - Local Dev Quickstart
+
+```markdown
+1) Copy .env.example to .env.local and set variables as needed:
+   - AI_ENABLE_MOCK=true (recommended for local dev)
+   - OPENAI_API_KEY= (optional for live OpenAI; required in production)
+
+2) Start the app and open /ai.
+   - If unauthenticated, click "Enable AI (dev)" to set a temporary cookie (ai_auth=1).
+   - Submit a prompt to generate a plan; when AI_ENABLE_MOCK=true, the API returns a mock plan.
+
+3) Summary AI
+   - The Summary component can request an AI summary via /api/ai/summary.
+   - With AI_ENABLE_MOCK=true or when OpenAI returns 429 insufficient_quota, a mock summary is returned.
+
+Notes:
+- Service Worker is disabled on localhost to avoid intercepting dev assets; it still runs in previews/production.
+- The temporary cookie gate is for development only.
+```
+
 ### Deployment Verification
 Before considering any feature or change complete, run these verification steps:
 ```markdown
