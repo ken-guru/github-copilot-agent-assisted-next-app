@@ -1,14 +1,9 @@
 // Service Worker for Mr. Timely
 
 // In development on localhost, avoid intercepting requests entirely
+let DEV_BYPASS = false;
 try {
-  const isLocalhost = self && self.location && (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1');
-  if (isLocalhost) {
-    // Add a no-op fetch listener to explicitly bypass handling in dev
-    self.addEventListener('fetch', () => {});
-    // Early exit so the rest of the SW logic doesn't run in dev
-    // Note: registration is disabled from the app in dev, this is an extra safeguard
-  }
+  DEV_BYPASS = Boolean(self && self.location && (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1'));
 } catch (_) {
   // Ignore errors accessing self in some environments
 }
@@ -188,6 +183,10 @@ function isNextAsset(url) {
 
 // Fetch event handler
 self.addEventListener('fetch', (event) => {
+  if (DEV_BYPASS) {
+    // Don't intercept any requests on localhost dev
+    return;
+  }
   const request = event.request;
   const url = new URL(request.url);
   

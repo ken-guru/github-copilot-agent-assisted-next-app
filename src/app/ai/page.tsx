@@ -22,13 +22,20 @@ export default function AIPlannerPage() {
 
   useEffect(() => {
     if (isAuthed === null) return; // wait for hydration check
-    if (!isAuthed) {
-      // Redirect unauthenticated users to home for now (placeholder for login flow)
-      router.replace('/');
-    } else {
-      setReady(true);
+    // Don't redirect; render inline prompt when unauthenticated
+    setReady(true);
+  }, [isAuthed]);
+
+  const enableDevAuth = () => {
+    try {
+      // Dev-only helper: set cookie so API routes accept requests
+      document.cookie = `ai_auth=1; path=/; max-age=${60 * 60 * 24 * 7}`; // 7 days
+      setIsAuthed(true);
+      addToast({ message: 'AI access enabled for development', variant: 'success' });
+    } catch {
+      addToast({ message: 'Failed to enable AI access', variant: 'error' });
     }
-  }, [isAuthed, router]);
+  };
 
   const handlePlan = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,6 +101,34 @@ export default function AIPlannerPage() {
   };
 
   if (!ready) return null;
+
+  if (!isAuthed) {
+    return (
+      <div className="container py-3">
+        <Card>
+          <Card.Header>
+            <h5 className="mb-0 d-flex align-items-center">
+              <i className="bi bi-lock me-2" aria-hidden="true" />
+              AI Session Planner
+            </h5>
+          </Card.Header>
+          <Card.Body>
+            <Alert variant="warning" role="alert" className="mb-3">
+              AI features are locked. Set the dev cookie to continue.
+            </Alert>
+            <div className="d-flex gap-2">
+              <Button type="button" variant="primary" onClick={enableDevAuth} aria-label="Enable AI access">
+                Enable AI (dev)
+              </Button>
+              <Button type="button" variant="outline-secondary" onClick={() => router.push('/') }>
+                Go Home
+              </Button>
+            </div>
+          </Card.Body>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-3">
