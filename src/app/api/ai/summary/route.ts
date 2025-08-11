@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { ensureAuthenticated } from '@/utils/auth/server';
 import { requestSummaryFromOpenAI } from '@/utils/ai/openai';
+import { generateMockSummary } from '@/utils/ai/mock';
 
 export async function POST(req: Request) {
   const cookieStore = await cookies();
@@ -17,7 +18,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
+  const enableMock = process.env.AI_ENABLE_MOCK === 'true';
   if (!process.env.OPENAI_API_KEY) {
+    if (enableMock) {
+      return NextResponse.json({ summary: generateMockSummary(body) });
+    }
     return NextResponse.json({ error: 'AI summary not configured on server' }, { status: 501 });
   }
 
@@ -32,6 +37,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ summary: text });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : 'AI summary failed';
+    if (enableMock || /(?:429|insufficient_quota)/i.test(message)) {
+      return NextResponse.json({ summary: generateMockSummary(body) });
+    }
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }

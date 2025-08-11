@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { ensureAuthenticated } from '@/utils/auth/server';
 import { requestPlanFromOpenAI } from '@/utils/ai/openai';
+import { generateMockPlan } from '@/utils/ai/mock';
 import { extractPlanFromText, validateAIActivities } from '@/utils/ai/parse';
 
 export async function POST(req: Request) {
@@ -30,8 +31,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
   }
 
-  // If API key missing, inform client clearly
+  const enableMock = process.env.AI_ENABLE_MOCK === 'true';
+  // If API key missing, allow mock mode in dev
   if (!process.env.OPENAI_API_KEY) {
+    if (enableMock) {
+      const plan = generateMockPlan(userPrompt);
+      return NextResponse.json(plan);
+    }
     return NextResponse.json({ error: 'AI planning not configured on server' }, { status: 501 });
   }
 
@@ -49,6 +55,11 @@ export async function POST(req: Request) {
     return NextResponse.json(plan);
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : 'AI planning failed';
+    // If quota/429 or mock enabled, return mock plan
+    if (enableMock || /(?:429|insufficient_quota)/i.test(message)) {
+      const plan = generateMockPlan(userPrompt);
+      return NextResponse.json(plan);
+    }
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }
