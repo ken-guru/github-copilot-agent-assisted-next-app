@@ -10,14 +10,14 @@ export async function POST(req: Request) {
   const cookieStore = await cookies();
   const auth = ensureAuthenticated({ cookies: { get: (name: string) => cookieStore.get(name) } });
   if (!auth.ok) {
-    return NextResponse.json({ error: auth.message }, { status: auth.status });
+    return NextResponse.json({ error: auth.message }, { status: auth.status, headers: { 'X-AI-Mode': 'disabled' } });
   }
 
   let body: unknown;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400, headers: { 'X-AI-Mode': 'disabled' } });
   }
 
   const userPrompt = ((): string => {
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     return '';
   })();
   if (!userPrompt) {
-    return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
+    return NextResponse.json({ error: 'Prompt is required' }, { status: 400, headers: { 'X-AI-Mode': 'disabled' } });
   }
 
   const enableMock = process.env.AI_ENABLE_MOCK === 'true';
@@ -36,9 +36,9 @@ export async function POST(req: Request) {
   if (!process.env.OPENAI_API_KEY) {
     if (enableMock) {
       const plan = generateMockPlan(userPrompt);
-      return NextResponse.json(plan);
+      return NextResponse.json(plan, { headers: { 'X-AI-Mode': 'mock' } });
     }
-    return NextResponse.json({ error: 'AI planning not configured on server' }, { status: 501 });
+    return NextResponse.json({ error: 'AI planning not configured on server' }, { status: 501, headers: { 'X-AI-Mode': 'disabled' } });
   }
 
   const systemPrompt = [
@@ -52,14 +52,16 @@ export async function POST(req: Request) {
     const content = await requestPlanFromOpenAI(systemPrompt, userPrompt);
     const plan = extractPlanFromText(content);
     validateAIActivities(plan.activities);
-    return NextResponse.json(plan);
+    return NextResponse.json(plan, { headers: { 'X-AI-Mode': 'live' } });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : 'AI planning failed';
+    // Server-side debug to help diagnose why mock may be returned
+    console.warn('[AI Plan] OpenAI error:', message);
     // If quota/429 or mock enabled, return mock plan
     if (enableMock || /(?:429|insufficient_quota)/i.test(message)) {
       const plan = generateMockPlan(userPrompt);
-      return NextResponse.json(plan);
+      return NextResponse.json(plan, { headers: { 'X-AI-Mode': 'mock' } });
     }
-    return NextResponse.json({ error: message }, { status: 502 });
+    return NextResponse.json({ error: message }, { status: 502, headers: { 'X-AI-Mode': 'error' } });
   }
 }

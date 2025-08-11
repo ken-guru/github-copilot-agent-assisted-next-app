@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   const cookieStore = await cookies();
   const auth = ensureAuthenticated({ cookies: { get: (name: string) => cookieStore.get(name) } });
   if (!auth.ok) {
-    return NextResponse.json({ error: auth.message }, { status: auth.status });
+    return NextResponse.json({ error: auth.message }, { status: auth.status, headers: { 'X-AI-Mode': 'disabled' } });
   }
 
   let body: unknown;
@@ -21,9 +21,9 @@ export async function POST(req: Request) {
   const enableMock = process.env.AI_ENABLE_MOCK === 'true';
   if (!process.env.OPENAI_API_KEY) {
     if (enableMock) {
-      return NextResponse.json({ summary: generateMockSummary(body) });
+      return NextResponse.json({ summary: generateMockSummary(body) }, { headers: { 'X-AI-Mode': 'mock' } });
     }
-    return NextResponse.json({ error: 'AI summary not configured on server' }, { status: 501 });
+    return NextResponse.json({ error: 'AI summary not configured on server' }, { status: 501, headers: { 'X-AI-Mode': 'disabled' } });
   }
 
   const systemPrompt = [
@@ -34,12 +34,13 @@ export async function POST(req: Request) {
 
   try {
     const text = await requestSummaryFromOpenAI(systemPrompt, body);
-    return NextResponse.json({ summary: text });
+    return NextResponse.json({ summary: text }, { headers: { 'X-AI-Mode': 'live' } });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : 'AI summary failed';
+    console.warn('[AI Summary] OpenAI error:', message);
     if (enableMock || /(?:429|insufficient_quota)/i.test(message)) {
-      return NextResponse.json({ summary: generateMockSummary(body) });
+      return NextResponse.json({ summary: generateMockSummary(body) }, { headers: { 'X-AI-Mode': 'mock' } });
     }
-    return NextResponse.json({ error: message }, { status: 502 });
+    return NextResponse.json({ error: message }, { status: 502, headers: { 'X-AI-Mode': 'error' } });
   }
 }
