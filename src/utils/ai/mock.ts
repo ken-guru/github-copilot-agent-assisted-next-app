@@ -17,13 +17,29 @@ export function generateMockPlan(userPrompt: string) {
   return { activities: withTopic };
 }
 
-export function generateMockSummary(metrics: any): string {
+export function generateMockSummary(metrics: unknown): string {
   try {
-    const planned = Number(metrics?.plannedTime ?? 0);
-    const spent = Number(metrics?.timeSpent ?? 0);
-    const overtime = Number(metrics?.overtime ?? 0);
-    const idle = Number(metrics?.idle ?? 0);
-    const done = Array.isArray(metrics?.perActivity) ? metrics.perActivity.length : 0;
+    const getNum = (obj: unknown, key: string): number => {
+      if (obj && typeof obj === 'object' && key in (obj as Record<string, unknown>)) {
+        const v = (obj as Record<string, unknown>)[key];
+        if (typeof v === 'number') return v;
+        const n = Number(v);
+        return Number.isFinite(n) ? n : 0;
+      }
+      return 0;
+    };
+
+    const planned = getNum(metrics, 'plannedTime');
+    const spent = getNum(metrics, 'timeSpent');
+    const overtime = getNum(metrics, 'overtime');
+    const idle = getNum(metrics, 'idle');
+    const done = (() => {
+      if (metrics && typeof metrics === 'object' && 'perActivity' in (metrics as Record<string, unknown>)) {
+        const v = (metrics as Record<string, unknown>)['perActivity'];
+        return Array.isArray(v) ? v.length : 0;
+      }
+      return 0;
+    })();
     return `Great session! You wrapped ${done} activities, spending ${spent} min (planned ${planned} min) with ${overtime} min overtime and ${idle} min idle. Keep the momentum going!`;
   } catch {
     return 'Great session! Productive time logged and actionable progress made. Keep the momentum going!';
