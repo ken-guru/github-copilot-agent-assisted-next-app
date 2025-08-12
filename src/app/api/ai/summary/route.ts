@@ -19,7 +19,6 @@ export async function POST(req: Request) {
   }
 
   const enableMock = process.env.AI_ENABLE_MOCK === 'true';
-  const fallbackOn429 = process.env.AI_FALLBACK_ON_429 !== 'false';
   if (enableMock) {
     return NextResponse.json({ summary: generateMockSummary(body) }, { headers: { 'X-AI-Mode': 'mock' } });
   }

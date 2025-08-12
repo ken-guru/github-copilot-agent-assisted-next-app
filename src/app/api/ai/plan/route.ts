@@ -32,7 +32,6 @@ export async function POST(req: Request) {
   }
 
   const enableMock = process.env.AI_ENABLE_MOCK === 'true';
-  const fallbackOn429 = process.env.AI_FALLBACK_ON_429 !== 'false';
   // Server path only supports mock; live calls must use client BYOK
   if (enableMock) {
     const plan = generateMockPlan(userPrompt);
