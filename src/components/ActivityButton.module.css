@@ -1,0 +1,81 @@
+/* ActivityButton drag and drop styles */
+
+.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+}
+
+.dragOver {
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.25);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}
+
+.dragHandle {
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.dragHandle:hover {
+  opacity: 1 !important;
+  color: var(--accent-color) !important;
+  cursor: grab;
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+/* Ensure proper cursor states */
+.card[draggable="true"] {
+  cursor: move;
+}
+
+.card[draggable="true"]:hover {
+  box-shadow: var(--shadow-card-hover);
+  transition: box-shadow 0.2s ease;
+}
+
+/* Accessibility improvements */
+.card[draggable="true"]:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Prevent text selection during drag */
+.dragging * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Visual feedback for drop zones */
+.dragOver::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent-color);
+  border-radius: var(--radius-sm);
+  z-index: 1;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .dragHandle {
+    /* Larger touch target on mobile */
+    padding: var(--space-xs);
+    margin: calc(-1 * var(--space-xs));
+  }
+  
+  .dragHandle svg {
+    width: 18px;
+    height: 18px;
+  }
+}

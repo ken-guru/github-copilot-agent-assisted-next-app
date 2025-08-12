@@ -31,7 +31,7 @@
   - Write unit tests for keyboard navigation and accessibility features
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-- [ ] 5. Add drag handles and visual feedback to ActivityButton component
+- [x] 5. Add drag handles and visual feedback to ActivityButton component
   - Modify `src/components/ActivityButton.tsx` to include drag handles (grip icon)
   - Add drag event handlers (onDragStart, onDragOver, onDragEnd, onDrop) and visual states
   - Implement proper ARIA attributes for drag-and-drop accessibility (draggable, aria-grabbed)
