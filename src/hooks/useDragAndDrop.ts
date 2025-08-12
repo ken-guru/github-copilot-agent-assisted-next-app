@@ -101,7 +101,12 @@ export function useDragAndDrop(
     }
 
     // Remove dragged item from its current position
-    const [draggedItem] = newOrder.splice(draggedIndex, 1);
+    const removedItems = newOrder.splice(draggedIndex, 1);
+    const draggedItem = removedItems[0];
+    
+    if (!draggedItem) {
+      throw new Error('Failed to remove dragged item from order');
+    }
     
     // Insert dragged item at target position
     newOrder.splice(targetIndex, 0, draggedItem);

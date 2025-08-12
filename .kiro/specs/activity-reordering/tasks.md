@@ -23,7 +23,7 @@
   - Write unit tests for drag-and-drop state transitions and reordering logic
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 4. Create keyboard reordering accessibility hook
+- [x] 4. Create keyboard reordering accessibility hook
   - Implement `src/hooks/useKeyboardReordering.ts` for keyboard-based reordering
   - Add keyboard event handlers for up/down arrow keys with modifier keys (Ctrl+Up/Down or Alt+Up/Down)
   - Implement focus management and position announcements for screen readers
