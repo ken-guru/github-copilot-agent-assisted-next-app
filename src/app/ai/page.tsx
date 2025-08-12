@@ -5,6 +5,7 @@ import { Button, Card, Form, Spinner, Alert, InputGroup } from 'react-bootstrap'
 import { useToast } from '@/contexts/ToastContext';
 import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
+import type { ChatCompletion } from '@/types/ai';
 
 export default function AIPlannerPage() {
   const router = useRouter();
@@ -44,9 +45,6 @@ export default function AIPlannerPage() {
           ],
           response_format: { type: 'json_object' }
         };
-        type ChatMessage = { content?: string };
-        type ChatChoice = { message?: ChatMessage };
-        type ChatCompletion = { choices?: ChatChoice[] };
         data = await callOpenAI('/v1/chat/completions', payload);
         // Extract JSON from choices
         const cc = (data as Partial<ChatCompletion>) ?? {};

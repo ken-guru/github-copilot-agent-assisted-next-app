@@ -23,8 +23,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ summary: generateMockSummary(body) }, { headers: { 'X-AI-Mode': 'mock' } });
   }
   return NextResponse.json({ error: 'AI summary not available on server (use BYOK client mode)' }, { status: 501, headers: { 'X-AI-Mode': 'disabled' } });
-
-  // Kept for potential future server implementation
-
-  // Unreachable due to early return above; kept for future expansion
 }

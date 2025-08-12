@@ -7,6 +7,7 @@ import { isAuthenticatedClient } from '@/utils/auth/client';
 import { useToast } from '@/contexts/ToastContext';
 import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
+import type { ChatCompletion } from '@/types/ai';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -382,9 +383,6 @@ export default function Summary({
                     { role: 'system', content: 'You summarize time tracking sessions for users.' },
                     { role: 'user', content: `Create a brief friendly summary. JSON only: {"summary": string}. Data: ${JSON.stringify(payload)}` }
                   ];
-                  type ChatMessage = { content?: string };
-                  type ChatChoice = { message?: ChatMessage };
-                  type ChatCompletion = { choices?: ChatChoice[] };
                   const data = await callOpenAI('/v1/chat/completions', { model: 'gpt-4o-mini', messages, response_format: { type: 'json_object' } }) as Partial<ChatCompletion>;
                   const content = data.choices && data.choices.length > 0 && data.choices[0]?.message?.content
                     ? String(data.choices[0].message?.content)

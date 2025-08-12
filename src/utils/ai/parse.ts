@@ -3,18 +3,33 @@ import type { AIActivity, AIActivityPlan } from '@/types/ai';
 export function safeJsonParse<T = unknown>(text: string): T {
   try {
     return JSON.parse(text) as T;
-  } catch {
+  } catch (e1) {
     // Try to extract JSON from fenced code blocks first: ```json ... ``` or ``` ... ```
-    const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-    if (fenceMatch && fenceMatch[1]) {
-      return JSON.parse(fenceMatch[1]) as T;
+    try {
+      const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+      if (fenceMatch && fenceMatch[1]) {
+        return JSON.parse(fenceMatch[1]) as T;
+      }
+    } catch (e2) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug('safeJsonParse fenced block parse failed:', e2);
+      }
     }
     // Fallback: grab substring between first '{' and last '}'
-    const firstBrace = text.indexOf('{');
-    const lastBrace = text.lastIndexOf('}');
-    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-      const candidate = text.slice(firstBrace, lastBrace + 1);
-      return JSON.parse(candidate) as T;
+    try {
+      const firstBrace = text.indexOf('{');
+      const lastBrace = text.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        const candidate = text.slice(firstBrace, lastBrace + 1);
+        return JSON.parse(candidate) as T;
+      }
+    } catch (e3) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.debug('safeJsonParse substring parse failed:', e3);
+      }
+    }
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('safeJsonParse initial error:', e1);
     }
     throw new Error('Unable to parse JSON');
   }
@@ -30,11 +45,21 @@ export function extractPlanFromText(text: string): AIActivityPlan {
     return [];
   })();
   type Loose = { title?: unknown; name?: unknown; description?: unknown; duration?: unknown };
+  const normalizeDuration = (val: unknown): number => {
+    if (typeof val === 'number' && Number.isFinite(val)) {
+      return Math.max(1, Math.floor(val));
+    }
+    if (typeof val === 'string') {
+      const n = Number(val);
+      if (Number.isFinite(n)) return Math.max(1, Math.floor(n));
+    }
+    return 1;
+  };
   const normalized: AIActivity[] = activitiesRaw.map((a: unknown) => {
     const x = a as Loose;
     const title = typeof x?.title === 'string' ? x.title : (typeof x?.name === 'string' ? x.name : 'Untitled');
     const description = typeof x?.description === 'string' ? x.description : '';
-    const dur = typeof x?.duration === 'number' && Number.isFinite(x.duration) ? Math.max(1, Math.floor(x.duration)) : 1;
+    const dur = normalizeDuration(x?.duration);
     return { title: String(title).trim() || 'Untitled', description, duration: dur };
   }).slice(0, 20);
   if (normalized.length === 0) throw new Error('No activities provided by AI');

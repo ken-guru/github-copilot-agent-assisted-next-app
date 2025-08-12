@@ -3,7 +3,6 @@ import { cookies } from 'next/headers';
 import { ensureAuthenticated } from '@/utils/auth/server';
 // Server no longer calls OpenAI directly; BYOK happens client-side
 import { generateMockPlan } from '@/utils/ai/mock';
-// import { extractPlanFromText, validateAIActivities } from '@/utils/ai/parse';
 
 export async function POST(req: Request) {
   // Build a minimal request-like for cookie access using next/headers
@@ -17,7 +16,7 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-  return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400, headers: { 'X-AI-Mode': 'disabled' } });
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400, headers: { 'X-AI-Mode': 'disabled' } });
   }
 
   const userPrompt = ((): string => {
@@ -38,8 +37,4 @@ export async function POST(req: Request) {
     return NextResponse.json(plan, { headers: { 'X-AI-Mode': 'mock' } });
   }
   return NextResponse.json({ error: 'AI planning not available on server (use BYOK client mode)' }, { status: 501, headers: { 'X-AI-Mode': 'disabled' } });
-
-  // Kept for potential future server implementation
-
-  // Unreachable due to early return above; kept for future expansion
 }

@@ -27,8 +27,12 @@ export function useOpenAIClient() {
         body: JSON.stringify(body),
         ...init,
       });
-  } catch {
-      throw new Error('Network error: could not reach OpenAI (blocked or connection closed). Check ad blockers, VPN, or firewall.');
+    } catch (err: unknown) {
+      if (err instanceof TypeError) {
+        throw new Error('Network error: could not reach OpenAI (blocked or connection closed). Check ad blockers, VPN, or firewall.');
+      }
+      const msg = err && typeof err === 'object' && 'message' in err ? String((err as { message?: unknown }).message) : 'Unknown network error';
+      throw new Error(msg);
     }
     if (!res.ok) {
       // Avoid echoing any server-provided text to the UI/logs
