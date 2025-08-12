@@ -37,7 +37,8 @@ async function handleFetch(request) {
     // Never intercept or cache cross-origin OpenAI calls carrying Authorization header
     try {
       const url = new URL(request.url);
-      if (url.origin !== self.location.origin && url.hostname.endsWith('api.openai.com')) {
+      // Only bypass for exact OpenAI API host
+      if (url.origin !== self.location.origin && url.hostname === 'api.openai.com') {
         return await fetch(request);
       }
     } catch {}

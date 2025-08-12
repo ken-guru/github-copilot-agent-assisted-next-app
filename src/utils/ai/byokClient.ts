@@ -23,7 +23,7 @@ export function useOpenAIClient() {
     if (!res.ok) {
       // Avoid echoing secrets
       const text = await res.text().catch(() => '');
-      throw new Error(`OpenAI request failed (${res.status})` + (text ? '' : ''));
+  throw new Error(`OpenAI request failed (${res.status})${text ? `: ${text}` : ''}`);
     }
     return res.json();
   }, [apiKey]);

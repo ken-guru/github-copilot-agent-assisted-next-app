@@ -2,12 +2,12 @@ import type { AIActivity, AIActivityPlan } from '@/types/ai';
 
 export function safeJsonParse<T = unknown>(text: string): T {
   try {
-  return JSON.parse(text) as T;
+    return JSON.parse(text) as T;
   } catch {
     // Try to extract JSON from fenced code blocks first: ```json ... ``` or ``` ... ```
     const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
     if (fenceMatch && fenceMatch[1]) {
-  return JSON.parse(fenceMatch[1]) as T;
+      return JSON.parse(fenceMatch[1]) as T;
     }
     // Fallback: grab substring between first '{' and last '}'
     const firstBrace = text.indexOf('{');
