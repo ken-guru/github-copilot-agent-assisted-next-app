@@ -77,6 +77,8 @@ mcp_playwright_browser_snapshot()
 mcp_playwright_browser_take_screenshot(filename="issue-<NUMBER>-current-state.png")
 ```
 
+> Important: MCP Playwright sessions cannot access localhost/127.0.0.1. Use your machine's LAN IP (e.g., http://192.168.x.x:3000). On macOS you can find it via System Settings → Network or with `ipconfig getifaddr en0` (Wi‑Fi) / `ipconfig getifaddr en1` (Ethernet).
+
 ## MCP TOOL INTEGRATION
 
 ### Available Tools and Documentation
