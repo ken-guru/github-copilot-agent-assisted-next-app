@@ -29,9 +29,10 @@ export function safeJsonParse<T = unknown>(text: string): T {
       }
     }
     if (process.env.NODE_ENV !== 'production') {
-      console.debug('safeJsonParse initial error:', e1);
+      console.error('safeJsonParse initial error:', e1);
     }
-    throw new Error('Unable to parse JSON');
+    const msg = e1 instanceof Error ? e1.message : String(e1);
+    throw new Error('Unable to parse JSON: ' + msg);
   }
 }
 
