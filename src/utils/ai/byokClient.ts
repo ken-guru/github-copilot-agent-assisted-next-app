@@ -11,15 +11,25 @@ export function useOpenAIClient() {
     if (!apiKey) {
       throw new Error('No API key set');
     }
-    const res = await fetch(`https://api.openai.com${path}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(body),
-      ...init,
-    });
+    let res: Response;
+    try {
+      res = await fetch(`https://api.openai.com${path}`, {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-store',
+        credentials: 'omit',
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(body),
+        ...init,
+      });
+  } catch {
+      throw new Error('Network error: could not reach OpenAI (blocked or connection closed). Check ad blockers, VPN, or firewall.');
+    }
     if (!res.ok) {
       // Avoid echoing any server-provided text to the UI/logs
       throw new Error(`OpenAI request failed (${res.status})`);
