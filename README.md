@@ -422,3 +422,18 @@ This project recently migrated from a Cypress-heavy approach to a balanced test 
 - **Coverage**: Enhanced with better edge case testing
 
 For detailed migration information, see [MRTMLY-221](./docs/logged_memories/MRTMLY-221-comprehensive-cypress-jest-migration.md).
+
+## Bring Your Own Key (BYOK) for OpenAI
+
+You can use OpenAI features without configuring server env vars:
+
+- Click the key icon in the navbar to open the “OpenAI API Key” dialog.
+- Paste your key (e.g., sk-...) and choose persistence:
+   - Default: in-memory (cleared on refresh)
+   - Optional: session-only (kept for this tab via sessionStorage)
+- Your key isn’t sent to the server or Vercel and is never logged.
+
+Security notes:
+- A strict CSP limits outbound connections to https://api.openai.com.
+- The service worker bypasses OpenAI requests (no caching/interception).
+- Avoid using BYOK on untrusted pages; client code has access while open.

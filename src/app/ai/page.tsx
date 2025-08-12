@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { Button, Card, Form, Spinner, Alert } from 'react-bootstrap';
 import { useToast } from '@/contexts/ToastContext';
 import { isAuthenticatedClient } from '@/utils/auth/client';
+import { useApiKey } from '@/contexts/ApiKeyContext';
+import { useOpenAIClient } from '@/utils/ai/byokClient';
 
 export default function AIPlannerPage() {
   const router = useRouter();
@@ -12,8 +14,11 @@ export default function AIPlannerPage() {
   const [prompt, setPrompt] = useState('I want a 30-minute study sprint on React and JavaScript, plus a 10-minute break.');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [useClientKey, setUseClientKey] = useState(false);
   // Determine auth after hydration to avoid SSR false negatives
   const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
+  const { apiKey } = useApiKey();
+  const { callOpenAI } = useOpenAIClient();
 
   useEffect(() => {
     // Evaluate cookie on client only
@@ -42,19 +47,47 @@ export default function AIPlannerPage() {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch('/api/ai/plan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt })
-      });
-      if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as unknown;
-        const message = (typeof data === 'object' && data && 'error' in data && typeof (data as { error?: unknown }).error === 'string')
-          ? (data as { error: string }).error
-          : 'Failed to generate plan';
-        throw new Error(message);
+      let data: unknown;
+      if (useClientKey) {
+        // Client-direct call to OpenAI with BYOK
+        // Minimal example: responses API, text generation with JSON instruction
+        const payload = {
+          model: 'gpt-4o-mini',
+          messages: [
+            { role: 'system', content: 'You are planning study/work sessions.' },
+            { role: 'user', content: `${prompt}\n\nReturn strict JSON: {"activities": [{"title": string, "description": string, "duration": number}]}` }
+          ],
+          response_format: { type: 'json_object' }
+        };
+        type ChatMessage = { content?: string };
+        type ChatChoice = { message?: ChatMessage };
+        type ChatCompletion = { choices?: ChatChoice[] };
+        data = await callOpenAI('/v1/chat/completions', payload);
+        // Extract JSON from choices
+        const cc = (data as Partial<ChatCompletion>) ?? {};
+        const content = cc.choices && cc.choices.length > 0 && cc.choices[0]?.message?.content
+          ? String(cc.choices[0].message?.content)
+          : '';
+        try {
+          data = JSON.parse(content);
+        } catch {
+          throw new Error('Malformed AI response');
+        }
+      } else {
+        const res = await fetch('/api/ai/plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt })
+        });
+        if (!res.ok) {
+          const d = (await res.json().catch(() => ({}))) as unknown;
+          const message = (typeof d === 'object' && d && 'error' in (d as { error?: unknown }) && typeof (d as { error?: unknown }).error === 'string')
+            ? (d as { error: string }).error
+            : 'Failed to generate plan';
+          throw new Error(message);
+        }
+        data = await res.json();
       }
-      const data = (await res.json()) as unknown;
       type LoosePlanActivity = {
         title?: unknown;
         name?: unknown;
@@ -116,6 +149,9 @@ export default function AIPlannerPage() {
             <Alert variant="warning" role="alert" className="mb-3">
               AI features are locked. Set the dev cookie to continue.
             </Alert>
+            {apiKey && (
+              <Alert variant="info" className="mb-3">You can still try client-only mode using your API key below.</Alert>
+            )}
             <div className="d-flex gap-2">
               <Button type="button" variant="primary" onClick={enableDevAuth} aria-label="Enable AI access">
                 Enable AI (dev)
@@ -153,6 +189,18 @@ export default function AIPlannerPage() {
               />
               <Form.Text className="text-body-secondary">One request per plan to conserve tokens.</Form.Text>
             </Form.Group>
+            {apiKey && (
+              <Form.Group className="mb-3">
+                <Form.Check
+                  type="switch"
+                  id="use-client-key"
+                  label="Use my API key (client-only)"
+                  checked={useClientKey}
+                  onChange={(e) => setUseClientKey(e.target.checked)}
+                />
+                <Form.Text className="text-body-secondary">No server involved; requests go directly to OpenAI from your browser.</Form.Text>
+              </Form.Group>
+            )}
             {error && (
               <Alert variant="danger" role="alert">{error}</Alert>
             )}

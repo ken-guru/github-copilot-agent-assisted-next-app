@@ -5,6 +5,8 @@ import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { getActivities } from '@/utils/activity-storage';
 import { isAuthenticatedClient } from '@/utils/auth/client';
 import { useToast } from '@/contexts/ToastContext';
+import { useApiKey } from '@/contexts/ApiKeyContext';
+import { useOpenAIClient } from '@/utils/ai/byokClient';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -31,6 +33,9 @@ export default function Summary({
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const canUseAI = isAuthenticatedClient();
+  const { apiKey } = useApiKey();
+  const { callOpenAI } = useOpenAIClient();
+  const [useClientKey, setUseClientKey] = useState(false);
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
@@ -356,7 +361,7 @@ export default function Summary({
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0" role="heading" aria-level={2}>Summary</h5>
         <div className="d-flex gap-2 align-items-center">
-        {canUseAI && (!aiSummary) && (
+        {(canUseAI || apiKey) && (!aiSummary) && (
           <Button
             variant="outline-primary"
             size="sm"
@@ -372,23 +377,39 @@ export default function Summary({
                   perActivity: calculateActivityTimes().map(a => ({ id: a.id, name: a.name, duration: a.duration })),
                   skippedIds: skippedActivities.map(s => s.id)
                 };
-                const res = await fetch('/api/ai/summary', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!res.ok) {
-                  const data = (await res.json().catch(() => ({}))) as unknown;
-                  const message = (typeof data === 'object' && data && 'error' in data && typeof (data as { error?: unknown }).error === 'string')
-                    ? (data as { error: string }).error
-                    : 'Failed to get AI summary';
-                  throw new Error(message);
-                }
-                const data = (await res.json()) as unknown;
-                const summary = ((): string => {
-                  if (typeof data === 'object' && data && 'summary' in (data as Record<string, unknown>)) {
-                    const v = (data as Record<string, unknown>).summary;
-                    return typeof v === 'string' ? v : '';
+                if (useClientKey && apiKey) {
+                  const messages = [
+                    { role: 'system', content: 'You summarize time tracking sessions for users.' },
+                    { role: 'user', content: `Create a brief friendly summary. JSON only: {"summary": string}. Data: ${JSON.stringify(payload)}` }
+                  ];
+                  type ChatMessage = { content?: string };
+                  type ChatChoice = { message?: ChatMessage };
+                  type ChatCompletion = { choices?: ChatChoice[] };
+                  const data = await callOpenAI('/v1/chat/completions', { model: 'gpt-4o-mini', messages, response_format: { type: 'json_object' } }) as Partial<ChatCompletion>;
+                  const content = data.choices && data.choices.length > 0 && data.choices[0]?.message?.content
+                    ? String(data.choices[0].message?.content)
+                    : '';
+                  const parsed = JSON.parse(content) as { summary?: unknown };
+                  setAiSummary(typeof parsed.summary === 'string' ? parsed.summary : '');
+                } else {
+                  const res = await fetch('/api/ai/summary', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                  if (!res.ok) {
+                    const data = (await res.json().catch(() => ({}))) as unknown;
+                    const message = (typeof data === 'object' && data && 'error' in data && typeof (data as { error?: unknown }).error === 'string')
+                      ? (data as { error: string }).error
+                      : 'Failed to get AI summary';
+                    throw new Error(message);
                   }
-                  return '';
-                })();
-                setAiSummary(summary);
+                  const data = (await res.json()) as unknown;
+                  const summary = ((): string => {
+                    if (typeof data === 'object' && data && 'summary' in (data as Record<string, unknown>)) {
+                      const v = (data as Record<string, unknown>).summary;
+                      return typeof v === 'string' ? v : '';
+                    }
+                    return '';
+                  })();
+                  setAiSummary(summary);
+                }
               } catch (e: unknown) {
                 const message = e instanceof Error ? e.message : 'AI summary failed';
                 addToast({ message, variant: 'error' });
@@ -400,6 +421,12 @@ export default function Summary({
           >
             {aiLoading ? (<><Spinner size="sm" className="me-2" animation="border" />Summarizing…</>) : 'AI Summary'}
           </Button>
+        )}
+        {apiKey && !aiSummary && (
+          <div className="form-check form-switch ms-2">
+            <input className="form-check-input" type="checkbox" id="use-client-key-summary" checked={useClientKey} onChange={(e) => setUseClientKey(e.target.checked)} />
+            <label className="form-check-label small" htmlFor="use-client-key-summary">Use my API key</label>
+          </div>
         )}
         {onReset && (
           <Button 
