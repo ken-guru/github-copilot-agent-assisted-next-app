@@ -1,3 +1,5 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -17,10 +19,10 @@ const nextConfig = {
       };
     }
     
-    // Add aliases that match tsconfig.json
+    // Add aliases that match tsconfig.json (avoid absolute paths for security)
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': '/Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/src'
+      '@': path.resolve(__dirname, 'src'),
     };
     
     return config;
@@ -28,6 +30,24 @@ const nextConfig = {
   
   // Ensure proper handling of PWA assets and security
   async headers() {
+    const isProd = process.env.NODE_ENV === 'production';
+
+    // Build CSP dynamically: relax in development to support React Refresh (unsafe-eval) and HMR (ws)
+    const scriptSrc = [
+      "'self'",
+      "'unsafe-inline'",
+      !isProd ? "'unsafe-eval'" : null,
+      'https://cdn.jsdelivr.net',
+    ].filter(Boolean).join(' ');
+
+    const connectSrc = [
+      "'self'",
+      'https://api.openai.com',
+      !isProd ? 'ws:' : null,
+      !isProd ? 'wss:' : null,
+    ].filter(Boolean).join(' ');
+
+    const baseCsp = `default-src 'self' data: blob:; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src ${scriptSrc}; connect-src ${connectSrc};`;
     return [
       // Global security headers for all routes
       {
@@ -47,7 +67,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self' data: blob:; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; connect-src 'self' https://api.openai.com;",
+            value: baseCsp,
           },
         ],
       },
