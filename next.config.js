@@ -43,6 +43,7 @@ const nextConfig = {
     const connectSrc = [
       "'self'",
       'https://api.openai.com',
+      'https://cdn.jsdelivr.net',
       !isProd ? 'ws:' : null,
       !isProd ? 'wss:' : null,
     ].filter(Boolean).join(' ');
