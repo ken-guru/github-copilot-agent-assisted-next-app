@@ -15,7 +15,7 @@
   - Write unit tests for order integration with existing storage functions
   - _Requirements: 1.3, 3.1, 3.2, 3.4, 3.5_
 
-- [ ] 3. Create drag-and-drop state management hook
+- [x] 3. Create drag-and-drop state management hook
   - Implement `src/hooks/useDragAndDrop.ts` for drag-and-drop state management
   - Handle drag start, drag over, drag end, and drop events
   - Implement reordering logic that updates both local state and persistent storage
