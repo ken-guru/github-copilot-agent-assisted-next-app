@@ -25,72 +25,72 @@
 
 - [ ] 4. Create keyboard reordering accessibility hook
   - Implement `src/hooks/useKeyboardReordering.ts` for keyboard-based reordering
-  - Add keyboard event handlers for up/down arrow keys with modifier keys
+  - Add keyboard event handlers for up/down arrow keys with modifier keys (Ctrl+Up/Down or Alt+Up/Down)
   - Implement focus management and position announcements for screen readers
   - Add ARIA live region support for accessibility feedback
   - Write unit tests for keyboard navigation and accessibility features
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
 - [ ] 5. Add drag handles and visual feedback to ActivityButton component
-  - Modify `src/components/ActivityButton.tsx` to include drag handles
-  - Add drag event handlers and visual states (dragging, drag-over)
-  - Implement proper ARIA attributes for drag-and-drop accessibility
-  - Add CSS classes for drag feedback and hover states
+  - Modify `src/components/ActivityButton.tsx` to include drag handles (grip icon)
+  - Add drag event handlers (onDragStart, onDragOver, onDragEnd, onDrop) and visual states
+  - Implement proper ARIA attributes for drag-and-drop accessibility (draggable, aria-grabbed)
+  - Add CSS classes for drag feedback (.dragging, .drag-over) and hover states
   - Write component tests for drag handle interactions and visual states
   - _Requirements: 1.1, 1.2, 4.1, 4.3_
 
 - [ ] 6. Integrate reordering functionality into ActivityManager
-  - Modify `src/components/ActivityManager.tsx` to use order-aware activity loading
-  - Integrate drag-and-drop and keyboard reordering hooks
-  - Add reordering event handlers and state management
-  - Ensure new activities are added to the end of the custom order
+  - Modify `src/components/ActivityManager.tsx` to use `getActivitiesInOrder()` instead of `getActivities()`
+  - Integrate useDragAndDrop and useKeyboardReordering hooks
+  - Add reordering event handlers and pass activity IDs to drag-and-drop hook
+  - Ensure ActivityManager re-renders when order changes
   - Write integration tests for ActivityManager with reordering enabled
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 3.3_
 
 - [ ] 7. Update Summary component to respect custom activity order
-  - Modify `src/components/Summary.tsx` to use order-aware activity sorting
-  - Ensure completed activities maintain their relative custom order
+  - Modify `src/components/Summary.tsx` to sort activities using `sortActivitiesByOrder()` utility
+  - Update `calculateActivityTimes()` to preserve custom order when building activity time list
+  - Ensure completed activities maintain their relative custom order in the summary display
   - Ensure skipped activities maintain their relative custom order within the skipped group
-  - Preserve original ordering relationships when activities are distributed between completed and skipped lists
   - Write tests for summary order consistency with various activity completion scenarios
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
 - [ ] 8. Update Timeline component for visual order consistency
-  - Modify `src/components/Timeline.tsx` to respect custom activity order in visual representation
-  - Ensure timeline entries maintain chronological order for time calculations
-  - Add display order consideration for visual consistency with other views
-  - Maintain existing timeline functionality while respecting custom order
+  - Modify `src/components/Timeline.tsx` to consider custom activity order for visual consistency
+  - Ensure timeline entries maintain chronological order for time calculations (no changes to time logic)
+  - Add visual indicators or sorting hints that respect custom order where appropriate
+  - Maintain existing timeline functionality while improving visual consistency with other views
   - Write tests for timeline visual consistency with custom activity order
   - _Requirements: 2.2, 2.4_
 
 - [ ] 9. Add mobile touch support for drag-and-drop
-  - Extend drag-and-drop hook to handle touch events (touchstart, touchmove, touchend)
-  - Implement long-press detection for touch drag initiation
-  - Add touch-specific visual feedback and drop zone indicators
-  - Handle touch gesture cancellation and edge cases
+  - Extend useDragAndDrop hook to handle touch events (touchstart, touchmove, touchend)
+  - Implement long-press detection (500ms) for touch drag initiation to avoid conflicts with scrolling
+  - Add touch-specific visual feedback and drop zone indicators for mobile devices
+  - Handle touch gesture cancellation and edge cases (scroll interference, multi-touch)
   - Write tests for mobile touch interactions and gesture handling
   - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
 
 - [ ] 10. Add comprehensive error handling and edge cases
-  - Implement error handling for localStorage quota exceeded scenarios
-  - Add validation for corrupted order data with automatic cleanup
-  - Handle edge cases like missing activities in order array
-  - Add graceful degradation when drag-and-drop is not supported
-  - Write tests for error scenarios and recovery mechanisms
+  - Review and enhance error handling in activity-order.ts for localStorage quota exceeded scenarios
+  - Add validation for corrupted order data with automatic cleanup (already partially implemented)
+  - Handle edge cases like missing activities in order array (already implemented via cleanupActivityOrder)
+  - Add graceful degradation when drag-and-drop is not supported (feature detection)
+  - Write additional tests for error scenarios and recovery mechanisms
   - _Requirements: 3.1, 3.2, 3.4, 3.5_
 
 - [ ] 11. Create end-to-end tests for complete reordering workflows
-  - Write Cypress tests for drag-and-drop reordering scenarios
+  - Write Cypress tests for drag-and-drop reordering scenarios in `cypress/e2e/activity-reordering.cy.ts`
   - Test order persistence across page reloads and browser sessions
-  - Test cross-view consistency (Activities → Timer → Summary)
-  - Test accessibility features with keyboard navigation
-  - Test mobile touch interactions on various screen sizes
+  - Test cross-view consistency (Activities → Timer → Summary views maintain same order)
+  - Test accessibility features with keyboard navigation (Tab, Ctrl+Up/Down)
+  - Test mobile touch interactions on various screen sizes (if mobile touch is implemented)
   - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 3.1, 3.2, 4.1, 4.2, 6.1, 6.2_
 
 - [ ] 12. Add performance optimizations and final polish
-  - Implement debounced order persistence to reduce localStorage writes
-  - Add memoization for sorted activity arrays to prevent unnecessary re-renders
-  - Optimize drag feedback rendering for smooth interactions
+  - Review debounced order persistence implementation in useDragAndDrop (already implemented)
+  - Add memoization for sorted activity arrays in ActivityManager to prevent unnecessary re-renders
+  - Optimize drag feedback rendering for smooth interactions (CSS transitions, transform instead of layout changes)
   - Add loading states and transition animations for better user experience
-  - Write performance tests for large activity lists and rapid reordering
+  - Write performance tests for large activity lists (20+ activities) and rapid reordering
   - _Requirements: 1.2, 1.4, 1.5, 6.5_
