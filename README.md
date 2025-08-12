@@ -209,8 +209,8 @@ yarn test:watch
    - Note: OPENAI_API_KEY is deprecated and not used; BYOK is client-only.
 
 2) Start the app and open /ai.
-   - If unauthenticated, click "Enable AI (dev)" to set a temporary cookie (ai_auth=1).
-   - Submit a prompt to generate a plan; when AI_ENABLE_MOCK=true, the API returns a mock plan.
+   - Enter your OpenAI key (sk-...) in the BYOK section and Save. That's it—AI is enabled client-side.
+   - Submit a prompt to generate a plan.
 
 3) Summary AI
    - The Summary component can request an AI summary via /api/ai/summary.

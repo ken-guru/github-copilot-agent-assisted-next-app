@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Form, Spinner, Alert, InputGroup } from 'react-bootstrap';
 import { useToast } from '@/contexts/ToastContext';
-import { isAuthenticatedClient } from '@/utils/auth/client';
 import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
 
@@ -16,41 +15,25 @@ export default function AIPlannerPage() {
   const [error, setError] = useState<string | null>(null);
   // BYOK inline setup
   const [keyInput, setKeyInput] = useState('');
-  // Determine auth after hydration to avoid SSR false negatives
-  const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
   const { apiKey, setApiKey, clearApiKey } = useApiKey();
   const { callOpenAI } = useOpenAIClient();
 
   useEffect(() => {
-    // Evaluate cookie on client only
-    setIsAuthed(isAuthenticatedClient());
-  }, []);
-
-  useEffect(() => {
-    if (isAuthed === null) return; // wait for hydration check
-    // Don't redirect; render inline prompt when unauthenticated
+    // Hydration guard for client-only rendering
     setReady(true);
-  }, [isAuthed]);
-
-  const enableDevAuth = () => {
-    try {
-      // Dev-only helper: set cookie so API routes accept requests
-      document.cookie = `ai_auth=1; path=/; max-age=${60 * 60 * 24 * 7}`; // 7 days
-      setIsAuthed(true);
-      addToast({ message: 'AI access enabled for development', variant: 'success' });
-    } catch {
-      addToast({ message: 'Failed to enable AI access', variant: 'error' });
-    }
-  };
+  }, []);
 
   const handlePlan = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     try {
-  // Auto mode: BYOK if apiKey present, else server route (mock/501)
-  let data: unknown;
-  if (apiKey) {
+  // Require BYOK for AI planning
+  if (!apiKey) {
+        throw new Error('Please enter and save your OpenAI API key first.');
+      }
+      let data: unknown;
+      {
         // Client-direct call to OpenAI with BYOK
         // Minimal example: responses API, text generation with JSON instruction
         const payload = {
@@ -75,20 +58,6 @@ export default function AIPlannerPage() {
         } catch {
           throw new Error('Malformed AI response');
         }
-  } else {
-        const res = await fetch('/api/ai/plan', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
-        });
-        if (!res.ok) {
-          const d = (await res.json().catch(() => ({}))) as unknown;
-          const message = (typeof d === 'object' && d && 'error' in (d as { error?: unknown }) && typeof (d as { error?: unknown }).error === 'string')
-            ? (d as { error: string }).error
-            : 'Failed to generate plan';
-          throw new Error(message);
-        }
-        data = await res.json();
       }
       type LoosePlanActivity = {
         title?: unknown;
@@ -137,23 +106,21 @@ export default function AIPlannerPage() {
 
   if (!ready) return null;
 
-  if (!isAuthed) {
+  // State 1: Supply a key (BYOK). No additional enablement required.
+  if (!apiKey) {
     return (
       <div className="container py-3">
         <Card>
           <Card.Header>
             <h5 className="mb-0 d-flex align-items-center">
-              <i className="bi bi-lock me-2" aria-hidden="true" />
-              AI Session Planner
+              <i className="bi bi-key me-2" aria-hidden="true" />
+              AI Session Planner — Bring Your Own Key
             </h5>
           </Card.Header>
           <Card.Body>
-            <Alert variant="warning" role="alert" className="mb-3">
-              AI features are locked. Set the dev cookie to continue.
-            </Alert>
             <Card className="mb-3">
               <Card.Body>
-                <Form.Label htmlFor="byokKey">Use your OpenAI API key (client-only)</Form.Label>
+                <Form.Label htmlFor="byokKey">Enter your OpenAI API key (client-only)</Form.Label>
                 <InputGroup className="mb-2">
                   <Form.Control
                     id="byokKey"
@@ -163,32 +130,20 @@ export default function AIPlannerPage() {
                     onChange={(e) => setKeyInput(e.target.value)}
                   />
                   <Button
-                    variant="outline-primary"
+                    variant="primary"
                     onClick={() => {
                       const trimmed = keyInput.trim();
                       if (!trimmed) return;
                       setApiKey(trimmed, 'session');
+                      setKeyInput(''); // don't keep in input after saving
                       addToast({ message: 'API key saved (session only)', variant: 'success' });
                     }}
                   >Save</Button>
-                  {apiKey && (
-                    <Button
-                      variant="outline-danger"
-                      onClick={() => {
-                        clearApiKey();
-                        setKeyInput('');
-                        addToast({ message: 'API key cleared', variant: 'success' });
-                      }}
-                    >Clear</Button>
-                  )}
                 </InputGroup>
-                <Form.Text className="text-body-secondary">Key is kept only in this tab (sessionStorage). Never sent to server.</Form.Text>
+                <Form.Text className="text-body-secondary">Stored only in this tab (sessionStorage). Never sent to the server or logged.</Form.Text>
               </Card.Body>
             </Card>
             <div className="d-flex gap-2">
-              <Button type="button" variant="primary" onClick={enableDevAuth} aria-label="Enable AI access">
-                Enable AI (dev)
-              </Button>
               <Button type="button" variant="outline-secondary" onClick={() => router.push('/') }>
                 Go Home
               </Button>
@@ -222,8 +177,8 @@ export default function AIPlannerPage() {
               />
               <Form.Text className="text-body-secondary">One request per plan to conserve tokens.</Form.Text>
             </Form.Group>
-            <Alert variant={apiKey ? 'info' : 'secondary'} className="mb-3">
-              Mode: {apiKey ? 'Client-only (BYOK)' : 'Server mock (no key)'}
+            <Alert variant="info" className="mb-3">
+              Mode: Client-only (BYOK). Your key stays on this device.
             </Alert>
             {error && (
               <Alert variant="danger" role="alert">{error}</Alert>
@@ -231,6 +186,9 @@ export default function AIPlannerPage() {
             <div className="d-flex gap-2">
               <Button type="submit" variant="primary" disabled={loading} aria-label="Generate AI plan">
                 {loading ? (<><Spinner size="sm" className="me-2" animation="border" />Planning…</>) : 'Plan with AI'}
+              </Button>
+              <Button type="button" variant="outline-danger" onClick={() => { clearApiKey(); addToast({ message: 'API key cleared', variant: 'success' }); }}>
+                Clear key
               </Button>
               <Button type="button" variant="outline-secondary" onClick={() => router.push('/') }>
                 Cancel
