@@ -205,8 +205,8 @@ yarn test:watch
 ```markdown
 1) Copy .env.example to .env.local and set variables as needed:
    - AI_ENABLE_MOCK=true (recommended for local dev)
-   - OPENAI_API_KEY= (optional for live OpenAI; required in production)
    - AI_FALLBACK_ON_429=true (default). Set to false to surface real 429 errors instead of mock fallback.
+   - Note: OPENAI_API_KEY is deprecated and not used; BYOK is client-only.
 
 2) Start the app and open /ai.
    - If unauthenticated, click "Enable AI (dev)" to set a temporary cookie (ai_auth=1).
@@ -427,11 +427,9 @@ For detailed migration information, see [MRTMLY-221](./docs/logged_memories/MRTM
 
 You can use OpenAI features without configuring server env vars:
 
-- Click the key icon in the navbar to open the “OpenAI API Key” dialog.
-- Paste your key (e.g., sk-...) and choose persistence:
-   - Default: in-memory (cleared on refresh)
-   - Optional: session-only (kept for this tab via sessionStorage)
-- Your key isn’t sent to the server or Vercel and is never logged.
+- Open the AI page from the navbar (always visible).
+- In the AI page, enter your OpenAI key (sk-...) in the BYOK section and save.
+- The key is kept only for this tab (sessionStorage) and never sent to the server.
 
 Security notes:
 - A strict CSP limits outbound connections to https://api.openai.com.

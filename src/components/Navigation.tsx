@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useThemeReactive } from '@/hooks/useThemeReactive';
 import ThemeToggle from '@/components/ThemeToggle';
-import { isAuthenticatedClient } from '@/utils/auth/client';
-import { ApiKeyDialog } from '@/components/ApiKeyDialog';
-import { useApiKey } from '@/contexts/ApiKeyContext';
+// AI nav is always visible; gating handled on page
 
 /**
  * Enhanced navigation with active state management and tab-like styling
@@ -25,9 +23,8 @@ const Navigation: React.FC = () => {
   const isTimerActive = pathname === '/';
   const isActivitiesActive = pathname === '/activities';
   const isAIActive = pathname === '/ai';
-  const showAI = isAuthenticatedClient();
-  const { apiKey } = useApiKey();
-  const [showKeyModal, setShowKeyModal] = useState(false);
+  // Always show AI nav item; page handles gating/setup
+  const showAI = true;
   
   // Use Bootstrap's theme-aware classes (removed navbar-expand-lg for always-expanded behavior)
   const navClasses = theme === 'dark' 
@@ -49,23 +46,6 @@ const Navigation: React.FC = () => {
           {/* Theme Toggle - Visually separated from navigation */}
           <div className="d-flex align-items-center me-4" data-testid="theme-toggle-container">
             <ThemeToggle size="sm" variant="navbar" />
-            {/* BYOK settings button */}
-            <button
-              type="button"
-              className="btn btn-outline-secondary btn-sm ms-2 position-relative"
-              aria-label="Set OpenAI API key"
-              onClick={() => setShowKeyModal(true)}
-              data-testid="openai-api-key-button"
-            >
-              <i className="bi bi-key" aria-hidden="true"></i>
-              {apiKey && (
-                <span
-                  className="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle"
-                  title="API key set"
-                  aria-label="API key active"
-                />
-              )}
-            </button>
           </div>
           
           {/* Navigation Items - Using Bootstrap nav pills for tab-like appearance */}
@@ -116,8 +96,6 @@ const Navigation: React.FC = () => {
           </ul>
         </div>
       </div>
-  {/* API key dialog */}
-  <ApiKeyDialog show={showKeyModal} onClose={() => setShowKeyModal(false)} />
     </nav>
   );
 };

@@ -35,7 +35,7 @@ export default function Summary({
   const canUseAI = isAuthenticatedClient();
   const { apiKey } = useApiKey();
   const { callOpenAI } = useOpenAIClient();
-  const [useClientKey, setUseClientKey] = useState(false);
+  // Auto mode: BYOK if available, else server route
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
@@ -377,7 +377,7 @@ export default function Summary({
                   perActivity: calculateActivityTimes().map(a => ({ id: a.id, name: a.name, duration: a.duration })),
                   skippedIds: skippedActivities.map(s => s.id)
                 };
-                if (useClientKey && apiKey) {
+                if (apiKey) {
                   const messages = [
                     { role: 'system', content: 'You summarize time tracking sessions for users.' },
                     { role: 'user', content: `Create a brief friendly summary. JSON only: {"summary": string}. Data: ${JSON.stringify(payload)}` }
@@ -422,12 +422,7 @@ export default function Summary({
             {aiLoading ? (<><Spinner size="sm" className="me-2" animation="border" />Summarizing…</>) : 'AI Summary'}
           </Button>
         )}
-        {apiKey && !aiSummary && (
-          <div className="form-check form-switch ms-2">
-            <input className="form-check-input" type="checkbox" id="use-client-key-summary" checked={useClientKey} onChange={(e) => setUseClientKey(e.target.checked)} />
-            <label className="form-check-label small" htmlFor="use-client-key-summary">Use my API key</label>
-          </div>
-        )}
+  {/* Auto BYOK mode indicated by presence of apiKey; no manual switch */}
         {onReset && (
           <Button 
             variant="outline-danger" 
