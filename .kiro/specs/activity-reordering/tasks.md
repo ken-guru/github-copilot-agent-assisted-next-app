@@ -7,7 +7,7 @@
   - Write comprehensive unit tests for all order utility functions
   - _Requirements: 1.3, 3.1, 3.2, 3.4_
 
-- [ ] 2. Extend activity storage with order integration
+- [x] 2. Extend activity storage with order integration
   - Modify `src/utils/activity-storage.ts` to include order-aware functions
   - Add `getActivitiesInOrder()` function that returns activities sorted by custom order
   - Add `reorderActivities()` function to persist new order arrangements

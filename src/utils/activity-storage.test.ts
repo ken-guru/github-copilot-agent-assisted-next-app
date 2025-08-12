@@ -6,8 +6,17 @@ import {
   deleteActivity,
   validateActivity,
   resetActivitiesToDefault,
+  getActivitiesInOrder,
+  reorderActivities,
+  restoreActivity,
+  synchronizeActivityOrder,
 } from './activity-storage';
 import { Activity, DEFAULT_ACTIVITIES } from '../types/activity';
+import { 
+  getActivityOrder, 
+  setActivityOrder, 
+  clearActivityOrder 
+} from './activity-order';
 
 describe('activity-storage', () => {
   beforeEach(() => {
@@ -151,6 +160,252 @@ describe('activity-storage', () => {
       
       expect(firstActivityTimestamp.getTime()).toBeGreaterThanOrEqual(beforeReset.getTime());
       expect(firstActivityTimestamp.getTime()).toBeLessThanOrEqual(afterReset.getTime());
+    });
+
+    it('should reset activity order to match default activities', () => {
+      // Set up custom order first
+      setActivityOrder(['custom-1', 'custom-2']);
+      expect(getActivityOrder()).toEqual(['custom-1', 'custom-2']);
+      
+      // Reset to defaults
+      resetActivitiesToDefault();
+      
+      // Verify order is reset to default activity IDs
+      const activities = getActivities();
+      const expectedOrder = activities
+        .filter(a => a.isActive)
+        .map(a => a.id);
+      expect(getActivityOrder()).toEqual(expectedOrder);
+    });
+  });
+
+  describe('Order Integration', () => {
+    beforeEach(() => {
+      localStorage.clear();
+      // Set up default activities for order tests
+      saveActivities(DEFAULT_ACTIVITIES);
+    });
+
+    describe('getActivitiesInOrder', () => {
+      it('should return activities in creation order when no custom order exists', () => {
+        const activities = getActivitiesInOrder();
+        const regularActivities = getActivities();
+        
+        // Should be same as regular getActivities when no custom order
+        expect(activities).toEqual(regularActivities);
+      });
+
+      it('should return activities in custom order when order exists', () => {
+        // Set custom order (reverse of default)
+        const customOrder = ['4', '3', '2', '1'];
+        setActivityOrder(customOrder);
+        
+        const activities = getActivitiesInOrder();
+        
+        // Should be in custom order
+        expect(activities.map(a => a.id)).toEqual(customOrder);
+      });
+
+      it('should handle activities not in custom order by appending them', () => {
+        // Add a new activity
+        const newActivity: Activity = {
+          id: '5',
+          name: 'New Activity',
+          colorIndex: 4,
+          description: 'New activity',
+          createdAt: new Date().toISOString(),
+          isActive: true,
+        };
+        addActivity(newActivity);
+        
+        // Set partial custom order
+        const partialOrder = ['2', '1'];
+        setActivityOrder(partialOrder);
+        
+        const activities = getActivitiesInOrder();
+        const orderedIds = activities.map(a => a.id);
+        
+        // First two should be in custom order
+        expect(orderedIds.slice(0, 2)).toEqual(['2', '1']);
+        // Remaining should include the unordered activities
+        expect(orderedIds).toContain('3');
+        expect(orderedIds).toContain('4');
+        expect(orderedIds).toContain('5');
+      });
+    });
+
+    describe('reorderActivities', () => {
+      it('should set new activity order', () => {
+        const newOrder = ['3', '1', '4', '2'];
+        reorderActivities(newOrder);
+        
+        expect(getActivityOrder()).toEqual(newOrder);
+        
+        const activities = getActivitiesInOrder();
+        expect(activities.map(a => a.id)).toEqual(newOrder);
+      });
+
+      it('should filter out invalid activity IDs', () => {
+        const orderWithInvalid = ['3', 'invalid-id', '1', '4'];
+        reorderActivities(orderWithInvalid);
+        
+        // Should only include valid IDs
+        expect(getActivityOrder()).toEqual(['3', '1', '4']);
+      });
+
+      it('should handle empty array', () => {
+        // Set initial order
+        setActivityOrder(['1', '2', '3', '4']);
+        
+        reorderActivities([]);
+        
+        expect(getActivityOrder()).toEqual([]);
+      });
+
+      it('should handle non-array input gracefully', () => {
+        // Set initial order
+        setActivityOrder(['1', '2', '3', '4']);
+        
+        // @ts-expect-error Testing invalid input
+        reorderActivities('not-an-array');
+        
+        // Should not change existing order
+        expect(getActivityOrder()).toEqual(['1', '2', '3', '4']);
+      });
+    });
+
+    describe('addActivity with order integration', () => {
+      it('should add new activity to end of custom order', () => {
+        // Set initial order
+        setActivityOrder(['2', '1', '4', '3']);
+        
+        const newActivity: Activity = {
+          id: '5',
+          name: 'New Activity',
+          colorIndex: 4,
+          description: 'New activity',
+          createdAt: new Date().toISOString(),
+          isActive: true,
+        };
+        
+        addActivity(newActivity);
+        
+        // Should be added to end of order
+        expect(getActivityOrder()).toEqual(['2', '1', '4', '3', '5']);
+      });
+
+      it('should not add inactive activity to order', () => {
+        setActivityOrder(['1', '2']);
+        
+        const inactiveActivity: Activity = {
+          id: '5',
+          name: 'Inactive Activity',
+          colorIndex: 4,
+          description: 'Inactive activity',
+          createdAt: new Date().toISOString(),
+          isActive: false,
+        };
+        
+        addActivity(inactiveActivity);
+        
+        // Order should remain unchanged
+        expect(getActivityOrder()).toEqual(['1', '2']);
+      });
+    });
+
+    describe('deleteActivity with order integration', () => {
+      it('should remove deleted activity from custom order', () => {
+        setActivityOrder(['1', '2', '3', '4']);
+        
+        deleteActivity('2');
+        
+        // Should be removed from order
+        expect(getActivityOrder()).toEqual(['1', '3', '4']);
+        
+        // Activity should still exist but be inactive
+        const activities = getActivities();
+        const deletedActivity = activities.find(a => a.id === '2');
+        expect(deletedActivity?.isActive).toBe(false);
+      });
+
+      it('should handle deleting activity not in order', () => {
+        setActivityOrder(['1', '3']);
+        
+        deleteActivity('2');
+        
+        // Order should remain unchanged
+        expect(getActivityOrder()).toEqual(['1', '3']);
+      });
+    });
+
+    describe('restoreActivity', () => {
+      it('should restore deleted activity and add to end of order', () => {
+        // Delete an activity first
+        deleteActivity('2');
+        setActivityOrder(['1', '3', '4']);
+        
+        // Restore it
+        restoreActivity('2');
+        
+        // Should be added back to end of order
+        expect(getActivityOrder()).toEqual(['1', '3', '4', '2']);
+        
+        // Activity should be active again
+        const activities = getActivities();
+        const restoredActivity = activities.find(a => a.id === '2');
+        expect(restoredActivity?.isActive).toBe(true);
+      });
+
+      it('should not affect already active activity', () => {
+        setActivityOrder(['1', '2', '3', '4']);
+        
+        restoreActivity('2');
+        
+        // Order should remain unchanged
+        expect(getActivityOrder()).toEqual(['1', '2', '3', '4']);
+      });
+
+      it('should handle non-existent activity ID', () => {
+        setActivityOrder(['1', '2', '3', '4']);
+        
+        restoreActivity('non-existent');
+        
+        // Order should remain unchanged
+        expect(getActivityOrder()).toEqual(['1', '2', '3', '4']);
+      });
+    });
+
+    describe('synchronizeActivityOrder', () => {
+      it('should remove orphaned IDs from order', () => {
+        // Set order with some non-existent IDs
+        setActivityOrder(['1', 'orphaned-1', '2', 'orphaned-2', '3']);
+        
+        synchronizeActivityOrder();
+        
+        // Should only contain existing active activity IDs
+        expect(getActivityOrder()).toEqual(['1', '2', '3']);
+      });
+
+      it('should handle deleted activities in order', () => {
+        setActivityOrder(['1', '2', '3', '4']);
+        
+        // Delete an activity
+        deleteActivity('2');
+        
+        // Synchronize should clean up the order
+        synchronizeActivityOrder();
+        
+        expect(getActivityOrder()).toEqual(['1', '3', '4']);
+      });
+
+      it('should not affect valid order', () => {
+        const validOrder = ['1', '2', '3', '4'];
+        setActivityOrder(validOrder);
+        
+        synchronizeActivityOrder();
+        
+        expect(getActivityOrder()).toEqual(validOrder);
+      });
     });
   });
 });
