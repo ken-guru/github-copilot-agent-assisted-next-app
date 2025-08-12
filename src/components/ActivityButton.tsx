@@ -25,6 +25,12 @@ interface ActivityButtonProps {
   onDragEnter?: (activityId: string) => void;
   onDragLeave?: () => void;
   onDrop?: (activityId: string) => void;
+  // Keyboard reordering props
+  onKeyDown?: (event: KeyboardEvent) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  isFocused?: boolean;
+  isReordering?: boolean;
 }
 
 /**
@@ -50,6 +56,12 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
   onDragEnter,
   onDragLeave,
   onDrop,
+  // Keyboard reordering props
+  onKeyDown,
+  onFocus,
+  onBlur,
+  isFocused = false,
+  isReordering = false,
 }) => {
   const { id, name, colorIndex } = activity;
   const theme = useThemeReactive();
@@ -114,6 +126,25 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
     }
   };
 
+  // Keyboard event handlers
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onKeyDown) {
+      onKeyDown(e.nativeEvent);
+    }
+  };
+
+  const handleFocus = () => {
+    if (onFocus) {
+      onFocus();
+    }
+  };
+
+  const handleBlur = () => {
+    if (onBlur) {
+      onBlur();
+    }
+  };
+
   // Extract word wrap styles to avoid duplication
   const wordWrapStyles = {
     wordWrap: 'break-word' as const,
@@ -130,7 +161,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
 
   return (
     <Card 
-      className={`${isCompleted ? 'border-success' : ''} ${getDragClasses()}`}
+      className={`${isCompleted ? 'border-success' : ''} ${getDragClasses()} ${isFocused ? 'border-primary' : ''} ${isReordering ? 'reordering' : ''}`}
       style={colors ? {
         backgroundColor: colors.background,
         borderColor: colors.border
@@ -142,9 +173,13 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
       onDragEnter={draggable ? handleDragEnter : undefined}
       onDragLeave={draggable ? handleDragLeave : undefined}
       onDrop={draggable ? handleDrop : undefined}
+      onKeyDown={onKeyDown ? handleKeyDown : undefined}
+      onFocus={onFocus ? handleFocus : undefined}
+      onBlur={onBlur ? handleBlur : undefined}
       aria-grabbed={draggable ? isDragging : undefined}
       role={draggable ? 'button' : undefined}
       tabIndex={draggable ? 0 : undefined}
+      aria-describedby={draggable ? `${id}-reorder-instructions` : undefined}
     >
       <Card.Body className="py-2 px-3">
         <div className="d-flex justify-content-between align-items-center">
@@ -252,6 +287,16 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
           </div>
         </div>
       </Card.Body>
+      {/* Screen reader instructions for reordering */}
+      {draggable && (
+        <div 
+          id={`${id}-reorder-instructions`} 
+          className="sr-only"
+          aria-hidden="true"
+        >
+          Use Ctrl+Up or Ctrl+Down arrow keys to reorder this activity. Use Alt+Up or Alt+Down as alternative.
+        </div>
+      )}
     </Card>
   );
 };

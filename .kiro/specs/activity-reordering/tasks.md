@@ -39,7 +39,7 @@
   - Write component tests for drag handle interactions and visual states
   - _Requirements: 1.1, 1.2, 4.1, 4.3_
 
-- [ ] 6. Integrate reordering functionality into ActivityManager
+- [x] 6. Integrate reordering functionality into ActivityManager
   - Modify `src/components/ActivityManager.tsx` to use `getActivitiesInOrder()` instead of `getActivities()`
   - Integrate useDragAndDrop and useKeyboardReordering hooks
   - Add reordering event handlers and pass activity IDs to drag-and-drop hook

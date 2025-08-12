@@ -5,8 +5,10 @@ import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import TimerProgressSection from './TimerProgressSection';
 import ActivityFormSection from './ActivityFormSection';
-import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
+import { getActivitiesInOrder, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
+import { useKeyboardReordering } from '../hooks/useKeyboardReordering';
 
 // Use canonical Activity type
 type Activity = CanonicalActivity & { colors?: ColorSet };
@@ -56,9 +58,44 @@ export default function ActivityManager({
     description: ''
   });
 
-  // Load activities from localStorage on mount
+  // Get activity IDs for reordering hooks
+  const activityIds = activities.map(activity => activity.id);
+
+  // Drag and drop functionality
+  const {
+    state: dragState,
+    handlers: dragHandlers,
+    getActivityClasses,
+    isActivityDragged,
+    isActivityDraggedOver,
+    cleanup: cleanupDragAndDrop
+  } = useDragAndDrop(activityIds, {
+    onReorder: (newOrder) => {
+      // Re-fetch activities in new order to trigger re-render
+      const reorderedActivities = getActivitiesInOrder().filter(a => a.isActive);
+      setActivities(reorderedActivities);
+    }
+  });
+
+  // Keyboard reordering functionality
+  const {
+    focusedItem,
+    isReordering,
+    handleKeyDown,
+    setFocusedItem,
+    clearAnnouncements
+  } = useKeyboardReordering({
+    activityIds,
+    onReorder: (newOrder) => {
+      // Re-fetch activities in new order to trigger re-render
+      const reorderedActivities = getActivitiesInOrder().filter(a => a.isActive);
+      setActivities(reorderedActivities);
+    }
+  });
+
+  // Load activities from localStorage on mount using custom order
   useEffect(() => {
-    const loadedActivities = getActivities().filter(a => a.isActive);
+    const loadedActivities = getActivitiesInOrder().filter(a => a.isActive);
     setActivities(loadedActivities);
     // Register activities in state machine
     loadedActivities.forEach(activity => {
@@ -100,6 +137,14 @@ export default function ActivityManager({
       observer.disconnect();
     };
   }, []);
+
+  // Cleanup reordering hooks on unmount
+  useEffect(() => {
+    return () => {
+      cleanupDragAndDrop();
+      clearAnnouncements();
+    };
+  }, [cleanupDragAndDrop, clearAnnouncements]);
 
   const handleAddActivity = useCallback((newActivity: Activity) => {
     // Activity already has smart color selection from the form
@@ -242,6 +287,7 @@ export default function ActivityManager({
                 key={activity.id} 
                 xs={12}
                 data-testid={`activity-column-${activity.id}`}
+                className={getActivityClasses(activity.id)}
               >
                 <ActivityButton
                   activity={activity}
@@ -251,6 +297,22 @@ export default function ActivityManager({
                   onRemove={onActivityRemove ? handleRemoveActivity : undefined}
                   timelineEntries={timelineEntries}
                   elapsedTime={elapsedTime}
+                  // Drag and drop props
+                  draggable={true}
+                  onDragStart={() => dragHandlers.handleDragStart(activity.id)}
+                  onDragOver={() => dragHandlers.handleDragOver(activity.id)}
+                  onDragEnter={() => dragHandlers.handleDragEnter(activity.id)}
+                  onDragLeave={() => dragHandlers.handleDragLeave()}
+                  onDragEnd={() => dragHandlers.handleDragEnd()}
+                  onDrop={() => dragHandlers.handleDrop(activity.id)}
+                  isDragging={isActivityDragged(activity.id)}
+                  isDraggedOver={isActivityDraggedOver(activity.id)}
+                  // Keyboard reordering props
+                  onKeyDown={(e) => handleKeyDown(e, activity.id)}
+                  onFocus={() => setFocusedItem(activity.id)}
+                  onBlur={() => setFocusedItem(null)}
+                  isFocused={focusedItem === activity.id}
+                  isReordering={isReordering}
                 />
               </Col>
             ))}
