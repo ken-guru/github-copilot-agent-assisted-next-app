@@ -55,7 +55,7 @@
   - Write tests for summary order consistency with various activity completion scenarios
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 8. Update Timeline component for visual order consistency
+- [x] 8. Update Timeline component for visual order consistency
   - Modify `src/components/Timeline.tsx` to consider custom activity order for visual consistency
   - Ensure timeline entries maintain chronological order for time calculations (no changes to time logic)
   - Add visual indicators or sorting hints that respect custom order where appropriate
