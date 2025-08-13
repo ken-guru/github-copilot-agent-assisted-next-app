@@ -34,7 +34,7 @@ const CACHE_NAMES = {
  */
 async function handleFetch(request) {
   try {
-    // Never intercept or cache cross-origin OpenAI calls carrying Authorization header
+  // Never intercept or cache cross-origin OpenAI calls; ensure exact hostname match to avoid suffix bypass
     try {
       const url = new URL(request.url);
       // Only bypass for exact OpenAI API host

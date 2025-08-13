@@ -6,6 +6,7 @@ import { useToast } from '@/contexts/ToastContext';
 import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
 import type { ChatCompletion } from '@/types/ai';
+import { MAX_AI_ACTIVITIES } from '@/types/ai';
 
 export default function AIPlannerPage() {
   const router = useRouter();
@@ -47,10 +48,9 @@ export default function AIPlannerPage() {
         };
         data = await callOpenAI('/v1/chat/completions', payload);
         // Extract JSON from choices
-        const cc = (data as Partial<ChatCompletion>) ?? {};
-        const content = cc.choices && cc.choices.length > 0 && cc.choices[0]?.message?.content
-          ? String(cc.choices[0].message?.content)
-          : '';
+  const cc = (data as Partial<ChatCompletion>) ?? {};
+  const firstChoice = (Array.isArray(cc.choices) && cc.choices.length > 0) ? cc.choices[0] : undefined;
+  const content = firstChoice?.message?.content ? String(firstChoice.message.content) : '';
         try {
           data = JSON.parse(content);
         } catch {
@@ -75,7 +75,7 @@ export default function AIPlannerPage() {
       if (Array.isArray(acts)) {
         // Map to app's Activity shape
         const now = new Date().toISOString();
-        const planned = acts.slice(0, 20).map((a: LoosePlanActivity, idx: number) => ({
+  const planned = acts.slice(0, MAX_AI_ACTIVITIES).map((a: LoosePlanActivity, idx: number) => ({
           id: crypto.randomUUID(),
           name: String((typeof a.title === 'string' ? a.title : (typeof a.name === 'string' ? a.name : `Activity ${idx + 1}`))),
           description: typeof a.description === 'string' ? a.description : undefined,

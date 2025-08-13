@@ -1,4 +1,5 @@
 import type { AIActivity, AIActivityPlan } from '@/types/ai';
+import { MAX_AI_ACTIVITIES } from '@/types/ai';
 
 export function safeJsonParse<T = unknown>(text: string): T {
   try {
@@ -62,13 +63,13 @@ export function extractPlanFromText(text: string): AIActivityPlan {
     const description = typeof x?.description === 'string' ? x.description : '';
     const dur = normalizeDuration(x?.duration);
     return { title: String(title).trim() || 'Untitled', description, duration: dur };
-  }).slice(0, 20);
+  }).slice(0, MAX_AI_ACTIVITIES);
   if (normalized.length === 0) throw new Error('No activities provided by AI');
   return { activities: normalized };
 }
 
 export function validateAIActivities(activities: AIActivity[]): void {
-  if (!Array.isArray(activities) || activities.length === 0 || activities.length > 20) {
+  if (!Array.isArray(activities) || activities.length === 0 || activities.length > MAX_AI_ACTIVITIES) {
     throw new Error('Activities must contain 1-20 items');
   }
   for (const a of activities) {

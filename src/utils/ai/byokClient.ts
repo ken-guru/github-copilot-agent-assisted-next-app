@@ -36,9 +36,7 @@ export function useOpenAIClient() {
     }
     if (!res.ok) {
       // Avoid echoing any server-provided text to the UI/logs
-      let text = '';
-      try { text = await res.text(); } catch {}
-      throw new Error(`OpenAI request failed (${res.status})${text ? `: ${text}` : ''}`);
+  throw new Error(`OpenAI request failed (${res.status})`);
     }
     return res.json();
   }, [apiKey]);

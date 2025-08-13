@@ -384,9 +384,8 @@ export default function Summary({
                     { role: 'user', content: `Create a brief friendly summary. JSON only: {"summary": string}. Data: ${JSON.stringify(payload)}` }
                   ];
                   const data = await callOpenAI('/v1/chat/completions', { model: 'gpt-4o-mini', messages, response_format: { type: 'json_object' } }) as Partial<ChatCompletion>;
-                  const content = data.choices && data.choices.length > 0 && data.choices[0]?.message?.content
-                    ? String(data.choices[0].message?.content)
-                    : '';
+                  const firstChoice = (Array.isArray(data.choices) && data.choices.length > 0) ? data.choices[0] : undefined;
+                  const content = firstChoice?.message?.content ? String(firstChoice.message.content) : '';
                   const parsed = JSON.parse(content) as { summary?: unknown };
                   setAiSummary(typeof parsed.summary === 'string' ? parsed.summary : '');
                 } else {
