@@ -47,7 +47,7 @@
   - Write integration tests for ActivityManager with reordering enabled
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 3.3_
 
-- [ ] 7. Update Summary component to respect custom activity order
+- [x] 7. Update Summary component to respect custom activity order
   - Modify `src/components/Summary.tsx` to sort activities using `sortActivitiesByOrder()` utility
   - Update `calculateActivityTimes()` to preserve custom order when building activity time list
   - Ensure completed activities maintain their relative custom order in the summary display

@@ -10,6 +10,7 @@ import * as activityStorage from '../../utils/activity-storage';
 // Mock the storage utilities
 jest.mock('../../utils/activity-storage', () => ({
   getActivities: jest.fn((): Activity[] => []),
+  getActivitiesInOrder: jest.fn((): Activity[] => []),
   addActivity: jest.fn(),
   deleteActivity: jest.fn()
 }));
