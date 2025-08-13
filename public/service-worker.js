@@ -11,7 +11,7 @@ try {
 const CACHE_NAME_PREFIX = 'github-copilot-agent-assisted-next-app';
 // Use consistent version - will be replaced at build time or deployment
 // This ensures consistent cache versioning across all instances
-const BUILD_VERSION = '0.1.0-1755078149657'; // Format: package.version-increment
+const BUILD_VERSION = '0.1.0-1755078842223'; // Format: package.version-increment
 const CACHE_NAME = `${CACHE_NAME_PREFIX}-v${BUILD_VERSION}`;
 const APP_SHELL_CACHE_NAME = `app-shell-v${BUILD_VERSION}`;
 
@@ -62,7 +62,7 @@ const OFFLINE_RESPONSE = new Response(OFFLINE_PAGE_TEMPLATE, {
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json',
+  '/manifest.webmanifest',
   '/favicon.ico', 
   '/favicon.svg',
   '/icons/icon-192x192.svg',
