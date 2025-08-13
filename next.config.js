@@ -32,31 +32,35 @@ const nextConfig = {
   async headers() {
     const isProd = process.env.NODE_ENV === 'production';
 
-    // Build CSP dynamically: tighten security while maintaining functionality
+    // Build CSP dynamically: balance security with Next.js/Vercel requirements
     const scriptSrc = [
       "'self'",
-      // SECURITY: Only allow unsafe-inline in development for React DevTools
-      !isProd ? "'unsafe-inline'" : null,
-      // SECURITY: Only allow unsafe-eval in development for React Fast Refresh
-      !isProd ? "'unsafe-eval'" : null,
+      "'unsafe-inline'", // Required for Next.js inline scripts in production
+      "'unsafe-eval'", // Required for Next.js development and some production features
       'https://cdn.jsdelivr.net',
+      // Vercel domains for production deployment
+      isProd ? 'https://vercel.live' : null,
+      isProd ? 'https://*.vercel.app' : null,
     ].filter(Boolean).join(' ');
 
     const connectSrc = [
       "'self'",
-      // SECURITY: Explicitly allow only OpenAI API for production
+      // SECURITY: Explicitly allow only OpenAI API
       'https://api.openai.com',
       'https://cdn.jsdelivr.net',
-      // SECURITY: Development-only WebSocket connections
-      !isProd ? 'ws:' : null,
-      !isProd ? 'wss:' : null,
+      // Vercel domains for production functionality
+      isProd ? 'https://vercel.live' : null,
+      isProd ? 'https://*.vercel.app' : null,
+      // WebSocket connections for development and Vercel live features
+      'ws:',
+      'wss:',
     ].filter(Boolean).join(' ');
 
-    // SECURITY: Comprehensive CSP with strict policies
+    // SECURITY: CSP balancing security with functionality
     const baseCsp = [
       "default-src 'self' data: blob:",
-      "img-src 'self' data: blob:",
-      "style-src 'self' 'unsafe-inline'", // Bootstrap requires unsafe-inline for styles
+      "img-src 'self' data: blob: https:",
+      "style-src 'self' 'unsafe-inline'", // Bootstrap and Next.js require unsafe-inline for styles
       `script-src ${scriptSrc}`,
       `connect-src ${connectSrc}`,
       "object-src 'none'", // Prevent plugin execution
@@ -81,6 +85,13 @@ const nextConfig = {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
           },
+          // Only apply CSP to HTML pages, not to static assets
+        ],
+      },
+      // CSP only for HTML pages to avoid blocking static assets
+      {
+        source: '/((?!api|_next|favicon|manifest|icons|service-worker).*)',
+        headers: [
           {
             key: 'Content-Security-Policy',
             value: baseCsp,
