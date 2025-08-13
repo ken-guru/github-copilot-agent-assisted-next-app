@@ -28,41 +28,33 @@ export function ApiKeyProvider({ children }: ApiKeyProviderProps) {
   const [apiKey, setApiKeyState] = useState<string | null>(null);
   const [persistence, setPersistence] = useState<Persistence>('memory');
 
-  // Load from sessionStorage if present (explicit opt-in on prior session)
+  // SECURITY: API keys are NEVER persisted to storage to prevent XSS attacks
+  // Only memory-based storage is supported for maximum security
   useEffect(() => {
-    try {
-      const stored = typeof window !== 'undefined' ? window.sessionStorage.getItem('openai_api_key') : null;
-      if (stored) {
-        setApiKeyState(stored);
-        setPersistence('session');
-      }
-    } catch {
-      // ignore storage errors
-    }
+    // Intentionally do not load from any persistent storage
+    // API keys must be re-entered each session for security
   }, []);
 
   const setApiKey = (key: string, persist: Persistence = 'memory') => {
     setApiKeyState(key);
-    setPersistence(persist);
-    if (persist === 'session') {
-      try {
-        window.sessionStorage.setItem('openai_api_key', key);
-      } catch {
-        // ignore
-      }
-    } else {
-      try {
-        window.sessionStorage.removeItem('openai_api_key');
-      } catch {
-        // ignore
-      }
+    // SECURITY: Force memory-only persistence regardless of user preference
+    setPersistence('memory');
+    
+    // SECURITY: Ensure no API key is ever stored in any browser storage
+    try {
+      window.sessionStorage.removeItem('openai_api_key');
+      window.localStorage.removeItem('openai_api_key');
+    } catch {
+      // ignore storage errors
     }
   };
 
   const clearApiKey = () => {
     setApiKeyState(null);
     try {
+      // SECURITY: Clear from all possible storage locations
       window.sessionStorage.removeItem('openai_api_key');
+      window.localStorage.removeItem('openai_api_key');
     } catch {
       // ignore
     }

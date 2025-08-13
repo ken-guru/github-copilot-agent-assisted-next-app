@@ -145,6 +145,18 @@ export default function AIPlannerPage() {
           <Card.Body>
             <Card className="mb-3">
               <Card.Body>
+                <Alert variant="warning" className="mb-3">
+                  <Alert.Heading className="h6 mb-2">
+                    <i className="bi bi-shield-exclamation me-2" aria-hidden="true" />
+                    Security Notice
+                  </Alert.Heading>
+                  <ul className="mb-0 small">
+                    <li>Your API key is stored only in memory and will be lost when you close this tab</li>
+                    <li>Do not use this feature on shared computers or untrusted networks</li>
+                    <li>Your API key and prompts are sent directly to OpenAI - not through our servers</li>
+                    <li>Ensure your OpenAI account has appropriate usage limits configured</li>
+                  </ul>
+                </Alert>
                 <Form.Label htmlFor="byokKey">Enter your OpenAI API key (client-only)</Form.Label>
                 <InputGroup className="mb-2">
                   <Form.Control
@@ -159,13 +171,13 @@ export default function AIPlannerPage() {
                     onClick={() => {
                       const trimmed = keyInput.trim();
                       if (!trimmed) return;
-                      setApiKey(trimmed, 'session');
+                      setApiKey(trimmed, 'memory');
                       setKeyInput(''); // don't keep in input after saving
-                      addToast({ message: 'API key saved (session only)', variant: 'success' });
+                      addToast({ message: 'API key saved (memory only)', variant: 'success' });
                     }}
                   >Save</Button>
                 </InputGroup>
-                <Form.Text className="text-body-secondary">Stored only in this tab (sessionStorage). Never sent to the server or logged.</Form.Text>
+                <Form.Text className="text-body-secondary">Stored only in memory (RAM). Never sent to the server or logged.</Form.Text>
               </Card.Body>
             </Card>
             <div className="d-flex gap-2">

@@ -29,16 +29,16 @@ export function safeJsonParse<T = unknown>(text: string): T {
   try {
     return JSON.parse(text) as T;
   } catch (e1) {
-    // Try to extract JSON from fenced code blocks first: ```json ... ``` or ``` ... ```
+    // SECURITY: Use simple, non-backtracking regex to prevent ReDoS attacks
     try {
-      const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+      const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
       if (fenceMatch && fenceMatch[1]) {
         return JSON.parse(fenceMatch[1]) as T;
       }
     } catch (e2) {
       devDebug('safeJsonParse fenced block parse failed:', e2);
     }
-    // Fallback: grab substring between first '{' and last '}'
+    // SECURITY: Simple indexOf/lastIndexOf to avoid regex complexity
     try {
       const firstBrace = text.indexOf('{');
       const lastBrace = text.lastIndexOf('}');

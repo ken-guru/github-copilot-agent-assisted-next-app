@@ -16,7 +16,8 @@ export const ApiKeyDialog: React.FC<ApiKeyDialogProps> = ({ show, onClose }) => 
   const handleSave = () => {
     const trimmed = value.trim();
     if (!trimmed) return;
-    setApiKey(trimmed, sessionOnly ? 'session' : 'memory');
+    // SECURITY: Always use memory-only storage
+    setApiKey(trimmed, 'memory');
     onClose();
   };
 
@@ -44,15 +45,16 @@ export const ApiKeyDialog: React.FC<ApiKeyDialogProps> = ({ show, onClose }) => 
               data-testid="openai-api-key-input"
             />
             <Form.Text className="text-body-secondary">
-              Not stored on any server. In-memory by default. Optionally kept for this tab only.
+              <strong>SECURITY:</strong> Never stored on any server or browser storage. Memory-only for this session.
             </Form.Text>
           </Form.Group>
           <Form.Check
             type="checkbox"
             id="session-only"
-            label="Keep for this tab (sessionStorage)"
-            checked={sessionOnly}
-            onChange={(e) => setSessionOnly(e.target.checked)}
+            label="Keep for this tab (DISABLED for security)"
+            checked={false}
+            disabled={true}
+            onChange={() => {}}
           />
         </Form>
       </Modal.Body>

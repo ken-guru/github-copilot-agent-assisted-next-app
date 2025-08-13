@@ -23,6 +23,17 @@ jest.mock('@/utils/ai/byokClient', () => ({
   }) }),
 }));
 
+// Mock the useApiKey hook to provide a test API key
+jest.mock('@/contexts/ApiKeyContext', () => ({
+  ...jest.requireActual('@/contexts/ApiKeyContext'),
+  useApiKey: () => ({
+    apiKey: 'sk-test',
+    setApiKey: jest.fn(),
+    clearApiKey: jest.fn(),
+    persistence: 'memory'
+  })
+}));
+
 function renderWithProviders(node: React.ReactElement) {
   return render(
     <ToastProvider>
@@ -36,8 +47,9 @@ describe('AI Planner prompt persistence', () => {
 
   beforeEach(() => {
     window.localStorage.clear();
-    // Ensure API key exists so planner page renders planner form
-    window.sessionStorage.setItem('openai_api_key', 'sk-test');
+    window.sessionStorage.clear();
+    // SECURITY: Since API keys are no longer stored in sessionStorage,
+    // we need to mock having an API key in the context for these tests
   });
 
   it('loads previous prompt from localStorage on revisit', async () => {

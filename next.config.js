@@ -32,23 +32,38 @@ const nextConfig = {
   async headers() {
     const isProd = process.env.NODE_ENV === 'production';
 
-    // Build CSP dynamically: relax in development to support React Refresh (unsafe-eval) and HMR (ws)
+    // Build CSP dynamically: tighten security while maintaining functionality
     const scriptSrc = [
       "'self'",
-      "'unsafe-inline'",
+      // SECURITY: Only allow unsafe-inline in development for React DevTools
+      !isProd ? "'unsafe-inline'" : null,
+      // SECURITY: Only allow unsafe-eval in development for React Fast Refresh
       !isProd ? "'unsafe-eval'" : null,
       'https://cdn.jsdelivr.net',
     ].filter(Boolean).join(' ');
 
     const connectSrc = [
       "'self'",
+      // SECURITY: Explicitly allow only OpenAI API for production
       'https://api.openai.com',
       'https://cdn.jsdelivr.net',
+      // SECURITY: Development-only WebSocket connections
       !isProd ? 'ws:' : null,
       !isProd ? 'wss:' : null,
     ].filter(Boolean).join(' ');
 
-    const baseCsp = `default-src 'self' data: blob:; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src ${scriptSrc}; connect-src ${connectSrc};`;
+    // SECURITY: Comprehensive CSP with strict policies
+    const baseCsp = [
+      "default-src 'self' data: blob:",
+      "img-src 'self' data: blob:",
+      "style-src 'self' 'unsafe-inline'", // Bootstrap requires unsafe-inline for styles
+      `script-src ${scriptSrc}`,
+      `connect-src ${connectSrc}`,
+      "object-src 'none'", // Prevent plugin execution
+      "base-uri 'self'", // Prevent base tag hijacking
+      "form-action 'self'", // Restrict form submissions
+      "frame-ancestors 'none'", // Prevent embedding in frames
+    ].join('; ');
     return [
       // Global security headers for all routes
       {

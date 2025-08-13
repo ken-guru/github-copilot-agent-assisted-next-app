@@ -24,12 +24,12 @@ describe('ApiKeyContext', () => {
     expect(window.sessionStorage.getItem('openai_api_key')).toBeNull();
   });
 
-  it('sets key in sessionStorage when requested', () => {
+  it('forces memory-only storage for security even when session requested', () => {
     const { result } = renderHook(() => useApiKey(), { wrapper });
     act(() => result.current.setApiKey('sk-session', 'session'));
     expect(result.current.apiKey).toBe('sk-session');
-    expect(result.current.persistence).toBe('session');
-    expect(window.sessionStorage.getItem('openai_api_key')).toBe('sk-session');
+    expect(result.current.persistence).toBe('memory'); // SECURITY: Always memory-only
+    expect(window.sessionStorage.getItem('openai_api_key')).toBeNull(); // Never stored
   });
 
   it('clears key and sessionStorage on clear', () => {
