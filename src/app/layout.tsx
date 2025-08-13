@@ -32,7 +32,7 @@ export const metadata: Metadata = {
       { url: '/icons/apple-touch-icon.svg', sizes: '180x180', type: 'image/svg+xml' }
     ]
   },
-  manifest: '/manifest.webmanifest',
+  manifest: '/api/manifest',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -67,7 +67,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="manifest" href="/api/manifest" />
         
         {/* Theme initialization script - runs before React hydration */}
         <script
