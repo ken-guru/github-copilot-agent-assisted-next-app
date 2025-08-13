@@ -272,29 +272,15 @@ const ActivityCrud: React.FC = () => {
       {/* Activities List Section */}
       <div className="row">
         <div className="col-12">
-          {activities.length === 0 ? (
-            <div className="text-center py-5">
-              <div className="mb-3">
-                <i className="bi bi-list-task" style={{fontSize: '3rem'}} aria-hidden="true"></i>
-              </div>
-              <h4 className="text-muted">No activities yet</h4>
-              <p className="text-muted">Get started by creating your first activity</p>
-              <Button variant="primary" onClick={handleAdd} className="d-flex align-items-center mx-auto">
-                <i className="bi bi-plus me-2"></i>
-                Create First Activity
-              </Button>
-            </div>
-          ) : (
-            <ActivityList
-              activities={activities}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onAdd={handleAdd}
-              onImport={handleImport}
-              onExport={handleExport}
-              onReset={handleResetToDefault}
-            />
-          )}
+          <ActivityList
+            activities={activities}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onAdd={handleAdd}
+            onImport={handleImport}
+            onExport={handleExport}
+            onReset={handleResetToDefault}
+          />
         </div>
       </div>
 
