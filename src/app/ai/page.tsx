@@ -19,11 +19,25 @@ export default function AIPlannerPage() {
   const [keyInput, setKeyInput] = useState('');
   const { apiKey, setApiKey, clearApiKey } = useApiKey();
   const { callOpenAI } = useOpenAIClient();
+  const PROMPT_STORAGE_KEY = 'ai_planner_last_prompt';
 
   useEffect(() => {
     // Hydration guard for client-only rendering
     setReady(true);
   }, []);
+
+  // Load last used prompt from localStorage once client is ready
+  useEffect(() => {
+    if (!ready) return;
+    try {
+      const saved = window.localStorage.getItem(PROMPT_STORAGE_KEY);
+      if (typeof saved === 'string' && saved.trim()) {
+        setPrompt(saved);
+      }
+    } catch {
+      // ignore storage access issues
+    }
+  }, [ready]);
 
   const pickActivityName = (a: { title?: unknown; name?: unknown }, idx: number) => {
     if (typeof a.title === 'string' && a.title.trim()) return a.title;
@@ -36,6 +50,12 @@ export default function AIPlannerPage() {
     setError(null);
     setLoading(true);
     try {
+      // Persist the latest prompt immediately upon submit
+      try {
+        window.localStorage.setItem(PROMPT_STORAGE_KEY, prompt);
+      } catch {
+        // ignore storage errors
+      }
       // BYOK-only: this page requires a user-provided OpenAI API key; no server fallback exists here
   if (!apiKey) {
         throw new Error('Please enter and save your OpenAI API key first.');
