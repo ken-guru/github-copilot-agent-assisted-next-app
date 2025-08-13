@@ -34,10 +34,10 @@ describe('Activity CRUD Operations', () => {
       cy.contains('Your Activities').should('be.visible');
       cy.contains('Add Activity').should('be.visible');
       
-  // Verify essential UI elements in empty state
+  // Verify essential UI elements with default activities present
   cy.get('button').contains('Import').should('be.visible');
+  cy.get('button').contains('Export').should('be.visible');
   cy.get('button').contains('Reset Activities').should('be.visible');
-  cy.get('button').contains('Export').should('not.exist');
       
       // This is a high-level smoke test - detailed CRUD testing should be in Jest
     });
@@ -121,15 +121,18 @@ describe('Activity CRUD Operations', () => {
 
   describe('Error Handling Integration', () => {
     it('should handle empty activity list gracefully', () => {
-      // Ensure clean state
+      // Force empty state: set activities array to empty and reload
       cy.window().then((win) => {
-        win.localStorage.clear();
+        win.localStorage.setItem('activities_v1', '[]');
       });
       cy.reload();
-      
-      // Should show empty state
-  cy.contains('No activities found').should('be.visible');
+
+      // Should show empty state with toolbar actions available (except Export)
+      cy.contains('No activities found').should('be.visible');
       cy.get('button').contains('Add Activity').should('be.visible');
+      cy.get('button').contains('Import').should('be.visible');
+      cy.get('button').contains('Reset Activities').should('be.visible');
+      cy.get('button').contains('Export').should('not.exist');
     });
 
     it('should handle modal interactions correctly', () => {
