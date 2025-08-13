@@ -37,9 +37,40 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
             <div className="text-muted">
               <i className="bi bi-kanban fa-2x mb-3"></i>
               <p>No activities found</p>
+              <p className="mb-0 small">You can import a JSON file or reset to defaults to get started.</p>
             </div>
           </div>
         </Card.Body>
+        {(onImport || onReset) && (
+          <Card.Footer className={theme === 'dark' ? 'bg-dark text-light' : 'bg-light'}>
+            <div className="d-flex gap-2 justify-content-center">
+              {onImport && (
+                <Button 
+                  variant="outline-secondary" 
+                  size="sm" 
+                  onClick={onImport}
+                  className="d-flex align-items-center px-3"
+                  title="Import activities from JSON file"
+                >
+                  <i className="bi bi-upload me-2"></i>
+                  Import
+                </Button>
+              )}
+              {onReset && (
+                <Button 
+                  variant="outline-danger" 
+                  size="sm" 
+                  onClick={onReset}
+                  className="d-flex align-items-center px-3"
+                  title="Reset to default activities"
+                >
+                  <i className="bi bi-arrow-clockwise me-2"></i>
+                  Reset Activities
+                </Button>
+              )}
+            </div>
+          </Card.Footer>
+        )}
       </Card>
     );
   }

@@ -48,6 +48,28 @@ describe('ActivityList', () => {
     expect(screen.getByText(/No activities found/i)).toBeInTheDocument();
   });
 
+  it('shows import and reset buttons in empty state when handlers provided, hides export', () => {
+    const onImport = jest.fn();
+    const onReset = jest.fn();
+    const onExport = jest.fn();
+
+    render(
+      <ActivityList 
+        activities={[]} 
+        onImport={onImport} 
+        onReset={onReset}
+        onExport={onExport}
+      />
+    );
+
+    // Import and Reset should be visible
+    expect(screen.getByRole('button', { name: /Import/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Reset Activities/i })).toBeInTheDocument();
+
+    // Export should be hidden when there are no activities
+    expect(screen.queryByRole('button', { name: /Export/i })).not.toBeInTheDocument();
+  });
+
   describe('Footer Toolbar', () => {
     it('does not render footer when no action props are provided', () => {
       render(<ActivityList activities={DEFAULT_ACTIVITIES} />);
