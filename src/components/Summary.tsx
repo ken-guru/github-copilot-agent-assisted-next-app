@@ -3,7 +3,6 @@ import { Card, Alert, Row, Col, ListGroup, Badge, Button, Spinner } from 'react-
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { getActivities } from '@/utils/activity-storage';
-import { isAuthenticatedClient } from '@/utils/auth/client';
 import { useToast } from '@/contexts/ToastContext';
 import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
@@ -33,7 +32,6 @@ export default function Summary({
   const { addToast } = useToast();
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSummary, setAiSummary] = useState<string | null>(null);
-  const canUseAI = isAuthenticatedClient();
   const { apiKey } = useApiKey();
   const { callOpenAI } = useOpenAIClient();
   // Auto mode: BYOK if available, else server mock route
@@ -410,7 +408,7 @@ export default function Summary({
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0" role="heading" aria-level={2}>Summary</h5>
         <div className="d-flex gap-2 align-items-center">
-  {(canUseAI || apiKey) && (!aiSummary) && (
+  {apiKey && (!aiSummary) && (
           <Button
             variant="outline-primary"
             size="sm"

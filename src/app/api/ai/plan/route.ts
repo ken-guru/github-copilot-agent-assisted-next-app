@@ -1,16 +1,8 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { ensureAuthenticated } from '@/utils/auth/server';
 // Server no longer calls OpenAI directly; BYOK happens client-side
 import { generateMockPlan } from '@/utils/ai/mock';
 
 export async function POST(req: Request) {
-  // Build a minimal request-like for cookie access using next/headers
-  const cookieStore = await cookies();
-  const auth = ensureAuthenticated({ cookies: { get: (name: string) => cookieStore.get(name) } });
-  if (!auth.ok) {
-    return NextResponse.json({ error: auth.message }, { status: auth.status, headers: { 'X-AI-Mode': 'disabled' } });
-  }
 
   let body: unknown;
   try {
