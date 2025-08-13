@@ -3,6 +3,9 @@ import { render, screen, within, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Summary from '../Summary';
 import { TimelineEntry } from '@/types';
+import { ToastProvider } from '@/contexts/ToastContext';
+
+const renderWithProviders = (ui: React.ReactElement) => render(<ToastProvider>{ui}</ToastProvider>);
 
 // Create timeline entries for testing chronological order
 const createTestTimelineEntries = (configs: Array<{name: string, startTime: number, duration: number}>): TimelineEntry[] => {
@@ -35,7 +38,7 @@ describe('Summary Activity Order', () => {
       { name: 'Activity B', startTime: 800, duration: 200 }
     ]);
     
-    render(
+  renderWithProviders(
       <Summary 
         entries={entries}
         totalDuration={2000}
@@ -65,7 +68,7 @@ describe('Summary Activity Order', () => {
       { name: 'Third Activity', startTime: 1001, duration: 200 }
     ]);
     
-    render(
+  renderWithProviders(
       <Summary 
         entries={entries}
         totalDuration={2000}
@@ -98,7 +101,7 @@ describe('Summary Activity Order', () => {
     // Clear any previous renders
     cleanup();
     
-    const { unmount } = render(
+  const { unmount } = renderWithProviders(
       <Summary 
         entries={entries}
         totalDuration={2000}
@@ -129,7 +132,7 @@ describe('Summary Activity Order', () => {
     unmount();
     
     // Re-render the component
-    render(
+  renderWithProviders(
       <Summary 
         entries={entries}
         totalDuration={2000}
@@ -159,7 +162,7 @@ describe('Summary Activity Order', () => {
       { name: 'Activity 2', startTime: 1100, duration: 200 }
     ]);
     
-    const { rerender } = render(
+  const { rerender } = renderWithProviders(
       <Summary 
         entries={entries}
         totalDuration={2000}
@@ -181,14 +184,12 @@ describe('Summary Activity Order', () => {
     expect(activityNames).toEqual(['Activity 1', 'Activity 2', 'Activity 3']);
     
     // Re-render with same props (simulating a parent component re-render)
-    rerender(
-      <Summary 
+  rerender(<ToastProvider><Summary 
         entries={entries}
         totalDuration={2000}
         elapsedTime={2000}
         allActivitiesCompleted={true}
-      />
-    );
+      /></ToastProvider>);
     
     // Check order after re-render
     activityItems = screen.getAllByTestId(/^activity-summary-item-/);
@@ -202,7 +203,7 @@ describe('Summary Activity Order', () => {
   });
   
   it('should handle empty activity list gracefully', () => {
-    render(
+  renderWithProviders(
       <Summary 
         entries={[]}
         totalDuration={1000}

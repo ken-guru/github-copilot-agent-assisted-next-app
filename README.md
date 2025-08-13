@@ -200,6 +200,27 @@ npm run test:watch
 yarn test:watch
 ```
 
+### AI Feature (Issue #307) - Local Dev Quickstart
+
+```markdown
+1) Copy .env.example to .env.local and set variables as needed:
+   - AI_ENABLE_MOCK=true (recommended for local dev)
+   - AI_FALLBACK_ON_429=true (default). Set to false to surface real 429 errors instead of mock fallback.
+   - Note: OPENAI_API_KEY is deprecated and not used; BYOK is client-only.
+
+2) Start the app and open /ai.
+   - Enter your OpenAI key (sk-...) in the BYOK section and Save. That's it—AI is enabled client-side.
+   - Submit a prompt to generate a plan.
+
+3) Summary AI
+   - The Summary component can request an AI summary via /api/ai/summary.
+   - With AI_ENABLE_MOCK=true or when OpenAI returns 429 insufficient_quota, a mock summary is returned.
+
+Notes:
+- On localhost the service worker installs but bypasses request interception to avoid interfering with dev assets; it still intercepts in preview/production builds.
+
+```
+
 ### Deployment Verification
 Before considering any feature or change complete, run these verification steps:
 ```markdown
@@ -401,3 +422,19 @@ This project recently migrated from a Cypress-heavy approach to a balanced test 
 - **Coverage**: Enhanced with better edge case testing
 
 For detailed migration information, see [MRTMLY-221](./docs/logged_memories/MRTMLY-221-comprehensive-cypress-jest-migration.md).
+
+## Bring Your Own Key (BYOK) for OpenAI
+
+You can use OpenAI features without configuring server env vars:
+
+- Open the AI page from the navbar (always visible).
+- In the AI page, enter your OpenAI key (sk-...) in the BYOK section and save.
+- The key is stored in memory for this tab only (never persisted to sessionStorage/localStorage) and is never sent to the server.
+
+Security notes:
+- A strict CSP limits outbound connections to https://api.openai.com.
+- The service worker bypasses OpenAI requests (no caching/interception).
+- Avoid using BYOK on untrusted pages; client code has access while open.
+
+Authentication notes:
+- There is no OAuth or cookie-based authentication gate. AI features are enabled purely via BYOK on the client.

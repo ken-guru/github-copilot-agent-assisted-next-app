@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ToastProvider, useToast } from '@/contexts/ToastContext';
 import { ToastContainer } from '@/components/ui/ToastContainer';
@@ -64,7 +64,9 @@ describe('ToastContainer', () => {
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
     jest.useRealTimers();
   });
 
@@ -163,7 +165,9 @@ describe('ToastContainer', () => {
     expect(screen.getByTestId('toast-notification')).toBeInTheDocument();
 
     // Fast-forward 5 seconds
-    jest.advanceTimersByTime(5000);
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
 
     await waitFor(() => {
       expect(screen.queryByTestId('toast-notification')).not.toBeInTheDocument();
@@ -199,7 +203,9 @@ describe('ToastContainer', () => {
     expect(screen.getByTestId('toast-notification')).toBeInTheDocument();
 
     // Fast-forward well beyond the auto-dismiss time
-    jest.advanceTimersByTime(10000);
+    act(() => {
+      jest.advanceTimersByTime(10000);
+    });
 
     // Toast should still be there
     expect(screen.getByTestId('toast-notification')).toBeInTheDocument();
