@@ -68,7 +68,32 @@ export function setActivityOrder(order: string[]): void {
       lastUpdated: new Date().toISOString()
     };
     
-    localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orderStorage));
+    const serializedData = JSON.stringify(orderStorage);
+    
+    try {
+      localStorage.setItem(ORDER_STORAGE_KEY, serializedData);
+    } catch (storageError) {
+      // Handle quota exceeded or other storage errors
+      if (isQuotaExceededError(storageError)) {
+        console.warn('localStorage quota exceeded, attempting to free space for activity order');
+        
+        // Try to clear old data and retry
+        if (attemptStorageCleanup()) {
+          try {
+            localStorage.setItem(ORDER_STORAGE_KEY, serializedData);
+            console.info('Successfully saved activity order after cleanup');
+          } catch (retryError) {
+            console.error('Failed to save activity order even after cleanup:', retryError);
+          }
+        } else {
+          console.error('Unable to free localStorage space for activity order');
+        }
+      } else if (storageError instanceof Error && storageError.message.includes('localStorage')) {
+        console.warn('localStorage is not available, activity order will not persist');
+      } else {
+        throw storageError; // Re-throw other errors
+      }
+    }
   } catch (error) {
     console.error('Failed to save activity order:', error);
     // Don't throw - graceful degradation
@@ -259,4 +284,112 @@ export function getActivityOrderMetadata(): { version: string; lastUpdated: stri
  */
 export function hasCustomActivityOrder(): boolean {
   return getActivityOrder().length > 0;
+}
+
+/**
+ * Check if localStorage is available and functional
+ * @returns True if localStorage is available, false otherwise
+ */
+function isLocalStorageAvailable(): boolean {
+  try {
+    if (typeof localStorage === 'undefined') {
+      return false;
+    }
+    
+    // Test localStorage functionality
+    const testKey = '__activity_order_test__';
+    localStorage.setItem(testKey, 'test');
+    localStorage.removeItem(testKey);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Check if an error is a quota exceeded error
+ * @param error The error to check
+ * @returns True if the error indicates quota exceeded
+ */
+function isQuotaExceededError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+  
+  const errorObj = error as { name?: string; code?: number };
+  
+  // Check for various quota exceeded error patterns
+  return (
+    errorObj.name === 'QuotaExceededError' ||
+    errorObj.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+    errorObj.code === 22 || // QUOTA_EXCEEDED_ERR
+    (error instanceof Error && error.message.toLowerCase().includes('quota'))
+  );
+}
+
+/**
+ * Attempt to clean up localStorage to free space
+ * @returns True if cleanup was attempted, false if no cleanup possible
+ */
+function attemptStorageCleanup(): boolean {
+  try {
+    // Get current localStorage usage
+    const currentKeys = Object.keys(localStorage);
+    
+    // Look for non-essential keys that can be removed
+    const cleanupCandidates = currentKeys.filter(key => {
+      // Don't remove essential app data
+      if (key.startsWith('activity_') || key.startsWith('timer_') || key.startsWith('theme_')) {
+        return false;
+      }
+      
+      // Remove old or temporary data
+      return (
+        key.includes('temp') ||
+        key.includes('cache') ||
+        key.includes('debug') ||
+        key.startsWith('_') ||
+        key.includes('test')
+      );
+    });
+    
+    // Remove cleanup candidates
+    let removedCount = 0;
+    for (const key of cleanupCandidates) {
+      try {
+        localStorage.removeItem(key);
+        removedCount++;
+      } catch {
+        // Continue with other keys if one fails
+      }
+    }
+    
+    if (removedCount > 0) {
+      console.info(`Cleaned up ${removedCount} localStorage entries to free space`);
+      return true;
+    }
+    
+    // If no cleanup candidates, try to remove oldest activity order versions
+    const orderKeys = currentKeys.filter(key => key.startsWith('activity_order_') && key !== ORDER_STORAGE_KEY);
+    if (orderKeys.length > 0) {
+      for (const key of orderKeys) {
+        try {
+          localStorage.removeItem(key);
+          removedCount++;
+        } catch {
+          // Continue with other keys
+        }
+      }
+      
+      if (removedCount > 0) {
+        console.info(`Cleaned up ${removedCount} old activity order entries`);
+        return true;
+      }
+    }
+    
+    return false;
+  } catch (error) {
+    console.warn('Failed to perform localStorage cleanup:', error);
+    return false;
+  }
 }

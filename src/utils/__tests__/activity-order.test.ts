@@ -192,38 +192,38 @@ describe('activity-order utilities', () => {
     });
 
     it('should handle localStorage quota exceeded', () => {
-      // First set a valid order
-      setActivityOrder(['activity-1']);
-      expect(getActivityOrder()).toEqual(['activity-1']);
-      
-      // Then mock setItem to throw
-      const originalSetItem = mockLocalStorage.setItem;
+      // Mock setItem to throw quota exceeded error
       mockLocalStorage.setItem.mockImplementation(() => {
-        throw new Error('QuotaExceededError');
+        const error = new Error('QuotaExceededError');
+        (error as any).name = 'QuotaExceededError';
+        throw error;
       });
       
-      setActivityOrder(['activity-2']);
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
       
-      expect(console.error).toHaveBeenCalledWith(
-        'Failed to save activity order:',
-        expect.any(Error)
+      setActivityOrder(['activity-1']);
+      
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'localStorage quota exceeded, attempting to free space for activity order'
       );
       
-      // Restore the original implementation
-      mockLocalStorage.setItem = originalSetItem;
-      
-      // Order should remain unchanged since save failed
-      expect(getActivityOrder()).toEqual(['activity-1']);
+      consoleSpy.mockRestore();
     });
 
     it('should include version and timestamp in saved data', () => {
       const testOrder = ['activity-1'];
       const beforeTime = Date.now();
       
+      // Reset setItem to work normally
+      const store = mockLocalStorage._getStore();
+      mockLocalStorage.setItem.mockImplementation((key: string, value: string) => {
+        store[key] = value;
+      });
+      
       setActivityOrder(testOrder);
       
       const afterTime = Date.now();
-      const savedData = JSON.parse(mockLocalStorage.setItem.mock.calls[0]?.[1] || '{}');
+      const savedData = JSON.parse(store['activity_order_v1'] || '{}');
       
       expect(savedData.version).toBe('1.0');
       expect(savedData.order).toEqual(testOrder);
@@ -376,11 +376,14 @@ describe('activity-order utilities', () => {
 
     it('should not update if no cleanup needed', () => {
       setActivityOrder(['activity-1', 'activity-2']);
-      const setItemCallCount = mockLocalStorage.setItem.mock.calls.length;
+      
+      // Clear the mock calls from the initial setActivityOrder
+      mockLocalStorage.setItem.mockClear();
       
       cleanupActivityOrder(['activity-1', 'activity-2', 'activity-3']);
       
-      expect(mockLocalStorage.setItem.mock.calls.length).toBe(setItemCallCount);
+      // Should not have called setItem again since no cleanup was needed
+      expect(mockLocalStorage.setItem).not.toHaveBeenCalled();
     });
 
     it('should handle invalid input gracefully', () => {
@@ -511,6 +514,157 @@ describe('activity-order utilities', () => {
       expect(getActivityOrderMetadata()).toBeNull();
     });
 
+    it('should handle localStorage quota exceeded with cleanup', () => {
+      // Set up some initial data
+      const store = mockLocalStorage._getStore();
+      store['temp_data'] = 'temporary';
+      store['cache_old'] = 'cached';
+      store['debug_info'] = 'debug';
+      
+      // Mock setItem to throw quota exceeded error initially, then succeed
+      let setItemCallCount = 0;
+      const originalSetItem = mockLocalStorage.setItem;
+      mockLocalStorage.setItem.mockImplementation((key: string, value: string) => {
+        setItemCallCount++;
+        if (setItemCallCount === 1) {
+          const error = new Error('QuotaExceededError');
+          (error as any).name = 'QuotaExceededError';
+          throw error;
+        }
+        // Second call should succeed after cleanup
+        store[key] = value;
+      });
+      
+      // Mock removeItem to actually remove items during cleanup
+      mockLocalStorage.removeItem.mockImplementation((key: string) => {
+        delete store[key];
+      });
+      
+      // Mock Object.keys to return the store keys for cleanup
+      const originalObjectKeys = Object.keys;
+      Object.keys = jest.fn().mockImplementation((obj) => {
+        if (obj === localStorage) {
+          return Object.keys(store);
+        }
+        return originalObjectKeys(obj);
+      });
+      
+      const consoleSpy = jest.spyOn(console, 'info').mockImplementation();
+      
+      setActivityOrder(['activity-1', 'activity-2']);
+      
+      // Should have attempted cleanup and succeeded on retry
+      expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Cleaned up'));
+      expect(consoleSpy).toHaveBeenCalledWith('Successfully saved activity order after cleanup');
+      
+      // Cleanup candidates should be removed
+      expect(store['temp_data']).toBeUndefined();
+      expect(store['cache_old']).toBeUndefined();
+      expect(store['debug_info']).toBeUndefined();
+      
+      consoleSpy.mockRestore();
+      mockLocalStorage.setItem = originalSetItem;
+      Object.keys = originalObjectKeys;
+    });
+
+    it('should handle quota exceeded when cleanup fails', () => {
+      // Set up store with no cleanup candidates
+      const store = mockLocalStorage._getStore();
+      Object.keys(store).forEach(key => delete store[key]);
+      
+      // Mock setItem to always throw quota exceeded
+      mockLocalStorage.setItem.mockImplementation(() => {
+        const error = new Error('QuotaExceededError');
+        (error as any).name = 'QuotaExceededError';
+        throw error;
+      });
+      
+      // Mock Object.keys to return empty array (no cleanup candidates)
+      const originalObjectKeys = Object.keys;
+      Object.keys = jest.fn().mockImplementation((obj) => {
+        if (obj === localStorage) {
+          return [];
+        }
+        return originalObjectKeys(obj);
+      });
+      
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      
+      setActivityOrder(['activity-1']);
+      
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Unable to free localStorage space for activity order'
+      );
+      
+      consoleSpy.mockRestore();
+      Object.keys = originalObjectKeys;
+    });
+
+    it('should handle different quota exceeded error formats', () => {
+      const errorFormats = [
+        { name: 'NS_ERROR_DOM_QUOTA_REACHED' },
+        { code: 22 },
+        new Error('Storage quota exceeded'),
+        new Error('QUOTA_EXCEEDED_ERR')
+      ];
+      
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      
+      errorFormats.forEach((error, index) => {
+        jest.clearAllMocks();
+        consoleSpy.mockClear();
+        
+        mockLocalStorage.setItem.mockImplementation(() => {
+          throw error;
+        });
+        
+        setActivityOrder([`activity-${index}`]);
+        
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'localStorage quota exceeded, attempting to free space for activity order'
+        );
+      });
+      
+      consoleSpy.mockRestore();
+    });
+
+    it('should handle localStorage unavailable during get operations', () => {
+      // Mock localStorage as undefined by making getItem throw
+      mockLocalStorage.getItem.mockImplementation(() => {
+        throw new Error('localStorage not available');
+      });
+      
+      const order = getActivityOrder();
+      expect(order).toEqual([]);
+      
+      const metadata = getActivityOrderMetadata();
+      expect(metadata).toBeNull();
+      
+      expect(hasCustomActivityOrder()).toBe(false);
+    });
+
+    it('should handle corrupted JSON with invalid structure', () => {
+      const corruptedData = [
+        '{"version":"1.0","order":"not-an-array","lastUpdated":"2023-01-01"}',
+        '{"version":123,"order":["activity-1"],"lastUpdated":"2023-01-01"}',
+        '{"order":["activity-1"],"lastUpdated":"2023-01-01"}', // missing version
+        '{"version":"1.0","order":["activity-1"]}', // missing lastUpdated
+        '{"version":"1.0","order":[123,"activity-1"],"lastUpdated":"2023-01-01"}', // invalid order item
+        '{"version":"1.0","order":[""],"lastUpdated":"2023-01-01"}' // empty string in order
+      ];
+      
+      corruptedData.forEach((data, index) => {
+        mockLocalStorage.clear();
+        mockLocalStorage.setItem('activity_order_v1', data);
+        
+        const order = getActivityOrder();
+        expect(order).toEqual([]);
+        
+        // Should have cleared the corrupted data
+        expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('activity_order_v1');
+      });
+    });
+
     it('should handle very large order arrays', () => {
       const largeOrder = Array.from({ length: 1000 }, (_, i) => `activity-${i}`);
       
@@ -526,6 +680,96 @@ describe('activity-order utilities', () => {
       const retrieved = getActivityOrder();
       
       expect(retrieved).toEqual(specialIds);
+    });
+
+    it('should handle cleanup with no cleanup candidates', () => {
+      // Set up store with only essential data
+      const store = mockLocalStorage._getStore();
+      Object.keys(store).forEach(key => delete store[key]);
+      store['activity_data'] = 'essential';
+      store['timer_state'] = 'essential';
+      store['theme_preference'] = 'essential';
+      
+      // Mock setItem to throw quota exceeded error
+      mockLocalStorage.setItem.mockImplementation(() => {
+        const error = new Error('QuotaExceededError');
+        (error as any).name = 'QuotaExceededError';
+        throw error;
+      });
+      
+      // Mock Object.keys to return only essential keys
+      const originalObjectKeys = Object.keys;
+      Object.keys = jest.fn().mockImplementation((obj) => {
+        if (obj === localStorage) {
+          return ['activity_data', 'timer_state', 'theme_preference'];
+        }
+        return originalObjectKeys(obj);
+      });
+      
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      
+      setActivityOrder(['activity-1']);
+      
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Unable to free localStorage space for activity order'
+      );
+      
+      // Essential data should remain
+      expect(store['activity_data']).toBe('essential');
+      expect(store['timer_state']).toBe('essential');
+      expect(store['theme_preference']).toBe('essential');
+      
+      consoleSpy.mockRestore();
+      Object.keys = originalObjectKeys;
+    });
+
+    it('should handle cleanup errors gracefully', () => {
+      // Mock setItem to throw quota exceeded
+      mockLocalStorage.setItem.mockImplementation(() => {
+        const error = new Error('QuotaExceededError');
+        (error as any).name = 'QuotaExceededError';
+        throw error;
+      });
+      
+      // Mock Object.keys to throw during cleanup attempt
+      const originalObjectKeys = Object.keys;
+      Object.keys = jest.fn().mockImplementation((obj) => {
+        if (obj === localStorage) {
+          throw new Error('Object.keys failed');
+        }
+        return originalObjectKeys(obj);
+      });
+      
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      
+      setActivityOrder(['activity-1']);
+      
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Failed to perform localStorage cleanup:',
+        expect.any(Error)
+      );
+      
+      consoleSpy.mockRestore();
+      Object.keys = originalObjectKeys;
+    });
+
+    it('should handle non-string activity IDs in validation', () => {
+      const invalidInputs = [
+        [null, 'activity-1'],
+        [undefined, 'activity-2'],
+        [123, 'activity-3'],
+        [{}, 'activity-4'],
+        [[], 'activity-5']
+      ];
+      
+      invalidInputs.forEach(input => {
+        setActivityOrder(input as any);
+        
+        expect(console.error).toHaveBeenCalledWith(
+          'Failed to save activity order:',
+          expect.any(Error)
+        );
+      });
     });
   });
 });

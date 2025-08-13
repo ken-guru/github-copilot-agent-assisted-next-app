@@ -4,8 +4,9 @@
  * @module useDragAndDrop
  */
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { reorderActivities } from '../utils/activity-storage';
+import { isDragAndDropSupported, isTouchSupported, isVibrationSupported } from '../utils/feature-detection';
 
 /**
  * Drag and drop state interface
@@ -16,6 +17,12 @@ export interface DragAndDropState {
   isDragging: boolean;
   isTouchDragging: boolean;
   touchStartPosition: { x: number; y: number } | null;
+  isSupported: boolean;
+  supportedMethods: {
+    dragAndDrop: boolean;
+    touch: boolean;
+    vibration: boolean;
+  };
 }
 
 /**
@@ -57,6 +64,13 @@ export function useDragAndDrop(
 ) {
   const { onReorder, debounceMs = 300, longPressMs = 500, touchMoveThreshold = 10 } = options;
   
+  // Feature detection
+  const [supportedMethods] = useState(() => ({
+    dragAndDrop: isDragAndDropSupported(),
+    touch: isTouchSupported(),
+    vibration: isVibrationSupported(),
+  }));
+  
   // Drag and drop state
   const [state, setState] = useState<DragAndDropState>({
     draggedItem: null,
@@ -64,6 +78,8 @@ export function useDragAndDrop(
     isDragging: false,
     isTouchDragging: false,
     touchStartPosition: null,
+    isSupported: supportedMethods.dragAndDrop || supportedMethods.touch,
+    supportedMethods,
   });
 
   // Debounce timer ref for order persistence
@@ -164,13 +180,19 @@ export function useDragAndDrop(
       return;
     }
 
+    // Check if drag and drop is supported
+    if (!supportedMethods.dragAndDrop) {
+      console.warn('Drag and drop is not supported in this browser');
+      return;
+    }
+
     setState(prev => ({
       ...prev,
       draggedItem: activityId,
       isDragging: true,
       dragOverItem: null,
     }));
-  }, []);
+  }, [supportedMethods.dragAndDrop]);
 
   /**
    * Handle drag over event (for visual feedback)
@@ -257,6 +279,9 @@ export function useDragAndDrop(
     } catch (error) {
       if (error instanceof Error && error.message.includes('activity not found')) {
         console.warn(error.message);
+      } else if (error instanceof Error && error.message.includes('localStorage')) {
+        console.error('Failed to persist reorder due to storage error:', error);
+        // Still clear drag state even if persistence failed
       } else {
         console.error('Failed to handle drop operation:', error);
       }
@@ -346,6 +371,12 @@ export function useDragAndDrop(
       return;
     }
 
+    // Check if touch is supported
+    if (!supportedMethods.touch) {
+      console.warn('Touch events are not supported in this browser');
+      return;
+    }
+
     // Prevent multiple touches
     if (event.touches.length > 1) {
       resetTouchState();
@@ -379,12 +410,16 @@ export function useDragAndDrop(
         }));
 
         // Provide haptic feedback if available
-        if ('vibrate' in navigator) {
-          navigator.vibrate(50);
+        if (supportedMethods.vibration) {
+          try {
+            navigator.vibrate(50);
+          } catch (error) {
+            console.warn('Failed to provide haptic feedback:', error);
+          }
         }
       }
     }, longPressMs);
-  }, [longPressMs, clearLongPressTimer, resetTouchState]);
+  }, [longPressMs, clearLongPressTimer, resetTouchState, supportedMethods.touch, supportedMethods.vibration]);
 
   /**
    * Handle touch move event
@@ -490,6 +525,50 @@ export function useDragAndDrop(
     resetTouchState();
   }, [clearDebounceTimer, clearLongPressTimer, resetTouchState]);
 
+  /**
+   * Check if any reordering method is available
+   */
+  const isReorderingAvailable = useCallback(() => {
+    return state.isSupported;
+  }, [state.isSupported]);
+
+  /**
+   * Get available reordering methods
+   */
+  const getAvailableMethods = useCallback(() => {
+    const methods: string[] = [];
+    
+    if (supportedMethods.dragAndDrop) {
+      methods.push('drag-and-drop');
+    }
+    
+    if (supportedMethods.touch) {
+      methods.push('touch');
+    }
+    
+    // Keyboard is always available as fallback
+    methods.push('keyboard');
+    
+    return methods;
+  }, [supportedMethods]);
+
+  /**
+   * Get user-friendly message about available reordering methods
+   */
+  const getReorderingInstructions = useCallback(() => {
+    const methods = getAvailableMethods();
+    
+    if (methods.includes('drag-and-drop') && methods.includes('touch')) {
+      return 'Drag and drop activities to reorder, or use long press on touch devices. Use Ctrl+Up/Down for keyboard navigation.';
+    } else if (methods.includes('drag-and-drop')) {
+      return 'Drag and drop activities to reorder, or use Ctrl+Up/Down for keyboard navigation.';
+    } else if (methods.includes('touch')) {
+      return 'Long press and drag activities to reorder, or use Ctrl+Up/Down for keyboard navigation.';
+    } else {
+      return 'Use Ctrl+Up/Down arrow keys to reorder activities.';
+    }
+  }, [getAvailableMethods]);
+
   const handlers: DragAndDropHandlers = {
     handleDragStart,
     handleDragOver,
@@ -509,6 +588,9 @@ export function useDragAndDrop(
     getActivityClasses,
     isActivityDragged,
     isActivityDraggedOver,
+    isReorderingAvailable,
+    getAvailableMethods,
+    getReorderingInstructions,
     cleanup,
   };
 }

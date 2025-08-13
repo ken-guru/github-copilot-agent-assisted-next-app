@@ -50,6 +50,12 @@ describe('useDragAndDrop', () => {
         isDragging: false,
         isTouchDragging: false,
         touchStartPosition: null,
+        isSupported: expect.any(Boolean),
+        supportedMethods: {
+          dragAndDrop: expect.any(Boolean),
+          touch: expect.any(Boolean),
+          vibration: expect.any(Boolean),
+        },
       });
     });
 
@@ -88,6 +94,12 @@ describe('useDragAndDrop', () => {
         isDragging: true,
         isTouchDragging: false,
         touchStartPosition: null,
+        isSupported: expect.any(Boolean),
+        supportedMethods: {
+          dragAndDrop: expect.any(Boolean),
+          touch: expect.any(Boolean),
+          vibration: expect.any(Boolean),
+        },
       });
     });
 
@@ -508,6 +520,206 @@ describe('useDragAndDrop', () => {
     });
   });
 
+  describe('Feature Detection and Error Handling', () => {
+    beforeEach(() => {
+      // Mock feature detection functions
+      jest.doMock('../../utils/feature-detection', () => ({
+        isDragAndDropSupported: jest.fn().mockReturnValue(true),
+        isTouchSupported: jest.fn().mockReturnValue(true),
+        isVibrationSupported: jest.fn().mockReturnValue(true)
+      }));
+    });
+
+    afterEach(() => {
+      jest.dontMock('../../utils/feature-detection');
+    });
+
+    it('should initialize with feature support information', () => {
+      const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+
+      expect(result.current.state.isSupported).toBe(true);
+      expect(result.current.state.supportedMethods).toEqual({
+        dragAndDrop: true,
+        touch: true,
+        vibration: true
+      });
+    });
+
+    it('should provide reordering availability check', () => {
+      const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+
+      expect(result.current.isReorderingAvailable()).toBe(true);
+    });
+
+    it('should provide available methods list', () => {
+      const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+
+      const methods = result.current.getAvailableMethods();
+      expect(methods).toContain('drag-and-drop');
+      expect(methods).toContain('touch');
+      expect(methods).toContain('keyboard');
+    });
+
+    it('should provide user-friendly instructions', () => {
+      const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+
+      const instructions = result.current.getReorderingInstructions();
+      expect(instructions).toContain('Drag and drop');
+      expect(instructions).toContain('long press');
+      expect(instructions).toContain('Ctrl+Up/Down');
+    });
+
+    it('should handle drag start when drag-and-drop is not supported', () => {
+      // Mock drag-and-drop as not supported
+      jest.doMock('../feature-detection', () => ({
+        isDragAndDropSupported: jest.fn().mockReturnValue(false),
+        isTouchSupported: jest.fn().mockReturnValue(true),
+        isVibrationSupported: jest.fn().mockReturnValue(true)
+      }));
+
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+
+      act(() => {
+        result.current.handlers.handleDragStart('activity-1');
+      });
+
+      expect(result.current.state.isDragging).toBe(false);
+      expect(consoleSpy).toHaveBeenCalledWith('Drag and drop is not supported in this browser');
+      
+      consoleSpy.mockRestore();
+    });
+
+    it('should handle touch start when touch is not supported', () => {
+      // Mock touch as not supported
+      jest.doMock('../feature-detection', () => ({
+        isDragAndDropSupported: jest.fn().mockReturnValue(true),
+        isTouchSupported: jest.fn().mockReturnValue(false),
+        isVibrationSupported: jest.fn().mockReturnValue(false)
+      }));
+
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+      const touchEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+
+      act(() => {
+        result.current.handlers.handleTouchStart('activity-1', touchEvent);
+      });
+
+      expect(result.current.state.isTouchDragging).toBe(false);
+      expect(consoleSpy).toHaveBeenCalledWith('Touch events are not supported in this browser');
+      
+      consoleSpy.mockRestore();
+    });
+
+    it('should handle vibration errors gracefully', () => {
+      // Mock vibration to throw error
+      const mockNavigator = {
+        vibrate: jest.fn().mockImplementation(() => {
+          throw new Error('Vibration failed');
+        })
+      };
+      Object.defineProperty(global, 'navigator', {
+        value: mockNavigator,
+        writable: true
+      });
+
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { longPressMs: 100 }));
+      const touchEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+
+      act(() => {
+        result.current.handlers.handleTouchStart('activity-1', touchEvent);
+      });
+
+      // Trigger long press
+      act(() => {
+        jest.advanceTimersByTime(100);
+      });
+
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to provide haptic feedback:', expect.any(Error));
+      
+      consoleSpy.mockRestore();
+    });
+
+    it('should handle storage errors in drop operation', () => {
+      mockReorderActivities.mockImplementation(() => {
+        const error = new Error('localStorage quota exceeded');
+        error.message = 'localStorage quota exceeded';
+        throw error;
+      });
+
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { debounceMs: 0 }));
+
+      act(() => {
+        result.current.handlers.handleDragStart('activity-1');
+      });
+
+      act(() => {
+        result.current.handlers.handleDrop('activity-2');
+      });
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Failed to persist reorder due to storage error:',
+        expect.any(Error)
+      );
+      expect(result.current.state.isDragging).toBe(false);
+
+      consoleSpy.mockRestore();
+    });
+
+    it('should provide fallback instructions when only keyboard is available', () => {
+      // Mock all interactive methods as not supported
+      jest.doMock('../feature-detection', () => ({
+        isDragAndDropSupported: jest.fn().mockReturnValue(false),
+        isTouchSupported: jest.fn().mockReturnValue(false),
+        isVibrationSupported: jest.fn().mockReturnValue(false)
+      }));
+
+      const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+
+      const instructions = result.current.getReorderingInstructions();
+      expect(instructions).toBe('Use Ctrl+Up/Down arrow keys to reorder activities.');
+      
+      const methods = result.current.getAvailableMethods();
+      expect(methods).toEqual(['keyboard']);
+    });
+
+    it('should handle element finding errors in touch operations', () => {
+      const mockElementFromPoint = document.elementFromPoint as jest.Mock;
+      mockElementFromPoint.mockImplementation(() => {
+        throw new Error('elementFromPoint failed');
+      });
+
+      const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { longPressMs: 100 }));
+      
+      const touchStartEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+      const touchEndEvent = createMockTouchEvent([{ clientX: 150, clientY: 250 }]);
+
+      act(() => {
+        result.current.handlers.handleTouchStart('activity-1', touchStartEvent);
+      });
+
+      // Trigger long press
+      act(() => {
+        jest.advanceTimersByTime(100);
+      });
+
+      // Should not throw when element finding fails
+      act(() => {
+        result.current.handlers.handleTouchEnd(touchEndEvent);
+      });
+
+      expect(result.current.state.isTouchDragging).toBe(false);
+      expect(mockReorderActivities).not.toHaveBeenCalled();
+    });
+  });
+
   describe('Touch Events', () => {
     const createMockTouchEvent = (touches: Array<{ clientX: number; clientY: number }>) => ({
       touches: touches.map(touch => ({ clientX: touch.clientX, clientY: touch.clientY })),
@@ -838,6 +1050,12 @@ describe('useDragAndDrop', () => {
           isDragging: false,
           isTouchDragging: false,
           touchStartPosition: null,
+          isSupported: expect.any(Boolean),
+          supportedMethods: {
+            dragAndDrop: expect.any(Boolean),
+            touch: expect.any(Boolean),
+            vibration: expect.any(Boolean),
+          },
         });
       });
     });
