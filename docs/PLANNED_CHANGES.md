@@ -4,6 +4,25 @@ This file contains specifications for upcoming changes to the application. Each 
 
 Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
 
+## Issue #308: Activity CRUD Empty State Toolbar (IMPLEMENTED ✅)
+
+### Context
+- Users couldn't access Import JSON and Reset actions when the activities list was empty.
+- Request: Keep the "Your Activities" card visible in empty state and surface Import/Reset there; hide Export when no activities exist.
+
+### Implementation Summary
+- Always render `ActivityList` from `ActivityCrud` regardless of list length.
+- In `ActivityList` empty state:
+   - Keep header with "Add Activity" button.
+   - Show empty-state guidance in `Card.Body`.
+   - Render `Card.Footer` with Import and Reset buttons when handlers are provided.
+   - Do not render Export button when `activities.length === 0`.
+- Tests updated to validate visibility of Import/Reset in empty state and absence of Export.
+
+### Status
+- Implemented on branch `fix-308-activitycrud-empty-state`.
+- PR opened: #317.
+
 ## UI Inconsistencies Fixes (Issues #261, #265)
 
 ### Context
