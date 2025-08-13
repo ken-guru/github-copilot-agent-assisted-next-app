@@ -34,9 +34,10 @@ describe('Activity CRUD Operations', () => {
       cy.contains('Your Activities').should('be.visible');
       cy.contains('Add Activity').should('be.visible');
       
-      // Verify essential UI elements are present
-      cy.get('button').contains('Import').should('be.visible');
-      cy.get('button').contains('Export').should('be.visible');
+  // Verify essential UI elements in empty state
+  cy.get('button').contains('Import').should('be.visible');
+  cy.get('button').contains('Reset Activities').should('be.visible');
+  cy.get('button').contains('Export').should('not.exist');
       
       // This is a high-level smoke test - detailed CRUD testing should be in Jest
     });
@@ -127,7 +128,7 @@ describe('Activity CRUD Operations', () => {
       cy.reload();
       
       // Should show empty state
-      cy.contains('No activities yet').should('be.visible');
+  cy.contains('No activities found').should('be.visible');
       cy.get('button').contains('Add Activity').should('be.visible');
     });
 
