@@ -9,9 +9,8 @@ interface ApiKeyDialogProps {
 }
 
 export const ApiKeyDialog: React.FC<ApiKeyDialogProps> = ({ show, onClose }) => {
-  const { apiKey, setApiKey, clearApiKey, persistence } = useApiKey();
+  const { apiKey, setApiKey, clearApiKey } = useApiKey();
   const [value, setValue] = useState(apiKey ?? '');
-  const [sessionOnly, setSessionOnly] = useState(persistence === 'session');
 
   const handleSave = () => {
     const trimmed = value.trim();

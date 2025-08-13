@@ -35,7 +35,8 @@ export function ApiKeyProvider({ children }: ApiKeyProviderProps) {
     // API keys must be re-entered each session for security
   }, []);
 
-  const setApiKey = (key: string, persist: Persistence = 'memory') => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const setApiKey = (key: string, _persist: Persistence = 'memory') => {
     setApiKeyState(key);
     // SECURITY: Force memory-only persistence regardless of user preference
     setPersistence('memory');

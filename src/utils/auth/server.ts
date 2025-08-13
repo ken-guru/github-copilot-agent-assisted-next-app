@@ -7,7 +7,8 @@ import { NextRequest } from 'next/server';
  * 
  * Current implementation allows all requests - DO NOT USE IN PRODUCTION.
  */
-export function ensureAuthenticated(req: NextRequest | { cookies: { get: (name: string) => { value?: string } | undefined } }): { ok: true } | { ok: false; status: number; message: string } {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function ensureAuthenticated(_req: NextRequest | { cookies: { get: (name: string) => { value?: string } | undefined } }): { ok: true } | { ok: false; status: number; message: string } {
   // TEMPORARY: Allow all requests since the cookie-based auth is insecure
   // TODO: Implement proper authentication before production deployment
   return { ok: true };
