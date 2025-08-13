@@ -217,8 +217,8 @@ yarn test:watch
    - With AI_ENABLE_MOCK=true or when OpenAI returns 429 insufficient_quota, a mock summary is returned.
 
 Notes:
-- Service Worker is disabled on localhost to avoid intercepting dev assets; it still runs in previews/production.
-- The temporary cookie gate is for development only.
+- On localhost the service worker installs but bypasses request interception to avoid interfering with dev assets; it still intercepts in preview/production builds.
+
 ```
 
 ### Deployment Verification
@@ -429,9 +429,12 @@ You can use OpenAI features without configuring server env vars:
 
 - Open the AI page from the navbar (always visible).
 - In the AI page, enter your OpenAI key (sk-...) in the BYOK section and save.
-- The key is kept only for this tab (sessionStorage) and never sent to the server.
+- The key is stored in memory for this tab only (never persisted to sessionStorage/localStorage) and is never sent to the server.
 
 Security notes:
 - A strict CSP limits outbound connections to https://api.openai.com.
 - The service worker bypasses OpenAI requests (no caching/interception).
 - Avoid using BYOK on untrusted pages; client code has access while open.
+
+Authentication notes:
+- There is no OAuth or cookie-based authentication gate. AI features are enabled purely via BYOK on the client.
