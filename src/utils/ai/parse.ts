@@ -10,11 +10,20 @@ const devError = (...args: unknown[]) => {
 };
 
 /**
- * Safely parses a string that should contain JSON, with multiple fallbacks:
- * - Direct JSON.parse
- * - Fenced code blocks (```json ... ``` or ``` ... ```)
- * - Substring between first '{' and last '}'
- * Throws a descriptive error when parsing fails.
+ * Safely parses a string that should contain JSON, with multiple fallbacks.
+ *
+ * Parsing strategies applied in order:
+ * 1) Direct JSON.parse on the full string
+ * 2) Extract and parse from fenced code blocks (```json ... ``` or ``` ... ```)
+ * 3) Extract and parse substring between the first '{' and last '}'
+ *
+ * Notes:
+ * - Only the first successful strategy returns. If all fail, a descriptive error is thrown.
+ * - Dev-only logs are emitted for failed strategies; production remains silent.
+ *
+ * @param text String that is expected to contain JSON (possibly wrapped in code fences)
+ * @returns Parsed JSON value of type T
+ * @throws Error when the input cannot be parsed by any strategy. Message includes the initial parse error.
  */
 export function safeJsonParse<T = unknown>(text: string): T {
   try {

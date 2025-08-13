@@ -36,12 +36,12 @@ export default function AIPlannerPage() {
     setError(null);
     setLoading(true);
     try {
-  // Require BYOK for AI planning
+      // BYOK-only: this page requires a user-provided OpenAI API key; no server fallback exists here
   if (!apiKey) {
         throw new Error('Please enter and save your OpenAI API key first.');
       }
       let data: unknown;
-  {
+      {
         // Client-direct call to OpenAI with BYOK
         // Minimal example: responses API, text generation with JSON instruction
         const payload = {
