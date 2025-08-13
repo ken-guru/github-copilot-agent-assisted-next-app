@@ -63,6 +63,7 @@ const nextConfig = {
       "style-src 'self' 'unsafe-inline'", // Bootstrap and Next.js require unsafe-inline for styles
       `script-src ${scriptSrc}`,
       `connect-src ${connectSrc}`,
+      `frame-src ${isProd ? 'https://vercel.live https://*.vercel.app' : "'none'"}`, // Allow Vercel frames in production
       "object-src 'none'", // Prevent plugin execution
       "base-uri 'self'", // Prevent base tag hijacking
       "form-action 'self'", // Restrict form submissions
@@ -88,9 +89,9 @@ const nextConfig = {
           // Only apply CSP to HTML pages, not to static assets
         ],
       },
-      // CSP only for HTML pages to avoid blocking static assets
+      // CSP only for HTML pages to avoid blocking static assets and API routes
       {
-        source: '/((?!api|_next|favicon|manifest|icons|service-worker).*)',
+        source: '/((?!api/|_next/|favicon|manifest|icons/|service-worker).*)',
         headers: [
           {
             key: 'Content-Security-Policy',
@@ -120,13 +121,27 @@ const nextConfig = {
           },
         ],
       },
-      // Manifest with proper caching
+      // Manifest with proper caching (legacy route)
       {
         source: '/manifest.json',
         headers: [
           {
             key: 'Cache-Control',
             value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
+      // Manifest with proper caching (App Router route)
+      {
+        source: '/manifest.webmanifest',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+          {
+            key: 'Content-Type',
+            value: 'application/manifest+json',
           },
         ],
       },
