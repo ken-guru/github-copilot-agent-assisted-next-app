@@ -25,6 +25,12 @@ export default function AIPlannerPage() {
     setReady(true);
   }, []);
 
+  const pickActivityName = (a: { title?: unknown; name?: unknown }, idx: number) => {
+    if (typeof a.title === 'string' && a.title.trim()) return a.title;
+    if (typeof a.name === 'string' && a.name.trim()) return a.name;
+    return `Activity ${idx + 1}`;
+  };
+
   const handlePlan = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -35,7 +41,7 @@ export default function AIPlannerPage() {
         throw new Error('Please enter and save your OpenAI API key first.');
       }
       let data: unknown;
-      {
+  {
         // Client-direct call to OpenAI with BYOK
         // Minimal example: responses API, text generation with JSON instruction
         const payload = {
@@ -75,9 +81,9 @@ export default function AIPlannerPage() {
       if (Array.isArray(acts)) {
         // Map to app's Activity shape
         const now = new Date().toISOString();
-  const planned = acts.slice(0, MAX_AI_ACTIVITIES).map((a: LoosePlanActivity, idx: number) => ({
+        const planned = acts.slice(0, MAX_AI_ACTIVITIES).map((a: LoosePlanActivity, idx: number) => ({
           id: crypto.randomUUID(),
-          name: String((typeof a.title === 'string' ? a.title : (typeof a.name === 'string' ? a.name : `Activity ${idx + 1}`))),
+          name: String(pickActivityName(a, idx)),
           description: typeof a.description === 'string' ? a.description : undefined,
           colorIndex: idx % 8,
           createdAt: now,
@@ -105,6 +111,7 @@ export default function AIPlannerPage() {
   if (!ready) return null;
 
   // State 1: Supply a key (BYOK). No additional enablement required.
+  // BYOK-only page: server never receives this key and no server AI calls are made here.
   if (!apiKey) {
     return (
       <div className="container py-3">

@@ -36,7 +36,26 @@ export function useOpenAIClient() {
     }
     if (!res.ok) {
       // Avoid echoing any server-provided text to the UI/logs
-  throw new Error(`OpenAI request failed (${res.status})`);
+      // Provide user-friendly, status-specific messages where safe
+      let message = `OpenAI request failed (${res.status})`;
+      switch (res.status) {
+        case 400:
+          message = 'OpenAI rejected the request (400). Please adjust your input.';
+          break;
+        case 401:
+          message = 'Invalid or missing OpenAI API key (401). Check your key.';
+          break;
+        case 403:
+          message = 'Access to the requested OpenAI resource is forbidden (403).';
+          break;
+        case 429:
+          message = 'Rate limit exceeded (429). Please wait and try again.';
+          break;
+        default:
+          // keep default generic message
+          break;
+      }
+      throw new Error(message);
     }
     return res.json();
   }, [apiKey]);
