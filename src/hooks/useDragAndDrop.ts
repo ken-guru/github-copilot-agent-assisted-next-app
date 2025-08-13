@@ -14,6 +14,8 @@ export interface DragAndDropState {
   draggedItem: string | null;
   dragOverItem: string | null;
   isDragging: boolean;
+  isTouchDragging: boolean;
+  touchStartPosition: { x: number; y: number } | null;
 }
 
 /**
@@ -26,6 +28,11 @@ export interface DragAndDropHandlers {
   handleDrop: (targetId: string) => void;
   handleDragEnter: (activityId: string) => void;
   handleDragLeave: () => void;
+  // Touch event handlers
+  handleTouchStart: (activityId: string, event: TouchEvent) => void;
+  handleTouchMove: (event: TouchEvent) => void;
+  handleTouchEnd: (event: TouchEvent) => void;
+  handleTouchCancel: () => void;
 }
 
 /**
@@ -34,6 +41,8 @@ export interface DragAndDropHandlers {
 export interface UseDragAndDropOptions {
   onReorder?: (newOrder: string[]) => void;
   debounceMs?: number;
+  longPressMs?: number;
+  touchMoveThreshold?: number;
 }
 
 /**
@@ -46,17 +55,25 @@ export function useDragAndDrop(
   activityIds: string[],
   options: UseDragAndDropOptions = {}
 ) {
-  const { onReorder, debounceMs = 300 } = options;
+  const { onReorder, debounceMs = 300, longPressMs = 500, touchMoveThreshold = 10 } = options;
   
   // Drag and drop state
   const [state, setState] = useState<DragAndDropState>({
     draggedItem: null,
     dragOverItem: null,
     isDragging: false,
+    isTouchDragging: false,
+    touchStartPosition: null,
   });
 
   // Debounce timer ref for order persistence
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Touch-specific refs
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const touchStartTimeRef = useRef<number>(0);
+  const currentTouchActivityRef = useRef<string | null>(null);
+  const touchMoveCountRef = useRef<number>(0);
 
   /**
    * Clear any pending debounced operations
@@ -67,6 +84,30 @@ export function useDragAndDrop(
       debounceTimerRef.current = null;
     }
   }, []);
+
+  /**
+   * Clear long press timer
+   */
+  const clearLongPressTimer = useCallback(() => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  }, []);
+
+  /**
+   * Reset touch-specific state
+   */
+  const resetTouchState = useCallback(() => {
+    clearLongPressTimer();
+    currentTouchActivityRef.current = null;
+    touchMoveCountRef.current = 0;
+    setState(prev => ({
+      ...prev,
+      isTouchDragging: false,
+      touchStartPosition: null,
+    }));
+  }, [clearLongPressTimer]);
 
   /**
    * Persist the new order with debouncing to reduce localStorage writes
@@ -179,12 +220,15 @@ export function useDragAndDrop(
    * Handle drag end event (cleanup)
    */
   const handleDragEnd = useCallback(() => {
+    resetTouchState();
     setState({
       draggedItem: null,
       dragOverItem: null,
       isDragging: false,
+      isTouchDragging: false,
+      touchStartPosition: null,
     });
-  }, []);
+  }, [resetTouchState]);
 
   /**
    * Handle drop event (perform reordering)
@@ -251,10 +295,200 @@ export function useDragAndDrop(
     return state.dragOverItem === activityId && state.draggedItem !== activityId;
   }, [state.draggedItem, state.dragOverItem]);
 
+  /**
+   * Get element at touch position
+   */
+  const getElementAtTouchPosition = useCallback((touch: Touch): Element | null => {
+    return document.elementFromPoint(touch.clientX, touch.clientY);
+  }, []);
+
+  /**
+   * Find activity ID from touch target element
+   */
+  const findActivityIdFromElement = useCallback((element: Element | null): string | null => {
+    if (!element) return null;
+    
+    // Look for activity button or card element with data-activity-id
+    const activityElement = element.closest('[data-activity-id]');
+    if (activityElement) {
+      return activityElement.getAttribute('data-activity-id');
+    }
+    
+    // Fallback: look for activity ID in class names or other attributes
+    let current = element as Element | null;
+    while (current && current !== document.body) {
+      // Check for activity ID in various formats
+      const classList = Array.from(current.classList || []);
+      for (const className of classList) {
+        if (className.startsWith('activity-') && activityIds.includes(className)) {
+          return className;
+        }
+      }
+      
+      // Check data attributes
+      const dataId = current.getAttribute('data-id') || current.getAttribute('id');
+      if (dataId && activityIds.includes(dataId)) {
+        return dataId;
+      }
+      
+      current = current.parentElement;
+    }
+    
+    return null;
+  }, [activityIds]);
+
+  /**
+   * Handle touch start event
+   */
+  const handleTouchStart = useCallback((activityId: string, event: TouchEvent) => {
+    if (!activityId || typeof activityId !== 'string') {
+      console.warn('Invalid activity ID provided to handleTouchStart');
+      return;
+    }
+
+    // Prevent multiple touches
+    if (event.touches.length > 1) {
+      resetTouchState();
+      return;
+    }
+
+    const touch = event.touches[0];
+    if (!touch) return;
+
+    // Store touch start information
+    currentTouchActivityRef.current = activityId;
+    touchStartTimeRef.current = Date.now();
+    touchMoveCountRef.current = 0;
+
+    setState(prev => ({
+      ...prev,
+      touchStartPosition: { x: touch.clientX, y: touch.clientY },
+    }));
+
+    // Start long press timer
+    clearLongPressTimer();
+    longPressTimerRef.current = setTimeout(() => {
+      // Only start drag if we haven't moved too much
+      if (touchMoveCountRef.current < 3 && currentTouchActivityRef.current === activityId) {
+        setState(prev => ({
+          ...prev,
+          draggedItem: activityId,
+          isDragging: true,
+          isTouchDragging: true,
+          dragOverItem: null,
+        }));
+
+        // Provide haptic feedback if available
+        if ('vibrate' in navigator) {
+          navigator.vibrate(50);
+        }
+      }
+    }, longPressMs);
+  }, [longPressMs, clearLongPressTimer, resetTouchState]);
+
+  /**
+   * Handle touch move event
+   */
+  const handleTouchMove = useCallback((event: TouchEvent) => {
+    const touch = event.touches[0];
+    if (!touch || !currentTouchActivityRef.current) return;
+
+    touchMoveCountRef.current++;
+
+    // If we have a touch start position, check if we've moved beyond threshold
+    if (state.touchStartPosition) {
+      const deltaX = Math.abs(touch.clientX - state.touchStartPosition.x);
+      const deltaY = Math.abs(touch.clientY - state.touchStartPosition.y);
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+      // If we've moved too much before long press, cancel the long press
+      if (distance > touchMoveThreshold && !state.isTouchDragging) {
+        clearLongPressTimer();
+        currentTouchActivityRef.current = null;
+        return;
+      }
+    }
+
+    // If we're in touch drag mode, handle drag over
+    if (state.isTouchDragging && state.draggedItem) {
+      event.preventDefault(); // Prevent scrolling during drag
+
+      const elementUnderTouch = getElementAtTouchPosition(touch);
+      const targetActivityId = findActivityIdFromElement(elementUnderTouch);
+
+      if (targetActivityId && targetActivityId !== state.draggedItem) {
+        setState(prev => ({
+          ...prev,
+          dragOverItem: targetActivityId,
+        }));
+      }
+    }
+  }, [state.touchStartPosition, state.isTouchDragging, state.draggedItem, touchMoveThreshold, clearLongPressTimer, getElementAtTouchPosition, findActivityIdFromElement]);
+
+  /**
+   * Handle touch end event
+   */
+  const handleTouchEnd = useCallback((event: TouchEvent) => {
+    const wasInTouchDrag = state.isTouchDragging;
+    const draggedItem = state.draggedItem;
+    
+    // Clear long press timer
+    clearLongPressTimer();
+
+    // If we were in touch drag mode, handle the drop
+    if (wasInTouchDrag && draggedItem && event.changedTouches.length > 0) {
+      const touch = event.changedTouches[0];
+      const elementUnderTouch = getElementAtTouchPosition(touch);
+      const targetActivityId = findActivityIdFromElement(elementUnderTouch);
+
+      if (targetActivityId && targetActivityId !== draggedItem) {
+        // Perform the drop
+        try {
+          const newOrder = calculateNewOrder(draggedItem, targetActivityId);
+          persistOrder(newOrder);
+        } catch (error) {
+          if (error instanceof Error && error.message.includes('activity not found')) {
+            console.warn(error.message);
+          } else {
+            console.error('Failed to handle touch drop operation:', error);
+          }
+        }
+      }
+    }
+
+    // Reset all touch state
+    resetTouchState();
+    setState(prev => ({
+      ...prev,
+      draggedItem: null,
+      dragOverItem: null,
+      isDragging: false,
+      isTouchDragging: false,
+      touchStartPosition: null,
+    }));
+  }, [state.isTouchDragging, state.draggedItem, clearLongPressTimer, getElementAtTouchPosition, findActivityIdFromElement, calculateNewOrder, persistOrder, resetTouchState]);
+
+  /**
+   * Handle touch cancel event
+   */
+  const handleTouchCancel = useCallback(() => {
+    resetTouchState();
+    setState(prev => ({
+      ...prev,
+      draggedItem: null,
+      dragOverItem: null,
+      isDragging: false,
+      isTouchDragging: false,
+      touchStartPosition: null,
+    }));
+  }, [resetTouchState]);
+
   // Cleanup debounce timer on unmount
   const cleanup = useCallback(() => {
     clearDebounceTimer();
-  }, [clearDebounceTimer]);
+    clearLongPressTimer();
+    resetTouchState();
+  }, [clearDebounceTimer, clearLongPressTimer, resetTouchState]);
 
   const handlers: DragAndDropHandlers = {
     handleDragStart,
@@ -263,6 +497,10 @@ export function useDragAndDrop(
     handleDrop,
     handleDragEnter,
     handleDragLeave,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    handleTouchCancel,
   };
 
   return {

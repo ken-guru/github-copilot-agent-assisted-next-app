@@ -66,6 +66,96 @@
   z-index: 1;
 }
 
+/* Touch-specific styles */
+.touchDragging {
+  opacity: 0.7;
+  transform: scale(1.05) rotate(2deg);
+  transition: opacity 0.1s ease, transform 0.1s ease;
+  box-shadow: var(--shadow-lg);
+  z-index: 1001;
+  pointer-events: none;
+}
+
+.touchDragOver {
+  border-color: var(--accent-color) !important;
+  background-color: rgba(var(--accent-color-rgb), 0.1) !important;
+  box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.3);
+  transform: scale(1.02);
+  transition: all 0.15s ease;
+}
+
+/* Long press feedback */
+.longPressActive {
+  animation: longPressIndicator 0.5s ease-in-out;
+}
+
+@keyframes longPressIndicator {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* Touch drop zone indicator */
+.touchDropZone {
+  position: relative;
+}
+
+.touchDropZone::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.touchDragOver.touchDropZone::after {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0.3;
+}
+
+/* Prevent scrolling during touch drag */
+.touchDragActive {
+  touch-action: none;
+  overflow: hidden;
+}
+
+/* Enhanced touch targets for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .dragHandle {
+    /* Larger touch target on touch devices */
+    padding: var(--space-sm);
+    margin: calc(-1 * var(--space-sm));
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .dragHandle svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Increase card padding for better touch experience */
+  .card[draggable="true"] {
+    padding: var(--space-xs);
+  }
+  
+  /* Visual feedback for touch interactions */
+  .card[draggable="true"]:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
 /* Responsive adjustments for mobile */
 @media (max-width: 768px) {
   .dragHandle {
@@ -77,5 +167,16 @@
   .dragHandle svg {
     width: 18px;
     height: 18px;
+  }
+  
+  /* Enhanced visual feedback for touch drag */
+  .touchDragging {
+    transform: scale(1.08) rotate(3deg);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  }
+  
+  .touchDragOver {
+    transform: scale(1.03);
+    box-shadow: 0 0 0 4px rgba(var(--accent-color-rgb), 0.4);
   }
 }

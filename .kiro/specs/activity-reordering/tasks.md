@@ -63,7 +63,7 @@
   - Write tests for timeline visual consistency with custom activity order
   - _Requirements: 2.2, 2.4_
 
-- [ ] 9. Add mobile touch support for drag-and-drop
+- [x] 9. Add mobile touch support for drag-and-drop
   - Extend useDragAndDrop hook to handle touch events (touchstart, touchmove, touchend)
   - Implement long-press detection (500ms) for touch drag initiation to avoid conflicts with scrolling
   - Add touch-specific visual feedback and drop zone indicators for mobile devices

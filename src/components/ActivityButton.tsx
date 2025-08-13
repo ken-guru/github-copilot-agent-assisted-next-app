@@ -25,6 +25,11 @@ interface ActivityButtonProps {
   onDragEnter?: (activityId: string) => void;
   onDragLeave?: () => void;
   onDrop?: (activityId: string) => void;
+  // Touch event props
+  onTouchStart?: (activityId: string, event: TouchEvent) => void;
+  onTouchMove?: (event: TouchEvent) => void;
+  onTouchEnd?: (event: TouchEvent) => void;
+  onTouchCancel?: () => void;
   // Keyboard reordering props
   onKeyDown?: (event: KeyboardEvent) => void;
   onFocus?: () => void;
@@ -56,6 +61,11 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
   onDragEnter,
   onDragLeave,
   onDrop,
+  // Touch event props
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
+  onTouchCancel,
   // Keyboard reordering props
   onKeyDown,
   onFocus,
@@ -126,6 +136,31 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
     }
   };
 
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (onTouchStart) {
+      onTouchStart(id, e.nativeEvent);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (onTouchMove) {
+      onTouchMove(e.nativeEvent);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (onTouchEnd) {
+      onTouchEnd(e.nativeEvent);
+    }
+  };
+
+  const handleTouchCancel = () => {
+    if (onTouchCancel) {
+      onTouchCancel();
+    }
+  };
+
   // Keyboard event handlers
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (onKeyDown) {
@@ -173,6 +208,10 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
       onDragEnter={draggable ? handleDragEnter : undefined}
       onDragLeave={draggable ? handleDragLeave : undefined}
       onDrop={draggable ? handleDrop : undefined}
+      onTouchStart={draggable ? handleTouchStart : undefined}
+      onTouchMove={draggable ? handleTouchMove : undefined}
+      onTouchEnd={draggable ? handleTouchEnd : undefined}
+      onTouchCancel={draggable ? handleTouchCancel : undefined}
       onKeyDown={onKeyDown ? handleKeyDown : undefined}
       onFocus={onFocus ? handleFocus : undefined}
       onBlur={onBlur ? handleBlur : undefined}
@@ -180,6 +219,7 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
       role={draggable ? 'button' : undefined}
       tabIndex={draggable ? 0 : undefined}
       aria-describedby={draggable ? `${id}-reorder-instructions` : undefined}
+      data-activity-id={draggable ? id : undefined}
     >
       <Card.Body className="py-2 px-3">
         <div className="d-flex justify-content-between align-items-center">

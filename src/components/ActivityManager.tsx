@@ -307,6 +307,11 @@ export default function ActivityManager({
                   onDrop={() => dragHandlers.handleDrop(activity.id)}
                   isDragging={isActivityDragged(activity.id)}
                   isDraggedOver={isActivityDraggedOver(activity.id)}
+                  // Touch event props
+                  onTouchStart={(activityId, event) => dragHandlers.handleTouchStart(activityId, event)}
+                  onTouchMove={(event) => dragHandlers.handleTouchMove(event)}
+                  onTouchEnd={(event) => dragHandlers.handleTouchEnd(event)}
+                  onTouchCancel={() => dragHandlers.handleTouchCancel()}
                   // Keyboard reordering props
                   onKeyDown={(e) => handleKeyDown(e, activity.id)}
                   onFocus={() => setFocusedItem(activity.id)}

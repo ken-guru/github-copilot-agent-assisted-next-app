@@ -21,6 +21,18 @@ describe('useDragAndDrop', () => {
     jest.clearAllMocks();
     jest.clearAllTimers();
     jest.useFakeTimers();
+    
+    // Mock navigator.vibrate for touch tests
+    Object.defineProperty(navigator, 'vibrate', {
+      value: jest.fn(),
+      writable: true,
+    });
+    
+    // Mock document.elementFromPoint for touch tests
+    Object.defineProperty(document, 'elementFromPoint', {
+      value: jest.fn(),
+      writable: true,
+    });
   });
 
   afterEach(() => {
@@ -36,6 +48,8 @@ describe('useDragAndDrop', () => {
         draggedItem: null,
         dragOverItem: null,
         isDragging: false,
+        isTouchDragging: false,
+        touchStartPosition: null,
       });
     });
 
@@ -72,6 +86,8 @@ describe('useDragAndDrop', () => {
         draggedItem: 'activity-1',
         dragOverItem: null,
         isDragging: true,
+        isTouchDragging: false,
+        touchStartPosition: null,
       });
     });
 
@@ -195,6 +211,8 @@ describe('useDragAndDrop', () => {
         draggedItem: null,
         dragOverItem: null,
         isDragging: false,
+        isTouchDragging: false,
+        touchStartPosition: null,
       });
     });
   });
@@ -225,6 +243,8 @@ describe('useDragAndDrop', () => {
         draggedItem: null,
         dragOverItem: null,
         isDragging: false,
+        isTouchDragging: false,
+        touchStartPosition: null,
       });
 
       // Should call reorderActivities with new order (activity-1 moved to position of activity-3)
@@ -257,6 +277,8 @@ describe('useDragAndDrop', () => {
         draggedItem: null,
         dragOverItem: null,
         isDragging: false,
+        isTouchDragging: false,
+        touchStartPosition: null,
       });
 
       // Should not call reorderActivities
@@ -486,6 +508,447 @@ describe('useDragAndDrop', () => {
     });
   });
 
+  describe('Touch Events', () => {
+    const createMockTouchEvent = (touches: Array<{ clientX: number; clientY: number }>) => ({
+      touches: touches.map(touch => ({ clientX: touch.clientX, clientY: touch.clientY })),
+      changedTouches: touches.map(touch => ({ clientX: touch.clientX, clientY: touch.clientY })),
+      preventDefault: jest.fn(),
+    } as TouchEvent);
+
+    const mockElementFromPoint = (activityId: string | null) => {
+      const mockElement = activityId ? {
+        closest: jest.fn().mockReturnValue({
+          getAttribute: jest.fn().mockReturnValue(activityId)
+        }),
+        classList: [],
+        getAttribute: jest.fn().mockReturnValue(null),
+        parentElement: null
+      } : null;
+      
+      (document.elementFromPoint as jest.Mock).mockReturnValue(mockElement);
+    };
+
+    describe('Touch Start', () => {
+      it('should initialize touch state on touch start', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+        const touchEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchEvent);
+        });
+
+        expect(result.current.state.touchStartPosition).toEqual({ x: 100, y: 200 });
+        expect(result.current.state.isTouchDragging).toBe(false);
+        expect(result.current.state.isDragging).toBe(false);
+      });
+
+      it('should start long press timer on touch start', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { longPressMs: 500 }));
+        const touchEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchEvent);
+        });
+
+        // Should not be dragging yet
+        expect(result.current.state.isDragging).toBe(false);
+        expect(result.current.state.isTouchDragging).toBe(false);
+
+        // Fast forward to trigger long press
+        act(() => {
+          jest.advanceTimersByTime(500);
+        });
+
+        expect(result.current.state.isDragging).toBe(true);
+        expect(result.current.state.isTouchDragging).toBe(true);
+        expect(result.current.state.draggedItem).toBe('activity-1');
+        expect(navigator.vibrate).toHaveBeenCalledWith(50);
+      });
+
+      it('should handle multi-touch by resetting state', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+        const multiTouchEvent = createMockTouchEvent([
+          { clientX: 100, clientY: 200 },
+          { clientX: 150, clientY: 250 }
+        ]);
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', multiTouchEvent);
+        });
+
+        expect(result.current.state.touchStartPosition).toBe(null);
+        expect(result.current.state.isTouchDragging).toBe(false);
+      });
+
+      it('should handle invalid activity ID gracefully', () => {
+        const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+        const touchEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+
+        act(() => {
+          result.current.handlers.handleTouchStart('', touchEvent);
+        });
+
+        expect(result.current.state.touchStartPosition).toBe(null);
+        expect(consoleSpy).toHaveBeenCalledWith('Invalid activity ID provided to handleTouchStart');
+        
+        consoleSpy.mockRestore();
+      });
+    });
+
+    describe('Touch Move', () => {
+      it('should cancel long press if moved beyond threshold', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { 
+          longPressMs: 500, 
+          touchMoveThreshold: 10 
+        }));
+        
+        const touchStartEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+        const touchMoveEvent = createMockTouchEvent([{ clientX: 120, clientY: 220 }]); // 28px distance
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchStartEvent);
+        });
+
+        act(() => {
+          result.current.handlers.handleTouchMove(touchMoveEvent);
+        });
+
+        // Fast forward past long press time
+        act(() => {
+          jest.advanceTimersByTime(500);
+        });
+
+        // Should not have started dragging due to movement
+        expect(result.current.state.isDragging).toBe(false);
+        expect(result.current.state.isTouchDragging).toBe(false);
+      });
+
+      it('should handle drag over during touch drag', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { longPressMs: 100 }));
+        
+        const touchStartEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+        const touchMoveEvent = createMockTouchEvent([{ clientX: 105, clientY: 205 }]);
+
+        // Mock element finding
+        mockElementFromPoint('activity-2');
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchStartEvent);
+        });
+
+        // Trigger long press
+        act(() => {
+          jest.advanceTimersByTime(100);
+        });
+
+        expect(result.current.state.isTouchDragging).toBe(true);
+
+        act(() => {
+          result.current.handlers.handleTouchMove(touchMoveEvent);
+        });
+
+        expect(result.current.state.dragOverItem).toBe('activity-2');
+      });
+
+      it('should prevent default during touch drag to prevent scrolling', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { longPressMs: 100 }));
+        
+        const touchStartEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+        const touchMoveEvent = {
+          ...createMockTouchEvent([{ clientX: 105, clientY: 205 }]),
+          preventDefault: jest.fn()
+        } as TouchEvent;
+
+        mockElementFromPoint('activity-2');
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchStartEvent);
+        });
+
+        // Trigger long press
+        act(() => {
+          jest.advanceTimersByTime(100);
+        });
+
+        act(() => {
+          result.current.handlers.handleTouchMove(touchMoveEvent);
+        });
+
+        expect(touchMoveEvent.preventDefault).toHaveBeenCalled();
+      });
+    });
+
+    describe('Touch End', () => {
+      it('should perform reorder on successful touch drop', () => {
+        // Reset mocks before this test
+        mockReorderActivities.mockClear();
+        
+        const mockOnReorder = jest.fn();
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { 
+          longPressMs: 100,
+          onReorder: mockOnReorder,
+          debounceMs: 0
+        }));
+        
+        const touchStartEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+        const touchEndEvent = createMockTouchEvent([{ clientX: 150, clientY: 250 }]);
+
+        // Mock element finding for drop target
+        mockElementFromPoint('activity-3');
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchStartEvent);
+        });
+
+        // Trigger long press
+        act(() => {
+          jest.advanceTimersByTime(100);
+        });
+
+        expect(result.current.state.isTouchDragging).toBe(true);
+        expect(result.current.state.draggedItem).toBe('activity-1');
+
+        act(() => {
+          result.current.handlers.handleTouchEnd(touchEndEvent);
+        });
+
+        // Should reset state immediately
+        expect(result.current.state.isTouchDragging).toBe(false);
+        expect(result.current.state.isDragging).toBe(false);
+        expect(result.current.state.draggedItem).toBe(null);
+
+        // Should call reorderActivities with new order
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(mockReorderActivities).toHaveBeenCalledWith(['activity-2', 'activity-3', 'activity-1', 'activity-4']);
+        expect(mockOnReorder).toHaveBeenCalledWith(['activity-2', 'activity-3', 'activity-1', 'activity-4']);
+      });
+
+      it('should handle touch end without drag (no reordering)', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+        const touchStartEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+        const touchEndEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchStartEvent);
+        });
+
+        // End touch before long press triggers
+        act(() => {
+          result.current.handlers.handleTouchEnd(touchEndEvent);
+        });
+
+        expect(result.current.state.isTouchDragging).toBe(false);
+        expect(result.current.state.isDragging).toBe(false);
+        expect(mockReorderActivities).not.toHaveBeenCalled();
+      });
+
+      it('should handle drop on same item (no reordering)', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { longPressMs: 100 }));
+        
+        const touchStartEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+        const touchEndEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+
+        // Mock element finding for same item
+        mockElementFromPoint('activity-1');
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchStartEvent);
+        });
+
+        // Trigger long press
+        act(() => {
+          jest.advanceTimersByTime(100);
+        });
+
+        act(() => {
+          result.current.handlers.handleTouchEnd(touchEndEvent);
+        });
+
+        expect(result.current.state.isTouchDragging).toBe(false);
+        expect(mockReorderActivities).not.toHaveBeenCalled();
+      });
+
+      it('should handle touch end errors gracefully', () => {
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+        mockReorderActivities.mockImplementation(() => {
+          throw new Error('Storage error');
+        });
+
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { 
+          longPressMs: 100,
+          debounceMs: 0
+        }));
+        
+        const touchStartEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+        const touchEndEvent = createMockTouchEvent([{ clientX: 150, clientY: 250 }]);
+
+        mockElementFromPoint('activity-2');
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchStartEvent);
+        });
+
+        act(() => {
+          jest.advanceTimersByTime(100);
+        });
+
+        act(() => {
+          result.current.handlers.handleTouchEnd(touchEndEvent);
+        });
+
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(consoleSpy).toHaveBeenCalledWith('Failed to persist activity order:', expect.any(Error));
+        expect(result.current.state.isTouchDragging).toBe(false);
+
+        consoleSpy.mockRestore();
+      });
+    });
+
+    describe('Touch Cancel', () => {
+      it('should reset all touch state on touch cancel', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { longPressMs: 100 }));
+        
+        const touchStartEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchStartEvent);
+        });
+
+        // Trigger long press
+        act(() => {
+          jest.advanceTimersByTime(100);
+        });
+
+        expect(result.current.state.isTouchDragging).toBe(true);
+
+        act(() => {
+          result.current.handlers.handleTouchCancel();
+        });
+
+        expect(result.current.state).toEqual({
+          draggedItem: null,
+          dragOverItem: null,
+          isDragging: false,
+          isTouchDragging: false,
+          touchStartPosition: null,
+        });
+      });
+    });
+
+    describe('Touch Configuration Options', () => {
+      it('should use custom long press duration', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { longPressMs: 1000 }));
+        const touchEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchEvent);
+        });
+
+        // Should not be dragging after 500ms
+        act(() => {
+          jest.advanceTimersByTime(500);
+        });
+
+        expect(result.current.state.isDragging).toBe(false);
+
+        // Should be dragging after 1000ms
+        act(() => {
+          jest.advanceTimersByTime(500);
+        });
+
+        expect(result.current.state.isDragging).toBe(true);
+        expect(result.current.state.isTouchDragging).toBe(true);
+      });
+
+      it('should use custom touch move threshold', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { 
+          longPressMs: 500,
+          touchMoveThreshold: 20
+        }));
+        
+        const touchStartEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+        const touchMoveEvent = createMockTouchEvent([{ clientX: 115, clientY: 215 }]); // ~21px distance
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchStartEvent);
+        });
+
+        act(() => {
+          result.current.handlers.handleTouchMove(touchMoveEvent);
+        });
+
+        // Fast forward past long press time
+        act(() => {
+          jest.advanceTimersByTime(500);
+        });
+
+        // Should not have started dragging due to movement beyond threshold
+        expect(result.current.state.isDragging).toBe(false);
+      });
+    });
+
+    describe('Element Finding', () => {
+      it('should find activity ID from data-activity-id attribute', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
+        
+        const mockElement = {
+          closest: jest.fn().mockReturnValue({
+            getAttribute: jest.fn().mockReturnValue('activity-2')
+          })
+        };
+        
+        (document.elementFromPoint as jest.Mock).mockReturnValue(mockElement);
+
+        const touchEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+        
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchEvent);
+        });
+
+        act(() => {
+          jest.advanceTimersByTime(500);
+        });
+
+        act(() => {
+          result.current.handlers.handleTouchMove(touchEvent);
+        });
+
+        expect(mockElement.closest).toHaveBeenCalledWith('[data-activity-id]');
+      });
+
+      it('should handle element not found gracefully', () => {
+        const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { longPressMs: 100 }));
+        
+        (document.elementFromPoint as jest.Mock).mockReturnValue(null);
+
+        const touchStartEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+        const touchMoveEvent = createMockTouchEvent([{ clientX: 105, clientY: 205 }]);
+
+        act(() => {
+          result.current.handlers.handleTouchStart('activity-1', touchStartEvent);
+        });
+
+        act(() => {
+          jest.advanceTimersByTime(100);
+        });
+
+        act(() => {
+          result.current.handlers.handleTouchMove(touchMoveEvent);
+        });
+
+        // Should not crash and should not set dragOverItem
+        expect(result.current.state.dragOverItem).toBe(null);
+      });
+    });
+  });
+
   describe('Edge Cases', () => {
     it('should handle empty activity list', () => {
       const { result } = renderHook(() => useDragAndDrop([]));
@@ -532,6 +995,35 @@ describe('useDragAndDrop', () => {
 
       // Should handle gracefully
       expect(result.current.state.isDragging).toBe(false);
+    });
+
+    it('should cleanup touch timers on cleanup', () => {
+      const createMockTouchEvent = (touches: Array<{ clientX: number; clientY: number }>) => ({
+        touches: touches.map(touch => ({ clientX: touch.clientX, clientY: touch.clientY })),
+        changedTouches: touches.map(touch => ({ clientX: touch.clientX, clientY: touch.clientY })),
+        preventDefault: jest.fn(),
+      } as TouchEvent);
+
+      const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { longPressMs: 500 }));
+      const touchEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
+
+      act(() => {
+        result.current.handlers.handleTouchStart('activity-1', touchEvent);
+      });
+
+      // Call cleanup before long press triggers
+      act(() => {
+        result.current.cleanup();
+      });
+
+      // Fast forward past long press time
+      act(() => {
+        jest.advanceTimersByTime(500);
+      });
+
+      // Should not have started dragging
+      expect(result.current.state.isDragging).toBe(false);
+      expect(result.current.state.isTouchDragging).toBe(false);
     });
   });
 });
