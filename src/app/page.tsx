@@ -11,6 +11,7 @@ import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import { useSessionPersistence } from '@/hooks/useSessionPersistence';
 import { SessionRecoveryInfo } from '@/types/session';
+import { getActivities } from '@/utils/activity-storage';
 import resetService from '@/utils/resetService';
 
 // Main application content with loading context
@@ -28,12 +29,14 @@ function AppContent() {
     currentActivity,
     timelineEntries,
     completedActivityIds,
-  removedActivityIds,
+    removedActivityIds,
     allActivitiesCompleted,
     handleActivitySelect,
     handleActivityRemoval,
-  restoreActivity,
+    restoreActivity,
     resetActivities,
+    restoreAllActivityStates,
+    restoreTimelineEntries,
     getAllActivityStates,
   } = useActivityState({
     onTimerStart: () => {
@@ -54,7 +57,8 @@ function AppContent() {
   });
 
   // Session persistence hook for auto-save and recovery  
-  // For now, simplify by using activity states instead of full activities
+  // Get current activities from storage to ensure consistency
+  const currentActivities = timeSet ? getActivities().filter(a => a.isActive) : [];
   const sessionState = timeSet ? {
     timeSet,
     totalDuration,
@@ -65,7 +69,7 @@ function AppContent() {
     completedActivityIds,
     removedActivityIds,
     allActivitiesCompleted,
-    activities: [], // Simplified for now - ActivityStates contain the essential data
+    activities: currentActivities, // Properly populated from activity storage
     activityStates: getAllActivityStates ? getAllActivityStates() : [],
   } : null;
 
@@ -178,12 +182,35 @@ function AppContent() {
     try {
       const sessionData = await loadSessionForRecovery();
       if (sessionData) {
-        // Restore session state
-        setTimeSet(true); // If we have session data, time was set
+        // Restore basic timer state
+        setTimeSet(true);
         setTotalDuration(sessionData.totalDuration);
-        // Note: Full activity state and timeline restoration would need to be implemented
-        // in the activity hooks to properly restore the complete session state
-        console.log('Session recovered with duration:', sessionData.totalDuration);
+        
+        // Restore activity states if available
+        if (sessionData.activityStates && sessionData.activityStates.length > 0) {
+          restoreAllActivityStates(sessionData.activityStates, sessionData.currentActivityId);
+        }
+        
+        // Restore timeline entries if available
+        if (sessionData.timelineEntries && sessionData.timelineEntries.length > 0) {
+          restoreTimelineEntries(sessionData.timelineEntries);
+        }
+        
+        // If there was a current activity, try to restore it
+        if (sessionData.currentActivityId && sessionData.activities) {
+          const restoredActivity = sessionData.activities.find(a => a.id === sessionData.currentActivityId);
+          if (restoredActivity) {
+            // Restore the current activity selection, but don't auto-start timer
+            handleActivitySelect(restoredActivity, true); // justAdd = true to avoid auto-starting
+          }
+        }
+        
+        console.log('Session fully recovered:', {
+          duration: sessionData.totalDuration,
+          activities: sessionData.activityStates?.length || 0,
+          timeline: sessionData.timelineEntries?.length || 0,
+          currentActivity: sessionData.currentActivityId
+        });
       }
       setShowRecoveryAlert(false);
     } catch (error) {

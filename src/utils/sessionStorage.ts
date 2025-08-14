@@ -284,7 +284,7 @@ export const sessionStorageUtils = {
     // For now, we only store one current session
     // This could be extended in the future to handle multiple sessions
     const session = await storage.loadSession();
-    if (session && !this.isSessionRecoverable(session, maxAge)) {
+    if (session && !sessionStorageUtils.isSessionRecoverable(session, maxAge)) {
       await storage.clearSession();
     }
   }

@@ -28,8 +28,9 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     startActivity,
     completeActivity,
     removeActivity,
-  restoreActivity,
+    restoreActivity,
     resetActivities: resetActivityTracking,
+    restoreAllActivityStates,
     // New state machine methods
     getCurrentActivity: getCurrentActivityState,
     isCompleted: isActivitiesCompleted,
@@ -41,7 +42,8 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     timelineEntries,
     addTimelineEntry,
     completeCurrentTimelineEntry,
-    resetTimelineEntries
+    resetTimelineEntries,
+    restoreTimelineEntries
   } = useTimelineEntries();
 
   const handleActivitySelect = useCallback((activity: Activity | null, justAdd: boolean = false) => {
@@ -155,13 +157,15 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     timelineEntries,
     activities,
     completedActivityIds,
-  removedActivityIds,
+    removedActivityIds,
     allActivitiesCompleted,
     handleActivitySelect,
     handleActivityRemoval,
     checkActivitiesCompleted,
     resetActivities,
-  restoreActivity,
+    restoreActivity,
+    restoreAllActivityStates,
+    restoreTimelineEntries,
     // New method to get current activity state
     getCurrentActivityStateDetails,
     // Method to get state of a specific activity

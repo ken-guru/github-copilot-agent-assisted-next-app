@@ -17,6 +17,7 @@ export interface UseActivitiesTrackingResult {
   removeActivity: (activityId: string) => void;
   restoreActivity: (activityId: string) => void;
   resetActivities: () => void;
+  restoreAllActivityStates: (states: ActivityState[], currentActivityId: string | null) => void;
   // New methods for the state machine
   getCurrentActivity: () => ActivityState | null;
   isCompleted: () => boolean;
@@ -278,7 +279,12 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
   const getAllActivityStates = useCallback(() => {
     return stateMachine.getAllActivities();
   }, [stateMachine]);
-  
+
+  const restoreAllActivityStates = useCallback((states: ActivityState[], currentActivityId: string | null) => {
+    stateMachine.restoreAllStates(states, currentActivityId);
+    updateLocalStateFromMachine();
+  }, [stateMachine, updateLocalStateFromMachine]);
+
   return {
     activities,
     allActivityIds,
@@ -290,8 +296,9 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
     startActivity,
     completeActivity,
     removeActivity,
-  restoreActivity,
+    restoreActivity,
     resetActivities,
+    restoreAllActivityStates,
     // New methods
     getCurrentActivity,
     isCompleted,

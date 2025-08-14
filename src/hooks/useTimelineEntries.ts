@@ -8,6 +8,7 @@ export interface UseTimelineEntriesResult {
   addTimelineEntry: (activity: Activity) => void;
   completeCurrentTimelineEntry: () => void;
   resetTimelineEntries: () => void;
+  restoreTimelineEntries: (entries: TimelineEntry[]) => void;
 }
 
 /**
@@ -58,10 +59,15 @@ export function useTimelineEntries(): UseTimelineEntriesResult {
     setTimelineEntries([]);
   }, []);
 
+  const restoreTimelineEntries = useCallback((entries: TimelineEntry[]) => {
+    setTimelineEntries(entries);
+  }, []);
+
   return {
     timelineEntries,
     addTimelineEntry,
     completeCurrentTimelineEntry,
-    resetTimelineEntries
+    resetTimelineEntries,
+    restoreTimelineEntries
   };
 }

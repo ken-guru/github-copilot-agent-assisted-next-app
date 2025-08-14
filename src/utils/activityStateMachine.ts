@@ -274,4 +274,28 @@ export class ActivityStateMachine {
   getAllActivities(): ActivityState[] {
     return Array.from(this.states.values());
   }
+
+  /**
+   * Restores the entire state machine from saved state
+   * @param states Array of activity states to restore
+   * @param currentActivityId ID of the currently active activity
+   */
+  restoreAllStates(states: ActivityState[], currentActivityId: string | null = null): void {
+    // Clear existing state
+    this.states.clear();
+    this.currentActivityId = null;
+
+    // Restore all activity states
+    for (const state of states) {
+      this.states.set(state.id, { ...state });
+    }
+
+    // Set current activity if provided and valid
+    if (currentActivityId && this.states.has(currentActivityId)) {
+      const currentActivity = this.states.get(currentActivityId);
+      if (currentActivity && currentActivity.state === 'RUNNING') {
+        this.currentActivityId = currentActivityId;
+      }
+    }
+  }
 }
