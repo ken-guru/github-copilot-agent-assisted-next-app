@@ -21,6 +21,7 @@ export interface UseActivitiesTrackingResult {
   getCurrentActivity: () => ActivityState | null;
   isCompleted: () => boolean;
   getActivityState: (activityId: string) => ActivityState | undefined;
+  getAllActivityStates: () => ActivityState[];
 }
 
 /**
@@ -274,6 +275,10 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
     return stateMachine.getActivityState(activityId);
   }, [stateMachine]);
   
+  const getAllActivityStates = useCallback(() => {
+    return stateMachine.getAllActivities();
+  }, [stateMachine]);
+  
   return {
     activities,
     allActivityIds,
@@ -290,6 +295,7 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
     // New methods
     getCurrentActivity,
     isCompleted,
-    getActivityState
+    getActivityState,
+    getAllActivityStates
   };
 }

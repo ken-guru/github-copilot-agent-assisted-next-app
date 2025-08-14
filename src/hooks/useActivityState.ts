@@ -33,7 +33,8 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     // New state machine methods
     getCurrentActivity: getCurrentActivityState,
     isCompleted: isActivitiesCompleted,
-    getActivityState
+    getActivityState,
+    getAllActivityStates
   } = useActivitiesTracking();
 
   const {
@@ -164,6 +165,8 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     // New method to get current activity state
     getCurrentActivityStateDetails,
     // Method to get state of a specific activity
-    getActivityState
+    getActivityState,
+    // Method to get all activity states
+    getAllActivityStates
   };
 }
