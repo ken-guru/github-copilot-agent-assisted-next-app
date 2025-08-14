@@ -10,6 +10,7 @@ Ensure you have access to these MCP tools:
 - **Sequential Thinking**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking)
 - **Memory Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/memory)
 - **Playwright Automation**: [Documentation](https://github.com/executeautomation/mcp-playwright)
+- **Context7**: [Documentation](https://github.com/upstash/context7)
 
 ## Repository Configuration
 
@@ -231,17 +232,20 @@ mcp_memory_create_relations([{
 
 ### Complex Problem Analysis
 ```bash
-# Use Sequential Thinking + Memory together
+# Use Sequential Thinking + Memory + Context7 together
 mcp_sequential-th_sequentialthinking() → analyze problem systematically
 mcp_memory_search_nodes() → find relevant historical context
+mcp_context7_resolve-library-id() → identify relevant libraries
+mcp_context7_get-library-docs() → fetch current documentation
 mcp_memory_create_entities() → document analysis outcomes
 ```
 
 ### Issue Verification and Testing
 ```bash
-# Use Playwright + GitHub tools
+# Use Playwright + GitHub + Context7 tools
 mcp_playwright_browser_* → verify issue and test solution
 mcp_github_get_issue() → understand requirements
+mcp_context7_get-library-docs() → get up-to-date library references
 mcp_github_create_pull_request() → document verification results
 ```
 

@@ -1,6 +1,9 @@
-# Activity Timer and Tracker
-
-[![Dependabot Updates](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates)
+# Activity Timer and Tracke- **GitHub MCP Server**: [Documentation](https://github.com/github/github-mcp-server) - Issue/PR management and repository operations
+- **Sequential Thinking**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking) - Complex problem analysis
+- **Memory Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) - Knowledge persistence and retrieval
+- **Time Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/time) - Timezone-aware handling
+- **Playwright Tools**: [Documentation](https://github.com/executeautomation/mcp-playwright) - Browser automation and UI verification
+- **Context7**: [Documentation](https://github.com/upstash/context7) - Real-time library documentation and code examples[Dependabot Updates](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates)
 [![CodeQL Security Scan](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/codeql.yml)
 
 ## Project Context
