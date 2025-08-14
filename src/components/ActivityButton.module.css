@@ -1,42 +1,57 @@
-/* ActivityButton drag and drop styles */
+/* ActivityButton drag and drop styles - optimized for performance */
 
 .dragging {
   opacity: 0.5;
-  transform: scale(0.98);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: scale(0.98) translateZ(0); /* GPU acceleration with translateZ */
+  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1), transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: var(--shadow-lg);
   z-index: 1000;
+  will-change: transform, opacity; /* Hint browser for optimization */
+  backface-visibility: hidden; /* Prevent flickering */
 }
 
 .dragOver {
   border-color: var(--accent-color) !important;
   box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.25);
-  transform: translateY(-2px);
-  transition: all 0.2s ease;
+  transform: translateY(-2px) translateZ(0); /* GPU acceleration */
+  transition: border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, border-color, box-shadow;
+  backface-visibility: hidden;
 }
 
 .dragHandle {
-  transition: opacity 0.2s ease, color 0.2s ease;
+  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, color, transform;
+  transform: translateZ(0); /* GPU acceleration */
 }
 
 .dragHandle:hover {
   opacity: 1 !important;
   color: var(--accent-color) !important;
   cursor: grab;
+  transform: scale(1.05) translateZ(0); /* Subtle scale with GPU acceleration */
 }
 
 .dragHandle:active {
   cursor: grabbing;
+  transform: scale(0.95) translateZ(0); /* Feedback on press */
 }
 
 /* Ensure proper cursor states */
 .card[draggable="true"] {
   cursor: move;
+  transform: translateZ(0); /* GPU acceleration for the entire card */
+  will-change: transform, box-shadow;
 }
 
 .card[draggable="true"]:hover {
   box-shadow: var(--shadow-card-hover);
-  transition: box-shadow 0.2s ease;
+  transition: box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(-1px) translateZ(0); /* Subtle lift effect */
 }
 
 /* Accessibility improvements */
@@ -53,7 +68,7 @@
   -ms-user-select: none;
 }
 
-/* Visual feedback for drop zones */
+/* Visual feedback for drop zones - optimized to prevent layout thrashing */
 .dragOver::before {
   content: '';
   position: absolute;
@@ -64,38 +79,50 @@
   background: var(--accent-color);
   border-radius: var(--radius-sm);
   z-index: 1;
+  transform: translateZ(0); /* GPU acceleration */
+  will-change: opacity;
+  backface-visibility: hidden;
 }
 
-/* Touch-specific styles */
+/* Touch-specific styles - optimized for performance */
 .touchDragging {
   opacity: 0.7;
-  transform: scale(1.05) rotate(2deg);
-  transition: opacity 0.1s ease, transform 0.1s ease;
+  transform: scale(1.05) rotate(2deg) translateZ(0); /* GPU acceleration */
+  transition: opacity 0.1s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: var(--shadow-lg);
   z-index: 1001;
   pointer-events: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 .touchDragOver {
   border-color: var(--accent-color) !important;
   background-color: rgba(var(--accent-color-rgb), 0.1) !important;
   box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.3);
-  transform: scale(1.02);
-  transition: all 0.15s ease;
+  transform: scale(1.02) translateZ(0); /* GPU acceleration */
+  transition: border-color 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, border-color, background-color, box-shadow;
+  backface-visibility: hidden;
 }
 
-/* Long press feedback */
+/* Long press feedback - optimized for performance */
 .longPressActive {
-  animation: longPressIndicator 0.5s ease-in-out;
+  animation: longPressIndicator 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 @keyframes longPressIndicator {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.95); }
-  100% { transform: scale(1); }
+  0% { transform: scale(1) translateZ(0); }
+  50% { transform: scale(0.95) translateZ(0); }
+  100% { transform: scale(1) translateZ(0); }
 }
 
-/* Touch drop zone indicator */
+/* Touch drop zone indicator - optimized for performance */
 .touchDropZone {
   position: relative;
 }
@@ -109,14 +136,17 @@
   height: 40px;
   background: var(--accent-color);
   border-radius: 50%;
-  transform: translate(-50%, -50%) scale(0);
+  transform: translate(-50%, -50%) scale(0) translateZ(0); /* GPU acceleration */
   opacity: 0;
-  transition: all 0.2s ease;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 .touchDragOver.touchDropZone::after {
-  transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, -50%) scale(1) translateZ(0);
   opacity: 0.3;
 }
 
@@ -151,8 +181,71 @@
   
   /* Visual feedback for touch interactions */
   .card[draggable="true"]:active {
-    transform: scale(0.98);
-    transition: transform 0.1s ease;
+    transform: scale(0.98) translateZ(0); /* GPU acceleration */
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Loading and transition states */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+  transform: translateZ(0);
+  will-change: opacity;
+}
+
+.reordering {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.fadeIn {
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fadeOut {
+  animation: fadeOut 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) translateZ(0);
+  }
+}
+
+/* Skeleton loading animation */
+.skeleton {
+  background: linear-gradient(90deg, 
+    var(--background-muted) 25%, 
+    var(--background) 50%, 
+    var(--background-muted) 75%);
+  background-size: 200% 100%;
+  animation: skeleton 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes skeleton {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }
 
@@ -171,12 +264,12 @@
   
   /* Enhanced visual feedback for touch drag */
   .touchDragging {
-    transform: scale(1.08) rotate(3deg);
+    transform: scale(1.08) rotate(3deg) translateZ(0); /* GPU acceleration */
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   }
   
   .touchDragOver {
-    transform: scale(1.03);
+    transform: scale(1.03) translateZ(0); /* GPU acceleration */
     box-shadow: 0 0 0 4px rgba(var(--accent-color-rgb), 0.4);
   }
 }

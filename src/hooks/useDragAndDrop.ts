@@ -7,6 +7,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { reorderActivities } from '../utils/activity-storage';
 import { isDragAndDropSupported, isTouchSupported, isVibrationSupported } from '../utils/feature-detection';
+import { startPerformanceTimer, endPerformanceTimer } from '../utils/performance-monitor';
 
 /**
  * Drag and drop state interface
@@ -175,14 +176,18 @@ export function useDragAndDrop(
    * Handle drag start event
    */
   const handleDragStart = useCallback((activityId: string) => {
+    startPerformanceTimer('drag-start', { activityId });
+    
     if (!activityId || typeof activityId !== 'string') {
       console.warn('Invalid activity ID provided to handleDragStart');
+      endPerformanceTimer('drag-start');
       return;
     }
 
     // Check if drag and drop is supported
     if (!supportedMethods.dragAndDrop) {
       console.warn('Drag and drop is not supported in this browser');
+      endPerformanceTimer('drag-start');
       return;
     }
 
@@ -192,6 +197,8 @@ export function useDragAndDrop(
       isDragging: true,
       dragOverItem: null,
     }));
+    
+    endPerformanceTimer('drag-start');
   }, [supportedMethods.dragAndDrop]);
 
   /**
@@ -242,29 +249,42 @@ export function useDragAndDrop(
    * Handle drag end event (cleanup)
    */
   const handleDragEnd = useCallback(() => {
+    startPerformanceTimer('drag-end');
+    
     resetTouchState();
-    setState({
+    setState(prev => ({
+      ...prev,
       draggedItem: null,
       dragOverItem: null,
       isDragging: false,
       isTouchDragging: false,
       touchStartPosition: null,
-    });
+    }));
+    
+    endPerformanceTimer('drag-end');
   }, [resetTouchState]);
 
   /**
    * Handle drop event (perform reordering)
    */
   const handleDrop = useCallback((targetId: string) => {
+    startPerformanceTimer('reorder-drop', { 
+      draggedItem: state.draggedItem, 
+      targetId,
+      activityCount: activityIds.length 
+    });
+    
     if (!state.draggedItem || !targetId) {
       console.warn('Invalid drop operation: missing dragged item or target');
       handleDragEnd();
+      endPerformanceTimer('reorder-drop');
       return;
     }
 
     if (state.draggedItem === targetId) {
       // Dropped on itself, no reordering needed
       handleDragEnd();
+      endPerformanceTimer('reorder-drop');
       return;
     }
 
@@ -276,6 +296,7 @@ export function useDragAndDrop(
       
       // Clear drag state
       handleDragEnd();
+      endPerformanceTimer('reorder-drop');
     } catch (error) {
       if (error instanceof Error && error.message.includes('activity not found')) {
         console.warn(error.message);
@@ -286,8 +307,9 @@ export function useDragAndDrop(
         console.error('Failed to handle drop operation:', error);
       }
       handleDragEnd();
+      endPerformanceTimer('reorder-drop');
     }
-  }, [state.draggedItem, calculateNewOrder, persistOrder, handleDragEnd]);
+  }, [state.draggedItem, calculateNewOrder, persistOrder, handleDragEnd, activityIds.length]);
 
   /**
    * Get visual feedback classes for an activity

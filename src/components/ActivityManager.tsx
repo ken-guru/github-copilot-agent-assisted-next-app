@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, Row, Col, Button } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
@@ -48,6 +48,8 @@ export default function ActivityManager({
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [showHiddenList, setShowHiddenList] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isReorderingState, setIsReorderingState] = useState(false);
   
   // State preservation for form values during unmount/remount cycles
   const [preservedFormValues, setPreservedFormValues] = useState<{
@@ -58,8 +60,27 @@ export default function ActivityManager({
     description: ''
   });
 
-  // Get activity IDs for reordering hooks
-  const activityIds = activities.map(activity => activity.id);
+  // Memoize activity IDs to prevent unnecessary re-renders in reordering hooks
+  const activityIds = useMemo(() => activities.map(activity => activity.id), [activities]);
+
+  // Memoize visible and hidden activities to prevent unnecessary re-renders
+  const { visibleActivities, hiddenActivities } = useMemo(() => {
+    const hiddenSet = new Set(removedActivityIds);
+    return {
+      visibleActivities: activities.filter(a => !hiddenSet.has(a.id)),
+      hiddenActivities: activities.filter(a => hiddenSet.has(a.id))
+    };
+  }, [activities, removedActivityIds]);
+
+  // Memoize reorder callback to prevent unnecessary re-renders
+  const handleReorder = useCallback((newOrder: string[]) => {
+    setIsReorderingState(true);
+    // Re-fetch activities in new order to trigger re-render
+    const reorderedActivities = getActivitiesInOrder().filter(a => a.isActive);
+    setActivities(reorderedActivities);
+    // Add a small delay to show the reordering animation
+    setTimeout(() => setIsReorderingState(false), 150);
+  }, []);
 
   // Drag and drop functionality
   const {
@@ -70,11 +91,7 @@ export default function ActivityManager({
     isActivityDraggedOver,
     cleanup: cleanupDragAndDrop
   } = useDragAndDrop(activityIds, {
-    onReorder: (newOrder) => {
-      // Re-fetch activities in new order to trigger re-render
-      const reorderedActivities = getActivitiesInOrder().filter(a => a.isActive);
-      setActivities(reorderedActivities);
-    }
+    onReorder: handleReorder
   });
 
   // Keyboard reordering functionality
@@ -86,21 +103,26 @@ export default function ActivityManager({
     clearAnnouncements
   } = useKeyboardReordering({
     activityIds,
-    onReorder: (newOrder) => {
-      // Re-fetch activities in new order to trigger re-render
-      const reorderedActivities = getActivitiesInOrder().filter(a => a.isActive);
-      setActivities(reorderedActivities);
-    }
+    onReorder: handleReorder
   });
 
   // Load activities from localStorage on mount using custom order
   useEffect(() => {
-    const loadedActivities = getActivitiesInOrder().filter(a => a.isActive);
-    setActivities(loadedActivities);
-    // Register activities in state machine
-    loadedActivities.forEach(activity => {
-      onActivitySelect(activity, true);
-    });
+    const loadActivities = async () => {
+      setIsLoading(true);
+      try {
+        const loadedActivities = getActivitiesInOrder().filter(a => a.isActive);
+        setActivities(loadedActivities);
+        // Register activities in state machine
+        loadedActivities.forEach(activity => {
+          onActivitySelect(activity, true);
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadActivities();
   }, [onActivitySelect]);
 
   // Listen for theme changes
@@ -223,10 +245,7 @@ export default function ActivityManager({
   const isOvertime = elapsedTime > totalDuration;
   const timeOverage = isOvertime ? Math.floor(elapsedTime - totalDuration) : 0;
 
-  // Derived lists
-  const hiddenSet = new Set(removedActivityIds);
-  const visibleActivities = activities.filter(a => !hiddenSet.has(a.id));
-  const hiddenActivities = activities.filter(a => hiddenSet.has(a.id));
+  // Memoized activity lists are calculated above to prevent unnecessary re-renders
 
   return (
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
@@ -281,14 +300,32 @@ export default function ActivityManager({
         
         {/* Activities List - scrollable if needed */}
         <div className="flex-grow-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
-          <Row className="gy-3" data-testid="activity-list">
-            {visibleActivities.map((activity) => (
-              <Col 
-                key={activity.id} 
-                xs={12}
-                data-testid={`activity-column-${activity.id}`}
-                className={getActivityClasses(activity.id)}
-              >
+          {isLoading ? (
+            // Loading skeleton
+            <Row className="gy-3">
+              {[1, 2, 3].map((i) => (
+                <Col key={i} xs={12}>
+                  <div 
+                    className="skeleton" 
+                    style={{ 
+                      height: '80px', 
+                      borderRadius: 'var(--radius-md)',
+                      animation: `skeleton 1.5s infinite ${i * 0.2}s`
+                    }} 
+                  />
+                </Col>
+              ))}
+            </Row>
+          ) : (
+            <Row className={`gy-3 ${isReorderingState ? 'reordering' : ''}`} data-testid="activity-list">
+              {visibleActivities.map((activity, index) => (
+                <Col 
+                  key={activity.id} 
+                  xs={12}
+                  data-testid={`activity-column-${activity.id}`}
+                  className={`${getActivityClasses(activity.id)} fadeIn`}
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
                 <ActivityButton
                   activity={activity}
                   isCompleted={completedActivityIds.includes(activity.id)}
@@ -319,9 +356,10 @@ export default function ActivityManager({
                   isFocused={focusedItem === activity.id}
                   isReordering={isReordering}
                 />
-              </Col>
-            ))}
-          </Row>
+                </Col>
+              ))}
+            </Row>
+          )}
 
           {/* Hidden activities control */}
           {hiddenActivities.length > 0 && (
