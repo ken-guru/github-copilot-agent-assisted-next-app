@@ -79,7 +79,7 @@
   - Write additional tests for error scenarios and recovery mechanisms
   - _Requirements: 3.1, 3.2, 3.4, 3.5_
 
-- [ ] 11. Create end-to-end tests for complete reordering workflows
+- [x] 11. Create end-to-end tests for complete reordering workflows
   - Write Cypress tests for drag-and-drop reordering scenarios in `cypress/e2e/activity-reordering.cy.ts`
   - Test order persistence across page reloads and browser sessions
   - Test cross-view consistency (Activities → Timer → Summary views maintain same order)

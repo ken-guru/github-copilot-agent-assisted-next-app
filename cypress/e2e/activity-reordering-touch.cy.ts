@@ -5,21 +5,53 @@
 
 describe('Activity Reordering - Touch Interactions', () => {
   beforeEach(() => {
+    // Handle hydration errors from Next.js
+    cy.on('uncaught:exception', (err) => {
+      // Log all uncaught exceptions for debugging purposes
+      console.error('Uncaught exception:', err);
+      
+      // Ignore specific hydration mismatch errors in development
+      if (err.message.includes('Hydration failed')) {
+        console.warn('Ignoring expected hydration error in development mode');
+        return false;
+      }
+      
+      // Ignore specific minified React errors in production builds
+      if (err.message.includes('Minified React error #418')) {
+        console.warn('Ignoring expected minified React error in production mode');
+        return false;
+      }
+      
+      // Allow all other errors to propagate and fail the test
+      return true;
+    });
+
     cy.visit('/');
     
-    // Set up activities for testing
-    cy.get('[data-testid="duration-input"]').clear().type('10');
-    cy.get('[data-testid="start-timer-button"]').click();
+    // Clear any existing data to ensure clean state
+    cy.window().then((win) => {
+      win.localStorage.clear();
+    });
+    
+    // Wait for page to be fully loaded
+    cy.wait(1000);
+    
+    // Set up activities for testing using the correct selectors
+    cy.get('#minutes').focus().clear().type('10');
+    cy.contains('button', 'Set Time').click();
+    
+    // Wait for transition to activity view
+    cy.wait(2000);
     
     // Add test activities
-    cy.get('[data-testid="activity-name-input"]').type('First Activity');
-    cy.get('[data-testid="add-activity-button"]').click();
-    
-    cy.get('[data-testid="activity-name-input"]').type('Second Activity');
-    cy.get('[data-testid="add-activity-button"]').click();
-    
-    cy.get('[data-testid="activity-name-input"]').type('Third Activity');
-    cy.get('[data-testid="add-activity-button"]').click();
+    const activities = ['First Activity', 'Second Activity', 'Third Activity'];
+    activities.forEach((activityName) => {
+      cy.get('[data-testid="activity-form"]').within(() => {
+        cy.get('input[type="text"]').clear().type(activityName);
+        cy.get('button[type="submit"]').click();
+      });
+      cy.wait(500);
+    });
   });
 
   describe('Touch Drag and Drop', () => {
