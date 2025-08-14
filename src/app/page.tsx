@@ -6,8 +6,11 @@ import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
+import SessionRecoveryAlert from '@/components/SessionRecoveryAlert';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
+import { useSessionPersistence } from '@/hooks/useSessionPersistence';
+import { SessionRecoveryInfo } from '@/types/session';
 import resetService from '@/utils/resetService';
 
 // Main application content with loading context
@@ -16,6 +19,10 @@ function AppContent() {
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
+  
+  // Session recovery state
+  const [showRecoveryAlert, setShowRecoveryAlert] = useState(false);
+  const [recoveryInfo, setRecoveryInfo] = useState<SessionRecoveryInfo | null>(null);
   
   const {
     currentActivity,
@@ -27,6 +34,8 @@ function AppContent() {
     handleActivityRemoval,
   restoreActivity,
     resetActivities,
+    getAllActivityStates,
+    activities,
   } = useActivityState({
     onTimerStart: () => {
       if (!timerActive) startTimer();
@@ -45,11 +54,49 @@ function AppContent() {
     isCompleted: allActivitiesCompleted
   });
 
-  // Initialize app and hide loading screen after initialization is complete
+  // Session persistence hook for auto-save and recovery  
+  // For now, simplify by using activity states instead of full activities
+  const sessionState = timeSet ? {
+    timeSet,
+    totalDuration,
+    elapsedTime,
+    timerActive,
+    currentActivity,
+    timelineEntries,
+    completedActivityIds,
+    removedActivityIds,
+    allActivitiesCompleted,
+    activities: [], // Simplified for now - ActivityStates contain the essential data
+    activityStates: getAllActivityStates ? getAllActivityStates() : [],
+  } : null;
+
+  const {
+    isPersistenceAvailable,
+    storageType,
+    saveSession,
+    clearSession,
+    checkRecoverableSession,
+    loadSessionForRecovery,
+    isAutoSaveActive,
+    lastSaveTime,
+  } = useSessionPersistence(sessionState, {
+    saveInterval: 10000, // Auto-save every 10 seconds
+  });
+
+  // Initialize app and check for recoverable session
   useEffect(() => {
     const initApp = async () => {
-      // Add any actual initialization logic here
-      // For example: load user preferences, preload critical data
+      // Check for recoverable session before showing loading screen
+      if (isPersistenceAvailable) {
+        const sessionRecoveryInfo = await checkRecoverableSession();
+        
+        if (sessionRecoveryInfo.hasRecoverableSession) {
+          setRecoveryInfo(sessionRecoveryInfo);
+          setShowRecoveryAlert(true);
+          setIsLoading(false); // Show recovery alert instead of loading
+          return;
+        }
+      }
       
       // For demo purposes, using a timeout to simulate loading
       setTimeout(() => {
@@ -58,7 +105,7 @@ function AppContent() {
     };
     
     initApp();
-  }, [setIsLoading]);
+  }, [setIsLoading, isPersistenceAvailable, checkRecoverableSession]);
   
   // Set up the dialog callback for resetService
   useEffect(() => {
@@ -131,6 +178,30 @@ function AppContent() {
     await resetService.reset();
   };
   
+  // Session recovery handlers
+  const handleRecoverSession = async () => {
+    try {
+      const sessionData = await loadSessionForRecovery();
+      if (sessionData) {
+        // Restore session state
+        setTimeSet(true); // If we have session data, time was set
+        setTotalDuration(sessionData.totalDuration);
+        // Note: Full activity state and timeline restoration would need to be implemented
+        // in the activity hooks to properly restore the complete session state
+        console.log('Session recovered with duration:', sessionData.totalDuration);
+      }
+      setShowRecoveryAlert(false);
+    } catch (error) {
+      console.error('Failed to recover session:', error);
+      // Handle recovery error - maybe show a toast or alert
+    }
+  };
+  
+  const handleStartFresh = async () => {
+    await clearSession();
+    setShowRecoveryAlert(false);
+  };
+  
   const appState = !timeSet 
     ? 'setup' 
     : allActivitiesCompleted 
@@ -145,6 +216,23 @@ function AppContent() {
   return (
     <>
       <main className="container-fluid d-flex flex-column overflow-x-hidden overflow-y-auto" style={{ height: 'calc(100vh - var(--navbar-height))' }}>
+        {/* Session Recovery Alert */}
+        {showRecoveryAlert && recoveryInfo && (
+          <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }}>
+            <div className="container">
+              <div className="row justify-content-center">
+                <div className="col-md-6">
+                  <SessionRecoveryAlert
+                    recoveryInfo={recoveryInfo}
+                    onRecover={handleRecoverSession}
+                    onStartFresh={handleStartFresh}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}
