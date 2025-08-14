@@ -35,7 +35,6 @@ function AppContent() {
   restoreActivity,
     resetActivities,
     getAllActivityStates,
-    activities,
   } = useActivityState({
     onTimerStart: () => {
       if (!timerActive) startTimer();
@@ -72,13 +71,9 @@ function AppContent() {
 
   const {
     isPersistenceAvailable,
-    storageType,
-    saveSession,
     clearSession,
     checkRecoverableSession,
     loadSessionForRecovery,
-    isAutoSaveActive,
-    lastSaveTime,
   } = useSessionPersistence(sessionState, {
     saveInterval: 10000, // Auto-save every 10 seconds
   });

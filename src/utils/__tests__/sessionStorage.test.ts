@@ -122,13 +122,13 @@ describe('createSessionStorage', () => {
     jest.clearAllMocks();
     
     // Reset global mocks
-    delete (global as any).indexedDB;
-    delete (global as any).localStorage;
+    delete (global as Record<string, unknown>).indexedDB;
+    delete (global as Record<string, unknown>).localStorage;
   });
 
   it('should prefer IndexedDB when available', () => {
     // Mock indexedDB availability
-    (global as any).indexedDB = mockIndexedDB;
+    (global as Record<string, unknown>).indexedDB = mockIndexedDB;
     Object.defineProperty(window, 'indexedDB', {
       value: mockIndexedDB,
       writable: true
