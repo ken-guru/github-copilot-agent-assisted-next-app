@@ -4,15 +4,8 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { Activity } from '@/types/activity';
-import { TimelineEntry } from '@/types';
+import { TimelineEntry, PersistedSession, SessionPersistenceOptions, SessionRecoveryInfo, DEFAULT_PERSISTENCE_OPTIONS, SESSION_PERSISTENCE_VERSION } from '@/types';
 import { ActivityState } from '@/utils/activityStateMachine';
-import { 
-  PersistedSession, 
-  SessionPersistenceOptions, 
-  SessionRecoveryInfo,
-  DEFAULT_PERSISTENCE_OPTIONS,
-  SESSION_PERSISTENCE_VERSION
-} from '@/types/session';
 import { createSessionStorage, sessionStorageUtils } from '@/utils/sessionStorage';
 
 /**
