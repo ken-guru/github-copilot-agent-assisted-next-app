@@ -130,20 +130,27 @@ beforeAll(() => {
     }
   });
   
-  // Suppress React act() warnings for testing async updates
-  const originalConsoleError = console.error;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  console.error = (...args: any[]) => {
+  // Suppress React act() warnings for testing async updates using Jest spy
+  jest.spyOn(console, 'error').mockImplementation((...args) => {
     const firstArg = args[0];
     if (
       typeof firstArg === 'string' &&
-      (firstArg.includes('Warning: An update to') || 
+      (firstArg.includes('Warning: An update to') ||
        firstArg.includes('not wrapped in act'))
     ) {
       return; // Suppress act warnings
     }
-    originalConsoleError(...args);
-  };
+    // Call the original console.error for other errors
+    const originalImplementation = jest.requireActual('console').error;
+    originalImplementation(...args);
+  });
+});
+
+afterAll(() => {
+  // Restore the original console.error implementation
+  if (jest.isMockFunction(console.error)) {
+    (console.error as jest.MockedFunction<typeof console.error>).mockRestore();
+  }
 });
 
 // Helper function to render Home component with required providers

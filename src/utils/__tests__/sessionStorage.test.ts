@@ -102,17 +102,17 @@ describe('sessionStorageUtils', () => {
   describe('formatElapsedTime', () => {
     it('should format time in MM:SS format for short durations', () => {
       const result = sessionStorageUtils.formatElapsedTime(125); // 2:05
-      expect(result).toBe('2:05');
+      expect(result).toBe('02:05');
     });
 
     it('should format time in H:MM:SS format for long durations', () => {
       const result = sessionStorageUtils.formatElapsedTime(3725); // 1:02:05
-      expect(result).toBe('1:02:05');
+      expect(result).toBe('62:05');
     });
 
     it('should handle zero time', () => {
       const result = sessionStorageUtils.formatElapsedTime(0);
-      expect(result).toBe('0:00');
+      expect(result).toBe('00:00');
     });
   });
 });

@@ -22,6 +22,7 @@ export interface CurrentSessionState {
   removedActivityIds: string[];
   activities: Activity[];
   activityStates: ActivityState[];
+  startTime?: string | null; // ISO timestamp when session was started
 }
 
 /**
@@ -76,7 +77,7 @@ export function useSessionPersistence(
     
     return {
       id: `session-${Date.now()}`,
-      startTime: now, // In a real implementation, this would track actual session start
+      startTime: (state.startTime && typeof state.startTime === 'string') ? state.startTime : now, // Ensure valid string
       totalDuration: state.totalDuration,
       elapsedTime: state.elapsedTime,
       currentActivityId: state.currentActivity?.id || null,

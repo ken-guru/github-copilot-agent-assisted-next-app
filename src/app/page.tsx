@@ -20,6 +20,7 @@ function AppContent() {
   const { setIsLoading } = useLoading();
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
+  const [sessionStartTime, setSessionStartTime] = useState<string | null>(null);
   const [showRecoveryAlert, setShowRecoveryAlert] = useState(false);
   const [recoveryInfo, setRecoveryInfo] = useState<SessionRecoveryInfo | null>(null);
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
@@ -70,6 +71,7 @@ function AppContent() {
     allActivitiesCompleted,
     activities: currentActivities, // Properly populated from activity storage
     activityStates: getAllActivityStates ? getAllActivityStates() : [],
+    startTime: sessionStartTime, // Track actual session start time
   } : null;
 
   const {
@@ -158,6 +160,7 @@ function AppContent() {
   const handleTimeSet = (durationInSeconds: number) => {
     setTotalDuration(durationInSeconds);
     setTimeSet(true);
+    setSessionStartTime(new Date().toISOString());
   };
   
   const handleExtendDuration = () => {
@@ -185,6 +188,11 @@ function AppContent() {
         setTimeSet(true);
         setTotalDuration(sessionData.totalDuration);
         
+        // Restore session start time if available
+        if (sessionData.startTime) {
+          setSessionStartTime(sessionData.startTime);
+        }
+        
         // Restore activity states if available
         if (sessionData.activityStates && sessionData.activityStates.length > 0) {
           restoreAllActivityStates(sessionData.activityStates, sessionData.currentActivityId);
@@ -204,12 +212,7 @@ function AppContent() {
           }
         }
         
-        console.log('Session fully recovered:', {
-          duration: sessionData.totalDuration,
-          activities: sessionData.activityStates?.length || 0,
-          timeline: sessionData.timelineEntries?.length || 0,
-          currentActivity: sessionData.currentActivityId
-        });
+        // Session fully recovered - logging removed for production security
       }
       setShowRecoveryAlert(false);
     } catch (error) {

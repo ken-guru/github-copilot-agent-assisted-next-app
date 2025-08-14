@@ -3,6 +3,8 @@
  */
 
 import { PersistedSession, SessionStorage } from '@/types/session';
+import { validateSessionData, sanitizeSessionData } from './sessionSecurity';
+import { formatTime } from './timeUtils';
 
 /**
  * IndexedDB-based session storage implementation
@@ -17,6 +19,13 @@ class IndexedDBSessionStorage implements SessionStorage {
     if (!this.isAvailable()) {
       throw new Error('IndexedDB is not available');
     }
+
+    // Validate and sanitize session data for security
+    if (!validateSessionData(session)) {
+      throw new Error('Invalid session data structure');
+    }
+    
+    const sanitizedSession = sanitizeSessionData(session);
 
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(this.dbName, this.dbVersion);
@@ -35,7 +44,7 @@ class IndexedDBSessionStorage implements SessionStorage {
         const transaction = db.transaction([this.storeName], 'readwrite');
         const store = transaction.objectStore(this.storeName);
 
-        const putRequest = store.put(session, this.sessionKey);
+        const putRequest = store.put(sanitizedSession, this.sessionKey);
         
         putRequest.onerror = () => reject(new Error('Failed to save session to IndexedDB'));
         putRequest.onsuccess = () => {
@@ -73,7 +82,13 @@ class IndexedDBSessionStorage implements SessionStorage {
         getRequest.onerror = () => reject(new Error('Failed to load session from IndexedDB'));
         getRequest.onsuccess = () => {
           db.close();
-          resolve(getRequest.result || null);
+          const result = getRequest.result;
+          // Validate loaded data for security
+          if (result && validateSessionData(result)) {
+            resolve(sanitizeSessionData(result));
+          } else {
+            resolve(null);
+          }
         };
       };
     });
@@ -129,8 +144,15 @@ class LocalStorageSessionStorage implements SessionStorage {
       throw new Error('localStorage is not available');
     }
 
+    // Validate and sanitize session data for security
+    if (!validateSessionData(session)) {
+      throw new Error('Invalid session data structure');
+    }
+    
+    const sanitizedSession = sanitizeSessionData(session);
+
     try {
-      const compressed = this.compressSession(session);
+      const compressed = this.compressSession(sanitizedSession);
       localStorage.setItem(this.storageKey, compressed);
     } catch (error) {
       throw new Error(`Failed to save session to localStorage: ${error}`);
@@ -148,9 +170,20 @@ class LocalStorageSessionStorage implements SessionStorage {
         return null;
       }
       
-      return this.decompressSession(data);
+      const session = this.decompressSession(data);
+      
+      // Validate loaded data for security
+      if (validateSessionData(session)) {
+        return sanitizeSessionData(session);
+      } else {
+        // Invalid data - clear it for security
+        localStorage.removeItem(this.storageKey);
+        return null;
+      }
     } catch (error) {
       console.error('Failed to load session from localStorage:', error);
+      // Clear potentially corrupted data
+      localStorage.removeItem(this.storageKey);
       return null;
     }
   }
@@ -267,14 +300,7 @@ export const sessionStorageUtils = {
    * Format elapsed time for display
    */
   formatElapsedTime(elapsedSeconds: number): string {
-    const hours = Math.floor(elapsedSeconds / 3600);
-    const minutes = Math.floor((elapsedSeconds % 3600) / 60);
-    const seconds = elapsedSeconds % 60;
-    
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return formatTime(elapsedSeconds);
   },
 
   /**
