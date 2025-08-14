@@ -49,6 +49,7 @@ Use this template when documenting debugging sessions in the Memory Log system.
 - **Time Tool**: Track debugging session duration and timezone context
 - **GitHub Tools**: Document PR/issue analysis steps
 - **Playwright Tools**: Record UI verification and testing steps
+- **Context7**: Fetch up-to-date library documentation and code examples
 ```
 
 ## Extended Template for Complex Issues
@@ -116,6 +117,7 @@ For complex debugging sessions involving multiple components or systems:
 - **GitHub Tool Usage**: PR/issue management steps
 - **Playwright Verification**: UI testing and validation
 - **Time Management**: Session duration and scheduling context
+- **Context7**: Library documentation and code examples integration
 
 #### Future Considerations
 - **Monitoring**: What to watch for ongoing
@@ -160,7 +162,7 @@ mcp_memory_create_entities([{
     "Issue: [brief description]",
     "Root cause: [cause identified]", 
     "Solution: [approach taken]",
-    "Tools used: [MCP tools employed]"
+    "Tools used: [MCP tools employed including Context7 for library docs]"
   ]
 }])
 

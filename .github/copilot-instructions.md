@@ -87,6 +87,7 @@ mcp_playwright_browser_take_screenshot(filename="issue-<NUMBER>-current-state.pn
 - **Memory**: [memory](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) - Knowledge persistence
 - **Time**: [time](https://github.com/modelcontextprotocol/servers/tree/main/src/time) - Timezone handling
 - **Playwright**: [mcp-playwright](https://github.com/executeautomation/mcp-playwright) - Browser automation
+- **Context7**: [context7](https://github.com/upstash/context7) - Real-time library documentation and code examples
 
 ### Tool Combination Strategies
 ```bash
@@ -94,11 +95,13 @@ mcp_playwright_browser_take_screenshot(filename="issue-<NUMBER>-current-state.pn
 mcp_sequential-th_sequentialthinking() → systematic analysis
 mcp_memory_create_entities() → persist insights
 mcp_time_get_current_time() → timestamp entries
+mcp_context7_get-library-docs() → fetch current documentation
 
 # Issue Verification → Implementation
 mcp_playwright_browser_* → verify problem
 mcp_github_get_issue() → understand requirements  
 mcp_memory_search_nodes() → find similar solutions
+mcp_context7_resolve-library-id() → get accurate library references
 ```
 
 ## CRITICAL DEVELOPMENT RULES
