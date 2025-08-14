@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { LoadingProvider, useLoading } from '@/contexts/loading';
 import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
@@ -16,14 +16,13 @@ import resetService from '@/utils/resetService';
 
 // Main application content with loading context
 function AppContent() {
+  // All hooks must be in consistent order across all renders
   const { setIsLoading } = useLoading();
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
-  const resetDialogRef = useRef<ConfirmationDialogRef>(null);
-  
-  // Session recovery state
   const [showRecoveryAlert, setShowRecoveryAlert] = useState(false);
   const [recoveryInfo, setRecoveryInfo] = useState<SessionRecoveryInfo | null>(null);
+  const resetDialogRef = useRef<ConfirmationDialogRef>(null);
   
   const {
     currentActivity,
