@@ -165,19 +165,27 @@ export default function AIPlannerPage() {
                     placeholder="sk-..."
                     value={keyInput}
                     onChange={(e) => setKeyInput(e.target.value)}
+                    isInvalid={Boolean(keyInput.trim() && !keyInput.trim().startsWith('sk-'))}
                   />
                   <Button
                     variant="primary"
                     onClick={() => {
                       const trimmed = keyInput.trim();
                       if (!trimmed) return;
-                      setApiKey(trimmed, 'memory');
-                      setKeyInput(''); // don't keep in input after saving
-                      addToast({ message: 'API key saved (memory only)', variant: 'success' });
+                      try {
+                        setApiKey(trimmed, 'memory');
+                        setKeyInput(''); // don't keep in input after saving
+                        addToast({ message: 'API key saved (memory only)', variant: 'success' });
+                      } catch (error: unknown) {
+                        const message = error instanceof Error ? error.message : 'Invalid API key format';
+                        addToast({ message, variant: 'error' });
+                      }
                     }}
                   >Save</Button>
                 </InputGroup>
-                <Form.Text className="text-body-secondary">Stored only in memory (RAM). Never sent to the server or logged.</Form.Text>
+                <Form.Text className="text-body-secondary">
+                  OpenAI API keys start with "sk-" and are about 51 characters long. Never sent to the server or logged.
+                </Form.Text>
               </Card.Body>
             </Card>
             <div className="d-flex gap-2">
