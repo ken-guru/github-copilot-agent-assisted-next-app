@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import Summary from '../Summary';
 import { TimelineEntry } from '@/types';
 import { Activity } from '@/types/activity';
+import { ToastProvider } from '@/contexts/ToastContext';
 import * as activityOrder from '@/utils/activity-order';
 import * as activityStorage from '@/utils/activity-storage';
 
@@ -57,12 +58,14 @@ describe('Summary Component - Activity Order Integration', () => {
     ];
 
     render(
-      <Summary 
-        entries={entries}
-        totalDuration={7200}
-        elapsedTime={7200}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={entries}
+          totalDuration={7200}
+          elapsedTime={7200}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
 
     // Verify sortActivitiesByOrder was called
@@ -116,13 +119,15 @@ describe('Summary Component - Activity Order Integration', () => {
     ];
 
     render(
-      <Summary 
-        entries={entries}
-        totalDuration={3600}
-        elapsedTime={3600}
-        allActivitiesCompleted={true}
-        skippedActivityIds={['activity-1', 'activity-2']}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={entries}
+          totalDuration={3600}
+          elapsedTime={3600}
+          allActivitiesCompleted={true}
+          skippedActivityIds={['activity-1', 'activity-2']}
+        />
+      </ToastProvider>
     );
 
     // Verify sortActivitiesByOrder was called for skipped activities
@@ -179,12 +184,14 @@ describe('Summary Component - Activity Order Integration', () => {
     ];
 
     render(
-      <Summary 
-        entries={entries}
-        totalDuration={7200}
-        elapsedTime={7200}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={entries}
+          totalDuration={7200}
+          elapsedTime={7200}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
 
     // Verify that time calculations are correct regardless of display order
@@ -259,12 +266,14 @@ describe('Summary Component - Activity Order Integration', () => {
     ];
 
     render(
-      <Summary 
-        entries={entries}
-        totalDuration={5400}
-        elapsedTime={5400}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={entries}
+          totalDuration={5400}
+          elapsedTime={5400}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
 
     // Verify sortActivitiesByOrder was called with correct aggregated data
@@ -329,12 +338,14 @@ describe('Summary Component - Activity Order Integration', () => {
     ];
 
     render(
-      <Summary 
-        entries={entries}
-        totalDuration={7200}
-        elapsedTime={7200}
-        allActivitiesCompleted={true}
-      />
+      <ToastProvider>
+        <Summary 
+          entries={entries}
+          totalDuration={7200}
+          elapsedTime={7200}
+          allActivitiesCompleted={true}
+        />
+      </ToastProvider>
     );
 
     // Verify sortActivitiesByOrder was still called

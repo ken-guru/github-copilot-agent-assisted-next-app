@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Task Completion Quality Check",
+  "description": "After completing a planned task, verify production readiness through linting, type checking, testing, and building. Update documentation if it's the last task, then commit changes with task description.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      ".kiro/specs/*/tasks.md"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A planned task has been completed. Please perform the following quality assurance steps:\n\n1. **Code Quality Verification:**\n   - Run `npm run lint` to check for linting errors\n   - Run `npm run type-check` to verify TypeScript compilation\n   - Run `npm test` to ensure all tests pass\n   - Run `npm run build` to verify the application builds successfully\n\n2. **Documentation Update (if last task):**\n   - Check if this was the last task in the spec's tasks.md file\n   - If so, update relevant documentation files (README.md, component docs, etc.)\n   - Update IMPLEMENTED_CHANGES.md with completed feature summary\n\n3. **Commit Changes:**\n   - Bundle all changes into a single commit\n   - Use the task description from the spec's tasks.md file as the commit message\n   - Ensure the commit includes all modified files\n\nPlease execute these steps systematically and report any issues that need to be addressed before the task can be considered complete."
+  }
+}

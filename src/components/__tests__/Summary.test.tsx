@@ -395,7 +395,7 @@ describe('Summary Component', () => {
         }
       ];
 
-      render(
+      renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={3600}
@@ -506,7 +506,7 @@ describe('Summary Component', () => {
         }
       ];
 
-      render(
+      renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={5400}
@@ -541,7 +541,7 @@ describe('Summary Component', () => {
         }
       ];
 
-      render(
+      renderWithProviders(
         <Summary 
           entries={entries}
           totalDuration={3600}
