@@ -2,6 +2,9 @@
  * Application type definitions
  */
 
+// Export session persistence types
+export * from './session';
+
 /**
  * Represents a timeline entry for activities
  * This is the comprehensive interface with all possible fields

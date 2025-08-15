@@ -28,28 +28,37 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     startActivity,
     completeActivity,
     removeActivity,
-  restoreActivity,
+    restoreActivity,
     resetActivities: resetActivityTracking,
+    restoreAllActivityStates,
     // New state machine methods
     getCurrentActivity: getCurrentActivityState,
     isCompleted: isActivitiesCompleted,
-    getActivityState
+    getActivityState,
+    getAllActivityStates
   } = useActivitiesTracking();
 
   const {
     timelineEntries,
     addTimelineEntry,
     completeCurrentTimelineEntry,
-    resetTimelineEntries
+    resetTimelineEntries,
+    restoreTimelineEntries
   } = useTimelineEntries();
 
-  const handleActivitySelect = useCallback((activity: Activity | null, justAdd: boolean = false) => {
+  const handleActivitySelect = useCallback((activity: Activity | null, justAdd: boolean = false, isRestoration: boolean = false) => {
     if (activity) {
       // Add activity to the state machine if it's not already there
       addActivity(activity.id);
       
       // If we're just adding (initializing), don't start the activity
-      if (justAdd) {
+      if (justAdd && !isRestoration) {
+        return;
+      }
+
+      // If this is a restoration, just set the current activity without state changes
+      if (isRestoration) {
+        setCurrentActivity(activity);
         return;
       }
 
@@ -154,16 +163,20 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     timelineEntries,
     activities,
     completedActivityIds,
-  removedActivityIds,
+    removedActivityIds,
     allActivitiesCompleted,
     handleActivitySelect,
     handleActivityRemoval,
     checkActivitiesCompleted,
     resetActivities,
-  restoreActivity,
+    restoreActivity,
+    restoreAllActivityStates,
+    restoreTimelineEntries,
     // New method to get current activity state
     getCurrentActivityStateDetails,
     // Method to get state of a specific activity
-    getActivityState
+    getActivityState,
+    // Method to get all activity states
+    getAllActivityStates
   };
 }

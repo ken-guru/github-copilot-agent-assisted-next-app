@@ -17,10 +17,12 @@ export interface UseActivitiesTrackingResult {
   removeActivity: (activityId: string) => void;
   restoreActivity: (activityId: string) => void;
   resetActivities: () => void;
+  restoreAllActivityStates: (states: ActivityState[], currentActivityId: string | null) => void;
   // New methods for the state machine
   getCurrentActivity: () => ActivityState | null;
   isCompleted: () => boolean;
   getActivityState: (activityId: string) => ActivityState | undefined;
+  getAllActivityStates: () => ActivityState[];
 }
 
 /**
@@ -274,6 +276,15 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
     return stateMachine.getActivityState(activityId);
   }, [stateMachine]);
   
+  const getAllActivityStates = useCallback(() => {
+    return stateMachine.getAllActivities();
+  }, [stateMachine]);
+
+  const restoreAllActivityStates = useCallback((states: ActivityState[], currentActivityId: string | null) => {
+    stateMachine.restoreAllStates(states, currentActivityId);
+    updateLocalStateFromMachine();
+  }, [stateMachine, updateLocalStateFromMachine]);
+
   return {
     activities,
     allActivityIds,
@@ -285,11 +296,13 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
     startActivity,
     completeActivity,
     removeActivity,
-  restoreActivity,
+    restoreActivity,
     resetActivities,
+    restoreAllActivityStates,
     // New methods
     getCurrentActivity,
     isCompleted,
-    getActivityState
+    getActivityState,
+    getAllActivityStates
   };
 }

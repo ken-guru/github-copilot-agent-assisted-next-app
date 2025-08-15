@@ -37,7 +37,17 @@ export function ApiKeyProvider({ children }: ApiKeyProviderProps) {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const setApiKey = (key: string, _persist: Persistence = 'memory') => {
-    setApiKeyState(key);
+    const trimmedKey = key.trim();
+    
+    // Basic validation for OpenAI API key format
+    if (!trimmedKey.startsWith('sk-')) {
+      throw new Error('Invalid API key format. OpenAI API keys should start with "sk-".');
+    }
+    if (trimmedKey.length < 40) {
+      throw new Error('Invalid API key length. OpenAI API keys should be around 51 characters long.');
+    }
+    
+    setApiKeyState(trimmedKey);
     // SECURITY: Force memory-only persistence regardless of user preference
     setPersistence('memory');
     

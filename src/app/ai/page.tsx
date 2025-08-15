@@ -45,6 +45,16 @@ export default function AIPlannerPage() {
     return `Activity ${idx + 1}`;
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Handle Cmd+Enter (Mac) or Ctrl+Enter (Windows/Linux) to submit
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if (!loading) {
+        handlePlan(e as unknown as React.FormEvent);
+      }
+    }
+  };
+
   const handlePlan = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -165,19 +175,27 @@ export default function AIPlannerPage() {
                     placeholder="sk-..."
                     value={keyInput}
                     onChange={(e) => setKeyInput(e.target.value)}
+                    isInvalid={Boolean(keyInput.trim() && !keyInput.trim().startsWith('sk-'))}
                   />
                   <Button
                     variant="primary"
                     onClick={() => {
                       const trimmed = keyInput.trim();
                       if (!trimmed) return;
-                      setApiKey(trimmed, 'memory');
-                      setKeyInput(''); // don't keep in input after saving
-                      addToast({ message: 'API key saved (memory only)', variant: 'success' });
+                      try {
+                        setApiKey(trimmed, 'memory');
+                        setKeyInput(''); // don't keep in input after saving
+                        addToast({ message: 'API key saved (memory only)', variant: 'success' });
+                      } catch (error: unknown) {
+                        const message = error instanceof Error ? error.message : 'Invalid API key format';
+                        addToast({ message, variant: 'error' });
+                      }
                     }}
                   >Save</Button>
                 </InputGroup>
-                <Form.Text className="text-body-secondary">Stored only in memory (RAM). Never sent to the server or logged.</Form.Text>
+                <Form.Text className="text-body-secondary">
+                  OpenAI API keys start with &ldquo;sk-&rdquo; and are about 51 characters long. Never sent to the server or logged.
+                </Form.Text>
               </Card.Body>
             </Card>
             <div className="d-flex gap-2">
@@ -210,9 +228,10 @@ export default function AIPlannerPage() {
                 rows={4}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="e.g., 30-minute study sprint on React and JavaScript, plus a 10-minute break"
               />
-              <Form.Text className="text-body-secondary">One request per plan to conserve tokens.</Form.Text>
+              <Form.Text className="text-body-secondary">One request per plan to conserve tokens. Press Cmd+Enter (Mac) or Ctrl+Enter (Windows) to submit.</Form.Text>
             </Form.Group>
             <Alert variant="info" className="mb-3">
               Mode: Client-only (BYOK). Your key stays on this device.

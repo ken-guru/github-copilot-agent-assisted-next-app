@@ -11,6 +11,19 @@ export function useOpenAIClient() {
     if (!apiKey) {
       throw new Error('No API key set');
     }
+    
+    // Validate API key format
+    const trimmedKey = apiKey.trim();
+    if (!trimmedKey.startsWith('sk-')) {
+      throw new Error('Invalid API key format. OpenAI API keys should start with "sk-".');
+    }
+    if (trimmedKey.length < 40) {
+      throw new Error('Invalid API key length. OpenAI API keys are typically 51 characters long.');
+    }
+    
+    // Debug logging (mask key for security)
+    console.debug('Making OpenAI API call with key:', `${trimmedKey.substring(0, 7)}...${trimmedKey.substring(trimmedKey.length - 4)}`);
+    
     let res: Response;
     try {
       res = await fetch(`https://api.openai.com${path}`, {
@@ -22,7 +35,7 @@ export function useOpenAIClient() {
         referrerPolicy: 'no-referrer',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
+          'Authorization': `Bearer ${trimmedKey}`,
         },
         body: JSON.stringify(body),
         ...init,

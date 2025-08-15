@@ -1,32 +1,48 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { LoadingProvider, useLoading } from '@/contexts/loading';
 import TimeSetup from '@/components/TimeSetup';
 import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
+import SessionRecoveryModal, { SessionRecoveryModalRef } from '@/components/SessionRecoveryModal';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
+import { useSessionPersistence } from '@/hooks/useSessionPersistence';
+import { SessionRecoveryInfo } from '@/types/session';
+import { getActivities } from '@/utils/activity-storage';
 import resetService from '@/utils/resetService';
 
 // Main application content with loading context
 function AppContent() {
+  // All hooks must be in consistent order across all renders
   const { setIsLoading } = useLoading();
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
-  const resetDialogRef = useRef<ConfirmationDialogRef>(null);
+  const [sessionStartTime, setSessionStartTime] = useState<string | null>(null);
   
+  // Timer restoration state for session recovery
+  const [restoredElapsedTime, setRestoredElapsedTime] = useState<number>(0);
+  const [shouldRestartTimer, setShouldRestartTimer] = useState<boolean>(false);
+  const [recoveryInfo, setRecoveryInfo] = useState<SessionRecoveryInfo | null>(null);
+  const resetDialogRef = useRef<ConfirmationDialogRef>(null);
+  const recoveryModalRef = useRef<SessionRecoveryModalRef>(null);
+
+  // Activity state management
   const {
     currentActivity,
     timelineEntries,
     completedActivityIds,
-  removedActivityIds,
+    removedActivityIds,
     allActivitiesCompleted,
     handleActivitySelect,
     handleActivityRemoval,
-  restoreActivity,
+    restoreActivity,
     resetActivities,
+    restoreAllActivityStates,
+    restoreTimelineEntries,
+    getAllActivityStates,
   } = useActivityState({
     onTimerStart: () => {
       if (!timerActive) startTimer();
@@ -42,14 +58,55 @@ function AppContent() {
     extendDuration: clearTimeUpState,
   } = useTimerState({
     totalDuration,
-    isCompleted: allActivitiesCompleted
+    isCompleted: allActivitiesCompleted,
+    initialElapsedTime: restoredElapsedTime,
+    shouldAutoStart: shouldRestartTimer
   });
 
-  // Initialize app and hide loading screen after initialization is complete
+  // Session persistence hook for auto-save and recovery  
+  // Get current activities from storage to ensure consistency
+  const currentActivities = timeSet ? getActivities().filter(a => a.isActive) : [];
+  const sessionState = timeSet ? {
+    timeSet,
+    totalDuration,
+    elapsedTime,
+    timerActive,
+    currentActivity,
+    timelineEntries,
+    completedActivityIds,
+    removedActivityIds,
+    allActivitiesCompleted,
+    activities: currentActivities, // Properly populated from activity storage
+    activityStates: getAllActivityStates ? getAllActivityStates() : [],
+    startTime: sessionStartTime, // Track actual session start time
+  } : null;
+
+  const {
+    isPersistenceAvailable,
+    clearSession,
+    checkRecoverableSession,
+    loadSessionForRecovery,
+  } = useSessionPersistence(sessionState, {
+    saveInterval: 10000, // Auto-save every 10 seconds
+  });
+
+  // Initialize app and check for recoverable session
   useEffect(() => {
     const initApp = async () => {
-      // Add any actual initialization logic here
-      // For example: load user preferences, preload critical data
+      // Check for recoverable session before showing loading screen
+      if (isPersistenceAvailable) {
+        const sessionRecoveryInfo = await checkRecoverableSession();
+        
+        if (sessionRecoveryInfo.hasRecoverableSession) {
+          setRecoveryInfo(sessionRecoveryInfo);
+          setIsLoading(false); // Show recovery modal instead of loading
+          // Use timeout to ensure modal ref is ready
+          setTimeout(() => {
+            recoveryModalRef.current?.showModal();
+          }, 100);
+          return;
+        }
+      }
       
       // For demo purposes, using a timeout to simulate loading
       setTimeout(() => {
@@ -58,7 +115,7 @@ function AppContent() {
     };
     
     initApp();
-  }, [setIsLoading]);
+  }, [setIsLoading, isPersistenceAvailable, checkRecoverableSession]);
   
   // Set up the dialog callback for resetService
   useEffect(() => {
@@ -104,15 +161,28 @@ function AppContent() {
       setTotalDuration(0);
       resetActivities();
       resetTimer();
+      // Clear any saved sessions to prevent recovery dialog on reload
+      clearSession().catch(error => {
+        console.error('Failed to clear session during reset:', error);
+      });
     });
     
     // Clean up on component unmount
     return unregisterCallbacks;
-  }, [resetActivities, resetTimer]);
+  }, [resetActivities, resetTimer, clearSession]);
+  
+  // Effect to clean up restoration flags after timer has been restored
+  useEffect(() => {
+    if (shouldRestartTimer && timerActive) {
+      // Timer has been successfully restarted, clear the flag
+      setShouldRestartTimer(false);
+    }
+  }, [shouldRestartTimer, timerActive]);
   
   const handleTimeSet = (durationInSeconds: number) => {
     setTotalDuration(durationInSeconds);
     setTimeSet(true);
+    setSessionStartTime(new Date().toISOString());
   };
   
   const handleExtendDuration = () => {
@@ -131,6 +201,71 @@ function AppContent() {
     await resetService.reset();
   };
   
+  // Session recovery handlers
+  const handleRecoverSession = async () => {
+    try {
+      const sessionData = await loadSessionForRecovery();
+      if (sessionData) {
+        // Restore basic timer state
+        setTimeSet(true);
+        setTotalDuration(sessionData.totalDuration);
+        
+        // Restore session start time if available
+        if (sessionData.startTime) {
+          setSessionStartTime(sessionData.startTime);
+        }
+        
+        // Restore timer state - critical for proper session recovery
+        if (sessionData.elapsedTime !== undefined) {
+          // Calculate total elapsed time including time spent while tab was closed
+          const savedTime = new Date(sessionData.lastSaved).getTime();
+          const currentTime = Date.now();
+          const offlineTime = Math.max(0, currentTime - savedTime); // Time spent while tab was closed
+          const totalElapsedTime = sessionData.elapsedTime + Math.floor(offlineTime / 1000); // Convert to seconds
+          
+          // Clamp elapsed time to not exceed total duration to prevent immediate completion
+          const clampedElapsedTime = Math.min(totalElapsedTime, sessionData.totalDuration);
+          setRestoredElapsedTime(clampedElapsedTime);
+        }
+        
+        // Restart timer if it was active when session was saved
+        if (sessionData.timerActive) {
+          setShouldRestartTimer(true);
+        }
+        
+        // Restore activity states if available
+        if (sessionData.activityStates && sessionData.activityStates.length > 0) {
+          restoreAllActivityStates(sessionData.activityStates, sessionData.currentActivityId);
+        }
+        
+        // Restore timeline entries if available
+        if (sessionData.timelineEntries && sessionData.timelineEntries.length > 0) {
+          restoreTimelineEntries(sessionData.timelineEntries, sessionData.activities);
+        }
+        
+        // If there was a current activity, try to restore it
+        if (sessionData.currentActivityId && sessionData.activities) {
+          const restoredActivity = sessionData.activities.find(a => a.id === sessionData.currentActivityId);
+          if (restoredActivity) {
+            // Restore the current activity selection - use isRestoration flag to properly set UI state
+            handleActivitySelect(restoredActivity, false, true); // isRestoration = true
+          }
+        }
+        
+        // Session fully recovered - logging removed for production security
+      }
+      recoveryModalRef.current?.hideModal();
+    } catch (error) {
+      console.error('Failed to recover session:', error);
+      // Handle recovery error - maybe show a toast or alert
+    }
+  };
+  
+  const handleStartFresh = async () => {
+    await clearSession();
+    recoveryModalRef.current?.hideModal();
+  };
+  
   const appState = !timeSet 
     ? 'setup' 
     : allActivitiesCompleted 
@@ -145,6 +280,16 @@ function AppContent() {
   return (
     <>
       <main className="container-fluid d-flex flex-column overflow-x-hidden overflow-y-auto" style={{ height: 'calc(100vh - var(--navbar-height))' }}>
+        {/* Session Recovery Modal */}
+        {recoveryInfo && (
+          <SessionRecoveryModal
+            ref={recoveryModalRef}
+            recoveryInfo={recoveryInfo}
+            onRecover={handleRecoverSession}
+            onStartFresh={handleStartFresh}
+          />
+        )}
+        
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}

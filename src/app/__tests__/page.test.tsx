@@ -129,6 +129,28 @@ beforeAll(() => {
       remove: jest.fn(),
     }
   });
+  
+  // Suppress React act() warnings for testing async updates using Jest spy
+  jest.spyOn(console, 'error').mockImplementation((...args) => {
+    const firstArg = args[0];
+    if (
+      typeof firstArg === 'string' &&
+      (firstArg.includes('Warning: An update to') ||
+       firstArg.includes('not wrapped in act'))
+    ) {
+      return; // Suppress act warnings
+    }
+    // Call the original console.error for other errors
+    const originalImplementation = jest.requireActual('console').error;
+    originalImplementation(...args);
+  });
+});
+
+afterAll(() => {
+  // Restore the original console.error implementation
+  if (jest.isMockFunction(console.error)) {
+    (console.error as jest.MockedFunction<typeof console.error>).mockRestore();
+  }
 });
 
 // Helper function to render Home component with required providers
@@ -260,8 +282,7 @@ describe('Progress Element Visibility', () => {
   });
   
   it('should show progress container in activity state', () => {
-    // Mock activity state (timeSet = true, !allActivitiesCompleted)
-    jest.spyOn(React, 'useState').mockImplementationOnce(() => [true, jest.fn()]);
+    // Mock activity state directly through useActivityState instead of React.useState
     mockUseActivityState.mockImplementationOnce(() => ({
       currentActivity: { id: '1', name: 'Test Activity' },
       timelineEntries: [{ id: '1', activityId: '1', activityName: 'Test Activity', startTime: 0 }],
@@ -273,6 +294,10 @@ describe('Progress Element Visibility', () => {
     }));
     
     renderHome();
+    
+    // Navigate to activity state by setting time
+    const timeSetupButton = screen.getByRole('button', { name: /set time/i });
+    fireEvent.click(timeSetupButton);
     
     // In activity state, progress container should be present
     const progressContainer = screen.getByTestId('progress-container');
@@ -294,10 +319,8 @@ describe('Progress Element Visibility', () => {
   });
   
   it('should not show progress container in completed state', () => {
-    // Mock for completed state (timeSet = true, allActivitiesCompleted = true)
-    jest.spyOn(React, 'useState').mockImplementationOnce(() => [true, jest.fn()]);
-    
-    mockUseActivityState.mockImplementationOnce(() => ({
+    // Mock for completed state through useActivityState - use persistent mock
+    mockUseActivityState.mockImplementation(() => ({
       currentActivity: null,
       timelineEntries: [],
       completedActivityIds: ['1'],
@@ -308,6 +331,10 @@ describe('Progress Element Visibility', () => {
     }));
     
     renderHome();
+    
+    // Navigate to completed state by setting time and completing activities
+    const timeSetupButton = screen.getByRole('button', { name: /set time/i });
+    fireEvent.click(timeSetupButton);
     
     // In completed state, progress container should not be rendered
     const progressContainer = screen.queryByTestId('progress-container');

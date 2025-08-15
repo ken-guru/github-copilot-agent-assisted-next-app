@@ -3,13 +3,27 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 interface UseTimerStateProps {
   totalDuration: number;
   isCompleted?: boolean;
+  initialElapsedTime?: number;
+  shouldAutoStart?: boolean;
 }
 
-export function useTimerState({ totalDuration, isCompleted = false }: UseTimerStateProps) {
-  const [elapsedTime, setElapsedTime] = useState(0);
+export function useTimerState({ 
+  totalDuration, 
+  isCompleted = false, 
+  initialElapsedTime = 0,
+  shouldAutoStart = false 
+}: UseTimerStateProps) {
+  const [elapsedTime, setElapsedTime] = useState(initialElapsedTime);
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [timerActive, setTimerActive] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Update elapsed time when initialElapsedTime changes (for session restoration)
+  useEffect(() => {
+    if (!timerActive) {
+      setElapsedTime(initialElapsedTime);
+    }
+  }, [initialElapsedTime, timerActive]);
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -68,6 +82,14 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
     setElapsedTime(0);
     setIsTimeUp(false);
   }, [stopTimer]);
+
+  // Effect to auto-start timer if requested (for session restoration)
+  // This runs after elapsedTime has been updated to ensure proper timer calculation
+  useEffect(() => {
+    if (shouldAutoStart && !timerActive && !isCompleted && elapsedTime === initialElapsedTime) {
+      startTimer();
+    }
+  }, [shouldAutoStart, timerActive, isCompleted, startTimer, elapsedTime, initialElapsedTime]);
 
   return {
     elapsedTime,
