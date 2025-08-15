@@ -22,9 +22,14 @@ function AppContent() {
   const [totalDuration, setTotalDuration] = useState(0);
   const [sessionStartTime, setSessionStartTime] = useState<string | null>(null);
   const [showRecoveryAlert, setShowRecoveryAlert] = useState(false);
+  
+  // Timer restoration state for session recovery
+  const [restoredElapsedTime, setRestoredElapsedTime] = useState<number>(0);
+  const [shouldRestartTimer, setShouldRestartTimer] = useState<boolean>(false);
   const [recoveryInfo, setRecoveryInfo] = useState<SessionRecoveryInfo | null>(null);
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
-  
+
+  // Activity state management
   const {
     currentActivity,
     timelineEntries,
@@ -53,7 +58,9 @@ function AppContent() {
     extendDuration: clearTimeUpState,
   } = useTimerState({
     totalDuration,
-    isCompleted: allActivitiesCompleted
+    isCompleted: allActivitiesCompleted,
+    initialElapsedTime: restoredElapsedTime,
+    shouldAutoStart: shouldRestartTimer
   });
 
   // Session persistence hook for auto-save and recovery  
@@ -157,6 +164,14 @@ function AppContent() {
     return unregisterCallbacks;
   }, [resetActivities, resetTimer]);
   
+  // Effect to clean up restoration flags after timer has been restored
+  useEffect(() => {
+    if (shouldRestartTimer && timerActive) {
+      // Timer has been successfully restarted, clear the flag
+      setShouldRestartTimer(false);
+    }
+  }, [shouldRestartTimer, timerActive]);
+  
   const handleTimeSet = (durationInSeconds: number) => {
     setTotalDuration(durationInSeconds);
     setTimeSet(true);
@@ -193,6 +208,16 @@ function AppContent() {
           setSessionStartTime(sessionData.startTime);
         }
         
+        // Restore timer state - critical for proper session recovery
+        if (sessionData.elapsedTime !== undefined) {
+          setRestoredElapsedTime(sessionData.elapsedTime);
+        }
+        
+        // Restart timer if it was active when session was saved
+        if (sessionData.timerActive) {
+          setShouldRestartTimer(true);
+        }
+        
         // Restore activity states if available
         if (sessionData.activityStates && sessionData.activityStates.length > 0) {
           restoreAllActivityStates(sessionData.activityStates, sessionData.currentActivityId);
@@ -208,6 +233,7 @@ function AppContent() {
           const restoredActivity = sessionData.activities.find(a => a.id === sessionData.currentActivityId);
           if (restoredActivity) {
             // Restore the current activity selection, but don't auto-start timer
+            // Timer will be auto-started by shouldRestartTimer flag if needed
             handleActivitySelect(restoredActivity, true); // justAdd = true to avoid auto-starting
           }
         }
