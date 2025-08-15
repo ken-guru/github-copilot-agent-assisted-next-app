@@ -216,7 +216,9 @@ function AppContent() {
           const offlineTime = Math.max(0, currentTime - savedTime); // Time spent while tab was closed
           const totalElapsedTime = sessionData.elapsedTime + Math.floor(offlineTime / 1000); // Convert to seconds
           
-          setRestoredElapsedTime(totalElapsedTime);
+          // Clamp elapsed time to not exceed total duration to prevent immediate completion
+          const clampedElapsedTime = Math.min(totalElapsedTime, sessionData.totalDuration);
+          setRestoredElapsedTime(clampedElapsedTime);
         }
         
         // Restart timer if it was active when session was saved

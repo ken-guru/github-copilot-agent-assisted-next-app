@@ -77,7 +77,7 @@ export function useSessionPersistence(
     
     return {
       id: `session-${Date.now()}`,
-      startTime: (state.startTime && typeof state.startTime === 'string') ? state.startTime : now, // Ensure valid string
+      startTime: state.startTime || now, // Use actual session start time or fallback to current time
       totalDuration: state.totalDuration,
       elapsedTime: state.elapsedTime,
       currentActivityId: state.currentActivity?.id || null,
@@ -110,8 +110,20 @@ export function useSessionPersistence(
       await storage.current.saveSession(persistedSession);
       setLastSaveTime(new Date());
       
-      // Update state tracking for change detection
-      lastStateRef.current = JSON.stringify(sessionState);
+      // Update state tracking for change detection using lightweight signature
+      const stateSignature = [
+        sessionState.timeSet,
+        sessionState.totalDuration,
+        sessionState.elapsedTime,
+        sessionState.timerActive,
+        sessionState.currentActivity?.id || '',
+        sessionState.activities.length,
+        sessionState.activityStates.length,
+        sessionState.timelineEntries.length,
+        sessionState.completedActivityIds.length,
+        sessionState.removedActivityIds.length,
+      ].join('|');
+      lastStateRef.current = stateSignature;
     } catch (error) {
       console.error('Failed to save session:', error);
     }
@@ -187,11 +199,25 @@ export function useSessionPersistence(
 
   /**
    * Check if session state has changed significantly
+   * Uses a more efficient approach than JSON.stringify for large objects
    */
-  const hasSessionChanged = useCallback((state: CurrentSessionState): boolean => {
-    const currentStateString = JSON.stringify(state);
-    return currentStateString !== lastStateRef.current;
-  }, []);
+  const hasSessionChanged = useCallback(() => {
+    if (!sessionState) return false;
+    
+    // Lightweight change detection using state signature with safe defaults
+    const stateSignature = [
+      sessionState.timerActive,
+      sessionState.currentActivity?.id || '',
+      sessionState.activities?.length || 0,
+      sessionState.activityStates?.length || 0,
+      sessionState.timelineEntries?.length || 0,
+      sessionState.completedActivityIds?.length || 0,
+      sessionState.removedActivityIds?.length || 0,
+    ].join('|');
+    
+    const changed = stateSignature !== lastStateRef.current;
+    return changed;
+  }, [sessionState]);
 
   /**
    * Auto-save logic
@@ -212,13 +238,13 @@ export function useSessionPersistence(
 
     // Set up interval for regular saves
     saveIntervalRef.current = setInterval(() => {
-      if (sessionState && hasSessionChanged(sessionState)) {
+      if (sessionState && hasSessionChanged()) {
         saveSession();
       }
     }, opts.saveInterval);
 
     // Save immediately on timer state changes if auto-save is enabled
-    if (opts.autoSaveOnActivity && hasSessionChanged(sessionState)) {
+    if (opts.autoSaveOnActivity && hasSessionChanged()) {
       saveSession();
     }
 

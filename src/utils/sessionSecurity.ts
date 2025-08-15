@@ -2,7 +2,7 @@
  * Security utilities for session data validation and sanitization
  */
 
-import { PersistedSession } from '@/types/session';
+import { PersistedSession, SESSION_PERSISTENCE_VERSION } from '@/types/session';
 import { Activity } from '@/types/activity';
 import { TimelineEntry } from '@/types';
 
@@ -72,7 +72,7 @@ export function validateSessionData(session: unknown): session is PersistedSessi
   }
 
   // Version check for compatibility
-  if (s.version !== 1) {
+  if (s.version !== SESSION_PERSISTENCE_VERSION) {
     return false;
   }
 
