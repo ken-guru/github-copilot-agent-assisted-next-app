@@ -158,11 +158,15 @@ function AppContent() {
       setTotalDuration(0);
       resetActivities();
       resetTimer();
+      // Clear any saved sessions to prevent recovery dialog on reload
+      clearSession().catch(error => {
+        console.error('Failed to clear session during reset:', error);
+      });
     });
     
     // Clean up on component unmount
     return unregisterCallbacks;
-  }, [resetActivities, resetTimer]);
+  }, [resetActivities, resetTimer, clearSession]);
   
   // Effect to clean up restoration flags after timer has been restored
   useEffect(() => {

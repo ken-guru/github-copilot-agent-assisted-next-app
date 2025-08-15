@@ -45,6 +45,16 @@ export default function AIPlannerPage() {
     return `Activity ${idx + 1}`;
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Handle Cmd+Enter (Mac) or Ctrl+Enter (Windows/Linux) to submit
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if (!loading) {
+        handlePlan(e as unknown as React.FormEvent);
+      }
+    }
+  };
+
   const handlePlan = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -218,9 +228,10 @@ export default function AIPlannerPage() {
                 rows={4}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="e.g., 30-minute study sprint on React and JavaScript, plus a 10-minute break"
               />
-              <Form.Text className="text-body-secondary">One request per plan to conserve tokens.</Form.Text>
+              <Form.Text className="text-body-secondary">One request per plan to conserve tokens. Press Cmd+Enter (Mac) or Ctrl+Enter (Windows) to submit.</Form.Text>
             </Form.Group>
             <Alert variant="info" className="mb-3">
               Mode: Client-only (BYOK). Your key stays on this device.
