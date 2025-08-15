@@ -1,9 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Card, Alert, Row, Col, ListGroup, Badge, Button } from 'react-bootstrap';
+import { Card, Alert, Row, Col, ListGroup, Badge, Button, Spinner } from 'react-bootstrap';
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { getActivities } from '@/utils/activity-storage';
 import { sortActivitiesByOrder } from '@/utils/activity-order';
+import { useToast } from '@/contexts/ToastContext';
+import { useApiKey } from '@/contexts/ApiKeyContext';
+import { useOpenAIClient } from '@/utils/ai/byokClient';
+import type { ChatCompletion } from '@/types/ai';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -26,6 +30,12 @@ export default function Summary({
   onReset, // Add reset callback prop
   skippedActivityIds = []
 }: SummaryProps) {
+  const { addToast } = useToast();
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
+  const { apiKey } = useApiKey();
+  const { callOpenAI } = useOpenAIClient();
+  // Auto mode: BYOK if available, else server mock route
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
@@ -333,18 +343,90 @@ export default function Summary({
     return sortActivitiesByOrder(skippedActivitiesUnsorted);
   }, [skippedKey]);
 
+  // Precompute values used in memoized payload to keep hook order consistent
+  const overtime = calculateOvertime();
+  const activityTimes = calculateActivityTimes();
+
+  // Build a stable payload for AI summary generation
+  const summaryPayload = useMemo(() => ({
+    plannedTime: totalDuration,
+    timeSpent: elapsedTime,
+    overtime,
+    idle: stats.idleTime,
+    perActivity: activityTimes.map(a => ({ id: a.id, name: a.name, duration: a.duration })),
+    skippedIds: skippedActivities.map(s => s.id)
+  }), [totalDuration, elapsedTime, overtime, stats.idleTime, activityTimes, skippedActivities]);
+
   // Early return modified to handle isTimeUp case
   if ((!allActivitiesCompleted && !isTimeUp) || !stats) {
     return null;
   }
 
-  const overtime = calculateOvertime();
-  const activityTimes = calculateActivityTimes();
+  // Extracted helper to generate summary using either BYOK or server mock
+  const generateAISummary = async () => {
+    if (apiKey) {
+      const messages = [
+        { role: 'system', content: 'You summarize time tracking sessions for users.' },
+        { role: 'user', content: `Create a brief friendly summary. JSON only: {"summary": string}. Data: ${JSON.stringify(summaryPayload)}` }
+      ];
+      const data = await callOpenAI('/v1/chat/completions', {
+        model: 'gpt-4o-mini',
+        messages,
+        response_format: { type: 'json_object' }
+      }) as Partial<ChatCompletion>;
+      const firstChoice = (Array.isArray(data.choices) && data.choices.length > 0) ? data.choices[0] : undefined;
+      const content = firstChoice?.message?.content ? String(firstChoice.message.content) : '';
+      const parsed = JSON.parse(content) as { summary?: unknown };
+      return (typeof parsed.summary === 'string' ? parsed.summary : '');
+    }
+    const res = await fetch('/api/ai/summary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(summaryPayload)
+    });
+    if (!res.ok) {
+      const data = (await res.json().catch(() => ({}))) as unknown;
+      const message = (typeof data === 'object' && data && 'error' in data && typeof (data as { error?: unknown }).error === 'string')
+        ? (data as { error: string }).error
+        : 'Failed to get AI summary';
+      throw new Error(message);
+    }
+    const data = (await res.json()) as unknown;
+    if (typeof data === 'object' && data && 'summary' in (data as Record<string, unknown>)) {
+      const v = (data as Record<string, unknown>).summary;
+      return typeof v === 'string' ? v : '';
+    }
+    return '';
+  };
 
   return (
     <Card data-testid="summary" className="summary-card h-100">
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0" role="heading" aria-level={2}>Summary</h5>
+        <div className="d-flex gap-2 align-items-center">
+  {apiKey && (!aiSummary) && (
+          <Button
+            variant="outline-primary"
+            size="sm"
+            disabled={aiLoading}
+            onClick={async () => {
+              try {
+                setAiLoading(true);
+    const summary = await generateAISummary();
+    setAiSummary(summary);
+              } catch (e: unknown) {
+                const message = e instanceof Error ? e.message : 'AI summary failed';
+                addToast({ message, variant: 'error' });
+              } finally {
+                setAiLoading(false);
+              }
+            }}
+            title="Generate AI summary"
+          >
+            {aiLoading ? (<><Spinner size="sm" className="me-2" animation="border" />Summarizing…</>) : 'AI Summary'}
+          </Button>
+        )}
+  {/* Auto BYOK mode indicated by presence of apiKey; no manual switch */}
         {onReset && (
           <Button 
             variant="outline-danger" 
@@ -357,6 +439,7 @@ export default function Summary({
             Reset
           </Button>
         )}
+        </div>
       </Card.Header>
       
       <Card.Body data-testid="summary-body">
@@ -439,6 +522,13 @@ export default function Summary({
                 );
               })}
             </ListGroup>
+          </div>
+        )}
+
+        {aiSummary && (
+          <div className="mt-4" data-testid="ai-summary">
+            <h3 className="h6 mb-2">AI Summary</h3>
+            <Alert variant="info">{aiSummary}</Alert>
           </div>
         )}
 

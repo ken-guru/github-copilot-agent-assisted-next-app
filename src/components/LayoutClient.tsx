@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import Script from 'next/script';
 import { ThemeProvider } from '@/contexts/theme';
+import { ApiKeyProvider } from '@/contexts/ApiKeyContext';
 import { ToastProvider } from '@/contexts/ToastContext';
 import { ToastContainer } from '@/components/ui/ToastContainer';
 import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
@@ -125,6 +126,7 @@ export function LayoutClient({ children }: LayoutClientProps) {
 
   return (
     <ThemeProvider>
+      <ApiKeyProvider>
       <ToastProvider>
         {/* Bootstrap JavaScript for responsive navigation */}
         <Script 
@@ -148,6 +150,7 @@ export function LayoutClient({ children }: LayoutClientProps) {
         
         {children}
       </ToastProvider>
+      </ApiKeyProvider>
     </ThemeProvider>
   );
 }

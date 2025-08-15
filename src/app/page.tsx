@@ -49,7 +49,7 @@ function AppContent() {
   useEffect(() => {
     const initApp = async () => {
       // Add any actual initialization logic here
-      // For example: load user preferences, check auth state, preload critical data
+      // For example: load user preferences, preload critical data
       
       // For demo purposes, using a timeout to simulate loading
       setTimeout(() => {

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useThemeReactive } from '@/hooks/useThemeReactive';
 import ThemeToggle from '@/components/ThemeToggle';
+// AI nav is always visible; gating handled on page
 
 /**
  * Enhanced navigation with active state management and tab-like styling
@@ -21,6 +22,9 @@ const Navigation: React.FC = () => {
   // Determine active states based on current path
   const isTimerActive = pathname === '/';
   const isActivitiesActive = pathname === '/activities';
+  const isAIActive = pathname === '/ai';
+  // Always show AI nav item; page handles gating/setup
+  const showAI = true;
   
   // Use Bootstrap's theme-aware classes (removed navbar-expand-lg for always-expanded behavior)
   const navClasses = theme === 'dark' 
@@ -28,7 +32,7 @@ const Navigation: React.FC = () => {
     : 'navbar navbar-light bg-light';
 
   return (
-    <nav className={navClasses} aria-label="Main navigation">
+  <nav className={navClasses} aria-label="Main navigation">
       <div className="container-fluid d-flex justify-content-between align-items-center flex-wrap">
         <Link className="navbar-brand" href="/">
           <span data-testid="navbar-brand">
@@ -40,7 +44,7 @@ const Navigation: React.FC = () => {
         {/* Navigation with separated theme toggle and nav pills */}
         <div className="d-flex align-items-center">
           {/* Theme Toggle - Visually separated from navigation */}
-          <div className="theme-toggle-separator me-4" data-testid="theme-toggle-container">
+          <div className="d-flex align-items-center me-4" data-testid="theme-toggle-container">
             <ThemeToggle size="sm" variant="navbar" />
           </div>
           
@@ -73,6 +77,22 @@ const Navigation: React.FC = () => {
                 </span>
               </Link>
             </li>
+
+              {/* AI - Conditional navigation item */}
+              {showAI && (
+                <li className="nav-item ai-item" data-testid="ai-nav-item">
+                  <Link
+                    className={`nav-link ${isAIActive ? 'active' : ''}`}
+                    href="/ai"
+                    aria-current={isAIActive ? 'page' : undefined}
+                  >
+                    <span aria-label="Go to AI Planner">
+                      <i className="bi bi-stars me-sm-1" aria-hidden="true"></i>
+                      <span className="nav-text d-none d-sm-inline">AI</span>
+                    </span>
+                  </Link>
+                </li>
+              )}
           </ul>
         </div>
       </div>

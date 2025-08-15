@@ -1,6 +1,9 @@
-# Activity Timer and Tracker
-
-[![Dependabot Updates](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates)
+# Activity Timer and Tracke- **GitHub MCP Server**: [Documentation](https://github.com/github/github-mcp-server) - Issue/PR management and repository operations
+- **Sequential Thinking**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking) - Complex problem analysis
+- **Memory Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) - Knowledge persistence and retrieval
+- **Time Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/time) - Timezone-aware handling
+- **Playwright Tools**: [Documentation](https://github.com/executeautomation/mcp-playwright) - Browser automation and UI verification
+- **Context7**: [Documentation](https://github.com/upstash/context7) - Real-time library documentation and code examples[Dependabot Updates](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates)
 [![CodeQL Security Scan](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/codeql.yml)
 
 ## Project Context
@@ -198,6 +201,27 @@ yarn test
 npm run test:watch
 # or
 yarn test:watch
+```
+
+### AI Feature (Issue #307) - Local Dev Quickstart
+
+```markdown
+1) Copy .env.example to .env.local and set variables as needed:
+   - AI_ENABLE_MOCK=true (recommended for local dev)
+   - AI_FALLBACK_ON_429=true (default). Set to false to surface real 429 errors instead of mock fallback.
+   - Note: OPENAI_API_KEY is deprecated and not used; BYOK is client-only.
+
+2) Start the app and open /ai.
+   - Enter your OpenAI key (sk-...) in the BYOK section and Save. That's it—AI is enabled client-side.
+   - Submit a prompt to generate a plan.
+
+3) Summary AI
+   - The Summary component can request an AI summary via /api/ai/summary.
+   - With AI_ENABLE_MOCK=true or when OpenAI returns 429 insufficient_quota, a mock summary is returned.
+
+Notes:
+- On localhost the service worker installs but bypasses request interception to avoid interfering with dev assets; it still intercepts in preview/production builds.
+
 ```
 
 ### Deployment Verification
@@ -401,3 +425,19 @@ This project recently migrated from a Cypress-heavy approach to a balanced test 
 - **Coverage**: Enhanced with better edge case testing
 
 For detailed migration information, see [MRTMLY-221](./docs/logged_memories/MRTMLY-221-comprehensive-cypress-jest-migration.md).
+
+## Bring Your Own Key (BYOK) for OpenAI
+
+You can use OpenAI features without configuring server env vars:
+
+- Open the AI page from the navbar (always visible).
+- In the AI page, enter your OpenAI key (sk-...) in the BYOK section and save.
+- The key is stored in memory for this tab only (never persisted to sessionStorage/localStorage) and is never sent to the server.
+
+Security notes:
+- A strict CSP limits outbound connections to https://api.openai.com.
+- The service worker bypasses OpenAI requests (no caching/interception).
+- Avoid using BYOK on untrusted pages; client code has access while open.
+
+Authentication notes:
+- There is no OAuth or cookie-based authentication gate. AI features are enabled purely via BYOK on the client.

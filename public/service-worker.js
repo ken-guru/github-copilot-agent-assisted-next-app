@@ -1,5 +1,13 @@
 // Service Worker for Mr. Timely
 
+// In development on localhost, avoid intercepting requests entirely
+let DEV_BYPASS = false;
+try {
+  DEV_BYPASS = Boolean(self && self.location && (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1'));
+} catch (_) {
+  // Ignore errors accessing self in some environments
+}
+
 const CACHE_NAME_PREFIX = 'github-copilot-agent-assisted-next-app';
 // Use consistent version - will be replaced at build time or deployment
 // This ensures consistent cache versioning across all instances
@@ -54,7 +62,7 @@ const OFFLINE_RESPONSE = new Response(OFFLINE_PAGE_TEMPLATE, {
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json',
+  '/api/manifest',
   '/favicon.ico', 
   '/favicon.svg',
   '/icons/icon-192x192.svg',
@@ -175,6 +183,10 @@ function isNextAsset(url) {
 
 // Fetch event handler
 self.addEventListener('fetch', (event) => {
+  if (DEV_BYPASS) {
+    // Don't intercept any requests on localhost dev
+    return;
+  }
   const request = event.request;
   const url = new URL(request.url);
   
