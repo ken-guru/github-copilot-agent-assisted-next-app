@@ -18,6 +18,13 @@ export function useTimerState({
   const [timerActive, setTimerActive] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Update elapsed time when initialElapsedTime changes (for session restoration)
+  useEffect(() => {
+    if (!timerActive) {
+      setElapsedTime(initialElapsedTime);
+    }
+  }, [initialElapsedTime, timerActive]);
+
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -77,11 +84,12 @@ export function useTimerState({
   }, [stopTimer]);
 
   // Effect to auto-start timer if requested (for session restoration)
+  // This runs after elapsedTime has been updated to ensure proper timer calculation
   useEffect(() => {
-    if (shouldAutoStart && !timerActive && !isCompleted) {
+    if (shouldAutoStart && !timerActive && !isCompleted && elapsedTime === initialElapsedTime) {
       startTimer();
     }
-  }, [shouldAutoStart, timerActive, isCompleted, startTimer]);
+  }, [shouldAutoStart, timerActive, isCompleted, startTimer, elapsedTime, initialElapsedTime]);
 
   return {
     elapsedTime,
