@@ -225,7 +225,7 @@ function AppContent() {
         
         // Restore timeline entries if available
         if (sessionData.timelineEntries && sessionData.timelineEntries.length > 0) {
-          restoreTimelineEntries(sessionData.timelineEntries);
+          restoreTimelineEntries(sessionData.timelineEntries, sessionData.activities);
         }
         
         // If there was a current activity, try to restore it

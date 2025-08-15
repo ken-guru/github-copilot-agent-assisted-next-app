@@ -8,7 +8,7 @@ export interface UseTimelineEntriesResult {
   addTimelineEntry: (activity: Activity) => void;
   completeCurrentTimelineEntry: () => void;
   resetTimelineEntries: () => void;
-  restoreTimelineEntries: (entries: TimelineEntry[]) => void;
+  restoreTimelineEntries: (entries: TimelineEntry[], activities?: Activity[]) => void;
 }
 
 /**
@@ -59,8 +59,33 @@ export function useTimelineEntries(): UseTimelineEntriesResult {
     setTimelineEntries([]);
   }, []);
 
-  const restoreTimelineEntries = useCallback((entries: TimelineEntry[]) => {
-    setTimelineEntries(entries);
+  const restoreTimelineEntries = useCallback((entries: TimelineEntry[], activities?: Activity[]) => {
+    // Ensure restored timeline entries have proper color information
+    const entriesWithColors = entries.map(entry => {
+      // If entry already has colors, keep them
+      if (entry.colors) {
+        return entry;
+      }
+      
+      // If no colors, try to find the corresponding activity and regenerate colors
+      if (activities && entry.activityId) {
+        const correspondingActivity = activities.find(a => a.id === entry.activityId);
+        if (correspondingActivity) {
+          return {
+            ...entry,
+            colors: getNextAvailableColorSet(correspondingActivity.colorIndex || 0)
+          };
+        }
+      }
+      
+      // Fallback: use a default color if we can't find the activity
+      return {
+        ...entry,
+        colors: getNextAvailableColorSet(0)
+      };
+    });
+    
+    setTimelineEntries(entriesWithColors);
   }, []);
 
   return {
