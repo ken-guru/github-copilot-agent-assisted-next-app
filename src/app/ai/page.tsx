@@ -184,7 +184,7 @@ export default function AIPlannerPage() {
                   >Save</Button>
                 </InputGroup>
                 <Form.Text className="text-body-secondary">
-                  OpenAI API keys start with "sk-" and are about 51 characters long. Never sent to the server or logged.
+                  OpenAI API keys start with &ldquo;sk-&rdquo; and are about 51 characters long. Never sent to the server or logged.
                 </Form.Text>
               </Card.Body>
             </Card>
