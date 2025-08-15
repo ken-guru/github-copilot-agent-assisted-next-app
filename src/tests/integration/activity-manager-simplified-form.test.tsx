@@ -10,6 +10,7 @@ import * as activityStorage from '../../utils/activity-storage';
 // Mock the storage utilities
 jest.mock('../../utils/activity-storage', () => ({
   getActivities: jest.fn((): Activity[] => []),
+  getActivitiesInOrder: jest.fn((): Activity[] => []),
   addActivity: jest.fn(),
   deleteActivity: jest.fn()
 }));
@@ -63,7 +64,7 @@ describe('ActivityManager Simplified Form Integration', () => {
   describe('Timeline Context (Simplified Form)', () => {
     it('renders simplified activity form in timeline context when activities exist', async () => {
       // Provide some activities so the form renders
-      mockActivityStorage.getActivities.mockReturnValue([
+      mockActivityStorage.getActivitiesInOrder.mockReturnValue([
         {
           id: 'test-1',
           name: 'Test Activity',
@@ -98,7 +99,7 @@ describe('ActivityManager Simplified Form Integration', () => {
 
     it('allows adding activities through simplified form', async () => {
       // Start with some activities so the form renders
-      mockActivityStorage.getActivities.mockReturnValue([
+      mockActivityStorage.getActivitiesInOrder.mockReturnValue([
         {
           id: 'existing-1',
           name: 'Existing Activity',
@@ -140,7 +141,7 @@ describe('ActivityManager Simplified Form Integration', () => {
 
     it('maintains simplified form after adding activity', async () => {
       // Start with existing activities so form renders
-      mockActivityStorage.getActivities.mockReturnValue([
+      mockActivityStorage.getActivitiesInOrder.mockReturnValue([
         {
           id: 'existing-1',
           name: 'Existing Activity',
@@ -175,7 +176,7 @@ describe('ActivityManager Simplified Form Integration', () => {
 
     it('keeps form enabled when time is up', async () => {
       // Start with activities so form renders
-      mockActivityStorage.getActivities.mockReturnValue([
+      mockActivityStorage.getActivitiesInOrder.mockReturnValue([
         {
           id: 'existing-1',
           name: 'Existing Activity',
@@ -213,7 +214,7 @@ describe('ActivityManager Simplified Form Integration', () => {
 
     it('shows progress bar alongside simplified form', async () => {
       // Start with activities so form renders
-      mockActivityStorage.getActivities.mockReturnValue([
+      mockActivityStorage.getActivitiesInOrder.mockReturnValue([
         {
           id: 'existing-1',
           name: 'Existing Activity',
@@ -259,7 +260,7 @@ describe('ActivityManager Simplified Form Integration', () => {
   describe('Activity List Integration', () => {
     it('shows activity list alongside simplified form when activities exist', async () => {
       // Mock existing activities
-      mockActivityStorage.getActivities.mockReturnValue([
+      mockActivityStorage.getActivitiesInOrder.mockReturnValue([
         {
           id: 'activity-1',
           name: 'Existing Activity',
@@ -290,7 +291,7 @@ describe('ActivityManager Simplified Form Integration', () => {
 
     it('shows empty state when no activities exist', async () => {
       // Ensure mock returns empty array
-      mockActivityStorage.getActivities.mockReturnValue([]);
+      mockActivityStorage.getActivitiesInOrder.mockReturnValue([]);
       
       render(<ActivityManager {...defaultProps} />);
 

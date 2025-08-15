@@ -5,6 +5,7 @@ import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { TimelineEntry } from '@/types';
+import { getActivityOrder, hasCustomActivityOrder } from '@/utils/activity-order';
 
 interface TimelineProps {
   entries: TimelineEntry[];
@@ -41,6 +42,17 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
   );
   
+  // Function to get the visual order position for an activity
+  const getActivityOrderPosition = (activityId: string | null): number | null => {
+    if (!activityId || !hasCustomActivityOrder()) {
+      return null;
+    }
+    
+    const customOrder = getActivityOrder();
+    const position = customOrder.indexOf(activityId);
+    return position >= 0 ? position + 1 : null; // 1-based position for display
+  };
+
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors?: TimelineEntry['colors']) => {
     if (!colors) return undefined;
@@ -387,16 +399,29 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                         </div>
                       );
                     }
+                    const orderPosition = getActivityOrderPosition(item.entry!.activityId);
+                    
                     return (
                       <div key={item.entry!.id} className={`${styles.timelineEntry} timeline-entry d-flex flex-column border rounded`} style={style}>
                         <div className={styles.entryContent}>
                           <div className={styles.entryHeader}>
-                            <span
-                              className={`${styles.activityName} fw-medium`}
-                              data-testid="timeline-activity-name"
-                            >
-                              {item.entry!.activityName}
-                            </span>
+                            <div className="d-flex align-items-center">
+                              {orderPosition && (
+                                <span 
+                                  className={`${styles.orderIndicator} badge bg-secondary me-2`}
+                                  title={`Activity order position: ${orderPosition}`}
+                                  data-testid="timeline-order-indicator"
+                                >
+                                  #{orderPosition}
+                                </span>
+                              )}
+                              <span
+                                className={`${styles.activityName} fw-medium`}
+                                data-testid="timeline-activity-name"
+                              >
+                                {item.entry!.activityName}
+                              </span>
+                            </div>
                             <span className={`${styles.timeInfo} time-info small text-nowrap`}>
                               {formatTimeHuman(item.duration)}
                             </span>

@@ -5,6 +5,7 @@ import { getActivityColorsForTheme } from '../utils/colors';
 import { useThemeReactive } from '../hooks/useThemeReactive';
 import { TimelineEntry } from '@/types';
 import { formatTime } from '@/utils/timeUtils';
+import styles from './ActivityButton.module.css';
 
 interface ActivityButtonProps {
   activity: Activity;
@@ -14,11 +15,33 @@ interface ActivityButtonProps {
   onRemove?: (id: string) => void;
   timelineEntries?: TimelineEntry[];
   elapsedTime?: number;
+  // Drag and drop props
+  draggable?: boolean;
+  isDragging?: boolean;
+  isDraggedOver?: boolean;
+  onDragStart?: (activityId: string) => void;
+  onDragEnd?: () => void;
+  onDragOver?: (activityId: string) => void;
+  onDragEnter?: (activityId: string) => void;
+  onDragLeave?: () => void;
+  onDrop?: (activityId: string) => void;
+  // Touch event props
+  onTouchStart?: (activityId: string, event: TouchEvent) => void;
+  onTouchMove?: (event: TouchEvent) => void;
+  onTouchEnd?: (event: TouchEvent) => void;
+  onTouchCancel?: () => void;
+  // Keyboard reordering props
+  onKeyDown?: (event: KeyboardEvent) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  isFocused?: boolean;
+  isReordering?: boolean;
 }
 
 /**
  * ActivityButton component for displaying and interacting with activity items
  * Migrated to use Bootstrap components for consistent styling
+ * Enhanced with drag-and-drop functionality for activity reordering
  */
 const ActivityButton: React.FC<ActivityButtonProps> = ({
   activity,
@@ -28,6 +51,27 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
   onRemove,
   timelineEntries = [],
   elapsedTime = 0,
+  // Drag and drop props
+  draggable = false,
+  isDragging = false,
+  isDraggedOver = false,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDragEnter,
+  onDragLeave,
+  onDrop,
+  // Touch event props
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
+  onTouchCancel,
+  // Keyboard reordering props
+  onKeyDown,
+  onFocus,
+  onBlur,
+  isFocused = false,
+  isReordering = false,
 }) => {
   const { id, name, colorIndex } = activity;
   const theme = useThemeReactive();
@@ -46,22 +90,157 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
     }
   };
 
+  // Drag event handlers
+  const handleDragStart = (e: React.DragEvent) => {
+    e.stopPropagation();
+    if (onDragStart) {
+      onDragStart(id);
+    }
+  };
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    e.stopPropagation();
+    if (onDragEnd) {
+      onDragEnd();
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onDragOver) {
+      onDragOver(id);
+    }
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onDragEnter) {
+      onDragEnter(id);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.stopPropagation();
+    if (onDragLeave) {
+      onDragLeave();
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onDrop) {
+      onDrop(id);
+    }
+  };
+
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (onTouchStart) {
+      onTouchStart(id, e.nativeEvent);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (onTouchMove) {
+      onTouchMove(e.nativeEvent);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (onTouchEnd) {
+      onTouchEnd(e.nativeEvent);
+    }
+  };
+
+  const handleTouchCancel = () => {
+    if (onTouchCancel) {
+      onTouchCancel();
+    }
+  };
+
+  // Keyboard event handlers
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onKeyDown) {
+      onKeyDown(e.nativeEvent);
+    }
+  };
+
+  const handleFocus = () => {
+    if (onFocus) {
+      onFocus();
+    }
+  };
+
+  const handleBlur = () => {
+    if (onBlur) {
+      onBlur();
+    }
+  };
+
   // Extract word wrap styles to avoid duplication
   const wordWrapStyles = {
     wordWrap: 'break-word' as const,
     overflowWrap: 'break-word' as const,
   };
 
+  // Generate CSS classes for drag feedback
+  const getDragClasses = () => {
+    const classes = [];
+    if (isDragging) classes.push(styles.dragging);
+    if (isDraggedOver) classes.push(styles.dragOver);
+    return classes.join(' ');
+  };
+
   return (
     <Card 
-      className={`${isCompleted ? 'border-success' : ''}`}
+      className={`${isCompleted ? 'border-success' : ''} ${getDragClasses()} ${isFocused ? 'border-primary' : ''} ${isReordering ? 'reordering' : ''}`}
       style={colors ? {
         backgroundColor: colors.background,
         borderColor: colors.border
       } : undefined}
+      draggable={draggable}
+      onDragStart={draggable ? handleDragStart : undefined}
+      onDragEnd={draggable ? handleDragEnd : undefined}
+      onDragOver={draggable ? handleDragOver : undefined}
+      onDragEnter={draggable ? handleDragEnter : undefined}
+      onDragLeave={draggable ? handleDragLeave : undefined}
+      onDrop={draggable ? handleDrop : undefined}
+      onTouchStart={draggable ? handleTouchStart : undefined}
+      onTouchMove={draggable ? handleTouchMove : undefined}
+      onTouchEnd={draggable ? handleTouchEnd : undefined}
+      onTouchCancel={draggable ? handleTouchCancel : undefined}
+      onKeyDown={onKeyDown ? handleKeyDown : undefined}
+      onFocus={onFocus ? handleFocus : undefined}
+      onBlur={onBlur ? handleBlur : undefined}
+      aria-grabbed={draggable ? isDragging : undefined}
+      role={draggable ? 'button' : undefined}
+      tabIndex={draggable ? 0 : undefined}
+      aria-describedby={draggable ? `${id}-reorder-instructions` : undefined}
+      data-activity-id={draggable ? id : undefined}
     >
       <Card.Body className="py-2 px-3">
         <div className="d-flex justify-content-between align-items-center">
+          {/* Drag handle */}
+          {draggable && (
+            <div 
+              className={`${styles.dragHandle} me-2 d-flex align-items-center`}
+              style={{ 
+                cursor: 'grab',
+                color: colors?.text || 'var(--text-secondary)',
+                opacity: 0.6
+              }}
+              title="Drag to reorder"
+              aria-label="Drag handle for reordering activity"
+            >
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M11 18c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-2-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 4c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+              </svg>
+            </div>
+          )}
+
           {/* Left side: Activity name */}
           <div className="d-flex flex-column flex-grow-1">
             <h6 
@@ -148,6 +327,16 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
           </div>
         </div>
       </Card.Body>
+      {/* Screen reader instructions for reordering */}
+      {draggable && (
+        <div 
+          id={`${id}-reorder-instructions`} 
+          className="sr-only"
+          aria-hidden="true"
+        >
+          Use Ctrl+Up or Ctrl+Down arrow keys to reorder this activity. Use Alt+Up or Alt+Down as alternative.
+        </div>
+      )}
     </Card>
   );
 };

@@ -3,6 +3,7 @@ import { Card, Alert, Row, Col, ListGroup, Badge, Button, Spinner } from 'react-
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { getActivities } from '@/utils/activity-storage';
+import { sortActivitiesByOrder } from '@/utils/activity-order';
 import { useToast } from '@/contexts/ToastContext';
 import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
@@ -277,14 +278,12 @@ export default function Summary({
   const calculateActivityTimes = () => {
     if (!entries || entries.length === 0) return [];
     
-    const activityTimes: { id: string; name: string; duration: number; colors?: TimelineEntry['colors'] }[] = [];
     const activityMap = new Map<string, { duration: number; name: string; colors?: TimelineEntry['colors'] }>();
-    const seenActivityIds = new Set<string>(); // Track order of first appearance
     
-    // Sort entries by startTime to ensure chronological order
+    // Sort entries by startTime to ensure chronological order for time calculations
     const sortedEntries = [...entries].sort((a, b) => a.startTime - b.startTime);
     
-    // First pass: Calculate total durations
+    // Calculate total durations for each activity
     for (const entry of sortedEntries) {
       if (entry.activityId && entry.activityName) {
         const endTime = entry.endTime ?? Date.now();
@@ -300,23 +299,17 @@ export default function Summary({
             colors: entry.colors
           });
         }
-        
-        // Track first appearance of each activity
-        if (!seenActivityIds.has(entry.activityId)) {
-          seenActivityIds.add(entry.activityId);
-          activityTimes.push({ 
-            id: entry.activityId, 
-            ...activityMap.get(entry.activityId)! 
-          });
-        }
       }
     }
     
-    // Update durations in activityTimes with final values
-    return activityTimes.map(activity => ({
-      ...activity,
-      duration: activityMap.get(activity.id)!.duration
+    // Convert map to array of activities with time data
+    const activityTimes = Array.from(activityMap.entries()).map(([id, data]) => ({
+      id,
+      ...data
     }));
+    
+    // Sort activities by custom order using sortActivitiesByOrder utility
+    return sortActivitiesByOrder(activityTimes);
   };
 
   // Helper function to convert CSS module classes to Bootstrap Alert variants
@@ -344,7 +337,10 @@ export default function Summary({
       // ignore storage errors; fall back to id as name
     }
     const ids = skippedKey.split('|').filter(Boolean);
-    return ids.map(id => ({ id, name: namesById.get(id) || id }));
+    const skippedActivitiesUnsorted = ids.map(id => ({ id, name: namesById.get(id) || id }));
+    
+    // Sort skipped activities by custom order to maintain relative order within the skipped group
+    return sortActivitiesByOrder(skippedActivitiesUnsorted);
   }, [skippedKey]);
 
   // Precompute values used in memoized payload to keep hook order consistent
