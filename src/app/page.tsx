@@ -6,7 +6,7 @@ import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
-import SessionRecoveryAlert from '@/components/SessionRecoveryAlert';
+import SessionRecoveryModal, { SessionRecoveryModalRef } from '@/components/SessionRecoveryModal';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import { useSessionPersistence } from '@/hooks/useSessionPersistence';
@@ -21,13 +21,13 @@ function AppContent() {
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
   const [sessionStartTime, setSessionStartTime] = useState<string | null>(null);
-  const [showRecoveryAlert, setShowRecoveryAlert] = useState(false);
   
   // Timer restoration state for session recovery
   const [restoredElapsedTime, setRestoredElapsedTime] = useState<number>(0);
   const [shouldRestartTimer, setShouldRestartTimer] = useState<boolean>(false);
   const [recoveryInfo, setRecoveryInfo] = useState<SessionRecoveryInfo | null>(null);
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
+  const recoveryModalRef = useRef<SessionRecoveryModalRef>(null);
 
   // Activity state management
   const {
@@ -99,8 +99,11 @@ function AppContent() {
         
         if (sessionRecoveryInfo.hasRecoverableSession) {
           setRecoveryInfo(sessionRecoveryInfo);
-          setShowRecoveryAlert(true);
-          setIsLoading(false); // Show recovery alert instead of loading
+          setIsLoading(false); // Show recovery modal instead of loading
+          // Use timeout to ensure modal ref is ready
+          setTimeout(() => {
+            recoveryModalRef.current?.showModal();
+          }, 100);
           return;
         }
       }
@@ -251,7 +254,7 @@ function AppContent() {
         
         // Session fully recovered - logging removed for production security
       }
-      setShowRecoveryAlert(false);
+      recoveryModalRef.current?.hideModal();
     } catch (error) {
       console.error('Failed to recover session:', error);
       // Handle recovery error - maybe show a toast or alert
@@ -260,7 +263,7 @@ function AppContent() {
   
   const handleStartFresh = async () => {
     await clearSession();
-    setShowRecoveryAlert(false);
+    recoveryModalRef.current?.hideModal();
   };
   
   const appState = !timeSet 
@@ -277,21 +280,14 @@ function AppContent() {
   return (
     <>
       <main className="container-fluid d-flex flex-column overflow-x-hidden overflow-y-auto" style={{ height: 'calc(100vh - var(--navbar-height))' }}>
-        {/* Session Recovery Alert */}
-        {showRecoveryAlert && recoveryInfo && (
-          <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }}>
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-md-6">
-                  <SessionRecoveryAlert
-                    recoveryInfo={recoveryInfo}
-                    onRecover={handleRecoverSession}
-                    onStartFresh={handleStartFresh}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Session Recovery Modal */}
+        {recoveryInfo && (
+          <SessionRecoveryModal
+            ref={recoveryModalRef}
+            recoveryInfo={recoveryInfo}
+            onRecover={handleRecoverSession}
+            onStartFresh={handleStartFresh}
+          />
         )}
         
         {/* Confirmation Dialog */}
