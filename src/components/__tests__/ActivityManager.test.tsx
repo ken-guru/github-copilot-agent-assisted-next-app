@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, within, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import ActivityManager from '../ActivityManager';
 import * as colorUtils from '../../utils/colors';
 import { DEFAULT_ACTIVITIES } from '../../types/activity';
@@ -867,7 +867,6 @@ describe('ActivityManager Component', () => {
         expect(screen.getByText('Homework')).toBeInTheDocument();
       });
 
-      const homeworkCard = screen.getByText('Homework').closest('.card') as HTMLElement;
       const readingCard = screen.getByText('Reading').closest('.card') as HTMLElement;
 
       // Mock preventDefault to verify it's called

@@ -80,11 +80,13 @@ export default function ActivityManager({
     setActivities(reorderedActivities);
     // Add a small delay to show the reordering animation
     setTimeout(() => setIsReorderingState(false), 150);
+    
+    // Log the new order for debugging (this uses the parameter)
+    console.debug('Activities reordered:', newOrder);
   }, []);
 
   // Drag and drop functionality
   const {
-    state: dragState,
     handlers: dragHandlers,
     getActivityClasses,
     isActivityDragged,

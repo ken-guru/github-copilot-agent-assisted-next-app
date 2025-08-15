@@ -4,7 +4,7 @@
  * @module activity-order
  */
 
-import { Activity } from '../types/activity';
+
 
 const ORDER_STORAGE_KEY = 'activity_order_v1';
 
@@ -284,26 +284,6 @@ export function getActivityOrderMetadata(): { version: string; lastUpdated: stri
  */
 export function hasCustomActivityOrder(): boolean {
   return getActivityOrder().length > 0;
-}
-
-/**
- * Check if localStorage is available and functional
- * @returns True if localStorage is available, false otherwise
- */
-function isLocalStorageAvailable(): boolean {
-  try {
-    if (typeof localStorage === 'undefined') {
-      return false;
-    }
-    
-    // Test localStorage functionality
-    const testKey = '__activity_order_test__';
-    localStorage.setItem(testKey, 'test');
-    localStorage.removeItem(testKey);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 /**

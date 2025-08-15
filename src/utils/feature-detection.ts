@@ -43,7 +43,7 @@ export function isTouchSupported(): boolean {
     return (
       'ontouchstart' in window ||
       (window.navigator && window.navigator.maxTouchPoints > 0) ||
-      (window.DocumentTouch && document instanceof window.DocumentTouch)
+      ('DocumentTouch' in window && document instanceof (window as unknown as { DocumentTouch: new() => Document }).DocumentTouch)
     );
   } catch {
     return false;

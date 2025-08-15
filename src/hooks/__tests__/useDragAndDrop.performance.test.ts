@@ -7,7 +7,6 @@ import { renderHook, act } from '@testing-library/react';
 import { jest } from '@jest/globals';
 import { useDragAndDrop } from '../useDragAndDrop';
 import * as activityStorage from '../../utils/activity-storage';
-import * as featureDetection from '../../utils/feature-detection';
 
 // Mock dependencies
 jest.mock('../../utils/activity-storage', () => ({
@@ -82,7 +81,7 @@ describe('useDragAndDrop Performance Tests', () => {
     it('should maintain performance with frequent activity list updates', async () => {
       let activityList = createActivityIds(20);
       
-      const { result, rerender } = renderHook(
+      const { rerender } = renderHook(
         ({ activities }) => useDragAndDrop(activities),
         { initialProps: { activities: activityList } }
       );
@@ -186,8 +185,8 @@ describe('useDragAndDrop Performance Tests', () => {
 
       // Mock touch events
       const createTouchEvent = (clientX: number, clientY: number): TouchEvent => ({
-        touches: [{ clientX, clientY }] as TouchList,
-        changedTouches: [{ clientX, clientY }] as TouchList,
+        touches: [{ clientX, clientY }] as unknown as TouchList,
+        changedTouches: [{ clientX, clientY }] as unknown as TouchList,
         preventDefault: jest.fn(),
       } as unknown as TouchEvent);
 
@@ -215,8 +214,8 @@ describe('useDragAndDrop Performance Tests', () => {
       );
 
       const touchEvent = {
-        touches: [{ clientX: 100, clientY: 100 }] as TouchList,
-        changedTouches: [{ clientX: 100, clientY: 100 }] as TouchList,
+        touches: [{ clientX: 100, clientY: 100 }] as unknown as TouchList,
+        changedTouches: [{ clientX: 100, clientY: 100 }] as unknown as TouchList,
         preventDefault: jest.fn(),
       } as unknown as TouchEvent;
 
@@ -246,8 +245,8 @@ describe('useDragAndDrop Performance Tests', () => {
       act(() => {
         result.current.handlers.handleDragStart('activity-0');
         result.current.handlers.handleTouchStart('activity-1', {
-          touches: [{ clientX: 100, clientY: 100 }] as TouchList,
-          changedTouches: [{ clientX: 100, clientY: 100 }] as TouchList,
+          touches: [{ clientX: 100, clientY: 100 }] as unknown as TouchList,
+          changedTouches: [{ clientX: 100, clientY: 100 }] as unknown as TouchList,
           preventDefault: jest.fn(),
         } as unknown as TouchEvent);
       });
@@ -268,7 +267,7 @@ describe('useDragAndDrop Performance Tests', () => {
       const activities = createActivityIds(10);
       
       const { result, rerender } = renderHook(
-        ({ onReorder }) => useDragAndDrop(activities, { onReorder }),
+        ({ onReorder }: { onReorder: (order: string[]) => void }) => useDragAndDrop(activities, { onReorder }),
         { 
           initialProps: { 
             onReorder: jest.fn() 
@@ -276,13 +275,11 @@ describe('useDragAndDrop Performance Tests', () => {
         }
       );
 
-      const initialHandlers = result.current.handlers;
-
       // Re-render with same props
       rerender({ onReorder: jest.fn() });
 
       // Handlers should be stable when possible
-      const newHandlers = result.current.handlers;
+      const newHandlers = (result.current as { handlers: Record<string, unknown> }).handlers;
       
       // Some handlers might change due to dependencies, but structure should be consistent
       expect(typeof newHandlers.handleDragStart).toBe('function');

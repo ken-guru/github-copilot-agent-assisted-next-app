@@ -4,7 +4,7 @@
  * @module useDragAndDrop
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { reorderActivities } from '../utils/activity-storage';
 import { isDragAndDropSupported, isTouchSupported, isVibrationSupported } from '../utils/feature-detection';
 import { startPerformanceTimer, endPerformanceTimer } from '../utils/performance-monitor';
@@ -346,7 +346,12 @@ export function useDragAndDrop(
    * Get element at touch position
    */
   const getElementAtTouchPosition = useCallback((touch: Touch): Element | null => {
-    return document.elementFromPoint(touch.clientX, touch.clientY);
+    try {
+      return document.elementFromPoint(touch.clientX, touch.clientY);
+    } catch (error) {
+      console.warn('Failed to get element at touch position:', error);
+      return null;
+    }
   }, []);
 
   /**
@@ -495,6 +500,8 @@ export function useDragAndDrop(
     // If we were in touch drag mode, handle the drop
     if (wasInTouchDrag && draggedItem && event.changedTouches.length > 0) {
       const touch = event.changedTouches[0];
+      if (!touch) return;
+      
       const elementUnderTouch = getElementAtTouchPosition(touch);
       const targetActivityId = findActivityIdFromElement(elementUnderTouch);
 

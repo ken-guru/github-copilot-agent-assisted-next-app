@@ -38,6 +38,35 @@ export function useKeyboardReordering({
   const announceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
+   * Announce position changes to screen readers
+   */
+  const announcePosition = useCallback((
+    activityId: string, 
+    newPosition: number, 
+    totalItems: number,
+    customMessage?: string
+  ) => {
+    if (!liveRegionRef.current) {
+      return;
+    }
+
+    // Clear any existing timeout
+    if (announceTimeoutRef.current) {
+      clearTimeout(announceTimeoutRef.current);
+    }
+
+    const message = customMessage || `Activity moved to position ${newPosition} of ${totalItems}`;
+    
+    // Use a slight delay to ensure screen readers pick up the announcement
+    announceTimeoutRef.current = setTimeout(() => {
+      if (liveRegionRef.current) {
+        liveRegionRef.current.textContent = message;
+        setLastAnnouncedPosition(newPosition);
+      }
+    }, announceDelay);
+  }, [announceDelay]);
+
+  /**
    * Move an activity up or down in the order
    */
   const moveActivity = useCallback((activityId: string, direction: 'up' | 'down') => {
@@ -86,7 +115,7 @@ export function useKeyboardReordering({
     
     // Call the onReorder callback if provided
     onReorder?.(newOrder);
-  }, [activityIds, onReorder, announceDelay]);
+  }, [activityIds, onReorder, announcePosition]);
 
   /**
    * Handle keyboard events for reordering
@@ -116,35 +145,6 @@ export function useKeyboardReordering({
       return;
     }
   }, [moveActivity]);
-
-  /**
-   * Announce position changes to screen readers
-   */
-  const announcePosition = useCallback((
-    activityId: string, 
-    newPosition: number, 
-    totalItems: number,
-    customMessage?: string
-  ) => {
-    if (!liveRegionRef.current) {
-      return;
-    }
-
-    // Clear any existing timeout
-    if (announceTimeoutRef.current) {
-      clearTimeout(announceTimeoutRef.current);
-    }
-
-    const message = customMessage || `Activity moved to position ${newPosition} of ${totalItems}`;
-    
-    // Use a slight delay to ensure screen readers pick up the announcement
-    announceTimeoutRef.current = setTimeout(() => {
-      if (liveRegionRef.current) {
-        liveRegionRef.current.textContent = message;
-        setLastAnnouncedPosition(newPosition);
-      }
-    }, announceDelay);
-  }, [announceDelay]);
 
   /**
    * Clear announcements from the live region

@@ -176,9 +176,12 @@ describe('Activity Order Performance Tests', () => {
             const currentOrder = getActivityOrder();
             const newOrder = [...currentOrder];
             if (newOrder.length > 1) {
-              const temp = newOrder[0];
-              newOrder[0] = newOrder[1];
-              newOrder[1] = temp;
+              const first = newOrder[0];
+              const second = newOrder[1];
+              if (first && second) {
+                newOrder[0] = second;
+                newOrder[1] = first;
+              }
             }
             setActivityOrder(newOrder);
           }
@@ -209,7 +212,7 @@ describe('Activity Order Performance Tests', () => {
       expect(result1.map(a => a.id)).toEqual(result2.map(a => a.id));
       
       // Should not mutate original array
-      expect(activities[0].id).toBe('activity-0');
+      expect(activities[0]?.id).toBe('activity-0');
     });
 
     it('should handle localStorage quota efficiently', () => {
@@ -223,7 +226,7 @@ describe('Activity Order Performance Tests', () => {
       const errorTime = measureTime(() => {
         try {
           setActivityOrder(veryLargeOrder);
-        } catch (error) {
+        } catch {
           // Expected to throw
         }
       });

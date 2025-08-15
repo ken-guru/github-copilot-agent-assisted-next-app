@@ -14,8 +14,7 @@ import {
 import { Activity, DEFAULT_ACTIVITIES } from '../types/activity';
 import { 
   getActivityOrder, 
-  setActivityOrder, 
-  clearActivityOrder 
+  setActivityOrder 
 } from './activity-order';
 
 describe('activity-storage', () => {

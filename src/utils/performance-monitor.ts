@@ -8,7 +8,7 @@ interface PerformanceMetric {
   startTime: number;
   endTime?: number;
   duration?: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 interface PerformanceThresholds {
@@ -33,7 +33,7 @@ class PerformanceMonitor {
   /**
    * Start measuring a performance metric
    */
-  start(name: string, metadata?: Record<string, any>): void {
+  start(name: string, metadata?: Record<string, unknown>): void {
     if (!this.isEnabled) return;
 
     const metric: PerformanceMetric = {
@@ -72,7 +72,7 @@ class PerformanceMonitor {
   /**
    * Measure a function's execution time
    */
-  measure<T>(name: string, fn: () => T, metadata?: Record<string, any>): T {
+  measure<T>(name: string, fn: () => T, metadata?: Record<string, unknown>): T {
     if (!this.isEnabled) return fn();
 
     this.start(name, metadata);
@@ -92,7 +92,7 @@ class PerformanceMonitor {
   async measureAsync<T>(
     name: string,
     fn: () => Promise<T>,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<T> {
     if (!this.isEnabled) return fn();
 
@@ -235,19 +235,19 @@ class PerformanceMonitor {
 export const performanceMonitor = new PerformanceMonitor();
 
 // Convenience functions
-export const startPerformanceTimer = (name: string, metadata?: Record<string, any>) => 
+export const startPerformanceTimer = (name: string, metadata?: Record<string, unknown>) => 
   performanceMonitor.start(name, metadata);
 
 export const endPerformanceTimer = (name: string) => 
   performanceMonitor.end(name);
 
-export const measurePerformance = <T>(name: string, fn: () => T, metadata?: Record<string, any>) => 
+export const measurePerformance = <T>(name: string, fn: () => T, metadata?: Record<string, unknown>) => 
   performanceMonitor.measure(name, fn, metadata);
 
 export const measureAsyncPerformance = <T>(
   name: string, 
   fn: () => Promise<T>, 
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ) => 
   performanceMonitor.measureAsync(name, fn, metadata);
 

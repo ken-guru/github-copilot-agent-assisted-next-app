@@ -171,7 +171,7 @@ describe('activity-order utilities', () => {
     });
 
     it('should handle non-array input gracefully', () => {
-      setActivityOrder('not-an-array' as any);
+      setActivityOrder('not-an-array' as unknown as string[]);
       
       expect(console.error).toHaveBeenCalledWith(
         'Failed to save activity order:',
@@ -181,7 +181,7 @@ describe('activity-order utilities', () => {
     });
 
     it('should handle array with non-string items', () => {
-      const invalidOrder = ['activity-1', 123, null, 'activity-2'] as any;
+      const invalidOrder = ['activity-1', 123, null, 'activity-2'] as unknown as string[];
       
       setActivityOrder(invalidOrder);
       
@@ -195,7 +195,7 @@ describe('activity-order utilities', () => {
       // Mock setItem to throw quota exceeded error
       mockLocalStorage.setItem.mockImplementation(() => {
         const error = new Error('QuotaExceededError');
-        (error as any).name = 'QuotaExceededError';
+        Object.defineProperty(error, 'name', { value: 'QuotaExceededError' });
         throw error;
       });
       
@@ -255,8 +255,8 @@ describe('activity-order utilities', () => {
 
     it('should handle invalid activity ID gracefully', () => {
       addActivityToOrder('');
-      addActivityToOrder(null as any);
-      addActivityToOrder(undefined as any);
+      addActivityToOrder(null as unknown as string);
+      addActivityToOrder(undefined as unknown as string);
       
       expect(console.warn).toHaveBeenCalledTimes(3);
       expect(getActivityOrder()).toEqual([]);
@@ -293,8 +293,8 @@ describe('activity-order utilities', () => {
       setActivityOrder(['activity-1']);
       
       removeActivityFromOrder('');
-      removeActivityFromOrder(null as any);
-      removeActivityFromOrder(undefined as any);
+      removeActivityFromOrder(null as unknown as string);
+      removeActivityFromOrder(undefined as unknown as string);
       
       expect(console.warn).toHaveBeenCalledTimes(3);
       expect(getActivityOrder()).toEqual(['activity-1']);
@@ -340,7 +340,7 @@ describe('activity-order utilities', () => {
     });
 
     it('should handle invalid input gracefully', () => {
-      const sorted = sortActivitiesByOrder(null as any);
+      const sorted = sortActivitiesByOrder(null as unknown as never[]);
       
       expect(sorted).toEqual([]);
       expect(console.warn).toHaveBeenCalledWith(
@@ -389,7 +389,7 @@ describe('activity-order utilities', () => {
     it('should handle invalid input gracefully', () => {
       setActivityOrder(['activity-1']);
       
-      cleanupActivityOrder(null as any);
+      cleanupActivityOrder(null as unknown as string[]);
       
       expect(console.warn).toHaveBeenCalledWith(
         'Invalid existing activity IDs provided to cleanupActivityOrder'
@@ -528,7 +528,7 @@ describe('activity-order utilities', () => {
         setItemCallCount++;
         if (setItemCallCount === 1) {
           const error = new Error('QuotaExceededError');
-          (error as any).name = 'QuotaExceededError';
+          Object.defineProperty(error, 'name', { value: 'QuotaExceededError' });
           throw error;
         }
         // Second call should succeed after cleanup
@@ -575,7 +575,7 @@ describe('activity-order utilities', () => {
       // Mock setItem to always throw quota exceeded
       mockLocalStorage.setItem.mockImplementation(() => {
         const error = new Error('QuotaExceededError');
-        (error as any).name = 'QuotaExceededError';
+        Object.defineProperty(error, 'name', { value: 'QuotaExceededError' });
         throw error;
       });
       
@@ -653,7 +653,7 @@ describe('activity-order utilities', () => {
         '{"version":"1.0","order":[""],"lastUpdated":"2023-01-01"}' // empty string in order
       ];
       
-      corruptedData.forEach((data, index) => {
+      corruptedData.forEach((data) => {
         mockLocalStorage.clear();
         mockLocalStorage.setItem('activity_order_v1', data);
         
@@ -693,7 +693,7 @@ describe('activity-order utilities', () => {
       // Mock setItem to throw quota exceeded error
       mockLocalStorage.setItem.mockImplementation(() => {
         const error = new Error('QuotaExceededError');
-        (error as any).name = 'QuotaExceededError';
+        Object.defineProperty(error, 'name', { value: 'QuotaExceededError' });
         throw error;
       });
       
@@ -727,7 +727,7 @@ describe('activity-order utilities', () => {
       // Mock setItem to throw quota exceeded
       mockLocalStorage.setItem.mockImplementation(() => {
         const error = new Error('QuotaExceededError');
-        (error as any).name = 'QuotaExceededError';
+        Object.defineProperty(error, 'name', { value: 'QuotaExceededError' });
         throw error;
       });
       
@@ -763,7 +763,7 @@ describe('activity-order utilities', () => {
       ];
       
       invalidInputs.forEach(input => {
-        setActivityOrder(input as any);
+        setActivityOrder(input as unknown as string[]);
         
         expect(console.error).toHaveBeenCalledWith(
           'Failed to save activity order:',

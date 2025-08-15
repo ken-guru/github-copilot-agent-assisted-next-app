@@ -237,9 +237,12 @@ describe('ActivityManager Performance Tests', () => {
         act(() => {
           // Trigger a reorder by changing the activity order
           const reorderedActivities = [...activities];
-          const temp = reorderedActivities[i % activities.length];
-          reorderedActivities[i % activities.length] = reorderedActivities[(i + 1) % activities.length];
-          reorderedActivities[(i + 1) % activities.length] = temp;
+          const currentActivity = reorderedActivities[i % activities.length];
+          const nextActivity = reorderedActivities[(i + 1) % activities.length];
+          if (currentActivity && nextActivity) {
+            reorderedActivities[i % activities.length] = nextActivity;
+            reorderedActivities[(i + 1) % activities.length] = currentActivity;
+          }
           mockGetActivitiesInOrder.mockReturnValue(reorderedActivities);
         });
       }
@@ -395,7 +398,7 @@ describe('ActivityManager Performance Tests', () => {
       const startTime = performance.now();
       
       // Simulate multiple drag events
-      activityElements.slice(0, 5).forEach((element, i) => {
+      activityElements.slice(0, 5).forEach((element) => {
         fireEvent.dragStart(element);
         fireEvent.dragEnd(element);
       });

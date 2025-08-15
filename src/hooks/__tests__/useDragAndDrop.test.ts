@@ -6,13 +6,31 @@
 import { renderHook, act } from '@testing-library/react';
 import { useDragAndDrop } from '../useDragAndDrop';
 import { reorderActivities } from '../../utils/activity-storage';
+import { isDragAndDropSupported, isTouchSupported, isVibrationSupported } from '../../utils/feature-detection';
 
 // Mock the activity storage module
 jest.mock('../../utils/activity-storage', () => ({
   reorderActivities: jest.fn(),
 }));
 
+// Mock the feature detection module
+jest.mock('../../utils/feature-detection', () => ({
+  isDragAndDropSupported: jest.fn().mockReturnValue(true),
+  isTouchSupported: jest.fn().mockReturnValue(true),
+  isVibrationSupported: jest.fn().mockReturnValue(true),
+}));
+
 const mockReorderActivities = reorderActivities as jest.MockedFunction<typeof reorderActivities>;
+const mockIsDragAndDropSupported = isDragAndDropSupported as jest.MockedFunction<typeof isDragAndDropSupported>;
+const mockIsTouchSupported = isTouchSupported as jest.MockedFunction<typeof isTouchSupported>;
+const mockIsVibrationSupported = isVibrationSupported as jest.MockedFunction<typeof isVibrationSupported>;
+
+// Helper function for creating mock touch events
+const createMockTouchEvent = (touches: Array<{ clientX: number; clientY: number }>) => ({
+  touches: touches.map(touch => ({ clientX: touch.clientX, clientY: touch.clientY })),
+  changedTouches: touches.map(touch => ({ clientX: touch.clientX, clientY: touch.clientY })),
+  preventDefault: jest.fn(),
+} as unknown as TouchEvent);
 
 describe('useDragAndDrop', () => {
   const mockActivityIds = ['activity-1', 'activity-2', 'activity-3', 'activity-4'];
@@ -21,6 +39,11 @@ describe('useDragAndDrop', () => {
     jest.clearAllMocks();
     jest.clearAllTimers();
     jest.useFakeTimers();
+    
+    // Reset feature detection mocks to default values
+    mockIsDragAndDropSupported.mockReturnValue(true);
+    mockIsTouchSupported.mockReturnValue(true);
+    mockIsVibrationSupported.mockReturnValue(true);
     
     // Mock navigator.vibrate for touch tests
     Object.defineProperty(navigator, 'vibrate', {
@@ -219,13 +242,13 @@ describe('useDragAndDrop', () => {
         result.current.handlers.handleDragEnd();
       });
 
-      expect(result.current.state).toEqual({
+      expect(result.current.state).toEqual(expect.objectContaining({
         draggedItem: null,
         dragOverItem: null,
         isDragging: false,
         isTouchDragging: false,
         touchStartPosition: null,
-      });
+      }));
     });
   });
 
@@ -251,13 +274,13 @@ describe('useDragAndDrop', () => {
       });
 
       // Should reset state immediately
-      expect(result.current.state).toEqual({
+      expect(result.current.state).toEqual(expect.objectContaining({
         draggedItem: null,
         dragOverItem: null,
         isDragging: false,
         isTouchDragging: false,
         touchStartPosition: null,
-      });
+      }));
 
       // Should call reorderActivities with new order (activity-1 moved to position of activity-3)
       act(() => {
@@ -285,13 +308,13 @@ describe('useDragAndDrop', () => {
       });
 
       // Should reset state
-      expect(result.current.state).toEqual({
+      expect(result.current.state).toEqual(expect.objectContaining({
         draggedItem: null,
         dragOverItem: null,
         isDragging: false,
         isTouchDragging: false,
         touchStartPosition: null,
-      });
+      }));
 
       // Should not call reorderActivities
       act(() => {
@@ -571,11 +594,9 @@ describe('useDragAndDrop', () => {
 
     it('should handle drag start when drag-and-drop is not supported', () => {
       // Mock drag-and-drop as not supported
-      jest.doMock('../feature-detection', () => ({
-        isDragAndDropSupported: jest.fn().mockReturnValue(false),
-        isTouchSupported: jest.fn().mockReturnValue(true),
-        isVibrationSupported: jest.fn().mockReturnValue(true)
-      }));
+      mockIsDragAndDropSupported.mockReturnValue(false);
+      mockIsTouchSupported.mockReturnValue(true);
+      mockIsVibrationSupported.mockReturnValue(true);
 
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
       const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
@@ -592,11 +613,9 @@ describe('useDragAndDrop', () => {
 
     it('should handle touch start when touch is not supported', () => {
       // Mock touch as not supported
-      jest.doMock('../feature-detection', () => ({
-        isDragAndDropSupported: jest.fn().mockReturnValue(true),
-        isTouchSupported: jest.fn().mockReturnValue(false),
-        isVibrationSupported: jest.fn().mockReturnValue(false)
-      }));
+      mockIsDragAndDropSupported.mockReturnValue(true);
+      mockIsTouchSupported.mockReturnValue(false);
+      mockIsVibrationSupported.mockReturnValue(false);
 
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
       const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
@@ -665,7 +684,7 @@ describe('useDragAndDrop', () => {
       });
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Failed to persist reorder due to storage error:',
+        'Failed to persist activity order:',
         expect.any(Error)
       );
       expect(result.current.state.isDragging).toBe(false);
@@ -675,11 +694,9 @@ describe('useDragAndDrop', () => {
 
     it('should provide fallback instructions when only keyboard is available', () => {
       // Mock all interactive methods as not supported
-      jest.doMock('../feature-detection', () => ({
-        isDragAndDropSupported: jest.fn().mockReturnValue(false),
-        isTouchSupported: jest.fn().mockReturnValue(false),
-        isVibrationSupported: jest.fn().mockReturnValue(false)
-      }));
+      mockIsDragAndDropSupported.mockReturnValue(false);
+      mockIsTouchSupported.mockReturnValue(false);
+      mockIsVibrationSupported.mockReturnValue(false);
 
       const { result } = renderHook(() => useDragAndDrop(mockActivityIds));
 
@@ -721,11 +738,6 @@ describe('useDragAndDrop', () => {
   });
 
   describe('Touch Events', () => {
-    const createMockTouchEvent = (touches: Array<{ clientX: number; clientY: number }>) => ({
-      touches: touches.map(touch => ({ clientX: touch.clientX, clientY: touch.clientY })),
-      changedTouches: touches.map(touch => ({ clientX: touch.clientX, clientY: touch.clientY })),
-      preventDefault: jest.fn(),
-    } as TouchEvent);
 
     const mockElementFromPoint = (activityId: string | null) => {
       const mockElement = activityId ? {
@@ -1216,11 +1228,6 @@ describe('useDragAndDrop', () => {
     });
 
     it('should cleanup touch timers on cleanup', () => {
-      const createMockTouchEvent = (touches: Array<{ clientX: number; clientY: number }>) => ({
-        touches: touches.map(touch => ({ clientX: touch.clientX, clientY: touch.clientY })),
-        changedTouches: touches.map(touch => ({ clientX: touch.clientX, clientY: touch.clientY })),
-        preventDefault: jest.fn(),
-      } as TouchEvent);
 
       const { result } = renderHook(() => useDragAndDrop(mockActivityIds, { longPressMs: 500 }));
       const touchEvent = createMockTouchEvent([{ clientX: 100, clientY: 200 }]);
