@@ -232,9 +232,8 @@ function AppContent() {
         if (sessionData.currentActivityId && sessionData.activities) {
           const restoredActivity = sessionData.activities.find(a => a.id === sessionData.currentActivityId);
           if (restoredActivity) {
-            // Restore the current activity selection, but don't auto-start timer
-            // Timer will be auto-started by shouldRestartTimer flag if needed
-            handleActivitySelect(restoredActivity, true); // justAdd = true to avoid auto-starting
+            // Restore the current activity selection - use isRestoration flag to properly set UI state
+            handleActivitySelect(restoredActivity, false, true); // isRestoration = true
           }
         }
         

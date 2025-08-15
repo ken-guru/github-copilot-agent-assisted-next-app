@@ -46,13 +46,19 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     restoreTimelineEntries
   } = useTimelineEntries();
 
-  const handleActivitySelect = useCallback((activity: Activity | null, justAdd: boolean = false) => {
+  const handleActivitySelect = useCallback((activity: Activity | null, justAdd: boolean = false, isRestoration: boolean = false) => {
     if (activity) {
       // Add activity to the state machine if it's not already there
       addActivity(activity.id);
       
       // If we're just adding (initializing), don't start the activity
-      if (justAdd) {
+      if (justAdd && !isRestoration) {
+        return;
+      }
+
+      // If this is a restoration, just set the current activity without state changes
+      if (isRestoration) {
+        setCurrentActivity(activity);
         return;
       }
 
