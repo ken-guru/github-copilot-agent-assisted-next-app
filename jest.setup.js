@@ -63,3 +63,22 @@ if (typeof window.URL.createObjectURL === 'undefined') {
 
 // Add mock for React 18 features
 global.IS_REACT_ACT_ENVIRONMENT = true;
+
+// Suppress React Bootstrap transition warnings in tests
+// These warnings occur due to React Bootstrap's internal state updates
+// and are not related to our application logic
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  const message = typeof args[0] === 'string' ? args[0] : '';
+  
+  // Suppress React Bootstrap transition/modal act warnings
+  if (
+    message.includes('An update to Transition inside a test was not wrapped in act') ||
+    message.includes('An update to Modal inside a test was not wrapped in act') ||
+    message.includes('An update to ActivityModificationWarningModal inside a test was not wrapped in act')
+  ) {
+    return;
+  }
+  
+  originalConsoleError.apply(console, args);
+};

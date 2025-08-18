@@ -155,6 +155,13 @@ npm run cypress:run        # E2E tests (if workflow changes)
 
 **Use Cypress for**: Complete user workflows spanning multiple pages, file operations, service worker UI interactions
 
+### Test File Management Rules
+**🚨 CRITICAL: NEVER create new test files when debugging failing tests**
+- **MODIFY existing tests** instead of creating new simplified versions
+- **FIX broken tests in place** rather than creating duplicates
+- **DELETE any temporary test files** created during debugging sessions
+- **AVOID test file proliferation** that clutters test runs and CI/CD pipeline
+
 **📚 Complete Testing Guide**: [../docs/workflows/testing-procedures.md](../docs/workflows/testing-procedures.md)
 
 ## DOCUMENTATION AND MEMORY
