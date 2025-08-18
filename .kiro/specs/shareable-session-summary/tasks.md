@@ -6,7 +6,7 @@
 
 1. **Tests**: `npm test` - All tests must pass
 2. **Linting**: `npm run lint` - No ESLint errors or warnings
-3. **Type Checking**: `npx tsc --noEmit` - No TypeScript compilation errors
+3. **Type Checking**: `npm run type-check` - No TypeScript compilation errors
 4. **Build**: `npm run build` - Application must build successfully
 
 **Failure to meet these requirements will cause GitHub checks and Vercel deployment to fail. No task should be considered complete until all quality gates pass.**

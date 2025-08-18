@@ -115,7 +115,7 @@ describe('Security Validation', () => {
       };
 
       const result = validateSessionForSharing(dataWithXSS);
-      expect(result.activities[0].name).toBe('Task');
+      expect(result.activities[0]?.name).toBe('Task');
     });
   });
 });

@@ -31,10 +31,10 @@ describe('UUID Utilities', () => {
       const parts = uuid.split('-');
       
       // Version should be 4
-      expect(parts[2][0]).toBe('4');
+      expect(parts[2]?.[0]).toBe('4');
       
       // Variant should be 8, 9, a, or b
-      expect(['8', '9', 'a', 'b']).toContain(parts[3][0].toLowerCase());
+      expect(['8', '9', 'a', 'b']).toContain(parts[3]?.[0]?.toLowerCase());
     });
   });
 
@@ -125,7 +125,7 @@ describe('UUID Utilities', () => {
       ];
 
       invalidIds.forEach(id => {
-        expect(() => validateSessionSharingId(id)).toThrow();
+        expect(() => validateSessionSharingId(id as string)).toThrow();
       });
     });
   });
