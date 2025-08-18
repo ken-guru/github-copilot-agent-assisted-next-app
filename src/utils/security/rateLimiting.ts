@@ -262,15 +262,15 @@ export class DuplicateDetector {
   /**
    * Generate hash for session data
    */
-  private generateHash(data: any): string {
-    const serialized = JSON.stringify(data, Object.keys(data).sort());
+  private generateHash(data: unknown): string {
+    const serialized = JSON.stringify(data, data && typeof data === 'object' ? Object.keys(data as Record<string, unknown>).sort() : undefined);
     return btoa(serialized).slice(0, 32); // Simple hash for duplicate detection
   }
 
   /**
    * Check if session data is a duplicate
    */
-  checkDuplicate(ip: string, sessionData: any): boolean {
+  checkDuplicate(ip: string, sessionData: unknown): boolean {
     const hash = this.generateHash(sessionData);
     const key = `${ip}:${hash}`;
     const now = Date.now();

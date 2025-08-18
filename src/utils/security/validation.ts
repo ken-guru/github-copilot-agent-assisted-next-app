@@ -98,7 +98,7 @@ export class InputSanitizer {
   /**
    * Sanitize session data by cleaning all string fields
    */
-  static sanitizeSessionData(data: any): any {
+  static sanitizeSessionData(data: unknown): unknown {
     if (typeof data === 'string') {
       return this.sanitizeHtml(data);
     }
@@ -108,7 +108,7 @@ export class InputSanitizer {
     }
     
     if (data && typeof data === 'object') {
-      const sanitized: any = {};
+      const sanitized: Record<string, unknown> = {};
       for (const [key, value] of Object.entries(data)) {
         sanitized[key] = this.sanitizeSessionData(value);
       }
@@ -174,7 +174,7 @@ export class SizeValidator {
   /**
    * Validate session data size
    */
-  static validateSessionSize(data: any): void {
+  static validateSessionSize(data: unknown): void {
     const serialized = JSON.stringify(data);
     
     // Use Buffer.byteLength in Node.js environment, TextEncoder in browser
@@ -196,7 +196,7 @@ export class SizeValidator {
   /**
    * Validate activity count limits
    */
-  static validateActivityLimits(activities: any[], skippedActivities: any[]): void {
+  static validateActivityLimits(activities: unknown[], skippedActivities: unknown[]): void {
     if (activities.length > this.MAX_ACTIVITY_COUNT) {
       throw new Error(`Too many activities: ${activities.length} (max: ${this.MAX_ACTIVITY_COUNT})`);
     }

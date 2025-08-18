@@ -13,10 +13,6 @@ export function generateCSRFToken(): string {
     // Browser environment
     array = new Uint8Array(32);
     crypto.getRandomValues(array);
-  } else if (typeof require !== 'undefined') {
-    // Node.js environment
-    const nodeCrypto = require('crypto');
-    array = new Uint8Array(nodeCrypto.randomBytes(32));
   } else {
     // Fallback (not cryptographically secure, for testing only)
     array = new Uint8Array(32);
@@ -228,10 +224,6 @@ export function generateSessionId(): string {
     // Browser environment
     array = new Uint8Array(16);
     crypto.getRandomValues(array);
-  } else if (typeof require !== 'undefined') {
-    // Node.js environment
-    const nodeCrypto = require('crypto');
-    array = new Uint8Array(nodeCrypto.randomBytes(16));
   } else {
     // Fallback (not cryptographically secure, for testing only)
     array = new Uint8Array(16);

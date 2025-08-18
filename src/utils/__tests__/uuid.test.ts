@@ -119,9 +119,9 @@ describe('UUID Utilities', () => {
         '',
         '   ',
         'not-a-uuid',
-        null as any,
-        undefined as any,
-        123 as any,
+        null as unknown,
+        undefined as unknown,
+        123 as unknown,
       ];
 
       invalidIds.forEach(id => {

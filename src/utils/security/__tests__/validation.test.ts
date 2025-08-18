@@ -1,6 +1,5 @@
 import {
   UUIDSchema,
-  SessionSummaryDataSchema,
   InputSanitizer,
   ContentFilter,
   SizeValidator,
