@@ -44,6 +44,17 @@ export {
   CSRFTokenManager,
 } from './csrf';
 
+// Import types and functions for internal use
+import { 
+  MemoryRateLimiter, 
+  getClientIP, 
+  RateLimitError 
+} from './rateLimiting';
+import { 
+  generateSessionId, 
+  withCSRFProtection 
+} from './csrf';
+
 /**
  * Security configuration constants
  */
@@ -94,9 +105,10 @@ export async function validateSecureRequest(
     requireCSRF?: boolean;
     rateLimiter?: MemoryRateLimiter;
     maxSize?: number;
+    sessionId?: string;
   } = {}
 ): Promise<void> {
-  const { requireCSRF = false, rateLimiter, maxSize } = options;
+  const { requireCSRF = false, rateLimiter, maxSize, sessionId } = options;
 
   // Check request size if specified
   if (maxSize && request.headers.get('content-length')) {
@@ -117,7 +129,7 @@ export async function validateSecureRequest(
 
   // CSRF protection for state-changing operations
   if (requireCSRF && ['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method)) {
-    const sessionId = generateSessionId(); // In real implementation, get from session
-    await withCSRFProtection(request, sessionId, async () => {});
+    const csrfSessionId = sessionId || generateSessionId();
+    await withCSRFProtection(request, csrfSessionId, async () => {});
   }
 }

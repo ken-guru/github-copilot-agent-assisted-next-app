@@ -52,3 +52,25 @@ export interface TimelineEntry {
     };
   };
 }
+
+// Re-export session sharing types for convenience
+export type {
+  ActivitySummary,
+  SkippedActivity,
+  SharedTimelineEntry,
+  SessionSummaryData,
+  SessionMetadata,
+  StoredSession,
+  ShareSessionRequest,
+  ShareSessionResponse,
+  GetSessionResponse,
+  DuplicateSessionRequest,
+  DuplicateSessionResponse,
+  ActivityDuplicationData,
+  SessionSharingError,
+  ShareSessionControlsProps,
+  SharedSummaryProps,
+  SharedSessionPageProps,
+  SessionSharingState,
+  SessionSharingContext,
+} from './session-sharing';
