@@ -1,10 +1,12 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Card, Form, Spinner, Alert, InputGroup } from 'react-bootstrap';
 import { useToast } from '@/contexts/ToastContext';
 import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
+import ActivityModificationWarningModal, { ActivityModificationWarningModalRef } from '@/components/ActivityModificationWarningModal';
+import { useActivityModificationGuard } from '@/hooks/useActivityModificationGuard';
 import type { ChatCompletion } from '@/types/ai';
 import { MAX_AI_ACTIVITIES } from '@/types/ai';
 
@@ -20,6 +22,13 @@ export default function AIPlannerPage() {
   const { apiKey, setApiKey, clearApiKey } = useApiKey();
   const { callOpenAI } = useOpenAIClient();
   const PROMPT_STORAGE_KEY = 'ai_planner_last_prompt';
+
+  // Activity modification warning system
+  const activityWarningModalRef = useRef<ActivityModificationWarningModalRef>(null);
+  const activityModificationGuard = useActivityModificationGuard({
+    warningModalRef: activityWarningModalRef as React.RefObject<ActivityModificationWarningModalRef>,
+    enableWarnings: true
+  });
 
   useEffect(() => {
     // Hydration guard for client-only rendering
@@ -119,12 +128,29 @@ export default function AIPlannerPage() {
           createdAt: now,
           isActive: true
         }));
-        try {
-          localStorage.setItem('activities_v1', JSON.stringify(planned));
-          addToast({ message: 'Activities replaced by AI plan', variant: 'success' });
-          router.push('/');
-        } catch {
-          throw new Error('Unable to save activities locally');
+
+        // Use activity modification guard to warn about session loss
+        const userConfirmed = await activityModificationGuard.guardedExecute({
+          operationType: 'ai-generate',
+          operationDescription: 'generating AI activities',
+          operation: async () => {
+            localStorage.setItem('activities_v1', JSON.stringify(planned));
+          },
+          onSuccess: () => {
+            addToast({ message: 'Activities replaced by AI plan', variant: 'success' });
+            router.push('/');
+          },
+          onCancel: () => {
+            addToast({ message: 'AI activity generation cancelled', variant: 'info' });
+          },
+          onError: (error) => {
+            throw new Error(`Unable to save activities locally: ${error.message}`);
+          }
+        });
+
+        // If user cancelled the operation, don't proceed
+        if (!userConfirmed) {
+          return;
         }
       } else {
         throw new Error('Malformed response from AI');
@@ -253,6 +279,11 @@ export default function AIPlannerPage() {
           </Form>
         </Card.Body>
       </Card>
+      
+      {/* Activity Modification Warning Modal */}
+      <ActivityModificationWarningModal
+        ref={activityWarningModalRef}
+      />
     </div>
   );
 }

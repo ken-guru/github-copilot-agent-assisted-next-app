@@ -7,9 +7,11 @@ import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import SessionRecoveryModal, { SessionRecoveryModalRef } from '@/components/SessionRecoveryModal';
+import ActivityModificationWarningModal, { ActivityModificationWarningModalRef } from '@/components/ActivityModificationWarningModal';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import { useSessionPersistence } from '@/hooks/useSessionPersistence';
+import { useActivityModificationGuard } from '@/hooks/useActivityModificationGuard';
 import { SessionRecoveryInfo } from '@/types/session';
 import { getActivities } from '@/utils/activity-storage';
 import resetService from '@/utils/resetService';
@@ -28,6 +30,7 @@ function AppContent() {
   const [recoveryInfo, setRecoveryInfo] = useState<SessionRecoveryInfo | null>(null);
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
   const recoveryModalRef = useRef<SessionRecoveryModalRef>(null);
+  const activityWarningModalRef = useRef<ActivityModificationWarningModalRef>(null);
 
   // Activity state management
   const {
@@ -90,7 +93,12 @@ function AppContent() {
     saveInterval: 10000, // Auto-save every 10 seconds
   });
 
-  // Initialize app and check for recoverable session
+  // Activity modification guard for protecting session recovery
+  // Will be used for future activity edit/delete operations that could affect session recovery
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const activityModificationGuard = useActivityModificationGuard({
+    warningModalRef: activityWarningModalRef
+  });  // Initialize app and check for recoverable session
   useEffect(() => {
     const initApp = async () => {
       // Check for recoverable session before showing loading screen
@@ -298,6 +306,11 @@ function AppContent() {
           cancelText="Cancel"
           onConfirm={dialogActions.onConfirm}
           onCancel={dialogActions.onCancel}
+        />
+        
+        {/* Activity Modification Warning Modal */}
+        <ActivityModificationWarningModal
+          ref={activityWarningModalRef}
         />
         
         <div className="flex-grow-1 d-flex flex-column overflow-x-hidden overflow-y-auto">
