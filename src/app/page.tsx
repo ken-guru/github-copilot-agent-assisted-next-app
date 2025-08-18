@@ -14,6 +14,7 @@ import { useSessionPersistence } from '@/hooks/useSessionPersistence';
 import { useActivityModificationGuard } from '@/hooks/useActivityModificationGuard';
 import { SessionRecoveryInfo } from '@/types/session';
 import { getActivities } from '@/utils/activity-storage';
+import { Activity } from '@/types/activity';
 import resetService from '@/utils/resetService';
 
 // Main application content with loading context
@@ -23,6 +24,9 @@ function AppContent() {
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
   const [sessionStartTime, setSessionStartTime] = useState<string | null>(null);
+  
+  // Session activity snapshot - stores activities when session starts, not current activities
+  const [sessionActivities, setSessionActivities] = useState<Activity[]>([]);
   
   // Timer restoration state for session recovery
   const [restoredElapsedTime, setRestoredElapsedTime] = useState<number>(0);
@@ -48,7 +52,18 @@ function AppContent() {
     getAllActivityStates,
   } = useActivityState({
     onTimerStart: () => {
-      if (!timerActive) startTimer();
+      if (!timerActive) {
+        // Capture session activities snapshot when timer starts
+        const activitiesAtSessionStart = getActivities().filter(a => a.isActive);
+        setSessionActivities(activitiesAtSessionStart);
+        
+        // Set session start time
+        if (!sessionStartTime) {
+          setSessionStartTime(new Date().toISOString());
+        }
+        
+        startTimer();
+      }
     }
   });
   
@@ -66,9 +81,7 @@ function AppContent() {
     shouldAutoStart: shouldRestartTimer
   });
 
-  // Session persistence hook for auto-save and recovery  
-  // Get current activities from storage to ensure consistency
-  const currentActivities = timeSet ? getActivities().filter(a => a.isActive) : [];
+  // Session state for persistence - use session activities snapshot, not current activities
   const sessionState = timeSet ? {
     timeSet,
     totalDuration,
@@ -79,7 +92,7 @@ function AppContent() {
     completedActivityIds,
     removedActivityIds,
     allActivitiesCompleted,
-    activities: currentActivities, // Properly populated from activity storage
+    activities: sessionActivities, // Use session snapshot, not current activities from storage
     activityStates: getAllActivityStates ? getAllActivityStates() : [],
     startTime: sessionStartTime, // Track actual session start time
   } : null;
@@ -169,6 +182,9 @@ function AppContent() {
       setTotalDuration(0);
       resetActivities();
       resetTimer();
+      // Clear session-related states
+      setSessionActivities([]);
+      setSessionStartTime(null);
       // Clear any saved sessions to prevent recovery dialog on reload
       clearSession().catch(error => {
         console.error('Failed to clear session during reset:', error);
@@ -337,6 +353,7 @@ function AppContent() {
                   timerActive={timerActive}
                   onReset={handleReset}
                   onExtendDuration={handleExtendDuration}
+                  activityModificationGuard={activityModificationGuard}
                 />
               </div>
               <div className="col-lg-7 d-none d-lg-flex flex-column overflow-hidden">

@@ -7,6 +7,7 @@ import TimerProgressSection from './TimerProgressSection';
 import ActivityFormSection from './ActivityFormSection';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
+import { UseActivityModificationGuardResult } from '../hooks/useActivityModificationGuard';
 
 // Use canonical Activity type
 type Activity = CanonicalActivity & { colors?: ColorSet };
@@ -28,6 +29,8 @@ interface ActivityManagerProps {
   onReset?: () => void;
   // Extend duration callback for adding 1 minute
   onExtendDuration?: () => void;
+  // Activity modification guard for session protection
+  activityModificationGuard?: UseActivityModificationGuardResult;
 }
 
 export default function ActivityManager({ 
@@ -42,7 +45,8 @@ export default function ActivityManager({
   totalDuration = 0,
   timerActive = false,
   onReset,
-  onExtendDuration
+  onExtendDuration,
+  activityModificationGuard
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [showHiddenList, setShowHiddenList] = useState(false);
@@ -101,19 +105,42 @@ export default function ActivityManager({
     };
   }, []);
 
-  const handleAddActivity = useCallback((newActivity: Activity) => {
+  const handleAddActivity = useCallback(async (newActivity: Activity) => {
     // Activity already has smart color selection from the form
     const activityWithColors: Activity = {
       ...newActivity,
       colors: getNextAvailableColorSet(newActivity.colorIndex)
     };
-    setActivities(prev => [...prev, activityWithColors]);
-    persistActivity(newActivity); // Persist without the colors property which is UI-only
-    onActivitySelect(activityWithColors, true);
-    
-    // Clear preserved form values after successful submission
-    setPreservedFormValues({ name: '', description: '' });
-  }, [onActivitySelect]);
+
+    const executeAdd = async () => {
+      setActivities(prev => [...prev, activityWithColors]);
+      persistActivity(newActivity); // Persist without the colors property which is UI-only
+      onActivitySelect(activityWithColors, true);
+      
+      // Clear preserved form values after successful submission
+      setPreservedFormValues({ name: '', description: '' });
+    };
+
+    // Use activity modification guard if available
+    if (activityModificationGuard) {
+      const success = await activityModificationGuard.guardedExecute({
+        operationType: 'create',
+        operationDescription: `adding "${newActivity.name}"`,
+        operation: executeAdd,
+        onError: (error) => {
+          console.error('Failed to add activity:', error);
+        }
+      });
+      
+      if (!success) {
+        // User cancelled or error occurred - don't proceed
+        return;
+      }
+    } else {
+      // No guard available - execute directly
+      await executeAdd();
+    }
+  }, [onActivitySelect, activityModificationGuard]);
 
   const handleActivitySelect = useCallback((activity: Activity) => {
     if (activity.id === currentActivityId) {
@@ -126,27 +153,54 @@ export default function ActivityManager({
     }
   }, [currentActivityId, onActivitySelect]);
 
-  const handleRemoveActivity = useCallback((id: string) => {
-    if (timerActive) {
-      // Session-only hide/skip: do NOT persist delete
-      if (id === currentActivityId) {
-        onActivitySelect(null);
+  const handleRemoveActivity = useCallback(async (id: string) => {
+    // Find the activity name for better user feedback
+    const activity = activities.find(a => a.id === id);
+    const activityName = activity?.name || 'activity';
+
+    const executeRemove = async () => {
+      if (timerActive) {
+        // Session-only hide/skip: do NOT persist delete
+        if (id === currentActivityId) {
+          onActivitySelect(null);
+        }
+        if (onActivityRemove) {
+          onActivityRemove(id);
+        }
+      } else {
+        // CRUD-like behavior (not typical for this component, but preserve existing logic)
+        if (id === currentActivityId) {
+          onActivitySelect(null);
+        }
+        setActivities(prev => prev.filter(activity => activity.id !== id));
+        persistDeleteActivity(id);
+        if (onActivityRemove) {
+          onActivityRemove(id);
+        }
       }
-      if (onActivityRemove) {
-        onActivityRemove(id);
+    };
+
+    // Use activity modification guard if available and not in timer mode
+    // (during timer mode, removal is just hiding, not permanent deletion)
+    if (activityModificationGuard && !timerActive) {
+      const success = await activityModificationGuard.guardedExecute({
+        operationType: 'delete',
+        operationDescription: `deleting "${activityName}"`,
+        operation: executeRemove,
+        onError: (error) => {
+          console.error('Failed to remove activity:', error);
+        }
+      });
+      
+      if (!success) {
+        // User cancelled or error occurred - don't proceed
+        return;
       }
     } else {
-      // CRUD-like behavior (not typical for this component, but preserve existing logic)
-      if (id === currentActivityId) {
-        onActivitySelect(null);
-      }
-      setActivities(prev => prev.filter(activity => activity.id !== id));
-      persistDeleteActivity(id);
-      if (onActivityRemove) {
-        onActivityRemove(id);
-      }
+      // No guard available or timer active - execute directly
+      await executeRemove();
     }
-  }, [currentActivityId, onActivitySelect, onActivityRemove, timerActive]);
+  }, [currentActivityId, onActivitySelect, onActivityRemove, timerActive, activities, activityModificationGuard]);
 
   const handleRestoreActivity = useCallback((id: string) => {
     onActivityRestore?.(id);
