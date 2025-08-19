@@ -1,6 +1,7 @@
 /**
  * Service Worker retry functionality
  */
+// Local types for the serviceWorker utilities (kept local to this folder on purpose)
 import { ServiceWorkerConfig } from './types';
 import { handleServiceWorkerError } from './errors';
 

@@ -1,6 +1,7 @@
 /**
  * Service Worker update handling functionality
  */
+// Local types for the serviceWorker utilities (kept local to this folder on purpose)
 import { ServiceWorkerConfig, UpdateHandlerFn } from './types';
 import { handleServiceWorkerError } from './errors';
 

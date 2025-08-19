@@ -1,6 +1,7 @@
 /**
  * Core Service Worker registration functionality
  */
+// Local types for the serviceWorker utilities (kept local to this folder on purpose)
 import { ServiceWorkerConfig } from './types';
 import { isLocalhost } from './errors';
 import { handleRegistration } from './updates';
