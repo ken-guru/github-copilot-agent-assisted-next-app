@@ -29,7 +29,8 @@ describe('POST /api/sessions/share', () => {
     // Minimal Request-like object that the handler expects
     const req = {
       json: async () => body,
-      headers: { get: (__: string) => undefined },
+      // headers.get is not used by the handler in tests — implement no-arg form to avoid unused-var lint
+      headers: { get: () => undefined },
     } as unknown as Request;
 
     // call handler
