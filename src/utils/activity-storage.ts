@@ -4,6 +4,8 @@
  * @see docs/components/activity-storage.md
  */
 import { Activity } from '../types/activity';
+import { ActivitySummary } from '../types/session-sharing';
+import { generateUUID } from './uuid';
 import defaultActivitiesConfig from '../../config/default-activities.json';
 
 const STORAGE_KEY = 'activities_v1';
@@ -120,4 +122,81 @@ export function validateActivity(activity: unknown): activity is Activity {
 export function resetActivitiesToDefault(): void {
   const defaultActivities = loadDefaultActivities();
   saveActivities(defaultActivities);
+}
+
+/**
+ * Convert ActivitySummary to Activity for local storage
+ * @param activitySummary ActivitySummary from shared session
+ * @returns Activity object for local storage
+ */
+function convertActivitySummaryToActivity(activitySummary: ActivitySummary): Activity {
+  return {
+    id: generateUUID(),
+    name: activitySummary.name,
+    colorIndex: activitySummary.colorIndex,
+    createdAt: new Date().toISOString(),
+    isActive: true,
+    description: `Duplicated from shared session`
+  };
+}
+
+/**
+ * Replace current activities with duplicated activities from shared session
+ * @param activitySummaries Array of ActivitySummary objects from shared session
+ * @param originalSessionId UUID of the original shared session
+ */
+export function duplicateActivitiesFromSession(
+  activitySummaries: ActivitySummary[],
+  originalSessionId: string
+): void {
+  try {
+    // Convert ActivitySummary objects to Activity objects
+    const newActivities = activitySummaries.map(convertActivitySummaryToActivity);
+    
+    // Store the original session ID for potential linking
+    localStorage.setItem('originalSessionId', originalSessionId);
+    localStorage.setItem('activitiesDuplicatedAt', new Date().toISOString());
+    
+    // Replace current activities
+    saveActivities(newActivities);
+  } catch (error) {
+    console.error('Error duplicating activities:', error);
+    throw new Error('Failed to duplicate activities from shared session');
+  }
+}
+
+/**
+ * Get the original session ID if activities were duplicated from a shared session
+ * @returns Original session UUID or null if not duplicated
+ */
+export function getOriginalSessionId(): string | null {
+  try {
+    return localStorage.getItem('originalSessionId');
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Clear the original session tracking information
+ */
+export function clearOriginalSessionTracking(): void {
+  try {
+    localStorage.removeItem('originalSessionId');
+    localStorage.removeItem('activitiesDuplicatedAt');
+  } catch {
+    // Silently fail if localStorage is not available
+  }
+}
+
+/**
+ * Check if current activities were duplicated from a shared session
+ * @returns True if activities were duplicated, false otherwise
+ */
+export function areActivitiesDuplicated(): boolean {
+  try {
+    return localStorage.getItem('originalSessionId') !== null;
+  } catch {
+    return false;
+  }
 }

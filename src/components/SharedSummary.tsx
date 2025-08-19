@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, Alert, Row, Col, ListGroup, Badge, Button } from 'react-bootstrap';
 import { isDarkMode, internalActivityColors } from '../utils/colors';
 import { useToast } from '@/contexts/ToastContext';
-import { saveActivities } from '@/utils/activity-storage';
-import { generateUUID } from '@/utils/uuid';
-import type { SharedSummaryProps, ActivitySummary } from '@/types/session-sharing';
-import type { Activity } from '@/types/activity';
+import { handleActivityDuplication } from '@/utils/session-sharing/duplication';
+import type { SharedSummaryProps } from '@/types/session-sharing';
 
 export default function SharedSummary({ 
   sessionData,
@@ -148,47 +146,36 @@ export default function SharedSummary({
 
     setIsDuplicating(true);
 
-    try {
-      // Convert ActivitySummary to Activity format for local storage
-      const activitiesToDuplicate: Activity[] = sessionData.activities.map((activitySummary: ActivitySummary) => ({
-        id: generateUUID(),
-        name: activitySummary.name,
-        colorIndex: activitySummary.colorIndex,
-        createdAt: new Date().toISOString(),
-        isActive: true,
-        description: `Duplicated from shared session`
-      }));
-
-      // Save activities to local storage
-      saveActivities(activitiesToDuplicate);
-
-      // Call the parent callback
-      onDuplicateActivities();
-
+    // Extract session ID from current URL
+    const sessionId = window.location.pathname.split('/').pop();
+    if (!sessionId) {
       addToast({
-        message: `Successfully copied ${activitiesToDuplicate.length} activities to your session!`,
-        variant: 'success',
-      });
-
-      // Navigate to main app after a short delay
-      setTimeout(() => {
-        if (window.location.assign) {
-          window.location.assign('/');
-        } else {
-          window.location.href = '/';
-        }
-      }, 1500);
-
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to duplicate activities';
-      
-      addToast({
-        message: errorMessage,
+        message: 'Unable to determine session ID',
         variant: 'error',
       });
-    } finally {
       setIsDuplicating(false);
+      return;
     }
+
+    await handleActivityDuplication(
+      sessionId,
+      () => {
+        // Success callback
+        onDuplicateActivities();
+        addToast({
+          message: `Successfully copied ${sessionData.activities.length} activities to your session!`,
+          variant: 'success',
+        });
+      },
+      (error) => {
+        // Error callback
+        addToast({
+          message: error.message,
+          variant: 'error',
+        });
+        setIsDuplicating(false);
+      }
+    );
   };
 
   const status = getStatusMessage();

@@ -97,7 +97,7 @@ git commit -m "<task description>"
   - **✅ COMMITTED**: "feat: add SharedSummary component for read-only session display"
   - _Requirements: 2.4, 2.5, 2.6, 5.1, 5.3_
 
-- [-] 9. Implement shared session page route (/shared/[uuid]/page.tsx)
+- [x] 9. Implement shared session page route (/shared/[uuid]/page.tsx)
   - Create Next.js App Router dynamic route for shared sessions
   - Implement server-side data fetching with proper error boundaries
   - Add SEO-friendly metadata generation for shared sessions
@@ -106,7 +106,7 @@ git commit -m "<task description>"
   - **🔄 MUST COMMIT**: "feat: add shared session page route with SSR and error handling"
   - _Requirements: 2.1, 2.2, 2.3, 5.3_
 
-- [ ] 10. Build activity duplication functionality
+- [-] 10. Build activity duplication functionality
   - Create API endpoint for activity list extraction from shared sessions
   - Implement client-side activity duplication workflow
   - Integrate with existing activity-storage.ts for local storage updates
