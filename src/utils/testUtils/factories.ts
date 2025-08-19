@@ -5,7 +5,7 @@
  * for various components and tests throughout the application.
  */
 
-import { TimelineEntry } from '../../types/index';
+import { TimelineEntry } from '@/types';
 
 /**
  * Factory function to create timeline entries for testing

@@ -19,8 +19,8 @@ import TimeSetup from '../TimeSetup';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ColorSet } from '../../utils/colors';
 import { getNextAvailableColorSet } from '../../utils/colors';
-import type { TimelineEntry } from '../../types';
-import type { Activity } from '../../types/activity';
+import type { TimelineEntry } from '@/types';
+import type { Activity } from '@/types/activity';
 
 describe('Component Props Interface Validation', () => {
   // Mock functions and data for testing

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import Timeline from '../Timeline';
-import { TimelineEntry } from '../../types';
+import { TimelineEntry } from '@/types';
 import { ToastProvider } from '@/contexts/ToastContext';
 
 // Fixed timestamp for consistent testing
