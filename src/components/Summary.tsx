@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { Card, Alert, Row, Col, ListGroup, Badge, Button, Spinner } from 'react-bootstrap';
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
@@ -7,6 +7,9 @@ import { useToast } from '@/contexts/ToastContext';
 import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
 import type { ChatCompletion } from '@/types/ai';
+import ShareSessionControls from './ShareSessionControls';
+import { extractSessionSummaryData } from '@/utils/session-sharing/extraction';
+import type { SessionSummaryData, ShareSessionResponse } from '@/types/session-sharing';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -34,6 +37,12 @@ export default function Summary({
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const { apiKey } = useApiKey();
   const { callOpenAI } = useOpenAIClient();
+  
+  // Session sharing state management
+  const [isShared, setIsShared] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | undefined>(undefined);
+  const [isGeneratingShare, setIsGeneratingShare] = useState(false);
+  
   // Auto mode: BYOK if available, else server mock route
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
@@ -361,6 +370,61 @@ export default function Summary({
     skippedIds: skippedActivities.map(s => s.id)
   }), [totalDuration, elapsedTime, overtime, stats.idleTime, activityTimes, skippedActivities]);
 
+  // Prepare session data for sharing (memoized for performance)
+  const sessionData = useMemo<SessionSummaryData>(() => {
+    return extractSessionSummaryData(
+      entries,
+      totalDuration,
+      elapsedTime,
+      allActivitiesCompleted,
+      isTimeUp,
+      skippedActivityIds
+    );
+  }, [entries, totalDuration, elapsedTime, allActivitiesCompleted, isTimeUp, skippedActivityIds]);
+
+  // Handle making session shareable
+  const handleMakeShareable = useCallback(async () => {
+    if (isGeneratingShare) return;
+
+    setIsGeneratingShare(true);
+
+    try {
+      const response = await fetch('/api/sessions/share', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionData,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create shareable link');
+      }
+
+      const result = await response.json() as ShareSessionResponse;
+      
+      setIsShared(true);
+      setShareUrl(result.shareUrl);
+      
+      addToast({
+        message: 'Shareable link created successfully!',
+        variant: 'success',
+      });
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create shareable link';
+      
+      addToast({
+        message: errorMessage,
+        variant: 'error',
+      });
+    } finally {
+      setIsGeneratingShare(false);
+    }
+  }, [sessionData, isGeneratingShare, addToast]);
+
   // Early return modified to handle isTimeUp case
   if ((!allActivitiesCompleted && !isTimeUp) || !stats) {
     return null;
@@ -408,41 +472,48 @@ export default function Summary({
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0" role="heading" aria-level={2}>Summary</h5>
         <div className="d-flex gap-2 align-items-center">
-  {apiKey && (!aiSummary) && (
-          <Button
-            variant="outline-primary"
-            size="sm"
-            disabled={aiLoading}
-            onClick={async () => {
-              try {
-                setAiLoading(true);
-    const summary = await generateAISummary();
-    setAiSummary(summary);
-              } catch (e: unknown) {
-                const message = e instanceof Error ? e.message : 'AI summary failed';
-                addToast({ message, variant: 'error' });
-              } finally {
-                setAiLoading(false);
-              }
-            }}
-            title="Generate AI summary"
-          >
-            {aiLoading ? (<><Spinner size="sm" className="me-2" animation="border" />Summarizing…</>) : 'AI Summary'}
-          </Button>
-        )}
-  {/* Auto BYOK mode indicated by presence of apiKey; no manual switch */}
-        {onReset && (
-          <Button 
-            variant="outline-danger" 
-            size="sm" 
-            onClick={onReset}
-            className="d-flex align-items-center"
-            title="Reset to default activities"
-          >
-            <i className="bi bi-arrow-clockwise me-2"></i>
-            Reset
-          </Button>
-        )}
+          <ShareSessionControls
+            sessionData={sessionData}
+            isShared={isShared}
+            shareUrl={shareUrl}
+            onMakeShareable={handleMakeShareable}
+            disabled={isGeneratingShare}
+          />
+          {apiKey && (!aiSummary) && (
+            <Button
+              variant="outline-primary"
+              size="sm"
+              disabled={aiLoading}
+              onClick={async () => {
+                try {
+                  setAiLoading(true);
+                  const summary = await generateAISummary();
+                  setAiSummary(summary);
+                } catch (e: unknown) {
+                  const message = e instanceof Error ? e.message : 'AI summary failed';
+                  addToast({ message, variant: 'error' });
+                } finally {
+                  setAiLoading(false);
+                }
+              }}
+              title="Generate AI summary"
+            >
+              {aiLoading ? (<><Spinner size="sm" className="me-2" animation="border" />Summarizing…</>) : 'AI Summary'}
+            </Button>
+          )}
+          {/* Auto BYOK mode indicated by presence of apiKey; no manual switch */}
+          {onReset && (
+            <Button 
+              variant="outline-danger" 
+              size="sm" 
+              onClick={onReset}
+              className="d-flex align-items-center"
+              title="Reset to default activities"
+            >
+              <i className="bi bi-arrow-clockwise me-2"></i>
+              Reset
+            </Button>
+          )}
         </div>
       </Card.Header>
       

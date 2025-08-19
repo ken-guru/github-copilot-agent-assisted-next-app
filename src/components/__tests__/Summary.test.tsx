@@ -550,6 +550,63 @@ describe('Summary Component', () => {
     jest.unmock('../../utils/colors');
   });
 
+  describe('Session Sharing Integration', () => {
+    const mockTimelineEntries = createMockTimelineEntries();
+
+    it('renders ShareSessionControls component in header', () => {
+      renderWithProviders(
+        <Summary 
+          entries={mockTimelineEntries}
+          totalDuration={3600}
+          elapsedTime={3600}
+          allActivitiesCompleted={true}
+        />
+      );
+      
+      // Check that the sharing controls are present
+      expect(screen.getByRole('button', { name: /Make Shareable/i })).toBeInTheDocument();
+    });
+
+    it('prepares session data correctly for sharing', () => {
+      // This test verifies that the component can prepare session data
+      // The actual sharing logic is tested in the ShareSessionControls component tests
+      renderWithProviders(
+        <Summary 
+          entries={mockTimelineEntries}
+          totalDuration={3600}
+          elapsedTime={3600}
+          allActivitiesCompleted={true}
+          skippedActivityIds={['skipped-1']}
+        />
+      );
+      
+      // Verify the component renders without errors when session data is prepared
+      expect(screen.getByTestId('summary')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Make Shareable/i })).toBeInTheDocument();
+    });
+
+    it('maintains backward compatibility with existing props', () => {
+      // Test that all existing functionality still works with sharing integration
+      const onReset = jest.fn();
+      
+      renderWithProviders(
+        <Summary 
+          entries={mockTimelineEntries}
+          totalDuration={3600}
+          elapsedTime={3600}
+          allActivitiesCompleted={true}
+          onReset={onReset}
+        />
+      );
+      
+      // Verify existing functionality is preserved
+      expect(screen.getByRole('button', { name: /Reset/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Make Shareable/i })).toBeInTheDocument();
+      expect(screen.getByText('Planned Time')).toBeInTheDocument();
+      expect(screen.getByText('Time Spent per Activity')).toBeInTheDocument();
+    });
+  });
+
   describe('Reset Button', () => {
     const mockTimelineEntries = createMockTimelineEntries();
 

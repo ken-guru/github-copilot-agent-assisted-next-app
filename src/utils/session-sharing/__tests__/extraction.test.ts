@@ -273,8 +273,8 @@ describe('extractSessionSummaryData', () => {
       []
     );
 
-    expect(result.activities[0].name).toBe('Study Math');
-    expect(result.timelineEntries[0].activityName).toBe('Study Math');
+    expect(result.activities[0]?.name).toBe('Study Math');
+    expect(result.timelineEntries[0]?.activityName).toBe('Study Math');
   });
 
   it('handles ongoing activities (no endTime)', () => {
@@ -298,7 +298,7 @@ describe('extractSessionSummaryData', () => {
       []
     );
 
-    expect(result.timelineEntries[0].endTime).toBeNull();
-    expect(result.activities[0].duration).toBeGreaterThan(0); // Should calculate duration to now
+    expect(result.timelineEntries[0]?.endTime).toBeNull();
+    expect(result.activities[0]?.duration).toBeGreaterThan(0); // Should calculate duration to now
   });
 });
