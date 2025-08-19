@@ -29,13 +29,10 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 // Mock window.location
-Object.defineProperty(window, 'location', {
-  value: {
-    href: ''
-  },
-  writable: true,
-  configurable: true
-});
+delete (window as unknown as { location: unknown }).location;
+(window as unknown as { location: { href: string } }).location = {
+  href: ''
+};
 
 describe('duplication utilities', () => {
   beforeEach(() => {

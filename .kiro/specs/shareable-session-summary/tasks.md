@@ -19,9 +19,9 @@
 # 2. Run quality gates
 npm test && npm run lint && npm run type-check && npm run build
 
-# 3. ALWAYS commit with the description of the completed task
+# 3. ALWAYS commit with the full bullet point description of the completed task
 git add .
-git commit -m "<task description>"
+git commit -m "<task description including bullet points>"
 ```
 
 **⚠️ NO TASK IS COMPLETE WITHOUT BOTH QUALITY GATES AND THE COMMIT STEP.**
@@ -106,7 +106,7 @@ git commit -m "<task description>"
   - **🔄 MUST COMMIT**: "feat: add shared session page route with SSR and error handling"
   - _Requirements: 2.1, 2.2, 2.3, 5.3_
 
-- [-] 10. Build activity duplication functionality
+- [x] 10. Build activity duplication functionality
   - Create API endpoint for activity list extraction from shared sessions
   - Implement client-side activity duplication workflow
   - Integrate with existing activity-storage.ts for local storage updates
@@ -115,7 +115,7 @@ git commit -m "<task description>"
   - **🔄 MUST COMMIT**: "feat: implement activity duplication from shared sessions"
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-- [ ] 11. Implement session linking and relationship tracking
+- [-] 11. Implement session linking and relationship tracking
   - Create API route for linked session creation (POST /api/sessions/duplicate)
   - Add relationship validation to prevent circular references
   - Implement bidirectional linking between original and derived sessions
