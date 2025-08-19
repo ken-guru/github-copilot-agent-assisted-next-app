@@ -234,6 +234,24 @@ interface StoredSession {
 }
 ```
 
+## Rate limiting decision
+
+For the initial rollout we intentionally keep the rate-limiting approach simple and low-friction:
+
+- Default: keep the in-memory (process-local) rate limiter for `POST /api/sessions/share`.
+  - Rationale: the current userbase is small and traffic is expected to be low; an in-memory limiter prevents accidental rapid re-submissions during development and early adoption without requiring additional infrastructure.
+  - This limiter is already implemented and covered by unit tests in the repository.
+
+- Migration path (when scale or abuse requires it):
+  1. Implement a blob-store-based adapter that appends one small event object per request under a `rate-limits/<key>/` prefix and counts recent events by listing and filtering timestamps in object names. This keeps all storage in Vercel Blob Store and avoids adding other services.
+  2. If strict atomic counters or higher QPS are later required, add a managed centralized counter store (Upstash/Vercel KV or managed Redis) as a drop-in adapter. The limiter code should follow an adapter pattern to make swapping implementations straightforward.
+
+- Failure semantics and monitoring:
+  - The in-memory limiter is permissive across multiple instances (counters are per-process) — monitor share endpoint metrics to detect abnormal request patterns and promote to a distributed adapter when needed.
+  - For distributed adapters, prefer fail-open behavior on adapter errors (allow requests and log errors) to avoid blocking legitimate users during transient infra problems; tune to your security model if stricter behavior is required.
+
+This keeps the initial deployment simple while documenting a clear upgrade path when the app grows.
+
 ## Error Handling
 
 ### Client-Side Error Scenarios
