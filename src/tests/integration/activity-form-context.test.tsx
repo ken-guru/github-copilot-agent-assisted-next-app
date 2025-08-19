@@ -4,7 +4,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ActivityForm from '../../components/feature/ActivityForm';
-import { Activity } from '../../types/activity';
+import { Activity } from '@/types/activity';
 
 // Mock the theme hook
 jest.mock('../../hooks/useThemeReactive', () => ({

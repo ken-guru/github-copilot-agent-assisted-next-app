@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Card, Badge } from 'react-bootstrap';
-import { Activity } from '../types/activity';
+import { Activity } from '@/types/activity';
 import { getActivityColorsForTheme } from '../utils/colors';
 import { useThemeReactive } from '../hooks/useThemeReactive';
 import { TimelineEntry } from '@/types';

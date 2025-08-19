@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ActivityList from '../feature/ActivityList'; // Ensure this file exists and is exported correctly
-import { DEFAULT_ACTIVITIES } from '../../types/activity';
+import { DEFAULT_ACTIVITIES } from '@/types/activity';
 
 describe('ActivityList', () => {
   it('renders all activities', () => {

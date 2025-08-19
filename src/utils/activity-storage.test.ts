@@ -7,7 +7,7 @@ import {
   validateActivity,
   resetActivitiesToDefault,
 } from './activity-storage';
-import { Activity, DEFAULT_ACTIVITIES } from '../types/activity';
+import { Activity, DEFAULT_ACTIVITIES } from '@/types/activity';
 
 describe('activity-storage', () => {
   beforeEach(() => {

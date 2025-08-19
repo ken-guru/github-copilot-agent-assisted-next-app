@@ -6,7 +6,7 @@ import { ActivityButton } from './ActivityButton';
 import TimerProgressSection from './TimerProgressSection';
 import ActivityFormSection from './ActivityFormSection';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
-import { Activity as CanonicalActivity } from '../types/activity';
+import { Activity as CanonicalActivity } from '@/types/activity';
 
 // Use canonical Activity type
 type Activity = CanonicalActivity & { colors?: ColorSet };

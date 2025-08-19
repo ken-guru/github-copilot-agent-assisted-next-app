@@ -3,7 +3,7 @@
  * @module activity-storage
  * @see docs/components/activity-storage.md
  */
-import { Activity } from '../types/activity';
+import { Activity } from '@/types/activity';
 import defaultActivitiesConfig from '../../config/default-activities.json';
 
 const STORAGE_KEY = 'activities_v1';

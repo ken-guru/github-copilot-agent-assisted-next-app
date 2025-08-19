@@ -4,7 +4,7 @@ import { ColorSet } from '../utils/colors';
 import ActivityForm from './feature/ActivityForm';
 import OvertimeWarning from './OvertimeWarning';
 import ClientOnly from './ClientOnly';
-import { Activity as CanonicalActivity } from '../types/activity';
+import { Activity as CanonicalActivity } from '@/types/activity';
 
 type Activity = CanonicalActivity & { colors?: ColorSet };
 

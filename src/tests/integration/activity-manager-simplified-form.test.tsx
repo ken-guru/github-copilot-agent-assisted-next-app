@@ -4,7 +4,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ActivityManager from '../../components/ActivityManager';
-import { Activity } from '../../types/activity';
+import { Activity } from '@/types/activity';
 import * as activityStorage from '../../utils/activity-storage';
 
 // Mock the storage utilities

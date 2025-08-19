@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import ActivityManager from '../ActivityManager';
 import * as colorUtils from '../../utils/colors';
-import { DEFAULT_ACTIVITIES } from '../../types/activity';
+import { DEFAULT_ACTIVITIES } from '@/types/activity';
 
 // Mock window.matchMedia and getNextAvailableColorSet
 jest.mock('../../utils/colors', () => ({

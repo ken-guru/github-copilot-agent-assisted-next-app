@@ -1,5 +1,5 @@
 import { getSmartColorIndex } from '../colors';
-import { Activity } from '../../types/activity';
+import { Activity } from '@/types/activity';
 
 describe('getSmartColorIndex', () => {
   it('should return 0 (Green) when no existing activities', () => {
