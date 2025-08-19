@@ -24,6 +24,8 @@ const ActivityCrud: React.FC = () => {
   // Import modal state
   const [showImportConfirm, setShowImportConfirm] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
+  // Store processed activities for preview before overwrite
+  const [processedImportPreview, setProcessedImportPreview] = useState<Activity[] | null>(null);
 
   // Create ref for ActivityForm to trigger submit from modal footer
   const activityFormRef = React.useRef<{ submitForm: () => void }>(null);
@@ -225,6 +227,9 @@ const ActivityCrud: React.FC = () => {
         colorStartIndex: 0
       });
 
+      // Store processed activities for preview in confirmation modal
+      setProcessedImportPreview(processedActivities);
+
       // Confirm overwrite if activities exist
       if (activities.length > 0) {
         setShowImportConfirm(true);
@@ -250,34 +255,75 @@ const ActivityCrud: React.FC = () => {
   };
 
   const confirmImportOverwrite = () => {
+    // Use the processed preview if available; otherwise fall back to re-parsing
+    const finalizeImport = (processedActivities: Activity[]) => {
+      // Save imported activities to localStorage (overwrites existing)
+      saveActivities(processedActivities);
+      // Refresh from localStorage
+      const updatedActivities = getActivities().filter(a => a.isActive);
+      setActivities(updatedActivities);
+      setShowImportConfirm(false);
+      setShowImport(false);
+      setProcessedImportPreview(null);
+      addToast({
+        message: `Successfully imported ${processedActivities.length} activities`,
+        variant: 'success'
+      });
+    };
+
+    if (processedImportPreview && Array.isArray(processedImportPreview)) {
+      try {
+        finalizeImport(processedImportPreview);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to import activities';
+        addToast({ message: errorMessage, variant: 'error' });
+      }
+      return;
+    }
+
+    // Fallback: try to re-parse the file and process
     if (importFile) {
       importFile.text().then(text => {
         try {
           const imported = JSON.parse(text);
+          let importArray: unknown[] = [];
+          if (imported && typeof imported === 'object' && 'sessionData' in (imported as object)) {
+            const maybeImported = imported as Record<string, unknown>;
+            const candidate = maybeImported['sessionData'];
+            if (candidate && typeof candidate === 'object') {
+              const candidateObj = candidate as Record<string, unknown>;
+              const activitiesCandidate = candidateObj['activities'];
+              if (Array.isArray(activitiesCandidate)) {
+                importArray = activitiesCandidate;
+              } else {
+                throw new Error('Shared session format invalid: missing sessionData.activities');
+              }
+            } else {
+              throw new Error('Shared session format invalid: sessionData is not an object');
+            }
+          } else if (Array.isArray(imported)) {
+            importArray = imported;
+          } else if (imported && typeof imported === 'object') {
+            const importedObj = imported as Record<string, unknown>;
+            const activitiesCandidate = importedObj['activities'];
+            if (Array.isArray(activitiesCandidate)) {
+              importArray = activitiesCandidate;
+            } else {
+              throw new Error('Unsupported import format');
+            }
+          } else {
+            throw new Error('Unsupported import format');
+          }
 
-          // Use the new import utility that handles auto-population of missing fields
-          const processedActivities = importActivities(imported, {
+          const processedActivities = importActivities(importArray, {
             existingActivities: activities,
             colorStartIndex: 0
           });
 
-          // Save imported activities to localStorage (overwrites existing)
-          saveActivities(processedActivities);
-          // Refresh from localStorage
-          const updatedActivities = getActivities().filter(a => a.isActive);
-          setActivities(updatedActivities);
-          setShowImportConfirm(false);
-          setShowImport(false);
-          addToast({
-            message: `Successfully imported ${processedActivities.length} activities`,
-            variant: 'success'
-          });
+          finalizeImport(processedActivities);
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Failed to parse file';
-          addToast({
-            message: errorMessage,
-            variant: 'error'
-          });
+          addToast({ message: errorMessage, variant: 'error' });
           setShowImportConfirm(false);
         }
       });
@@ -517,7 +563,23 @@ const ActivityCrud: React.FC = () => {
               This action cannot be undone. Make sure you have exported your current activities if you want to keep them.
             </div>
           </div>
-          <p className="mb-0">Do you want to continue with the import?</p>
+          <p className="mb-2">Do you want to continue with the import?</p>
+          {processedImportPreview && processedImportPreview.length > 0 && (
+            <div className="mt-3">
+              <h6>Preview of imported activities</h6>
+              <ul className="list-group">
+                {processedImportPreview.map(p => (
+                  <li key={p.id} className="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>{p.name}</strong>
+                      {p.description && <div className="small text-muted">{p.description}</div>}
+                    </div>
+                    <span className="badge bg-secondary rounded-pill">#{p.colorIndex}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowImportConfirm(false)} className="d-flex align-items-center">
