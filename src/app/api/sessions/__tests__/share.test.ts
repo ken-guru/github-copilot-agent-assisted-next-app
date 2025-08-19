@@ -5,7 +5,7 @@ import path from 'path';
 // server-only globals (Request/Headers) during module initialization in Jest.
 jest.mock('next/server', () => ({
   NextResponse: {
-    json: (body: any, init?: any) => ({ status: init?.status ?? 200, json: async () => body }),
+    json: (body: unknown, init?: { status?: number }) => ({ status: init?.status ?? 200, json: async () => body }),
   },
 }));
 

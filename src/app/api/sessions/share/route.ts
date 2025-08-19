@@ -28,10 +28,11 @@ export async function POST(req: Request) {
     const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/shared/${id}`;
 
     return NextResponse.json({ shareId: id, shareUrl, expiresAt: metadata.expiresAt }, { status: 201 });
-  } catch (err: any) {
-    if (err?.name === 'ZodError') {
-      return NextResponse.json({ error: 'Invalid session data', details: err.errors }, { status: 400 });
+  } catch (err) {
+    const e = err as { name?: string; errors?: unknown; message?: string } | undefined;
+    if (e?.name === 'ZodError') {
+      return NextResponse.json({ error: 'Invalid session data', details: e.errors }, { status: 400 });
     }
-    return NextResponse.json({ error: err?.message ?? String(err) }, { status: 500 });
+    return NextResponse.json({ error: e?.message ?? String(err) }, { status: 500 });
   }
 }

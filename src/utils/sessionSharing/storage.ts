@@ -30,11 +30,11 @@ export async function saveSession(id: string, data: StoredSession) {
   if (token && base) {
     // Write to Vercel Blob: PUT {base}/{id}
     const url = `${base.replace(/\/$/, '')}/${id}`;
-    const fetchFn = (globalThis as any).fetch;
-    if (typeof fetchFn !== 'function') {
+    const maybeFetch: unknown = (globalThis as unknown as { fetch?: unknown }).fetch;
+    if (typeof maybeFetch !== 'function') {
       throw new Error('fetch is not available in this runtime');
     }
-    const res = await fetchFn(url, {
+    const res = await (maybeFetch as typeof fetch)(url, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -56,11 +56,11 @@ export async function getSession(id: string): Promise<StoredSession | null> {
   const base = process.env.BLOB_BASE_URL;
   if (token && base) {
     const url = `${base.replace(/\/$/, '')}/${id}`;
-    const fetchFn = (globalThis as any).fetch;
-    if (typeof fetchFn !== 'function') {
+    const maybeFetch: unknown = (globalThis as unknown as { fetch?: unknown }).fetch;
+    if (typeof maybeFetch !== 'function') {
       throw new Error('fetch is not available in this runtime');
     }
-    const res = await fetchFn(url, {
+    const res = await (maybeFetch as typeof fetch)(url, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
