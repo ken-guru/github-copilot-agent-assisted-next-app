@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Local vercel blob store used for tests / local dev - ensure we don't commit test artifacts
+.vercel_blob_store/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
