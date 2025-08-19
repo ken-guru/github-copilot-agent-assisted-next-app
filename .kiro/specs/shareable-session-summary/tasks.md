@@ -115,7 +115,7 @@ git commit -m "<task description including bullet points>"
   - **🔄 MUST COMMIT**: "feat: implement activity duplication from shared sessions"
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-- [-] 11. Implement session linking and relationship tracking
+- [x] 11. Implement session linking and relationship tracking
   - Create API route for linked session creation (POST /api/sessions/duplicate)
   - Add relationship validation to prevent circular references
   - Implement bidirectional linking between original and derived sessions
