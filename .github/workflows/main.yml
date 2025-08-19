@@ -10,10 +10,10 @@ jobs:
   type-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18.x'
       
       - name: Install dependencies
         run: npm ci
@@ -24,10 +24,10 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18.x'
       
       - name: Install dependencies
         run: npm ci
@@ -38,10 +38,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18.x'
       
       - name: Install dependencies
         run: npm ci
@@ -52,10 +52,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18.x'
       
       - name: Install dependencies
         run: npm ci
@@ -63,28 +63,23 @@ jobs:
       - name: Restore Next.js cache
         uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/.next/cache
+          path: .next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-          
       - name: Build
         run: npm run build
         
-      - name: Save Next.js cache
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-build-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+  # Cache is handled by actions/cache@v4 and will be saved automatically at the end of the job.
 
   # Cypress E2E test job
   cypress:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '18.x'
       
       - name: Install dependencies
         run: npm ci
@@ -92,11 +87,10 @@ jobs:
       - name: Restore Next.js cache
         uses: actions/cache@v4
         with:
-          path: ${{ github.workspace }}/.next/cache
-          # Modified to use both build and cypress cache keys in restore
-          key: ${{ runner.os }}-nextjs-build-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-cypress-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-build-${{ hashFiles('**/package-lock.json') }}-
+            ${{ runner.os }}-nextjs-cypress-${{ hashFiles('**/package-lock.json') }}-
       
       - name: Build application for testing
         run: npm run build
@@ -116,13 +110,7 @@ jobs:
             exit 1
           fi
       
-      - name: Save Next.js cache
-        uses: actions/cache/save@v4
-        with:
-          path: ${{ github.workspace }}/.next/cache
-          # Modified to use a different key than the build job
-          key: ${{ runner.os }}-nextjs-cypress-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          
+  # Cache is handled by actions/cache@v4 and will be saved automatically at the end of the job.
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
