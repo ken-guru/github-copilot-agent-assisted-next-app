@@ -1,21 +1,21 @@
 "use client";
 
 import React from 'react';
+import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 
 interface Props {
   shareUrl: string;
 }
 
 export default function ShareControls({ shareUrl }: Props) {
+  const { addResponsiveToast } = useResponsiveToast();
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
-      // small feedback via alert for now (non-blocking)
-      // In future replace with toasts
-      alert('Share URL copied to clipboard');
+      addResponsiveToast({ message: 'Share URL copied to clipboard', variant: 'success', autoDismiss: true });
     } catch {
-      // fallback: alert user to copy manually
-      alert('Unable to copy to clipboard. Please copy manually: ' + shareUrl);
+      addResponsiveToast({ message: `Unable to copy to clipboard. Please copy manually: ${shareUrl}`, variant: 'warning', autoDismiss: true });
     }
   };
 
@@ -23,19 +23,19 @@ export default function ShareControls({ shareUrl }: Props) {
     try {
       // Derive id from shareUrl (last path segment)
       if (!shareUrl) {
-        alert('No share URL available');
+        addResponsiveToast({ message: 'No share URL available', variant: 'warning', autoDismiss: true });
         return;
       }
       const parts = shareUrl.split('/').filter(Boolean);
       const id = parts[parts.length - 1];
       if (!id) {
-        alert('Invalid share URL');
+        addResponsiveToast({ message: 'Invalid share URL', variant: 'warning', autoDismiss: true });
         return;
       }
       const res = await fetch(`/api/sessions/${encodeURIComponent(String(id))}`);
       if (!res.ok) {
         const msg = `Unable to fetch shared session: ${res.status}`;
-        alert(msg);
+        addResponsiveToast({ message: msg, variant: 'error', autoDismiss: true });
         return;
       }
       const json = await res.json();
@@ -48,9 +48,9 @@ export default function ShareControls({ shareUrl }: Props) {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-  } catch {
-      // Provide a simple fallback
-      alert('Failed to download JSON. Please open the share link and save manually.');
+      addResponsiveToast({ message: 'Download started', variant: 'success', autoDismiss: true });
+    } catch {
+      addResponsiveToast({ message: 'Failed to download JSON. Please open the share link and save manually.', variant: 'error', autoDismiss: true });
     }
   };
 

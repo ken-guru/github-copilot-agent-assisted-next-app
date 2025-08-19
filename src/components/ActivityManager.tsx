@@ -6,6 +6,7 @@ import { ActivityButton } from './ActivityButton';
 import TimerProgressSection from './TimerProgressSection';
 import ActivityFormSection from './ActivityFormSection';
 import ShareControls from './ShareControls';
+import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
 
@@ -185,6 +186,7 @@ export default function ActivityManager({
   const [shareLoading, setShareLoading] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [showShareControls, setShowShareControls] = useState(false);
+  const { addResponsiveToast } = useResponsiveToast();
   const visibleActivities = activities.filter(a => !hiddenSet.has(a.id));
   const hiddenActivities = activities.filter(a => hiddenSet.has(a.id));
 
@@ -368,8 +370,8 @@ export default function ActivityManager({
                     setShowShareControls(true);
                     // keep modal open so ShareControls are visible
                   } catch {
-                    // Basic fallback for now
-                    alert('Failed to create share.');
+                    // Basic fallback for now - show toast
+                    addResponsiveToast({ message: 'Failed to create share.', variant: 'error', autoDismiss: true });
                     setShowShareModal(false);
                   } finally {
                     setShareLoading(false);
