@@ -45,4 +45,37 @@ describe('POST /api/sessions/share', () => {
     const exists = await fs.stat(filePath).then(() => true).catch(() => false);
     expect(exists).toBe(true);
   });
+
+  it('enforces rate limiting and returns 429 when exceeded', async () => {
+    const body = {
+      plannedTime: 3600,
+      timeSpent: 3550,
+      overtime: 0,
+      idleTime: 50,
+      activities: [{ id: 'a1', name: 'Task 1', duration: 1800, colorIndex: 1 }],
+      skippedActivities: [],
+      timelineEntries: [],
+      completedAt: new Date().toISOString(),
+      sessionType: 'completed',
+    };
+
+    const { POST } = await import('../../../api/sessions/share/route');
+
+    const req = (override?: Partial<Request>) => ({
+      json: async () => body,
+      headers: { get: () => 'http://localhost:3000' },
+      ...override,
+    }) as unknown as Request;
+
+    // Call more times than default limiter allows (default 10); for speed, we call 11
+    let lastRes: { status: number; json: () => Promise<unknown> } | undefined;
+    for (let i = 0; i <= 10; i++) {
+      // await in loop is intentional to exercise the limiter
+      lastRes = await POST(req());
+    }
+    const lastJson = await (lastRes as { json: () => Promise<unknown> }).json();
+    expect((lastRes as { status: number }).status).toBe(429);
+    expect(typeof (lastJson as Record<string, unknown>).error).toBe('string');
+    expect(((lastJson as Record<string, unknown>).error as string)).toMatch(/Too many requests/);
+  });
 });

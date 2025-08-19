@@ -2,10 +2,25 @@ import { NextResponse } from 'next/server';
 import { validateSessionSummaryData, validateStoredSession } from '../../../../utils/sessionSharing/schema';
 import { generateShareId } from '../../../../utils/sessionSharing/utils';
 import { saveSession } from '../../../../utils/sessionSharing/storage';
+import { checkAndIncrementKey } from '../../../../utils/sessionSharing/rateLimiter';
 import type { StoredSession } from '../../../../types/sessionSharing';
 
 export async function POST(req: Request) {
   try {
+    // Basic Origin/Referer check to reduce CSRF surface for public endpoint.
+    const origin = req.headers.get('origin') ?? req.headers.get('referer') ?? '';
+    const base = process.env.NEXT_PUBLIC_BASE_URL ?? '';
+    if (base && origin && !origin.startsWith(base)) {
+      return NextResponse.json({ error: 'Invalid origin' }, { status: 400 });
+    }
+
+    // Rate limit per-origin (fall back to 'global' if absent)
+    const rateKey = origin || 'global';
+    const rate = checkAndIncrementKey(rateKey);
+    if (!rate.ok) {
+      return NextResponse.json({ error: 'Too many requests', retryAfterMs: rate.retryAfterMs }, { status: 429 });
+    }
+
     const body = await req.json();
     const sessionData = validateSessionSummaryData(body.sessionData ?? body);
 
