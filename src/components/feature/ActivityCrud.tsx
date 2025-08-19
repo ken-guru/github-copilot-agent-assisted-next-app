@@ -186,8 +186,41 @@ const ActivityCrud: React.FC = () => {
       const text = await importFile.text();
       const imported = JSON.parse(text);
 
-      // Use the new import utility that handles auto-population of missing fields
-      const processedActivities = importActivities(imported, {
+      // If the uploaded JSON is a stored shared session (contains sessionData),
+      // extract activities from sessionData.activities and import them.
+      let importArray: unknown[] = [];
+      if (imported && typeof imported === 'object' && 'sessionData' in (imported as object)) {
+        // Best-effort extraction from stored session object
+        const maybeImported = imported as Record<string, unknown>;
+        const candidate = maybeImported['sessionData'];
+        if (candidate && typeof candidate === 'object') {
+          const candidateObj = candidate as Record<string, unknown>;
+          const activitiesCandidate = candidateObj['activities'];
+          if (Array.isArray(activitiesCandidate)) {
+            importArray = activitiesCandidate;
+          } else {
+            throw new Error('Shared session format invalid: missing sessionData.activities');
+          }
+        } else {
+          throw new Error('Shared session format invalid: sessionData is not an object');
+        }
+      } else if (Array.isArray(imported)) {
+        importArray = imported;
+      } else if (imported && typeof imported === 'object') {
+        const importedObj = imported as Record<string, unknown>;
+        const activitiesCandidate = importedObj['activities'];
+        if (Array.isArray(activitiesCandidate)) {
+          // Some exports may use an object with an activities key
+          importArray = activitiesCandidate;
+        } else {
+          throw new Error('Unsupported import format');
+        }
+      } else {
+        throw new Error('Unsupported import format');
+      }
+
+      // Use the import utility to process and validate individual activity objects
+      const processedActivities = importActivities(importArray, {
         existingActivities: activities,
         colorStartIndex: 0
       });
