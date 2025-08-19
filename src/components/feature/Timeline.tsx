@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useMemo, useEffect, useState } from 'react';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/time/timelineCalculations';

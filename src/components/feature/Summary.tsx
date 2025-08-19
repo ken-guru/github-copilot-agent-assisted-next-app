@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import styles from './Summary.module.css';
 import type { TimelineEntry } from '@/types';
