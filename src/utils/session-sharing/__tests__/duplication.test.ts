@@ -1,195 +1,314 @@
-/**
- * Tests for activity duplication utilities
- */
+import { 
+  extractActivitiesForDuplication,
+  duplicateActivitiesFromSharedSession,
+  createLinkedSharedSession,
+  getDuplicationStatus,
+  clearDuplicationTracking,
+  handleActivityDuplication
+} from '../duplication';
+import { duplicateActivitiesFromSession } from '@/utils/activity-storage';
 
-import { fetchActivitiesForDuplication, duplicateActivitiesWorkflow, handleActivityDuplication } from '../duplication';
-import { duplicateActivitiesFromSession } from '../../activity-storage';
-import type { ActivityDuplicationData } from '@/types/session-sharing';
+// Mock the activity-storage module
+jest.mock('@/utils/activity-storage', () => ({
+  duplicateActivitiesFromSession: jest.fn()
+}));
 
-// Mock dependencies
-jest.mock('../../activity-storage');
-const mockDuplicateActivitiesFromSession = duplicateActivitiesFromSession as jest.MockedFunction<typeof duplicateActivitiesFromSession>;
-
-// Mock fetch
+// Mock fetch globally
 global.fetch = jest.fn();
-const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
+
+// Mock localStorage
+const mockLocalStorage = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn()
+};
+
+Object.defineProperty(window, 'localStorage', {
+  value: mockLocalStorage
+});
 
 // Mock window.location
-const mockLocation = {
-  href: ''
-};
-delete (window as unknown as { location: unknown }).location;
-(window as unknown as { location: unknown }).location = mockLocation;
+Object.defineProperty(window, 'location', {
+  value: {
+    href: ''
+  },
+  writable: true,
+  configurable: true
+});
 
-describe('Activity Duplication Utilities', () => {
-  const mockSessionId = 'test-session-123';
-  const mockDuplicationData: ActivityDuplicationData = {
-    activities: [
-      { id: '1', name: 'Homework', duration: 1800, colorIndex: 0 },
-      { id: '2', name: 'Reading', duration: 1700, colorIndex: 1 }
-    ],
-    originalSessionId: mockSessionId,
-    duplicatedAt: '2024-01-01T12:00:00Z'
-  };
-
+describe('duplication utilities', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockLocation.href = '';
+    mockLocalStorage.getItem.mockReturnValue(null);
   });
 
-  describe('fetchActivitiesForDuplication', () => {
-    it('should fetch activities successfully', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValue(mockDuplicationData)
-      } as unknown as Response);
+  describe('extractActivitiesForDuplication', () => {
+    it('should extract activities from valid session data', () => {
+      const sessionData = {
+        activities: [
+          { id: '1', name: 'Activity 1', duration: 300, colorIndex: 0 },
+          { id: '2', name: 'Activity 2', duration: 600, colorIndex: 1 }
+        ]
+      };
 
-      const result = await fetchActivitiesForDuplication(mockSessionId);
+      const result = extractActivitiesForDuplication(sessionData);
 
-      expect(result).toEqual(mockDuplicationData);
-      expect(mockFetch).toHaveBeenCalledWith(`/api/sessions/${mockSessionId}/activities`);
+      expect(result).toEqual([
+        { id: '1', name: 'Activity 1', duration: 300, colorIndex: 0 },
+        { id: '2', name: 'Activity 2', duration: 600, colorIndex: 1 }
+      ]);
     });
 
-    it('should throw error for failed request', async () => {
-      const errorResponse = { message: 'Session not found' };
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-        json: jest.fn().mockResolvedValue(errorResponse)
-      } as unknown as Response);
-
-      await expect(fetchActivitiesForDuplication(mockSessionId))
-        .rejects.toThrow('Session not found');
-    });
-
-    it('should handle network errors', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'));
-
-      await expect(fetchActivitiesForDuplication(mockSessionId))
-        .rejects.toThrow('Network error');
-    });
-
-    it('should handle malformed error responses', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-        json: jest.fn().mockRejectedValue(new Error('Invalid JSON'))
-      } as unknown as Response);
-
-      await expect(fetchActivitiesForDuplication(mockSessionId))
-        .rejects.toThrow('Failed to fetch activities: 500');
+    it('should throw error for invalid session data', () => {
+      expect(() => extractActivitiesForDuplication(null)).toThrow('Invalid session data: missing activities');
+      expect(() => extractActivitiesForDuplication({})).toThrow('Invalid session data: missing activities');
+      expect(() => extractActivitiesForDuplication({ activities: 'not-array' })).toThrow('Invalid session data: missing activities');
     });
   });
 
-  describe('duplicateActivitiesWorkflow', () => {
-    it('should complete duplication workflow successfully', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValue(mockDuplicationData)
-      } as unknown as Response);
+  describe('duplicateActivitiesFromSharedSession', () => {
+    it('should successfully duplicate activities', async () => {
+      const sessionData = {
+        activities: [
+          { id: '1', name: 'Activity 1', duration: 300, colorIndex: 0 }
+        ]
+      };
+      const originalSessionId = 'test-session-id';
 
-      await duplicateActivitiesWorkflow(mockSessionId);
+      const result = await duplicateActivitiesFromSharedSession(sessionData, originalSessionId);
 
-      expect(mockDuplicateActivitiesFromSession).toHaveBeenCalledWith(
-        mockDuplicationData.activities,
-        mockDuplicationData.originalSessionId
+      expect(result.success).toBe(true);
+      expect(result.redirectUrl).toBe('/');
+      expect(duplicateActivitiesFromSession).toHaveBeenCalledWith(
+        [{ id: '1', name: 'Activity 1', duration: 300, colorIndex: 0 }],
+        originalSessionId
       );
-      // Note: window.location.href assignment is mocked and may not work in tests
     });
 
-    it('should handle fetch errors', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-        json: jest.fn().mockResolvedValue({ message: 'Session not found' })
-      } as unknown as Response);
+    it('should handle invalid session data', async () => {
+      const result = await duplicateActivitiesFromSharedSession(null, 'test-id');
 
-      await expect(duplicateActivitiesWorkflow(mockSessionId))
-        .rejects.toThrow('Session not found');
-      
-      expect(mockDuplicateActivitiesFromSession).not.toHaveBeenCalled();
-      expect(mockLocation.href).toBe('');
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Invalid session data provided');
     });
 
-    it('should handle storage errors', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValue(mockDuplicationData)
-      } as unknown as Response);
+    it('should handle invalid session ID', async () => {
+      const sessionData = { activities: [] };
+      const result = await duplicateActivitiesFromSharedSession(sessionData, '');
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Invalid session ID provided');
+    });
+
+    it('should handle empty activities', async () => {
+      const sessionData = { activities: [] };
+      const result = await duplicateActivitiesFromSharedSession(sessionData, 'test-id');
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('No activities found in shared session');
+    });
+
+    it('should handle duplication errors', async () => {
+      const sessionData = {
+        activities: [{ id: '1', name: 'Activity 1', duration: 300, colorIndex: 0 }]
+      };
       
-      mockDuplicateActivitiesFromSession.mockImplementation(() => {
+      (duplicateActivitiesFromSession as jest.Mock).mockImplementation(() => {
         throw new Error('Storage error');
       });
 
-      await expect(duplicateActivitiesWorkflow(mockSessionId))
-        .rejects.toThrow('Storage error');
-      
-      expect(mockLocation.href).toBe('');
+      const result = await duplicateActivitiesFromSharedSession(sessionData, 'test-id');
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Storage error');
+    });
+  });
+
+  describe('createLinkedSharedSession', () => {
+    it('should successfully create linked session', async () => {
+      const mockResponse = {
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          shareUrl: 'https://example.com/shared/new-id'
+        })
+      };
+      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+
+      const sessionData = { activities: [] };
+      const originalSessionId = 'original-id';
+
+      const result = await createLinkedSharedSession(sessionData, originalSessionId);
+
+      expect(result.success).toBe(true);
+      expect(result.shareUrl).toBe('https://example.com/shared/new-id');
+      expect(global.fetch).toHaveBeenCalledWith('/api/sessions/duplicate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sourceSessionId: originalSessionId,
+          newSessionData: sessionData
+        })
+      });
+    });
+
+    it('should handle API errors', async () => {
+      const mockResponse = {
+        ok: false,
+        json: jest.fn().mockResolvedValue({
+          error: 'API error'
+        })
+      };
+      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+
+      const result = await createLinkedSharedSession({}, 'test-id');
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('API error');
+    });
+
+    it('should handle network errors', async () => {
+      (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+      const result = await createLinkedSharedSession({}, 'test-id');
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Network error');
+    });
+  });
+
+  describe('getDuplicationStatus', () => {
+    it('should return duplication status when data exists', () => {
+      mockLocalStorage.getItem
+        .mockReturnValueOnce('original-session-id')
+        .mockReturnValueOnce('2023-01-01T00:00:00.000Z');
+
+      const result = getDuplicationStatus();
+
+      expect(result.isDuplicated).toBe(true);
+      expect(result.originalSessionId).toBe('original-session-id');
+      expect(result.duplicatedAt).toBe('2023-01-01T00:00:00.000Z');
+    });
+
+    it('should return no duplication when data does not exist', () => {
+      const result = getDuplicationStatus();
+
+      expect(result.isDuplicated).toBe(false);
+      expect(result.originalSessionId).toBe(null);
+      expect(result.duplicatedAt).toBe(null);
+    });
+
+    it('should handle localStorage errors', () => {
+      mockLocalStorage.getItem.mockImplementation(() => {
+        throw new Error('localStorage error');
+      });
+
+      const result = getDuplicationStatus();
+
+      expect(result.isDuplicated).toBe(false);
+      expect(result.originalSessionId).toBe(null);
+      expect(result.duplicatedAt).toBe(null);
+    });
+  });
+
+  describe('clearDuplicationTracking', () => {
+    it('should remove duplication tracking items', () => {
+      clearDuplicationTracking();
+
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('originalSessionId');
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('activitiesDuplicatedAt');
+    });
+
+    it('should handle localStorage errors silently', () => {
+      mockLocalStorage.removeItem.mockImplementation(() => {
+        throw new Error('localStorage error');
+      });
+
+      expect(() => clearDuplicationTracking()).not.toThrow();
     });
   });
 
   describe('handleActivityDuplication', () => {
-    it('should call success callback on successful duplication', async () => {
-      const onSuccess = jest.fn();
-      const onError = jest.fn();
+    const mockOnSuccess = jest.fn();
+    const mockOnError = jest.fn();
 
-      // Reset the mock to not throw errors
-      mockDuplicateActivitiesFromSession.mockImplementation(() => {
-        // Mock successful storage operation
-      });
+    beforeEach(() => {
+      mockOnSuccess.mockClear();
+      mockOnError.mockClear();
+      jest.useFakeTimers();
+    });
 
-      mockFetch.mockResolvedValueOnce({
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('should successfully handle activity duplication', async () => {
+      const mockSessionResponse = {
         ok: true,
-        json: jest.fn().mockResolvedValue(mockDuplicationData)
-      } as unknown as Response);
-
-      await handleActivityDuplication(mockSessionId, onSuccess, onError);
-
-      expect(onSuccess).toHaveBeenCalled();
-      expect(onError).not.toHaveBeenCalled();
-      // Note: window.location.href assignment is mocked and may not work in tests
-    });
-
-    it('should call error callback on failure', async () => {
-      const onSuccess = jest.fn();
-      const onError = jest.fn();
-
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-        json: jest.fn().mockResolvedValue({ message: 'Session not found' })
-      } as unknown as Response);
-
-      await handleActivityDuplication(mockSessionId, onSuccess, onError);
-
-      expect(onSuccess).not.toHaveBeenCalled();
-      expect(onError).toHaveBeenCalledWith(expect.any(Error));
-      expect(onError).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'Session not found' })
-      );
-    });
-
-    it('should work without callbacks', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: jest.fn().mockResolvedValue(mockDuplicationData)
-      } as unknown as Response);
-
-      await expect(handleActivityDuplication(mockSessionId))
-        .resolves.toBeUndefined();
-    });
-
-    it('should handle non-Error exceptions', async () => {
-      const onError = jest.fn();
+        json: jest.fn().mockResolvedValue({
+          sessionData: {
+            activities: [
+              { id: '1', name: 'Activity 1', duration: 300, colorIndex: 0 }
+            ]
+          }
+        })
+      };
+      (global.fetch as jest.Mock).mockResolvedValue(mockSessionResponse);
       
-      mockFetch.mockRejectedValueOnce('String error');
+      // Reset the mock to ensure it works properly
+      (duplicateActivitiesFromSession as jest.Mock).mockClear();
 
-      await handleActivityDuplication(mockSessionId, undefined, onError);
+      const promise = handleActivityDuplication('test-session-id', mockOnSuccess, mockOnError);
 
-      expect(onError).toHaveBeenCalledWith(expect.any(Error));
-      expect(onError).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'Unknown error occurred' })
-      );
+      await promise;
+
+      expect(global.fetch).toHaveBeenCalledWith('/api/sessions/test-session-id');
+      expect(mockOnSuccess).toHaveBeenCalled();
+      expect(mockOnError).not.toHaveBeenCalled();
+
+      // Test navigation after delay
+      jest.advanceTimersByTime(1500);
+      expect(window.location.href).toBe('/');
+    });
+
+    it('should handle fetch errors', async () => {
+      const mockResponse = {
+        ok: false,
+        json: jest.fn()
+      };
+      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+
+      await handleActivityDuplication('test-session-id', mockOnSuccess, mockOnError);
+
+      expect(mockOnSuccess).not.toHaveBeenCalled();
+      expect(mockOnError).toHaveBeenCalledWith(expect.any(Error));
+      expect(mockOnError.mock.calls[0][0].message).toBe('Failed to fetch session data');
+    });
+
+    it('should handle duplication errors', async () => {
+      const mockSessionResponse = {
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          sessionData: { activities: [] } // Empty activities will cause error
+        })
+      };
+      (global.fetch as jest.Mock).mockResolvedValue(mockSessionResponse);
+
+      await handleActivityDuplication('test-session-id', mockOnSuccess, mockOnError);
+
+      expect(mockOnSuccess).not.toHaveBeenCalled();
+      expect(mockOnError).toHaveBeenCalledWith(expect.any(Error));
+      expect(mockOnError.mock.calls[0][0].message).toBe('No activities found in shared session');
+    });
+
+    it('should handle network errors', async () => {
+      (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+      await handleActivityDuplication('test-session-id', mockOnSuccess, mockOnError);
+
+      expect(mockOnSuccess).not.toHaveBeenCalled();
+      expect(mockOnError).toHaveBeenCalledWith(expect.any(Error));
+      expect(mockOnError.mock.calls[0][0].message).toBe('Network error');
     });
   });
 });

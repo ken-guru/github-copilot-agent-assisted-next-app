@@ -9,6 +9,7 @@ import { useOpenAIClient } from '@/utils/ai/byokClient';
 import type { ChatCompletion } from '@/types/ai';
 import ShareSessionControls from './ShareSessionControls';
 import { extractSessionSummaryData } from '@/utils/session-sharing/extraction';
+import { getDuplicationStatus, createLinkedSharedSession, clearDuplicationTracking } from '@/utils/session-sharing/duplication';
 import type { SessionSummaryData, ShareSessionResponse } from '@/types/session-sharing';
 
 interface SummaryProps {
@@ -42,6 +43,9 @@ export default function Summary({
   const [isShared, setIsShared] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | undefined>(undefined);
   const [isGeneratingShare, setIsGeneratingShare] = useState(false);
+  
+  // Duplication tracking
+  const duplicationStatus = getDuplicationStatus();
   
   // Auto mode: BYOK if available, else server mock route
   // Add state to track current theme mode
@@ -389,27 +393,54 @@ export default function Summary({
     setIsGeneratingShare(true);
 
     try {
-      const response = await fetch('/api/sessions/share', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sessionData,
-        }),
-      });
+      let result: ShareSessionResponse;
 
-      if (!response.ok) {
-        throw new Error('Failed to create shareable link');
+      // Check if this session was duplicated from another session
+      if (duplicationStatus.isDuplicated && duplicationStatus.originalSessionId) {
+        // Create a linked session
+        const linkedResult = await createLinkedSharedSession(sessionData, duplicationStatus.originalSessionId);
+        
+        if (!linkedResult.success) {
+          throw new Error(linkedResult.error || 'Failed to create linked session');
+        }
+        
+        result = {
+          shareId: '', // Not needed for linked sessions
+          shareUrl: linkedResult.shareUrl!,
+          expiresAt: '' // Not needed for linked sessions
+        };
+        
+        // Clear duplication tracking since we've now shared the completed session
+        clearDuplicationTracking();
+        
+      } else {
+        // Create a regular shared session
+        const response = await fetch('/api/sessions/share', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            sessionData,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to create shareable link');
+        }
+
+        result = await response.json() as ShareSessionResponse;
       }
-
-      const result = await response.json() as ShareSessionResponse;
       
       setIsShared(true);
       setShareUrl(result.shareUrl);
       
+      const message = duplicationStatus.isDuplicated 
+        ? 'Linked session created successfully! This session is now connected to the original.'
+        : 'Shareable link created successfully!';
+      
       addToast({
-        message: 'Shareable link created successfully!',
+        message,
         variant: 'success',
       });
 
@@ -423,7 +454,7 @@ export default function Summary({
     } finally {
       setIsGeneratingShare(false);
     }
-  }, [sessionData, isGeneratingShare, addToast]);
+  }, [sessionData, isGeneratingShare, addToast, duplicationStatus.isDuplicated, duplicationStatus.originalSessionId]);
 
   // Early return modified to handle isTimeUp case
   if ((!allActivitiesCompleted && !isTimeUp) || !stats) {

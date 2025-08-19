@@ -167,7 +167,7 @@ export default function SharedSummary({
           variant: 'success',
         });
       },
-      (error) => {
+      (error: Error) => {
         // Error callback
         addToast({
           message: error.message,
