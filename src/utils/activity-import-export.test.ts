@@ -1,5 +1,5 @@
 import { importActivities, exportActivities } from './activity-import-export';
-import { Activity } from '../types/activity';
+import { Activity } from '@/types/activity';
 
 // Mock crypto.randomUUID for consistent testing
 const mockUUID = 'test-uuid-12345';

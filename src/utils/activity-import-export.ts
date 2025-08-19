@@ -4,7 +4,7 @@
  * and clean export format (without internal fields like isActive)
  */
 
-import { Activity } from '../types/activity';
+import { Activity } from '@/types/activity';
 
 /**
  * Options for exporting activities

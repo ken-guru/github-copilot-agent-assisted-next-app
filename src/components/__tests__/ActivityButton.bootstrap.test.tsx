@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ActivityButton } from '../ActivityButton';
-import { Activity } from '../../types/activity';
+import { Activity } from '@/types/activity';
 import { getNextAvailableColorSet } from '../../utils/colors';
 import { TimelineEntry } from '@/types';
 
