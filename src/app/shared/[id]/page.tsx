@@ -1,6 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { getSession } from '../../../../utils/sessionSharing/storage';
+import { getSession } from '../../../utils/sessionSharing/storage';
 
 type Props = { params: { id: string } };
 
