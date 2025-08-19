@@ -1,7 +1,8 @@
 export function generateShareId(): string {
   // Prefer native crypto.randomUUID when available (Node 18+ / modern browsers)
-  if (typeof (globalThis as any).crypto?.randomUUID === 'function') {
-    return (globalThis as any).crypto.randomUUID();
+  const maybe = globalThis as unknown as { crypto?: { randomUUID?: () => string } };
+  if (typeof maybe.crypto?.randomUUID === 'function') {
+    return maybe.crypto.randomUUID();
   }
   // Fallback: simple UUID v4 generator (not cryptographically secure)
   // Prefer to use crypto.randomUUID in production (Vercel Node 18+ supports it)

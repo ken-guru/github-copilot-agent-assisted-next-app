@@ -29,7 +29,7 @@ describe('POST /api/sessions/share', () => {
     // Minimal Request-like object that the handler expects
     const req = {
       json: async () => body,
-      headers: { get: (_: string) => undefined },
+      headers: { get: (__: string) => undefined },
     } as unknown as Request;
 
     // call handler
