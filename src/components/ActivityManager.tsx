@@ -219,18 +219,22 @@ export default function ActivityManager({
               Reset
             </Button>
           )}
-          {/* Share action - creates a public share of current session */}
-          <Button
-            variant="outline-success"
-            size="sm"
-            onClick={() => setShowShareModal(true)}
-            className="d-flex align-items-center"
-            title="Share session"
-            data-testid="open-share-modal"
-          >
-            <i className="bi bi-share me-2" />
-            Share
-          </Button>
+          {/* Share action - creates a public share of current session
+              Only show after the session is complete (summary state). */}
+          {/* Summary state heuristic: timer is inactive, we have timeline entries, and there's no running activity */}
+          {(!timerActive && timelineEntries.length > 0 && currentActivityId == null) && (
+            <Button
+              variant="outline-success"
+              size="sm"
+              onClick={() => setShowShareModal(true)}
+              className="d-flex align-items-center"
+              title="Share session"
+              data-testid="open-share-modal"
+            >
+              <i className="bi bi-share me-2" />
+              Share
+            </Button>
+          )}
         </div>
       </Card.Header>
       <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden p-3">

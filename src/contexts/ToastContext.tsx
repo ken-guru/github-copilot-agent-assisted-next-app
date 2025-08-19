@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import { ToastMessage, ToastContextType } from '@/types/toast';
 
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
+export const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 interface ToastState {
   toasts: ToastMessage[];

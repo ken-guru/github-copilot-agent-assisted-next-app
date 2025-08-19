@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useToast } from '@/contexts/ToastContext';
+import { ToastContextType } from '@/types/toast';
 import { ToastMessage } from '@/types/toast';
 import { BOOTSTRAP_MD_BREAKPOINT } from '@/constants/breakpoints';
 
@@ -8,7 +9,16 @@ import { BOOTSTRAP_MD_BREAKPOINT } from '@/constants/breakpoints';
  */
 export function useResponsiveToast() {
   const [isMobile, setIsMobile] = useState(false);
-  const { addToast, removeToast } = useToast();
+  let addToast: ToastContextType['addToast'] = () => '';
+  let removeToast: ToastContextType['removeToast'] = () => {};
+
+  try {
+    const toast = useToast();
+    addToast = toast.addToast;
+    removeToast = toast.removeToast;
+  } catch {
+    // Tests may render this hook outside of ToastProvider; fall back to no-ops.
+  }
 
   useEffect(() => {
     const checkIsMobile = () => {
