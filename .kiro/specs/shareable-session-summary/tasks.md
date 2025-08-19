@@ -19,9 +19,9 @@
 # 2. Run quality gates
 npm test && npm run lint && npm run type-check && npm run build
 
-# 3. ALWAYS commit with the specified message
+# 3. ALWAYS commit with the description of the completed task
 git add .
-git commit -m "feat: add SharedSummary component for read-only session display"
+git commit -m "<task description>"
 ```
 
 **⚠️ NO TASK IS COMPLETE WITHOUT BOTH QUALITY GATES AND THE COMMIT STEP.**
@@ -97,7 +97,7 @@ git commit -m "feat: add SharedSummary component for read-only session display"
   - **✅ COMMITTED**: "feat: add SharedSummary component for read-only session display"
   - _Requirements: 2.4, 2.5, 2.6, 5.1, 5.3_
 
-- [ ] 9. Implement shared session page route (/shared/[uuid]/page.tsx)
+- [-] 9. Implement shared session page route (/shared/[uuid]/page.tsx)
   - Create Next.js App Router dynamic route for shared sessions
   - Implement server-side data fetching with proper error boundaries
   - Add SEO-friendly metadata generation for shared sessions
