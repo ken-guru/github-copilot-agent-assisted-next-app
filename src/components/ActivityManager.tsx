@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Card, Row, Col, Button } from 'react-bootstrap';
+import { Card, Row, Col, Button, Modal, Spinner } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import TimerProgressSection from './TimerProgressSection';
 import ActivityFormSection from './ActivityFormSection';
+import ShareControls from './ShareControls';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
 
@@ -180,6 +181,10 @@ export default function ActivityManager({
 
   // Derived lists
   const hiddenSet = new Set(removedActivityIds);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [showShareControls, setShowShareControls] = useState(false);
   const visibleActivities = activities.filter(a => !hiddenSet.has(a.id));
   const hiddenActivities = activities.filter(a => hiddenSet.has(a.id));
 
@@ -212,6 +217,18 @@ export default function ActivityManager({
               Reset
             </Button>
           )}
+          {/* Share action - creates a public share of current session */}
+          <Button
+            variant="outline-success"
+            size="sm"
+            onClick={() => setShowShareModal(true)}
+            className="d-flex align-items-center"
+            title="Share session"
+            data-testid="open-share-modal"
+          >
+            <i className="bi bi-share me-2" />
+            Share
+          </Button>
         </div>
       </Card.Header>
       <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden p-3">
@@ -295,6 +312,79 @@ export default function ActivityManager({
           )}
         </div>
       </Card.Body>
+
+      {/* Share confirmation modal */}
+      <Modal show={showShareModal} onHide={() => setShowShareModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Share session</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Share a read-only copy of the current session. This will create a public URL that anyone can open.</p>
+          <p className="text-muted small">The shared session will contain summary and timeline data only.</p>
+          {shareLoading && (
+            <div className="d-flex align-items-center">
+              <Spinner animation="border" size="sm" className="me-2" /> Creating share...
+            </div>
+          )}
+          {showShareControls && shareUrl && (
+            <div className="mt-3">
+              <ShareControls shareUrl={shareUrl} />
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          {!showShareControls && (
+            <>
+              <Button variant="secondary" onClick={() => setShowShareModal(false)}>Cancel</Button>
+              <Button
+                variant="success"
+                onClick={async () => {
+                  // create share
+                  try {
+                    setShareLoading(true);
+                    // Build minimal payload from timelineEntries and activities
+                    const payload = {
+                      sessionData: {
+                        activities: activities.map(a => ({ id: a.id, name: a.name, description: a.description || '', colorIndex: a.colorIndex })),
+                        timeline: timelineEntries
+                      },
+                      metadata: {
+                        title: 'Shared session',
+                        createdBy: 'app'
+                      }
+                    };
+                    const res = await fetch('/api/sessions/share', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(payload)
+                    });
+                    if (!res.ok) {
+                      throw new Error(`Share failed: ${res.status}`);
+                    }
+                    const json = await res.json();
+                    const id = json?.metadata?.id || json?.id;
+                    const url = id ? `${window.location.origin}/shared/${id}` : json?.shareUrl;
+                    setShareUrl(url || null);
+                    setShowShareControls(true);
+                    // keep modal open so ShareControls are visible
+                  } catch {
+                    // Basic fallback for now
+                    alert('Failed to create share.');
+                    setShowShareModal(false);
+                  } finally {
+                    setShareLoading(false);
+                  }
+                }}
+              >
+                Create share
+              </Button>
+            </>
+          )}
+          {showShareControls && (
+            <Button variant="primary" onClick={() => setShowShareModal(false)}>Done</Button>
+          )}
+        </Modal.Footer>
+      </Modal>
     </Card>
   );
 }
