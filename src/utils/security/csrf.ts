@@ -288,7 +288,9 @@ export class CSRFTokenManager {
   }
 }
 
-// Set up cleanup interval for CSRF tokens
-setInterval(() => {
-  csrfTokenStore.cleanup();
-}, 5 * 60 * 1000); // Clean up every 5 minutes
+// Set up cleanup interval for CSRF tokens (only in non-test environment)
+if (process.env.NODE_ENV !== 'test') {
+  setInterval(() => {
+    csrfTokenStore.cleanup();
+  }, 5 * 60 * 1000); // Clean up every 5 minutes
+}

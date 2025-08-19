@@ -1,7 +1,15 @@
 import '@testing-library/jest-dom';
 
-// Set up window.matchMedia mock
-Object.defineProperty(window, 'matchMedia', {
+// Setup for Node.js environment (API routes)
+if (typeof global.crypto === 'undefined') {
+  const { webcrypto } = require('crypto');
+  global.crypto = webcrypto;
+}
+
+// Only setup browser-specific mocks if window is available
+if (typeof window !== 'undefined') {
+  // Set up window.matchMedia mock
+  Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation(query => ({
     matches: false,
@@ -13,10 +21,10 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
-});
+  });
 
-// Mock localStorage
-const localStorageMock = (function() {
+  // Mock localStorage
+  const localStorageMock = (function() {
   let store = {};
   return {
     getItem: function(key) {
@@ -32,14 +40,14 @@ const localStorageMock = (function() {
       store = {};
     }
   };
-})();
+  })();
 
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
-});
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock
+  });
 
-// Mock IntersectionObserver
-class MockIntersectionObserver {
+  // Mock IntersectionObserver
+  class MockIntersectionObserver {
   constructor(callback) {
     this.callback = callback;
   }
@@ -52,13 +60,14 @@ class MockIntersectionObserver {
   disconnect() {
     return null;
   }
-}
+  }
 
-window.IntersectionObserver = MockIntersectionObserver;
+  window.IntersectionObserver = MockIntersectionObserver;
 
-// Add missing DOM APIs needed for tests
-if (typeof window.URL.createObjectURL === 'undefined') {
-  Object.defineProperty(window.URL, 'createObjectURL', { value: () => 'mock-url' });
+  // Add missing DOM APIs needed for tests
+  if (typeof window.URL.createObjectURL === 'undefined') {
+    Object.defineProperty(window.URL, 'createObjectURL', { value: () => 'mock-url' });
+  }
 }
 
 // Add mock for React 18 features

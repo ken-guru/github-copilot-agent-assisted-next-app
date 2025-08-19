@@ -20,12 +20,15 @@ interface RateLimitConfig {
 export class MemoryRateLimiter {
   private store = new Map<string, RateLimitEntry>();
   private config: RateLimitConfig;
+  private cleanupInterval?: NodeJS.Timeout;
 
   constructor(config: RateLimitConfig) {
     this.config = config;
     
-    // Clean up expired entries every 5 minutes
-    setInterval(() => this.cleanup(), 5 * 60 * 1000);
+    // Clean up expired entries every 5 minutes (only in non-test environment)
+    if (process.env.NODE_ENV !== 'test') {
+      this.cleanupInterval = setInterval(() => this.cleanup(), 5 * 60 * 1000);
+    }
   }
 
   /**
@@ -89,6 +92,17 @@ export class MemoryRateLimiter {
    * Clear all entries (for testing)
    */
   clear(): void {
+    this.store.clear();
+  }
+
+  /**
+   * Destroy the rate limiter and clean up resources
+   */
+  destroy(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = undefined;
+    }
     this.store.clear();
   }
 }
@@ -311,8 +325,10 @@ export class DuplicateDetector {
  */
 export const duplicateDetector = new DuplicateDetector();
 
-// Set up cleanup intervals
-setInterval(() => {
-  storageQuotaTracker.cleanup();
-  duplicateDetector.cleanup();
-}, 5 * 60 * 1000); // Clean up every 5 minutes
+// Set up cleanup intervals (only in non-test environment)
+if (process.env.NODE_ENV !== 'test') {
+  setInterval(() => {
+    storageQuotaTracker.cleanup();
+    duplicateDetector.cleanup();
+  }, 5 * 60 * 1000); // Clean up every 5 minutes
+}
