@@ -5,8 +5,7 @@
 
 // Export extraction utilities
 export {
-  extractSessionData,
-  type SummaryDataProps,
+  extractSessionSummaryData,
 } from './extraction';
 
 // Export serialization utilities

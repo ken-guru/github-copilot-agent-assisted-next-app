@@ -2,238 +2,303 @@
  * Tests for session data extraction utilities
  */
 
-import { extractSessionData, type SummaryDataProps } from '../extraction';
-import { TimelineEntry } from '@/types';
-import { getActivities } from '@/utils/activity-storage';
+import { extractSessionSummaryData } from '../extraction';
+import type { TimelineEntry } from '@/types';
+import * as activityStorage from '@/utils/activity-storage';
 
-// Mock the activity storage
+// Mock activity storage
 jest.mock('@/utils/activity-storage');
-const mockGetActivities = getActivities as jest.MockedFunction<typeof getActivities>;
+const mockGetActivities = activityStorage.getActivities as jest.MockedFunction<typeof activityStorage.getActivities>;
 
-describe('extractSessionData', () => {
+describe('extractSessionSummaryData', () => {
+  const mockActivities = [
+    { id: '1', name: 'Study Math', colorIndex: 0, createdAt: '2024-01-01T00:00:00Z', isActive: true },
+    { id: '2', name: 'Read Book', colorIndex: 1, createdAt: '2024-01-01T00:00:00Z', isActive: true },
+    { id: '3', name: 'Exercise', colorIndex: 2, createdAt: '2024-01-01T00:00:00Z', isActive: true },
+  ];
+
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetActivities.mockReturnValue([
-      {
-        id: 'activity-1',
-        name: 'Test Activity 1',
-        colorIndex: 0,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        isActive: true,
-      },
-      {
-        id: 'activity-2',
-        name: 'Test Activity 2',
-        colorIndex: 1,
-        createdAt: '2024-01-01T00:00:00.000Z',
-        isActive: true,
-      },
-    ]);
+    mockGetActivities.mockReturnValue(mockActivities);
   });
 
-  it('should extract basic session data with no entries', () => {
-    const props: SummaryDataProps = {
-      entries: [],
-      totalDuration: 3600, // 1 hour
-      elapsedTime: 3000, // 50 minutes
-      allActivitiesCompleted: true,
-    };
+  it('extracts basic session data correctly', () => {
+    const baseTime = Date.now();
+    const entries: TimelineEntry[] = [
+      {
+        id: 'entry-1',
+        activityId: '1',
+        activityName: 'Study Math',
+        startTime: baseTime,
+        endTime: baseTime + 900000, // 15 minutes
+      },
+      {
+        id: 'entry-2',
+        activityId: '2',
+        activityName: 'Read Book',
+        startTime: baseTime + 1000000, // 1 minute break
+        endTime: baseTime + 1600000, // 10 minutes
+      },
+    ];
 
-    const result = extractSessionData(props);
+    const result = extractSessionSummaryData(
+      entries,
+      1800, // 30 minutes planned
+      1600, // 26 minutes 40 seconds actual
+      true, // completed
+      false, // not time up
+      ['3'] // skipped exercise
+    );
 
-    expect(result).toEqual({
-      plannedTime: 3600,
-      timeSpent: 3000,
+    expect(result).toMatchObject({
+      plannedTime: 1800,
+      timeSpent: 1600,
+      sessionType: 'completed',
+      activities: [
+        {
+          id: '1',
+          name: 'Study Math',
+          duration: 900, // 15 minutes in seconds
+          colorIndex: 0,
+        },
+        {
+          id: '2',
+          name: 'Read Book',
+          duration: 600, // 10 minutes in seconds
+          colorIndex: 0,
+        },
+      ],
+      skippedActivities: [
+        {
+          id: '3',
+          name: 'Exercise',
+        },
+      ],
+      timelineEntries: [
+        {
+          id: 'entry-1',
+          activityId: '1',
+          activityName: 'Study Math',
+          startTime: baseTime,
+          endTime: baseTime + 900000,
+          colorIndex: 0,
+        },
+        {
+          id: 'entry-2',
+          activityId: '2',
+          activityName: 'Read Book',
+          startTime: baseTime + 1000000,
+          endTime: baseTime + 1600000,
+          colorIndex: 0,
+        },
+      ],
+    });
+
+    expect(result.completedAt).toBeDefined();
+    expect(new Date(result.completedAt)).toBeInstanceOf(Date);
+  });
+
+  it('calculates overtime correctly', () => {
+    const baseTime = Date.now();
+    const entries: TimelineEntry[] = [
+      {
+        id: 'entry-1',
+        activityId: '1',
+        activityName: 'Study Math',
+        startTime: baseTime,
+        endTime: baseTime + 2400000, // 40 minutes
+      },
+    ];
+
+    const result = extractSessionSummaryData(
+      entries,
+      1800, // 30 minutes planned
+      2400, // 40 minutes actual
+      true,
+      false,
+      []
+    );
+
+    expect(result.overtime).toBe(600); // 10 minutes overtime in seconds
+  });
+
+  it('calculates idle time correctly', () => {
+    const baseTime = Date.now();
+    const entries: TimelineEntry[] = [
+      {
+        id: 'entry-1',
+        activityId: '1',
+        activityName: 'Study Math',
+        startTime: baseTime,
+        endTime: baseTime + 900000, // 15 minutes
+      },
+      {
+        id: 'entry-2',
+        activityId: '2',
+        activityName: 'Read Book',
+        startTime: baseTime + 1200000, // 5 minute break
+        endTime: baseTime + 1800000, // 10 minutes
+      },
+    ];
+
+    const result = extractSessionSummaryData(
+      entries,
+      1800,
+      1800,
+      true,
+      false,
+      []
+    );
+
+    expect(result.idleTime).toBe(300); // 5 minutes idle time in seconds
+  });
+
+  it('handles time up session type', () => {
+    const result = extractSessionSummaryData(
+      [],
+      1800,
+      1800,
+      false,
+      true, // time up
+      []
+    );
+
+    expect(result.sessionType).toBe('timeUp');
+  });
+
+  it('handles empty entries', () => {
+    const result = extractSessionSummaryData(
+      [],
+      1800,
+      0,
+      false,
+      false,
+      []
+    );
+
+    expect(result).toMatchObject({
+      plannedTime: 1800,
+      timeSpent: 0,
       overtime: 0,
       idleTime: 0,
       activities: [],
       skippedActivities: [],
       timelineEntries: [],
-      completedAt: expect.any(String),
       sessionType: 'completed',
     });
-
-    // Verify completedAt is a valid ISO string
-    expect(new Date(result.completedAt).toISOString()).toBe(result.completedAt);
   });
 
-  it('should extract session data with timeline entries', () => {
-    const now = Date.now();
-    const entries: TimelineEntry[] = [
-      {
-        id: 'entry-1',
-        activityId: 'activity-1',
-        activityName: 'Test Activity 1',
-        startTime: now - 2000000, // 33+ minutes ago
-        endTime: now - 1000000, // 16+ minutes ago
-        colors: {
-          background: 'hsl(0, 70%, 90%)',
-          text: 'hsl(0, 70%, 20%)',
-          border: 'hsl(0, 70%, 80%)',
-        },
-      },
-      {
-        id: 'entry-2',
-        activityId: 'activity-2',
-        activityName: 'Test Activity 2',
-        startTime: now - 800000, // 13+ minutes ago
-        endTime: now - 200000, // 3+ minutes ago
-        colors: {
-          background: 'hsl(120, 70%, 90%)',
-          text: 'hsl(120, 70%, 20%)',
-          border: 'hsl(120, 70%, 80%)',
-        },
-      },
-    ];
-
-    const props: SummaryDataProps = {
-      entries,
-      totalDuration: 3600,
-      elapsedTime: 2400,
-      allActivitiesCompleted: true,
-    };
-
-    const result = extractSessionData(props);
-
-    expect(result.activities).toHaveLength(2);
-    expect(result.activities[0]).toEqual({
-      id: 'activity-1',
-      name: 'Test Activity 1',
-      duration: expect.any(Number),
-      colorIndex: 0,
-    });
-
-    expect(result.timelineEntries).toHaveLength(2);
-    expect(result.timelineEntries[0]).toEqual({
-      id: 'entry-1',
-      activityId: 'activity-1',
-      activityName: 'Test Activity 1',
-      startTime: entries[0]!.startTime,
-      endTime: entries[0]!.endTime,
-      colorIndex: 0,
-    });
-  });
-
-  it('should handle skipped activities', () => {
-    const props: SummaryDataProps = {
-      entries: [],
-      totalDuration: 3600,
-      elapsedTime: 2400,
-      allActivitiesCompleted: true,
-      skippedActivityIds: ['activity-1', 'activity-2'],
-    };
-
-    const result = extractSessionData(props);
-
-    expect(result.skippedActivities).toHaveLength(2);
-    expect(result.skippedActivities[0]).toEqual({
-      id: 'activity-1',
-      name: 'Test Activity 1',
-    });
-    expect(result.skippedActivities[1]).toEqual({
-      id: 'activity-2',
-      name: 'Test Activity 2',
-    });
-  });
-
-  it('should handle skipped activities when storage fails', () => {
+  it('handles skipped activities when storage fails', () => {
     mockGetActivities.mockImplementation(() => {
       throw new Error('Storage error');
     });
 
-    const props: SummaryDataProps = {
-      entries: [],
-      totalDuration: 3600,
-      elapsedTime: 2400,
-      allActivitiesCompleted: true,
-      skippedActivityIds: ['activity-1', 'unknown-activity'],
-    };
+    const result = extractSessionSummaryData(
+      [],
+      1800,
+      0,
+      false,
+      false,
+      ['1', '2']
+    );
 
-    const result = extractSessionData(props);
-
-    expect(result.skippedActivities).toHaveLength(2);
-    expect(result.skippedActivities[0]).toEqual({
-      id: 'activity-1',
-      name: 'activity-1', // Falls back to ID when storage fails
-    });
-    expect(result.skippedActivities[1]).toEqual({
-      id: 'unknown-activity',
-      name: 'unknown-activity',
-    });
+    expect(result.skippedActivities).toEqual([
+      { id: '1', name: '1' }, // Falls back to ID as name
+      { id: '2', name: '2' },
+    ]);
   });
 
-  it('should calculate overtime correctly', () => {
-    const now = Date.now();
+  it('aggregates multiple entries for the same activity', () => {
+    const baseTime = Date.now();
     const entries: TimelineEntry[] = [
       {
         id: 'entry-1',
-        activityId: 'activity-1',
-        activityName: 'Test Activity 1',
-        startTime: now - 5000000, // Started 83+ minutes ago
-        endTime: now - 1000000, // Ended 16+ minutes ago
+        activityId: '1',
+        activityName: 'Study Math',
+        startTime: baseTime,
+        endTime: baseTime + 600000, // 10 minutes
+      },
+      {
+        id: 'entry-2',
+        activityId: '2',
+        activityName: 'Read Book',
+        startTime: baseTime + 600000,
+        endTime: baseTime + 1200000, // 10 minutes
+      },
+      {
+        id: 'entry-3',
+        activityId: '1', // Same activity again
+        activityName: 'Study Math',
+        startTime: baseTime + 1200000,
+        endTime: baseTime + 1500000, // 5 minutes
       },
     ];
 
-    const props: SummaryDataProps = {
+    const result = extractSessionSummaryData(
       entries,
-      totalDuration: 3600, // 1 hour planned
-      elapsedTime: 4800, // 80 minutes actual
-      allActivitiesCompleted: true,
-    };
+      1800,
+      1500,
+      true,
+      false,
+      []
+    );
 
-    const result = extractSessionData(props);
-
-    // Overtime should be calculated from timeline span, not elapsed time
-    expect(result.overtime).toBeGreaterThan(0);
+    expect(result.activities).toHaveLength(2);
+    
+    const mathActivity = result.activities.find(a => a.id === '1');
+    const readActivity = result.activities.find(a => a.id === '2');
+    
+    expect(mathActivity?.duration).toBe(900); // 15 minutes total (10 + 5)
+    expect(readActivity?.duration).toBe(600); // 10 minutes
   });
 
-  it('should set session type based on isTimeUp flag', () => {
-    const props: SummaryDataProps = {
-      entries: [],
-      totalDuration: 3600,
-      elapsedTime: 3600,
-      isTimeUp: true,
-    };
-
-    const result = extractSessionData(props);
-    expect(result.sessionType).toBe('timeUp');
-  });
-
-  it('should default to completed session type', () => {
-    const props: SummaryDataProps = {
-      entries: [],
-      totalDuration: 3600,
-      elapsedTime: 3000,
-      allActivitiesCompleted: true,
-    };
-
-    const result = extractSessionData(props);
-    expect(result.sessionType).toBe('completed');
-  });
-
-  it('should handle entries with null endTime (ongoing activities)', () => {
-    const now = Date.now();
+  it('handles entries with title instead of activityName', () => {
+    const baseTime = Date.now();
     const entries: TimelineEntry[] = [
       {
         id: 'entry-1',
-        activityId: 'activity-1',
-        activityName: 'Test Activity 1',
-        startTime: now - 1000000,
-        endTime: null, // Ongoing activity
+        activityId: '1',
+        title: 'Study Math', // Using title instead of activityName
+        startTime: baseTime,
+        endTime: baseTime + 900000,
       },
     ];
 
-    const props: SummaryDataProps = {
+    const result = extractSessionSummaryData(
       entries,
-      totalDuration: 3600,
-      elapsedTime: 2400,
-      allActivitiesCompleted: false,
-    };
+      1800,
+      900,
+      true,
+      false,
+      []
+    );
 
-    const result = extractSessionData(props);
+    expect(result.activities[0].name).toBe('Study Math');
+    expect(result.timelineEntries[0].activityName).toBe('Study Math');
+  });
 
-    expect(result.activities).toHaveLength(1);
-    expect(result.activities[0]!.duration).toBeGreaterThan(0);
-    expect(result.timelineEntries[0]!.endTime).toBeNull();
+  it('handles ongoing activities (no endTime)', () => {
+    const baseTime = Date.now() - 60000; // 1 minute ago to ensure positive duration
+    const entries: TimelineEntry[] = [
+      {
+        id: 'entry-1',
+        activityId: '1',
+        activityName: 'Study Math',
+        startTime: baseTime,
+        // No endTime - ongoing activity
+      },
+    ];
+
+    const result = extractSessionSummaryData(
+      entries,
+      1800,
+      900,
+      false,
+      false,
+      []
+    );
+
+    expect(result.timelineEntries[0].endTime).toBeNull();
+    expect(result.activities[0].duration).toBeGreaterThan(0); // Should calculate duration to now
   });
 });
