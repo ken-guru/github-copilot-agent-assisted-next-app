@@ -349,6 +349,70 @@ export async function getSession(
   // unless explicitly forced for targeted network-path tests.
   if (isTest && !opts?.forceNetwork) return getSessionFromLocal(id);
 
+  // Prefer SDK read in non-test environments to avoid REST endpoint/version mismatches
+  // and leverage the public URL (we write with access: 'public'). This path does not
+  // require BLOB_BASE_URL and is more robust in preview/prod.
+  if (!isTest) {
+    try {
+      const blobMod = (await import('@vercel/blob')) as unknown as {
+        head?: (name: string, opts?: unknown) => Promise<{ url?: string } | unknown>;
+        list?: (opts?: { prefix?: string; limit?: number; cursor?: string }) => Promise<{ blobs?: Array<{ pathname?: string; url?: string }> }>;
+      };
+      const nameCandidates = [`${id}.json`, `${id}`];
+      for (const name of nameCandidates) {
+        try {
+          let url: string | undefined;
+          if (typeof blobMod.head === 'function') {
+            // head() throws on not found; returns { url, ... } when it exists
+            const info = await blobMod.head(name as string);
+            url = (info as { url?: string } | undefined)?.url;
+          }
+          // Fallback to list() to discover public URL when head() is unavailable
+          if (!url && typeof blobMod.list === 'function') {
+            const listed = await blobMod.list({ prefix: name });
+            const match = (listed?.blobs ?? []).find(b => b.pathname === name || (b.pathname ?? '').endsWith(name));
+            url = match?.url;
+          }
+          if (!url) {
+            if (process.env.NODE_ENV !== 'production') {
+              console.warn('getSession: SDK head returned no url for', name);
+            }
+            continue;
+          }
+          const res = await fetch(url, { method: 'GET' });
+          if (!res.ok) {
+            if (process.env.NODE_ENV !== 'production') {
+              const txt = await res.text().catch(() => '');
+              console.warn('getSession: public URL fetch not ok', { name, status: res.status, hint: String(txt).slice(0, 200) });
+            }
+            continue;
+          }
+          const json = await res.json().catch(() => null as unknown);
+          if (json && typeof json === 'object' && 'sessionData' in json && 'metadata' in json) {
+            if (process.env.NODE_ENV !== 'production') {
+              console.log('getSession: loaded via SDK/public URL', { name });
+            }
+            return json as StoredSession;
+          }
+          if (process.env.NODE_ENV !== 'production') {
+            console.warn('getSession: invalid JSON shape from public URL', { name });
+          }
+        } catch (sdkErr) {
+          // On 404 or other errors, try next candidate
+          if (process.env.NODE_ENV !== 'production') {
+            console.warn('getSession: SDK head failed for candidate', { name, err: String(sdkErr) });
+          }
+          continue;
+        }
+      }
+      // If SDK path didn't resolve anything, fall through to REST fallback below
+    } catch (e) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('getSession: failed to use @vercel/blob SDK, falling back to REST', String(e));
+      }
+    }
+  }
+
   // Prefer dev-specific env vars when running in development
   const token = isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV ? process.env.BLOB_READ_WRITE_TOKEN_DEV : process.env.BLOB_READ_WRITE_TOKEN;
   const base = isDev && process.env.BLOB_BASE_URL_DEV ? process.env.BLOB_BASE_URL_DEV : process.env.BLOB_BASE_URL;
