@@ -42,7 +42,16 @@ export async function POST(req: Request) {
     validateStoredSession(stored);
 
   // Define a light put signature to avoid depending on SDK types at build time
-  type PutFn = (name: string, body: BodyInit, opts?: Record<string, unknown>) => Promise<{ id?: string; url?: string }>;
+  type PutFn = (
+    name: string,
+    body: BodyInit,
+    opts?: {
+      access?: 'public' | 'private';
+      addRandomSuffix?: boolean;
+      allowOverwrite?: boolean;
+      token?: string;
+    },
+  ) => Promise<{ id?: string; url?: string }>;
   let putBlob: PutFn | null = null;
   let saved;
   try {
@@ -64,7 +73,20 @@ export async function POST(req: Request) {
       saved = await saveSession(id, stored);
     } else {
       try {
-        const result = await putBlob(`${id}.json`, JSON.stringify(stored), { access: 'private' });
+        // Prefer SDK path in non-test environments. Pass token explicitly if available,
+        // disable random suffix to keep deterministic names, and allow overwrite to
+        // avoid collisions if an id is re-used during retries.
+        const token = process.env.BLOB_READ_WRITE_TOKEN;
+        const result = await putBlob(
+          `${id}.json`,
+          JSON.stringify(stored),
+          {
+            access: 'private',
+            addRandomSuffix: false,
+            allowOverwrite: true,
+            ...(token ? { token } : {}),
+          },
+        );
         saved = { id: result.id ?? id, url: result.url ?? (process.env.NEXT_PUBLIC_BASE_URL ? `${process.env.NEXT_PUBLIC_BASE_URL}/shared/${id}` : ''), storage: 'blob' };
         if (process.env.NODE_ENV !== 'production') console.log('session-share: putBlob result', { id: saved.id, url: saved.url });
       } catch (sdkErr) {
