@@ -1,24 +1,60 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import { StoredSession } from '../../types/sessionSharing';
 
-const LOCAL_STORE_DIR = path.join(process.cwd(), '.vercel_blob_store');
+/**
+ * Determine an effective local store directory for development and fallback
+ * runtimes where Vercel Blob is not configured. Priority:
+ * 1. `process.env.BLOB_LOCAL_DIR` (explicit override)
+ * 2. `process.cwd()/.vercel_blob_store` (project-local)
+ * 3. OS tempdir (fallback)
+ */
+function getEffectiveLocalDir() {
+  const env = process.env.BLOB_LOCAL_DIR;
+  if (env && typeof env === 'string' && env.trim() !== '') {
+    return path.resolve(env);
+  }
 
-function ensureLocalDir() {
-  if (!fs.existsSync(LOCAL_STORE_DIR)) {
-    fs.mkdirSync(LOCAL_STORE_DIR, { recursive: true });
+  // Prefer project-local directory when writable
+  const projectDir = path.join(process.cwd(), '.vercel_blob_store');
+  try {
+    if (!fs.existsSync(projectDir)) {
+      fs.mkdirSync(projectDir, { recursive: true });
+    }
+    // If we were able to create or it already exists, return it
+    return projectDir;
+  } catch (e) {
+    // Fall through to tmpdir fallback
+    // Note: Some serverless or locked-down runtimes disallow writing to cwd
+  }
+
+  const tmpDir = path.join(os.tmpdir(), '.vercel_blob_store');
+  try {
+    if (!fs.existsSync(tmpDir)) {
+      fs.mkdirSync(tmpDir, { recursive: true });
+    }
+    return tmpDir;
+  } catch (e) {
+    // Last resort: return tmpDir path even if creation failed; callers will receive runtime errors
+    return tmpDir;
   }
 }
 
+function getLocalFilePath(id: string) {
+  const dir = getEffectiveLocalDir();
+  return path.join(dir, `${id}.json`);
+}
+
 export async function saveSessionToLocal(id: string, data: StoredSession) {
-  ensureLocalDir();
-  const filePath = path.join(LOCAL_STORE_DIR, `${id}.json`);
+  const filePath = getLocalFilePath(id);
+  // Write synchronously to avoid lifecycle complexities in serverless handlers/tests
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
   return { id, url: `file://${filePath}` };
 }
 
 export async function getSessionFromLocal(id: string): Promise<StoredSession | null> {
-  const filePath = path.join(LOCAL_STORE_DIR, `${id}.json`);
+  const filePath = getLocalFilePath(id);
   if (!fs.existsSync(filePath)) return null;
   const raw = fs.readFileSync(filePath, 'utf-8');
   return JSON.parse(raw) as StoredSession;
