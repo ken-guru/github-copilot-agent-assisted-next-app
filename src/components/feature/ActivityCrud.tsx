@@ -252,39 +252,12 @@ const ActivityCrud: React.FC = () => {
       return;
     }
 
-    // Fallback: try to re-parse the file and process
+  // Fallback: try to re-parse the file and process
     if (importFile) {
       importFile.text().then(text => {
         try {
-          const imported = JSON.parse(text);
-          let importArray: unknown[] = [];
-          if (imported && typeof imported === 'object' && 'sessionData' in (imported as object)) {
-            const maybeImported = imported as Record<string, unknown>;
-            const candidate = maybeImported['sessionData'];
-            if (candidate && typeof candidate === 'object') {
-              const candidateObj = candidate as Record<string, unknown>;
-              const activitiesCandidate = candidateObj['activities'];
-              if (Array.isArray(activitiesCandidate)) {
-                importArray = activitiesCandidate;
-              } else {
-                throw new Error('Shared session format invalid: missing sessionData.activities');
-              }
-            } else {
-              throw new Error('Shared session format invalid: sessionData is not an object');
-            }
-          } else if (Array.isArray(imported)) {
-            importArray = imported;
-          } else if (imported && typeof imported === 'object') {
-            const importedObj = imported as Record<string, unknown>;
-            const activitiesCandidate = importedObj['activities'];
-            if (Array.isArray(activitiesCandidate)) {
-              importArray = activitiesCandidate;
-            } else {
-              throw new Error('Unsupported import format');
-            }
-          } else {
-            throw new Error('Unsupported import format');
-          }
+      const imported = JSON.parse(text);
+      const importArray = extractActivitiesFromImport(imported);
 
           const processedActivities = importActivities(importArray, {
             existingActivities: activities,

@@ -94,3 +94,9 @@ Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
 5. Add tests (unit, integration, e2e) and security middleware
 
 See `docs/session-sharing-design.md` for full details and staged implementation plan.
+
+### Status Update (Preview Robustness and Bypass)
+- Implemented SDK-first read path with tokenized `head()` and list fallback, plus REST fallback.
+- Implemented preview protection bypass for API/page/download flows with internal cookie route and client helper.
+- Local tests remain fully offline; CI green; preview deployment verified end-to-end.
+- Next: merge final PR and verify production deployment.

@@ -365,7 +365,7 @@ export async function getSession(
           let url: string | undefined;
           if (typeof blobMod.head === 'function') {
             // head() throws on not found; returns { url, ... } when it exists
-    const info = await blobMod.head(name as string, sdkToken ? { token: sdkToken } : undefined);
+    const info = await blobMod.head(name, sdkToken ? { token: sdkToken } : undefined);
             url = (info as { url?: string } | undefined)?.url;
           }
           // Fallback to list() to discover public URL when head() is unavailable
