@@ -3,6 +3,9 @@
 import React from 'react';
 import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
+import { saveActivities } from '@/utils/activity-storage';
+import { importActivities } from '@/utils/activity-import-export';
+import type { PartialActivityImport } from '@/utils/activity-import-export';
 
 interface Props {
   shareUrl: string;
@@ -28,7 +31,7 @@ export default function ShareControls({ shareUrl }: Props) {
         return;
       }
       const parts = shareUrl.split('/').filter(Boolean);
-      const id = parts[parts.length - 1];
+  const id = parts[parts.length - 1];
       if (!id) {
         addResponsiveToast({ message: 'Invalid share URL', variant: 'warning', autoDismiss: true });
         return;
@@ -55,6 +58,67 @@ export default function ShareControls({ shareUrl }: Props) {
     }
   };
 
+  const replaceMyActivities = async () => {
+    try {
+      if (!shareUrl) {
+        addResponsiveToast({ message: 'No share URL available', variant: 'warning', autoDismiss: true });
+        return;
+      }
+
+  // Confirm destructive action
+  const confirmed = typeof window !== 'undefined' && typeof window.confirm === 'function'
+        ? window.confirm('This will replace your current activities with the shared set. Continue?')
+        : true;
+      if (!confirmed) return;
+
+      const parts = shareUrl.split('/').filter(Boolean);
+      const id = parts[parts.length - 1];
+      if (!id) {
+        addResponsiveToast({ message: 'Invalid share URL', variant: 'warning', autoDismiss: true });
+        return;
+      }
+
+      const res = await fetchWithVercelBypass(`/api/sessions/${encodeURIComponent(String(id))}`);
+      if (!res.ok) {
+        const msg = `Unable to fetch shared session: ${res.status}`;
+        addResponsiveToast({ message: msg, variant: 'error', autoDismiss: true });
+        return;
+      }
+      const json = await res.json();
+      // Expect StoredSession shape: { sessionData: { activities, skippedActivities } }
+      const sessionData = json?.sessionData as unknown;
+      if (!sessionData || typeof sessionData !== 'object') {
+        addResponsiveToast({ message: 'Shared data is not in expected format', variant: 'error', autoDismiss: true });
+        return;
+      }
+
+      const activities = (sessionData as { activities?: Array<{ id?: string; name?: string; colorIndex?: number }> }).activities || [];
+      const skipped = (sessionData as { skippedActivities?: Array<{ id?: string; name?: string }> }).skippedActivities || [];
+
+      // Build import list from union of activities and skippedActivities, deduped by case-insensitive name
+      const byName = new Map<string, PartialActivityImport>();
+      for (const a of activities) {
+        if (!a || typeof a !== 'object' || !a.name) continue;
+        const key = a.name.trim().toLowerCase();
+        byName.set(key, { id: a.id, name: a.name, colorIndex: typeof a.colorIndex === 'number' ? a.colorIndex : undefined });
+      }
+      for (const s of skipped) {
+        if (!s || typeof s !== 'object' || !s.name) continue;
+        const key = s.name.trim().toLowerCase();
+        if (!byName.has(key)) {
+          byName.set(key, { id: s.id, name: s.name });
+        }
+      }
+      const importList = Array.from(byName.values());
+
+      const imported = importActivities(importList, { existingActivities: [], colorStartIndex: 0 });
+      saveActivities(imported);
+      addResponsiveToast({ message: `Replaced activities (${imported.length}) from shared set`, variant: 'success', autoDismiss: true });
+  } catch {
+      addResponsiveToast({ message: 'Failed to replace activities from shared data', variant: 'error', autoDismiss: true });
+    }
+  };
+
   return (
     <div
       style={{ display: 'flex', gap: 8, alignItems: 'center' }}
@@ -76,6 +140,15 @@ export default function ShareControls({ shareUrl }: Props) {
         aria-label="Download shared session as JSON"
       >
         Download JSON
+      </button>
+      <button
+        type="button"
+        className="btn btn-warning"
+        onClick={replaceMyActivities}
+        aria-label="Replace my activities with this shared set"
+        title="Replace my activities with this shared set"
+      >
+        Replace my activities
       </button>
       <a
         className="btn btn-outline-secondary"

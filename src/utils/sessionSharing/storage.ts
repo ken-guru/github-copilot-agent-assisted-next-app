@@ -3,6 +3,49 @@ import path from 'path';
 import os from 'os';
 import { StoredSession } from '../../types/sessionSharing';
 
+// Lightweight type for the subset of @vercel/blob SDK we use
+type BlobModule = {
+  head?: (name: string, opts?: unknown) => Promise<{ url?: string } | unknown>;
+  list?: (opts?: { prefix?: string; limit?: number; cursor?: string }) => Promise<{ blobs?: Array<{ pathname?: string; url?: string }> }>;
+};
+
+// Encapsulate dynamic import to simplify call sites and improve readability
+async function loadBlobModule(): Promise<BlobModule> {
+  return (await import('@vercel/blob')) as unknown as BlobModule;
+}
+
+// Safely read both JSON and text from a fetch Response
+async function readJsonAndText(res: Response): Promise<{ json?: unknown; text: string }> {
+  let json: unknown | undefined = undefined;
+  let text = '';
+  try {
+    const maybeClone = typeof res.clone === 'function' ? res.clone() : res;
+    const asJson = maybeClone as unknown as { json?: () => Promise<unknown> };
+    if (typeof asJson.json === 'function') {
+      json = await asJson.json().catch(() => undefined);
+    }
+  } catch {
+    json = undefined;
+  }
+  try {
+    const maybeClone = typeof res.clone === 'function' ? res.clone() : res;
+    const asText = maybeClone as unknown as { text?: () => Promise<string> };
+    if (typeof asText.text === 'function') {
+      text = (await asText.text().catch(() => '')) || '';
+    }
+  } catch {
+    text = '';
+  }
+  if (!text && json) {
+    try {
+      text = JSON.stringify(json);
+    } catch {
+      // ignore
+    }
+  }
+  return { json, text };
+}
+
 /**
  * Determine an effective local store directory for development and fallback
  * runtimes where Vercel Blob is not configured. Priority:
@@ -137,7 +180,13 @@ export async function saveSession(
     });
     if (!res.ok) {
       const text = await res.text().catch(() => 'unable to read response body');
-  if (process.env.NODE_ENV !== 'production') console.log('saveSession: PUT response', { status: res.status, ok: res.ok, bodyHint: String(text).slice(0, 200) });
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('saveSession: PUT response', {
+          status: res.status,
+          ok: res.ok,
+          bodyHint: String(text).slice(0, 200),
+        });
+      }
 
       // If the blob API responds with 404 it's common that a create-upload flow is required.
       if (res.status === 404) {
@@ -166,35 +215,7 @@ export async function saveSession(
           // include helpful diagnostic hints in preview logs when the remote service
           // returns unexpected shapes. Some test mocks implement only `json()` or
           // only `text()`, so attempt both in a defensive order (json preferred).
-          let createJson: unknown = undefined;
-          let createText = '';
-          try {
-            const maybeClone = typeof (createRes as Response).clone === 'function' ? (createRes as Response).clone() : createRes;
-            const respForJson = maybeClone as unknown as { json?: () => Promise<unknown> };
-            if (typeof respForJson.json === 'function') {
-              createJson = await respForJson.json().catch(() => undefined);
-            }
-          } catch {
-            createJson = undefined;
-          }
-          try {
-            const maybeClone = typeof (createRes as Response).clone === 'function' ? (createRes as Response).clone() : createRes;
-            const respForText = maybeClone as unknown as { text?: () => Promise<string> };
-            if (typeof respForText.text === 'function') {
-              createText = await respForText.text().catch(() => '');
-            }
-          } catch {
-            createText = '';
-          }
-
-          // If we couldn't read text but did parse JSON, create a text preview from it
-          if (!createText && createJson) {
-            try {
-              createText = JSON.stringify(createJson);
-            } catch {
-              createText = '';
-            }
-          }
+          const { json: createJson, text: createText } = await readJsonAndText(createRes as Response);
 
           if (process.env.NODE_ENV !== 'production') {
             // Collect a safe subset of headers for debugging (avoid exposing auth headers)
@@ -354,18 +375,18 @@ export async function getSession(
   // require BLOB_BASE_URL and is more robust in preview/prod.
   if (!isTest) {
     try {
-  const blobMod = (await import('@vercel/blob')) as unknown as {
-        head?: (name: string, opts?: unknown) => Promise<{ url?: string } | unknown>;
-        list?: (opts?: { prefix?: string; limit?: number; cursor?: string }) => Promise<{ blobs?: Array<{ pathname?: string; url?: string }> }>;
-      };
+      const blobMod = await loadBlobModule();
   const nameCandidates = [`${id}.json`, `${id}`];
-  const accessToken = process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN_DEV || undefined;
+  // Prefer dev-specific token when in development for SDK reads
+  const sdkToken = (isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV)
+    ? process.env.BLOB_READ_WRITE_TOKEN_DEV
+    : process.env.BLOB_READ_WRITE_TOKEN || undefined;
       for (const name of nameCandidates) {
         try {
           let url: string | undefined;
           if (typeof blobMod.head === 'function') {
             // head() throws on not found; returns { url, ... } when it exists
-    const info = await blobMod.head(name as string, accessToken ? { token: accessToken } : undefined);
+    const info = await blobMod.head(name as string, sdkToken ? { token: sdkToken } : undefined);
             url = (info as { url?: string } | undefined)?.url;
           }
           // Fallback to list() to discover public URL when head() is unavailable

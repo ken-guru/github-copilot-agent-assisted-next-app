@@ -19,26 +19,45 @@ function looksLikeVercelAuthHtml(text: string): boolean {
   return text.includes('<title>Authentication Required</title>') && text.includes('x-vercel-protection-bypass');
 }
 
+// Type guard for Headers instance
+function isHeadersInstance(obj: unknown): obj is Headers {
+  return typeof obj === 'object' && obj !== null && typeof (obj as Headers).get === 'function';
+}
+
+// Type guard for plain object map
+function isPlainObject(obj: unknown): obj is Record<string, unknown> {
+  return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
+}
+
 function getContentType(headers: Headers | Record<string, unknown> | undefined): string {
   if (!headers) return '';
   try {
-    const maybeHeaders = headers as Headers;
-    if (maybeHeaders && typeof (maybeHeaders as unknown as { get?: unknown }).get === 'function') {
-      const v = maybeHeaders.get('content-type');
+    if (isHeadersInstance(headers)) {
+      const v = headers.get('content-type');
       return typeof v === 'string' ? v : '';
+    }
+  } catch {
+    // ignore and fall through
+  }
+  try {
+  if (isPlainObject(headers)) {
+      const keys = Object.keys(headers);
+      const ctKey = keys.find((k) => k.toLowerCase() === 'content-type');
+      if (!ctKey) return '';
+      const rawVal = headers[ctKey];
+      if (typeof rawVal === 'string') return rawVal;
+      if (Array.isArray(rawVal)) {
+        const firstStr = rawVal.find((v) => typeof v === 'string');
+        if (typeof firstStr === 'string') return firstStr;
+      }
+      if (rawVal != null && (typeof rawVal === 'number' || typeof rawVal === 'boolean')) {
+        return String(rawVal);
+      }
     }
   } catch {
     // ignore
   }
-  try {
-    const record = headers as Record<string, unknown>;
-    const key = Object.keys(record).find((k) => k.toLowerCase() === 'content-type');
-    if (!key) return '';
-    const raw = record[key];
-    return typeof raw === 'string' ? raw : '';
-  } catch {
-    return '';
-  }
+  return '';
 }
 
 export async function fetchWithVercelBypass(input: RequestInfo | URL, init?: FetchWithBypassOptions): Promise<Response> {
