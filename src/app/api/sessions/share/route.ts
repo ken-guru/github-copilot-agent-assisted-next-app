@@ -53,19 +53,12 @@ export async function POST(req: Request) {
       saved = await saveSession(id, stored);
     } else {
       try {
-        // Enforce SDK path in non-test environments. Pass token explicitly, disable random suffix,
-        // and allow overwrite to avoid collisions during retries.
-        const token = process.env.BLOB_READ_WRITE_TOKEN;
-        const permissivePut = putBlob as unknown as (
-          name: string,
-          body: BodyInit,
-          opts?: Record<string, unknown>,
-        ) => Promise<PutResult>;
-        const result: PutResult = await permissivePut(`${id}.json`, JSON.stringify(stored), {
-          access: 'private',
+        // Enforce SDK path in non-test environments with public access.
+        // Deterministic name and overwrite to avoid collisions during retries.
+        const result: PutResult = await putBlob(`${id}.json`, JSON.stringify(stored), {
+          access: 'public',
           addRandomSuffix: false,
           allowOverwrite: true,
-          ...(token ? { token } : {}),
         });
         saved = {
           id: result.id ?? id,
