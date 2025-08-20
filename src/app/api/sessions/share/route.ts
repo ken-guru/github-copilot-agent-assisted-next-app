@@ -49,12 +49,11 @@ export async function POST(req: Request) {
     console.log('session-share: attempting to save session to blob/local storage', { id });
     // Attempt to dynamically import the SDK at runtime (avoids build-time type/import issues)
     try {
-      // Use a guarded require to avoid TypeScript resolving the module at build-time.
-      // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-      // @ts-ignore - module may not exist in all environments
-      const mod = require('@vercel/blob');
-      if (mod && typeof mod.put === 'function') putBlob = mod.put as PutFn;
-    } catch (e) {
+      const mod = await import('@vercel/blob');
+      if (mod && typeof (mod as unknown as { put?: unknown }).put === 'function') {
+        putBlob = (mod as unknown as { put: PutFn }).put;
+      }
+    } catch {
       // SDK not available — we'll fall back to REST saveSession below
       putBlob = null;
     }

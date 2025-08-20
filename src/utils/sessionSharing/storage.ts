@@ -169,15 +169,19 @@ export async function saveSession(
           let createJson: unknown = undefined;
           let createText = '';
           try {
-            if (typeof (createRes as any).json === 'function') {
-              createJson = await (createRes as any).json().catch(() => undefined);
+            const maybeClone = typeof (createRes as Response).clone === 'function' ? (createRes as Response).clone() : createRes;
+            const respForJson = maybeClone as unknown as { json?: () => Promise<unknown> };
+            if (typeof respForJson.json === 'function') {
+              createJson = await respForJson.json().catch(() => undefined);
             }
           } catch {
             createJson = undefined;
           }
           try {
-            if (typeof (createRes as any).text === 'function') {
-              createText = await (createRes as any).text().catch(() => '');
+            const maybeClone = typeof (createRes as Response).clone === 'function' ? (createRes as Response).clone() : createRes;
+            const respForText = maybeClone as unknown as { text?: () => Promise<string> };
+            if (typeof respForText.text === 'function') {
+              createText = await respForText.text().catch(() => '');
             }
           } catch {
             createText = '';
@@ -195,24 +199,18 @@ export async function saveSession(
           if (process.env.NODE_ENV !== 'production') {
             // Collect a safe subset of headers for debugging (avoid exposing auth headers)
             const safeHeaders: Record<string, string | null> = {};
-            try {
-              const hdrs = (createRes as any).headers;
-              if (hdrs && typeof hdrs.get === 'function') {
-                // Common header keys we'd like to inspect
-                const keys = ['location', 'content-type', 'content-length'];
-                for (const k of keys) {
-                  try {
-                    const v = hdrs.get(k);
-                    if (v != null && !k.toLowerCase().includes('authorization') && !k.toLowerCase().includes('token')) {
-                      safeHeaders[k] = v;
-                    }
-                  } catch {
-                    // ignore
-                  }
+            // Common header keys we'd like to inspect (avoid exposing sensitive ones)
+            const keys = ['location', 'content-type', 'content-length'];
+            for (const k of keys) {
+              try {
+                const headersObj = (createRes as Response).headers as Headers | undefined;
+                const v = headersObj && typeof headersObj.get === 'function' ? headersObj.get(k) : null;
+                if (v != null && !k.toLowerCase().includes('authorization') && !k.toLowerCase().includes('token')) {
+                  safeHeaders[k] = v;
                 }
+              } catch {
+                // ignore per-header errors
               }
-            } catch {
-              // ignore header iteration errors
             }
             console.log('saveSession: create response', { status: createRes.status, headers: safeHeaders, body: createJson ?? '<non-json or empty>', textPreview: String(createText).slice(0, 1000) });
           }
