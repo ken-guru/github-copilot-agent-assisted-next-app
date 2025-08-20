@@ -1,4 +1,12 @@
 import { NextResponse } from 'next/server';
+// Prefer the official @vercel/blob SDK for server-side uploads when available
+let putBlob: unknown = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  putBlob = require('@vercel/blob').put;
+} catch {
+  putBlob = null;
+}
 import { validateSessionSummaryData, validateStoredSession } from '../../../../utils/sessionSharing/schema';
 import { generateShareId } from '../../../../utils/sessionSharing/utils';
 import { saveSession } from '../../../../utils/sessionSharing/storage';
@@ -44,7 +52,22 @@ export async function POST(req: Request) {
   let saved;
   try {
     console.log('session-share: attempting to save session to blob/local storage', { id });
-    saved = await saveSession(id, stored);
+    // If running in tests or the SDK is not available, use the existing saveSession logic
+    const isTest = process.env.NODE_ENV === 'test';
+  if (isTest || !putBlob) {
+      saved = await saveSession(id, stored);
+    } else {
+      // Use SDK put helper which handles create/upload details
+      try {
+    const result = await (putBlob as any)(`${id}.json`, JSON.stringify(stored), { access: 'private' });
+        // result typically contains { id, url }
+        saved = { id: result.id ?? id, url: result.url ?? (process.env.NEXT_PUBLIC_BASE_URL ? `${process.env.NEXT_PUBLIC_BASE_URL}/shared/${id}` : ''), storage: 'blob' };
+        if (process.env.NODE_ENV !== 'production') console.log('session-share: putBlob result', { id: saved.id, url: saved.url });
+      } catch (sdkErr) {
+        if (process.env.NODE_ENV !== 'production') console.error('session-share: putBlob failed, falling back to REST saveSession', String(sdkErr));
+        saved = await saveSession(id, stored);
+      }
+    }
     console.log('session-share: saveSession result', { id, storage: saved.storage });
   } catch (saveErr) {
     console.error('session-share: saveSession failed', { id, err: String(saveErr) });
