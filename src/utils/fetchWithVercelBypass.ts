@@ -42,7 +42,8 @@ export async function fetchWithVercelBypass(input: RequestInfo | URL, init?: Fet
   const res1 = await fetch(input, init);
   // Only attempt bypass on the client and when token is available
   const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
-  const token = init?.vercelBypassToken || process.env?.NEXT_PUBLIC_VERCEL_BYPASS_TOKEN;
+  // IMPORTANT: Avoid optional chaining on process.env so Next can inline during build
+  const token = init?.vercelBypassToken || (process.env.NEXT_PUBLIC_VERCEL_BYPASS_TOKEN as string | undefined);
 
   // Detect if a 200 HTML auth page was returned (preview protection renders HTML with 200)
   let isAuthHtml200 = false;

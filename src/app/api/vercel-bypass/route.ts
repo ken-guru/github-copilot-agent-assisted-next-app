@@ -11,7 +11,12 @@ export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const next = url.searchParams.get('next') || '/';
-    const token = url.searchParams.get('token') || process.env.VERCEL_PROTECTION_BYPASS || '';
+    // Prefer explicit token query param; otherwise try server env fallbacks
+    const token =
+      url.searchParams.get('token') ||
+      process.env.VERCEL_PROTECTION_BYPASS ||
+      process.env.VERCEL_AUTOMATION_BYPASS_SECRET ||
+      '';
 
     if (!token) {
       return NextResponse.json({ error: 'Bypass token not configured' }, { status: 501 });
