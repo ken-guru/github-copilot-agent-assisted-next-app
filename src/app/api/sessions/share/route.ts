@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { put as putBlob } from '@vercel/blob';
 import { validateSessionSummaryData, validateStoredSession } from '../../../../utils/sessionSharing/schema';
 import { generateShareId } from '../../../../utils/sessionSharing/utils';
 import { saveSession } from '../../../../utils/sessionSharing/storage';
@@ -10,12 +9,23 @@ export async function POST(req: Request) {
   // Helpful debugging log: do not print token values, only presence
   console.log('session-share: BLOB_BASE_URL set?', !!process.env.BLOB_BASE_URL, 'BLOB_READ_WRITE_TOKEN set?', !!process.env.BLOB_READ_WRITE_TOKEN);
     // Additional context logs for debugging create/upload flow
-    console.log('session-share: creating share id', { idPreview: 'xxxx-xxxx', origin: req.headers.get('origin') ?? undefined });
-    // Basic Origin/Referer check to reduce CSRF surface for public endpoint.
-    const origin = req.headers.get('origin') ?? req.headers.get('referer') ?? '';
-    const base = process.env.NEXT_PUBLIC_BASE_URL ?? '';
-    if (base && origin && !origin.startsWith(base)) {
-      return NextResponse.json({ error: 'Invalid origin' }, { status: 400 });
+    console.log('session-share: creating share id', { idPreview: 'xxxx-xxxx', origin: req.headers.get('origin') ?? undefined, referer: req.headers.get('referer') ?? undefined, url: req.url });
+    // Origin validation: allow same-host requests (works for preview and production),
+    // avoid coupling to NEXT_PUBLIC_BASE_URL which may differ on preview.
+    // If an Origin/Referer is present and does not match this deployment's origin, reject.
+    try {
+      const reqUrl = new URL(req.url);
+      const serverOrigin = `${reqUrl.protocol}//${reqUrl.host}`;
+      const headerOrigin = req.headers.get('origin') ?? '';
+      const headerReferer = req.headers.get('referer') ?? '';
+      const headerBase = headerOrigin || headerReferer;
+      if (headerBase && !headerBase.startsWith(serverOrigin)) {
+        console.warn('session-share: origin mismatch', { serverOrigin, headerBase });
+        return NextResponse.json({ error: 'Invalid origin' }, { status: 400 });
+      }
+    } catch (e) {
+      // If URL parsing fails for any reason, continue without blocking
+      console.warn('session-share: origin validation skipped due to URL parse error', e);
     }
 
     // Rate limit per-origin (fall back to 'global' if absent)
@@ -48,14 +58,15 @@ export async function POST(req: Request) {
   try {
     console.log('session-share: attempting to save session to blob/local storage', { id });
     const isTest = process.env.NODE_ENV === 'test';
-    if (isTest) {
+  if (isTest) {
       // Use existing REST/local logic for tests (local-only path)
       saved = await saveSession(id, stored);
     } else {
       try {
-        // Enforce SDK path in non-test environments with public access.
+    // Enforce SDK path in non-test environments with public access.
         // Deterministic name and overwrite to avoid collisions during retries.
-        const result: PutResult = await putBlob(`${id}.json`, JSON.stringify(stored), {
+    const { put: putBlob } = await import('@vercel/blob');
+    const result: PutResult = await putBlob(`${id}.json`, JSON.stringify(stored), {
           access: 'public',
           addRandomSuffix: false,
           allowOverwrite: true,
@@ -80,8 +91,17 @@ export async function POST(req: Request) {
   }
 
   // Build the share URL. Prefer NEXT_PUBLIC_BASE_URL (set in production) but fall back to request origin
-  const requestOrigin = req.headers.get('origin') ?? req.headers.get('referer') ?? '';
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? requestOrigin ?? '';
+    const requestOrigin = req.headers.get('origin') ?? req.headers.get('referer') ?? '';
+    // Prefer configured base URL; otherwise use this deployment's origin derived from req.url; fallback to requestOrigin
+    let baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? '';
+    if (!baseUrl) {
+      try {
+        const reqUrl = new URL(req.url);
+        baseUrl = `${reqUrl.protocol}//${reqUrl.host}`;
+      } catch {
+        baseUrl = requestOrigin ?? '';
+      }
+    }
   const shareUrl = `${baseUrl.replace(/\/$/, '')}/shared/${id}`;
 
     return NextResponse.json(
