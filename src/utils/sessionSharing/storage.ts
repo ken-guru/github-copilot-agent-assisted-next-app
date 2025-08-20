@@ -3,6 +3,64 @@ import path from 'path';
 import os from 'os';
 import { StoredSession } from '../../types/sessionSharing';
 
+// Lightweight type for the parts of @vercel/blob we use
+type BlobModule = {
+  head?: (name: string, opts?: { token?: string }) => Promise<{ url?: string } | unknown>;
+  list?: (opts?: { prefix?: string; limit?: number; cursor?: string }) => Promise<{ blobs?: Array<{ pathname?: string; url?: string }> }>;
+};
+
+// Helper to dynamically import the Blob SDK in environments where it is available
+async function importBlobModule(): Promise<BlobModule> {
+  const mod = (await import('@vercel/blob')) as unknown as BlobModule;
+  return mod ?? {};
+}
+
+// Safely parse a Fetch Response into JSON and text without throwing, and capture a small set of safe headers
+async function parseResponseSafely(res: Response): Promise<{ json: unknown; text: string; safeHeaders: Record<string, string | null> }>{
+  let json: unknown = undefined;
+  let text = '';
+  try {
+    const maybeClone = typeof res.clone === 'function' ? res.clone() : res;
+    if (typeof (maybeClone as unknown as { json?: () => Promise<unknown> }).json === 'function') {
+      json = await (maybeClone as unknown as { json: () => Promise<unknown> }).json().catch(() => undefined);
+    }
+  } catch {
+    json = undefined;
+  }
+  try {
+    const maybeClone = typeof res.clone === 'function' ? res.clone() : res;
+    if (typeof (maybeClone as unknown as { text?: () => Promise<string> }).text === 'function') {
+      text = await (maybeClone as unknown as { text: () => Promise<string> }).text().catch(() => '');
+    }
+  } catch {
+    text = '';
+  }
+  if (!text && json) {
+    try {
+      text = JSON.stringify(json);
+    } catch {
+      text = '';
+    }
+  }
+  const safeHeaders: Record<string, string | null> = {};
+  try {
+    const keys = ['location', 'content-type', 'content-length'];
+    for (const k of keys) {
+      try {
+        const v = res.headers && typeof res.headers.get === 'function' ? res.headers.get(k) : null;
+        if (v != null && !k.toLowerCase().includes('authorization') && !k.toLowerCase().includes('token')) {
+          safeHeaders[k] = v;
+        }
+      } catch {
+        // ignore per-header errors
+      }
+    }
+  } catch {
+    // ignore header extraction failures
+  }
+  return { json, text, safeHeaders };
+}
+
 /**
  * Determine an effective local store directory for development and fallback
  * runtimes where Vercel Blob is not configured. Priority:
@@ -166,57 +224,8 @@ export async function saveSession(
               size: Buffer.byteLength(JSON.stringify(data), 'utf-8'),
             }),
           });
-
-          // Safely attempt to read both JSON and raw text from the response so we can
-          // include helpful diagnostic hints in preview logs when the remote service
-          // returns unexpected shapes. Some test mocks implement only `json()` or
-          // only `text()`, so attempt both in a defensive order (json preferred).
-          let createJson: unknown = undefined;
-          let createText = '';
-          try {
-            const maybeClone = typeof (createRes as Response).clone === 'function' ? (createRes as Response).clone() : createRes;
-            const respForJson = maybeClone as unknown as { json?: () => Promise<unknown> };
-            if (typeof respForJson.json === 'function') {
-              createJson = await respForJson.json().catch(() => undefined);
-            }
-          } catch {
-            createJson = undefined;
-          }
-          try {
-            const maybeClone = typeof (createRes as Response).clone === 'function' ? (createRes as Response).clone() : createRes;
-            const respForText = maybeClone as unknown as { text?: () => Promise<string> };
-            if (typeof respForText.text === 'function') {
-              createText = await respForText.text().catch(() => '');
-            }
-          } catch {
-            createText = '';
-          }
-
-          // If we couldn't read text but did parse JSON, create a text preview from it
-          if (!createText && createJson) {
-            try {
-              createText = JSON.stringify(createJson);
-            } catch {
-              createText = '';
-            }
-          }
-
+          const { json: createJson, text: createText, safeHeaders } = await parseResponseSafely(createRes);
           if (process.env.NODE_ENV !== 'production') {
-            // Collect a safe subset of headers for debugging (avoid exposing auth headers)
-            const safeHeaders: Record<string, string | null> = {};
-            // Common header keys we'd like to inspect (avoid exposing sensitive ones)
-            const keys = ['location', 'content-type', 'content-length'];
-            for (const k of keys) {
-              try {
-                const headersObj = (createRes as Response).headers as Headers | undefined;
-                const v = headersObj && typeof headersObj.get === 'function' ? headersObj.get(k) : null;
-                if (v != null && !k.toLowerCase().includes('authorization') && !k.toLowerCase().includes('token')) {
-                  safeHeaders[k] = v;
-                }
-              } catch {
-                // ignore per-header errors
-              }
-            }
             console.log('saveSession: create response', { status: createRes.status, headers: safeHeaders, body: createJson ?? '<non-json or empty>', textPreview: String(createText).slice(0, 1000) });
           }
 
@@ -359,10 +368,7 @@ export async function getSession(
   // require BLOB_BASE_URL and is more robust in preview/prod.
   if (!isTest) {
     try {
-  const blobMod = (await import('@vercel/blob')) as unknown as {
-        head?: (name: string, opts?: unknown) => Promise<{ url?: string } | unknown>;
-        list?: (opts?: { prefix?: string; limit?: number; cursor?: string }) => Promise<{ blobs?: Array<{ pathname?: string; url?: string }> }>;
-      };
+  const blobMod = await importBlobModule();
   const nameCandidates = [`${id}.json`, `${id}`];
   const blobToken = process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN_DEV || undefined;
       for (const name of nameCandidates) {

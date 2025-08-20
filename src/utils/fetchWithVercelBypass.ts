@@ -19,13 +19,20 @@ function looksLikeVercelAuthHtml(text: string): boolean {
   return text.includes('<title>Authentication Required</title>') && text.includes('x-vercel-protection-bypass');
 }
 
-function getContentType(headers: Headers | Record<string, unknown> | undefined): string {
+type HeadersLike = {
+  get?: (name: string) => string | null;
+} | Record<string, unknown>;
+
+function isHeadersInstance(h: unknown): h is { get: (name: string) => string | null } {
+  return !!h && typeof (h as { get?: unknown }).get === 'function';
+}
+
+function getContentType(headers: HeadersLike | undefined): string {
   if (!headers) return '';
   // Case 1: Headers instance (has get function)
   try {
-    const maybeHeaders: unknown = headers;
-    if (maybeHeaders && typeof (maybeHeaders as { get?: unknown }).get === 'function') {
-      const v = (maybeHeaders as Headers).get('content-type');
+    if (isHeadersInstance(headers)) {
+      const v = headers.get('content-type');
       return typeof v === 'string' ? v : '';
     }
   } catch {
@@ -34,8 +41,8 @@ function getContentType(headers: Headers | Record<string, unknown> | undefined):
 
   // Case 2: Plain object-like map. Validate key/value types at runtime before use.
   try {
-    if (headers && typeof headers === 'object' && !Array.isArray(headers)) {
-      const keys = Object.keys(headers as Record<string, unknown>);
+    if (headers && typeof headers === 'object' && !Array.isArray(headers) && !isHeadersInstance(headers)) {
+      const keys = Object.keys(headers);
       const ctKey = keys.find((k) => k.toLowerCase() === 'content-type');
       if (!ctKey) return '';
       const rawVal = (headers as Record<string, unknown>)[ctKey];
