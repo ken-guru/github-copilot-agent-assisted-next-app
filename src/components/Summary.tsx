@@ -469,6 +469,20 @@ export default function Summary({
             {status.message}
           </Alert>
         )}
+        {/* Secondary share button for visibility in narrow layouts */}
+        <div className="mb-3">
+          <Button
+            variant="outline-success"
+            size="sm"
+            onClick={() => setShowShareModal(true)}
+            className="d-flex align-items-center"
+            title="Share session"
+            data-testid="open-share-modal-summary-body"
+          >
+            <i className="bi bi-share me-2" />
+            Share
+          </Button>
+        </div>
         <Row className="stats-grid g-3 mb-4" data-testid="stats-grid">
           <Col xs={6} md={3} data-testid="stat-card-planned">
             <Card className="text-center h-100">
