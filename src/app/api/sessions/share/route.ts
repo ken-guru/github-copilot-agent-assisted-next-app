@@ -1,12 +1,4 @@
 import { NextResponse } from 'next/server';
-// Prefer the official @vercel/blob SDK for server-side uploads when available
-let putBlob: unknown = null;
-try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  putBlob = require('@vercel/blob').put;
-} catch {
-  putBlob = null;
-}
 import { validateSessionSummaryData, validateStoredSession } from '../../../../utils/sessionSharing/schema';
 import { generateShareId } from '../../../../utils/sessionSharing/utils';
 import { saveSession } from '../../../../utils/sessionSharing/storage';
@@ -49,18 +41,30 @@ export async function POST(req: Request) {
     // validate stored session (ensures metadata and sessionData shapes)
     validateStoredSession(stored);
 
+  // Define a light put signature to avoid depending on SDK types at build time
+  type PutFn = (name: string, body: BodyInit, opts?: Record<string, unknown>) => Promise<{ id?: string; url?: string }>;
+  let putBlob: PutFn | null = null;
   let saved;
   try {
     console.log('session-share: attempting to save session to blob/local storage', { id });
-    // If running in tests or the SDK is not available, use the existing saveSession logic
+    // Attempt to dynamically import the SDK at runtime (avoids build-time type/import issues)
+    try {
+      // dynamic import is allowed in ESM and won't trigger the no-require rule
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const mod = await import('@vercel/blob');
+      if (mod && typeof mod.put === 'function') putBlob = mod.put as PutFn;
+    } catch (e) {
+      // SDK not available — we'll fall back to REST saveSession below
+      putBlob = null;
+    }
+
     const isTest = process.env.NODE_ENV === 'test';
-  if (isTest || !putBlob) {
+    if (isTest || !putBlob) {
+      // Use existing REST/local logic for tests or when SDK isn't present
       saved = await saveSession(id, stored);
     } else {
-      // Use SDK put helper which handles create/upload details
       try {
-    const result = await (putBlob as any)(`${id}.json`, JSON.stringify(stored), { access: 'private' });
-        // result typically contains { id, url }
+        const result = await putBlob(`${id}.json`, JSON.stringify(stored), { access: 'private' });
         saved = { id: result.id ?? id, url: result.url ?? (process.env.NEXT_PUBLIC_BASE_URL ? `${process.env.NEXT_PUBLIC_BASE_URL}/shared/${id}` : ''), storage: 'blob' };
         if (process.env.NODE_ENV !== 'production') console.log('session-share: putBlob result', { id: saved.id, url: saved.url });
       } catch (sdkErr) {
