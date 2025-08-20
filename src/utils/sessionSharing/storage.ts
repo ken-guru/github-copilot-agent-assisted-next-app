@@ -24,7 +24,7 @@ function getEffectiveLocalDir() {
     }
     // If we were able to create or it already exists, return it
     return projectDir;
-  } catch (e) {
+  } catch {
     // Fall through to tmpdir fallback
     // Note: Some serverless or locked-down runtimes disallow writing to cwd
   }
@@ -35,7 +35,7 @@ function getEffectiveLocalDir() {
       fs.mkdirSync(tmpDir, { recursive: true });
     }
     return tmpDir;
-  } catch (e) {
+  } catch {
     // Last resort: return tmpDir path even if creation failed; callers will receive runtime errors
     return tmpDir;
   }
