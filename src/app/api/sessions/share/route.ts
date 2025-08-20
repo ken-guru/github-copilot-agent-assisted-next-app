@@ -73,7 +73,8 @@ export async function POST(req: Request) {
         saved = await saveSession(id, stored);
       }
     }
-    console.log('session-share: saveSession result', { id, storage: saved.storage });
+  // Log the storage and a safe preview of the saved URL for diagnostics (do not print tokens)
+  console.log('session-share: saveSession result', { id, storage: saved.storage, urlPreview: process.env.NODE_ENV === 'production' ? '<redacted>' : String(saved?.url ?? '') });
   } catch (saveErr) {
     console.error('session-share: saveSession failed', { id, err: String(saveErr) });
     throw saveErr;

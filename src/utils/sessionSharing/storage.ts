@@ -162,10 +162,60 @@ export async function saveSession(
             }),
           });
 
-          const createJson: unknown = await createRes.json().catch(() => ({}));
-          // Also capture raw text in case JSON parsing yields empty object
-          const createText = await createRes.text().catch(() => '');
-          if (process.env.NODE_ENV !== 'production') console.log('saveSession: create response', { status: createRes.status, body: createJson, textPreview: String(createText).slice(0, 1000) });
+          // Safely attempt to read both JSON and raw text from the response so we can
+          // include helpful diagnostic hints in preview logs when the remote service
+          // returns unexpected shapes. Some test mocks implement only `json()` or
+          // only `text()`, so attempt both in a defensive order (json preferred).
+          let createJson: unknown = undefined;
+          let createText = '';
+          try {
+            if (typeof (createRes as any).json === 'function') {
+              createJson = await (createRes as any).json().catch(() => undefined);
+            }
+          } catch {
+            createJson = undefined;
+          }
+          try {
+            if (typeof (createRes as any).text === 'function') {
+              createText = await (createRes as any).text().catch(() => '');
+            }
+          } catch {
+            createText = '';
+          }
+
+          // If we couldn't read text but did parse JSON, create a text preview from it
+          if (!createText && createJson) {
+            try {
+              createText = JSON.stringify(createJson);
+            } catch {
+              createText = '';
+            }
+          }
+
+          if (process.env.NODE_ENV !== 'production') {
+            // Collect a safe subset of headers for debugging (avoid exposing auth headers)
+            const safeHeaders: Record<string, string | null> = {};
+            try {
+              const hdrs = (createRes as any).headers;
+              if (hdrs && typeof hdrs.get === 'function') {
+                // Common header keys we'd like to inspect
+                const keys = ['location', 'content-type', 'content-length'];
+                for (const k of keys) {
+                  try {
+                    const v = hdrs.get(k);
+                    if (v != null && !k.toLowerCase().includes('authorization') && !k.toLowerCase().includes('token')) {
+                      safeHeaders[k] = v;
+                    }
+                  } catch {
+                    // ignore
+                  }
+                }
+              }
+            } catch {
+              // ignore header iteration errors
+            }
+            console.log('saveSession: create response', { status: createRes.status, headers: safeHeaders, body: createJson ?? '<non-json or empty>', textPreview: String(createText).slice(0, 1000) });
+          }
 
           // The create response may provide a direct upload URL under several common keys,
           // or might only return an `id` which we can PUT to at `${base}/{id}`.
@@ -251,8 +301,16 @@ export async function saveSession(
             return { id: createdId ?? id, url: uploadUrl, storage: 'blob' };
           }
 
-          // If create returned no upload URL or id, include its body in the hint to help debugging.
-          const hint = `create-upload did not return an upload URL or id (${JSON.stringify(createJson)})`;
+          // If create returned no upload URL or id, include its body and safe headers in
+          // the hint to help debugging. We avoid printing authorization tokens here.
+          const safeCreateBody = (() => {
+            try {
+              return createJson ?? (createText ? createText.slice(0, 1000) : '<empty>');
+            } catch {
+              return '<unserializable create body>';
+            }
+          })();
+          const hint = `create-upload did not return an upload URL or id (${typeof safeCreateBody === 'string' ? safeCreateBody : JSON.stringify(safeCreateBody)})`;
           const message = `Vercel Blob write failed: ${res.status} ${text} — ${hint}`;
           if (process.env.NODE_ENV !== 'production') console.error('saveSession PUT', safeLogUrl(), message);
           throw new Error(message);
