@@ -38,11 +38,17 @@ export async function POST(req: Request) {
     // validate stored session (ensures metadata shape)
     validateStoredSession(stored);
 
-    await saveSession(id, stored);
+  const saved = await saveSession(id, stored);
 
-    const shareUrl = `${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/shared/${id}`;
+  // Build the share URL. Prefer NEXT_PUBLIC_BASE_URL (set in production) but fall back to request origin
+  const requestOrigin = req.headers.get('origin') ?? req.headers.get('referer') ?? '';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? requestOrigin ?? '';
+  const shareUrl = `${baseUrl.replace(/\/$/, '')}/shared/${id}`;
 
-    return NextResponse.json({ shareId: id, shareUrl, expiresAt: metadata.expiresAt }, { status: 201 });
+    return NextResponse.json(
+      { shareId: id, shareUrl, expiresAt: metadata.expiresAt, storage: saved.storage },
+      { status: 201 },
+    );
   } catch (err) {
     const e = err as { name?: string; errors?: unknown; message?: string } | undefined;
     if (e?.name === 'ZodError') {
