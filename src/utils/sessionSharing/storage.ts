@@ -87,6 +87,19 @@ export async function saveSession(
   const token = isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV ? process.env.BLOB_READ_WRITE_TOKEN_DEV : process.env.BLOB_READ_WRITE_TOKEN;
   const baseRaw = isDev && process.env.BLOB_BASE_URL_DEV ? process.env.BLOB_BASE_URL_DEV : process.env.BLOB_BASE_URL;
 
+  // Non-secret diagnostic logs to help debug preview/runtime issues. Avoid printing tokens.
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('saveSession: start', {
+      id,
+      env: process.env.NODE_ENV,
+      isTest,
+      isDev,
+      hasToken: !!token,
+      hasBase: !!baseRaw,
+      forceNetwork: !!options?.forceNetwork,
+    });
+  }
+
   // Require blob config in non-test environments
   if (!token || !baseRaw) {
     throw new Error('Vercel Blob not configured. Set BLOB_READ_WRITE_TOKEN and BLOB_BASE_URL');
@@ -113,6 +126,7 @@ export async function saveSession(
   const safeLogUrl = () => (process.env.NODE_ENV === 'production' ? '<redacted>' : url);
 
   try {
+    if (process.env.NODE_ENV !== 'production') console.log('saveSession: attempting initial PUT', { url: safeLogUrl(), id });
     const res = await (maybeFetch as typeof fetch)(url, {
       method: 'PUT',
       headers: {
@@ -121,14 +135,15 @@ export async function saveSession(
       },
       body: JSON.stringify(data),
     });
-
     if (!res.ok) {
       const text = await res.text().catch(() => 'unable to read response body');
+  if (process.env.NODE_ENV !== 'production') console.log('saveSession: PUT response', { status: res.status, ok: res.ok, bodyHint: String(text).slice(0, 200) });
 
       // If the blob API responds with 404 it's common that a create-upload flow is required.
       if (res.status === 404) {
         if (process.env.NODE_ENV !== 'production') {
           console.warn('saveSession PUT returned 404, attempting create-upload fallback', safeLogUrl());
+          console.log('saveSession: create-upload POST to base', base);
         }
 
         // Try create-upload flow: POST to base to request an upload URL, then PUT to that URL.
@@ -148,6 +163,7 @@ export async function saveSession(
           });
 
           const createJson: unknown = await createRes.json().catch(() => ({}));
+          if (process.env.NODE_ENV !== 'production') console.log('saveSession: create response', { status: createRes.status, body: createJson });
 
           // The create response may provide a direct upload URL under several common keys,
           // or might only return an `id` which we can PUT to at `${base}/{id}`.
@@ -180,6 +196,7 @@ export async function saveSession(
           }
 
           if (uploadUrl && typeof uploadUrl === 'string') {
+            if (process.env.NODE_ENV !== 'production') console.log('saveSession: attempting upload PUT', { uploadUrl: uploadUrl.startsWith(base) ? '<internal>' : '<presigned>' });
             const uploadRes = await (maybeFetch as typeof fetch)(uploadUrl, {
               method: 'PUT',
               headers: {
@@ -193,11 +210,11 @@ export async function saveSession(
             if (!uploadRes.ok) {
               const text2 = await uploadRes.text().catch(() => 'unable to read upload response');
               const message = `Vercel Blob upload failed: ${uploadRes.status} ${text2}`;
-              if (process.env.NODE_ENV !== 'production') console.error('saveSession upload', message, 'uploadUrl:', uploadUrl);
+              if (process.env.NODE_ENV !== 'production') console.error('saveSession upload', { message, uploadUrl: uploadUrl.startsWith(base) ? '<internal>' : uploadUrl });
               throw new Error(message);
             }
 
-            if (process.env.NODE_ENV !== 'production') console.log('saveSession: stored to blob via upload URL', uploadUrl);
+            if (process.env.NODE_ENV !== 'production') console.log('saveSession: stored to blob via upload URL', uploadUrl.startsWith(base) ? '<internal>' : uploadUrl);
             return { id: createdId ?? id, url: uploadUrl, storage: 'blob' };
           }
 

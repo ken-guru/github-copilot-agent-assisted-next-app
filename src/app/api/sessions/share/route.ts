@@ -8,6 +8,8 @@ export async function POST(req: Request) {
   try {
   // Helpful debugging log: do not print token values, only presence
   console.log('session-share: BLOB_BASE_URL set?', !!process.env.BLOB_BASE_URL, 'BLOB_READ_WRITE_TOKEN set?', !!process.env.BLOB_READ_WRITE_TOKEN);
+    // Additional context logs for debugging create/upload flow
+    console.log('session-share: creating share id', { idPreview: 'xxxx-xxxx', origin: req.headers.get('origin') ?? undefined });
     // Basic Origin/Referer check to reduce CSRF surface for public endpoint.
     const origin = req.headers.get('origin') ?? req.headers.get('referer') ?? '';
     const base = process.env.NEXT_PUBLIC_BASE_URL ?? '';
@@ -39,7 +41,15 @@ export async function POST(req: Request) {
     // validate stored session (ensures metadata and sessionData shapes)
     validateStoredSession(stored);
 
-  const saved = await saveSession(id, stored);
+  let saved;
+  try {
+    console.log('session-share: attempting to save session to blob/local storage', { id });
+    saved = await saveSession(id, stored);
+    console.log('session-share: saveSession result', { id, storage: saved.storage });
+  } catch (saveErr) {
+    console.error('session-share: saveSession failed', { id, err: String(saveErr) });
+    throw saveErr;
+  }
 
   // Build the share URL. Prefer NEXT_PUBLIC_BASE_URL (set in production) but fall back to request origin
   const requestOrigin = req.headers.get('origin') ?? req.headers.get('referer') ?? '';
