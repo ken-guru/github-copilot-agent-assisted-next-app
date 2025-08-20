@@ -163,7 +163,9 @@ export async function saveSession(
           });
 
           const createJson: unknown = await createRes.json().catch(() => ({}));
-          if (process.env.NODE_ENV !== 'production') console.log('saveSession: create response', { status: createRes.status, body: createJson });
+          // Also capture raw text in case JSON parsing yields empty object
+          const createText = await createRes.text().catch(() => '');
+          if (process.env.NODE_ENV !== 'production') console.log('saveSession: create response', { status: createRes.status, body: createJson, textPreview: String(createText).slice(0, 1000) });
 
           // The create response may provide a direct upload URL under several common keys,
           // or might only return an `id` which we can PUT to at `${base}/{id}`.
@@ -189,10 +191,41 @@ export async function saveSession(
             }
           }
 
+          // If create didn't return JSON fields, some implementations provide a Location header or similar.
+          if (!uploadUrl && !createdId) {
+            const location = createRes.headers?.get?.('location') ?? createRes.headers?.get?.('Location');
+            if (location && typeof location === 'string' && location.trim() !== '') {
+              uploadUrl = location;
+              if (process.env.NODE_ENV !== 'production') console.log('saveSession: create returned Location header, using as upload URL', uploadUrl.startsWith(base) ? '<internal>' : uploadUrl);
+            }
+          }
+
           // If we only got an id, attempt PUT to `${base}/{id}` which should succeed after creation.
           if (!uploadUrl && createdId) {
             uploadUrl = `${base.replace(/\/$/, '')}/${encodeURIComponent(createdId)}`;
             if (process.env.NODE_ENV !== 'production') console.log('saveSession: create returned id, attempting PUT to', uploadUrl);
+          }
+
+          // Some APIs respond with 2xx but no body; try PUT to the requested id as a last resort.
+          if (!uploadUrl && !createdId && createRes.status >= 200 && createRes.status < 300) {
+            const fallbackUrl = `${base.replace(/\/$/, '')}/${encodeURIComponent(id)}`;
+            if (process.env.NODE_ENV !== 'production') console.log('saveSession: create returned empty body; attempting PUT to created id fallback', fallbackUrl);
+            const fallbackRes = await (maybeFetch as typeof fetch)(fallbackUrl, {
+              method: 'PUT',
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data),
+            });
+            if (fallbackRes.ok) {
+              if (process.env.NODE_ENV !== 'production') console.log('saveSession: stored to blob via fallback PUT', fallbackUrl);
+              return { id, url: fallbackUrl, storage: 'blob' };
+            }
+            if (process.env.NODE_ENV !== 'production') {
+              const fbText = await fallbackRes.text().catch(() => '');
+              console.warn('saveSession: fallback PUT failed', { status: fallbackRes.status, bodyHint: String(fbText).slice(0, 200) });
+            }
           }
 
           if (uploadUrl && typeof uploadUrl === 'string') {
