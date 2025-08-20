@@ -475,12 +475,12 @@ export default function Summary({
       </Card.Header>
       
       <Card.Body data-testid="summary-body">
-        {status && (
+  {status && (
           <Alert variant={getBootstrapVariant(status.className)} className="mb-3" data-testid="summary-status">
             {status.message}
           </Alert>
         )}
-  {/* Secondary share button intentionally removed — header Share button is sufficient */}
+        
         <Row className="stats-grid g-3 mb-4" data-testid="stats-grid">
           <Col xs={6} md={3} data-testid="stat-card-planned">
             <Card className="text-center h-100">

@@ -137,7 +137,12 @@ export async function saveSession(
     });
     if (!res.ok) {
       const text = await res.text().catch(() => 'unable to read response body');
-  if (process.env.NODE_ENV !== 'production') console.log('saveSession: PUT response', { status: res.status, ok: res.ok, bodyHint: String(text).slice(0, 200) });
+      if (process.env.NODE_ENV !== 'production')
+        console.log('saveSession: PUT response', {
+          status: res.status,
+          ok: res.ok,
+          bodyHint: String(text).slice(0, 200),
+        });
 
       // If the blob API responds with 404 it's common that a create-upload flow is required.
       if (res.status === 404) {
@@ -358,14 +363,14 @@ export async function getSession(
         head?: (name: string, opts?: unknown) => Promise<{ url?: string } | unknown>;
         list?: (opts?: { prefix?: string; limit?: number; cursor?: string }) => Promise<{ blobs?: Array<{ pathname?: string; url?: string }> }>;
       };
-      const nameCandidates = [`${id}.json`, `${id}`];
-  const sdkToken = process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN_DEV || undefined;
+  const nameCandidates = [`${id}.json`, `${id}`];
+  const blobToken = process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN_DEV || undefined;
       for (const name of nameCandidates) {
         try {
           let url: string | undefined;
           if (typeof blobMod.head === 'function') {
             // head() throws on not found; returns { url, ... } when it exists
-    const info = await blobMod.head(name, sdkToken ? { token: sdkToken } : undefined);
+    const info = await blobMod.head(name, blobToken ? { token: blobToken } : undefined);
             url = (info as { url?: string } | undefined)?.url;
           }
           // Fallback to list() to discover public URL when head() is unavailable
