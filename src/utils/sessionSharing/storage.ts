@@ -338,12 +338,16 @@ export async function saveSession(
   }
 }
 
-export async function getSession(id: string): Promise<StoredSession | null> {
+export async function getSession(
+  id: string,
+  opts?: { forceNetwork?: boolean }
+): Promise<StoredSession | null> {
   const isTest = process.env.NODE_ENV === 'test';
   const isDev = process.env.NODE_ENV === 'development';
 
-  // In test runs, ALWAYS use local storage to avoid network communication with Vercel Blob.
-  if (isTest) return getSessionFromLocal(id);
+  // In test runs, ALWAYS use local storage to avoid network communication with Vercel Blob
+  // unless explicitly forced for targeted network-path tests.
+  if (isTest && !opts?.forceNetwork) return getSessionFromLocal(id);
 
   // Prefer dev-specific env vars when running in development
   const token = isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV ? process.env.BLOB_READ_WRITE_TOKEN_DEV : process.env.BLOB_READ_WRITE_TOKEN;
@@ -358,36 +362,75 @@ export async function getSession(id: string): Promise<StoredSession | null> {
     effectiveBase = `${effectiveBase}/v1/blob`;
   }
 
-  const url = `${effectiveBase}/${encodeURIComponent(id)}`;
   const maybeFetch: unknown = (globalThis as unknown as { fetch?: unknown }).fetch;
   if (typeof maybeFetch !== 'function') {
     throw new Error('fetch is not available in this runtime');
   }
 
-  const res = await (maybeFetch as typeof fetch)(url, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  // Note: We intentionally avoid SDK listing here to keep dependencies light and tests simple.
+  // We rely on REST with Authorization and try both naming variants below.
 
-    if (res.status === 404) return null;
-  if (!res.ok) {
-    const text = await res.text().catch(() => 'unable to read response body');
-    const message = `Vercel Blob read failed: ${res.status} ${text}`;
-    if (process.env.NODE_ENV !== 'production') {
-      console.error('getSession GET', (String(process.env.NODE_ENV) === 'production' ? '<redacted>' : url), message);
+  // Try common name variants in order: `${id}.json` (SDK put) then `${id}` (legacy REST)
+  const candidates = [
+    `${effectiveBase}/${encodeURIComponent(id)}.json`,
+    `${effectiveBase}/${encodeURIComponent(id)}`,
+  ];
+
+  let lastError: Error | null = null;
+  for (const url of candidates) {
+    try {
+      const res = await (maybeFetch as typeof fetch)(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.status === 404) {
+        // Try next candidate
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('getSession: candidate not found', url);
+        }
+        continue;
+      }
+      if (!res.ok) {
+        const text = await res.text().catch(() => 'unable to read response body');
+        const message = `Vercel Blob read failed: ${res.status} ${text}`;
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('getSession GET', (String(process.env.NODE_ENV) === 'production' ? '<redacted>' : url), message);
+        }
+        lastError = new Error(message);
+        continue;
+      }
+
+      const json = await res.json();
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('getSession: loaded from blob', url);
+      }
+      // Basic shape validation
+      if (json && typeof json === 'object' && 'sessionData' in json && 'metadata' in json) {
+        return json as StoredSession;
+      }
+      // If shape invalid, try next candidate
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('getSession: invalid shape from blob', url);
+      }
+    } catch (err) {
+      lastError = err as Error;
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('getSession: error while fetching candidate', url, String(err));
+      }
     }
-    throw new Error(message);
   }
 
-  const json = await res.json();
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('getSession: loaded from blob', url);
-  }
-  // Basic shape validation
-  if (json && typeof json === 'object' && 'sessionData' in json && 'metadata' in json) {
-    return json as StoredSession;
+  if (lastError) {
+    // If all candidates failed with non-404 errors, surface the last one for diagnostics
+    // Otherwise, return null for genuine not-found
+    // We can't know definitively if 404 vs other without tracking, but we set lastError only
+    // on non-OK responses and exceptions; candidates that 404 simply continue without setting error.
+    // So if lastError is set and no candidate succeeded, throw it; else return null.
+    // However, above we also set lastError on non-OK responses; that's desired.
+    throw lastError;
   }
   return null;
 }
