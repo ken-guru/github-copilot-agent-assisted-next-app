@@ -120,14 +120,63 @@ export async function saveSession(id: string, data: StoredSession): Promise<Save
     if (!res.ok) {
       const text = await res.text().catch(() => 'unable to read response body');
 
-      // Helpful hint when a 404 occurs — often the API expects a different flow (create upload -> put)
+      // If the blob API responds with 404 it's common that a create-upload flow is required.
       if (res.status === 404) {
-        const hint = '404 from Vercel Blob. Verify that BLOB_BASE_URL points to the Vercel Blob endpoint (e.g. https://api.vercel.com/v1/blob) and that the token has write permissions. Some blob APIs require a create-upload step before PUT.';
-        const message = `Vercel Blob write failed: ${res.status} ${text} — ${hint}`;
         if (process.env.NODE_ENV !== 'production') {
-          console.error('saveSession PUT', safeLogUrl(), message);
+          // eslint-disable-next-line no-console
+          console.warn('saveSession PUT returned 404, attempting create-upload fallback', safeLogUrl());
         }
-        throw new Error(message);
+
+        // Try create-upload flow: POST to base to request an upload URL, then PUT to that URL.
+        try {
+          const createRes = await (maybeFetch as typeof fetch)(base, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              // Provide minimal metadata the API might expect. Keep fields generic.
+              filename: `${id}.json`,
+              contentType: 'application/json',
+              size: Buffer.byteLength(JSON.stringify(data), 'utf-8'),
+            }),
+          });
+
+          const createJson = await createRes.json().catch(() => ({} as any));
+
+          // The create response may provide a direct upload URL under several common keys.
+          const uploadUrl = (createJson && (createJson.uploadURL || createJson.upload_url || createJson.url)) as string | undefined;
+
+          if (uploadUrl && typeof uploadUrl === 'string') {
+            const uploadRes = await (maybeFetch as typeof fetch)(uploadUrl, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data),
+            });
+
+            if (!uploadRes.ok) {
+              const text2 = await uploadRes.text().catch(() => 'unable to read upload response');
+              const message = `Vercel Blob upload failed: ${uploadRes.status} ${text2}`;
+              if (process.env.NODE_ENV !== 'production') console.error('saveSession upload', message);
+              throw new Error(message);
+            }
+
+            if (process.env.NODE_ENV !== 'production') console.log('saveSession: stored to blob via upload URL', uploadUrl);
+            return { id, url: uploadUrl, storage: 'blob' };
+          }
+
+          // If create returned no upload URL, include its body in the hint to help debugging.
+          const hint = `create-upload did not return an upload URL (${JSON.stringify(createJson)})`;
+          const message = `Vercel Blob write failed: ${res.status} ${text} — ${hint}`;
+          if (process.env.NODE_ENV !== 'production') console.error('saveSession PUT', safeLogUrl(), message);
+          throw new Error(message);
+        } catch (createErr) {
+          if (process.env.NODE_ENV !== 'production') console.error('saveSession: create-upload fallback failed', String(createErr));
+          throw createErr;
+        }
       }
 
       const message = `Vercel Blob write failed: ${res.status} ${text}`;
