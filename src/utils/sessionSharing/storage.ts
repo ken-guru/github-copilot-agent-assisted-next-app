@@ -123,7 +123,6 @@ export async function saveSession(id: string, data: StoredSession): Promise<Save
       // If the blob API responds with 404 it's common that a create-upload flow is required.
       if (res.status === 404) {
         if (process.env.NODE_ENV !== 'production') {
-          // eslint-disable-next-line no-console
           console.warn('saveSession PUT returned 404, attempting create-upload fallback', safeLogUrl());
         }
 
@@ -143,10 +142,15 @@ export async function saveSession(id: string, data: StoredSession): Promise<Save
             }),
           });
 
-          const createJson = await createRes.json().catch(() => ({} as any));
+          const createJson: unknown = await createRes.json().catch(() => ({}));
 
           // The create response may provide a direct upload URL under several common keys.
-          const uploadUrl = (createJson && (createJson.uploadURL || createJson.upload_url || createJson.url)) as string | undefined;
+          let uploadUrl: string | undefined;
+          if (createJson && typeof createJson === 'object') {
+            const cj = createJson as Record<string, unknown>;
+            const candidate = cj.uploadURL ?? cj.upload_url ?? cj.url;
+            if (typeof candidate === 'string') uploadUrl = candidate;
+          }
 
           if (uploadUrl && typeof uploadUrl === 'string') {
             const uploadRes = await (maybeFetch as typeof fetch)(uploadUrl, {
