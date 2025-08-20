@@ -198,8 +198,11 @@ export async function getSession(id: string): Promise<StoredSession | null> {
 
   const json = await res.json();
   if (process.env.NODE_ENV !== 'production') {
-    // eslint-disable-next-line no-console
     console.log('getSession: loaded from blob', url);
   }
-  return json as StoredSession;
+  // Basic shape validation
+  if (json && typeof json === 'object' && 'sessionData' in json && 'metadata' in json) {
+    return json as StoredSession;
+  }
+  return null;
 }
