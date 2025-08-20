@@ -71,12 +71,17 @@ export async function getSessionFromLocal(id: string): Promise<StoredSession | n
   }
 }
 
-export async function saveSession(id: string, data: StoredSession): Promise<SaveResult> {
+export async function saveSession(
+  id: string,
+  data: StoredSession,
+  options?: { forceNetwork?: boolean },
+): Promise<SaveResult> {
   const isTest = process.env.NODE_ENV === 'test';
   const isDev = process.env.NODE_ENV === 'development';
 
   // In test runs, ALWAYS use local storage to avoid network communication with Vercel Blob.
-  if (isTest) return saveSessionToLocal(id, data);
+  // Tests can opt into the network path by passing { forceNetwork: true }.
+  if (isTest && !options?.forceNetwork) return saveSessionToLocal(id, data);
 
   // Prefer dev-specific env vars when running in development
   const token = isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV ? process.env.BLOB_READ_WRITE_TOKEN_DEV : process.env.BLOB_READ_WRITE_TOKEN;
@@ -185,14 +190,12 @@ export async function saveSession(id: string, data: StoredSession): Promise<Save
 
       const message = `Vercel Blob write failed: ${res.status} ${text}`;
       if (process.env.NODE_ENV !== 'production') {
-        // eslint-disable-next-line no-console
         console.error('saveSession PUT', safeLogUrl(), message);
       }
       throw new Error(message);
     }
 
     if (process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
       console.log('saveSession: stored to blob at', safeLogUrl());
     }
 
@@ -238,12 +241,11 @@ export async function getSession(id: string): Promise<StoredSession | null> {
     },
   });
 
-  if (res.status === 404) return null;
+    if (res.status === 404) return null;
   if (!res.ok) {
     const text = await res.text().catch(() => 'unable to read response body');
     const message = `Vercel Blob read failed: ${res.status} ${text}`;
     if (process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
       console.error('getSession GET', (String(process.env.NODE_ENV) === 'production' ? '<redacted>' : url), message);
     }
     throw new Error(message);
