@@ -9,16 +9,16 @@ export async function POST(req: Request) {
   // Helpful debugging log: do not print token values, only presence
   console.log('session-share: BLOB_BASE_URL set?', !!process.env.BLOB_BASE_URL, 'BLOB_READ_WRITE_TOKEN set?', !!process.env.BLOB_READ_WRITE_TOKEN);
     // Additional context logs for debugging create/upload flow
-    console.log('session-share: creating share id', { idPreview: 'xxxx-xxxx', origin: req.headers.get('origin') ?? undefined, referer: req.headers.get('referer') ?? undefined, url: req.url });
-    // Origin validation: allow same-host requests (works for preview and production),
+  const headerOrigin = req.headers.get('origin') ?? '';
+  const headerReferer = req.headers.get('referer') ?? '';
+  console.log('session-share: creating share id', { idPreview: 'xxxx-xxxx', origin: headerOrigin || undefined, referer: headerReferer || undefined, url: req.url });
+  // Origin validation: allow same-host requests (works for preview and production),
     // avoid coupling to NEXT_PUBLIC_BASE_URL which may differ on preview.
     // If an Origin/Referer is present and does not match this deployment's origin, reject.
     try {
       const reqUrl = new URL(req.url);
       const serverOrigin = `${reqUrl.protocol}//${reqUrl.host}`;
-      const headerOrigin = req.headers.get('origin') ?? '';
-      const headerReferer = req.headers.get('referer') ?? '';
-      const headerBase = headerOrigin || headerReferer;
+  const headerBase = headerOrigin || headerReferer;
       if (headerBase && !headerBase.startsWith(serverOrigin)) {
         console.warn('session-share: origin mismatch', { serverOrigin, headerBase });
         return NextResponse.json({ error: 'Invalid origin' }, { status: 400 });
@@ -28,8 +28,8 @@ export async function POST(req: Request) {
       console.warn('session-share: origin validation skipped due to URL parse error', e);
     }
 
-    // Rate limit per-origin (fall back to 'global' if absent)
-    const rateKey = origin || 'global';
+  // Rate limit per-origin (fall back to 'global' if absent)
+  const rateKey = headerOrigin || headerReferer || 'global';
     const rate = checkAndIncrementKey(rateKey);
     if (!rate.ok) {
       return NextResponse.json({ error: 'Too many requests', retryAfterMs: rate.retryAfterMs }, { status: 429 });
