@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useResponsiveToast } from '@/hooks/useResponsiveToast';
+import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
 
 interface Props {
   shareUrl: string;
@@ -32,7 +33,7 @@ export default function ShareControls({ shareUrl }: Props) {
         addResponsiveToast({ message: 'Invalid share URL', variant: 'warning', autoDismiss: true });
         return;
       }
-      const res = await fetch(`/api/sessions/${encodeURIComponent(String(id))}`);
+  const res = await fetchWithVercelBypass(`/api/sessions/${encodeURIComponent(String(id))}`);
       if (!res.ok) {
         const msg = `Unable to fetch shared session: ${res.status}`;
         addResponsiveToast({ message: msg, variant: 'error', autoDismiss: true });

@@ -8,6 +8,7 @@ import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
 import type { ChatCompletion } from '@/types/ai';
 import ShareControls from './ShareControls';
+import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
 import { mapTimelineEntriesForShare as mapTimelineEntriesForShareUtil } from '@/utils/sharing';
 
 interface SummaryProps {
@@ -683,7 +684,7 @@ export default function Summary({
                       }
                     };
 
-                    const res = await fetch('/api/sessions/share', {
+                    const res = await fetchWithVercelBypass('/api/sessions/share', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify(payload)
