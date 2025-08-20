@@ -49,6 +49,98 @@ export default function Summary({
     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
   );
 
+  // Extracted handler for creating a share to keep JSX minimal and readable
+  const handleCreateShare = async () => {
+    try {
+      setShareLoading(true);
+
+      // Build payload matching SessionSummaryDataSchema
+      const allStoredActivities = getActivities();
+      const colorById = new Map(allStoredActivities.map((a) => [a.id, a.colorIndex]));
+      const activitiesForShare = activityTimes.map(a => ({
+        id: a.id,
+        name: a.name,
+        duration: a.duration,
+        colorIndex: typeof colorById.get(a.id) === 'number' ? (colorById.get(a.id) as number) : 0,
+      }));
+
+      const skippedForShare = skippedActivities.map(s => ({ id: s.id, name: s.name }));
+
+      // Map timeline entries into the share payload shape with safe guards
+      const timelineEntriesForShare = mapTimelineEntriesForShare(entries || []);
+
+      // Determine completedAt from timeline entries when available — prefer latest endTime, then startTime, else now
+      const completedAtIso = (() => {
+        try {
+          if (entries && entries.length > 0) {
+            // Find the maximum timestamp among endTime (prefer) or startTime
+            let maxTs: number | null = null;
+            for (const e of entries) {
+              if (typeof e.endTime === 'number') {
+                maxTs = Math.max(maxTs ?? 0, e.endTime);
+              } else if (typeof e.startTime === 'number') {
+                maxTs = Math.max(maxTs ?? 0, e.startTime);
+              }
+            }
+            if (maxTs && maxTs > 0) return new Date(maxTs).toISOString();
+          }
+        } catch {
+          // ignore and fallthrough to now
+        }
+        return new Date().toISOString();
+      })();
+
+      // Determine sessionType: prefer explicit flags, fall back to 'completed'
+      const sessionTypeValue = allActivitiesCompleted ? 'completed' : (isTimeUp ? 'timeUp' : 'completed');
+
+      const payload = {
+        sessionData: {
+          plannedTime: totalDuration,
+          timeSpent: elapsedTime,
+          overtime,
+          idleTime: stats.idleTime,
+
+          activities: activitiesForShare,
+          skippedActivities: skippedForShare,
+          timelineEntries: timelineEntriesForShare,
+
+          completedAt: completedAtIso,
+          sessionType: sessionTypeValue,
+        },
+        metadata: {
+          title: 'Shared session',
+          createdBy: 'app'
+        }
+      };
+
+      const res = await fetchWithVercelBypass('/api/sessions/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(`Share failed: ${res.status} - ${JSON.stringify(data)}`);
+      }
+      const json = await res.json();
+      const id = json?.metadata?.id || json?.id || json?.shareId;
+      const url = id ? `${window.location.origin}/shared/${id}` : json?.shareUrl;
+      setShareUrl(url || null);
+      setShowShareControls(true);
+      // When share controls appear, focus the first control (copy button) if available
+      requestAnimationFrame(() => {
+        const el = document.querySelector('[aria-label="Copy share link to clipboard"]') as HTMLElement | null;
+        if (el && typeof el.focus === 'function' && !el.hasAttribute('disabled') && el.offsetParent !== null) el.focus();
+      });
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Failed to create share.';
+      addToast({ message, variant: 'error' });
+      setShowShareModal(false);
+    } finally {
+      setShareLoading(false);
+    }
+  };
+
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
     if (!colors) return undefined;
@@ -415,99 +507,6 @@ export default function Summary({
     return '';
   };
 
-  // Extracted handler for creating a share to improve readability and testability
-  const handleCreateShare = async () => {
-    try {
-      setShareLoading(true);
-
-      // Build payload matching SessionSummaryDataSchema
-      const allStoredActivities = getActivities();
-      const colorById = new Map(allStoredActivities.map((a) => [a.id, a.colorIndex]));
-      const activitiesForShare = activityTimes.map(a => ({
-        id: a.id,
-        name: a.name,
-        duration: a.duration,
-        colorIndex: typeof colorById.get(a.id) === 'number' ? (colorById.get(a.id) as number) : 0,
-      }));
-
-      const skippedForShare = skippedActivities.map(s => ({ id: s.id, name: s.name }));
-
-      // Map timeline entries into the share payload shape with safe guards
-      const timelineEntriesForShare = mapTimelineEntriesForShare(entries || []);
-
-      // Determine completedAt from timeline entries when available — prefer latest endTime, then startTime, else now
-      const completedAtIso = (() => {
-        try {
-          if (entries && entries.length > 0) {
-            // Find the maximum timestamp among endTime (prefer) or startTime
-            let maxTs: number | null = null;
-            for (const e of entries) {
-              if (typeof e.endTime === 'number') {
-                maxTs = Math.max(maxTs ?? 0, e.endTime);
-              } else if (typeof e.startTime === 'number') {
-                maxTs = Math.max(maxTs ?? 0, e.startTime);
-              }
-            }
-            if (maxTs && maxTs > 0) return new Date(maxTs).toISOString();
-          }
-        } catch {
-          // ignore and fallthrough to now
-        }
-        return new Date().toISOString();
-      })();
-
-      // Determine sessionType: prefer explicit flags, fall back to 'completed'
-      const sessionTypeValue = allActivitiesCompleted ? 'completed' : (isTimeUp ? 'timeUp' : 'completed');
-
-      const payload = {
-        sessionData: {
-          plannedTime: totalDuration,
-          timeSpent: elapsedTime,
-          overtime,
-          idleTime: stats.idleTime,
-
-          activities: activitiesForShare,
-          skippedActivities: skippedForShare,
-          timelineEntries: timelineEntriesForShare,
-
-          completedAt: completedAtIso,
-          sessionType: sessionTypeValue,
-        },
-        metadata: {
-          title: 'Shared session',
-          createdBy: 'app'
-        }
-      };
-
-      const res = await fetchWithVercelBypass('/api/sessions/share', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(`Share failed: ${res.status} - ${JSON.stringify(data)}`);
-      }
-      const json = await res.json();
-      const id = json?.metadata?.id || json?.id || json?.shareId;
-      const origin = typeof window !== 'undefined' ? window.location.origin : '';
-      const url = id ? `${origin}/shared/${id}` : json?.shareUrl;
-      setShareUrl(url || null);
-      setShowShareControls(true);
-      // When share controls appear, focus the first control (copy button) if available
-      requestAnimationFrame(() => {
-        const el = document.querySelector('[aria-label="Copy share link to clipboard"]') as HTMLElement | null;
-        if (el && typeof el.focus === 'function' && !el.hasAttribute('disabled') && el.offsetParent !== null) el.focus();
-      });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : 'Failed to create share.';
-      addToast({ message, variant: 'error' });
-      setShowShareModal(false);
-    } finally {
-      setShareLoading(false);
-    }
-  };
-
   return (
     <Card data-testid="summary" className="summary-card h-100">
       <Card.Header className="card-header-consistent">
@@ -534,7 +533,7 @@ export default function Summary({
           >
             {aiLoading ? (<><Spinner size="sm" className="me-2" animation="border" />Summarizing…</>) : 'AI Summary'}
           </Button>
-        )}
+  )}
   {/* Auto BYOK mode indicated by presence of apiKey; no manual switch */}
         {onReset && (
           <Button 
@@ -568,12 +567,12 @@ export default function Summary({
       </Card.Header>
       
       <Card.Body data-testid="summary-body">
-  {status && (
+        {status && (
           <Alert variant={getBootstrapVariant(status.className)} className="mb-3" data-testid="summary-status">
             {status.message}
           </Alert>
         )}
-        
+
         <Row className="stats-grid g-3 mb-4" data-testid="stats-grid">
           <Col xs={6} md={3} data-testid="stat-card-planned">
             <Card className="text-center h-100">

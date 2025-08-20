@@ -19,48 +19,26 @@ function looksLikeVercelAuthHtml(text: string): boolean {
   return text.includes('<title>Authentication Required</title>') && text.includes('x-vercel-protection-bypass');
 }
 
-type HeadersLike = {
-  get?: (name: string) => string | null;
-} | Record<string, unknown>;
-
-function isHeadersInstance(h: unknown): h is { get: (name: string) => string | null } {
-  return !!h && typeof (h as { get?: unknown }).get === 'function';
-}
-
-function getContentType(headers: HeadersLike | undefined): string {
+function getContentType(headers: Headers | Record<string, unknown> | undefined): string {
   if (!headers) return '';
-  // Case 1: Headers instance (has get function)
   try {
-    if (isHeadersInstance(headers)) {
-      const v = headers.get('content-type');
+    const maybeHeaders = headers as Headers;
+    if (maybeHeaders && typeof (maybeHeaders as unknown as { get?: unknown }).get === 'function') {
+      const v = maybeHeaders.get('content-type');
       return typeof v === 'string' ? v : '';
-    }
-  } catch {
-    // ignore and fall through
-  }
-
-  // Case 2: Plain object-like map. Validate key/value types at runtime before use.
-  try {
-    if (headers && typeof headers === 'object' && !Array.isArray(headers) && !isHeadersInstance(headers)) {
-      const keys = Object.keys(headers);
-      const ctKey = keys.find((k) => k.toLowerCase() === 'content-type');
-      if (!ctKey) return '';
-      const rawVal = (headers as Record<string, unknown>)[ctKey];
-      if (typeof rawVal === 'string') return rawVal;
-      // Some fetch impls may expose arrays; prefer first string
-      if (Array.isArray(rawVal)) {
-        const firstStr = rawVal.find((v) => typeof v === 'string');
-        return typeof firstStr === 'string' ? firstStr : '';
-      }
-      // Fallback to stringification for non-string primitives
-      if (rawVal != null && (typeof rawVal === 'number' || typeof rawVal === 'boolean')) {
-        return String(rawVal);
-      }
     }
   } catch {
     // ignore
   }
-  return '';
+  try {
+    const record = headers as Record<string, unknown>;
+    const key = Object.keys(record).find((k) => k.toLowerCase() === 'content-type');
+    if (!key) return '';
+    const raw = record[key];
+    return typeof raw === 'string' ? raw : '';
+  } catch {
+    return '';
+  }
 }
 
 export async function fetchWithVercelBypass(input: RequestInfo | URL, init?: FetchWithBypassOptions): Promise<Response> {
@@ -75,7 +53,7 @@ export async function fetchWithVercelBypass(input: RequestInfo | URL, init?: Fet
   let isAuthHtml200 = false;
   if (res1.ok && isBrowser && !init?.skipBypass && token) {
     try {
-  const ct = getContentType((res1 as Response).headers as unknown as Headers | Record<string, string>);
+      const ct = getContentType((res1 as Response).headers as unknown as Headers | Record<string, unknown>);
       if (ct && ct.toLowerCase().includes('text/html')) {
         const cloned = res1.clone();
         const text = await cloned.text();
