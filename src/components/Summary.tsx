@@ -358,6 +358,24 @@ export default function Summary({
   const overtime = calculateOvertime();
   const activityTimes = calculateActivityTimes();
 
+  // Helper to map timeline entries into the sanitized shape for sharing
+  const mapTimelineEntriesForShare = (inputEntries: TimelineEntry[]) => {
+    return inputEntries.map((e) => {
+      // Safely extract colorIndex when it's an integer number
+      const rawColor = (e as unknown as Record<string, unknown>).colorIndex;
+      const colorIndex = (typeof rawColor === 'number' && Number.isInteger(rawColor)) ? (rawColor as number) : undefined;
+
+      return {
+        id: e.id ?? `${e.startTime}-${e.activityId ?? 'idle'}`,
+        activityId: e.activityId ?? null,
+        activityName: e.activityName ?? null,
+        startTime: e.startTime,
+        endTime: e.endTime ?? null,
+        colorIndex,
+      };
+    });
+  };
+
   // Build a stable payload for AI summary generation
   const summaryPayload = useMemo(() => ({
     plannedTime: totalDuration,
@@ -632,14 +650,8 @@ export default function Summary({
 
                     const skippedForShare = skippedActivities.map(s => ({ id: s.id, name: s.name }));
 
-                    const timelineEntriesForShare = (entries || []).map((e) => ({
-                      id: e.id ?? `${e.startTime}-${e.activityId ?? 'idle'}`,
-                      activityId: e.activityId ?? null,
-                      activityName: e.activityName ?? null,
-                      startTime: e.startTime,
-                      endTime: e.endTime ?? null,
-                      colorIndex: (typeof (e as unknown as Record<string, unknown>).colorIndex === 'number') ? (e as unknown as Record<string, number>).colorIndex : undefined,
-                    }));
+                    // Map timeline entries into the share payload shape with safe guards
+                    const timelineEntriesForShare = mapTimelineEntriesForShare(entries || []);
 
                     // Determine completedAt from timeline entries when available — prefer latest endTime, then startTime, else now
                     const completedAtIso = (() => {
@@ -662,6 +674,7 @@ export default function Summary({
                       return new Date().toISOString();
                     })();
 
+                    // Determine sessionType: prefer explicit flags, fall back to 'completed'
                     const sessionTypeValue = allActivitiesCompleted ? 'completed' : (isTimeUp ? 'timeUp' : 'completed');
 
                     const payload = {

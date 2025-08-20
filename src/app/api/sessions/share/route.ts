@@ -3,7 +3,6 @@ import { validateSessionSummaryData, validateStoredSession } from '../../../../u
 import { generateShareId } from '../../../../utils/sessionSharing/utils';
 import { saveSession } from '../../../../utils/sessionSharing/storage';
 import { checkAndIncrementKey } from '../../../../utils/sessionSharing/rateLimiter';
-import type { StoredSession } from '../../../../types/sessionSharing';
 
 export async function POST(req: Request) {
   try {
@@ -28,16 +27,16 @@ export async function POST(req: Request) {
 
     const id = generateShareId();
     const now = new Date();
-    const metadata: StoredSession['metadata'] = {
+    const metadata = {
       id,
       createdAt: now.toISOString(),
       expiresAt: new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString(),
       version: '1',
       userAgent: req.headers.get('user-agent') ?? undefined,
-    } as StoredSession['metadata'];
+    };
 
-    const stored: StoredSession = { sessionData, metadata } as StoredSession;
-    // validate stored session (ensures metadata shape)
+    const stored = { sessionData, metadata };
+    // validate stored session (ensures metadata and sessionData shapes)
     validateStoredSession(stored);
 
   const saved = await saveSession(id, stored);

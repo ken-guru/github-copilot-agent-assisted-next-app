@@ -1,8 +1,13 @@
+interface GlobalCryptoLike {
+  crypto?: { randomUUID?: () => string };
+}
+
 export function generateShareId(): string {
   // Prefer native crypto.randomUUID when available (Node 18+ / modern browsers)
-  const maybe = globalThis as unknown as { crypto?: { randomUUID?: () => string } };
-  if (typeof maybe.crypto?.randomUUID === 'function') {
-    return maybe.crypto.randomUUID();
+  // Use a narrow interface to avoid `any` and satisfy eslint rules.
+  const g = globalThis as unknown as GlobalCryptoLike;
+  if (typeof g.crypto?.randomUUID === 'function') {
+    return g.crypto.randomUUID();
   }
   // Fallback: simple UUID v4 generator (not cryptographically secure)
   // Prefer to use crypto.randomUUID in production (Vercel Node 18+ supports it)

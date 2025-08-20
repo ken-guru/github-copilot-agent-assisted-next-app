@@ -7,6 +7,7 @@ import ActivityList from './ActivityList';
 import { Activity } from '../../types/activity';
 import { getActivities, saveActivities, addActivity as persistActivity, updateActivity as persistUpdateActivity, deleteActivity as persistDeleteActivity, resetActivitiesToDefault } from '../../utils/activity-storage';
 import { exportActivities, importActivities } from '../../utils/activity-import-export';
+import { extractActivitiesFromImport } from '@/utils/import-utils';
 import { useToast } from '@/contexts/ToastContext';
 
 const ActivityCrud: React.FC = () => {
@@ -185,41 +186,11 @@ const ActivityCrud: React.FC = () => {
       return;
     }
     try {
-      const text = await importFile.text();
-      const imported = JSON.parse(text);
+  const text = await importFile.text();
+  const imported = JSON.parse(text);
 
-      // If the uploaded JSON is a stored shared session (contains sessionData),
-      // extract activities from sessionData.activities and import them.
-      let importArray: unknown[] = [];
-      if (imported && typeof imported === 'object' && 'sessionData' in (imported as object)) {
-        // Best-effort extraction from stored session object
-        const maybeImported = imported as Record<string, unknown>;
-        const candidate = maybeImported['sessionData'];
-        if (candidate && typeof candidate === 'object') {
-          const candidateObj = candidate as Record<string, unknown>;
-          const activitiesCandidate = candidateObj['activities'];
-          if (Array.isArray(activitiesCandidate)) {
-            importArray = activitiesCandidate;
-          } else {
-            throw new Error('Shared session format invalid: missing sessionData.activities');
-          }
-        } else {
-          throw new Error('Shared session format invalid: sessionData is not an object');
-        }
-      } else if (Array.isArray(imported)) {
-        importArray = imported;
-      } else if (imported && typeof imported === 'object') {
-        const importedObj = imported as Record<string, unknown>;
-        const activitiesCandidate = importedObj['activities'];
-        if (Array.isArray(activitiesCandidate)) {
-          // Some exports may use an object with an activities key
-          importArray = activitiesCandidate;
-        } else {
-          throw new Error('Unsupported import format');
-        }
-      } else {
-        throw new Error('Unsupported import format');
-      }
+  // Centralized extraction of activities from supported import shapes
+  const importArray = extractActivitiesFromImport(imported);
 
       // Use the import utility to process and validate individual activity objects
       const processedActivities = importActivities(importArray, {

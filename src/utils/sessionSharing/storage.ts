@@ -63,13 +63,18 @@ export async function getSessionFromLocal(id: string): Promise<StoredSession | n
 }
 
 export async function saveSession(id: string, data: StoredSession): Promise<SaveResult> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-  const base = process.env.BLOB_BASE_URL;
   const isTest = process.env.NODE_ENV === 'test';
+  const isDev = process.env.NODE_ENV === 'development';
+
+  // In test runs, ALWAYS use local storage to avoid network communication with Vercel Blob.
+  if (isTest) return saveSessionToLocal(id, data);
+
+  // Prefer dev-specific env vars when running in development
+  const token = isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV ? process.env.BLOB_READ_WRITE_TOKEN_DEV : process.env.BLOB_READ_WRITE_TOKEN;
+  const base = isDev && process.env.BLOB_BASE_URL_DEV ? process.env.BLOB_BASE_URL_DEV : process.env.BLOB_BASE_URL;
 
   // Require blob config in non-test environments
   if (!token || !base) {
-    if (isTest) return saveSessionToLocal(id, data);
     throw new Error('Vercel Blob not configured. Set BLOB_READ_WRITE_TOKEN and BLOB_BASE_URL');
   }
 
@@ -99,12 +104,17 @@ export async function saveSession(id: string, data: StoredSession): Promise<Save
 }
 
 export async function getSession(id: string): Promise<StoredSession | null> {
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-  const base = process.env.BLOB_BASE_URL;
   const isTest = process.env.NODE_ENV === 'test';
+  const isDev = process.env.NODE_ENV === 'development';
+
+  // In test runs, ALWAYS use local storage to avoid network communication with Vercel Blob.
+  if (isTest) return getSessionFromLocal(id);
+
+  // Prefer dev-specific env vars when running in development
+  const token = isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV ? process.env.BLOB_READ_WRITE_TOKEN_DEV : process.env.BLOB_READ_WRITE_TOKEN;
+  const base = isDev && process.env.BLOB_BASE_URL_DEV ? process.env.BLOB_BASE_URL_DEV : process.env.BLOB_BASE_URL;
 
   if (!token || !base) {
-    if (isTest) return getSessionFromLocal(id);
     throw new Error('Vercel Blob not configured. Set BLOB_READ_WRITE_TOKEN and BLOB_BASE_URL');
   }
 
