@@ -46,11 +46,13 @@ function getLocalFilePath(id: string) {
   return path.join(dir, `${id}.json`);
 }
 
-export async function saveSessionToLocal(id: string, data: StoredSession) {
+export type SaveResult = { id: string; url: string; storage: 'local' | 'blob' };
+
+export async function saveSessionToLocal(id: string, data: StoredSession): Promise<SaveResult> {
   const filePath = getLocalFilePath(id);
   // Write synchronously to avoid lifecycle complexities in serverless handlers/tests
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
-  return { id, url: `file://${filePath}` };
+  return { id, url: `file://${filePath}`, storage: 'local' };
 }
 
 export async function getSessionFromLocal(id: string): Promise<StoredSession | null> {
@@ -60,72 +62,72 @@ export async function getSessionFromLocal(id: string): Promise<StoredSession | n
   return JSON.parse(raw) as StoredSession;
 }
 
-export async function saveSession(id: string, data: StoredSession) {
+export async function saveSession(id: string, data: StoredSession): Promise<SaveResult> {
   const token = process.env.BLOB_READ_WRITE_TOKEN;
   const base = process.env.BLOB_BASE_URL;
-  if (token && base) {
-    // Write to Vercel Blob: PUT {base}/{id}
-    const url = `${base.replace(/\/$/, '')}/${id}`;
-    const maybeFetch: unknown = (globalThis as unknown as { fetch?: unknown }).fetch;
-    if (typeof maybeFetch !== 'function') {
-      throw new Error('fetch is not available in this runtime');
-    }
-    try {
-      const res = await (maybeFetch as typeof fetch)(url, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) {
-        const text = await res.text();
-        // Treat as fallback to local store rather than hard failure so preview deployments
-        // without blob write permissions still work (local store is ephemeral but useful for preview).
-        console.warn(`Vercel Blob write failed: ${res.status} ${text}; falling back to local store.`);
-        return saveSessionToLocal(id, data);
-      }
-      console.log('saveSession: stored to blob at', url.replace(/:\/\/.*@/, ''));
-      return { id, url };
-    } catch (err) {
-      // Network/fetch/runtime error: fallback to local store
-      console.warn('saveSession: blob write failed, falling back to local store.', (err as Error).message);
-      return saveSessionToLocal(id, data);
-    }
+  const isTest = process.env.NODE_ENV === 'test';
+
+  // Require blob config in non-test environments
+  if (!token || !base) {
+    if (isTest) return saveSessionToLocal(id, data);
+    throw new Error('Vercel Blob not configured. Set BLOB_READ_WRITE_TOKEN and BLOB_BASE_URL');
   }
-  return saveSessionToLocal(id, data);
+
+  // Write to Vercel Blob: PUT {base}/{id} and surface any failures
+  const url = `${base.replace(/\/$/, '')}/${id}`;
+  const maybeFetch: unknown = (globalThis as unknown as { fetch?: unknown }).fetch;
+  if (typeof maybeFetch !== 'function') {
+    throw new Error('fetch is not available in this runtime');
+  }
+
+  const res = await (maybeFetch as typeof fetch)(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Vercel Blob write failed: ${res.status} ${text}`);
+  }
+
+  console.log('saveSession: stored to blob at', url.replace(/:\/\/.*@/, ''));
+  return { id, url, storage: 'blob' };
 }
 
 export async function getSession(id: string): Promise<StoredSession | null> {
   const token = process.env.BLOB_READ_WRITE_TOKEN;
   const base = process.env.BLOB_BASE_URL;
-  if (token && base) {
-    const url = `${base.replace(/\/$/, '')}/${id}`;
-    const maybeFetch: unknown = (globalThis as unknown as { fetch?: unknown }).fetch;
-    if (typeof maybeFetch !== 'function') {
-      throw new Error('fetch is not available in this runtime');
-    }
-    try {
-      const res = await (maybeFetch as typeof fetch)(url, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (res.status === 404) return null;
-      if (!res.ok) {
-        const text = await res.text();
-        console.warn(`Vercel Blob read failed: ${res.status} ${text}; falling back to local store.`);
-        return getSessionFromLocal(id);
-      }
-      const json = await res.json();
-      console.log('getSession: loaded from blob', url);
-      return json as StoredSession;
-    } catch (err) {
-      console.warn('getSession: blob read failed, falling back to local store.', (err as Error).message);
-      return getSessionFromLocal(id);
-    }
+  const isTest = process.env.NODE_ENV === 'test';
+
+  if (!token || !base) {
+    if (isTest) return getSessionFromLocal(id);
+    throw new Error('Vercel Blob not configured. Set BLOB_READ_WRITE_TOKEN and BLOB_BASE_URL');
   }
-  return getSessionFromLocal(id);
+
+  const url = `${base.replace(/\/$/, '')}/${id}`;
+  const maybeFetch: unknown = (globalThis as unknown as { fetch?: unknown }).fetch;
+  if (typeof maybeFetch !== 'function') {
+    throw new Error('fetch is not available in this runtime');
+  }
+
+  const res = await (maybeFetch as typeof fetch)(url, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Vercel Blob read failed: ${res.status} ${text}`);
+  }
+
+  const json = await res.json();
+  console.log('getSession: loaded from blob', url);
+  return json as StoredSession;
 }
