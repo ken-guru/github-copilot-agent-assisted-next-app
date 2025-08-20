@@ -55,14 +55,34 @@ export default function ShareControls({ shareUrl }: Props) {
   };
 
   return (
-    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-      <button type="button" className="btn btn-outline-primary" onClick={copy}>
+    <div
+      style={{ display: 'flex', gap: 8, alignItems: 'center' }}
+      role="group"
+      aria-label="Share controls"
+    >
+      <button
+        type="button"
+        className="btn btn-outline-primary"
+        onClick={copy}
+        aria-label="Copy share link to clipboard"
+      >
         Copy share link
       </button>
-      <button type="button" className="btn btn-outline-secondary" onClick={downloadJson}>
+      <button
+        type="button"
+        className="btn btn-outline-secondary"
+        onClick={downloadJson}
+        aria-label="Download shared session as JSON"
+      >
         Download JSON
       </button>
-      <a className="btn btn-outline-secondary" href={shareUrl} target="_blank" rel="noopener noreferrer">
+      <a
+        className="btn btn-outline-secondary"
+        href={shareUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open shared session in a new tab"
+      >
         Open in new tab
       </a>
     </div>

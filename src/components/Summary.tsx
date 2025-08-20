@@ -35,6 +35,8 @@ export default function Summary({
   const [shareLoading, setShareLoading] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [showShareControls, setShowShareControls] = useState(false);
+  // Ref to return focus to the trigger after modal closes
+  const [shareTriggerElement, setShareTriggerElement] = useState<HTMLElement | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const { apiKey } = useApiKey();
@@ -452,7 +454,11 @@ export default function Summary({
         <Button
           variant="outline-success"
           size="sm"
-          onClick={() => setShowShareModal(true)}
+          onClick={(e) => {
+            // capture trigger element so we can return focus after modal closes
+            setShareTriggerElement(e.currentTarget as HTMLElement);
+            setShowShareModal(true);
+          }}
           className="d-flex align-items-center"
           title="Share session"
           data-testid="open-share-modal-summary"
@@ -570,12 +576,23 @@ export default function Summary({
       </Card.Body>
 
       {/* Share confirmation modal */}
-      <Modal show={showShareModal} onHide={() => setShowShareModal(false)}>
+        <Modal
+          show={showShareModal}
+          onHide={() => {
+            setShowShareModal(false);
+            // Return focus to the trigger element for keyboard users
+            setTimeout(() => {
+              if (shareTriggerElement) shareTriggerElement.focus();
+            }, 0);
+          }}
+          aria-labelledby="share-modal-title"
+          aria-describedby="share-modal-desc"
+        >
         <Modal.Header closeButton>
-          <Modal.Title>Share session</Modal.Title>
+          <Modal.Title id="share-modal-title">Share session</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Share a read-only copy of the current session. This will create a public URL that anyone can open.</p>
+          <p id="share-modal-desc">Share a read-only copy of the current session. This will create a public URL that anyone can open.</p>
           <p className="text-muted small">The shared session will contain summary and timeline data only.</p>
           {shareLoading && (
             <div className="d-flex align-items-center">
@@ -589,9 +606,14 @@ export default function Summary({
           )}
         </Modal.Body>
         <Modal.Footer>
-          {!showShareControls && (
+              {!showShareControls && (
             <>
-              <Button variant="secondary" onClick={() => setShowShareModal(false)}>Cancel</Button>
+              <Button
+                variant="secondary"
+                onClick={() => setShowShareModal(false)}
+              >
+                Cancel
+              </Button>
               <Button
                 variant="success"
                 onClick={async () => {
@@ -676,6 +698,11 @@ export default function Summary({
                     const url = id ? `${window.location.origin}/shared/${id}` : json?.shareUrl;
                     setShareUrl(url || null);
                     setShowShareControls(true);
+                    // When share controls appear, focus the first control (copy button) if available
+                    setTimeout(() => {
+                      const el = document.querySelector('[aria-label="Copy share link to clipboard"]') as HTMLElement | null;
+                      if (el) el.focus();
+                    }, 0);
                   } catch (e) {
                     const message = e instanceof Error ? e.message : 'Failed to create share.';
                     addToast({ message, variant: 'error' });
@@ -690,7 +717,13 @@ export default function Summary({
             </>
           )}
           {showShareControls && (
-            <Button variant="primary" onClick={() => setShowShareModal(false)}>Done</Button>
+            <Button
+              variant="primary"
+              onClick={() => setShowShareModal(false)}
+              aria-label="Close share dialog"
+            >
+              Done
+            </Button>
           )}
         </Modal.Footer>
       </Modal>
