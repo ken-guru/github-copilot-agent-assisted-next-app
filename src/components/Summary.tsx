@@ -638,7 +638,7 @@ export default function Summary({
                       activityName: e.activityName ?? null,
                       startTime: e.startTime,
                       endTime: e.endTime ?? null,
-                      colorIndex: (e as any).colorIndex ?? undefined,
+                      colorIndex: (typeof (e as unknown as Record<string, unknown>).colorIndex === 'number') ? (e as unknown as Record<string, number>).colorIndex : undefined,
                     }));
 
                     // Determine completedAt from timeline entries when available — prefer latest endTime, then startTime, else now

@@ -44,7 +44,7 @@ describe('Summary share flow', () => {
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalledWith('/api/sessions/share', expect.any(Object)));
 
-    // After share created, ShareControls should be rendered with Open link
-    await screen.findByRole('link', { name: /open in new tab/i });
+  // After share created, ShareControls should be rendered with Open link
+  await screen.findByRole('link', { name: /open shared session in a new tab/i });
   });
 });

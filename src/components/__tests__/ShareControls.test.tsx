@@ -26,12 +26,12 @@ describe('ShareControls', () => {
 
     render(<ShareControls shareUrl={shareUrl} />);
 
-    const copyBtn = screen.getByRole('button', { name: /copy share link/i });
+  const copyBtn = screen.getByRole('button', { name: /copy share link to clipboard/i });
     fireEvent.click(copyBtn);
 
     await waitFor(() => expect(navigator.clipboard.writeText).toHaveBeenCalledWith(shareUrl));
 
-    const downloadBtn = screen.getByRole('button', { name: /download json/i });
+  const downloadBtn = screen.getByRole('button', { name: /download shared session as json/i });
     fireEvent.click(downloadBtn);
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalled());

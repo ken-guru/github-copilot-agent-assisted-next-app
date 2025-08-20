@@ -12,15 +12,20 @@ jest.mock('@/utils/activity-storage', () => ({
 
 // Mock importActivities utility to validate processing
 jest.mock('@/utils/activity-import-export', () => ({
-  importActivities: jest.fn((arr) => arr.map((a: any, i: number) => ({ id: `imp-${i}`, name: a.name || `Imported ${i}`, description: a.description || '', colorIndex: a.colorIndex ?? i })) ),
+  importActivities: jest.fn((arr: unknown[]) => arr.map((a: unknown, i: number) => {
+    const ai = a as Record<string, unknown>;
+    const name = typeof ai.name === 'string' ? ai.name : `Imported ${i}`;
+    const description = typeof ai.description === 'string' ? ai.description : '';
+    const colorIndex = typeof ai.colorIndex === 'number' ? ai.colorIndex : i;
+    return { id: `imp-${i}`, name, description, colorIndex };
+  })) ,
 }));
 
 describe('ActivityCrud import preview', () => {
   beforeAll(() => {
-    // Provide a mock for window.File and File.prototype.text
-    const file = new File([JSON.stringify({ sessionData: { activities: [{ name: 'X', description: 'Y' }] } })], 'import.json', { type: 'application/json' });
-    // @ts-ignore
-    global.File = File;
+  // Provide a mock for window.File and File.prototype.text
+  // Assign global File for test environment (jsdom may not expose File)
+  (globalThis as unknown as { File?: typeof File }).File = File;
     // mock addEventListener etc if needed
   });
 
