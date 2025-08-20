@@ -80,4 +80,29 @@ describe('saveSession blob flows', () => {
     expect(mockFetch.mock.calls[1][1].method).toBe('POST');
     expect(mockFetch.mock.calls[2][1].method).toBe('PUT');
   });
+
+  it('handles create response that returns only an id and then PUT succeeds', async () => {
+    process.env.BLOB_READ_WRITE_TOKEN = 'test-token';
+    process.env.BLOB_BASE_URL = 'https://api.vercel.com/v1/blob';
+
+    const put404 = { ok: false, status: 404, text: async () => 'Blob not found' };
+    const postCreate = { ok: true, status: 201, json: async () => ({ id: 'created-123' }) };
+    const uploadPut = { ok: true, status: 200, text: async () => '' };
+
+    const mockFetch = jest.fn()
+      .mockResolvedValueOnce(put404)
+      .mockResolvedValueOnce(postCreate)
+      .mockResolvedValueOnce(uploadPut);
+
+    (globalThis as unknown as { fetch?: typeof fetch }).fetch = mockFetch;
+
+    const res = await saveSession('created-id', sample as StoredSession, { forceNetwork: true });
+    expect(res.storage).toBe('blob');
+    // URL should point to the base/id constructed from create response
+    expect(res.url).toBe('https://api.vercel.com/v1/blob/created-123');
+    expect(mockFetch).toHaveBeenCalledTimes(3);
+    expect(mockFetch.mock.calls[0][1].method).toBe('PUT');
+    expect(mockFetch.mock.calls[1][1].method).toBe('POST');
+    expect(mockFetch.mock.calls[2][1].method).toBe('PUT');
+  });
 });

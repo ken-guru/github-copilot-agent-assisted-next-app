@@ -149,12 +149,34 @@ export async function saveSession(
 
           const createJson: unknown = await createRes.json().catch(() => ({}));
 
-          // The create response may provide a direct upload URL under several common keys.
+          // The create response may provide a direct upload URL under several common keys,
+          // or might only return an `id` which we can PUT to at `${base}/{id}`.
           let uploadUrl: string | undefined;
+          let createdId: string | undefined;
+
           if (createJson && typeof createJson === 'object') {
             const cj = createJson as Record<string, unknown>;
-            const candidate = cj.uploadURL ?? cj.upload_url ?? cj.url;
-            if (typeof candidate === 'string') uploadUrl = candidate;
+            // Common direct upload URL keys
+            uploadUrl = (cj.uploadURL as string | undefined) ?? (cj.upload_url as string | undefined) ?? (cj.url as string | undefined);
+
+            // Nested variations (some APIs return { data: { uploadURL } } or { result: { upload_url } })
+            if (!uploadUrl) {
+              const maybeData = cj.data as Record<string, unknown> | undefined;
+              const maybeResult = cj.result as Record<string, unknown> | undefined;
+              uploadUrl = maybeData?.uploadURL as string | undefined ?? maybeData?.upload_url as string | undefined ?? maybeResult?.uploadURL as string | undefined ?? maybeResult?.upload_url as string | undefined;
+            }
+
+            // Some APIs return only an id (or name) for the created blob; try to use it.
+            if (!uploadUrl) {
+              const idCandidate = (cj.id as string | undefined) ?? (cj.name as string | undefined);
+              if (typeof idCandidate === 'string' && idCandidate.trim() !== '') createdId = idCandidate;
+            }
+          }
+
+          // If we only got an id, attempt PUT to `${base}/{id}` which should succeed after creation.
+          if (!uploadUrl && createdId) {
+            uploadUrl = `${base.replace(/\/$/, '')}/${encodeURIComponent(createdId)}`;
+            if (process.env.NODE_ENV !== 'production') console.log('saveSession: create returned id, attempting PUT to', uploadUrl);
           }
 
           if (uploadUrl && typeof uploadUrl === 'string') {
@@ -162,6 +184,8 @@ export async function saveSession(
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
+                // Some upload URLs are presigned and must not include auth; others may accept token
+                ...(uploadUrl.startsWith(base) ? { Authorization: `Bearer ${token}` } : {}),
               },
               body: JSON.stringify(data),
             });
@@ -169,16 +193,16 @@ export async function saveSession(
             if (!uploadRes.ok) {
               const text2 = await uploadRes.text().catch(() => 'unable to read upload response');
               const message = `Vercel Blob upload failed: ${uploadRes.status} ${text2}`;
-              if (process.env.NODE_ENV !== 'production') console.error('saveSession upload', message);
+              if (process.env.NODE_ENV !== 'production') console.error('saveSession upload', message, 'uploadUrl:', uploadUrl);
               throw new Error(message);
             }
 
             if (process.env.NODE_ENV !== 'production') console.log('saveSession: stored to blob via upload URL', uploadUrl);
-            return { id, url: uploadUrl, storage: 'blob' };
+            return { id: createdId ?? id, url: uploadUrl, storage: 'blob' };
           }
 
-          // If create returned no upload URL, include its body in the hint to help debugging.
-          const hint = `create-upload did not return an upload URL (${JSON.stringify(createJson)})`;
+          // If create returned no upload URL or id, include its body in the hint to help debugging.
+          const hint = `create-upload did not return an upload URL or id (${JSON.stringify(createJson)})`;
           const message = `Vercel Blob write failed: ${res.status} ${text} — ${hint}`;
           if (process.env.NODE_ENV !== 'production') console.error('saveSession PUT', safeLogUrl(), message);
           throw new Error(message);
