@@ -354,17 +354,18 @@ export async function getSession(
   // require BLOB_BASE_URL and is more robust in preview/prod.
   if (!isTest) {
     try {
-      const blobMod = (await import('@vercel/blob')) as unknown as {
+  const blobMod = (await import('@vercel/blob')) as unknown as {
         head?: (name: string, opts?: unknown) => Promise<{ url?: string } | unknown>;
         list?: (opts?: { prefix?: string; limit?: number; cursor?: string }) => Promise<{ blobs?: Array<{ pathname?: string; url?: string }> }>;
       };
       const nameCandidates = [`${id}.json`, `${id}`];
+  const sdkToken = process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN_DEV || undefined;
       for (const name of nameCandidates) {
         try {
           let url: string | undefined;
           if (typeof blobMod.head === 'function') {
             // head() throws on not found; returns { url, ... } when it exists
-            const info = await blobMod.head(name as string);
+    const info = await blobMod.head(name as string, sdkToken ? { token: sdkToken } : undefined);
             url = (info as { url?: string } | undefined)?.url;
           }
           // Fallback to list() to discover public URL when head() is unavailable
