@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { put as putBlob } from '@vercel/blob';
 import { validateSessionSummaryData, validateStoredSession } from '../../../../utils/sessionSharing/schema';
 import { generateShareId } from '../../../../utils/sessionSharing/utils';
 import { saveSession } from '../../../../utils/sessionSharing/storage';
@@ -41,57 +42,41 @@ export async function POST(req: Request) {
     // validate stored session (ensures metadata and sessionData shapes)
     validateStoredSession(stored);
 
-  // Define a light put signature to avoid depending on SDK types at build time
-  type PutFn = (
-    name: string,
-    body: BodyInit,
-    opts?: {
-      access?: 'public' | 'private';
-      addRandomSuffix?: boolean;
-      allowOverwrite?: boolean;
-      token?: string;
-    },
-  ) => Promise<{ id?: string; url?: string }>;
-  let putBlob: PutFn | null = null;
+  // Define a light result type
+  type PutResult = { id?: string; url?: string };
   let saved;
   try {
     console.log('session-share: attempting to save session to blob/local storage', { id });
-    // Attempt to dynamically import the SDK at runtime (avoids build-time type/import issues)
-    try {
-      const mod = await import('@vercel/blob');
-      if (mod && typeof (mod as unknown as { put?: unknown }).put === 'function') {
-        putBlob = (mod as unknown as { put: PutFn }).put;
-      }
-    } catch {
-      // SDK not available — we'll fall back to REST saveSession below
-      putBlob = null;
-    }
-
     const isTest = process.env.NODE_ENV === 'test';
-    if (isTest || !putBlob) {
-      // Use existing REST/local logic for tests or when SDK isn't present
+    if (isTest) {
+      // Use existing REST/local logic for tests (local-only path)
       saved = await saveSession(id, stored);
     } else {
       try {
-        // Prefer SDK path in non-test environments. Pass token explicitly if available,
-        // disable random suffix to keep deterministic names, and allow overwrite to
-        // avoid collisions if an id is re-used during retries.
+        // Enforce SDK path in non-test environments. Pass token explicitly, disable random suffix,
+        // and allow overwrite to avoid collisions during retries.
         const token = process.env.BLOB_READ_WRITE_TOKEN;
-        const result = await putBlob(
-          `${id}.json`,
-          JSON.stringify(stored),
-          {
-            access: 'private',
-            addRandomSuffix: false,
-            allowOverwrite: true,
-            ...(token ? { token } : {}),
-          },
-        );
-        saved = { id: result.id ?? id, url: result.url ?? (process.env.NEXT_PUBLIC_BASE_URL ? `${process.env.NEXT_PUBLIC_BASE_URL}/shared/${id}` : ''), storage: 'blob' };
+        const permissivePut = putBlob as unknown as (
+          name: string,
+          body: BodyInit,
+          opts?: Record<string, unknown>,
+        ) => Promise<PutResult>;
+        const result: PutResult = await permissivePut(`${id}.json`, JSON.stringify(stored), {
+          access: 'private',
+          addRandomSuffix: false,
+          allowOverwrite: true,
+          ...(token ? { token } : {}),
+        });
+        saved = {
+          id: result.id ?? id,
+          url: result.url ?? (process.env.NEXT_PUBLIC_BASE_URL ? `${process.env.NEXT_PUBLIC_BASE_URL}/shared/${id}` : ''),
+          storage: 'blob',
+        };
         if (process.env.NODE_ENV !== 'production') console.log('session-share: putBlob result', { id: saved.id, url: saved.url });
       } catch (sdkErr) {
-        if (process.env.NODE_ENV !== 'production') console.error('session-share: putBlob failed, falling back to REST saveSession', String(sdkErr));
-        saved = await saveSession(id, stored);
+        // Avoid REST fallback in preview/prod since REST path has shown 404s. Surface the error clearly.
+        console.error('session-share: putBlob failed (SDK path). Aborting without REST fallback.', String(sdkErr));
+        throw sdkErr;
       }
     }
   // Log the storage and a safe preview of the saved URL for diagnostics (do not print tokens)
