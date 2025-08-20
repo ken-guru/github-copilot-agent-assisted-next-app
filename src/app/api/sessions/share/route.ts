@@ -7,6 +7,8 @@ import type { StoredSession } from '../../../../types/sessionSharing';
 
 export async function POST(req: Request) {
   try {
+  // Helpful debugging log: do not print token values, only presence
+  console.log('session-share: BLOB_BASE_URL set?', !!process.env.BLOB_BASE_URL, 'BLOB_READ_WRITE_TOKEN set?', !!process.env.BLOB_READ_WRITE_TOKEN);
     // Basic Origin/Referer check to reduce CSRF surface for public endpoint.
     const origin = req.headers.get('origin') ?? req.headers.get('referer') ?? '';
     const base = process.env.NEXT_PUBLIC_BASE_URL ?? '';
