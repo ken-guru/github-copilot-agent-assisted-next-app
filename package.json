@@ -12,7 +12,7 @@
     "cypress": "cypress open",
     "cypress:run": "cypress run",
     "cypress:headless": "cypress run --headless",
-  "type-check": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit",
+    "type-check": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit",
     "clean-build": "node scripts/clean-build.js",
     "clean-build:full": "node scripts/clean-build.js --full",
     "update-sw-version": "node scripts/update-service-worker-version.js"
@@ -20,17 +20,18 @@
   "dependencies": {
     "bootstrap": "^5.3.7",
     "bootstrap-icons": "^1.13.1",
-  "zod": "^3.21.4",
     "next": "15.4.6",
     "react": "^19.1.1",
     "react-bootstrap": "^2.10.10",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@testing-library/jest-dom": "^6.7.0",
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^30.0.0",
+    "@types/jest-axe": "^3.5.9",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -38,6 +39,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "jest": "^30.0.5",
+    "jest-axe": "^10.0.0",
     "jest-environment-jsdom": "^30.0.5",
     "typescript": "^5"
   }

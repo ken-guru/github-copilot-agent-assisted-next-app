@@ -469,20 +469,7 @@ export default function Summary({
             {status.message}
           </Alert>
         )}
-        {/* Secondary share button for visibility in narrow layouts */}
-        <div className="mb-3">
-          <Button
-            variant="outline-success"
-            size="sm"
-            onClick={() => setShowShareModal(true)}
-            className="d-flex align-items-center"
-            title="Share session"
-            data-testid="open-share-modal-summary-body"
-          >
-            <i className="bi bi-share me-2" />
-            Share
-          </Button>
-        </div>
+  {/* Secondary share button intentionally removed — header Share button is sufficient */}
         <Row className="stats-grid g-3 mb-4" data-testid="stats-grid">
           <Col xs={6} md={3} data-testid="stat-card-planned">
             <Card className="text-center h-100">
@@ -610,25 +597,82 @@ export default function Summary({
                 onClick={async () => {
                   try {
                     setShareLoading(true);
-                    // Build minimal payload
+
+                    // Build payload matching SessionSummaryDataSchema
+                    const allStoredActivities = getActivities();
+                    const colorById = new Map(allStoredActivities.map((a) => [a.id, a.colorIndex]));
+                    const activitiesForShare = activityTimes.map(a => ({
+                      id: a.id,
+                      name: a.name,
+                      duration: a.duration,
+                      colorIndex: typeof colorById.get(a.id) === 'number' ? (colorById.get(a.id) as number) : 0,
+                    }));
+
+                    const skippedForShare = skippedActivities.map(s => ({ id: s.id, name: s.name }));
+
+                    const timelineEntriesForShare = (entries || []).map((e) => ({
+                      id: e.id ?? `${e.startTime}-${e.activityId ?? 'idle'}`,
+                      activityId: e.activityId ?? null,
+                      activityName: e.activityName ?? null,
+                      startTime: e.startTime,
+                      endTime: e.endTime ?? null,
+                      colorIndex: (e as any).colorIndex ?? undefined,
+                    }));
+
+                    // Determine completedAt from timeline entries when available — prefer latest endTime, then startTime, else now
+                    const completedAtIso = (() => {
+                      try {
+                        if (entries && entries.length > 0) {
+                          // Find the maximum timestamp among endTime (prefer) or startTime
+                          let maxTs: number | null = null;
+                          for (const e of entries) {
+                            if (typeof e.endTime === 'number') {
+                              maxTs = Math.max(maxTs ?? 0, e.endTime);
+                            } else if (typeof e.startTime === 'number') {
+                              maxTs = Math.max(maxTs ?? 0, e.startTime);
+                            }
+                          }
+                          if (maxTs && maxTs > 0) return new Date(maxTs).toISOString();
+                        }
+                      } catch {
+                        // ignore and fallthrough to now
+                      }
+                      return new Date().toISOString();
+                    })();
+
+                    const sessionTypeValue = allActivitiesCompleted ? 'completed' : (isTimeUp ? 'timeUp' : 'completed');
+
                     const payload = {
                       sessionData: {
-                        activities: getActivities().map(a => ({ id: a.id, name: a.name, description: a.description || '', colorIndex: a.colorIndex })),
-                        timeline: entries
+                        plannedTime: totalDuration,
+                        timeSpent: elapsedTime,
+                        overtime,
+                        idleTime: stats.idleTime,
+
+                        activities: activitiesForShare,
+                        skippedActivities: skippedForShare,
+                        timelineEntries: timelineEntriesForShare,
+
+                        completedAt: completedAtIso,
+                        sessionType: sessionTypeValue,
                       },
                       metadata: {
                         title: 'Shared session',
                         createdBy: 'app'
                       }
                     };
+
                     const res = await fetch('/api/sessions/share', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify(payload)
                     });
-                    if (!res.ok) throw new Error(`Share failed: ${res.status}`);
+                    if (!res.ok) {
+                      const data = await res.json().catch(() => ({}));
+                      throw new Error(`Share failed: ${res.status} - ${JSON.stringify(data)}`);
+                    }
                     const json = await res.json();
-                    const id = json?.metadata?.id || json?.id;
+                    const id = json?.metadata?.id || json?.id || json?.shareId;
                     const url = id ? `${window.location.origin}/shared/${id}` : json?.shareUrl;
                     setShareUrl(url || null);
                     setShowShareControls(true);
