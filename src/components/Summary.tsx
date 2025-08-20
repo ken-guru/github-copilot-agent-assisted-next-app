@@ -8,6 +8,7 @@ import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
 import type { ChatCompletion } from '@/types/ai';
 import ShareControls from './ShareControls';
+import { mapTimelineEntriesForShare as mapTimelineEntriesForShareUtil } from '@/utils/sharing';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -358,23 +359,8 @@ export default function Summary({
   const overtime = calculateOvertime();
   const activityTimes = calculateActivityTimes();
 
-  // Helper to map timeline entries into the sanitized shape for sharing
-  const mapTimelineEntriesForShare = (inputEntries: TimelineEntry[]) => {
-    return inputEntries.map((e) => {
-      // Safely extract colorIndex when it's an integer number
-      const rawColor = (e as unknown as Record<string, unknown>).colorIndex;
-      const colorIndex = (typeof rawColor === 'number' && Number.isInteger(rawColor)) ? (rawColor as number) : undefined;
-
-      return {
-        id: e.id ?? `${e.startTime}-${e.activityId ?? 'idle'}`,
-        activityId: e.activityId ?? null,
-        activityName: e.activityName ?? null,
-        startTime: e.startTime,
-        endTime: e.endTime ?? null,
-        colorIndex,
-      };
-    });
-  };
+  // Use centralized sharing util for consistent mapping
+  const mapTimelineEntriesForShare = (inputEntries: TimelineEntry[]) => mapTimelineEntriesForShareUtil(inputEntries);
 
   // Build a stable payload for AI summary generation
   const summaryPayload = useMemo(() => ({
@@ -712,10 +698,10 @@ export default function Summary({
                     setShareUrl(url || null);
                     setShowShareControls(true);
                     // When share controls appear, focus the first control (copy button) if available
-                    setTimeout(() => {
+                    requestAnimationFrame(() => {
                       const el = document.querySelector('[aria-label="Copy share link to clipboard"]') as HTMLElement | null;
-                      if (el) el.focus();
-                    }, 0);
+                      if (el && typeof el.focus === 'function' && !el.hasAttribute('disabled') && el.offsetParent !== null) el.focus();
+                    });
                   } catch (e) {
                     const message = e instanceof Error ? e.message : 'Failed to create share.';
                     addToast({ message, variant: 'error' });

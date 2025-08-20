@@ -15,7 +15,7 @@ export default function ShareControls({ shareUrl }: Props) {
       await navigator.clipboard.writeText(shareUrl);
       addResponsiveToast({ message: 'Share URL copied to clipboard', variant: 'success', autoDismiss: true });
     } catch {
-      addResponsiveToast({ message: `Unable to copy to clipboard. Please copy manually: ${shareUrl}`, variant: 'warning', autoDismiss: true });
+      addResponsiveToast({ message: 'Unable to copy to clipboard. Please copy the link manually.', variant: 'warning', autoDismiss: true });
     }
   };
 

@@ -13,7 +13,13 @@ export default async function SharedPage({ params }: Props) {
   const stored = await getSession(id);
   if (!stored) return notFound();
 
-  const data: StoredSession = stored as StoredSession;
+  const dataCandidate = stored as unknown;
+  if (!dataCandidate || typeof dataCandidate !== 'object' || !('sessionData' in dataCandidate) || !('metadata' in dataCandidate)) {
+    // Unexpected shape — treat as not found
+    return notFound();
+  }
+
+  const data = dataCandidate as StoredSession;
 
   // Map stored.sessionData to Timeline entries expected by components
   const entries = (data.sessionData.timelineEntries || []).map((e) => ({
