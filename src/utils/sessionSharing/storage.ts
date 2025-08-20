@@ -70,19 +70,29 @@ export async function saveSession(id: string, data: StoredSession) {
     if (typeof maybeFetch !== 'function') {
       throw new Error('fetch is not available in this runtime');
     }
-    const res = await (maybeFetch as typeof fetch)(url, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`Vercel Blob write failed: ${res.status} ${text}`);
+    try {
+      const res = await (maybeFetch as typeof fetch)(url, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        // Treat as fallback to local store rather than hard failure so preview deployments
+        // without blob write permissions still work (local store is ephemeral but useful for preview).
+        console.warn(`Vercel Blob write failed: ${res.status} ${text}; falling back to local store.`);
+        return saveSessionToLocal(id, data);
+      }
+      console.log('saveSession: stored to blob at', url.replace(/:\/\/.*@/, ''));
+      return { id, url };
+    } catch (err) {
+      // Network/fetch/runtime error: fallback to local store
+      console.warn('saveSession: blob write failed, falling back to local store.', (err as Error).message);
+      return saveSessionToLocal(id, data);
     }
-    return { id, url };
   }
   return saveSessionToLocal(id, data);
 }
@@ -96,19 +106,26 @@ export async function getSession(id: string): Promise<StoredSession | null> {
     if (typeof maybeFetch !== 'function') {
       throw new Error('fetch is not available in this runtime');
     }
-    const res = await (maybeFetch as typeof fetch)(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (res.status === 404) return null;
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`Vercel Blob read failed: ${res.status} ${text}`);
+    try {
+      const res = await (maybeFetch as typeof fetch)(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.status === 404) return null;
+      if (!res.ok) {
+        const text = await res.text();
+        console.warn(`Vercel Blob read failed: ${res.status} ${text}; falling back to local store.`);
+        return getSessionFromLocal(id);
+      }
+      const json = await res.json();
+      console.log('getSession: loaded from blob', url);
+      return json as StoredSession;
+    } catch (err) {
+      console.warn('getSession: blob read failed, falling back to local store.', (err as Error).message);
+      return getSessionFromLocal(id);
     }
-    const json = await res.json();
-    return json as StoredSession;
   }
   return getSessionFromLocal(id);
 }
