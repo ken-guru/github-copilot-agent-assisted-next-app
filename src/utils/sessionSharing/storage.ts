@@ -138,14 +138,21 @@ export async function getSessionFromLocal(id: string): Promise<StoredSession | n
 export async function saveSession(
   id: string,
   data: StoredSession,
-  options?: { forceNetwork?: boolean },
+  options?: { forceNetwork?: boolean; forceLocal?: boolean },
 ): Promise<SaveResult> {
   const isTest = process.env.NODE_ENV === 'test';
   const isDev = process.env.NODE_ENV === 'development';
+  const disableExternal = (process.env.DISABLE_BLOB_NETWORK === '1' || process.env.DISABLE_BLOB_NETWORK === 'true')
+    || (process.env.CI === 'true' && process.env.NODE_ENV !== 'production');
 
   // In test runs, ALWAYS use local storage to avoid network communication with Vercel Blob.
   // Tests can opt into the network path by passing { forceNetwork: true }.
   if (isTest && !options?.forceNetwork) return saveSessionToLocal(id, data);
+
+  // Explicit override to force local storage (used by dev/e2e to avoid external calls)
+  if (options?.forceLocal || (disableExternal && !options?.forceNetwork)) {
+    return saveSessionToLocal(id, data);
+  }
 
   // Prefer dev-specific env vars when running in development
   const token = isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV ? process.env.BLOB_READ_WRITE_TOKEN_DEV : process.env.BLOB_READ_WRITE_TOKEN;
@@ -398,10 +405,18 @@ export async function getSession(
 ): Promise<StoredSession | null> {
   const isTest = process.env.NODE_ENV === 'test';
   const isDev = process.env.NODE_ENV === 'development';
+  const disableExternal = (process.env.DISABLE_BLOB_NETWORK === '1' || process.env.DISABLE_BLOB_NETWORK === 'true')
+    || (process.env.CI === 'true' && process.env.NODE_ENV !== 'production');
 
   // In test runs, ALWAYS use local storage to avoid network communication with Vercel Blob
   // unless explicitly forced for targeted network-path tests.
   if (isTest && !opts?.forceNetwork) return getSessionFromLocal(id);
+
+  // In non-production environments where external calls are disabled (e.g., CI/E2E),
+  // avoid hitting Vercel entirely and read from local store.
+  if (disableExternal && !opts?.forceNetwork) {
+    return getSessionFromLocal(id);
+  }
 
   // Prefer SDK read in non-test environments to avoid REST endpoint/version mismatches
   // and leverage the public URL (we write with access: 'public'). This path does not

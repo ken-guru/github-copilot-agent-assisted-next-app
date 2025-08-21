@@ -58,15 +58,18 @@ export async function POST(req: Request) {
   try {
   if (process.env.NODE_ENV !== 'production') console.log('session-share: attempting to save session to blob/local storage', { id });
     const isTest = process.env.NODE_ENV === 'test';
-  if (isTest) {
-      // Use existing REST/local logic for tests (local-only path)
-      saved = await saveSession(id, stored);
+    const disableExternal = (process.env.DISABLE_BLOB_NETWORK === '1' || process.env.DISABLE_BLOB_NETWORK === 'true')
+      || (process.env.CI === 'true' && process.env.NODE_ENV !== 'production');
+
+    if (isTest || disableExternal) {
+      // Use local-only path during tests or when external calls are disabled
+      saved = await saveSession(id, stored, { forceLocal: true });
     } else {
       try {
-    // Enforce SDK path in non-test environments with public access.
+        // Enforce SDK path in non-test environments with public access.
         // Deterministic name and overwrite to avoid collisions during retries.
-    const { put: putBlob } = await import('@vercel/blob');
-    const result: PutResult = await putBlob(`${id}.json`, JSON.stringify(stored), {
+        const { put: putBlob } = await import('@vercel/blob');
+        const result: PutResult = await putBlob(`${id}.json`, JSON.stringify(stored), {
           access: 'public',
           addRandomSuffix: false,
           allowOverwrite: true,
@@ -76,7 +79,7 @@ export async function POST(req: Request) {
           url: result.url ?? (process.env.NEXT_PUBLIC_BASE_URL ? `${process.env.NEXT_PUBLIC_BASE_URL}/shared/${id}` : ''),
           storage: 'blob',
         };
-  if (process.env.NODE_ENV !== 'production') console.log('session-share: putBlob result', { id: saved.id, url: saved.url });
+        if (process.env.NODE_ENV !== 'production') console.log('session-share: putBlob result', { id: saved.id, url: saved.url });
       } catch (sdkErr) {
         // Avoid REST fallback in preview/prod since REST path has shown 404s. Surface the error clearly.
         console.error('session-share: putBlob failed (SDK path). Aborting without REST fallback.', String(sdkErr));
