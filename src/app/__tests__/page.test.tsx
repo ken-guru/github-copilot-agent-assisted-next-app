@@ -6,6 +6,7 @@ import resetService, { DialogCallback } from '@/utils/resetService';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
 import { ConfirmationDialogProps, ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 import { LoadingProvider } from '@/contexts/LoadingContext';
+import { SESSION_STORAGE_KEY } from '@/utils/session-storage';
 import { ToastProvider } from '@/contexts/ToastContext';
 
 // Store dialog props for testing
@@ -151,6 +152,13 @@ describe('Home Page', () => {
       onConfirm: jest.fn(),
       onCancel: jest.fn()
     };
+
+    // Ensure no persisted session interferes with initial setup expectations
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(SESSION_STORAGE_KEY);
+      }
+    } catch {}
   });
 
   it('should not show reset button in setup state', () => {
@@ -214,7 +222,7 @@ describe('Home Page', () => {
       // Start the dialog callback process in an act block
       await act(async () => {
         // The dialog callback returns a promise that resolves when user confirms/cancels
-        dialogCallback('Test message').then(result => {
+  dialogCallback('Test message').then((result: boolean) => {
           resolveCallback(result);
         });
       });
@@ -257,6 +265,12 @@ describe('Home Page', () => {
 describe('Progress Element Visibility', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Ensure no persisted session interferes with these tests' setup
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(SESSION_STORAGE_KEY);
+      }
+    } catch {}
   });
   
   it('should show progress container in activity state', () => {

@@ -40,7 +40,7 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     timelineEntries,
     addTimelineEntry,
     completeCurrentTimelineEntry,
-    resetTimelineEntries
+  resetTimelineEntries
   } = useTimelineEntries();
 
   const handleActivitySelect = useCallback((activity: Activity | null, justAdd: boolean = false) => {
@@ -164,6 +164,6 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     // New method to get current activity state
     getCurrentActivityStateDetails,
     // Method to get state of a specific activity
-    getActivityState
+  getActivityState
   };
 }

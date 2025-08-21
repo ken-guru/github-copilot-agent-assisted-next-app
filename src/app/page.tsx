@@ -9,6 +9,7 @@ import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/Confirma
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import resetService from '@/utils/resetService';
+import { loadSessionSnapshot, saveSessionSnapshot, clearSessionSnapshot } from '@/utils/session-storage';
 
 // Main application content with loading context
 function AppContent() {
@@ -48,6 +49,27 @@ function AppContent() {
   // Initialize app and hide loading screen after initialization is complete
   useEffect(() => {
     const initApp = async () => {
+      // Attempt to resume previous session state from localStorage
+      const snap = loadSessionSnapshot();
+      if (snap && snap.timeSet) {
+        setTotalDuration(snap.totalDuration);
+        setTimeSet(true);
+        // Rehydrate timeline entries by selecting activities in recorded order
+        // Ensure activities are registered first; ActivityManager will add on mount
+        // So we defer handleActivitySelect until after first paint
+        setTimeout(() => {
+          // Replay timeline: select/complete based on entries
+          snap.timelineEntries.forEach((entry, idx) => {
+            // We only need to set current activity equal to last running entry
+            // Earlier entries will render in Timeline component from entries state
+            if (idx === snap.timelineEntries.length - 1 && entry.endTime == null) {
+              // Select current running activity by id/name
+              // Minimal synthetic object to trigger selection without altering colors
+              handleActivitySelect({ id: String(entry.activityId), name: String(entry.activityName || ''), colorIndex: 0, createdAt: new Date().toISOString(), isActive: true } as any, false);
+            }
+          });
+        }, 0);
+      }
       // Add any actual initialization logic here
       // For example: load user preferences, preload critical data
       
@@ -104,6 +126,7 @@ function AppContent() {
       setTotalDuration(0);
       resetActivities();
       resetTimer();
+  clearSessionSnapshot();
     });
     
     // Clean up on component unmount
@@ -141,6 +164,23 @@ function AppContent() {
     ...entry,
     endTime: entry.endTime === undefined ? null : entry.endTime
   }));
+
+  // Persist session snapshot on key state changes
+  useEffect(() => {
+    try {
+      if (!timeSet) return;
+      const snapshot = {
+        timeSet,
+        totalDuration,
+        timerActive,
+        currentActivityId: currentActivity?.id ?? null,
+        timelineEntries: processedEntries
+      };
+      saveSessionSnapshot(snapshot);
+    } catch {
+      // ignore
+    }
+  }, [timeSet, totalDuration, timerActive, currentActivity?.id, processedEntries]);
   
   return (
     <>
