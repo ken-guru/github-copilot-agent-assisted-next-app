@@ -190,10 +190,10 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
           Open
         </button>
       )}
-      {showReplace && (
+    {showReplace && (
         <button
           type="button"
-          className="btn btn-warning d-flex align-items-center"
+      className="btn btn-outline-warning d-flex align-items-center"
           onClick={replaceMyActivities}
           disabled={isReplacing}
           aria-label="Replace my activities"

@@ -46,7 +46,11 @@ export default async function SharedPage({ params }: Props) {
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
           <h1 className="h3 mb-0">Shared Session</h1>
-          <small className="text-muted">Created: {data.metadata.createdAt}</small>
+          <small className="text-muted">
+            Created: {new Date(data.metadata.createdAt).toLocaleString(undefined, {
+              year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'
+            })}
+          </small>
         </div>
         <div className="ms-auto">
           {/* Build shareUrl from NEXT_PUBLIC_BASE_URL if present so copy/open works in different environments */}
@@ -62,14 +66,21 @@ export default async function SharedPage({ params }: Props) {
       <div className="row mt-3 g-3">
         <div className="col-12 col-lg-6">
           <section>
-            <Summary
-              entries={entries}
-              totalDuration={totalDuration}
-              elapsedTime={elapsedTime}
-              timerActive={false}
-              allActivitiesCompleted={allActivitiesCompleted}
-              isTimeUp={isTimeUp}
-            />
+            <div className="card h-100">
+              <div className="card-header card-header-consistent">
+                <h5 className="mb-0">Summary</h5>
+              </div>
+              <div className="card-body">
+                <Summary
+                  entries={entries}
+                  totalDuration={totalDuration}
+                  elapsedTime={elapsedTime}
+                  timerActive={false}
+                  allActivitiesCompleted={allActivitiesCompleted}
+                  isTimeUp={isTimeUp}
+                />
+              </div>
+            </div>
           </section>
         </div>
         <div className="col-12 col-lg-6 d-none d-lg-block">
