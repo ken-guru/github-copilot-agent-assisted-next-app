@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+"use client";
+
+import React from 'react';
 import styles from './Summary.module.css';
 import type { TimelineEntry } from '@/types';
-import { isDarkMode } from '@/utils/colors';
+import { useThemeReactive } from '@/hooks/useThemeReactive';
 
 /**
  * Props interface for the Summary component
@@ -49,10 +51,8 @@ export default function Summary({
   allActivitiesCompleted = false,
   isTimeUp = false
 }: SummaryProps) {
-  // Add state to track current theme mode
-  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
-    typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
-  );
+  // React to theme changes using dedicated hook for reliable updates
+  const currentTheme = useThemeReactive();
 
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
@@ -87,42 +87,7 @@ export default function Summary({
     };
   };
   
-  // Effect to listen for theme changes
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    // Function to handle theme changes
-    const handleThemeChange = () => {
-      setCurrentTheme(isDarkMode() ? 'dark' : 'light');
-    };
-    
-    // Initial check
-    handleThemeChange();
-    
-    // Set up MutationObserver to watch for class changes on document.documentElement
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === 'attributes' && 
-          mutation.attributeName === 'class'
-        ) {
-          handleThemeChange();
-        }
-      });
-    });
-    
-    observer.observe(document.documentElement, { attributes: true });
-    
-    // Also listen for system preference changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', handleThemeChange);
-
-    // Clean up
-    return () => {
-      observer.disconnect();
-      mediaQuery.removeEventListener('change', handleThemeChange);
-    };
-  }, []);
+  // No need for manual observers here; useThemeReactive handles reactivity
 
   const getStatusMessage = () => {
     // First check if time is up, this should take precedence

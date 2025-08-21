@@ -7,6 +7,7 @@ import ActivityList from './ActivityList';
 import { Activity } from '../../types/activity';
 import { getActivities, saveActivities, addActivity as persistActivity, updateActivity as persistUpdateActivity, deleteActivity as persistDeleteActivity, resetActivitiesToDefault } from '../../utils/activity-storage';
 import { exportActivities, importActivities } from '../../utils/activity-import-export';
+import { extractActivitiesFromImport } from '@/utils/import-utils';
 import { useToast } from '@/contexts/ToastContext';
 
 const ActivityCrud: React.FC = () => {
@@ -24,9 +25,21 @@ const ActivityCrud: React.FC = () => {
   // Import modal state
   const [showImportConfirm, setShowImportConfirm] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
+  // Store processed activities for preview before overwrite
+  const [processedImportPreview, setProcessedImportPreview] = useState<Activity[] | null>(null);
 
   // Create ref for ActivityForm to trigger submit from modal footer
   const activityFormRef = React.useRef<{ submitForm: () => void }>(null);
+
+  // Helper to safely revoke object URLs
+  const safeRevokeUrl = (url: string | null | undefined) => {
+    if (!url) return;
+    try {
+      URL.revokeObjectURL(url);
+    } catch {
+      // ignore revoke errors (e.g., double revoke)
+    }
+  };
 
   // Load activities from localStorage on mount
   useEffect(() => {
@@ -89,6 +102,11 @@ const ActivityCrud: React.FC = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+  // Revoke object URL after a tick to ensure Safari completes download
+  const urlToRevoke = exportUrl;
+  setTimeout(() => safeRevokeUrl(urlToRevoke), 0);
+      setExportUrl(null);
+      setShowExport(false);
     }
   };
 
@@ -163,6 +181,20 @@ const ActivityCrud: React.FC = () => {
     }
   };
 
+  // Ensure we clean up any generated object URL when the modal is closed
+  const handleCloseExport = () => {
+  safeRevokeUrl(exportUrl);
+    setExportUrl(null);
+    setShowExport(false);
+  };
+
+  // Revoke any previously created object URL when it changes/unmounts to avoid leaks
+  useEffect(() => {
+    return () => {
+      safeRevokeUrl(exportUrl);
+    };
+  }, [exportUrl]);
+
   // Import modal logic
   const handleImport = () => {
     setShowImport(true);
@@ -183,14 +215,20 @@ const ActivityCrud: React.FC = () => {
       return;
     }
     try {
-      const text = await importFile.text();
-      const imported = JSON.parse(text);
+  const text = await importFile.text();
+  const imported = JSON.parse(text);
 
-      // Use the new import utility that handles auto-population of missing fields
-      const processedActivities = importActivities(imported, {
+  // Centralized extraction of activities from supported import shapes
+  const importArray = extractActivitiesFromImport(imported);
+
+      // Use the import utility to process and validate individual activity objects
+      const processedActivities = importActivities(importArray, {
         existingActivities: activities,
         colorStartIndex: 0
       });
+
+      // Store processed activities for preview in confirmation modal
+      setProcessedImportPreview(processedActivities);
 
       // Confirm overwrite if activities exist
       if (activities.length > 0) {
@@ -217,34 +255,48 @@ const ActivityCrud: React.FC = () => {
   };
 
   const confirmImportOverwrite = () => {
+    // Use the processed preview if available; otherwise fall back to re-parsing
+    const finalizeImport = (processedActivities: Activity[]) => {
+      // Save imported activities to localStorage (overwrites existing)
+      saveActivities(processedActivities);
+      // Refresh from localStorage
+      const updatedActivities = getActivities().filter(a => a.isActive);
+      setActivities(updatedActivities);
+      setShowImportConfirm(false);
+      setShowImport(false);
+      setProcessedImportPreview(null);
+      addToast({
+        message: `Successfully imported ${processedActivities.length} activities`,
+        variant: 'success'
+      });
+    };
+
+    if (processedImportPreview && Array.isArray(processedImportPreview)) {
+      try {
+        finalizeImport(processedImportPreview);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to import activities';
+        addToast({ message: errorMessage, variant: 'error' });
+      }
+      return;
+    }
+
+  // Fallback: try to re-parse the file and process
     if (importFile) {
       importFile.text().then(text => {
         try {
-          const imported = JSON.parse(text);
+      const imported = JSON.parse(text);
+      const importArray = extractActivitiesFromImport(imported);
 
-          // Use the new import utility that handles auto-population of missing fields
-          const processedActivities = importActivities(imported, {
+          const processedActivities = importActivities(importArray, {
             existingActivities: activities,
             colorStartIndex: 0
           });
 
-          // Save imported activities to localStorage (overwrites existing)
-          saveActivities(processedActivities);
-          // Refresh from localStorage
-          const updatedActivities = getActivities().filter(a => a.isActive);
-          setActivities(updatedActivities);
-          setShowImportConfirm(false);
-          setShowImport(false);
-          addToast({
-            message: `Successfully imported ${processedActivities.length} activities`,
-            variant: 'success'
-          });
+          finalizeImport(processedActivities);
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Failed to parse file';
-          addToast({
-            message: errorMessage,
-            variant: 'error'
-          });
+          addToast({ message: errorMessage, variant: 'error' });
           setShowImportConfirm(false);
         }
       });
@@ -351,7 +403,7 @@ const ActivityCrud: React.FC = () => {
       {/* Export Modal */}
       <Modal 
         show={showExport} 
-        onHide={() => setShowExport(false)} 
+        onHide={handleCloseExport} 
         aria-labelledby="export-modal" 
         aria-describedby="export-modal-desc" 
         centered 
@@ -362,7 +414,7 @@ const ActivityCrud: React.FC = () => {
             triggerDownload();
           } else if (e.key === 'Escape') {
             e.preventDefault();
-            setShowExport(false);
+            handleCloseExport();
           }
         }}
       >
@@ -392,9 +444,10 @@ const ActivityCrud: React.FC = () => {
         <Modal.Footer>
           <Button 
             variant="secondary" 
-            onClick={() => setShowExport(false)} 
+            onClick={handleCloseExport} 
             className="d-flex align-items-center"
-            autoFocus
+            // Close is primary only when there is nothing to download
+            autoFocus={!exportUrl}
           >
             <i className="bi bi-x me-2"></i>
             Close
@@ -405,6 +458,7 @@ const ActivityCrud: React.FC = () => {
               download="activities.json"
               className="btn btn-success d-flex align-items-center justify-content-center"
               aria-label="Download activities as JSON"
+              // When download is available, make it the primary action
               autoFocus
             >
               <i className="bi bi-download me-2"></i>
@@ -458,7 +512,7 @@ const ActivityCrud: React.FC = () => {
       {/* Import Overwrite Confirmation Modal */}
       <Modal
         show={showImportConfirm}
-        onHide={() => setShowImportConfirm(false)}
+        onHide={() => { setShowImportConfirm(false); setProcessedImportPreview(null); }}
         aria-labelledby="confirm-import-overwrite-modal"
         centered
         backdrop="static"
@@ -484,10 +538,26 @@ const ActivityCrud: React.FC = () => {
               This action cannot be undone. Make sure you have exported your current activities if you want to keep them.
             </div>
           </div>
-          <p className="mb-0">Do you want to continue with the import?</p>
+          <p className="mb-2">Do you want to continue with the import?</p>
+          {processedImportPreview && processedImportPreview.length > 0 && (
+            <div className="mt-3">
+              <h6>Preview of imported activities</h6>
+              <ul className="list-group">
+                {processedImportPreview.map(p => (
+                  <li key={p.id} className="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>{p.name}</strong>
+                      {p.description && <div className="small text-muted">{p.description}</div>}
+                    </div>
+                    <span className="badge bg-secondary rounded-pill">#{p.colorIndex}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowImportConfirm(false)} className="d-flex align-items-center">
+          <Button variant="secondary" onClick={() => { setShowImportConfirm(false); setProcessedImportPreview(null); }} className="d-flex align-items-center">
             <i className="bi bi-x me-2"></i>
             Cancel
           </Button>

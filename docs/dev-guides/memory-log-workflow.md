@@ -56,7 +56,7 @@ We maintain a **dual-system approach** for maximum reliability and accessibility
 3. **Add Reference to Main Index**
    ```markdown
    # In docs/MEMORY_LOG.md, add:
-   - [MRTMLY-XXX: Brief Description](logged_memories/MRTMLY-XXX-descriptive-name.md)
+   - [MRTMLY-XXX: Brief Description](#placeholder-link)
    ```
 
 4. **Migrate to MCP (Optional but Recommended)**

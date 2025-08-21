@@ -43,7 +43,8 @@
   position: relative;
   border: 1px solid var(--border-color);
   border-radius: 0.5rem;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   min-height: 300px;
 }
 
@@ -53,6 +54,7 @@
   background-color: var(--background-secondary);
   border-right: 1px solid var(--border-color);
   height: 100%;
+  flex: 0 0 auto;
 }
 
 .timeMarker {
@@ -91,7 +93,8 @@
 .entriesContainer {
   position: relative;
   flex: 1;
-  overflow-y: auto;
+  /* Allow parent container to control scrolling so ruler and entries stay aligned */
+  overflow: visible;
 }
 
 .timeGuides {

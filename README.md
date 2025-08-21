@@ -121,6 +121,11 @@ When implementing or modifying features, ensure adherence to these core function
   - Offline status indication
   - Service worker caching strategies
   - Update notification system
+  
+- Session Sharing
+   - Create read-only share links for sessions
+   - Theme-aware shared page with color normalization
+   - Privacy-preserving payloads (no PII; includes descriptions and exported colors)
 ```
 
 ## Implementation Guidelines
@@ -305,6 +310,10 @@ Key component categories:
 ### Development Resources
 
 - [GitHub Issue Resolution Workflow](./docs/workflows/github-issue-resolution.md) - **Complete step-by-step process for resolving GitHub issues with MCP tools**
+  
+### Session Sharing Docs
+- User guide: [docs/SHARING.md](./docs/SHARING.md)
+- Developer guide: [docs/dev-guides/session-sharing.md](./docs/dev-guides/session-sharing.md)
 - [Commit Procedures](./docs/workflows/commit-procedures.md) - Standard procedures for code commits and PR fixes
 - [Testing Procedures](./docs/workflows/testing-procedures.md) - Jest vs Cypress decision matrix and testing strategies
 - [Code Quality Checklist](./docs/workflows/code-quality-checklist.md) - Final verification before deployment

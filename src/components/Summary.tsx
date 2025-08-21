@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Card, Alert, Row, Col, ListGroup, Badge, Button, Spinner } from 'react-bootstrap';
+import { Card, Alert, Row, Col, ListGroup, Badge, Button, Spinner, Modal } from 'react-bootstrap';
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { getActivities } from '@/utils/activity-storage';
@@ -7,6 +7,9 @@ import { useToast } from '@/contexts/ToastContext';
 import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
 import type { ChatCompletion } from '@/types/ai';
+import ShareControls from './ShareControls';
+import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
+import { mapTimelineEntriesForShare } from '@/utils/sharing';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -30,6 +33,12 @@ export default function Summary({
   skippedActivityIds = []
 }: SummaryProps) {
   const { addToast } = useToast();
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [showShareControls, setShowShareControls] = useState(false);
+  // Ref to return focus to the trigger after modal closes
+  const [shareTriggerElement, setShareTriggerElement] = useState<HTMLElement | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const { apiKey } = useApiKey();
@@ -39,6 +48,113 @@ export default function Summary({
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
     typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
   );
+
+  // Extracted handler for creating a share to keep JSX minimal and readable
+  const handleCreateShare = async () => {
+    try {
+      setShareLoading(true);
+
+      // Build payload matching SessionSummaryDataSchema
+  const allStoredActivities = getActivities();
+  const colorById = new Map(allStoredActivities.map((a) => [a.id, a.colorIndex]));
+  const descriptionById = new Map(allStoredActivities.map((a) => [a.id, a.description]));
+      const activitiesForShare = activityTimes.map(a => {
+        const idx = typeof colorById.get(a.id) === 'number' ? (colorById.get(a.id) as number) : undefined;
+        const set = (typeof idx === 'number' && idx >= 0 && idx < internalActivityColors.length)
+          ? internalActivityColors[idx]
+          : undefined;
+        return {
+          id: a.id,
+          name: a.name,
+          // Include description when available for richer context in shared JSON
+          ...(descriptionById.get(a.id) ? { description: descriptionById.get(a.id) } : {}),
+          duration: a.duration,
+          // Do not emit colorIndex in new payloads for privacy and to avoid internal coupling
+          colors: set ? { light: set.light, dark: set.dark } : undefined,
+        };
+      });
+
+      const skippedForShare = skippedActivities.map(s => ({ id: s.id, name: s.name }));
+
+  // Map timeline entries into the share payload shape with safe guards
+  const timelineEntriesForShare = mapTimelineEntriesForShare(entries || []);
+
+      // Determine completedAt from timeline entries when available — prefer latest endTime, then startTime, else now
+      const completedAtIso = (() => {
+        try {
+          if (entries && entries.length > 0) {
+            // Find the maximum timestamp among endTime (prefer) or startTime
+            let maxTs: number | null = null;
+            for (const e of entries) {
+              if (typeof e.endTime === 'number') {
+                maxTs = Math.max(maxTs ?? 0, e.endTime);
+              } else if (typeof e.startTime === 'number') {
+                maxTs = Math.max(maxTs ?? 0, e.startTime);
+              }
+            }
+            if (maxTs && maxTs > 0) return new Date(maxTs).toISOString();
+          }
+        } catch {
+          // ignore and fallthrough to now
+        }
+        return new Date().toISOString();
+      })();
+
+      // Determine sessionType: prefer explicit flags, fall back to 'completed'
+      const sessionTypeValue = allActivitiesCompleted ? 'completed' : (isTimeUp ? 'timeUp' : 'completed');
+
+      const payload = {
+        sessionData: {
+          plannedTime: totalDuration,
+          timeSpent: elapsedTime,
+          overtime,
+          idleTime: stats.idleTime,
+
+          activities: activitiesForShare,
+          skippedActivities: skippedForShare,
+          timelineEntries: timelineEntriesForShare,
+
+          completedAt: completedAtIso,
+          sessionType: sessionTypeValue,
+        },
+        metadata: {
+          title: 'Shared session',
+          createdBy: 'app'
+        }
+      };
+
+      const res = await fetchWithVercelBypass('/api/sessions/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(`Share failed: ${res.status} - ${JSON.stringify(data)}`);
+      }
+      const json = await res.json();
+      const apiUrl: string | undefined = json?.shareUrl;
+      if (apiUrl) {
+        setShareUrl(apiUrl);
+      } else {
+        const id = json?.metadata?.id || json?.id || json?.shareId;
+        const origin = typeof window !== 'undefined' ? window.location.origin : '';
+        setShareUrl(id && origin ? `${origin}/shared/${id}` : null);
+      }
+      setShowShareControls(true);
+      // When share controls appear, focus the first control (copy button) if available
+      requestAnimationFrame(() => {
+        const el = document.querySelector('[aria-label="Copy share link"]') as HTMLElement | null;
+        if (el && typeof el.focus === 'function' && !el.hasAttribute('disabled') && el.offsetParent !== null) el.focus();
+      });
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Failed to create share.';
+      addToast({ message, variant: 'error' });
+      setShowShareModal(false);
+    } finally {
+      setShareLoading(false);
+    }
+  };
 
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
@@ -351,6 +467,8 @@ export default function Summary({
   const overtime = calculateOvertime();
   const activityTimes = calculateActivityTimes();
 
+  // Use centralized sharing util for consistent mapping (call directly where needed)
+
   // Build a stable payload for AI summary generation
   const summaryPayload = useMemo(() => ({
     plannedTime: totalDuration,
@@ -429,7 +547,7 @@ export default function Summary({
           >
             {aiLoading ? (<><Spinner size="sm" className="me-2" animation="border" />Summarizing…</>) : 'AI Summary'}
           </Button>
-        )}
+  )}
   {/* Auto BYOK mode indicated by presence of apiKey; no manual switch */}
         {onReset && (
           <Button 
@@ -443,6 +561,22 @@ export default function Summary({
             Reset
           </Button>
         )}
+        {/* Share action available in summary view */}
+        <Button
+          variant="outline-success"
+          size="sm"
+          onClick={(e) => {
+            // capture trigger element so we can return focus after modal closes
+            setShareTriggerElement(e.currentTarget as HTMLElement);
+            setShowShareModal(true);
+          }}
+          className="d-flex align-items-center"
+          title="Share session"
+          data-testid="open-share-modal-summary"
+        >
+          <i className="bi bi-share me-2" />
+          Share
+        </Button>
         </div>
       </Card.Header>
       
@@ -452,6 +586,7 @@ export default function Summary({
             {status.message}
           </Alert>
         )}
+
         <Row className="stats-grid g-3 mb-4" data-testid="stats-grid">
           <Col xs={6} md={3} data-testid="stat-card-planned">
             <Card className="text-center h-100">
@@ -550,6 +685,65 @@ export default function Summary({
           </div>
         )}
       </Card.Body>
+
+      {/* Share confirmation modal */}
+        <Modal
+          show={showShareModal}
+          onHide={() => {
+            setShowShareModal(false);
+            // Return focus to the trigger element for keyboard users
+            setTimeout(() => {
+              if (shareTriggerElement) shareTriggerElement.focus();
+            }, 0);
+          }}
+          aria-labelledby="share-modal-title"
+          aria-describedby="share-modal-desc"
+        >
+        <Modal.Header closeButton>
+          <Modal.Title id="share-modal-title">Share session</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p id="share-modal-desc">Share a read-only copy of the current session. This will create a public URL that anyone can open.</p>
+          <p className="text-muted small">The shared session will contain summary and timeline data only.</p>
+          {shareLoading && (
+            <div className="d-flex align-items-center">
+              <Spinner animation="border" size="sm" className="me-2" /> Creating share...
+            </div>
+          )}
+          {showShareControls && shareUrl && (
+            <div className="mt-3">
+              <ShareControls shareUrl={shareUrl} showOpen={true} showReplace={false} />
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+              {!showShareControls && (
+            <>
+              <Button
+                variant="secondary"
+                onClick={() => setShowShareModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="success"
+                onClick={handleCreateShare}
+              >
+                Create share
+              </Button>
+            </>
+          )}
+          {showShareControls && (
+            <Button
+              variant="primary"
+              onClick={() => setShowShareModal(false)}
+              aria-label="Close share dialog"
+            >
+              Done
+            </Button>
+          )}
+        </Modal.Footer>
+      </Modal>
     </Card>
   );
 }

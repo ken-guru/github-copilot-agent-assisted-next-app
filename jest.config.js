@@ -39,13 +39,18 @@ const customJestConfig = {
     // Handle CSS, SCSS, SVG imports
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js'
+  ,
+  // Stub ESM analytics packages in tests to avoid parsing .mjs from node_modules
+  '^@vercel/analytics/react$': '<rootDir>/__mocks__/vercel-analytics-react.js',
+  '^@vercel/speed-insights/next$': '<rootDir>/__mocks__/vercel-speed-insights-next.js'
   },
   // Transform paths
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }]
+  '^.+\\.(mjs|cjs|js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }]
   },
   transformIgnorePatterns: [
-    '/node_modules/',
+    // Transform selected ESM packages from node_modules (allow list)
+    '/node_modules/(?!(?:@vercel/analytics|@vercel/speed-insights)/)',
     '^.+\\.module\\.(css|sass|scss)$'
   ],
   collectCoverageFrom: [

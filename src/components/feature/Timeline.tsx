@@ -1,8 +1,10 @@
+"use client";
+
 import React, { useMemo, useEffect, useState } from 'react';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/time/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
-import { isDarkMode } from '@/utils/colors';
+import { useThemeReactive } from '@/hooks/useThemeReactive';
 
 /**
  * Represents an entry in the timeline
@@ -83,6 +85,8 @@ interface TimelineProps {
    * @default false
    */
   allActivitiesCompleted?: boolean;
+  /** Hide the internal header (title + time) when embedding inside a Card */
+  hideHeader?: boolean;
 }
 
 function calculateTimeIntervals(duration: number): { interval: number; count: number } {
@@ -109,7 +113,7 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
 function getThemeAppropriateColor(colors: {
   light?: { background: string, text: string, border: string },
   dark?: { background: string, text: string, border: string }
-} | { background: string, text: string, border: string }): { background: string, text: string, border: string } {
+} | { background: string, text: string, border: string }, theme: 'light' | 'dark'): { background: string, text: string, border: string } {
   // If colors is already in the final format, return it directly
   if (colors && typeof colors === 'object' && 'background' in colors) {
     return colors;
@@ -117,10 +121,9 @@ function getThemeAppropriateColor(colors: {
   
   // Otherwise, check if it's a color set with light/dark variants
   if (colors && typeof colors === 'object' && 'light' in colors && 'dark' in colors) {
-    const isDark = typeof window !== 'undefined' && isDarkMode();
-    const theme = isDark ? colors.dark : colors.light;
-    if (theme) {
-      return theme;
+    const variant = theme === 'dark' ? colors.dark : colors.light;
+    if (variant) {
+      return variant;
     }
   }
   
@@ -138,52 +141,14 @@ export default function Timeline({
   elapsedTime: initialElapsedTime, 
   isTimeUp = false, 
   timerActive = false, 
-  allActivitiesCompleted = false 
+  allActivitiesCompleted = false,
+  hideHeader = false,
 }: TimelineProps) {
+  // React to theme changes to ensure entry colors update live
+  const theme = useThemeReactive();
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
-  // We're not using this state directly, but it's needed for theme detection in the component
-  const [, setCurrentTheme] = useState<'light' | 'dark'>(
-    typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
-  );
   
   const hasEntries = entries && entries.length > 0;
-  
-  // Effect to listen for theme changes
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    // Function to handle theme changes
-    const handleThemeChange = () => {
-      setCurrentTheme(isDarkMode() ? 'dark' : 'light');
-    };
-    
-    // Initial check
-    handleThemeChange();
-    
-    // Set up MutationObserver to watch for class changes on document.documentElement
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === 'attributes' && 
-          mutation.attributeName === 'class'
-        ) {
-          handleThemeChange();
-        }
-      });
-    });
-    
-    observer.observe(document.documentElement, { attributes: true });
-    
-    // Also listen for system preference changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', handleThemeChange);
-    
-    // Clean up
-    return () => {
-      observer.disconnect();
-      mediaQuery.removeEventListener('change', handleThemeChange);
-    };
-  }, []);
   
   // Update current elapsed time when prop changes
   useEffect(() => {
@@ -289,7 +254,7 @@ export default function Timeline({
     
     // Get theme-appropriate colors using the theme detection
     const themeColors = item.entry?.colors ? 
-      getThemeAppropriateColor(item.entry.colors) : 
+      getThemeAppropriateColor(item.entry.colors, theme) : 
       undefined;
     
     // Use theme-appropriate colors or fallback to defaults
@@ -309,15 +274,17 @@ export default function Timeline({
   
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h2 className={styles.heading}>Timeline</h2>
-        <div 
-          className={`${styles.timeDisplay} ${isTimeUp ? styles.timeDisplayOvertime : ''}`}
-          data-testid="time-display"
-        >
-          {timeDisplay}
+      {!hideHeader && (
+        <div className={styles.header}>
+          <h2 className={styles.heading}>Timeline</h2>
+          <div 
+            className={`${styles.timeDisplay} ${isTimeUp ? styles.timeDisplayOvertime : ''}`}
+            data-testid="time-display"
+          >
+            {timeDisplay}
+          </div>
         </div>
-      </div>
+      )}
       
       <div className={styles.timelineContainer}>
         <div className={styles.timelineRuler}>

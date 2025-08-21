@@ -80,3 +80,17 @@ Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
 - [ ] Visual consistency verified across components
 - [ ] Accessibility maintained (screen reader, keyboard nav)
 - [ ] Responsive behavior preserved
+
+## New: Shareable Session Summary (Design Document Added)
+
+### Context
+- Feature to allow users to generate shareable, read-only URLs for completed session summaries backed by Vercel Blob storage. Full design, requirements, and implementation plan added to `docs/session-sharing-design.md`.
+
+### Next Steps (Planned)
+1. Implement data models and validation schemas (Zod)
+2. Create API routes for share creation and retrieval
+3. Build UI components: `ShareSessionControls`, `SharedSummary`, and `/shared/[uuid]` route
+4. Add activity duplication workflow and session linking
+5. Add tests (unit, integration, e2e) and security middleware
+
+See `docs/session-sharing-design.md` for full details and staged implementation plan.

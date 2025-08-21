@@ -71,7 +71,7 @@ touch docs/logged_memories/MRTMLY-XXX-brief-description.md
 ### Step 3: Add to Index
 ```markdown
 # Add to docs/MEMORY_LOG.md at the end:
-- [MRTMLY-XXX: Brief Description](logged_memories/MRTMLY-XXX-file-name.md)
+- [MRTMLY-XXX: Brief Description](#placeholder-link)
 ```
 
 ### Step 4: Optional MCP Sync

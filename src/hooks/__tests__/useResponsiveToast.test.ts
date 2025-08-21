@@ -13,6 +13,10 @@ jest.mock('@/contexts/ToastContext', () => ({
     addToast: mockAddToast,
     removeToast: mockRemoveToast,
   }),
+  useOptionalToast: () => ({
+    addToast: mockAddToast,
+    removeToast: mockRemoveToast,
+  }),
 }));
 
 // Mock window.innerWidth

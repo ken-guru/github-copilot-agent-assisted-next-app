@@ -41,18 +41,20 @@ src/components/                    # Bootstrap-wrapped components
 - **NEVER commit directly to main** - branch is protected
 - **ALWAYS create feature branch**: `fix-<issue-number>-<brief-description>`
 - **Create PRs into main** - all changes require PR reviews
+- **IMPORTANT: When already working on an existing PR branch, do NOT create a new branch or PR. Continue committing to the current PR branch and update the existing PR.**
 
 ### Complete Issue Resolution Process
 **📚 Detailed Workflow**: [/docs/workflows/github-issue-resolution.md](../docs/workflows/github-issue-resolution.md)
 
 1. **Analyze Issue** → Use GitHub MCP tools + Sequential Thinking
 2. **Verify Problem** → Use Playwright MCP tools for UI issues  
-3. **Create Branch** → Never work on main directly
+3. **Create Branch** → Never work on main directly. If a PR already exists for the task and you're on its branch, continue on that same branch (do not create a new branch/PR).
 4. **Implement Solution** → Test-first development with Jest
 5. **Quality Checks** → All tests, lint, type-check must pass
 6. **Create PR** → Good title/description referencing issue
 7. **Monitor & Iterate** → Address CI/CD failures and code review comments
 8. **Complete Verification** → **NEVER consider work finished until ALL PR checks pass**
+9. **Existing PR Continuation** → When changes are requested on an open PR, push additional commits to the same branch and update the PR description/comments as needed. Do not open a new PR for the same task.
 
 ### Issue Understanding with MCP Tools
 ```bash
@@ -78,6 +80,19 @@ mcp_playwright_browser_take_screenshot(filename="issue-<NUMBER>-current-state.pn
 ```
 
 > Important: MCP Playwright sessions cannot access localhost/127.0.0.1. Use your machine's LAN IP (e.g., http://192.168.x.x:3000). On macOS you can find it via System Settings → Network or with `ipconfig getifaddr en0` (Wi‑Fi) / `ipconfig getifaddr en1` (Ethernet).
+
+### Session Sharing Verification Addendum
+
+- User flows to verify:
+  - Create share from Summary → receive absolute `shareUrl`
+  - Open `/shared/[id]` and confirm theme-aware color normalization
+  - Download JSON and re-import via Replace; ensure descriptions and colors preserved
+- Privacy & safety checks:
+  - No PII in shared payloads; no `colorIndex`
+  - Logs must not contain tokens or secrets
+- Testing constraints:
+  - Jest tests must not hit Vercel endpoints; rely on local fallback/mocks
+  - Prefer server-provided `shareUrl`; only use SSR-safe `window.origin` when needed
 
 ## MCP TOOL INTEGRATION
 

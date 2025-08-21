@@ -21,26 +21,18 @@ This document outlines comprehensive testing strategies, including the Jest vs C
 ## Jest vs Cypress Decision Matrix
 
 ### ✅ USE JEST FOR:
-- Component rendering and props testing
-- Form validation and error handling
-- Keyboard navigation and focus management
-- State management hooks (useActivityState, etc.)
-- Utility function testing
-- Accessibility compliance (ARIA, screen readers)
-- Modal interactions and lifecycle
-- Theme switching behavior
-- **DETAILED UI INTERACTIONS**: Toast notifications for successful activity creation, confirmation dialog handling for activity deletion, ActivityButton state changes during transitions
-- **COMPONENT INTEGRATION**: How components work together within single page contexts
-- **ERROR HANDLING**: Form validation, API error states, edge cases
+  
+Session Sharing tests (Jest):
+- Storage save/get paths (SDK-first + REST fallbacks) with mocked network
+- API route validations (origin handling, rate limiting, serialization)
+- Replace/import preserves descriptions and exported colors
+- fetchWithVercelBypass does not leak tokens; robust content-type detection
 
 ### ✅ USE CYPRESS FOR:
-- **HIGH-LEVEL USER WORKFLOWS ONLY**: Complete end-to-end user journeys that span multiple components/pages
-- **CORE BUSINESS FLOWS**: Critical paths users take to accomplish primary application goals
-- Cross-page navigation with data persistence
-- File upload/download operations
-- Service worker update notifications (UI only)
-- Browser-specific behavior requiring real browser environment
-- **AVOID DETAILED UI TESTING**: Don't test individual component states, form validation details, or UI element specifics
+  
+Session Sharing e2e (Cypress):
+- Full flow: Create share → open `/shared/[id]` → download JSON → Replace/import
+- Use environment that avoids real Vercel calls unless explicitly validating production
 
 ## Test Coverage Management
 

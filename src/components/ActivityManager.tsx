@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Card, Row, Col, Button } from 'react-bootstrap';
+import { Card, Row, Col, Button, Modal, Spinner } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
 import TimerProgressSection from './TimerProgressSection';
 import ActivityFormSection from './ActivityFormSection';
+import ShareControls from './ShareControls';
+import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
+import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
 
 // Use canonical Activity type
 type Activity = CanonicalActivity & { colors?: ColorSet };
@@ -180,8 +183,52 @@ export default function ActivityManager({
 
   // Derived lists
   const hiddenSet = new Set(removedActivityIds);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [showShareControls, setShowShareControls] = useState(false);
+  const { addResponsiveToast } = useResponsiveToast();
   const visibleActivities = activities.filter(a => !hiddenSet.has(a.id));
   const hiddenActivities = activities.filter(a => hiddenSet.has(a.id));
+
+  const handleCreateShare = useCallback(async () => {
+    try {
+      setShareLoading(true);
+      const payload = {
+        sessionData: {
+          activities: activities.map(a => ({ id: a.id, name: a.name, description: a.description || '', colorIndex: a.colorIndex })),
+          timeline: timelineEntries
+        },
+        metadata: {
+          title: 'Shared session',
+          createdBy: 'app'
+        }
+      };
+      const res = await fetchWithVercelBypass('/api/sessions/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        throw new Error(`Share failed: ${res.status}`);
+      }
+      const json = await res.json();
+      const apiUrl: string | undefined = json?.shareUrl;
+      if (apiUrl) {
+        setShareUrl(apiUrl);
+      } else {
+        const id = json?.metadata?.id || json?.id || json?.shareId;
+        const origin = typeof window !== 'undefined' ? window.location.origin : '';
+        setShareUrl(id && origin ? `${origin}/shared/${id}` : null);
+      }
+      setShowShareControls(true);
+  } catch {
+      addResponsiveToast({ message: 'Failed to create share.', variant: 'error', autoDismiss: true });
+      setShowShareModal(false);
+    } finally {
+      setShareLoading(false);
+    }
+  }, [activities, timelineEntries, addResponsiveToast]);
 
   return (
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
@@ -210,6 +257,22 @@ export default function ActivityManager({
             >
               <i className="bi bi-arrow-clockwise me-2"></i>
               Reset
+            </Button>
+          )}
+          {/* Share action - creates a public share of current session
+              Only show after the session is complete (summary state). */}
+          {/* Summary state heuristic: timer is inactive, we have timeline entries, and there's no running activity */}
+          {(!timerActive && timelineEntries.length > 0 && currentActivityId == null) && (
+            <Button
+              variant="outline-success"
+              size="sm"
+              onClick={() => setShowShareModal(true)}
+              className="d-flex align-items-center"
+              title="Share session"
+              data-testid="open-share-modal"
+            >
+              <i className="bi bi-share me-2" />
+              Share
             </Button>
           )}
         </div>
@@ -295,6 +358,43 @@ export default function ActivityManager({
           )}
         </div>
       </Card.Body>
+
+      {/* Share confirmation modal */}
+      <Modal show={showShareModal} onHide={() => setShowShareModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Share session</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Share a read-only copy of the current session. This will create a public URL that anyone can open.</p>
+          <p className="text-muted small">The shared session will contain summary and timeline data only.</p>
+          {shareLoading && (
+            <div className="d-flex align-items-center">
+              <Spinner animation="border" size="sm" className="me-2" /> Creating share...
+            </div>
+          )}
+          {showShareControls && shareUrl && (
+            <div className="mt-3">
+              <ShareControls shareUrl={shareUrl} />
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          {!showShareControls && (
+            <>
+              <Button variant="secondary" onClick={() => setShowShareModal(false)}>Cancel</Button>
+              <Button
+                variant="success"
+                onClick={handleCreateShare}
+              >
+                Create share
+              </Button>
+            </>
+          )}
+          {showShareControls && (
+            <Button variant="primary" onClick={() => setShowShareModal(false)}>Done</Button>
+          )}
+        </Modal.Footer>
+      </Modal>
     </Card>
   );
 }

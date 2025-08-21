@@ -106,7 +106,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                     borderWidth: '2px'
                   }}
                   title={`Color: ${getColorDisplay(activity.colorIndex)}`}
-                  aria-label={`Activity color: ${getColorDisplay(activity.colorIndex)}`}
+                  aria-hidden="true"
                 ></div>
               </div>
               <div>

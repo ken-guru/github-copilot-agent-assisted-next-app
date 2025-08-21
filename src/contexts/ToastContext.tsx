@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import { ToastMessage, ToastContextType } from '@/types/toast';
 
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
+export const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 interface ToastState {
   toasts: ToastMessage[];
@@ -87,4 +87,10 @@ export function useToast(): ToastContextType {
     throw new Error('useToast must be used within a ToastProvider');
   }
   return context;
+}
+
+// Optional variant that does not throw if the provider is missing.
+// Useful for tests or integration mounts that may not include the ToastProvider.
+export function useOptionalToast(): ToastContextType | undefined {
+  return useContext(ToastContext);
 }

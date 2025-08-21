@@ -2,6 +2,50 @@
 
 This file contains a record of changes that have been implemented in the application, along with the date of implementation and any relevant notes.
 
+## 2025 August
+
+### Session Sharing: Robust, Privacy-Preserving, Theme-Correct - COMPLETED (2025-08-21)
+
+**Summary:**
+Implemented end-to-end Session Sharing with strong privacy, SSR safety, and resilient storage. Users can create a share link, open a dedicated `/shared/[id]` view with theme-aware colors, download JSON, and restore the session via Replace/Import while preserving descriptions and color fidelity.
+
+**PR/Branch:**
+- PR: #342
+- Branch: `fix-341-preview-read-bypass-finalization`
+
+**Key Features and Guarantees:**
+- SSR-safe absolute URLs: prefer server-provided `shareUrl`, fall back to `window.origin` only on client
+- Privacy by default: anonymized payload (no `userAgent`), safe logs (no tokens), origin validation
+- Data fidelity: activity `description` included and preserved across export/import/replace
+- Theme correctness on shared page: color normalization (palette exact match + hue-nearest fallback)
+- Deterministic blob naming, per-host rate limiting, and robust content-type detection
+- JSON export contains used colors (no `colorIndex` leakage)
+- A11y polish for Share Controls and toasts; Replace button contrast improvement; human-readable header timestamp
+
+**Storage Strategy:**
+- SDK-first Vercel Blob writes; REST fallback with safe headers
+- Offline/test fallbacks to local store to avoid hitting Vercel in Jest
+- No tokens in URLs; redacted logging
+
+**Testing and Quality Gates:**
+- Jest unit tests for storage fallbacks, schema validation, description preservation, and theme normalization
+- CI-safe: tests/lint/type-check/build all passing locally and on CI
+- Avoids network calls in Jest by design; content-type detection hardened
+
+**Documentation Updated:**
+- `docs/dev-guides/session-sharing.md` (developer guide: architecture, schema, storage, API, testing)
+- `docs/SHARING.md` (user guide and troubleshooting)
+- `README.md` (feature overview and links)
+- `docs/components/ShareControls.md` and index link in `docs/components/README.md`
+- `.github/copilot-instructions.md` (Session Sharing verification addendum)
+- `docs/workflows/testing-procedures.md` (Jest-first strategy for sharing)
+
+**Success Criteria Met:**
+- Robust sharing under SSR and client
+- Privacy and security guardrails
+- Theme-aware shared view
+- Descriptions and colors preserved end-to-end
+
 ## 2025 July
 
 ### JSON Import/Export Improvements - COMPLETED (2025-07-25)

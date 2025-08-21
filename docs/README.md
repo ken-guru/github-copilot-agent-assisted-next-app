@@ -15,7 +15,7 @@ This directory contains comprehensive documentation for the activity tracking ap
   - **[memory-log-workflow.md](./dev-guides/memory-log-workflow.md)** - Complete workflow for debugging knowledge management
   - **[mcp-memory-tool-usage.md](./dev-guides/mcp-memory-tool-usage.md)** - AI agent guide for semantic search and knowledge building
   - **[ai-agent-memory-quick-reference.md](./dev-guides/ai-agent-memory-quick-reference.md)** - Quick reference for AI agents
-  - **[human-developer-memory-quick-reference.md](./dev-guides/human-developer-quick-reference.md)** - Quick reference for human developers
+  - **[human-developer-memory-quick-reference.md](./dev-guides/human-developer-memory-quick-reference.md)** - Quick reference for human developers
   - Time utilities testing and implementation
   - Development workflow guidelines
 
