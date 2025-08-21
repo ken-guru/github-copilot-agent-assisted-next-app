@@ -71,6 +71,9 @@ function ToastItem({ toast, onRemove }: ToastItemProps): React.ReactElement {
       data-testid="toast-notification"
       data-variant={toast.variant}
       autohide={false} // We handle this manually for better control
+  role="status"
+  aria-live="polite"
+  aria-atomic="true"
     >
       <Toast.Body className="d-flex align-items-center">
         <i className={`bi ${getIcon(toast.variant)} me-2`} aria-hidden="true"></i>
@@ -102,8 +105,6 @@ export function ToastContainer(): React.ReactElement {
       className="p-3 position-fixed" 
       style={{ zIndex: 1055 }}
       data-testid="toast-container"
-      aria-live="polite"
-      aria-atomic="true"
       role="region"
       aria-label="Notifications"
     >

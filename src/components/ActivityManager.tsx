@@ -212,11 +212,15 @@ export default function ActivityManager({
       if (!res.ok) {
         throw new Error(`Share failed: ${res.status}`);
       }
-  const json = await res.json();
-  const id = json?.metadata?.id || json?.id || json?.shareId;
-  const origin = typeof window !== 'undefined' ? window.location.origin : undefined;
-  const url = id && origin ? `${origin}/shared/${id}` : (json?.shareUrl as string | undefined);
-      setShareUrl(url || null);
+      const json = await res.json();
+      const apiUrl: string | undefined = json?.shareUrl;
+      if (apiUrl) {
+        setShareUrl(apiUrl);
+      } else {
+        const id = json?.metadata?.id || json?.id || json?.shareId;
+        const origin = typeof window !== 'undefined' ? window.location.origin : '';
+        setShareUrl(id && origin ? `${origin}/shared/${id}` : null);
+      }
       setShowShareControls(true);
   } catch {
       addResponsiveToast({ message: 'Failed to create share.', variant: 'error', autoDismiss: true });

@@ -102,7 +102,7 @@ const ActivityCrud: React.FC = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      // Revoke object URL after a tick to ensure Safari completes download
+  // Revoke object URL after a tick to ensure Safari completes download
   const urlToRevoke = exportUrl;
   setTimeout(() => safeRevokeUrl(urlToRevoke), 0);
       setExportUrl(null);
@@ -191,7 +191,7 @@ const ActivityCrud: React.FC = () => {
   // Revoke any previously created object URL when it changes/unmounts to avoid leaks
   useEffect(() => {
     return () => {
-  safeRevokeUrl(exportUrl);
+      safeRevokeUrl(exportUrl);
     };
   }, [exportUrl]);
 

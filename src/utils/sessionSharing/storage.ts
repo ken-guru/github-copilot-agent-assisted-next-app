@@ -135,6 +135,54 @@ export async function getSessionFromLocal(id: string): Promise<StoredSession | n
   }
 }
 
+// Helper to extract upload URL or created id from a create-upload response
+function extractUploadInfo(
+  response: Response,
+  json: unknown,
+  base?: string,
+): { uploadUrl?: string; createdId?: string } {
+  let uploadUrl: string | undefined;
+  let createdId: string | undefined;
+  if (json && typeof json === 'object') {
+    const cj = json as Record<string, unknown>;
+    // Common direct upload URL keys
+    uploadUrl = (cj.uploadURL as string | undefined)
+      ?? (cj.upload_url as string | undefined)
+      ?? (cj.url as string | undefined);
+
+    // Nested variations (some APIs return { data: { uploadURL } } or { result: { upload_url } })
+    if (!uploadUrl) {
+      const maybeData = cj.data as Record<string, unknown> | undefined;
+      const maybeResult = cj.result as Record<string, unknown> | undefined;
+      uploadUrl = (maybeData?.uploadURL as string | undefined)
+        ?? (maybeData?.upload_url as string | undefined)
+        ?? (maybeResult?.uploadURL as string | undefined)
+        ?? (maybeResult?.upload_url as string | undefined);
+    }
+
+    // Some APIs return only an id (or name) for the created blob; try to use it.
+    if (!uploadUrl) {
+      const idCandidate = (cj.id as string | undefined) ?? (cj.name as string | undefined);
+      if (typeof idCandidate === 'string' && idCandidate.trim() !== '') createdId = idCandidate;
+    }
+  }
+
+  // If JSON did not include fields, try a Location header from the response
+  if (!uploadUrl && !createdId) {
+    const location = response.headers?.get?.('location') ?? response.headers?.get?.('Location');
+    if (location && typeof location === 'string' && location.trim() !== '') {
+      uploadUrl = location;
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(
+          'saveSession: create returned Location header, using as upload URL',
+          base && uploadUrl.startsWith(base) ? '<internal>' : uploadUrl,
+        );
+      }
+    }
+  }
+  return { uploadUrl, createdId };
+}
+
 export async function saveSession(
   id: string,
   data: StoredSession,
@@ -155,7 +203,7 @@ export async function saveSession(
   }
 
   // Prefer dev-specific env vars when running in development
-  const token = isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV ? process.env.BLOB_READ_WRITE_TOKEN_DEV : process.env.BLOB_READ_WRITE_TOKEN;
+  const blobToken = isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV ? process.env.BLOB_READ_WRITE_TOKEN_DEV : process.env.BLOB_READ_WRITE_TOKEN;
   const baseRaw = isDev && process.env.BLOB_BASE_URL_DEV ? process.env.BLOB_BASE_URL_DEV : process.env.BLOB_BASE_URL;
 
   // Non-secret diagnostic logs to help debug preview/runtime issues. Avoid printing tokens.
@@ -165,14 +213,14 @@ export async function saveSession(
       env: process.env.NODE_ENV,
       isTest,
       isDev,
-      hasToken: !!token,
+    hasToken: !!blobToken,
       hasBase: !!baseRaw,
       forceNetwork: !!options?.forceNetwork,
     });
   }
 
   // Require blob config in non-test environments
-  if (!token || !baseRaw) {
+  if (!blobToken || !baseRaw) {
     throw new Error('Vercel Blob not configured. Set BLOB_READ_WRITE_TOKEN and BLOB_BASE_URL');
   }
 
@@ -201,14 +249,14 @@ export async function saveSession(
     const res = await (maybeFetch as typeof fetch)(url, {
       method: 'PUT',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${blobToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     });
     if (!res.ok) {
-  const text = await res.text().catch(() => 'unable to read response body');
-  if (process.env.NODE_ENV !== 'production') console.log('saveSession: PUT response', { status: res.status, ok: res.ok, bodyHint: String(text).slice(0, 200) });
+      const text = await res.text().catch(() => 'unable to read response body');
+      if (process.env.NODE_ENV !== 'production') console.log('saveSession: PUT response', { status: res.status, ok: res.ok, bodyHint: String(text).slice(0, 200) });
 
       // If the blob API responds with 404 it's common that a create-upload flow is required.
       if (res.status === 404) {
@@ -219,10 +267,10 @@ export async function saveSession(
 
         // Try create-upload flow: POST to base to request an upload URL, then PUT to that URL.
         try {
-          const createRes = await (maybeFetch as typeof fetch)(base, {
+      const createRes = await (maybeFetch as typeof fetch)(base, {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${blobToken}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
@@ -267,54 +315,7 @@ export async function saveSession(
             console.log('saveSession: create response', { status: createRes.status, headers: safeHeaders, body: createJson ?? '<non-json or empty>', textPreview: String(createText).slice(0, 1000) });
           }
 
-          // The create response may provide a direct upload URL or an id; extract robustly via helper
-          const extractUploadInfo = (
-            response: Response,
-            json: unknown,
-          ): { uploadUrl?: string; createdId?: string } => {
-            let uploadUrl: string | undefined;
-            let createdId: string | undefined;
-            if (json && typeof json === 'object') {
-              const cj = json as Record<string, unknown>;
-              // Common direct upload URL keys
-              uploadUrl = (cj.uploadURL as string | undefined)
-                ?? (cj.upload_url as string | undefined)
-                ?? (cj.url as string | undefined);
-
-              // Nested variations (some APIs return { data: { uploadURL } } or { result: { upload_url } })
-              if (!uploadUrl) {
-                const maybeData = cj.data as Record<string, unknown> | undefined;
-                const maybeResult = cj.result as Record<string, unknown> | undefined;
-                uploadUrl = (maybeData?.uploadURL as string | undefined)
-                  ?? (maybeData?.upload_url as string | undefined)
-                  ?? (maybeResult?.uploadURL as string | undefined)
-                  ?? (maybeResult?.upload_url as string | undefined);
-              }
-
-              // Some APIs return only an id (or name) for the created blob; try to use it.
-              if (!uploadUrl) {
-                const idCandidate = (cj.id as string | undefined) ?? (cj.name as string | undefined);
-                if (typeof idCandidate === 'string' && idCandidate.trim() !== '') createdId = idCandidate;
-              }
-            }
-
-            // If JSON did not include fields, try a Location header from the response
-            if (!uploadUrl && !createdId) {
-              const location = response.headers?.get?.('location') ?? response.headers?.get?.('Location');
-              if (location && typeof location === 'string' && location.trim() !== '') {
-                uploadUrl = location;
-                if (process.env.NODE_ENV !== 'production') {
-                  console.log(
-                    'saveSession: create returned Location header, using as upload URL',
-                    uploadUrl.startsWith(base) ? '<internal>' : uploadUrl,
-                  );
-                }
-              }
-            }
-            return { uploadUrl, createdId };
-          };
-
-          const { uploadUrl: extractedUrl, createdId: extractedId } = extractUploadInfo(createRes as Response, createJson);
+          const { uploadUrl: extractedUrl, createdId: extractedId } = extractUploadInfo(createRes as Response, createJson, base);
           let uploadUrl = extractedUrl;
           const createdId = extractedId;
 
@@ -335,10 +336,10 @@ export async function saveSession(
                 fallbackUrl,
               );
             }
-            const fallbackRes = await (maybeFetch as typeof fetch)(fallbackUrl, {
+      const fallbackRes = await (maybeFetch as typeof fetch)(fallbackUrl, {
               method: 'PUT',
               headers: {
-                Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${blobToken}`,
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify(data),
@@ -355,12 +356,12 @@ export async function saveSession(
 
           if (uploadUrl && typeof uploadUrl === 'string') {
             if (process.env.NODE_ENV !== 'production') console.log('saveSession: attempting upload PUT', { uploadUrl: uploadUrl.startsWith(base) ? '<internal>' : '<presigned>' });
-            const uploadRes = await (maybeFetch as typeof fetch)(uploadUrl, {
+      const uploadRes = await (maybeFetch as typeof fetch)(uploadUrl, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
                 // Some upload URLs are presigned and must not include auth; others may accept token
-                ...(uploadUrl.startsWith(base) ? { Authorization: `Bearer ${token}` } : {}),
+        ...(uploadUrl.startsWith(base) ? { Authorization: `Bearer ${blobToken}` } : {}),
               },
               body: JSON.stringify(data),
             });
@@ -500,10 +501,10 @@ export async function getSession(
   }
 
   // Prefer dev-specific env vars when running in development
-  const token = isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV ? process.env.BLOB_READ_WRITE_TOKEN_DEV : process.env.BLOB_READ_WRITE_TOKEN;
+  const blobToken = isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV ? process.env.BLOB_READ_WRITE_TOKEN_DEV : process.env.BLOB_READ_WRITE_TOKEN;
   const base = isDev && process.env.BLOB_BASE_URL_DEV ? process.env.BLOB_BASE_URL_DEV : process.env.BLOB_BASE_URL;
 
-  if (!token || !base) {
+  if (!blobToken || !base) {
     throw new Error('Vercel Blob not configured. Set BLOB_READ_WRITE_TOKEN and BLOB_BASE_URL');
   }
   // Normalize base for GET as well
@@ -532,7 +533,7 @@ export async function getSession(
       const res = await (maybeFetch as typeof fetch)(url, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${blobToken}`,
         },
       });
 
