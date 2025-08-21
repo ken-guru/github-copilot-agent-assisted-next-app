@@ -92,6 +92,10 @@ const ActivityCrud: React.FC = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+  // Revoke object URL after triggering download to free memory
+  URL.revokeObjectURL(exportUrl);
+  setExportUrl(null);
+  setShowExport(false);
     }
   };
 
@@ -164,6 +168,19 @@ const ActivityCrud: React.FC = () => {
       setExportUrl(null);
       setShowExport(true);
     }
+  };
+
+  // Ensure we clean up any generated object URL when the modal is closed
+  const handleCloseExport = () => {
+    if (exportUrl) {
+      try {
+        URL.revokeObjectURL(exportUrl);
+      } catch {
+        // ignore revoke errors
+      }
+    }
+    setExportUrl(null);
+    setShowExport(false);
   };
 
   // Import modal logic
@@ -374,7 +391,7 @@ const ActivityCrud: React.FC = () => {
       {/* Export Modal */}
       <Modal 
         show={showExport} 
-        onHide={() => setShowExport(false)} 
+        onHide={handleCloseExport} 
         aria-labelledby="export-modal" 
         aria-describedby="export-modal-desc" 
         centered 
@@ -385,7 +402,7 @@ const ActivityCrud: React.FC = () => {
             triggerDownload();
           } else if (e.key === 'Escape') {
             e.preventDefault();
-            setShowExport(false);
+            handleCloseExport();
           }
         }}
       >
@@ -415,9 +432,10 @@ const ActivityCrud: React.FC = () => {
         <Modal.Footer>
           <Button 
             variant="secondary" 
-            onClick={() => setShowExport(false)} 
+            onClick={handleCloseExport} 
             className="d-flex align-items-center"
-            autoFocus
+            // Close is primary only when there is nothing to download
+            autoFocus={!exportUrl}
           >
             <i className="bi bi-x me-2"></i>
             Close
@@ -428,6 +446,7 @@ const ActivityCrud: React.FC = () => {
               download="activities.json"
               className="btn btn-success d-flex align-items-center justify-content-center"
               aria-label="Download activities as JSON"
+              // When download is available, make it the primary action
               autoFocus
             >
               <i className="bi bi-download me-2"></i>
@@ -481,7 +500,7 @@ const ActivityCrud: React.FC = () => {
       {/* Import Overwrite Confirmation Modal */}
       <Modal
         show={showImportConfirm}
-        onHide={() => setShowImportConfirm(false)}
+        onHide={() => { setShowImportConfirm(false); setProcessedImportPreview(null); }}
         aria-labelledby="confirm-import-overwrite-modal"
         centered
         backdrop="static"
@@ -526,7 +545,7 @@ const ActivityCrud: React.FC = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowImportConfirm(false)} className="d-flex align-items-center">
+          <Button variant="secondary" onClick={() => { setShowImportConfirm(false); setProcessedImportPreview(null); }} className="d-flex align-items-center">
             <i className="bi bi-x me-2"></i>
             Cancel
           </Button>

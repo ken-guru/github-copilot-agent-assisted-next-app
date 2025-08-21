@@ -207,14 +207,8 @@ export async function saveSession(
       body: JSON.stringify(data),
     });
     if (!res.ok) {
-      const text = await res.text().catch(() => 'unable to read response body');
-      if (process.env.NODE_ENV !== 'production') {
-        console.log('saveSession: PUT response', {
-          status: res.status,
-          ok: res.ok,
-          bodyHint: String(text).slice(0, 200),
-        });
-      }
+  const text = await res.text().catch(() => 'unable to read response body');
+  if (process.env.NODE_ENV !== 'production') console.log('saveSession: PUT response', { status: res.status, ok: res.ok, bodyHint: String(text).slice(0, 200) });
 
       // If the blob API responds with 404 it's common that a create-upload flow is required.
       if (res.status === 404) {
