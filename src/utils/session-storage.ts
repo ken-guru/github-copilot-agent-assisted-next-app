@@ -27,13 +27,16 @@ function isTimelineEntry(v: unknown): v is TimelineEntry {
 
 function isValidSnapshot(v: unknown): v is SessionSnapshot {
   if (!isObject(v)) return false;
-  return (
-    typeof v.timeSet === 'boolean' &&
-    typeof v.totalDuration === 'number' &&
-    typeof v.timerActive === 'boolean' &&
-    ('currentActivityId' in v) && (typeof (v as any).currentActivityId === 'string' || (v as any).currentActivityId === null) &&
-    Array.isArray((v as any).timelineEntries) && (v as any).timelineEntries.every(isTimelineEntry)
-  );
+  const obj = v as Record<string, unknown>;
+  const timeSetOk = typeof obj.timeSet === 'boolean';
+  const totalDurationOk = typeof obj.totalDuration === 'number';
+  const timerActiveOk = typeof obj.timerActive === 'boolean';
+  const currentActivityId = (obj as { currentActivityId?: unknown }).currentActivityId;
+  const currentActivityIdOk =
+    currentActivityId === null || typeof currentActivityId === 'string';
+  const entries = (obj as { timelineEntries?: unknown }).timelineEntries;
+  const entriesOk = Array.isArray(entries) && (entries as unknown[]).every(isTimelineEntry);
+  return timeSetOk && totalDurationOk && timerActiveOk && currentActivityIdOk && entriesOk;
 }
 
 export function loadSessionSnapshot(): SessionSnapshot | null {
