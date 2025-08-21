@@ -49,12 +49,11 @@ export async function POST(req: Request) {
 
     const id = generateShareId();
     const now = new Date();
-    const metadata = {
+  const metadata = {
       id,
       createdAt: now.toISOString(),
       expiresAt: new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString(),
       version: '1',
-      userAgent: req.headers.get('user-agent') ?? undefined,
     };
 
     const stored = { sessionData, metadata };

@@ -2,7 +2,8 @@ export interface ActivitySummary {
   id: string;
   name: string;
   duration: number; // seconds
-  colorIndex: number;
+  // Deprecated: no longer emitted in new payloads; kept optional for back-compat when reading
+  colorIndex?: number;
   colors?: {
     background: string;
     text: string;
@@ -59,7 +60,6 @@ export interface SessionMetadata {
   createdAt: string; // ISO
   expiresAt: string; // ISO
   version: string;
-  userAgent?: string;
 }
 
 export interface StoredSession {

@@ -29,13 +29,12 @@ export function mapTimelineEntriesForShare(inputEntries: TimelineEntry[]) {
       return undefined;
     })();
 
-    return {
+  return {
       id: e.id ?? `${e.startTime}-${e.activityId ?? 'idle'}`,
       activityId: e.activityId ?? null,
       activityName: e.activityName ?? null,
       startTime: e.startTime,
       endTime: e.endTime ?? null,
-      colorIndex,
       colors,
     };
   });

@@ -66,7 +66,7 @@ export default function Summary({
           id: a.id,
           name: a.name,
           duration: a.duration,
-          colorIndex: typeof idx === 'number' ? idx : 0,
+          // Do not emit colorIndex in new payloads for privacy and to avoid internal coupling
           colors: set ? { light: set.light, dark: set.dark } : undefined,
         };
       });

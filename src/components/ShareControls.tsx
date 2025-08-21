@@ -27,7 +27,16 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      const urlToCopy = (() => {
+        try {
+          // If shareUrl is absolute, use it; otherwise prefix with current origin
+          const u = new URL(shareUrl, typeof window !== 'undefined' ? window.location.origin : undefined);
+          return u.toString();
+        } catch {
+          return shareUrl; // fallback
+        }
+      })();
+      await navigator.clipboard.writeText(urlToCopy);
       addResponsiveToast({ message: 'Share URL copied to clipboard', variant: 'success', autoDismiss: true });
     } catch {
       addResponsiveToast({ message: 'Unable to copy to clipboard. Please copy the link manually.', variant: 'warning', autoDismiss: true });
@@ -162,7 +171,14 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
           onClick={() => {
             try {
               if (!shareUrl) return;
-              window.open(shareUrl, '_blank', 'noopener,noreferrer');
+              const absolute = (() => {
+                try {
+                  return new URL(shareUrl, typeof window !== 'undefined' ? window.location.origin : undefined).toString();
+                } catch {
+                  return shareUrl;
+                }
+              })();
+              window.open(absolute, '_blank', 'noopener,noreferrer');
             } catch {
               addResponsiveToast({ message: 'Unable to open link', variant: 'warning', autoDismiss: true });
             }

@@ -15,7 +15,8 @@ export const ActivitySummarySchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1).max(200),
   duration: z.number().int().nonnegative(),
-  colorIndex: z.number().int().nonnegative(),
+  // Deprecated: colorIndex is no longer included in new payloads; keep optional for back-compat
+  colorIndex: z.number().int().nonnegative().optional(),
   // Optional theme-aware or resolved colors to preserve fidelity in exports
   colors: z.union([ColorSetSchema, ThemeAwareColorsSchema]).optional(),
 });
@@ -64,7 +65,7 @@ export const SessionMetadataSchema = z.object({
   createdAt: z.string().refine((s) => !Number.isNaN(Date.parse(s))),
   expiresAt: z.string().refine((s) => !Number.isNaN(Date.parse(s))),
   version: z.string().min(1),
-  userAgent: z.string().optional(),
+  // Removed for privacy; accept absence
 });
 
 export const StoredSessionSchema = z.object({
