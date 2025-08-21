@@ -14,6 +14,7 @@ const ThemeAwareColorsSchema = z.object({
 export const ActivitySummarySchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1).max(200),
+  description: z.string().max(1000).optional(),
   duration: z.number().int().nonnegative(),
   // Deprecated: colorIndex is no longer included in new payloads; keep optional for back-compat
   colorIndex: z.number().int().nonnegative().optional(),

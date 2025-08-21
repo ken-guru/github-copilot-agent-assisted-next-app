@@ -105,7 +105,7 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
         return;
       }
 
-      const activities = (sessionData as { activities?: Array<{ id?: string; name?: string; colorIndex?: number }> }).activities || [];
+  const activities = (sessionData as { activities?: Array<{ id?: string; name?: string; description?: string | null; colorIndex?: number }> }).activities || [];
       const skipped = (sessionData as { skippedActivities?: Array<{ id?: string; name?: string }> }).skippedActivities || [];
 
       // Build import list from union of activities and skippedActivities, deduped by case-insensitive name
@@ -113,7 +113,7 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
       for (const a of activities) {
         if (!a || typeof a !== 'object' || !a.name) continue;
         const key = a.name.trim().toLowerCase();
-        byName.set(key, { id: a.id, name: a.name, colorIndex: typeof a.colorIndex === 'number' ? a.colorIndex : undefined });
+        byName.set(key, { id: a.id, name: a.name, description: a.description ?? undefined, colorIndex: typeof a.colorIndex === 'number' ? a.colorIndex : undefined });
       }
       for (const s of skipped) {
         if (!s || typeof s !== 'object' || !s.name) continue;

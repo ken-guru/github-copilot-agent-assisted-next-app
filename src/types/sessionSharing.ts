@@ -1,6 +1,7 @@
 export interface ActivitySummary {
   id: string;
   name: string;
+  description?: string; // optional description for richer context
   duration: number; // seconds
   // Deprecated: no longer emitted in new payloads; kept optional for back-compat when reading
   colorIndex?: number;

@@ -55,8 +55,9 @@ export default function Summary({
       setShareLoading(true);
 
       // Build payload matching SessionSummaryDataSchema
-      const allStoredActivities = getActivities();
-      const colorById = new Map(allStoredActivities.map((a) => [a.id, a.colorIndex]));
+  const allStoredActivities = getActivities();
+  const colorById = new Map(allStoredActivities.map((a) => [a.id, a.colorIndex]));
+  const descriptionById = new Map(allStoredActivities.map((a) => [a.id, a.description]));
       const activitiesForShare = activityTimes.map(a => {
         const idx = typeof colorById.get(a.id) === 'number' ? (colorById.get(a.id) as number) : undefined;
         const set = (typeof idx === 'number' && idx >= 0 && idx < internalActivityColors.length)
@@ -65,6 +66,8 @@ export default function Summary({
         return {
           id: a.id,
           name: a.name,
+          // Include description when available for richer context in shared JSON
+          ...(descriptionById.get(a.id) ? { description: descriptionById.get(a.id) } : {}),
           duration: a.duration,
           // Do not emit colorIndex in new payloads for privacy and to avoid internal coupling
           colors: set ? { light: set.light, dark: set.dark } : undefined,
