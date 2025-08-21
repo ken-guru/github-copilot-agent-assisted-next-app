@@ -12,6 +12,17 @@ export const SkippedActivitySchema = z.object({
   name: z.string().min(1).max(200),
 });
 
+const ColorSetSchema = z.object({
+  background: z.string(),
+  text: z.string(),
+  border: z.string(),
+});
+
+const ThemeAwareColorsSchema = z.object({
+  light: ColorSetSchema,
+  dark: ColorSetSchema,
+});
+
 export const SharedTimelineEntrySchema = z.object({
   id: z.string().min(1),
   activityId: z.string().nullable(),
@@ -19,6 +30,8 @@ export const SharedTimelineEntrySchema = z.object({
   startTime: z.number().int().nonnegative(),
   endTime: z.number().int().nullable(),
   colorIndex: z.number().int().optional(),
+  // Optional: theme-resolved or theme-aware colors for accurate rendering
+  colors: z.union([ColorSetSchema, ThemeAwareColorsSchema]).optional(),
 });
 
 export const SessionTypeSchema = z.union([z.literal('completed'), z.literal('timeUp')]);

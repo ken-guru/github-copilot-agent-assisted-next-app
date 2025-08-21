@@ -5,7 +5,7 @@ import Summary from '@/components/feature/Summary';
 import Timeline from '@/components/feature/Timeline';
 import type { StoredSession } from '@/types/sessionSharing';
 import ShareControls from '@/components/ShareControls';
-import { Col, Row } from 'react-bootstrap';
+import { Card, Col, Row } from 'react-bootstrap';
 
 type Props = { params: { id: string } };
 
@@ -29,6 +29,11 @@ export default async function SharedPage({ params }: Props) {
     activityName: e.activityName ?? null,
     startTime: e.startTime,
     endTime: e.endTime ?? null,
+    // Prefer colors from stored data (theme-aware or resolved) for fidelity
+    colors: (e as { colors?: unknown }).colors as
+      | { background: string; text: string; border: string }
+      | { light: { background: string; text: string; border: string }; dark: { background: string; text: string; border: string } }
+      | undefined,
   }));
 
   const totalDuration = data.sessionData.plannedTime ?? 0;
@@ -69,8 +74,20 @@ export default async function SharedPage({ params }: Props) {
         </Col>
         <Col xs={12} lg={6} className="d-none d-lg-block">
           <section>
-            <h2 className="h5">Timeline</h2>
-            <Timeline entries={entries} totalDuration={totalDuration} elapsedTime={elapsedTime} isTimeUp={isTimeUp} />
+            <Card className="h-100">
+              <Card.Header className="card-header-consistent">
+                <h5 className="mb-0">Timeline</h5>
+              </Card.Header>
+              <Card.Body>
+                <Timeline 
+                  entries={entries} 
+                  totalDuration={totalDuration} 
+                  elapsedTime={elapsedTime} 
+                  isTimeUp={isTimeUp}
+                  hideHeader
+                />
+              </Card.Body>
+            </Card>
           </section>
         </Col>
       </Row>

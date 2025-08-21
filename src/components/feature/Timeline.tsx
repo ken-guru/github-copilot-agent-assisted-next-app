@@ -85,6 +85,8 @@ interface TimelineProps {
    * @default false
    */
   allActivitiesCompleted?: boolean;
+  /** Hide the internal header (title + time) when embedding inside a Card */
+  hideHeader?: boolean;
 }
 
 function calculateTimeIntervals(duration: number): { interval: number; count: number } {
@@ -140,7 +142,8 @@ export default function Timeline({
   elapsedTime: initialElapsedTime, 
   isTimeUp = false, 
   timerActive = false, 
-  allActivitiesCompleted = false 
+  allActivitiesCompleted = false,
+  hideHeader = false,
 }: TimelineProps) {
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
   // We're not using this state directly, but it's needed for theme detection in the component
@@ -311,15 +314,17 @@ export default function Timeline({
   
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h2 className={styles.heading}>Timeline</h2>
-        <div 
-          className={`${styles.timeDisplay} ${isTimeUp ? styles.timeDisplayOvertime : ''}`}
-          data-testid="time-display"
-        >
-          {timeDisplay}
+      {!hideHeader && (
+        <div className={styles.header}>
+          <h2 className={styles.heading}>Timeline</h2>
+          <div 
+            className={`${styles.timeDisplay} ${isTimeUp ? styles.timeDisplayOvertime : ''}`}
+            data-testid="time-display"
+          >
+            {timeDisplay}
+          </div>
         </div>
-      </div>
+      )}
       
       <div className={styles.timelineContainer}>
         <div className={styles.timelineRuler}>

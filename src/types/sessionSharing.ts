@@ -17,6 +17,14 @@ export interface SharedTimelineEntry {
   startTime: number; // epoch ms
   endTime: number | null; // epoch ms or null
   colorIndex?: number;
+  colors?: {
+    background: string;
+    text: string;
+    border: string;
+  } | {
+    light: { background: string; text: string; border: string };
+    dark: { background: string; text: string; border: string };
+  };
 }
 
 export type SessionType = 'completed' | 'timeUp';
