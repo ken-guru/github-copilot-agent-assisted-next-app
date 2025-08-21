@@ -9,7 +9,7 @@ import { useOpenAIClient } from '@/utils/ai/byokClient';
 import type { ChatCompletion } from '@/types/ai';
 import ShareControls from './ShareControls';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
-import { mapTimelineEntriesForShare as mapTimelineEntriesForShareUtil } from '@/utils/sharing';
+import { mapTimelineEntriesForShare } from '@/utils/sharing';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -67,7 +67,7 @@ export default function Summary({
       const skippedForShare = skippedActivities.map(s => ({ id: s.id, name: s.name }));
 
   // Map timeline entries into the share payload shape with safe guards
-  const timelineEntriesForShare = mapTimelineEntriesForShareUtil(entries || []);
+  const timelineEntriesForShare = mapTimelineEntriesForShare(entries || []);
 
       // Determine completedAt from timeline entries when available — prefer latest endTime, then startTime, else now
       const completedAtIso = (() => {
@@ -122,9 +122,10 @@ export default function Summary({
         const data = await res.json().catch(() => ({}));
         throw new Error(`Share failed: ${res.status} - ${JSON.stringify(data)}`);
       }
-      const json = await res.json();
-      const id = json?.metadata?.id || json?.id || json?.shareId;
-      const url = id ? `${window.location.origin}/shared/${id}` : json?.shareUrl;
+  const json = await res.json();
+  const id = json?.metadata?.id || json?.id || json?.shareId;
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const url = id ? `${origin}/shared/${id}` : json?.shareUrl;
       setShareUrl(url || null);
       setShowShareControls(true);
       // When share controls appear, focus the first control (copy button) if available

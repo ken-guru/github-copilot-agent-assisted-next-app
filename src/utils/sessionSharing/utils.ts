@@ -15,8 +15,8 @@ export function generateShareId(): string {
     const bytes = new Uint8Array(16);
     anyGlobal.crypto.getRandomValues(bytes);
   // Set version and variant bits for RFC4122 v4
-  const b6 = bytes[6] ?? 0;
-  const b8 = bytes[8] ?? 0;
+  const b6 = bytes[6]!;
+  const b8 = bytes[8]!;
   bytes[6] = (b6 & 0x0f) | 0x40; // version 4
   bytes[8] = (b8 & 0x3f) | 0x80; // variant 10
     const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');

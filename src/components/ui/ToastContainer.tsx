@@ -72,7 +72,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps): React.ReactElement {
       data-variant={toast.variant}
       autohide={false} // We handle this manually for better control
     >
-  <Toast.Body className="d-flex align-items-center" aria-live={toast.variant === 'error' ? 'assertive' : 'polite'}>
+      <Toast.Body className="d-flex align-items-center">
         <i className={`bi ${getIcon(toast.variant)} me-2`} aria-hidden="true"></i>
         <span className="flex-grow-1" data-testid="toast-message">
           {toast.message}
@@ -102,6 +102,10 @@ export function ToastContainer(): React.ReactElement {
       className="p-3 position-fixed" 
       style={{ zIndex: 1055 }}
       data-testid="toast-container"
+      aria-live="polite"
+      aria-atomic="true"
+      role="region"
+      aria-label="Notifications"
     >
       {toasts.map((toast) => (
         <ToastItem

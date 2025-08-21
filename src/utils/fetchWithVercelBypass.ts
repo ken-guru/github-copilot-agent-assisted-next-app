@@ -8,8 +8,6 @@
 */
 
 export interface FetchWithBypassOptions extends RequestInit {
-  // If provided, overrides the env token for this call
-  vercelBypassToken?: string;
   // When true, skip using bypass even if token exists
   skipBypass?: boolean;
 }
@@ -66,7 +64,7 @@ export async function fetchWithVercelBypass(input: RequestInfo | URL, init?: Fet
   // Only attempt bypass on the client and when token is available
   const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
   // IMPORTANT: Avoid optional chaining on process.env so Next can inline during build
-  const token = init?.vercelBypassToken || (process.env.NEXT_PUBLIC_VERCEL_BYPASS_TOKEN as string | undefined);
+  const token = process.env.NEXT_PUBLIC_VERCEL_BYPASS_TOKEN as string | undefined;
 
   // Detect if a 200 HTML auth page was returned (preview protection renders HTML with 200)
   let isAuthHtml200 = false;

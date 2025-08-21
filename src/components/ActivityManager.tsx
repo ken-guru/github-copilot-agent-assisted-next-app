@@ -9,6 +9,7 @@ import ShareControls from './ShareControls';
 import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
+import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
 
 // Use canonical Activity type
 type Activity = CanonicalActivity & { colors?: ColorSet };
@@ -190,6 +191,41 @@ export default function ActivityManager({
   const visibleActivities = activities.filter(a => !hiddenSet.has(a.id));
   const hiddenActivities = activities.filter(a => hiddenSet.has(a.id));
 
+  const handleCreateShare = useCallback(async () => {
+    try {
+      setShareLoading(true);
+      const payload = {
+        sessionData: {
+          activities: activities.map(a => ({ id: a.id, name: a.name, description: a.description || '', colorIndex: a.colorIndex })),
+          timeline: timelineEntries
+        },
+        metadata: {
+          title: 'Shared session',
+          createdBy: 'app'
+        }
+      };
+      const res = await fetchWithVercelBypass('/api/sessions/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        throw new Error(`Share failed: ${res.status}`);
+      }
+      const json = await res.json();
+      const id = json?.metadata?.id || json?.id || json?.shareId;
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const url = id ? `${origin}/shared/${id}` : json?.shareUrl;
+      setShareUrl(url || null);
+      setShowShareControls(true);
+  } catch {
+      addResponsiveToast({ message: 'Failed to create share.', variant: 'error', autoDismiss: true });
+      setShowShareModal(false);
+    } finally {
+      setShareLoading(false);
+    }
+  }, [activities, timelineEntries, addResponsiveToast]);
+
   return (
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
       <Card.Header className="card-header-consistent">
@@ -344,43 +380,7 @@ export default function ActivityManager({
               <Button variant="secondary" onClick={() => setShowShareModal(false)}>Cancel</Button>
               <Button
                 variant="success"
-                onClick={async () => {
-                  // create share
-                  try {
-                    setShareLoading(true);
-                    // Build minimal payload from timelineEntries and activities
-                    const payload = {
-                      sessionData: {
-                        activities: activities.map(a => ({ id: a.id, name: a.name, description: a.description || '', colorIndex: a.colorIndex })),
-                        timeline: timelineEntries
-                      },
-                      metadata: {
-                        title: 'Shared session',
-                        createdBy: 'app'
-                      }
-                    };
-                    const res = await fetch('/api/sessions/share', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify(payload)
-                    });
-                    if (!res.ok) {
-                      throw new Error(`Share failed: ${res.status}`);
-                    }
-                    const json = await res.json();
-                    const id = json?.metadata?.id || json?.id;
-                    const url = id ? `${window.location.origin}/shared/${id}` : json?.shareUrl;
-                    setShareUrl(url || null);
-                    setShowShareControls(true);
-                    // keep modal open so ShareControls are visible
-                  } catch {
-                    // Basic fallback for now - show toast
-                    addResponsiveToast({ message: 'Failed to create share.', variant: 'error', autoDismiss: true });
-                    setShowShareModal(false);
-                  } finally {
-                    setShareLoading(false);
-                  }
-                }}
+                onClick={handleCreateShare}
               >
                 Create share
               </Button>

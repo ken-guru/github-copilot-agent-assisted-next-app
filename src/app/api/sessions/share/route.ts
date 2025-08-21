@@ -69,7 +69,13 @@ export async function POST(req: Request) {
         // Enforce SDK path in non-test environments with public access.
         // Deterministic name and overwrite to avoid collisions during retries.
         const { put: putBlob } = await import('@vercel/blob');
-        const result: PutResult = await putBlob(`${id}.json`, JSON.stringify(stored), {
+        let bodyString = '';
+        try {
+          bodyString = JSON.stringify(stored);
+        } catch {
+          return NextResponse.json({ error: 'Failed to serialize session' }, { status: 400 });
+        }
+        const result: PutResult = await putBlob(`${id}.json`, bodyString, {
           access: 'public',
           addRandomSuffix: false,
           allowOverwrite: true,
@@ -82,14 +88,18 @@ export async function POST(req: Request) {
         if (process.env.NODE_ENV !== 'production') console.log('session-share: putBlob result', { id: saved.id, url: saved.url });
       } catch (sdkErr) {
         // Avoid REST fallback in preview/prod since REST path has shown 404s. Surface the error clearly.
-        console.error('session-share: putBlob failed (SDK path). Aborting without REST fallback.', String(sdkErr));
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('session-share: putBlob failed (SDK path). Aborting without REST fallback.', String(sdkErr));
+        }
         throw sdkErr;
       }
     }
   // Log the storage and a safe preview of the saved URL for diagnostics (do not print tokens)
   if (process.env.NODE_ENV !== 'production') console.log('session-share: saveSession result', { id, storage: saved.storage, urlPreview: String(saved?.url ?? '') });
   } catch (saveErr) {
-    console.error('session-share: saveSession failed', { id, err: String(saveErr) });
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('session-share: saveSession failed', { id, err: String(saveErr) });
+    }
     throw saveErr;
   }
 
