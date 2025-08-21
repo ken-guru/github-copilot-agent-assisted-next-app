@@ -5,6 +5,7 @@ import Summary from '@/components/feature/Summary';
 import Timeline from '@/components/feature/Timeline';
 import type { StoredSession } from '@/types/sessionSharing';
 import ShareControls from '@/components/ShareControls';
+import { Col, Row } from 'react-bootstrap';
 
 type Props = { params: { id: string } };
 
@@ -37,34 +38,42 @@ export default async function SharedPage({ params }: Props) {
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Shared Session</h1>
-      <p>Created: {data.metadata.createdAt}</p>
-
-      <div style={{ marginTop: 8 }}>
-        {/* Build shareUrl from NEXT_PUBLIC_BASE_URL if present so copy/open works in different environments */}
-        <ShareControls
-          shareUrl={
-            (process.env.NEXT_PUBLIC_BASE_URL ? `${process.env.NEXT_PUBLIC_BASE_URL}` : '') +
-            `/shared/${data.metadata.id}`
-          }
-        />
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h1 className="h3 mb-0">Shared Session</h1>
+          <small className="text-muted">Created: {data.metadata.createdAt}</small>
+        </div>
+        <div className="ms-auto">
+          {/* Build shareUrl from NEXT_PUBLIC_BASE_URL if present so copy/open works in different environments */}
+          <ShareControls
+            shareUrl={
+              (process.env.NEXT_PUBLIC_BASE_URL ? `${process.env.NEXT_PUBLIC_BASE_URL}` : '') +
+              `/shared/${data.metadata.id}`
+            }
+          />
+        </div>
       </div>
 
-      <section style={{ marginTop: 16 }}>
-        <Summary
-          entries={entries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          timerActive={false}
-          allActivitiesCompleted={allActivitiesCompleted}
-          isTimeUp={isTimeUp}
-        />
-      </section>
-
-      <section style={{ marginTop: 24 }}>
-        <h2>Timeline</h2>
-        <Timeline entries={entries} totalDuration={totalDuration} elapsedTime={elapsedTime} isTimeUp={isTimeUp} />
-      </section>
+      <Row className="mt-3 g-3">
+        <Col xs={12} lg={6}>
+          <section>
+            <Summary
+              entries={entries}
+              totalDuration={totalDuration}
+              elapsedTime={elapsedTime}
+              timerActive={false}
+              allActivitiesCompleted={allActivitiesCompleted}
+              isTimeUp={isTimeUp}
+            />
+          </section>
+        </Col>
+        <Col xs={12} lg={6} className="d-none d-lg-block">
+          <section>
+            <h2 className="h5">Timeline</h2>
+            <Timeline entries={entries} totalDuration={totalDuration} elapsedTime={elapsedTime} isTimeUp={isTimeUp} />
+          </section>
+        </Col>
+      </Row>
     </div>
   );
 }

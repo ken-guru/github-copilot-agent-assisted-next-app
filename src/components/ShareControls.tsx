@@ -1,12 +1,14 @@
 "use client";
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
 import { saveActivities } from '@/utils/activity-storage';
 import { importActivities } from '@/utils/activity-import-export';
 import type { PartialActivityImport } from '@/utils/activity-import-export';
 import { extractShareIdFromUrl } from '@/utils/shareUrl';
+import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 
 interface Props {
   shareUrl: string;
@@ -14,6 +16,9 @@ interface Props {
 
 export default function ShareControls({ shareUrl }: Props) {
   const { addResponsiveToast } = useResponsiveToast();
+  const router = useRouter();
+  const confirmRef = useRef<ConfirmationDialogRef>(null);
+  const [isReplacing, setIsReplacing] = useState(false);
 
 
   const copy = async () => {
@@ -27,17 +32,17 @@ export default function ShareControls({ shareUrl }: Props) {
 
   const downloadJson = async () => {
     try {
-  // Derive id from shareUrl (last path segment)
-  if (!shareUrl) {
+      // Derive id from shareUrl (last path segment)
+      if (!shareUrl) {
         addResponsiveToast({ message: 'No share URL available', variant: 'warning', autoDismiss: true });
         return;
       }
-  const id = extractShareIdFromUrl(shareUrl);
-  if (!id) {
+      const id = extractShareIdFromUrl(shareUrl);
+      if (!id) {
         addResponsiveToast({ message: 'Invalid share URL', variant: 'warning', autoDismiss: true });
         return;
       }
-  const res = await fetchWithVercelBypass(`/api/sessions/${encodeURIComponent(String(id))}`);
+      const res = await fetchWithVercelBypass(`/api/sessions/${encodeURIComponent(String(id))}`);
       if (!res.ok) {
         const msg = `Unable to fetch shared session: ${res.status}`;
         addResponsiveToast({ message: msg, variant: 'error', autoDismiss: true });
@@ -59,21 +64,16 @@ export default function ShareControls({ shareUrl }: Props) {
     }
   };
 
-  const replaceMyActivities = async () => {
+  const doReplace = async () => {
     try {
       if (!shareUrl) {
         addResponsiveToast({ message: 'No share URL available', variant: 'warning', autoDismiss: true });
         return;
       }
+      setIsReplacing(true);
 
-  // Confirm destructive action
-  const confirmed = typeof window !== 'undefined' && typeof window.confirm === 'function'
-        ? window.confirm('This will replace your current activities with the shared set. Continue?')
-        : true;
-      if (!confirmed) return;
-
-  const id = extractShareIdFromUrl(shareUrl);
-  if (!id) {
+      const id = extractShareIdFromUrl(shareUrl);
+      if (!id) {
         addResponsiveToast({ message: 'Invalid share URL', variant: 'warning', autoDismiss: true });
         return;
       }
@@ -114,9 +114,17 @@ export default function ShareControls({ shareUrl }: Props) {
       const imported = importActivities(importList, { existingActivities: [], colorStartIndex: 0 });
       saveActivities(imported);
       addResponsiveToast({ message: `Replaced activities (${imported.length}) from shared set`, variant: 'success', autoDismiss: true });
-  } catch {
+      // Redirect to root after replacing to align UX expectations
+      router.push('/');
+    } catch {
       addResponsiveToast({ message: 'Failed to replace activities from shared data', variant: 'error', autoDismiss: true });
+    } finally {
+      setIsReplacing(false);
     }
+  };
+
+  const replaceMyActivities = () => {
+    confirmRef.current?.showDialog();
   };
 
   return (
@@ -145,20 +153,20 @@ export default function ShareControls({ shareUrl }: Props) {
         type="button"
         className="btn btn-warning"
         onClick={replaceMyActivities}
+        disabled={isReplacing}
         aria-label="Replace my activities with this shared set"
         title="Replace my activities with this shared set"
       >
-        Replace my activities
+        {isReplacing ? 'Replacing…' : 'Replace my activities'}
       </button>
-      <a
-        className="btn btn-outline-secondary"
-        href={shareUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Open shared session in a new tab"
-      >
-        Open in new tab
-      </a>
+      <ConfirmationDialog
+        ref={confirmRef}
+        message="This will replace your current activities with the shared set. Continue?"
+        confirmText="Confirm"
+        cancelText="Cancel"
+        onConfirm={doReplace}
+        onCancel={() => { /* no-op */ }}
+      />
     </div>
   );
 }

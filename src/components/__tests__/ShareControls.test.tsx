@@ -3,6 +3,18 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ShareControls from '@/components/ShareControls';
 import * as activityStorage from '../../utils/activity-storage';
 
+// Mock Next.js app router to avoid invariant about router being mounted
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+  }),
+}));
+
 // Mock activity-storage to allow interception of saveActivities calls
 jest.mock('../../utils/activity-storage', () => ({
   __esModule: true,
@@ -48,9 +60,6 @@ describe('ShareControls', () => {
   it('replaces activities from shared data', async () => {
     const shareUrl = 'https://example.com/shared/xyz-789';
 
-    // Confirm dialog auto-accept
-    jest.spyOn(window, 'confirm').mockReturnValue(true);
-
     // Mock fetch to return StoredSession-like shape with activities and skippedActivities
     const sample = {
       sessionData: {
@@ -68,12 +77,16 @@ describe('ShareControls', () => {
 
   const saveSpy = (activityStorage.saveActivities as unknown as jest.Mock).mockImplementation(() => {});
 
-    const { getByRole } = render(<ShareControls shareUrl={shareUrl} />);
-    const replaceBtn = getByRole('button', { name: /replace my activities/i });
-    replaceBtn.click();
+  const { getByRole } = render(<ShareControls shareUrl={shareUrl} />);
+  const replaceBtn = getByRole('button', { name: /replace my activities/i });
+  replaceBtn.click();
 
-    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
-    await waitFor(() => expect(saveSpy).toHaveBeenCalled());
+  // Click confirm on designed dialog
+  const confirmButton = await screen.findByRole('button', { name: /confirm/i });
+  fireEvent.click(confirmButton);
+
+  await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+  await waitFor(() => expect(saveSpy).toHaveBeenCalled());
 
   // Clean up mock implementation
   (activityStorage.saveActivities as unknown as jest.Mock).mockReset();

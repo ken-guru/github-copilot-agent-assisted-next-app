@@ -4,6 +4,18 @@ import '@testing-library/jest-dom';
 import Summary from '../Summary';
 import { ToastProvider } from '../../contexts/ToastContext';
 
+// Mock Next.js app router to avoid invariant about router being mounted
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+  }),
+}));
+
 // Mock getActivities to return a stable activity list used by Summary
 jest.mock('@/utils/activity-storage', () => ({
   getActivities: jest.fn(() => [
@@ -44,7 +56,9 @@ describe('Summary share flow', () => {
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalledWith('/api/sessions/share', expect.any(Object)));
 
-  // After share created, ShareControls should be rendered with Open link
-  await screen.findByRole('link', { name: /open shared session in a new tab/i });
+  // After share created, ShareControls should render copy/download/replace buttons
+  await screen.findByRole('button', { name: /copy share link to clipboard/i });
+  await screen.findByRole('button', { name: /download shared session as json/i });
+  await screen.findByRole('button', { name: /replace my activities/i });
   });
 });
