@@ -267,43 +267,56 @@ export async function saveSession(
             console.log('saveSession: create response', { status: createRes.status, headers: safeHeaders, body: createJson ?? '<non-json or empty>', textPreview: String(createText).slice(0, 1000) });
           }
 
-          // The create response may provide a direct upload URL under several common keys,
-          // or might only return an `id` which we can PUT to at `${base}/{id}`.
-          let uploadUrl: string | undefined;
-          let createdId: string | undefined;
+          // The create response may provide a direct upload URL or an id; extract robustly via helper
+          const extractUploadInfo = (
+            response: Response,
+            json: unknown,
+          ): { uploadUrl?: string; createdId?: string } => {
+            let uploadUrl: string | undefined;
+            let createdId: string | undefined;
+            if (json && typeof json === 'object') {
+              const cj = json as Record<string, unknown>;
+              // Common direct upload URL keys
+              uploadUrl = (cj.uploadURL as string | undefined)
+                ?? (cj.upload_url as string | undefined)
+                ?? (cj.url as string | undefined);
 
-          if (createJson && typeof createJson === 'object') {
-            const cj = createJson as Record<string, unknown>;
-            // Common direct upload URL keys
-            uploadUrl = (cj.uploadURL as string | undefined) ?? (cj.upload_url as string | undefined) ?? (cj.url as string | undefined);
+              // Nested variations (some APIs return { data: { uploadURL } } or { result: { upload_url } })
+              if (!uploadUrl) {
+                const maybeData = cj.data as Record<string, unknown> | undefined;
+                const maybeResult = cj.result as Record<string, unknown> | undefined;
+                uploadUrl = (maybeData?.uploadURL as string | undefined)
+                  ?? (maybeData?.upload_url as string | undefined)
+                  ?? (maybeResult?.uploadURL as string | undefined)
+                  ?? (maybeResult?.upload_url as string | undefined);
+              }
 
-            // Nested variations (some APIs return { data: { uploadURL } } or { result: { upload_url } })
-            if (!uploadUrl) {
-              const maybeData = cj.data as Record<string, unknown> | undefined;
-              const maybeResult = cj.result as Record<string, unknown> | undefined;
-              uploadUrl = maybeData?.uploadURL as string | undefined ?? maybeData?.upload_url as string | undefined ?? maybeResult?.uploadURL as string | undefined ?? maybeResult?.upload_url as string | undefined;
-            }
-
-            // Some APIs return only an id (or name) for the created blob; try to use it.
-            if (!uploadUrl) {
-              const idCandidate = (cj.id as string | undefined) ?? (cj.name as string | undefined);
-              if (typeof idCandidate === 'string' && idCandidate.trim() !== '') createdId = idCandidate;
-            }
-          }
-
-          // If create didn't return JSON fields, some implementations provide a Location header or similar.
-          if (!uploadUrl && !createdId) {
-            const location = createRes.headers?.get?.('location') ?? createRes.headers?.get?.('Location');
-            if (location && typeof location === 'string' && location.trim() !== '') {
-              uploadUrl = location;
-              if (process.env.NODE_ENV !== 'production') {
-                console.log(
-                  'saveSession: create returned Location header, using as upload URL',
-                  uploadUrl.startsWith(base) ? '<internal>' : uploadUrl,
-                );
+              // Some APIs return only an id (or name) for the created blob; try to use it.
+              if (!uploadUrl) {
+                const idCandidate = (cj.id as string | undefined) ?? (cj.name as string | undefined);
+                if (typeof idCandidate === 'string' && idCandidate.trim() !== '') createdId = idCandidate;
               }
             }
-          }
+
+            // If JSON did not include fields, try a Location header from the response
+            if (!uploadUrl && !createdId) {
+              const location = response.headers?.get?.('location') ?? response.headers?.get?.('Location');
+              if (location && typeof location === 'string' && location.trim() !== '') {
+                uploadUrl = location;
+                if (process.env.NODE_ENV !== 'production') {
+                  console.log(
+                    'saveSession: create returned Location header, using as upload URL',
+                    uploadUrl.startsWith(base) ? '<internal>' : uploadUrl,
+                  );
+                }
+              }
+            }
+            return { uploadUrl, createdId };
+          };
+
+          const { uploadUrl: extractedUrl, createdId: extractedId } = extractUploadInfo(createRes as Response, createJson);
+          let uploadUrl = extractedUrl;
+          const createdId = extractedId;
 
           // If we only got an id, attempt PUT to `${base}/{id}` which should succeed after creation.
           if (!uploadUrl && createdId) {

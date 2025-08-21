@@ -31,6 +31,16 @@ const ActivityCrud: React.FC = () => {
   // Create ref for ActivityForm to trigger submit from modal footer
   const activityFormRef = React.useRef<{ submitForm: () => void }>(null);
 
+  // Helper to safely revoke object URLs
+  const safeRevokeUrl = (url: string | null | undefined) => {
+    if (!url) return;
+    try {
+      URL.revokeObjectURL(url);
+    } catch {
+      // ignore revoke errors (e.g., double revoke)
+    }
+  };
+
   // Load activities from localStorage on mount
   useEffect(() => {
     const loadedActivities = getActivities().filter(a => a.isActive);
@@ -93,10 +103,8 @@ const ActivityCrud: React.FC = () => {
       link.click();
       document.body.removeChild(link);
       // Revoke object URL after a tick to ensure Safari completes download
-      const urlToRevoke = exportUrl;
-      setTimeout(() => {
-        try { URL.revokeObjectURL(urlToRevoke); } catch { /* ignore */ }
-      }, 0);
+  const urlToRevoke = exportUrl;
+  setTimeout(() => safeRevokeUrl(urlToRevoke), 0);
       setExportUrl(null);
       setShowExport(false);
     }
@@ -175,13 +183,7 @@ const ActivityCrud: React.FC = () => {
 
   // Ensure we clean up any generated object URL when the modal is closed
   const handleCloseExport = () => {
-    if (exportUrl) {
-      try {
-        URL.revokeObjectURL(exportUrl);
-      } catch {
-        // ignore revoke errors
-      }
-    }
+  safeRevokeUrl(exportUrl);
     setExportUrl(null);
     setShowExport(false);
   };
@@ -189,9 +191,7 @@ const ActivityCrud: React.FC = () => {
   // Revoke any previously created object URL when it changes/unmounts to avoid leaks
   useEffect(() => {
     return () => {
-      if (exportUrl) {
-        try { URL.revokeObjectURL(exportUrl); } catch { /* ignore */ }
-      }
+  safeRevokeUrl(exportUrl);
     };
   }, [exportUrl]);
 

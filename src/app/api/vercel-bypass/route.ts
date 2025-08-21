@@ -11,9 +11,8 @@ export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const next = url.searchParams.get('next') || '/';
-    // Prefer explicit token query param; otherwise try server env fallbacks
+    // Retrieve token from server-side environment only
     const token =
-      url.searchParams.get('token') ||
       process.env.VERCEL_PROTECTION_BYPASS ||
       process.env.VERCEL_AUTOMATION_BYPASS_SECRET ||
       '';

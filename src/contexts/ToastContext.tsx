@@ -88,3 +88,9 @@ export function useToast(): ToastContextType {
   }
   return context;
 }
+
+// Optional variant that does not throw if the provider is missing.
+// Useful for tests or integration mounts that may not include the ToastProvider.
+export function useOptionalToast(): ToastContextType | undefined {
+  return useContext(ToastContext);
+}

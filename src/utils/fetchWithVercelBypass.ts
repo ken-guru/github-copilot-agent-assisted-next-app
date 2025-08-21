@@ -106,9 +106,10 @@ export async function fetchWithVercelBypass(input: RequestInfo | URL, init?: Fet
 
     // Hit the same-origin bypass endpoint that sets the cookie via redirect
     // The endpoint will redirect to the provided next URL while setting the bypass cookie
-    const nextUrl = encodeURIComponent(target.pathname + target.search);
-    const bypassUrl = `/api/vercel-bypass?next=${nextUrl}&token=${encodeURIComponent(token)}`;
-    await fetch(bypassUrl, { method: 'GET', credentials: 'include' });
+  const nextUrl = encodeURIComponent(target.pathname + target.search);
+  // Do not pass token through URL; the route will use server env to retrieve it
+  const bypassUrl = `/api/vercel-bypass?next=${nextUrl}`;
+  await fetch(bypassUrl, { method: 'GET', credentials: 'include' });
   } catch {
     // ignore bypass failure and fall through to retry
   }

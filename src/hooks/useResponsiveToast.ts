@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState, useContext } from 'react';
-import { ToastContext } from '@/contexts/ToastContext';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useOptionalToast } from '@/contexts/ToastContext';
 import { ToastContextType } from '@/types/toast';
 import { ToastMessage } from '@/types/toast';
 import { BOOTSTRAP_MD_BREAKPOINT } from '@/constants/breakpoints';
@@ -13,16 +13,16 @@ export function useResponsiveToast() {
     if (typeof window === 'undefined') return false;
     return window.innerWidth < BOOTSTRAP_MD_BREAKPOINT;
   });
-  // Access toast context safely (tests may render without provider)
-  const toastCtx = useContext(ToastContext);
+  // Access toast API via optional hook (does not throw if provider is absent)
+  const toastCtx = useOptionalToast();
 
   // Memoize toast functions so they are stable for hook dependencies
   const addToast = useMemo<ToastContextType['addToast']>(() => {
-    return toastCtx?.addToast ?? (() => '');
+    return (toastCtx?.addToast as ToastContextType['addToast']) ?? (() => '');
   }, [toastCtx]);
 
   const removeToast = useMemo<ToastContextType['removeToast']>(() => {
-    return toastCtx?.removeToast ?? (() => {});
+    return (toastCtx?.removeToast as ToastContextType['removeToast']) ?? (() => {});
   }, [toastCtx]);
 
   useEffect(() => {

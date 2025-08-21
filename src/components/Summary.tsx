@@ -124,8 +124,8 @@ export default function Summary({
       }
   const json = await res.json();
   const id = json?.metadata?.id || json?.id || json?.shareId;
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  const url = id ? `${origin}/shared/${id}` : json?.shareUrl;
+  const origin = typeof window !== 'undefined' ? window.location.origin : undefined;
+  const url = id && origin ? `${origin}/shared/${id}` : (json?.shareUrl as string | undefined);
       setShareUrl(url || null);
       setShowShareControls(true);
       // When share controls appear, focus the first control (copy button) if available
