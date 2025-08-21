@@ -3,6 +3,14 @@ export interface ActivitySummary {
   name: string;
   duration: number; // seconds
   colorIndex: number;
+  colors?: {
+    background: string;
+    text: string;
+    border: string;
+  } | {
+    light: { background: string; text: string; border: string };
+    dark: { background: string; text: string; border: string };
+  };
 }
 
 export interface SkippedActivity {

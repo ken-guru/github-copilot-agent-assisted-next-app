@@ -1,17 +1,5 @@
 import { z } from 'zod';
 
-export const ActivitySummarySchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1).max(200),
-  duration: z.number().int().nonnegative(),
-  colorIndex: z.number().int().nonnegative(),
-});
-
-export const SkippedActivitySchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1).max(200),
-});
-
 const ColorSetSchema = z.object({
   background: z.string(),
   text: z.string(),
@@ -22,6 +10,22 @@ const ThemeAwareColorsSchema = z.object({
   light: ColorSetSchema,
   dark: ColorSetSchema,
 });
+
+export const ActivitySummarySchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1).max(200),
+  duration: z.number().int().nonnegative(),
+  colorIndex: z.number().int().nonnegative(),
+  // Optional theme-aware or resolved colors to preserve fidelity in exports
+  colors: z.union([ColorSetSchema, ThemeAwareColorsSchema]).optional(),
+});
+
+export const SkippedActivitySchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1).max(200),
+});
+
+// ColorSetSchema and ThemeAwareColorsSchema defined above for reuse
 
 export const SharedTimelineEntrySchema = z.object({
   id: z.string().min(1),

@@ -57,12 +57,19 @@ export default function Summary({
       // Build payload matching SessionSummaryDataSchema
       const allStoredActivities = getActivities();
       const colorById = new Map(allStoredActivities.map((a) => [a.id, a.colorIndex]));
-      const activitiesForShare = activityTimes.map(a => ({
-        id: a.id,
-        name: a.name,
-        duration: a.duration,
-        colorIndex: typeof colorById.get(a.id) === 'number' ? (colorById.get(a.id) as number) : 0,
-      }));
+      const activitiesForShare = activityTimes.map(a => {
+        const idx = typeof colorById.get(a.id) === 'number' ? (colorById.get(a.id) as number) : undefined;
+        const set = (typeof idx === 'number' && idx >= 0 && idx < internalActivityColors.length)
+          ? internalActivityColors[idx]
+          : undefined;
+        return {
+          id: a.id,
+          name: a.name,
+          duration: a.duration,
+          colorIndex: typeof idx === 'number' ? idx : 0,
+          colors: set ? { light: set.light, dark: set.dark } : undefined,
+        };
+      });
 
       const skippedForShare = skippedActivities.map(s => ({ id: s.id, name: s.name }));
 

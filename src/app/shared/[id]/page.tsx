@@ -5,12 +5,12 @@ import Summary from '@/components/feature/Summary';
 import Timeline from '@/components/feature/Timeline';
 import type { StoredSession } from '@/types/sessionSharing';
 import ShareControls from '@/components/ShareControls';
-import { Card, Col, Row } from 'react-bootstrap';
 
-type Props = { params: { id: string } };
+// In Next.js 15, dynamic route params are async; await them before use
+type Props = { params: Promise<{ id: string }> };
 
 export default async function SharedPage({ params }: Props) {
-  const id = params.id;
+  const { id } = await params;
   const stored = await getSession(id);
   if (!stored) return notFound();
 
@@ -59,8 +59,8 @@ export default async function SharedPage({ params }: Props) {
         </div>
       </div>
 
-      <Row className="mt-3 g-3">
-        <Col xs={12} lg={6}>
+      <div className="row mt-3 g-3">
+        <div className="col-12 col-lg-6">
           <section>
             <Summary
               entries={entries}
@@ -71,26 +71,26 @@ export default async function SharedPage({ params }: Props) {
               isTimeUp={isTimeUp}
             />
           </section>
-        </Col>
-        <Col xs={12} lg={6} className="d-none d-lg-block">
+        </div>
+        <div className="col-12 col-lg-6 d-none d-lg-block">
           <section>
-            <Card className="h-100">
-              <Card.Header className="card-header-consistent">
+            <div className="card h-100">
+              <div className="card-header card-header-consistent">
                 <h5 className="mb-0">Timeline</h5>
-              </Card.Header>
-              <Card.Body>
-                <Timeline 
-                  entries={entries} 
-                  totalDuration={totalDuration} 
-                  elapsedTime={elapsedTime} 
+              </div>
+              <div className="card-body">
+                <Timeline
+                  entries={entries}
+                  totalDuration={totalDuration}
+                  elapsedTime={elapsedTime}
                   isTimeUp={isTimeUp}
                   hideHeader
                 />
-              </Card.Body>
-            </Card>
+              </div>
+            </div>
           </section>
-        </Col>
-      </Row>
+        </div>
+      </div>
     </div>
   );
 }
