@@ -286,20 +286,32 @@ export async function saveSession(
             const location = createRes.headers?.get?.('location') ?? createRes.headers?.get?.('Location');
             if (location && typeof location === 'string' && location.trim() !== '') {
               uploadUrl = location;
-              if (process.env.NODE_ENV !== 'production') console.log('saveSession: create returned Location header, using as upload URL', uploadUrl.startsWith(base) ? '<internal>' : uploadUrl);
+              if (process.env.NODE_ENV !== 'production') {
+                console.log(
+                  'saveSession: create returned Location header, using as upload URL',
+                  uploadUrl.startsWith(base) ? '<internal>' : uploadUrl,
+                );
+              }
             }
           }
 
           // If we only got an id, attempt PUT to `${base}/{id}` which should succeed after creation.
           if (!uploadUrl && createdId) {
             uploadUrl = `${base.replace(/\/$/, '')}/${encodeURIComponent(createdId)}`;
-            if (process.env.NODE_ENV !== 'production') console.log('saveSession: create returned id, attempting PUT to', uploadUrl);
+            if (process.env.NODE_ENV !== 'production') {
+              console.log('saveSession: create returned id, attempting PUT to', uploadUrl);
+            }
           }
 
           // Some APIs respond with 2xx but no body; try PUT to the requested id as a last resort.
           if (!uploadUrl && !createdId && createRes.status >= 200 && createRes.status < 300) {
             const fallbackUrl = `${base.replace(/\/$/, '')}/${encodeURIComponent(id)}`;
-            if (process.env.NODE_ENV !== 'production') console.log('saveSession: create returned empty body; attempting PUT to created id fallback', fallbackUrl);
+            if (process.env.NODE_ENV !== 'production') {
+              console.log(
+                'saveSession: create returned empty body; attempting PUT to created id fallback',
+                fallbackUrl,
+              );
+            }
             const fallbackRes = await (maybeFetch as typeof fetch)(fallbackUrl, {
               method: 'PUT',
               headers: {
@@ -397,17 +409,17 @@ export async function getSession(
   if (!isTest) {
     try {
       const blobMod = await loadBlobModule();
-  const nameCandidates = [`${id}.json`, `${id}`];
-  // Prefer dev-specific token when in development for SDK reads
-  const blobToken = (isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV)
-    ? process.env.BLOB_READ_WRITE_TOKEN_DEV
-    : process.env.BLOB_READ_WRITE_TOKEN || undefined;
+      const nameCandidates = [`${id}.json`, `${id}`];
+      // Prefer dev-specific token when in development for SDK reads
+      const blobToken = (isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV)
+        ? process.env.BLOB_READ_WRITE_TOKEN_DEV
+        : process.env.BLOB_READ_WRITE_TOKEN || undefined;
       for (const name of nameCandidates) {
         try {
           let url: string | undefined;
           if (typeof blobMod.head === 'function') {
             // head() throws on not found; returns { url, ... } when it exists
-    const info = await blobMod.head(name as string, blobToken ? { token: blobToken } : undefined);
+            const info = await blobMod.head(name as string, blobToken ? { token: blobToken } : undefined);
             url = (info as { url?: string } | undefined)?.url;
           }
           // Fallback to list() to discover public URL when head() is unavailable
