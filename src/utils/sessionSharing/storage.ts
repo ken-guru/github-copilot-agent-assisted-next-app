@@ -229,7 +229,16 @@ export async function saveSession(
               // Provide minimal metadata the API might expect. Keep fields generic.
               filename: `${id}.json`,
               contentType: 'application/json',
-              size: Buffer.byteLength(JSON.stringify(data), 'utf-8'),
+              // Compute byte size without relying on Node Buffer for Edge compatibility
+              size: (() => {
+                try {
+                  const enc = new TextEncoder();
+                  return enc.encode(JSON.stringify(data)).length;
+                } catch {
+                  // Reasonable fallback; server will compute content-length
+                  return JSON.stringify(data).length;
+                }
+              })(),
             }),
           });
 

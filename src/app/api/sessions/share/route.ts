@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { validateSessionSummaryData, validateStoredSession } from '../../../../utils/sessionSharing/schema';
 import { generateShareId } from '../../../../utils/sessionSharing/utils';
-import { saveSession } from '../../../../utils/sessionSharing/storage';
+import { saveSession, SaveResult } from '../../../../utils/sessionSharing/storage';
 import { checkAndIncrementKey } from '../../../../utils/sessionSharing/rateLimiter';
 
 export async function POST(req: Request) {
@@ -28,8 +28,17 @@ export async function POST(req: Request) {
       console.warn('session-share: origin validation skipped due to URL parse error', e);
     }
 
-  // Rate limit per-origin (fall back to 'global' if absent)
-  const rateKey = headerOrigin || headerReferer || 'global';
+  // Rate limit per-origin host (fall back to 'global' if absent)
+  let rateKey = 'global';
+  try {
+    const keyBase = headerOrigin || headerReferer || '';
+    if (keyBase) {
+      const u = new URL(keyBase);
+      rateKey = u.host || keyBase;
+    }
+  } catch {
+    rateKey = headerOrigin || headerReferer || 'global';
+  }
     const rate = checkAndIncrementKey(rateKey);
     if (!rate.ok) {
       return NextResponse.json({ error: 'Too many requests', retryAfterMs: rate.retryAfterMs }, { status: 429 });
@@ -54,7 +63,7 @@ export async function POST(req: Request) {
 
   // Define a light result type
   type PutResult = { id?: string; url?: string };
-  let saved;
+  let saved: SaveResult;
   try {
   if (process.env.NODE_ENV !== 'production') console.log('session-share: attempting to save session to blob/local storage', { id });
     const isTest = process.env.NODE_ENV === 'test';

@@ -92,10 +92,13 @@ const ActivityCrud: React.FC = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-  // Revoke object URL after triggering download to free memory
-  URL.revokeObjectURL(exportUrl);
-  setExportUrl(null);
-  setShowExport(false);
+      // Revoke object URL after a tick to ensure Safari completes download
+      const urlToRevoke = exportUrl;
+      setTimeout(() => {
+        try { URL.revokeObjectURL(urlToRevoke); } catch { /* ignore */ }
+      }, 0);
+      setExportUrl(null);
+      setShowExport(false);
     }
   };
 
@@ -182,6 +185,15 @@ const ActivityCrud: React.FC = () => {
     setExportUrl(null);
     setShowExport(false);
   };
+
+  // Revoke any previously created object URL when it changes/unmounts to avoid leaks
+  useEffect(() => {
+    return () => {
+      if (exportUrl) {
+        try { URL.revokeObjectURL(exportUrl); } catch { /* ignore */ }
+      }
+    };
+  }, [exportUrl]);
 
   // Import modal logic
   const handleImport = () => {
