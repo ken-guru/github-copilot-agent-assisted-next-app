@@ -1,3 +1,24 @@
+/**
+ * Session sharing storage utilities
+ *
+ * Fallback strategy overview:
+ * - saveSession(id, data)
+ *   1) In Jest tests (NODE_ENV==='test' and not forceNetwork): write to local file store
+ *   2) Otherwise, require BLOB_* envs and attempt direct PUT to `${BLOB_BASE_URL}/v1/blob/{id}`
+ *      - If PUT 404s, perform create-upload fallback: POST base to get upload URL or id, then PUT
+ *   3) All logs avoid printing tokens; non-production environments log diagnostic hints only
+ *
+ * - getSession(id)
+ *   1) In tests (NODE_ENV==='test' and not forceNetwork): read from local file store
+ *   2) Otherwise, prefer @vercel/blob SDK reads first:
+ *      - head(name, { token }) to get public URL (we write with access:'public')
+ *      - list({ prefix }) as a fallback to discover the URL
+ *      - fetch the discovered public URL and validate shape
+ *   3) If SDK path fails, fall back to REST GET on `${BLOB_BASE_URL}/v1/blob/{id}[.json]` with Authorization
+ *
+ * Local file store locations (for tests/dev without network):
+ * - env BLOB_LOCAL_DIR, else project .vercel_blob_store, else OS tmpdir
+ */
 import fs from 'fs';
 import path from 'path';
 import os from 'os';

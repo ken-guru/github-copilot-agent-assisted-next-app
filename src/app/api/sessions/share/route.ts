@@ -6,12 +6,16 @@ import { checkAndIncrementKey } from '../../../../utils/sessionSharing/rateLimit
 
 export async function POST(req: Request) {
   try {
-  // Helpful debugging log: do not print token values, only presence
-  console.log('session-share: BLOB_BASE_URL set?', !!process.env.BLOB_BASE_URL, 'BLOB_READ_WRITE_TOKEN set?', !!process.env.BLOB_READ_WRITE_TOKEN);
+  // Helpful debugging log: do not print token values, only presence (non-production only)
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('session-share: BLOB_BASE_URL set?', !!process.env.BLOB_BASE_URL, 'BLOB_READ_WRITE_TOKEN set?', !!process.env.BLOB_READ_WRITE_TOKEN);
+  }
     // Additional context logs for debugging create/upload flow
   const headerOrigin = req.headers.get('origin') ?? '';
   const headerReferer = req.headers.get('referer') ?? '';
-  console.log('session-share: creating share id', { idPreview: 'xxxx-xxxx', origin: headerOrigin || undefined, referer: headerReferer || undefined, url: req.url });
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('session-share: creating share id', { idPreview: 'xxxx-xxxx', origin: headerOrigin || undefined, referer: headerReferer || undefined, url: req.url });
+  }
   // Origin validation: allow same-host requests (works for preview and production),
     // avoid coupling to NEXT_PUBLIC_BASE_URL which may differ on preview.
     // If an Origin/Referer is present and does not match this deployment's origin, reject.
@@ -56,7 +60,7 @@ export async function POST(req: Request) {
   type PutResult = { id?: string; url?: string };
   let saved;
   try {
-    console.log('session-share: attempting to save session to blob/local storage', { id });
+  if (process.env.NODE_ENV !== 'production') console.log('session-share: attempting to save session to blob/local storage', { id });
     const isTest = process.env.NODE_ENV === 'test';
   if (isTest) {
       // Use existing REST/local logic for tests (local-only path)
@@ -76,7 +80,7 @@ export async function POST(req: Request) {
           url: result.url ?? (process.env.NEXT_PUBLIC_BASE_URL ? `${process.env.NEXT_PUBLIC_BASE_URL}/shared/${id}` : ''),
           storage: 'blob',
         };
-        if (process.env.NODE_ENV !== 'production') console.log('session-share: putBlob result', { id: saved.id, url: saved.url });
+  if (process.env.NODE_ENV !== 'production') console.log('session-share: putBlob result', { id: saved.id, url: saved.url });
       } catch (sdkErr) {
         // Avoid REST fallback in preview/prod since REST path has shown 404s. Surface the error clearly.
         console.error('session-share: putBlob failed (SDK path). Aborting without REST fallback.', String(sdkErr));
@@ -84,7 +88,7 @@ export async function POST(req: Request) {
       }
     }
   // Log the storage and a safe preview of the saved URL for diagnostics (do not print tokens)
-  console.log('session-share: saveSession result', { id, storage: saved.storage, urlPreview: process.env.NODE_ENV === 'production' ? '<redacted>' : String(saved?.url ?? '') });
+  if (process.env.NODE_ENV !== 'production') console.log('session-share: saveSession result', { id, storage: saved.storage, urlPreview: String(saved?.url ?? '') });
   } catch (saveErr) {
     console.error('session-share: saveSession failed', { id, err: String(saveErr) });
     throw saveErr;

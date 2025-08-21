@@ -66,8 +66,8 @@ export default function Summary({
 
       const skippedForShare = skippedActivities.map(s => ({ id: s.id, name: s.name }));
 
-      // Map timeline entries into the share payload shape with safe guards
-      const timelineEntriesForShare = mapTimelineEntriesForShare(entries || []);
+  // Map timeline entries into the share payload shape with safe guards
+  const timelineEntriesForShare = mapTimelineEntriesForShareUtil(entries || []);
 
       // Determine completedAt from timeline entries when available — prefer latest endTime, then startTime, else now
       const completedAtIso = (() => {
@@ -452,8 +452,7 @@ export default function Summary({
   const overtime = calculateOvertime();
   const activityTimes = calculateActivityTimes();
 
-  // Use centralized sharing util for consistent mapping
-  const mapTimelineEntriesForShare = (inputEntries: TimelineEntry[]) => mapTimelineEntriesForShareUtil(inputEntries);
+  // Use centralized sharing util for consistent mapping (call directly where needed)
 
   // Build a stable payload for AI summary generation
   const summaryPayload = useMemo(() => ({
