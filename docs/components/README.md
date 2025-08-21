@@ -30,6 +30,7 @@ These components provide supporting functionality:
 - [**ServiceWorkerUpdater**](./ServiceWorkerUpdater.md): Manages service worker lifecycle and update notifications
 - [**ActivityForm**](./ActivityForm.md): Interface for creating and editing activities
 - [**ConfirmationDialog**](./ConfirmationDialog.md): Modal dialog for confirming user actions (Bootstrap-based)
+- [**ShareControls**](./ShareControls.md): Controls for copying/opening/downloading share links and replacing from shared data
 
 ## Utility Components
 

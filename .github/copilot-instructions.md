@@ -81,6 +81,19 @@ mcp_playwright_browser_take_screenshot(filename="issue-<NUMBER>-current-state.pn
 
 > Important: MCP Playwright sessions cannot access localhost/127.0.0.1. Use your machine's LAN IP (e.g., http://192.168.x.x:3000). On macOS you can find it via System Settings → Network or with `ipconfig getifaddr en0` (Wi‑Fi) / `ipconfig getifaddr en1` (Ethernet).
 
+### Session Sharing Verification Addendum
+
+- User flows to verify:
+  - Create share from Summary → receive absolute `shareUrl`
+  - Open `/shared/[id]` and confirm theme-aware color normalization
+  - Download JSON and re-import via Replace; ensure descriptions and colors preserved
+- Privacy & safety checks:
+  - No PII in shared payloads; no `colorIndex`
+  - Logs must not contain tokens or secrets
+- Testing constraints:
+  - Jest tests must not hit Vercel endpoints; rely on local fallback/mocks
+  - Prefer server-provided `shareUrl`; only use SSR-safe `window.origin` when needed
+
 ## MCP TOOL INTEGRATION
 
 ### Available Tools and Documentation

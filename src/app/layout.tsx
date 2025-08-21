@@ -7,6 +7,8 @@ import "./globals.css"; // App-specific styles that use the theme variables
 import { Metadata, Viewport } from "next";
 import { LayoutClient } from "../components/LayoutClient";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // Font configuration
 const geistSans = Geist({
@@ -137,6 +139,9 @@ export default function RootLayout({
         <LayoutClient>
           {children}
         </LayoutClient>
+  {/* Vercel Analytics & Speed Insights */}
+  <Analytics />
+  <SpeedInsights />
         {/* Service worker registration script with improved update detection */}
         <Script
           id="register-service-worker"

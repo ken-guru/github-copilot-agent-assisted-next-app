@@ -1,7 +1,25 @@
-## Session Sharing (Vercel Blob)
+## Session Sharing
 
-This document explains how session sharing works, environment variables, local development behavior, test isolation, Playwright guidance, and troubleshooting steps (particularly for 404s when using Vercel Blob).
+This document explains how to use Session Sharing (for users) and how it works under the hood (for developers).
 
+### User Guide
+
+Share a read‑only snapshot of your session:
+
+1. In Summary, click `Share` to create a link.
+2. Use `Copy Link` to share, `Open` to preview, or `Download JSON` for a file copy.
+3. Use `Replace` to import a shared session back into your app (descriptions and colors are preserved).
+
+Privacy and content:
+- Included: activities (name, color, optional description), session timings, anonymized metadata.
+- Excluded: PII (e.g., user agent), internal indices (e.g., `colorIndex`).
+
+Theme-aware shared page:
+- Visiting `/shared/[id]` normalizes colors to your current theme; if no exact palette match is found, it uses a hue‑nearest fallback.
+
+Tips:
+- Links are deterministic and safe to re-share.
+- If a preview briefly 404s, retry after a moment.
 ### Environment Variables
 
 - `BLOB_READ_WRITE_TOKEN` (required in production/preview) — the Vercel Blob read/write token used by the server to PUT/GET blobs.
@@ -46,5 +64,7 @@ If you see a runtime error like `Vercel Blob write failed: 404 Blob not found` i
 2. Share the sanitized logs if further assistance is needed; include the normalized PUT `url` and the response `status` and `body` so we can decide whether to (a) correct URL formation, (b) implement create-upload flow, or (c) fix token/permission issues.
 
 ### Links
+
+- Session Sharing developer guide: ./dev-guides/session-sharing.md
 
 - Vercel Blob docs: https://vercel.com/docs/vercel-blob
