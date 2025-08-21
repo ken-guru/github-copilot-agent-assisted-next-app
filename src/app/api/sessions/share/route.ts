@@ -6,10 +6,6 @@ import { checkAndIncrementKey } from '../../../../utils/sessionSharing/rateLimit
 
 export async function POST(req: Request) {
   try {
-  // Helpful debugging log: do not print token values, only presence (non-production only)
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('session-share: BLOB_BASE_URL set?', !!process.env.BLOB_BASE_URL, 'BLOB_READ_WRITE_TOKEN set?', !!process.env.BLOB_READ_WRITE_TOKEN);
-  }
     // Additional context logs for debugging create/upload flow
   const headerOrigin = req.headers.get('origin') ?? '';
   const headerReferer = req.headers.get('referer') ?? '';
