@@ -19,7 +19,7 @@ jest.mock('next/navigation', () => ({
 test('ShareControls should have no basic accessibility violations', async () => {
   const { container } = render(
     <ToastProvider>
-      <ShareControls shareUrl="https://example.com/shared/abc" />
+  <ShareControls shareUrl="https://example.com/shared/abc" />
     </ToastProvider>
   );
   const results = await axe(container);

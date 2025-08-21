@@ -56,9 +56,11 @@ describe('Summary share flow', () => {
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalledWith('/api/sessions/share', expect.any(Object)));
 
-  // After share created, ShareControls should render copy/download/replace buttons
-  await screen.findByRole('button', { name: /copy share link to clipboard/i });
-  await screen.findByRole('button', { name: /download shared session as json/i });
-  await screen.findByRole('button', { name: /replace my activities/i });
+  // After share created, ShareControls should render copy/download and open buttons
+  await screen.findByRole('button', { name: /copy share link/i });
+  await screen.findByRole('button', { name: /download json/i });
+  await screen.findByRole('button', { name: /open shared session in new window/i });
+  // Replace button should be hidden inside the dialog
+  expect(screen.queryByRole('button', { name: /replace my activities/i })).not.toBeInTheDocument();
   });
 });

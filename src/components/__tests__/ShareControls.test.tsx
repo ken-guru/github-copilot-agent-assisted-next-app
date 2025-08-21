@@ -28,7 +28,7 @@ beforeAll(() => {
 });
 
 describe('ShareControls', () => {
-  it('calls copy and open actions and download', async () => {
+  it('calls copy and download actions', async () => {
     const shareUrl = 'https://example.com/shared/abc-123';
 
     // mock clipboard
@@ -46,12 +46,12 @@ describe('ShareControls', () => {
 
     render(<ShareControls shareUrl={shareUrl} />);
 
-  const copyBtn = screen.getByRole('button', { name: /copy share link to clipboard/i });
+  const copyBtn = screen.getByRole('button', { name: /copy share link/i });
     fireEvent.click(copyBtn);
 
     await waitFor(() => expect(navigator.clipboard.writeText).toHaveBeenCalledWith(shareUrl));
 
-  const downloadBtn = screen.getByRole('button', { name: /download shared session as json/i });
+  const downloadBtn = screen.getByRole('button', { name: /download json/i });
     fireEvent.click(downloadBtn);
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalled());

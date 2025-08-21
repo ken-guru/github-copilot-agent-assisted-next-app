@@ -130,7 +130,7 @@ export default function Summary({
       setShowShareControls(true);
       // When share controls appear, focus the first control (copy button) if available
       requestAnimationFrame(() => {
-        const el = document.querySelector('[aria-label="Copy share link to clipboard"]') as HTMLElement | null;
+        const el = document.querySelector('[aria-label="Copy share link"]') as HTMLElement | null;
         if (el && typeof el.focus === 'function' && !el.hasAttribute('disabled') && el.offsetParent !== null) el.focus();
       });
     } catch (e) {
@@ -698,7 +698,7 @@ export default function Summary({
           )}
           {showShareControls && shareUrl && (
             <div className="mt-3">
-              <ShareControls shareUrl={shareUrl} />
+              <ShareControls shareUrl={shareUrl} showOpen={true} showReplace={false} />
             </div>
           )}
         </Modal.Body>

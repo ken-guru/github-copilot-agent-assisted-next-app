@@ -12,9 +12,13 @@ import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/Confirma
 
 interface Props {
   shareUrl: string;
+  // When true, render an "Open" button that opens the share URL in a new window/tab.
+  showOpen?: boolean;
+  // When false, hide the Replace button (useful inside the post-session share dialog).
+  showReplace?: boolean;
 }
 
-export default function ShareControls({ shareUrl }: Props) {
+export default function ShareControls({ shareUrl, showOpen = false, showReplace = true }: Props) {
   const { addResponsiveToast } = useResponsiveToast();
   const router = useRouter();
   const confirmRef = useRef<ConfirmationDialogRef>(null);
@@ -135,30 +139,54 @@ export default function ShareControls({ shareUrl }: Props) {
     >
       <button
         type="button"
-        className="btn btn-outline-primary"
+        className="btn btn-outline-primary d-flex align-items-center"
         onClick={copy}
-        aria-label="Copy share link to clipboard"
+        aria-label="Copy share link"
       >
-        Copy share link
+        <i className="bi bi-clipboard me-2" aria-hidden="true"></i>
+        Copy link
       </button>
       <button
         type="button"
-        className="btn btn-outline-secondary"
+        className="btn btn-outline-secondary d-flex align-items-center"
         onClick={downloadJson}
-        aria-label="Download shared session as JSON"
+        aria-label="Download JSON"
       >
+        <i className="bi bi-download me-2" aria-hidden="true"></i>
         Download JSON
       </button>
-      <button
-        type="button"
-        className="btn btn-warning"
-        onClick={replaceMyActivities}
-        disabled={isReplacing}
-        aria-label="Replace my activities with this shared set"
-        title="Replace my activities with this shared set"
-      >
-        {isReplacing ? 'Replacing…' : 'Replace my activities'}
-      </button>
+      {showOpen && (
+        <button
+          type="button"
+          className="btn btn-outline-success d-flex align-items-center"
+          onClick={() => {
+            try {
+              if (!shareUrl) return;
+              window.open(shareUrl, '_blank', 'noopener,noreferrer');
+            } catch {
+              addResponsiveToast({ message: 'Unable to open link', variant: 'warning', autoDismiss: true });
+            }
+          }}
+          aria-label="Open shared session in new window"
+          title="Open in new window"
+        >
+          <i className="bi bi-box-arrow-up-right me-2" aria-hidden="true"></i>
+          Open
+        </button>
+      )}
+      {showReplace && (
+        <button
+          type="button"
+          className="btn btn-warning d-flex align-items-center"
+          onClick={replaceMyActivities}
+          disabled={isReplacing}
+          aria-label="Replace my activities"
+          title="Replace my activities with this shared set"
+        >
+          <i className="bi bi-arrow-repeat me-2" aria-hidden="true"></i>
+          {isReplacing ? 'Replacing…' : 'Replace activities'}
+        </button>
+      )}
       <ConfirmationDialog
         ref={confirmRef}
         message="This will replace your current activities with the shared set. Continue?"
