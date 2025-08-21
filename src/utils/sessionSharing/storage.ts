@@ -378,7 +378,7 @@ export async function getSession(
       const blobMod = await loadBlobModule();
   const nameCandidates = [`${id}.json`, `${id}`];
   // Prefer dev-specific token when in development for SDK reads
-  const sdkToken = (isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV)
+  const blobToken = (isDev && process.env.BLOB_READ_WRITE_TOKEN_DEV)
     ? process.env.BLOB_READ_WRITE_TOKEN_DEV
     : process.env.BLOB_READ_WRITE_TOKEN || undefined;
       for (const name of nameCandidates) {
@@ -386,7 +386,7 @@ export async function getSession(
           let url: string | undefined;
           if (typeof blobMod.head === 'function') {
             // head() throws on not found; returns { url, ... } when it exists
-    const info = await blobMod.head(name as string, sdkToken ? { token: sdkToken } : undefined);
+    const info = await blobMod.head(name as string, blobToken ? { token: blobToken } : undefined);
             url = (info as { url?: string } | undefined)?.url;
           }
           // Fallback to list() to discover public URL when head() is unavailable
