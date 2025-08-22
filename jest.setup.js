@@ -71,3 +71,21 @@ if (typeof window.URL.createObjectURL === 'undefined') {
 
 // Add mock for React 18 features
 global.IS_REACT_ACT_ENVIRONMENT = true;
+
+// Provide a default mock for next/navigation so components using App Router hooks
+// (e.g., usePathname/useRouter) can render in Jest without a mounted Next.js router.
+// Individual tests can override these defaults with their own jest.mock calls.
+try {
+  jest.mock('next/navigation', () => {
+    return {
+      // Default pathname to root; tests can override via jest.mocked(usePathname).mockReturnValue('/foo')
+      usePathname: jest.fn(() => '/'),
+      // Minimal router with push stub; tests can assert on calls or override implementation
+      useRouter: jest.fn(() => ({ push: jest.fn() })),
+      // notFound is sometimes imported in server components; provide a stub that throws when called
+      notFound: jest.fn(() => { throw new Error('notFound called'); }),
+    };
+  });
+} catch (e) {
+  // In environments where jest.mock is not available or already defined, ignore
+}
