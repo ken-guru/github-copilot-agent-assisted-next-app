@@ -4,6 +4,7 @@ import Script from 'next/script';
 import { ThemeProvider } from '@/contexts/theme';
 import { ApiKeyProvider } from '@/contexts/ApiKeyContext';
 import { ToastProvider } from '@/contexts/ToastContext';
+import { useNavigationGuard } from '@/hooks/useNavigationGuard';
 import { ToastContainer } from '@/components/ui/ToastContainer';
 import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
 import Navigation from '@/components/Navigation';
@@ -139,6 +140,8 @@ export function LayoutClient({ children }: LayoutClientProps) {
         <ToastContainer />
         
         {/* Service worker update notifications - always render the component */}
+  // Activate navigation guard while session is running
+  useNavigationGuard();
         <ServiceWorkerUpdater 
           onUpdate={handleUpdate} 
         />
