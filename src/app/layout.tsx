@@ -9,6 +9,7 @@ import { LayoutClient } from "../components/LayoutClient";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GlobalTimerProvider } from "@/contexts/GlobalTimerContext";
 
 // Font configuration
 const geistSans = Geist({
@@ -136,6 +137,7 @@ export default function RootLayout({
         />
       </head>
       <body className={fontClasses}>
+        <GlobalTimerProvider>
         <LayoutClient>
           {children}
         </LayoutClient>
@@ -219,6 +221,7 @@ export default function RootLayout({
             `
           }}
         />
+        </GlobalTimerProvider>
       </body>
     </html>
   );

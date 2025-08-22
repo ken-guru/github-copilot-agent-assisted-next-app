@@ -29,6 +29,7 @@ const customJestConfig = {
     '^@/styles/(.*)$': '<rootDir>/src/styles/$1',
     '^@/public/(.*)$': '<rootDir>/public/$1',
     '^@/test/(.*)$': '<rootDir>/test/$1',
+  '^@/types/(.*)$': '<rootDir>/src/types/$1',
     // New module aliases for restructuring
     '^@contexts/(.*)$': '<rootDir>/contexts/$1',
     '^@components/(.*)$': '<rootDir>/components/$1',
