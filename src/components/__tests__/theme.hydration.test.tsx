@@ -3,11 +3,13 @@
  */
 import { render, waitFor } from '@testing-library/react';
 import Navigation from '../Navigation';
-import { useThemeReactive } from '@/hooks/useThemeReactive';
+import { useThemeReactive } from '../../hooks/useThemeReactive';
+import { GlobalTimerProvider } from '../../contexts/GlobalTimerContext';
 
 // Mock Next.js hooks
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(() => '/'),
+  useRouter: jest.fn(() => ({ push: jest.fn() })),
 }));
 
 // Mock the ThemeToggle component
@@ -18,6 +20,9 @@ jest.mock('../ThemeToggle', () => {
 });
 
 describe('Theme Hydration Issue #272', () => {
+  const renderWithProviders = (ui: React.ReactElement) =>
+    render(<GlobalTimerProvider>{ui}</GlobalTimerProvider>);
+
   beforeEach(() => {
     // Reset DOM state before each test
     document.documentElement.className = '';
@@ -53,7 +58,7 @@ describe('Theme Hydration Issue #272', () => {
     document.documentElement.classList.add('dark-mode', 'dark');
     
     // Render Navigation component
-    const { container } = render(<Navigation />);
+  const { container } = renderWithProviders(<Navigation />);
     
     const navbar = container.querySelector('nav');
     expect(navbar).toBeInTheDocument();
@@ -81,7 +86,7 @@ describe('Theme Hydration Issue #272', () => {
       return <div data-testid="theme-value">{theme}</div>;
     };
     
-    const { getByTestId } = render(<TestComponent />);
+  const { getByTestId } = render(<TestComponent />);
     const themeValue = getByTestId('theme-value');
     
     // Should detect dark theme immediately
@@ -113,7 +118,7 @@ describe('Theme Hydration Issue #272', () => {
     document.documentElement.classList.add('dark-mode', 'dark');
     
     // Render component
-    const { container } = render(<Navigation />);
+  const { container } = renderWithProviders(<Navigation />);
     
     // Component should eventually sync with DOM theme
     await waitFor(() => {
@@ -131,7 +136,7 @@ describe('Theme Hydration Issue #272', () => {
     document.documentElement.setAttribute('data-bs-theme', 'light');
     document.documentElement.classList.add('light-mode');
     
-    const { container } = render(<Navigation />);
+  const { container } = renderWithProviders(<Navigation />);
     
     // Wait for initial render
     await waitFor(() => {

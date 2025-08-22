@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ThemeProvider } from '@/contexts/theme';
-import Navigation from '@/components/Navigation';
+import { ThemeProvider } from '../../contexts/theme';
+import { GlobalTimerProvider } from '../../contexts/GlobalTimerContext';
+import Navigation from '../Navigation';
 
 // Mock Next.js Link component
 jest.mock('next/link', () => {
@@ -14,9 +15,11 @@ jest.mock('next/link', () => {
 
 const renderWithTheme = (component: React.ReactElement) => {
   return render(
-    <ThemeProvider>
-      {component}
-    </ThemeProvider>
+    <GlobalTimerProvider>
+      <ThemeProvider>
+        {component}
+      </ThemeProvider>
+    </GlobalTimerProvider>
   );
 };
 

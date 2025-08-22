@@ -1,12 +1,14 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { usePathname } from 'next/navigation';
-import Navigation from '@/components/Navigation';
-import { ThemeProvider } from '@/contexts/ThemeContext';
+import Navigation from '../Navigation';
+import { ThemeProvider } from '../../contexts/ThemeContext';
+import { GlobalTimerProvider } from '../../contexts/GlobalTimerContext';
 
 // Mock Next.js navigation hook
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(),
+  useRouter: jest.fn(() => ({ push: jest.fn() })),
 }));
 
 // Mock ThemeToggle component
@@ -25,9 +27,11 @@ const mockUsePathname = usePathname as jest.MockedFunction<typeof usePathname>;
 describe('Navigation - Active State Management', () => {
   const renderNavigation = () => {
     return render(
-      <ThemeProvider>
-        <Navigation />
-      </ThemeProvider>
+      <GlobalTimerProvider>
+        <ThemeProvider>
+          <Navigation />
+        </ThemeProvider>
+      </GlobalTimerProvider>
     );
   };
 

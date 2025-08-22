@@ -11,6 +11,7 @@ import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
 import Navigation from '@/components/Navigation';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import TimerDrawer from '@/components/TimerDrawer';
+import { useOptionalGlobalTimer } from '@/contexts/GlobalTimerContext';
 
 // Add TypeScript interface for the global window object
 declare global {
@@ -24,6 +25,19 @@ interface LayoutClientProps {
 }
 
 export function LayoutClient({ children }: LayoutClientProps) {
+  // Apply dynamic bottom padding to body to avoid overlap with fixed TimerDrawer
+  const timerCtx = useOptionalGlobalTimer();
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const body = document.body;
+    if (!body) return;
+    const previous = body.style.paddingBottom;
+    const isDrawerVisible = !!timerCtx?.sessionStartTime;
+    body.style.paddingBottom = isDrawerVisible ? '72px' : '0px';
+    return () => {
+      body.style.paddingBottom = previous;
+    };
+  }, [timerCtx?.sessionStartTime]);
   // Activate navigation guard while session is running
   useNavigationGuard();
   // Sync route changes into global timer page state and drawer behavior
