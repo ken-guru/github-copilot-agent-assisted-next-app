@@ -156,8 +156,10 @@ Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
   - Replace local timer state with global timer context
   - Update ActivityManager to consume global state instead of managing locally
   - Maintain existing UI and behavior but with global state backing
-- **Progress Bar Integration**:
-  - Move progress bar logic to TimerDrawer for persistence
+  - Unified current activity derivation and corrected overtime math using effective total duration
+  - Added optional accessor `useOptionalGlobalTimer` to support mixed provider contexts and tests
+- **Progress Bar Integration** (pending):
+  - Move progress bar logic to TimerDrawer for persistence (to be migrated)
   - Keep progress display in ActivityManager for timer page
 
 #### Phase 7: Layout and Styling
@@ -187,11 +189,10 @@ Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
   - Phase 2: Added `GlobalTimerContext` with reducer + `localStorage` persistence; exposed `useGlobalTimer`; wrapped app provider; tests passing
   - Phase 3: Implemented persistent `TimerDrawer` with collapsed/expanded states; integrated into `LayoutClient`; added collapsed “+1 min” quick action specifically when on the timer page; tests added/updated
   - Phase 4: Implemented `useNavigationGuard` (browser `beforeunload`) when a session runs; integrated at layout top-level; tests passing
-- Phase 5 (partial):
-  - Implemented `usePageStateSync` to map route → `currentPage` (`'timer' | 'summary' | 'other'`) and to manage drawer behavior (collapse on timer page and when no session)
-  - Enhanced `TimerDrawer` collapsed UI to show a quick “+1 min” action on the timer page
-  - Added tests for `usePageStateSync` and updated `TimerDrawer` tests; `LayoutClient` tests mock guard/page-sync hooks to avoid provider coupling
-  - Full suite: PASS (unit), plus lint/type-check/build PASS
+  - Phase 5: Implemented `usePageStateSync` to map route → `currentPage` and manage drawer behavior; added internal navigation confirmation modal in `Navigation` with timer-aware labeling; tests updated; full suite PASS
+- Phase 6 (in progress):
+  - ActivityManager migrated to optionally consume `GlobalTimerContext` with prop precedence; unified selection toggling and corrected overtime calculations; added integration tests; suite PASS
+  - Progress bar migration to `TimerDrawer` still pending; ActivityManager retains on-page progress display
 
 Challenges/Findings
 - Next.js `next/navigation` hooks: avoid `jest.spyOn` on `usePathname` (read-only); use module-level mocks to prevent “Cannot redefine property: usePathname”
@@ -200,17 +201,14 @@ Challenges/Findings
 - Deterministic tests: explicitly set `currentPage` to `'timer'` within harness to assert collapsed quick action visibility
 - Drawer behavior clarified: hidden on summary or when no session; collapsed quick action shown only on the timer page to reduce layout shift
 
-Pending (Phase 5 remainder and beyond)
-- Phase 5:
-  - Smart “Timer” navigation link: route to active session when running, otherwise to setup (timer-aware routing)
-  - Internal navigation confirmation modal for in-app route changes during an active session (custom dialog)
-- Phase 6: Migrate `ActivityManager` to consume `GlobalTimerContext` (replace local timer state), preserving UI/behavior
+Pending (remaining items)
+- Phase 6: Progress bar migration into `TimerDrawer` while keeping timer-page display
 - Phase 7: Bottom padding management for drawer, Bootstrap collapse animations, and theming polish
 
 Next Actions
-1) Implement timer-aware nav link behavior in navigation component(s) (assumption: existing Timer nav item routes to the timer page; if no session, route to setup page)
-2) Implement internal navigation confirmation modal wired to Next.js router events; provide continue/cancel actions and tests
-3) Begin Phase 6 migration: refactor `ActivityManager` to use global timer state; add/update tests
+1) Migrate progress bar logic from `ActivityManager` into `TimerDrawer` for persistence and cross-page visibility
+2) Add dynamic bottom padding when drawer is visible; wire to CSS variables for responsiveness
+3) Optional: Add Bootstrap collapse animations for drawer expand/collapse and finalize theming polish
 
 #### Phase 1: Cleanup (1-2 days)
 - [x] Remove `restoreActivity` functionality from state machine
@@ -231,19 +229,19 @@ Next Actions
 - [ ] Add expand/collapse animations
 
 #### Phase 4: Navigation Integration (1-2 days)
-- [ ] Update navigation components for timer-aware routing
+- [x] Update navigation components for timer-aware routing (timer-aware label + confirm modal)
 - [x] Implement page state tracking
-- [ ] Add smart timer navigation logic
+- [x] Add smart timer navigation logic
 
 #### Phase 5: Navigation Guards (1-2 days)
 - [x] Implement `beforeunload` event handling
-- [ ] Create custom navigation confirmation modal
-- [ ] Add Next.js router event integration
+- [x] Create custom navigation confirmation modal for internal navigation during active sessions
+- [x] Integrate with Next.js App Router `useRouter` in `Navigation` to intercept link clicks and confirm
 
 #### Phase 6: State Migration (2-3 days)
-- [ ] Refactor ActivityManager to use global timer state
-- [ ] Update all timer-related components to use global context
-- [ ] Ensure backward compatibility of existing functionality
+- [x] Refactor ActivityManager to optionally use global timer state with prop precedence
+- [ ] Move progress bar logic into `TimerDrawer`; keep ActivityManager page display
+- [x] Ensure backward compatibility of existing functionality (tests added)
 
 #### Phase 7: Layout & Polish (1-2 days)
 - [ ] Implement responsive bottom padding management
@@ -255,8 +253,8 @@ Next Actions
 - [ ] Timer state persists across all navigation scenarios
 - [ ] Drawer shows correctly in collapsed/expanded states
 - [ ] "+1 min" button works from drawer in all states
-- [ ] Navigation prevention works for both internal and external navigation
-- [ ] Timer navigation intelligently routes to active session or new timer
+- [x] Navigation prevention works for both internal and external navigation
+- [x] Timer navigation intelligently routes to active session or new timer
 - [ ] All existing timer functionality preserved
 - [ ] Mobile responsive design works properly
 - [ ] Accessibility requirements met (WCAG AA)
