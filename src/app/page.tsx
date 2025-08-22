@@ -25,7 +25,6 @@ function AppContent() {
     allActivitiesCompleted,
     handleActivitySelect,
     handleActivityRemoval,
-  restoreActivity,
     resetActivities,
   } = useActivityState({
     onTimerStart: () => {
@@ -168,7 +167,6 @@ function AppContent() {
                 <ActivityManager 
                   onActivitySelect={handleActivitySelect} 
                   onActivityRemove={handleActivityRemoval}
-                  onActivityRestore={restoreActivity}
                   currentActivityId={currentActivity?.id || null} 
                   completedActivityIds={completedActivityIds}
                   removedActivityIds={removedActivityIds}

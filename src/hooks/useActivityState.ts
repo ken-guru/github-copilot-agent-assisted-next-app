@@ -28,7 +28,6 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     startActivity,
     completeActivity,
     removeActivity,
-  restoreActivity,
     resetActivities: resetActivityTracking,
     // New state machine methods
     getCurrentActivity: getCurrentActivityState,
@@ -160,7 +159,6 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     handleActivityRemoval,
     checkActivitiesCompleted,
     resetActivities,
-  restoreActivity,
     // New method to get current activity state
     getCurrentActivityStateDetails,
     // Method to get state of a specific activity

@@ -17,7 +17,6 @@ type Activity = CanonicalActivity & { colors?: ColorSet };
 interface ActivityManagerProps {
   onActivitySelect: (activity: Activity | null, justAdd?: boolean) => void;
   onActivityRemove?: (activityId: string) => void;
-  onActivityRestore?: (activityId: string) => void;
   currentActivityId: string | null;
   completedActivityIds: string[];
   removedActivityIds?: string[];
@@ -36,10 +35,9 @@ interface ActivityManagerProps {
 export default function ActivityManager({ 
   onActivitySelect, 
   onActivityRemove,
-  onActivityRestore,
   currentActivityId, 
   completedActivityIds,
-  removedActivityIds = [],
+  removedActivityIds = [], // eslint-disable-line @typescript-eslint/no-unused-vars
   timelineEntries,
   elapsedTime = 0,
   totalDuration = 0,
@@ -48,7 +46,6 @@ export default function ActivityManager({
   onExtendDuration
 }: ActivityManagerProps) {
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [showHiddenList, setShowHiddenList] = useState(false);
   
   // State preservation for form values during unmount/remount cycles
   const [preservedFormValues, setPreservedFormValues] = useState<{
@@ -151,10 +148,6 @@ export default function ActivityManager({
     }
   }, [currentActivityId, onActivitySelect, onActivityRemove, timerActive]);
 
-  const handleRestoreActivity = useCallback((id: string) => {
-    onActivityRestore?.(id);
-  }, [onActivityRestore]);
-
   const handleExtendDuration = useCallback(() => {
     if (onExtendDuration) {
       onExtendDuration();
@@ -164,7 +157,6 @@ export default function ActivityManager({
   const handleResetSession = useCallback(() => {
     // Clear preserved form values on session reset
     setPreservedFormValues({ name: '', description: '' });
-  setShowHiddenList(false);
     // Call global reset function to reset timer/session
     if (onReset) {
       onReset();
@@ -181,15 +173,11 @@ export default function ActivityManager({
   const isOvertime = elapsedTime > totalDuration;
   const timeOverage = isOvertime ? Math.floor(elapsedTime - totalDuration) : 0;
 
-  // Derived lists
-  const hiddenSet = new Set(removedActivityIds);
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [showShareControls, setShowShareControls] = useState(false);
   const { addResponsiveToast } = useResponsiveToast();
-  const visibleActivities = activities.filter(a => !hiddenSet.has(a.id));
-  const hiddenActivities = activities.filter(a => hiddenSet.has(a.id));
 
   const handleCreateShare = useCallback(async () => {
     try {
@@ -300,7 +288,7 @@ export default function ActivityManager({
         {/* Activities List - scrollable if needed */}
         <div className="flex-grow-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
           <Row className="gy-3" data-testid="activity-list">
-            {visibleActivities.map((activity) => (
+            {activities.map((activity) => (
               <Col 
                 key={activity.id} 
                 xs={12}
@@ -318,44 +306,6 @@ export default function ActivityManager({
               </Col>
             ))}
           </Row>
-
-          {/* Hidden activities control */}
-          {hiddenActivities.length > 0 && (
-            <div className="mt-3">
-              <Button
-                variant="outline-secondary"
-                size="sm"
-                className="d-inline-flex align-items-center hidden-activities-toggle"
-                onClick={() => setShowHiddenList(v => !v)}
-                data-testid="toggle-hidden-activities"
-              >
-                <i className={`bi ${showHiddenList ? 'bi-eye-slash' : 'bi-eye'} me-2`} />
-                {showHiddenList ? 'Hide' : 'Show'} {hiddenActivities.length} hidden {hiddenActivities.length === 1 ? 'activity' : 'activities'}
-              </Button>
-
-              {showHiddenList && (
-                <div
-                  className="hidden-activities-panel bg-body-tertiary border rounded-3 p-2 mt-2"
-                  data-testid="hidden-activities-panel"
-                >
-                  {hiddenActivities.map((activity) => (
-                    <div key={activity.id} className="d-flex justify-content-between align-items-center py-1">
-                      <span className="text-body-secondary small">{activity.name}</span>
-                      <Button
-                        variant="outline-secondary"
-                        size="sm"
-                        className="px-2 py-1"
-                        onClick={() => handleRestoreActivity(activity.id)}
-                        data-testid={`restore-activity-${activity.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
-                      >
-                        Restore
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </Card.Body>
 
