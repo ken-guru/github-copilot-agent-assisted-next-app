@@ -14,6 +14,7 @@ const TimerDrawer: React.FC = () => {
     drawerExpanded,
     setDrawerExpanded,
     addOneMinute,
+    currentPage,
   } = useGlobalTimer();
 
   // Only render when a session is active
@@ -47,6 +48,16 @@ const TimerDrawer: React.FC = () => {
               {formatTime(remaining)}
             </div>
           </div>
+          {/* When on the timer page, surface quick action even when collapsed */}
+          {currentPage === 'timer' && !drawerExpanded && (
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={() => addOneMinute()}
+            >
+              Add 1 min
+            </button>
+          )}
           <button
             type="button"
             className="btn btn-sm btn-outline-secondary"

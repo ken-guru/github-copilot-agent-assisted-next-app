@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/contexts/theme';
 import { ApiKeyProvider } from '@/contexts/ApiKeyContext';
 import { ToastProvider } from '@/contexts/ToastContext';
 import { useNavigationGuard } from '@/hooks/useNavigationGuard';
+import { usePageStateSync } from '@/hooks/usePageStateSync';
 import { ToastContainer } from '@/components/ui/ToastContainer';
 import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
 import Navigation from '@/components/Navigation';
@@ -23,6 +24,11 @@ interface LayoutClientProps {
 }
 
 export function LayoutClient({ children }: LayoutClientProps) {
+  // Activate navigation guard while session is running
+  useNavigationGuard();
+  // Sync route changes into global timer page state and drawer behavior
+  usePageStateSync();
+
   // Handle service worker updates
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -140,8 +146,6 @@ export function LayoutClient({ children }: LayoutClientProps) {
         <ToastContainer />
         
         {/* Service worker update notifications - always render the component */}
-  // Activate navigation guard while session is running
-  useNavigationGuard();
         <ServiceWorkerUpdater 
           onUpdate={handleUpdate} 
         />

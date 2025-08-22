@@ -3,6 +3,14 @@ import { render, screen } from '@testing-library/react';
 import { LayoutClient } from '../LayoutClient';
 import * as useOnlineStatusModule from '../../hooks/useOnlineStatus';
 
+// Mock hooks that rely on GlobalTimerProvider to avoid provider coupling here
+jest.mock('../../hooks/useNavigationGuard', () => ({
+  useNavigationGuard: jest.fn(),
+}));
+jest.mock('../../hooks/usePageStateSync', () => ({
+  usePageStateSync: jest.fn(),
+}));
+
 // Mock next/script
 jest.mock('next/script', () => {
   return function MockScript({ src }: { src?: string }) {

@@ -2,6 +2,11 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { GlobalTimerProvider, useGlobalTimer } from '../../contexts/GlobalTimerContext';
 import TimerDrawer from '../TimerDrawer';
+// Mock next/navigation to control pathname in tests
+jest.mock('next/navigation', () => ({
+  usePathname: jest.fn(() => '/'),
+}));
+import { usePathname } from 'next/navigation';
 
 // Helper to start a session immediately on mount
 const StartSessionOnMount: React.FC<{ totalDuration: number; startTime: number }> = ({ totalDuration, startTime }) => {
@@ -9,6 +14,15 @@ const StartSessionOnMount: React.FC<{ totalDuration: number; startTime: number }
   React.useEffect(() => {
     startSession(totalDuration, { startTime, sessionId: 'test-session' });
   }, [startSession, totalDuration, startTime]);
+  return null;
+};
+
+// Helper to set current page in context (to simulate being on timer page)
+const SetPageOnMount: React.FC<{ page: 'timer' | 'summary' | 'other' }> = ({ page }) => {
+  const { setCurrentPage } = useGlobalTimer();
+  React.useEffect(() => {
+    setCurrentPage(page);
+  }, [setCurrentPage, page]);
   return null;
 };
 
@@ -36,6 +50,8 @@ describe('TimerDrawer', () => {
   beforeEach(() => {
     // Ensure no persisted state interferes
     window.localStorage.clear();
+    // Default pathname as timer page
+    (usePathname as unknown as jest.Mock).mockReturnValue('/');
   });
 
   it('does not render when no session is active', () => {
@@ -98,5 +114,21 @@ describe('TimerDrawer', () => {
 
     // After adding, remaining = 120s => 02:00
   expect(screen.getByTestId('remaining-time').textContent).toContain('02:00');
+  });
+
+  it('shows Add 1 min even when collapsed on the timer page', async () => {
+    const sessionStart = FIXED_NOW - 60_000; // 60s ago
+    renderWithProvider(<>
+      <SetPageOnMount page="timer" />
+      <StartSessionOnMount totalDuration={120} startTime={sessionStart} />
+      <TimerDrawer />
+    </>);
+
+    await waitFor(() => expect(screen.getByTestId('timer-drawer')).toBeTruthy());
+    // Collapsed by default on timer page; quick action should be visible
+    const addBtn = await screen.findByRole('button', { name: /add 1 min/i });
+    fireEvent.click(addBtn);
+    // Remaining initially: 60s -> after click: 120s
+    expect(screen.getByTestId('remaining-time').textContent).toContain('02:00');
   });
 });
