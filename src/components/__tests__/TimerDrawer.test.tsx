@@ -131,4 +131,28 @@ describe('TimerDrawer', () => {
     // Remaining initially: 60s -> after click: 120s
     expect(screen.getByTestId('remaining-time').textContent).toContain('02:00');
   });
+
+  it('renders a progress bar reflecting elapsed/total (capped at 100%)', async () => {
+    const sessionStart = FIXED_NOW - 90_000; // 90s ago
+    renderWithProvider(<>
+      <StartSessionOnMount totalDuration={300} startTime={sessionStart} />
+      <TimerDrawer />
+    </>);
+
+    await waitFor(() => expect(screen.getByTestId('timer-drawer')).toBeTruthy());
+    const progress = await screen.findByTestId('timer-progressbar');
+    // 90/300 = 30%
+    expect(progress).toHaveAttribute('aria-valuenow', '30');
+
+    // Overtime case: elapsed > totalDuration => cap at 100
+    window.localStorage.clear();
+    renderWithProvider(<>
+      <StartSessionOnMount totalDuration={60} startTime={FIXED_NOW - 120_000} />
+      <TimerDrawer />
+    </>);
+    await waitFor(() => expect(screen.getAllByTestId('timer-progressbar').length).toBeGreaterThan(0));
+    const bars = screen.getAllByTestId('timer-progressbar');
+    const overtimeProgress = bars[bars.length - 1];
+    expect(overtimeProgress).toHaveAttribute('aria-valuenow', '100');
+  });
 });

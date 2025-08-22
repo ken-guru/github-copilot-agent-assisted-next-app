@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, Row, Col, Button, Modal, Spinner } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
@@ -10,6 +10,8 @@ import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
+import { useOptionalGlobalTimer } from '@/contexts/GlobalTimerContext';
+import { computeProgress } from '@/utils/timerProgress';
 
 // Use canonical Activity type
 type Activity = CanonicalActivity & { colors?: ColorSet };
@@ -45,7 +47,27 @@ export default function ActivityManager({
   onReset,
   onExtendDuration
 }: ActivityManagerProps) {
+  // Optional global timer context. If present, prefer it for timer state and actions
+  const timerCtx = useOptionalGlobalTimer();
+
+  // Derive effective timer props from context when available, else use provided props
+  const effective = useMemo(() => {
+    const ctxActive = !!timerCtx?.isTimerRunning;
+    const ctxCurrentId = timerCtx?.currentActivity?.id ?? null;
+    return {
+      timerActive: timerCtx ? ctxActive : timerActive,
+      currentActivityId: timerCtx ? ctxCurrentId : currentActivityId,
+      totalDuration: timerCtx ? timerCtx.totalDuration : totalDuration,
+      // Handlers: prefer props when provided to preserve existing external control
+      onReset: onReset ?? (timerCtx ? timerCtx.resetSession : undefined),
+      onExtend: onExtendDuration ?? (timerCtx ? timerCtx.addOneMinute : undefined),
+      onSelect: onActivitySelect ?? (timerCtx ? (a: Activity | null) => timerCtx.setCurrentActivity(a) : undefined),
+    };
+  }, [timerCtx, timerActive, currentActivityId, totalDuration, onReset, onExtendDuration, onActivitySelect]);
+
   const [activities, setActivities] = useState<Activity[]>([]);
+  // Unified current activity id used by UI and handlers
+  const derivedCurrentActivityId = useMemo(() => effective.currentActivityId ?? currentActivityId, [effective.currentActivityId, currentActivityId]);
   
   // State preservation for form values during unmount/remount cycles
   const [preservedFormValues, setPreservedFormValues] = useState<{
@@ -62,9 +84,15 @@ export default function ActivityManager({
     setActivities(loadedActivities);
     // Register activities in state machine
     loadedActivities.forEach(activity => {
-      onActivitySelect(activity, true);
+      // When using context-backed selection, we only register activities locally
+      // and avoid dispatching selection side effects on mount
+      if (effective.onSelect && effective.onSelect !== onActivitySelect) {
+        // no-op: keep context clean on mount
+      } else {
+        onActivitySelect(activity, true);
+      }
     });
-  }, [onActivitySelect]);
+  }, [onActivitySelect, effective.onSelect]);
 
   // Listen for theme changes
   useEffect(() => {
@@ -116,29 +144,40 @@ export default function ActivityManager({
   }, [onActivitySelect]);
 
   const handleActivitySelect = useCallback((activity: Activity) => {
-    if (activity.id === currentActivityId) {
-      onActivitySelect(null);
+    const isSame = activity.id === derivedCurrentActivityId;
+    const target: Activity | null = isSame ? null : {
+      ...activity,
+      colors: activity.colors || getNextAvailableColorSet(activity.colorIndex || 0)
+    };
+    if (effective.onSelect && effective.onSelect !== onActivitySelect) {
+      // Context-backed selection
+      effective.onSelect(target);
     } else {
-      onActivitySelect({
-        ...activity,
-        colors: activity.colors || getNextAvailableColorSet(activity.colorIndex || 0)
-      });
+      onActivitySelect(target);
     }
-  }, [currentActivityId, onActivitySelect]);
+  }, [derivedCurrentActivityId, effective, onActivitySelect]);
 
   const handleRemoveActivity = useCallback((id: string) => {
-    if (timerActive) {
+    if (effective.timerActive) {
       // Session-only hide/skip: do NOT persist delete
-      if (id === currentActivityId) {
-        onActivitySelect(null);
+      if (id === derivedCurrentActivityId) {
+        if (effective.onSelect && effective.onSelect !== onActivitySelect) {
+          effective.onSelect(null);
+        } else {
+          onActivitySelect(null);
+        }
       }
       if (onActivityRemove) {
         onActivityRemove(id);
       }
     } else {
       // CRUD-like behavior (not typical for this component, but preserve existing logic)
-      if (id === currentActivityId) {
-        onActivitySelect(null);
+      if (id === derivedCurrentActivityId) {
+        if (effective.onSelect && effective.onSelect !== onActivitySelect) {
+          effective.onSelect(null);
+        } else {
+          onActivitySelect(null);
+        }
       }
       setActivities(prev => prev.filter(activity => activity.id !== id));
       persistDeleteActivity(id);
@@ -146,32 +185,36 @@ export default function ActivityManager({
         onActivityRemove(id);
       }
     }
-  }, [currentActivityId, onActivitySelect, onActivityRemove, timerActive]);
+  }, [effective, derivedCurrentActivityId, onActivitySelect, onActivityRemove]);
 
   const handleExtendDuration = useCallback(() => {
-    if (onExtendDuration) {
-      onExtendDuration();
+    if (effective.onExtend) {
+      effective.onExtend();
     }
-  }, [onExtendDuration]);
+  }, [effective]);
 
   const handleResetSession = useCallback(() => {
     // Clear preserved form values on session reset
     setPreservedFormValues({ name: '', description: '' });
     // Call global reset function to reset timer/session
-    if (onReset) {
-      onReset();
+    if (effective.onReset) {
+      effective.onReset();
     }
-  }, [onReset]);
+  }, [effective]);
 
   // Callback to update preserved form values as user types
   const handleFormValuesChange = useCallback((values: { name: string; description: string }) => {
     setPreservedFormValues(values);
   }, []);
 
-  // Calculate overtime status - show overtime if elapsed time exceeds total duration
-  // This handles both zero-duration starts and normal overtime scenarios
-  const isOvertime = elapsedTime > totalDuration;
-  const timeOverage = isOvertime ? Math.floor(elapsedTime - totalDuration) : 0;
+  // Calculate progress and overtime status using shared utility when context is available
+  const effectiveTotal = effective.totalDuration ?? totalDuration;
+  const contextProgress = timerCtx && timerCtx.sessionStartTime
+    ? computeProgress(timerCtx.sessionStartTime, effectiveTotal)
+    : null;
+  const effectiveElapsed = contextProgress ? contextProgress.elapsed : elapsedTime;
+  const isOvertime = effectiveElapsed > effectiveTotal;
+  const timeOverage = isOvertime ? Math.floor(effectiveElapsed - effectiveTotal) : 0;
 
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
@@ -223,7 +266,7 @@ export default function ActivityManager({
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0">Activities</h5>
         <div className="d-flex gap-2">
-          {onExtendDuration && (
+          {(effective.onExtend) && (
             <Button 
               variant="outline-primary" 
               size="sm" 
@@ -235,7 +278,7 @@ export default function ActivityManager({
               1 min
             </Button>
           )}
-          {onReset && (
+          {effective.onReset && (
             <Button 
               variant="outline-danger" 
               size="sm" 
@@ -250,7 +293,7 @@ export default function ActivityManager({
           {/* Share action - creates a public share of current session
               Only show after the session is complete (summary state). */}
           {/* Summary state heuristic: timer is inactive, we have timeline entries, and there's no running activity */}
-          {(!timerActive && timelineEntries.length > 0 && currentActivityId == null) && (
+          {(!effective.timerActive && timelineEntries.length > 0 && (effective.currentActivityId ?? currentActivityId) == null) && (
             <Button
               variant="outline-success"
               size="sm"
@@ -269,9 +312,9 @@ export default function ActivityManager({
         {/* Timer Progress Section - isolated from activity form */}
         <TimerProgressSection
           entries={timelineEntries}
-          totalDuration={totalDuration}
-          elapsedTime={elapsedTime}
-          timerActive={timerActive}
+          totalDuration={effective.totalDuration ?? totalDuration}
+          elapsedTime={effectiveElapsed}
+          timerActive={effective.timerActive}
         />
         
         {/* Activity Form Section - isolated from timer updates */}
@@ -297,11 +340,11 @@ export default function ActivityManager({
                 <ActivityButton
                   activity={activity}
                   isCompleted={completedActivityIds.includes(activity.id)}
-                  isRunning={activity.id === currentActivityId}
+                  isRunning={activity.id === derivedCurrentActivityId}
                   onSelect={handleActivitySelect}
                   onRemove={onActivityRemove ? handleRemoveActivity : undefined}
                   timelineEntries={timelineEntries}
-                  elapsedTime={elapsedTime}
+                  elapsedTime={effectiveElapsed}
                 />
               </Col>
             ))}

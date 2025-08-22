@@ -2,10 +2,7 @@
 import React from 'react';
 import { useGlobalTimer } from '@/contexts/GlobalTimerContext';
 import { formatTime } from '@/utils/timeUtils';
-
-function secondsBetween(fromMs: number, toMs: number): number {
-  return Math.max(0, Math.floor((toMs - fromMs) / 1000));
-}
+import { computeProgress } from '@/utils/timerProgress';
 
 const TimerDrawer: React.FC = () => {
   const {
@@ -20,9 +17,7 @@ const TimerDrawer: React.FC = () => {
   // Only render when a session is active
   if (!sessionStartTime) return null;
 
-  const now = Date.now();
-  const elapsed = secondsBetween(sessionStartTime, now);
-  const remaining = Math.max(0, totalDuration - elapsed);
+  const { elapsed, remaining, percent } = computeProgress(sessionStartTime, totalDuration);
 
   const handleToggle = () => setDrawerExpanded(!drawerExpanded);
 
@@ -67,6 +62,24 @@ const TimerDrawer: React.FC = () => {
           >
             <i className={`bi ${drawerExpanded ? 'bi-chevron-down' : 'bi-chevron-up'}`} aria-hidden="true" />
           </button>
+        </div>
+
+        {/* Minimal inline progress indicator for cross-page visibility */}
+        <div className="mt-2" aria-label="Timer progress">
+          <div
+            className="progress"
+            style={{ height: 6 }}
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.floor(percent)}
+            data-testid="timer-progressbar"
+          >
+            <div
+              className="progress-bar"
+              style={{ width: `${percent}%` }}
+            />
+          </div>
         </div>
 
         {drawerExpanded && (

@@ -202,3 +202,10 @@ export function useGlobalTimer(): GlobalTimerContextValue {
   }
   return ctx;
 }
+
+// Optional accessor for consumers that want to use the context when available
+// without forcing a provider in test environments. Returns undefined when no provider
+// is present, allowing components to fall back to prop-based behavior.
+export function useOptionalGlobalTimer(): GlobalTimerContextValue | undefined {
+  return useContext(GlobalTimerContext);
+}
