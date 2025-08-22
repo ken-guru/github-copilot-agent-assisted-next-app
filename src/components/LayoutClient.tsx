@@ -8,6 +8,7 @@ import { ToastContainer } from '@/components/ui/ToastContainer';
 import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
 import Navigation from '@/components/Navigation';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
+import TimerDrawer from '@/components/TimerDrawer';
 
 // Add TypeScript interface for the global window object
 declare global {
@@ -149,6 +150,9 @@ export function LayoutClient({ children }: LayoutClientProps) {
         <Navigation />
         
         {children}
+
+        {/* Persistent timer controls and status */}
+        <TimerDrawer />
       </ToastProvider>
       </ApiKeyProvider>
     </ThemeProvider>
