@@ -179,31 +179,64 @@ Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
 
 ### Implementation Phases
 
+#### Progress Update — 2025-08-22
+
+- Branch: `feature-344-persistent-timer-drawer` | Draft PR: #348 (green: tests, lint, type-check, build)
+- Completed Phases:
+  - Phase 1: Removed legacy restore logic and related UI/tests; cleaned types and imports
+  - Phase 2: Added `GlobalTimerContext` with reducer + `localStorage` persistence; exposed `useGlobalTimer`; wrapped app provider; tests passing
+  - Phase 3: Implemented persistent `TimerDrawer` with collapsed/expanded states; integrated into `LayoutClient`; added collapsed “+1 min” quick action specifically when on the timer page; tests added/updated
+  - Phase 4: Implemented `useNavigationGuard` (browser `beforeunload`) when a session runs; integrated at layout top-level; tests passing
+- Phase 5 (partial):
+  - Implemented `usePageStateSync` to map route → `currentPage` (`'timer' | 'summary' | 'other'`) and to manage drawer behavior (collapse on timer page and when no session)
+  - Enhanced `TimerDrawer` collapsed UI to show a quick “+1 min” action on the timer page
+  - Added tests for `usePageStateSync` and updated `TimerDrawer` tests; `LayoutClient` tests mock guard/page-sync hooks to avoid provider coupling
+  - Full suite: PASS (unit), plus lint/type-check/build PASS
+
+Challenges/Findings
+- Next.js `next/navigation` hooks: avoid `jest.spyOn` on `usePathname` (read-only); use module-level mocks to prevent “Cannot redefine property: usePathname”
+- Layout-level hooks (guard + page sync) required test isolation by mocking these hooks in layout tests to avoid provider dependencies
+- ESLint `@typescript-eslint/no-require-imports` flagged legacy require-style mocks; resolved via typed `jest.mocked` imports
+- Deterministic tests: explicitly set `currentPage` to `'timer'` within harness to assert collapsed quick action visibility
+- Drawer behavior clarified: hidden on summary or when no session; collapsed quick action shown only on the timer page to reduce layout shift
+
+Pending (Phase 5 remainder and beyond)
+- Phase 5:
+  - Smart “Timer” navigation link: route to active session when running, otherwise to setup (timer-aware routing)
+  - Internal navigation confirmation modal for in-app route changes during an active session (custom dialog)
+- Phase 6: Migrate `ActivityManager` to consume `GlobalTimerContext` (replace local timer state), preserving UI/behavior
+- Phase 7: Bottom padding management for drawer, Bootstrap collapse animations, and theming polish
+
+Next Actions
+1) Implement timer-aware nav link behavior in navigation component(s) (assumption: existing Timer nav item routes to the timer page; if no session, route to setup page)
+2) Implement internal navigation confirmation modal wired to Next.js router events; provide continue/cancel actions and tests
+3) Begin Phase 6 migration: refactor `ActivityManager` to use global timer state; add/update tests
+
 #### Phase 1: Cleanup (1-2 days)
-- [ ] Remove `restoreActivity` functionality from state machine
-- [ ] Remove activity restore UI and callbacks
-- [ ] Update tests to remove restore-related test cases
-- [ ] Clean up unused imports and interfaces
+- [x] Remove `restoreActivity` functionality from state machine
+- [x] Remove activity restore UI and callbacks
+- [x] Update tests to remove restore-related test cases
+- [x] Clean up unused imports and interfaces
 
 #### Phase 2: Global Context (2-3 days)
-- [ ] Create `GlobalTimerContext` and provider
-- [ ] Implement timer state persistence with localStorage
-- [ ] Add timer state management actions and reducers
-- [ ] Create custom hooks for timer state access
+- [x] Create `GlobalTimerContext` and provider
+- [x] Implement timer state persistence with localStorage
+- [x] Add timer state management actions and reducers
+- [x] Create custom hooks for timer state access
 
 #### Phase 3: Timer Drawer UI (2-3 days)
-- [ ] Build `TimerDrawer` component with collapsed/expanded states
+- [x] Build `TimerDrawer` component with collapsed/expanded states
 - [ ] Create `RunningActivityCard` component
-- [ ] Implement Bootstrap-based responsive design
+- [x] Implement Bootstrap-based responsive design
 - [ ] Add expand/collapse animations
 
 #### Phase 4: Navigation Integration (1-2 days)
 - [ ] Update navigation components for timer-aware routing
-- [ ] Implement page state tracking
+- [x] Implement page state tracking
 - [ ] Add smart timer navigation logic
 
 #### Phase 5: Navigation Guards (1-2 days)
-- [ ] Implement `beforeunload` event handling
+- [x] Implement `beforeunload` event handling
 - [ ] Create custom navigation confirmation modal
 - [ ] Add Next.js router event integration
 
