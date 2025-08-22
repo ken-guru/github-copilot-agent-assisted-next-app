@@ -158,14 +158,16 @@ Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
   - Maintain existing UI and behavior but with global state backing
   - Unified current activity derivation and corrected overtime math using effective total duration
   - Added optional accessor `useOptionalGlobalTimer` to support mixed provider contexts and tests
-- **Progress Bar Integration** (pending):
-  - Move progress bar logic to TimerDrawer for persistence (to be migrated)
-  - Keep progress display in ActivityManager for timer page
+  - Centralized progress computation: ActivityManager now uses shared `computeProgress` utility when context is present, with prop-based fallback for backward compatibility
+- **Progress Bar Integration**:
+  - Implemented minimal progress bar inside `TimerDrawer` for persistent, cross-page visibility (ARIA-compliant)
+  - Kept ActivityManager progress section on timer page for detailed view
 
 #### Phase 7: Layout and Styling
 - **Bottom Padding Management**:
   - Add dynamic bottom padding to main content when drawer is visible
-  - Use CSS custom properties for responsive padding adjustments
+  - Implemented via body-level padding in `LayoutClient` to avoid DOM order changes (fixes layout tests)
+  - Future: Consider CSS custom properties for responsive fine-tuning
 - **Bootstrap Integration**:
   - Use Bootstrap collapse animations for drawer expand/collapse
   - Implement consistent Bootstrap theming (light/dark mode support)
@@ -192,7 +194,11 @@ Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
   - Phase 5: Implemented `usePageStateSync` to map route → `currentPage` and manage drawer behavior; added internal navigation confirmation modal in `Navigation` with timer-aware labeling; tests updated; full suite PASS
 - Phase 6 (in progress):
   - ActivityManager migrated to optionally consume `GlobalTimerContext` with prop precedence; unified selection toggling and corrected overtime calculations; added integration tests; suite PASS
-  - Progress bar migration to `TimerDrawer` still pending; ActivityManager retains on-page progress display
+  - Centralized progress computation using `computeProgress`; ActivityManager defers to context when available
+  - Implemented minimal progress bar in `TimerDrawer` for persistent visibility; ActivityManager retains detailed progress on timer page
+
+- Phase 7 (initial polish):
+  - Implemented dynamic bottom padding at `document.body` level in `LayoutClient` when session is active, preventing content overlap with the fixed `TimerDrawer` while preserving DOM order; tests updated and PASS
 
 Challenges/Findings
 - Next.js `next/navigation` hooks: avoid `jest.spyOn` on `usePathname` (read-only); use module-level mocks to prevent “Cannot redefine property: usePathname”
@@ -202,13 +208,11 @@ Challenges/Findings
 - Drawer behavior clarified: hidden on summary or when no session; collapsed quick action shown only on the timer page to reduce layout shift
 
 Pending (remaining items)
-- Phase 6: Progress bar migration into `TimerDrawer` while keeping timer-page display
-- Phase 7: Bottom padding management for drawer, Bootstrap collapse animations, and theming polish
+- Phase 7: Bootstrap collapse animations for drawer and theming polish
 
 Next Actions
-1) Migrate progress bar logic from `ActivityManager` into `TimerDrawer` for persistence and cross-page visibility
-2) Add dynamic bottom padding when drawer is visible; wire to CSS variables for responsiveness
-3) Optional: Add Bootstrap collapse animations for drawer expand/collapse and finalize theming polish
+1) Optional: Add Bootstrap collapse animations for drawer expand/collapse and finalize theming polish
+2) Optional: Introduce CSS variables to fine-tune responsive bottom padding
 
 #### Phase 1: Cleanup (1-2 days)
 - [x] Remove `restoreActivity` functionality from state machine
@@ -240,11 +244,11 @@ Next Actions
 
 #### Phase 6: State Migration (2-3 days)
 - [x] Refactor ActivityManager to optionally use global timer state with prop precedence
-- [ ] Move progress bar logic into `TimerDrawer`; keep ActivityManager page display
+- [x] Implement persistent progress indicator in `TimerDrawer`; keep ActivityManager page display
 - [x] Ensure backward compatibility of existing functionality (tests added)
 
 #### Phase 7: Layout & Polish (1-2 days)
-- [ ] Implement responsive bottom padding management
+- [x] Implement bottom padding management at body level to avoid overlap with fixed drawer
 - [ ] Add proper Bootstrap theming support
 - [ ] Optimize animations and transitions
 - [ ] Final accessibility and responsive testing
