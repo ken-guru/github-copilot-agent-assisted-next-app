@@ -81,6 +81,169 @@ Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
 - [ ] Accessibility maintained (screen reader, keyboard nav)
 - [ ] Responsive behavior preserved
 
+## Issue #344: Persistent Timer State Across Application (IN PROGRESS 🚧)
+
+### Context
+- **GitHub Issue**: #344 - Allow activities to keep running when navigated to other parts of the application
+- **Branch**: `feature-344-persistent-timer-drawer`
+- **Current Behavior**: Timer state is local to ActivityManager; navigating away loses timer context
+- **User Needs**: 
+  - Persistent timer state across navigation
+  - Minimized progress indicator when not on timer page
+  - Easy navigation back to active timer
+  - Visual indication of running activity and progress
+  - Prevention of accidental navigation away from active timer
+
+### Requirements
+
+#### Phase 1: Cleanup and Preparation
+- **Remove Existing Activity Restore Feature**:
+  - Remove `restoreActivity` method from `ActivityStateMachine`
+  - Remove `onActivityRestore` callback from `ActivityManager` 
+  - Remove activity restore UI components and tests
+  - Clean up restore-related code in `useActivitiesTracking` hook
+
+#### Phase 2: Global Timer Context Implementation
+- **Create GlobalTimerContext**:
+  ```typescript
+  interface GlobalTimerState {
+    sessionId: string | null;
+    isTimerRunning: boolean;
+    sessionStartTime: Date | null;
+    totalDuration: number;
+    currentActivity: Activity | null;
+    currentActivityStartTime: Date | null;
+    completedActivities: Activity[];
+    currentBreakStartTime: Date | null;
+    drawerExpanded: boolean;
+    currentPage: 'timer' | 'summary' | 'other';
+  }
+  ```
+- **Persistent Storage**: Save timer state to localStorage for browser refresh recovery
+- **Provider Integration**: Wrap application at layout level for global access
+
+#### Phase 3: Timer Drawer Component
+- **TimerDrawer Component**:
+  - Fixed position at bottom of screen using Bootstrap `position-fixed bottom-0`
+  - Collapsed state: Progress bar + "+1 min" button (when on timer page)
+  - Expanded state: Current activity card + progress bar + "+1 min" button (when on other pages)
+  - Hidden state: Not visible when no timer running or on summary page
+- **RunningActivityCard Component**:
+  - Read-only activity display with color, name, and elapsed time
+  - Clickable to navigate back to timer page
+  - Bootstrap card styling consistent with existing components
+
+#### Phase 4: Navigation Integration
+- **Smart Timer Navigation**:
+  - When timer running: Timer nav link goes to active session
+  - When no timer: Timer nav link goes to new timer setup
+  - Update navigation components to check global timer state
+- **Page State Tracking**: 
+  - Update global context when route changes
+  - Control drawer expand/collapse based on current page
+
+#### Phase 5: Navigation Prevention
+- **Beforeunload Guard**:
+  - Attach `beforeunload` event listener when timer is running
+  - Show browser confirmation dialog for external navigation
+  - Use Next.js router events for internal navigation warnings
+- **Custom Navigation Modal**:
+  - Custom confirmation dialog for internal navigation attempts
+  - Option to continue to destination or stay on current page
+
+#### Phase 6: ActivityManager Integration
+- **State Migration**:
+  - Replace local timer state with global timer context
+  - Update ActivityManager to consume global state instead of managing locally
+  - Maintain existing UI and behavior but with global state backing
+- **Progress Bar Integration**:
+  - Move progress bar logic to TimerDrawer for persistence
+  - Keep progress display in ActivityManager for timer page
+
+#### Phase 7: Layout and Styling
+- **Bottom Padding Management**:
+  - Add dynamic bottom padding to main content when drawer is visible
+  - Use CSS custom properties for responsive padding adjustments
+- **Bootstrap Integration**:
+  - Use Bootstrap collapse animations for drawer expand/collapse
+  - Implement consistent Bootstrap theming (light/dark mode support)
+  - Follow Bootstrap spacing and component patterns
+
+### Technical Guidelines
+- **State Management**: Use React Context + useReducer for complex timer state
+- **Persistence**: localStorage for timer state with JSON serialization
+- **Performance**: Optimize re-renders with useMemo and useCallback
+- **Accessibility**: Proper ARIA labels and keyboard navigation for drawer
+- **Responsive Design**: Mobile-first approach with Bootstrap responsive utilities
+- **Testing**: Comprehensive Jest tests for state management and integration
+
+### Implementation Phases
+
+#### Phase 1: Cleanup (1-2 days)
+- [ ] Remove `restoreActivity` functionality from state machine
+- [ ] Remove activity restore UI and callbacks
+- [ ] Update tests to remove restore-related test cases
+- [ ] Clean up unused imports and interfaces
+
+#### Phase 2: Global Context (2-3 days)
+- [ ] Create `GlobalTimerContext` and provider
+- [ ] Implement timer state persistence with localStorage
+- [ ] Add timer state management actions and reducers
+- [ ] Create custom hooks for timer state access
+
+#### Phase 3: Timer Drawer UI (2-3 days)
+- [ ] Build `TimerDrawer` component with collapsed/expanded states
+- [ ] Create `RunningActivityCard` component
+- [ ] Implement Bootstrap-based responsive design
+- [ ] Add expand/collapse animations
+
+#### Phase 4: Navigation Integration (1-2 days)
+- [ ] Update navigation components for timer-aware routing
+- [ ] Implement page state tracking
+- [ ] Add smart timer navigation logic
+
+#### Phase 5: Navigation Guards (1-2 days)
+- [ ] Implement `beforeunload` event handling
+- [ ] Create custom navigation confirmation modal
+- [ ] Add Next.js router event integration
+
+#### Phase 6: State Migration (2-3 days)
+- [ ] Refactor ActivityManager to use global timer state
+- [ ] Update all timer-related components to use global context
+- [ ] Ensure backward compatibility of existing functionality
+
+#### Phase 7: Layout & Polish (1-2 days)
+- [ ] Implement responsive bottom padding management
+- [ ] Add proper Bootstrap theming support
+- [ ] Optimize animations and transitions
+- [ ] Final accessibility and responsive testing
+
+### Validation Criteria
+- [ ] Timer state persists across all navigation scenarios
+- [ ] Drawer shows correctly in collapsed/expanded states
+- [ ] "+1 min" button works from drawer in all states
+- [ ] Navigation prevention works for both internal and external navigation
+- [ ] Timer navigation intelligently routes to active session or new timer
+- [ ] All existing timer functionality preserved
+- [ ] Mobile responsive design works properly
+- [ ] Accessibility requirements met (WCAG AA)
+- [ ] Performance impact is minimal (no unnecessary re-renders)
+- [ ] Browser refresh preserves timer state appropriately
+- [ ] All tests pass including new integration tests
+
+### Expected Outcome
+- **User Experience**: Seamless timer experience across the entire application
+- **Technical Quality**: Clean, maintainable global state architecture
+- **Performance**: Minimal impact on app performance with smart state management
+- **Accessibility**: Fully accessible drawer and navigation prevention features
+- **Testing**: Comprehensive test coverage for complex state interactions
+
+### Draft PR Strategy
+- Create draft PR immediately after Phase 1 completion
+- Update PR description with progress after each phase
+- Request reviews at key architectural milestones (after Phases 2, 4, and 6)
+- Keep PR updated with implementation progress and any architectural decisions
+
 ## New: Shareable Session Summary (Design Document Added)
 
 ### Context
