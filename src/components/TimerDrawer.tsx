@@ -1,5 +1,5 @@
-'use client';
-import React from 'react';
+"use client";
+import React, { useEffect, useRef } from 'react';
 import { useGlobalTimer } from '@/contexts/GlobalTimerContext';
 import { formatTime } from '@/utils/timeUtils';
 import { computeProgress } from '@/utils/timerProgress';
@@ -14,15 +14,40 @@ const TimerDrawer: React.FC = () => {
     currentPage,
   } = useGlobalTimer();
 
+  // Publish drawer height as CSS variable for optional responsive padding tuning
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return () => {};
+    let ro: ResizeObserver | undefined;
+    if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
+      ro = new window.ResizeObserver((entries) => {
+        const entry = entries[0];
+        if (!entry) return;
+        const h = Math.ceil(entry.contentRect.height);
+        document.body.style.setProperty('--timer-drawer-height', `${h}px`);
+      });
+      ro.observe(el);
+    }
+    return () => {
+      ro?.disconnect();
+      document.body.style.removeProperty('--timer-drawer-height');
+    };
+  }, []);
+
   // Only render when a session is active
   if (!sessionStartTime) return null;
 
-  const { elapsed, remaining, percent } = computeProgress(sessionStartTime, totalDuration);
+  const { elapsed, remaining, percent } = computeProgress(
+    sessionStartTime,
+    totalDuration
+  );
 
   const handleToggle = () => setDrawerExpanded(!drawerExpanded);
 
   return (
     <div
+      ref={containerRef}
       data-testid="timer-drawer"
       className="position-fixed bottom-0 start-0 end-0 bg-body border-top shadow-sm"
       style={{ zIndex: 1030 }}
@@ -43,7 +68,6 @@ const TimerDrawer: React.FC = () => {
               {formatTime(remaining)}
             </div>
           </div>
-          {/* When on the timer page, surface quick action even when collapsed */}
           {currentPage === 'timer' && !drawerExpanded && (
             <button
               type="button"
@@ -60,7 +84,10 @@ const TimerDrawer: React.FC = () => {
             aria-expanded={drawerExpanded}
             onClick={handleToggle}
           >
-            <i className={`bi ${drawerExpanded ? 'bi-chevron-down' : 'bi-chevron-up'}`} aria-hidden="true" />
+            <i
+              className={`bi ${drawerExpanded ? 'bi-chevron-down' : 'bi-chevron-up'}`}
+              aria-hidden="true"
+            />
           </button>
         </div>
 
@@ -75,10 +102,7 @@ const TimerDrawer: React.FC = () => {
             aria-valuenow={Math.floor(percent)}
             data-testid="timer-progressbar"
           >
-            <div
-              className="progress-bar"
-              style={{ width: `${percent}%` }}
-            />
+            <div className="progress-bar" style={{ width: `${percent}%` }} />
           </div>
         </div>
 
