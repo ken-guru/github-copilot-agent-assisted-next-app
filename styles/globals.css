@@ -305,3 +305,40 @@ a {
 @media (max-width: 576px) {
   /* Additional small screen adjustments can be added here */
 }
+
+/* Timer drawer animations and styles */
+.timer-drawer {
+  will-change: transform, height;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.timer-drawer.is-collapsed {
+  transform: translateY(0);
+}
+
+.timer-drawer.is-expanded {
+  transform: translateY(0);
+}
+
+/* Collapsible content area inside the drawer */
+.timer-drawer .drawer-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms ease;
+}
+
+.timer-drawer .drawer-collapse.show {
+  grid-template-rows: 1fr;
+}
+
+.timer-drawer .drawer-collapse > * {
+  overflow: hidden;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .timer-drawer,
+  .timer-drawer .drawer-collapse {
+    transition: none !important;
+  }
+}

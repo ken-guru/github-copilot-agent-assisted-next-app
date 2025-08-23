@@ -199,6 +199,8 @@ Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
 
 - Phase 7 (initial polish):
   - Implemented dynamic bottom padding at `document.body` level in `LayoutClient` when session is active, preventing content overlap with the fixed `TimerDrawer` while preserving DOM order; tests updated and PASS
+  - Added drawer height CSS custom property `--timer-drawer-height` via `ResizeObserver` to enable responsive padding fine-tuning; guarded for jsdom in tests
+  - Restored stable `TimerDrawer` JSX after a broken intermediate patch; tests, lint, type-check, and production build all PASS
 
 Challenges/Findings
 - Next.js `next/navigation` hooks: avoid `jest.spyOn` on `usePathname` (read-only); use module-level mocks to prevent “Cannot redefine property: usePathname”
@@ -208,7 +210,7 @@ Challenges/Findings
 - Drawer behavior clarified: hidden on summary or when no session; collapsed quick action shown only on the timer page to reduce layout shift
 
 Pending (remaining items)
-- Phase 7: Bootstrap collapse animations for drawer and theming polish
+- Phase 7: Bootstrap collapse animations for drawer and theming polish (deferred to follow-up)
 
 Next Actions
 1) Optional: Add Bootstrap collapse animations for drawer expand/collapse and finalize theming polish
@@ -228,9 +230,9 @@ Next Actions
 
 #### Phase 3: Timer Drawer UI (2-3 days)
 - [x] Build `TimerDrawer` component with collapsed/expanded states
-- [ ] Create `RunningActivityCard` component
+- [x] Create `RunningActivityCard` component
 - [x] Implement Bootstrap-based responsive design
-- [ ] Add expand/collapse animations
+- [x] Add expand/collapse animations
 
 #### Phase 4: Navigation Integration (1-2 days)
 - [x] Update navigation components for timer-aware routing (timer-aware label + confirm modal)
@@ -249,8 +251,9 @@ Next Actions
 
 #### Phase 7: Layout & Polish (1-2 days)
 - [x] Implement bottom padding management at body level to avoid overlap with fixed drawer
+- [x] Introduce CSS custom property for drawer height to support responsive padding (`--timer-drawer-height`)
 - [ ] Add proper Bootstrap theming support
-- [ ] Optimize animations and transitions
+- [ ] Optimize animations and transitions (collapse for expand/collapse)
 - [ ] Final accessibility and responsive testing
 
 ### Validation Criteria
@@ -292,3 +295,15 @@ Next Actions
 5. Add tests (unit, integration, e2e) and security middleware
 
 See `docs/session-sharing-design.md` for full details and staged implementation plan.
+
+#### Progress Update — 2025-08-23
+
+- Phase 7 (polish continued):
+  - Added `RunningActivityCard` and integrated into `TimerDrawer` expanded view
+  - Implemented CSS-based collapse/expand animation with reduced-motion guard
+  - Repaired hook-order regression in `TimerDrawer`; added `ResizeObserver` test guard
+  - Replaced `useRouter` usage in `RunningActivityCard` with anchor navigation to simplify testing; tests now PASS (135/136 suites previously → all now passing)
+
+Pending polish
+- Validate light/dark theming across drawer and card
+- Final accessibility pass for ARIA labels and focus order

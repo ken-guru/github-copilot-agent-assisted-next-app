@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { useGlobalTimer } from '@/contexts/GlobalTimerContext';
 import { formatTime } from '@/utils/timeUtils';
 import { computeProgress } from '@/utils/timerProgress';
+import RunningActivityCard from '@/components/RunningActivityCard';
 
 const TimerDrawer: React.FC = () => {
   const {
@@ -49,10 +50,20 @@ const TimerDrawer: React.FC = () => {
     <div
       ref={containerRef}
       data-testid="timer-drawer"
-      className="position-fixed bottom-0 start-0 end-0 bg-body border-top shadow-sm"
+      className={[
+        'position-fixed',
+        'bottom-0',
+        'start-0',
+        'end-0',
+        'bg-body',
+        'border-top',
+        'shadow-sm',
+        'timer-drawer',
+        drawerExpanded ? 'is-expanded' : 'is-collapsed',
+      ].join(' ')}
       style={{ zIndex: 1030 }}
-      role="region"
-      aria-label="Timer drawer"
+  role="region"
+  aria-label="Timer drawer"
     >
       <div className="container py-2">
         <div className="d-flex align-items-center justify-content-between">
@@ -106,20 +117,28 @@ const TimerDrawer: React.FC = () => {
           </div>
         </div>
 
-        {drawerExpanded && (
-          <div className="mt-3" data-testid="drawer-expanded-content">
-            <div className="d-flex gap-2">
-              <button
-                type="button"
-                className="btn btn-primary btn-sm"
-                onClick={() => addOneMinute()}
-              >
-                Add 1 min
-              </button>
-              {/* Placeholder for future controls: complete activity, reset, etc. */}
+        <div
+          className={`mt-3 drawer-collapse ${drawerExpanded ? 'show' : ''}`}
+          data-testid={drawerExpanded ? 'drawer-expanded-content' : undefined}
+        >
+          {drawerExpanded && (
+            <div className="d-flex flex-column gap-2">
+              {/* Running activity summary card */}
+              <RunningActivityCard />
+
+              {/* Quick actions */}
+              <div className="d-flex gap-2">
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  onClick={() => addOneMinute()}
+                >
+                  Add 1 min
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
