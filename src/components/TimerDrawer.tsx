@@ -62,8 +62,8 @@ const TimerDrawer: React.FC = () => {
         drawerExpanded ? 'is-expanded' : 'is-collapsed',
       ].join(' ')}
       style={{ zIndex: 1030 }}
-  role="region"
-  aria-label="Timer drawer"
+      role="region"
+      aria-label="Timer drawer"
     >
       <div className="container py-2">
         <div className="d-flex align-items-center justify-content-between">
@@ -91,8 +91,9 @@ const TimerDrawer: React.FC = () => {
           <button
             type="button"
             className="btn btn-sm btn-outline-secondary"
-            aria-label="Expand timer drawer"
+            aria-label={drawerExpanded ? 'Collapse timer drawer' : 'Expand timer drawer'}
             aria-expanded={drawerExpanded}
+            aria-controls="timer-drawer-content"
             onClick={handleToggle}
           >
             <i
@@ -118,6 +119,7 @@ const TimerDrawer: React.FC = () => {
         </div>
 
         <div
+          id="timer-drawer-content"
           className={`mt-3 drawer-collapse ${drawerExpanded ? 'show' : ''}`}
           data-testid={drawerExpanded ? 'drawer-expanded-content' : undefined}
         >
