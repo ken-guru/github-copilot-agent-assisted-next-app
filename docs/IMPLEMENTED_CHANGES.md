@@ -4,6 +4,31 @@ This file contains a record of changes that have been implemented in the applica
 
 ## 2025 August
 
+### Persistent Timer Drawer (Issue #344) - COMPLETED (2025-08-24)
+
+Summary:
+Implemented a global, persistent Timer Drawer with state stored in `GlobalTimerContext` and localStorage, available across the entire application. Includes navigation safeguards, accessible controls, and theme-aware visuals.
+
+PR/Branch:
+- PR: #348
+- Branch: `feature-344-persistent-timer-drawer`
+
+Key Features:
+- `GlobalTimerContext` with actions: HYDRATE, START_SESSION, RESET_SESSION, SET_CURRENT_ACTIVITY, COMPLETE_CURRENT_ACTIVITY, SET_DRAWER_EXPANDED, SET_CURRENT_PAGE, ADD_ONE_MINUTE
+- `TimerDrawer` fixed bottom drawer with collapsed/expanded modes, height CSS variable for layout, reduced-motion-friendly animations
+- `RunningActivityCard` compact status with safe navigation via `next/link`
+- Navigation safeguards: `beforeunload` for external, internal confirm modal, page-state sync
+- Theme-aware progress variables and ARIA-correct region/toggle attributes
+
+Quality Gates:
+- Tests: PASS (135 suites; 1059/1061 tests with 2 skipped)
+- Lint: PASS (no warnings/errors)
+- Type-check: PASS
+- Build: PASS (Next.js 15.4.6)
+
+Notes:
+- Addressed PR feedback: removed unused eslint-disable, simplified ResizeObserver detection, clarified hook comments, and added error logging.
+
 ### Session Sharing: Robust, Privacy-Preserving, Theme-Correct - COMPLETED (2025-08-21)
 
 **Summary:**
