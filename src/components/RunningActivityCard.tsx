@@ -34,7 +34,10 @@ const RunningActivityCard: React.FC = () => {
     // Update page state for internal consumers
     try {
       setCurrentPage('timer');
-    } catch {}
+    } catch (err) {
+      // Log to aid debugging; this should be very rare and non-blocking
+      console.error('Failed to set current page to timer:', err);
+    }
   };
 
   return (

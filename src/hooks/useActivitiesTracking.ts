@@ -16,7 +16,7 @@ export interface UseActivitiesTrackingResult {
   completeActivity: (activityId: string) => void;
   removeActivity: (activityId: string) => void;
   resetActivities: () => void;
-  // New methods for the state machine
+  // Convenience accessors backed by the ActivityStateMachine
   getCurrentActivity: () => ActivityState | null;
   isCompleted: () => boolean;
   getActivityState: (activityId: string) => ActivityState | undefined;

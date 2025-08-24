@@ -21,7 +21,7 @@ const TimerDrawer: React.FC = () => {
     const el = containerRef.current;
     if (!el) return () => {};
     let ro: ResizeObserver | undefined;
-    if (typeof window !== 'undefined' && 'ResizeObserver' in window) {
+    if ('ResizeObserver' in window) {
       ro = new window.ResizeObserver((entries) => {
         const entry = entries[0];
         if (!entry) return;
