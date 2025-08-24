@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useThemeReactive } from '@/hooks/useThemeReactive';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useGlobalTimer } from '@/contexts/GlobalTimerContext';
-import ConfirmationDialog, { type ConfirmationDialogRef } from '@/components/ConfirmationDialog';
 // AI nav is always visible; gating handled on page
 
 /**
@@ -20,10 +19,7 @@ const Navigation: React.FC = () => {
   // Get theme reactively to ensure component responds to theme changes (fixes issue #252)
   const theme = useThemeReactive(); 
   const pathname = usePathname();
-  const router = useRouter();
   const { isTimerRunning } = useGlobalTimer();
-  const confirmRef = useRef<ConfirmationDialogRef>(null);
-  const [dialogHandlers, setDialogHandlers] = useState<{ onConfirm: () => void; onCancel: () => void }>({ onConfirm: () => {}, onCancel: () => {} });
   
   // Determine active states based on current path
   const isTimerActive = pathname === '/';
@@ -37,23 +33,7 @@ const Navigation: React.FC = () => {
     isTimerRunning ? 'Go to Active Timer' : 'Go to Timer Setup'
   ), [isTimerRunning]);
 
-  // Intercept internal navigation during active session for destinations other than timer page
-  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // If no active session or navigating to timer page, let default proceed
-    if (!isTimerRunning || href === '/') {
-      return; // allow Next Link default navigation
-    }
-    // Active session and navigating away: confirm
-    e.preventDefault();
-    const proceed = () => {
-      router.push(href);
-    };
-    const cancel = () => {
-      // no-op; stay on page
-    };
-    setDialogHandlers({ onConfirm: proceed, onCancel: cancel });
-    confirmRef.current?.showDialog();
-  }, [isTimerRunning, router]);
+  // Internal navigation should proceed without confirmation; external leaves are guarded by beforeunload
   
   // Use Bootstrap's theme-aware classes (removed navbar-expand-lg for always-expanded behavior)
   const navClasses = theme === 'dark' 
@@ -86,7 +66,6 @@ const Navigation: React.FC = () => {
                 href="/"
                 aria-current={isTimerActive ? 'page' : undefined}
                 aria-label={timerAriaLabel}
-                onClick={(e) => handleNavClick(e, '/')}
               >
                 <span aria-label="Go to Timer">
                   <i className="bi bi-stopwatch me-sm-1" aria-hidden="true"></i>
@@ -101,7 +80,6 @@ const Navigation: React.FC = () => {
                 className={`nav-link ${isActivitiesActive ? 'active' : ''}`} 
                 href="/activities"
                 aria-current={isActivitiesActive ? 'page' : undefined}
-                onClick={(e) => handleNavClick(e, '/activities')}
               >
                 <span aria-label="Go to Activities Management">
                   <i className="bi bi-list-check me-sm-1" aria-hidden="true"></i>
@@ -117,7 +95,6 @@ const Navigation: React.FC = () => {
                     className={`nav-link ${isAIActive ? 'active' : ''}`}
                     href="/ai"
                     aria-current={isAIActive ? 'page' : undefined}
-                    onClick={(e) => handleNavClick(e, '/ai')}
                   >
                     <span aria-label="Go to AI Planner">
                       <i className="bi bi-stars me-sm-1" aria-hidden="true"></i>
@@ -130,15 +107,6 @@ const Navigation: React.FC = () => {
         </div>
       </div>
 
-      {/* Internal navigation confirmation modal (active session only) */}
-      <ConfirmationDialog
-        ref={confirmRef}
-        message="You have an active timer running. Do you want to leave this page?"
-        confirmText="Leave"
-        cancelText="Stay"
-        onConfirm={dialogHandlers.onConfirm}
-        onCancel={dialogHandlers.onCancel}
-      />
     </nav>
   );
 };

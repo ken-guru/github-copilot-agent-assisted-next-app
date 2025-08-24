@@ -355,10 +355,21 @@ Phase A: Navigation Guard Refinement (Item 1)
 - Adjust `useNavigationGuard` to only warn on leave-the-origin events.
 - Add tests verifying no prompts on internal route changes, prompt on `beforeunload`.
 
+Status — Completed (2025-08-24)
+- Implemented: Removed internal confirmation modal and click interception from `Navigation.tsx`. Internal in-app links now navigate without prompts. External leaves remain protected by the existing `beforeunload` guard in `useNavigationGuard`.
+- Tests: Updated `src/components/__tests__/Navigation.test.tsx` to stop expecting the internal confirm dialog; suite remains green.
+- Quality gates: Jest, ESLint, type-check, and production build all passed locally.
+
 Phase B: Centralized Live Progress (Items 2, 6)
 - Add ticking loop to `GlobalTimerContext` with visibility-aware update cadence.
 - Expose computed progress via a dedicated hook used by TimerDrawer.
 - Tests: verify progress updates over time and after restore without interaction.
+
+Status — Completed (2025-08-24)
+- Implemented `useGlobalTimerProgress` hook providing live elapsed/remaining/percent without forcing global re-renders; wired into `TimerDrawer`.
+- Fixed hook-order regression by invoking the hook unconditionally in `TimerDrawer` to keep hook order stable.
+- Tests: Added hook tests using fake timers; updated `TimerDrawer` tests; all passing.
+- Quality gates: Full Jest suite PASS, ESLint PASS (no errors), Type-check PASS, Next.js build PASS.
 
 Phase C: Unify Add-Minute (Item 3)
 - Refactor to a single `addOneMinute` context action; update ActivityManager/TimerDrawer to use it.
@@ -378,8 +389,8 @@ Phase F: Remove Duplicate Progress (Item 7)
 - Tests: ensure only one progress bar is visible and accessible.
 
 ### Validation Criteria
-- [ ] A: Internal navigation never triggers confirm; external leave still prompts
-- [ ] B: Drawer progress updates live without interaction; after restore, ticking resumes immediately
+- [x] A: Internal navigation never triggers confirm; external leave still prompts
+- [x] B: Drawer progress updates live without interaction; after restore, ticking resumes immediately
 - [ ] C: “+1 min” in drawer and ActivityManager share identical behavior (single dispatcher)
 - [ ] D: Expanded drawer shows current activity or active break accurately with timing
 - [ ] E: On reload/return from outside the app, no setup flash; toast “Session restored” appears; in-app nav shows no toast

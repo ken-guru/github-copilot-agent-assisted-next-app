@@ -3,11 +3,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Navigation from '../Navigation';
 import '@testing-library/jest-dom';
 
-// Router mock
-const mockPush = jest.fn();
+// Mock next/navigation pathname only (internal navigation should not trigger custom confirms)
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(() => '/'),
-  useRouter: jest.fn(() => ({ push: mockPush })),
 }));
 
 // Global timer mock (default: not running)
@@ -69,26 +67,23 @@ describe('Navigation', () => {
   });
 
   it('shows confirm dialog on away navigation during active session and proceeds on Leave', () => {
+    // Internal navigation should not show any confirmation modal anymore
     mockUseGlobalTimer.mockReturnValueOnce({ isTimerRunning: true });
-  render(<Navigation />);
-  const activitiesItem = screen.getByTestId('activities-nav-item');
-  const activitiesLink = getLinkByHref(activitiesItem, '/activities');
+    render(<Navigation />);
+    const activitiesItem = screen.getByTestId('activities-nav-item');
+    const activitiesLink = getLinkByHref(activitiesItem, '/activities');
     fireEvent.click(activitiesLink);
-
-    // Dialog
-    expect(screen.getByText('You have an active timer running. Do you want to leave this page?')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Leave' }));
-    expect(mockPush).toHaveBeenCalledWith('/activities');
+    expect(screen.queryByText('You have an active timer running. Do you want to leave this page?')).toBeNull();
   });
 
   it('stays on page when clicking Stay in confirm dialog', () => {
+    // This behavior no longer applies; internal nav has no confirm modal
     mockUseGlobalTimer.mockReturnValueOnce({ isTimerRunning: true });
-  render(<Navigation />);
-  const aiItem = screen.getByTestId('ai-nav-item');
-  const aiLink = getLinkByHref(aiItem, '/ai');
+    render(<Navigation />);
+    const aiItem = screen.getByTestId('ai-nav-item');
+    const aiLink = getLinkByHref(aiItem, '/ai');
     fireEvent.click(aiLink);
-    fireEvent.click(screen.getByRole('button', { name: 'Stay' }));
-    expect(mockPush).not.toHaveBeenCalled();
+    expect(screen.queryByRole('button', { name: 'Stay' })).toBeNull();
   });
 
   it('does not show confirm dialog when clicking Timer during active session', () => {

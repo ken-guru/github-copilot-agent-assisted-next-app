@@ -2,18 +2,20 @@
 import React, { useEffect, useRef } from 'react';
 import { useGlobalTimer } from '@/contexts/GlobalTimerContext';
 import { formatTime } from '@/utils/timeUtils';
-import { computeProgress } from '@/utils/timerProgress';
+import useGlobalTimerProgress from '@/hooks/useGlobalTimerProgress';
 import RunningActivityCard from '@/components/RunningActivityCard';
 
 const TimerDrawer: React.FC = () => {
   const {
     sessionStartTime,
-    totalDuration,
     drawerExpanded,
     setDrawerExpanded,
     addOneMinute,
     currentPage,
   } = useGlobalTimer();
+
+  // Always subscribe to progress so hook order stays consistent across renders
+  const { elapsed, remaining, percent } = useGlobalTimerProgress(1000);
 
   // Publish drawer height as CSS variable for optional responsive padding tuning
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -36,13 +38,8 @@ const TimerDrawer: React.FC = () => {
     };
   }, []);
 
-  // Only render when a session is active
+  // Only render when a session is active (progress hook still ran to keep hook order stable)
   if (!sessionStartTime) return null;
-
-  const { elapsed, remaining, percent } = computeProgress(
-    sessionStartTime,
-    totalDuration
-  );
 
   const handleToggle = () => setDrawerExpanded(!drawerExpanded);
 
