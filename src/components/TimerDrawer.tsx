@@ -4,6 +4,7 @@ import { useGlobalTimer } from '@/contexts/GlobalTimerContext';
 import { formatTime } from '@/utils/timeUtils';
 import useGlobalTimerProgress from '@/hooks/useGlobalTimerProgress';
 import RunningActivityCard from '@/components/RunningActivityCard';
+import ActiveBreakCard from '@/components/ActiveBreakCard';
 
 const TimerDrawer: React.FC = () => {
   const {
@@ -12,6 +13,8 @@ const TimerDrawer: React.FC = () => {
     setDrawerExpanded,
     addOneMinute,
     currentPage,
+    currentActivity,
+    currentBreakStartTime,
   } = useGlobalTimer();
 
   // Always subscribe to progress so hook order stays consistent across renders
@@ -122,8 +125,8 @@ const TimerDrawer: React.FC = () => {
         >
           {drawerExpanded && (
             <div className="d-flex flex-column gap-2">
-              {/* Running activity summary card */}
-              <RunningActivityCard />
+              {/* Running activity or active break summary card */}
+              {currentActivity ? <RunningActivityCard /> : currentBreakStartTime ? <ActiveBreakCard /> : null}
 
               {/* Quick actions */}
               <div className="d-flex gap-2">

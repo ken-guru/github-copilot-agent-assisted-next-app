@@ -23,6 +23,8 @@ type Action =
   | { type: 'RESET_SESSION' }
   | { type: 'SET_CURRENT_ACTIVITY'; payload: { activity: Activity | null; startTime?: number } }
   | { type: 'COMPLETE_CURRENT_ACTIVITY'; payload?: { completedAt?: number } }
+  | { type: 'START_BREAK'; payload?: { startTime?: number } }
+  | { type: 'END_BREAK' }
   | { type: 'SET_DRAWER_EXPANDED'; payload: boolean }
   | { type: 'SET_CURRENT_PAGE'; payload: PageState }
   | { type: 'ADD_ONE_MINUTE' };
@@ -69,6 +71,8 @@ function reducer(state: GlobalTimerState, action: Action): GlobalTimerState {
         ...state,
         currentActivity: action.payload.activity,
         currentActivityStartTime: action.payload.activity ? startTime : null,
+        // Leaving activity implies break not active
+        currentBreakStartTime: action.payload.activity ? null : state.currentBreakStartTime,
       };
     }
     case 'COMPLETE_CURRENT_ACTIVITY': {
@@ -78,6 +82,22 @@ function reducer(state: GlobalTimerState, action: Action): GlobalTimerState {
         completedActivities: [...state.completedActivities, state.currentActivity],
         currentActivity: null,
         currentActivityStartTime: null,
+      };
+    }
+    case 'START_BREAK': {
+      const startTime = action.payload?.startTime ?? Date.now();
+      return {
+        ...state,
+        // Clear any current activity when break starts
+        currentActivity: null,
+        currentActivityStartTime: null,
+        currentBreakStartTime: startTime,
+      };
+    }
+    case 'END_BREAK': {
+      return {
+        ...state,
+        currentBreakStartTime: null,
       };
     }
     case 'SET_DRAWER_EXPANDED':
@@ -111,6 +131,8 @@ interface GlobalTimerContextValue extends GlobalTimerState {
   resetSession: () => void;
   setCurrentActivity: (activity: Activity | null, opts?: { startTime?: number }) => void;
   completeCurrentActivity: (opts?: { completedAt?: number }) => void;
+  startBreak: (opts?: { startTime?: number }) => void;
+  endBreak: () => void;
   addOneMinute: () => void;
   setDrawerExpanded: (expanded: boolean) => void;
   setCurrentPage: (page: PageState) => void;
@@ -165,6 +187,14 @@ export const GlobalTimerProvider: React.FC<React.PropsWithChildren> = ({ childre
     dispatch({ type: 'COMPLETE_CURRENT_ACTIVITY', payload: { completedAt: opts?.completedAt } });
   }, []);
 
+  const startBreak = useCallback<GlobalTimerContextValue['startBreak']>((opts) => {
+    dispatch({ type: 'START_BREAK', payload: { startTime: opts?.startTime } });
+  }, []);
+
+  const endBreak = useCallback<GlobalTimerContextValue['endBreak']>(() => {
+    dispatch({ type: 'END_BREAK' });
+  }, []);
+
   const addOneMinute = useCallback(() => {
     dispatch({ type: 'ADD_ONE_MINUTE' });
   }, []);
@@ -183,10 +213,12 @@ export const GlobalTimerProvider: React.FC<React.PropsWithChildren> = ({ childre
     resetSession,
     setCurrentActivity,
     completeCurrentActivity,
+    startBreak,
+    endBreak,
     addOneMinute,
     setDrawerExpanded,
     setCurrentPage,
-  }), [state, startSession, resetSession, setCurrentActivity, completeCurrentActivity, addOneMinute, setDrawerExpanded, setCurrentPage]);
+  }), [state, startSession, resetSession, setCurrentActivity, completeCurrentActivity, startBreak, endBreak, addOneMinute, setDrawerExpanded, setCurrentPage]);
 
   return (
     <GlobalTimerContext.Provider value={value}>
