@@ -12,6 +12,12 @@ export function useNavigationGuard() {
     const hasActiveSession = Boolean(sessionStartTime);
 
     function handleBeforeUnload(e: BeforeUnloadEvent) {
+      try {
+        // Mark that we left the origin while a session was active
+        if (typeof window !== 'undefined' && window.sessionStorage) {
+          window.sessionStorage.setItem('mrTimely.leftOriginAt', String(Date.now()));
+        }
+      } catch {}
       // Standard pattern: set returnValue to a non-empty string
       e.preventDefault();
       e.returnValue = '';

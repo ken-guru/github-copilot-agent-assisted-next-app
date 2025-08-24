@@ -44,6 +44,30 @@ describe('useNavigationGuard', () => {
     expect(addEventSpy).toHaveBeenCalledWith('beforeunload', expect.any(Function));
   });
 
+  it('sets a sessionStorage flag on beforeunload when a session is active', () => {
+    const originalSetItem = window.sessionStorage.setItem;
+    const setItemSpy = jest.spyOn(window.sessionStorage.__proto__, 'setItem');
+
+    const { unmount } = render(
+      <GlobalTimerProvider>
+        <StartSessionOnMount />
+        <GuardHarness />
+      </GlobalTimerProvider>
+    );
+
+    // Simulate beforeunload
+    const event = new Event('beforeunload');
+    window.dispatchEvent(event);
+
+    expect(setItemSpy).toHaveBeenCalledWith('mrTimely.leftOriginAt', expect.any(String));
+
+    // Cleanup
+    setItemSpy.mockRestore();
+    // restore in case
+    window.sessionStorage.setItem = originalSetItem;
+    unmount();
+  });
+
   it('removes beforeunload handler when session stops', () => {
     const { rerender } = render(
       <GlobalTimerProvider>

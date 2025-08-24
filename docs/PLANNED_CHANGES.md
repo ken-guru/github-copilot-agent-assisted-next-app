@@ -385,6 +385,11 @@ Phase D: Expanded Content — Activity/Break (Item 4)
 - Enhance TimerDrawer expanded view to render RunningActivityCard or Break card based on context.
 - Tests: assert correct rendering and timers for both states.
 
+Status — Completed (2025-08-24)
+- Implemented `ActiveBreakCard` and conditional rendering in `TimerDrawer` between `RunningActivityCard` and active break display
+- Added tests `TimerDrawer.expanded-content.test.tsx` covering both running activity and break states
+- Context updated with `startBreak`/`endBreak` actions; all validation gates PASS
+
 Phase E: Restore UX and Toast (Item 5)
 - Implement lazy initialization from storage to avoid setup flash.
 - Add session restored toast only for true app-return scenarios (using `sessionStorage` signal).
@@ -398,7 +403,7 @@ Phase F: Remove Duplicate Progress (Item 7)
 - [x] A: Internal navigation never triggers confirm; external leave still prompts
 - [x] B: Drawer progress updates live without interaction; after restore, ticking resumes immediately
   - [x] C: “+1 min” in drawer and ActivityManager share identical behavior (single dispatcher)
-- [ ] D: Expanded drawer shows current activity or active break accurately with timing
+- [x] D: Expanded drawer shows current activity or active break accurately with timing
 - [ ] E: On reload/return from outside the app, no setup flash; toast “Session restored” appears; in-app nav shows no toast
 - [ ] F: Only one progress bar displayed (drawer replaces ActivityManager’s top progress)
 - [ ] All tests updated and passing; lint/type-check/build remain green

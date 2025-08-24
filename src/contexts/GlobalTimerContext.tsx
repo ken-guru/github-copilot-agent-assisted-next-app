@@ -141,25 +141,25 @@ interface GlobalTimerContextValue extends GlobalTimerState {
 const GlobalTimerContext = createContext<GlobalTimerContextValue | undefined>(undefined);
 
 export const GlobalTimerProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  // Hydrate from localStorage on mount (client only)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed: GlobalTimerState = JSON.parse(raw);
-        // Basic validation of parsed object
+  // Synchronous hydration from localStorage using lazy initializer to avoid UI flash
+  const [state, dispatch] = useReducer(
+    reducer,
+    initialState,
+    (init): GlobalTimerState => {
+      if (typeof window === 'undefined') return init;
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (!raw) return init;
+        const parsed = JSON.parse(raw) as Partial<GlobalTimerState> | null;
         if (parsed && typeof parsed === 'object' && 'totalDuration' in parsed) {
-          dispatch({ type: 'HYDRATE', payload: parsed });
+          return { ...init, ...(parsed as GlobalTimerState) };
         }
+      } catch (e) {
+        console.warn('[GlobalTimer] Failed to hydrate from storage:', (e as Error).message);
       }
-    } catch (e) {
-      // Ignore storage errors
-      console.warn('[GlobalTimer] Failed to hydrate from storage:', (e as Error).message);
+      return init;
     }
-  }, []);
+  );
 
   // Persist to localStorage on change (client only)
   useEffect(() => {

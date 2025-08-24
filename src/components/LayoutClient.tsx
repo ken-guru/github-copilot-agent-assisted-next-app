@@ -4,6 +4,7 @@ import Script from 'next/script';
 import { ThemeProvider } from '@/contexts/theme';
 import { ApiKeyProvider } from '@/contexts/ApiKeyContext';
 import { ToastProvider } from '@/contexts/ToastContext';
+import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 import { useNavigationGuard } from '@/hooks/useNavigationGuard';
 import { usePageStateSync } from '@/hooks/usePageStateSync';
 import { ToastContainer } from '@/components/ui/ToastContainer';
@@ -42,6 +43,26 @@ export function LayoutClient({ children }: LayoutClientProps) {
   useNavigationGuard();
   // Sync route changes into global timer page state and drawer behavior
   usePageStateSync();
+
+  // Announce session restoration only when returning from outside the app
+  // Note: This effect must run within the ToastProvider tree so the toast context is available.
+  function RestoreAnnouncer() {
+    const innerTimerCtx = useOptionalGlobalTimer();
+    const { addResponsiveToast } = useResponsiveToast();
+    useEffect(() => {
+      try {
+        const leftAt = typeof window !== 'undefined' ? window.sessionStorage.getItem('mrTimely.leftOriginAt') : null;
+        // If we previously left the origin and a session is active, announce restore
+        if (leftAt && innerTimerCtx?.sessionStartTime) {
+          addResponsiveToast({ message: 'Session restored', variant: 'info' });
+          window.sessionStorage.removeItem('mrTimely.leftOriginAt');
+        }
+      } catch {
+        // no-op
+      }
+    }, [addResponsiveToast, innerTimerCtx?.sessionStartTime]);
+    return null;
+  }
 
   // Handle service worker updates
   useEffect(() => {
@@ -150,6 +171,8 @@ export function LayoutClient({ children }: LayoutClientProps) {
     <ThemeProvider>
       <ApiKeyProvider>
       <ToastProvider>
+        {/* Announce session restoration inside provider so toast context is available */}
+        <RestoreAnnouncer />
         {/* Bootstrap JavaScript for responsive navigation */}
         <Script 
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
