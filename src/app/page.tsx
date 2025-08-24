@@ -9,6 +9,7 @@ import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/Confirma
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import resetService from '@/utils/resetService';
+import { useOptionalGlobalTimer } from '@/contexts/GlobalTimerContext';
 
 // Main application content with loading context
 function AppContent() {
@@ -16,6 +17,9 @@ function AppContent() {
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
+  // Optional access to global timer (available in app layout). When present, we'll
+  // keep local page state in sync so navigation persists and the Timer Drawer shows.
+  const globalTimer = useOptionalGlobalTimer();
   
   const {
     currentActivity,
@@ -110,25 +114,59 @@ function AppContent() {
   }, [resetActivities, resetTimer]);
   
   const handleTimeSet = (durationInSeconds: number) => {
+    // Update local page state for existing UI
     setTotalDuration(durationInSeconds);
     setTimeSet(true);
+    // Start/record session globally so it persists across routes and enables the Timer Drawer
+    try {
+      if (globalTimer) {
+        globalTimer.startSession(durationInSeconds);
+        globalTimer.setCurrentPage('timer');
+      }
+    } catch (e) {
+      // Non-fatal: local page still functions without global timer
+      console.error('[Home] Failed to start global timer session:', (e as Error).message);
+    }
   };
   
   const handleExtendDuration = () => {
-    if (elapsedTime <= totalDuration) {
-      // Normal case: just add 1 minute
-      setTotalDuration(totalDuration + 60);
+    // Route extension through the global timer when available for cross-route persistence
+    if (globalTimer) {
+      globalTimer.addOneMinute();
     } else {
-      // Overtime case: set duration to elapsed time + 1 minute
-      setTotalDuration(elapsedTime + 60);
+      // Fallback to local behavior if global timer is unavailable
+      if (elapsedTime <= totalDuration) {
+        setTotalDuration(totalDuration + 60);
+      } else {
+        setTotalDuration(elapsedTime + 60);
+      }
     }
-    // Clear the time up state
+    // Clear the local "time up" flag so UI recovers immediately
     clearTimeUpState();
   };
   
   const handleReset = async () => {
     await resetService.reset();
+    try {
+      globalTimer?.resetSession();
+    } catch (e) {
+      console.error('[Home] Failed to reset global timer session:', (e as Error).message);
+    }
   };
+
+  // Keep local page state in sync with global timer so navigation (e.g., /activities → /) persists
+  useEffect(() => {
+    if (!globalTimer) return;
+    if (globalTimer.sessionStartTime) {
+      // Ensure activity view is shown after navigation
+      if (!timeSet) setTimeSet(true);
+      // Keep local duration aligned with global totalDuration
+      if (totalDuration !== globalTimer.totalDuration) {
+        setTotalDuration(globalTimer.totalDuration);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [globalTimer?.sessionStartTime, globalTimer?.totalDuration]);
   
   const appState = !timeSet 
     ? 'setup' 

@@ -81,7 +81,7 @@ Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
 - [ ] Accessibility maintained (screen reader, keyboard nav)
 - [ ] Responsive behavior preserved
 
-## Issue #344: Persistent Timer State Across Application (IN PROGRESS 🚧)
+## Issue #344: Persistent Timer State Across Application (COMPLETE ✅)
 
 ### Context
 - **GitHub Issue**: #344 - Allow activities to keep running when navigated to other parts of the application
@@ -210,11 +210,11 @@ Challenges/Findings
 - Drawer behavior clarified: hidden on summary or when no session; collapsed quick action shown only on the timer page to reduce layout shift
 
 Pending (remaining items)
-- Phase 7: Bootstrap collapse animations for drawer and theming polish (deferred to follow-up)
+- None. All acceptance criteria for Issue #344 have been met. Minor enhancements (animation polish) will be tracked separately.
 
 Next Actions
-1) Optional: Add Bootstrap collapse animations for drawer expand/collapse and finalize theming polish
-2) Optional: Introduce CSS variables to fine-tune responsive bottom padding
+1) Optional follow-up: Add additional Bootstrap collapse animation polish for drawer expand/collapse
+2) Optional follow-up: Introduce further CSS variables to fine-tune responsive bottom padding
 
 #### Phase 1: Cleanup (1-2 days)
 - [x] Remove `restoreActivity` functionality from state machine
@@ -269,6 +269,17 @@ Next Actions
 - [x] Browser refresh preserves timer state appropriately
 - [x] All tests pass including new integration tests
 
+### Live Smoke Validation Results — 2025-08-24
+- Verified end-to-end flow on running dev server (Network URL):
+  - Set duration on home page starts global session; drawer appears immediately (collapsed on timer page)
+  - "+1 min" updates progress from both collapsed quick action and expanded drawer across pages
+  - Navigation to `/activities` triggers internal confirm modal; choosing "Leave" persists the drawer and global state
+  - Drawer expand/collapse works with correct ARIA: `aria-expanded` toggles, region labeled, and control mapping via `aria-controls`
+  - Drawer persists across routes and back to home; global Reset hides the drawer and returns to timer setup state
+  - CSS var `--timer-drawer-height` is applied on `document.body` via ResizeObserver (intended); computed style on `documentElement` remains empty by design
+
+All quality gates (tests, lint, type-check, build) green.
+
 ### Expected Outcome
 - **User Experience**: Seamless timer experience across the entire application
 - **Technical Quality**: Clean, maintainable global state architecture
@@ -281,6 +292,105 @@ Next Actions
 - Update PR description with progress after each phase
 - Request reviews at key architectural milestones (after Phases 2, 4, and 6)
 - Keep PR updated with implementation progress and any architectural decisions
+
+## Follow-up: Persistent Timer Drawer — Post-Launch Fixes (PLANNED)
+
+### Context
+- After completing Issue #344, several UX and behavior gaps were identified during real-world usage and additional validation. These items refine navigation behavior, live progress updates, session restoration UX, and eliminate duplicate UI elements.
+
+### Requirements (Mapped to Feedback Items)
+1) Suppress internal navigation warnings
+   - Users should not see a warning when moving between pages within the app. The confirmation should only appear when leaving the site (close tab/window, external link, hard reload).
+
+2) Live progress updates in drawer
+   - The drawer progress bar must update continuously while a session runs, without requiring user interaction.
+
+3) Unify “+1 min” behavior
+   - The “+1 min” action in the drawer must be identical to the ActivityManager card header action (single source of truth).
+
+4) Expanded view shows current state
+   - Expanding the drawer reveals either the currently running activity or the active break when between activities (with correct time and color context).
+
+5) Seamless restore UX on reload/return
+   - When the page is reloaded or the user returns from outside the app while a session is ongoing, render directly into the running state (no setup flash) and show a toast “Session restored.”
+   - This toast must not show for in-app navigations (back/forward that never left the origin).
+
+6) Progress resumes after restore
+   - After restoring a running session, the drawer progress continues updating immediately, without needing a user gesture.
+
+7) Single progress bar source
+   - The drawer’s progress bar replaces the top-of-card progress in ActivityManager to avoid duplication.
+
+### Technical Guidelines and Approach
+- Navigation guard refinement
+  - Update `useNavigationGuard` to distinguish internal vs external navigations.
+  - Internal: never prompt; External: prompt only on `beforeunload`/external anchors.
+  - Consider using Next.js router events only for analytics, not blocking; keep the guard at window level for external cases.
+
+- Live progress clock centralization
+  - Centralize ticking in `GlobalTimerContext` using a stable timer (prefer `requestAnimationFrame` with visibility fallback to `setInterval(1000)` when hidden).
+  - Expose a derived selector/hook (e.g., `useGlobalTimerProgress()`) that yields elapsed/remaining/progress and re-renders subscribers without interaction.
+
+- Unify “+1 min” handler
+  - Implement single reducer action `ADD_ONE_MINUTE` with shared logic (already present) and ensure both ActivityManager and TimerDrawer call the same context dispatcher.
+  - Remove any component-local add-minute logic or drift.
+
+- Expanded content data model
+  - Source “current state” from context: if `currentActivity` present -> show RunningActivityCard; else if `currentBreakStartTime` present -> show Break card with elapsed; else show compact state.
+
+- Restore-first render and toast signaling
+  - Use context lazy-initializer from `localStorage` to set the initial state before first render; avoid setup flash in the home screen.
+  - Track cross-origin/page-leave in `sessionStorage` (e.g., `timer:lastLeftOriginAt`) and compare on load; only show the “Session restored” toast when the previous navigation left the app.
+  - Guard SSR/CSR differences: no SSR reliance on storage; lazy initializer runs on client during provider mount prior to first paint when possible.
+
+- Post-restore ticking
+  - Ensure the ticking effect depends on `isTimerRunning || currentBreakStartTime` and starts immediately on mount if a session is active.
+  - Avoid focus/interaction dependencies; use passive effects and visibility handlers.
+
+- Remove duplicate progress UI
+  - Hide/remove the ProgressBar section from ActivityManager when the global drawer is rendered; rely solely on the drawer’s progress visualization.
+
+### Phased Plan
+Phase A: Navigation Guard Refinement (Item 1)
+- Adjust `useNavigationGuard` to only warn on leave-the-origin events.
+- Add tests verifying no prompts on internal route changes, prompt on `beforeunload`.
+
+Phase B: Centralized Live Progress (Items 2, 6)
+- Add ticking loop to `GlobalTimerContext` with visibility-aware update cadence.
+- Expose computed progress via a dedicated hook used by TimerDrawer.
+- Tests: verify progress updates over time and after restore without interaction.
+
+Phase C: Unify Add-Minute (Item 3)
+- Refactor to a single `addOneMinute` context action; update ActivityManager/TimerDrawer to use it.
+- Tests: both buttons increment identically and affect session state consistently.
+
+Phase D: Expanded Content — Activity/Break (Item 4)
+- Enhance TimerDrawer expanded view to render RunningActivityCard or Break card based on context.
+- Tests: assert correct rendering and timers for both states.
+
+Phase E: Restore UX and Toast (Item 5)
+- Implement lazy initialization from storage to avoid setup flash.
+- Add session restored toast only for true app-return scenarios (using `sessionStorage` signal).
+- Tests: reload/return shows running state immediately; toast appears appropriately; in-app nav shows no toast.
+
+Phase F: Remove Duplicate Progress (Item 7)
+- Remove/disable ActivityManager top-of-card progress when drawer is present.
+- Tests: ensure only one progress bar is visible and accessible.
+
+### Validation Criteria
+- [ ] A: Internal navigation never triggers confirm; external leave still prompts
+- [ ] B: Drawer progress updates live without interaction; after restore, ticking resumes immediately
+- [ ] C: “+1 min” in drawer and ActivityManager share identical behavior (single dispatcher)
+- [ ] D: Expanded drawer shows current activity or active break accurately with timing
+- [ ] E: On reload/return from outside the app, no setup flash; toast “Session restored” appears; in-app nav shows no toast
+- [ ] F: Only one progress bar displayed (drawer replaces ActivityManager’s top progress)
+- [ ] All tests updated and passing; lint/type-check/build remain green
+- [ ] Accessibility preserved (roles/labels/aria-expanded); responsive behavior maintained
+
+### Branch and PR Strategy
+- Do NOT create a new branch or PR for these fixes.
+- Continue work on the existing branch `feature-344-persistent-timer-drawer` and update the existing PR #348.
+- Land phases incrementally with tests; keep CI green at each step; update the PR description/checklist per phase.
 
 ## New: Shareable Session Summary (Design Document Added)
 

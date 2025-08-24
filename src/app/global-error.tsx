@@ -9,11 +9,10 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <html>
-      <body>
-        <h1>Something went wrong!</h1>
-        <button onClick={() => reset()}>Try again</button>
-      </body>
-    </html>
+    <div className="container py-5">
+      <h1 className="h3 mb-3">Something went wrong!</h1>
+      <p className="mb-4">An unexpected error occurred. You can try again to recover.</p>
+      <button className="btn btn-primary" onClick={() => reset()}>Try again</button>
+    </div>
   );
 }
