@@ -375,6 +375,12 @@ Phase C: Unify Add-Minute (Item 3)
 - Refactor to a single `addOneMinute` context action; update ActivityManager/TimerDrawer to use it.
 - Tests: both buttons increment identically and affect session state consistently.
 
+Status — Completed (2025-08-24)
+- Implemented unification by removing local page-level `handleExtendDuration` and relying solely on `GlobalTimerContext.addOneMinute`.
+- `ActivityManager` now wires header “1 min” button to context when provider is present; no separate prop required in app usage. Legacy prop remains for backward compatibility in isolated renders/tests.
+- Added integration test `ActivityManager.addOneMinute.context.integration.test.tsx` to verify the header button works without an explicit prop when provider is present.
+- Quality gates: Jest PASS, ESLint PASS, Type-check PASS, Build PASS.
+
 Phase D: Expanded Content — Activity/Break (Item 4)
 - Enhance TimerDrawer expanded view to render RunningActivityCard or Break card based on context.
 - Tests: assert correct rendering and timers for both states.
@@ -391,7 +397,7 @@ Phase F: Remove Duplicate Progress (Item 7)
 ### Validation Criteria
 - [x] A: Internal navigation never triggers confirm; external leave still prompts
 - [x] B: Drawer progress updates live without interaction; after restore, ticking resumes immediately
-- [ ] C: “+1 min” in drawer and ActivityManager share identical behavior (single dispatcher)
+  - [x] C: “+1 min” in drawer and ActivityManager share identical behavior (single dispatcher)
 - [ ] D: Expanded drawer shows current activity or active break accurately with timing
 - [ ] E: On reload/return from outside the app, no setup flash; toast “Session restored” appears; in-app nav shows no toast
 - [ ] F: Only one progress bar displayed (drawer replaces ActivityManager’s top progress)

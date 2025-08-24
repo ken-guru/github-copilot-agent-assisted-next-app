@@ -42,7 +42,6 @@ function AppContent() {
     timerActive,
     startTimer,
     resetTimer,
-    extendDuration: clearTimeUpState,
   } = useTimerState({
     totalDuration,
     isCompleted: allActivitiesCompleted
@@ -129,21 +128,9 @@ function AppContent() {
     }
   };
   
-  const handleExtendDuration = () => {
-    // Route extension through the global timer when available for cross-route persistence
-    if (globalTimer) {
-      globalTimer.addOneMinute();
-    } else {
-      // Fallback to local behavior if global timer is unavailable
-      if (elapsedTime <= totalDuration) {
-        setTotalDuration(totalDuration + 60);
-      } else {
-        setTotalDuration(elapsedTime + 60);
-      }
-    }
-    // Clear the local "time up" flag so UI recovers immediately
-    clearTimeUpState();
-  };
+  // Note: "+1 min" behavior is unified via GlobalTimerContext (TimerDrawer and ActivityManager header)
+  // When GlobalTimerProvider is present (layout-level), ActivityManager uses context.addOneMinute directly.
+  // If provider is absent (test environments), the button will not render.
   
   const handleReset = async () => {
     await resetService.reset();
@@ -214,7 +201,7 @@ function AppContent() {
                   totalDuration={totalDuration}
                   timerActive={timerActive}
                   onReset={handleReset}
-                  onExtendDuration={handleExtendDuration}
+                  
                 />
               </div>
               <div className="col-lg-7 d-none d-lg-flex flex-column overflow-hidden">
