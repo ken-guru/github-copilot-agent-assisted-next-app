@@ -25,6 +25,8 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
   const confirmRef = useRef<ConfirmationDialogRef>(null);
   const [isReplacing, setIsReplacing] = useState(false);
 
+  // Network status hook - place with other hooks at top of component for clarity
+  const { online } = useNetworkStatus();
 
   const copy = async () => {
     try {
@@ -149,7 +151,6 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
     confirmRef.current?.showDialog();
   };
 
-  const { online } = useNetworkStatus();
 
   return (
     <div
