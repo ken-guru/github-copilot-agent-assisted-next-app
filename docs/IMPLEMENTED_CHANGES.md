@@ -46,6 +46,38 @@ Implemented end-to-end Session Sharing with strong privacy, SSR safety, and resi
 - Theme-aware shared view
 - Descriptions and colors preserved end-to-end
 
+### Timeline Sharing Scaling Fix, CRUD Smart Color Suggestion, and Dependency Modernization - COMPLETED (2025-08-25)
+
+**Summary:**
+Resolved two user-facing issues and modernized transitive dependencies to remove deprecated packages:
+- Fixes timeline scaling and break rendering in the sharing view by basing calculations on provided `elapsedTime` and limiting ticking to active/ongoing states.
+- Enables smart default color suggestion in Activity CRUD add form by delegating to `getSmartColorIndex` using existing activities.
+- Enforces `glob@^10` across the dependency tree and removes deprecated `inflight@1.0.6`.
+
+**Issues Resolved:**
+- Issue #349: Sharing timeline not scaling/marking correctly
+- Issue #345: CRUD form should suggest next available color
+
+**PR/Branch:**
+- PR: #351
+- Branch: `fix-345-349-deps-upgrade`
+
+**Key Changes:**
+- `src/components/feature/Timeline.tsx`: Compute time-left from `elapsedTime` for shared/static views; start ticking only when `timerActive` or an ongoing entry exists; include overtime for effective duration and markers.
+- `src/components/feature/ActivityCrud.tsx`: Pass `existingActivities={activities}` to `ActivityForm` to enable smart default color preselection.
+- `package.json`: Add `overrides` to force `glob@^10`, upgrade `test-exclude` to `^7.0.1` (uses `glob@10`), and alias deprecated `inflight` to an empty placeholder.
+
+**Testing and Quality Gates:**
+- Updated CRUD test expectation for default color to match smart selection behavior (defaults occupy indices 0–3, next is Red at index 4).
+- Jest: 132/132 suites passing; all tests green.
+- `npm run lint`: PASS
+- `npm run type-check`: PASS
+- `npm run build`: PASS
+
+**Notes:**
+- No breaking public APIs.
+- Shared view remains SSR-safe and theme-aware.
+
 ## 2025 July
 
 ### JSON Import/Export Improvements - COMPLETED (2025-07-25)
