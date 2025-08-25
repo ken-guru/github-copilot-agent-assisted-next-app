@@ -21,7 +21,9 @@ export default function useNetworkStatus() {
     // In some test environments the navigator.onLine may be out-of-date
     // so check once on mount to sync state.
     try {
-      setOnline(Boolean((navigator && (navigator as any).onLine) ?? true));
+      // Avoid using `any` casts for navigator; narrow safely
+      const nav = typeof navigator !== 'undefined' ? navigator : undefined;
+      setOnline(Boolean(nav?.onLine ?? true));
     } catch {
       // ignore
     }

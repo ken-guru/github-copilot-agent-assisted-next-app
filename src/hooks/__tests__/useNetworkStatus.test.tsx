@@ -4,14 +4,14 @@ import { act } from 'react';
 import useNetworkStatus from '../useNetworkStatus';
 
 describe('useNetworkStatus (integration)', () => {
-  const originalNavigator = { ...(window as any).navigator };
+  // Capture a shallow copy of the original navigator for restoration.
+  // Use unknown to avoid `any` lint rule and then cast to PropertyDescriptor-friendly type.
+  const originalNavigatorDescriptor = Object.getOwnPropertyDescriptor(window, 'navigator');
 
   afterEach(() => {
-    // Restore original navigator object after each test
-    Object.defineProperty(window, 'navigator', {
-      configurable: true,
-      value: originalNavigator,
-    });
+    if (originalNavigatorDescriptor) {
+      Object.defineProperty(window, 'navigator', originalNavigatorDescriptor);
+    }
   });
 
   function TestComponent() {

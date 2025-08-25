@@ -192,6 +192,8 @@ export default function ActivityManager({
   const visibleActivities = activities.filter(a => !hiddenSet.has(a.id));
   const hiddenActivities = activities.filter(a => hiddenSet.has(a.id));
 
+  const { online } = useNetworkStatus();
+
   const handleCreateShare = useCallback(async () => {
     try {
       if (!online) {
@@ -233,9 +235,9 @@ export default function ActivityManager({
     } finally {
       setShareLoading(false);
     }
-  }, [activities, timelineEntries, addResponsiveToast]);
+  }, [activities, timelineEntries, addResponsiveToast, online]);
 
-  const { online } = useNetworkStatus();
+  // Note: `online` is intentionally included in the handleCreateShare dependency array
 
   return (
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
