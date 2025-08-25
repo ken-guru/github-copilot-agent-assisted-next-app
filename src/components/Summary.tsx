@@ -12,6 +12,7 @@ import type { ChatCompletion } from '@/types/ai';
 import ShareControls from './ShareControls';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
 import { mapTimelineEntriesForShare } from '@/utils/sharing';
+import useNetworkStatus from '@/hooks/useNetworkStatus';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -45,6 +46,7 @@ export default function Summary({
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const { apiKey } = useApiKey();
   const { callOpenAI } = useOpenAIClient();
+  const { online } = useNetworkStatus();
   // Auto mode: BYOK if available, else server mock route
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
@@ -54,6 +56,11 @@ export default function Summary({
   // Extracted handler for creating a share to keep JSX minimal and readable
   const handleCreateShare = async () => {
     try {
+      // Guard against offline attempts — provide clear user feedback
+      if (!online) {
+        addToast({ message: 'Cannot create share: no network connection. Please reconnect and try again.', variant: 'warning' });
+        return;
+      }
       setShareLoading(true);
 
       // Build payload matching SessionSummaryDataSchema
@@ -727,12 +734,18 @@ export default function Summary({
               >
                 Cancel
               </Button>
-              <Button
-                variant="success"
-                onClick={handleCreateShare}
-              >
-                Create share
-              </Button>
+                  <div className="d-flex flex-column align-items-end">
+                    {!online && (
+                      <div className="text-muted small mb-2" data-testid="share-offline-warning">Sharing requires a network connection — you are currently offline.</div>
+                    )}
+                    <Button
+                      variant="success"
+                      onClick={handleCreateShare}
+                      disabled={!online}
+                    >
+                      Create share
+                    </Button>
+                  </div>
             </>
           )}
           {showShareControls && (

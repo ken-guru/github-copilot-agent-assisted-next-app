@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useResponsiveToast } from '@/hooks/useResponsiveToast';
+import useNetworkStatus from '@/hooks/useNetworkStatus';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
 import { saveActivities } from '@/utils/activity-storage';
 import { importActivities } from '@/utils/activity-import-export';
@@ -44,6 +45,10 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
   };
 
   const downloadJson = async () => {
+    if (!online) {
+      addResponsiveToast({ message: 'You are currently offline — downloading shared sessions requires a network connection.', variant: 'warning', autoDismiss: true });
+      return;
+    }
     try {
       // Derive id from shareUrl (last path segment)
       if (!shareUrl) {
@@ -78,6 +83,10 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
   };
 
   const doReplace = async () => {
+    if (!online) {
+      addResponsiveToast({ message: 'You are currently offline — replacing activities requires a network connection.', variant: 'warning', autoDismiss: true });
+      return;
+    }
     try {
       if (!shareUrl) {
         addResponsiveToast({ message: 'No share URL available', variant: 'warning', autoDismiss: true });
@@ -140,6 +149,8 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
     confirmRef.current?.showDialog();
   };
 
+  const { online } = useNetworkStatus();
+
   return (
     <div
       style={{ display: 'flex', gap: 8, alignItems: 'center' }}
@@ -159,6 +170,7 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
         type="button"
         className="btn btn-outline-secondary d-flex align-items-center"
         onClick={downloadJson}
+        disabled={!online}
         aria-label="Download JSON"
       >
         <i className="bi bi-download me-2" aria-hidden="true"></i>
@@ -178,7 +190,11 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
                   return shareUrl;
                 }
               })();
-              window.open(absolute, '_blank', 'noopener,noreferrer');
+                if (!online) {
+                  addResponsiveToast({ message: 'You are currently offline — opening a shared session requires a network connection.', variant: 'warning', autoDismiss: true });
+                  return;
+                }
+                window.open(absolute, '_blank', 'noopener,noreferrer');
             } catch {
               addResponsiveToast({ message: 'Unable to open link', variant: 'warning', autoDismiss: true });
             }
@@ -190,12 +206,12 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
           Open
         </button>
       )}
-    {showReplace && (
+      {showReplace && (
         <button
           type="button"
       className="btn btn-outline-warning d-flex align-items-center"
           onClick={replaceMyActivities}
-          disabled={isReplacing}
+          disabled={isReplacing || !online}
           aria-label="Replace my activities"
           title="Replace my activities with this shared set"
         >

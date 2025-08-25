@@ -10,6 +10,7 @@ import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
+import useNetworkStatus from '@/hooks/useNetworkStatus';
 
 // Use canonical Activity type
 type Activity = CanonicalActivity & { colors?: ColorSet };
@@ -193,6 +194,10 @@ export default function ActivityManager({
 
   const handleCreateShare = useCallback(async () => {
     try {
+      if (!online) {
+        addResponsiveToast({ message: 'Cannot create share: no network connection. Please reconnect and try again.', variant: 'warning', autoDismiss: true });
+        return;
+      }
       setShareLoading(true);
       const payload = {
         sessionData: {
@@ -229,6 +234,8 @@ export default function ActivityManager({
       setShareLoading(false);
     }
   }, [activities, timelineEntries, addResponsiveToast]);
+
+  const { online } = useNetworkStatus();
 
   return (
     <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
@@ -267,6 +274,7 @@ export default function ActivityManager({
               variant="outline-success"
               size="sm"
               onClick={() => setShowShareModal(true)}
+              disabled={!online}
               className="d-flex align-items-center"
               title="Share session"
               data-testid="open-share-modal"
@@ -372,6 +380,9 @@ export default function ActivityManager({
               <Spinner animation="border" size="sm" className="me-2" /> Creating share...
             </div>
           )}
+            {!online && (
+              <div className="text-muted small mt-2" data-testid="activitymanager-share-offline-warning">Sharing requires a network connection — you are currently offline.</div>
+            )}
           {showShareControls && shareUrl && (
             <div className="mt-3">
               <ShareControls shareUrl={shareUrl} />
@@ -385,6 +396,7 @@ export default function ActivityManager({
               <Button
                 variant="success"
                 onClick={handleCreateShare}
+                disabled={!online}
               >
                 Create share
               </Button>
