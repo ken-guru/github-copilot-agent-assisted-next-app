@@ -502,6 +502,12 @@ Additional issues were identified after rolling out the persistent timer drawer.
   - Introduced `AddMinuteButton` component and reused in `ActivityManager` and `TimerDrawer` (collapsed and expanded); retained ARIA/labels for tests.
 - 3) Restore ActivityManager from global state — Completed
 - 4) Prevent “+1 minute” wrap — Completed (added `flex-nowrap` and test)
-- 5) Fix remove activity action — Pending
-- 6) Remove leave-site confirmation — Pending
-- 7) Hide drawer on shared session page — Pending
+- 5) Fix remove activity action — Completed
+  - Implemented session-only hide by filtering `removedActivityIds` in `ActivityManager`; persisted delete only when timer inactive
+  - Added `ActivityManager.removal.behavior.test.tsx` to assert removed items are not rendered
+- 6) Remove leave-site confirmation — Completed
+  - Updated `useNavigationGuard` to stop setting `returnValue`/`preventDefault`; now only sets a sessionStorage flag for restore toast
+  - Updated tests to validate non-confirming behavior and proper listener cleanup
+- 7) Hide drawer on shared session page — Completed
+  - Added `usePathname` check in `LayoutClient` to suppress `TimerDrawer` on `/shared/[id]` routes
+  - Added `LayoutClient.shared-route.test.tsx` to assert the drawer is not rendered on shared pages
