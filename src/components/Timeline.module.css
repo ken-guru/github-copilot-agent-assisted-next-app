@@ -6,7 +6,7 @@
   flex: 1;
   min-height: 400px; /* Ensure minimum height for timeline visibility */
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Constrain children from overflowing vertically */
   background: var(--background);
   height: 100%; /* Allow full height growth */
 }
@@ -18,8 +18,9 @@
   background: var(--background-muted);
   flex-shrink: 0;
   z-index: 2;
-  padding: var(--space-lg) 0; /* Increase vertical padding to match marker height */
-  overflow: hidden; /* Ensure the overtime section stays within bounds */
+  padding: var(--space-lg) 0; /* Vertical padding contained within card */
+  overflow: hidden; /* Keep overtime section and markers within bounds */
+  height: 100%; /* Match the container height to avoid overflow */
 }
 
 .timeMarker {
@@ -102,7 +103,7 @@
   background: var(--background);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden; /* Rely on inner wrapper to scroll if needed */
 }
 
 .entriesWrapper {
@@ -112,7 +113,7 @@
   display: flex;
   flex-direction: column;
   gap: 1px;
-  overflow-y: auto; /* Allow scrolling inside the wrapper if needed */
+  overflow-y: auto; /* Scroll within entries only, keeping ruler fixed */
 }
 
 .timelineEntry {

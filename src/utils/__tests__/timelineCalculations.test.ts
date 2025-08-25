@@ -221,4 +221,33 @@ describe('calculateTimeSpans', () => {
     expect(result.items[0]?.duration).toBeCloseTo(Date.now() - startTime, -1);
     expect(result.items[0]?.height).toBeCloseTo(((Date.now() - startTime) / (totalDuration)) * 100);
   });
+
+  it('should respect provided nowMs snapshot instead of Date.now()', () => {
+    const startTime = FIXED_TIME - 10000; // started 10s before FIXED_TIME
+    const snapshotNow = FIXED_TIME - 5000; // pretend "now" is 5s earlier than FIXED_TIME
+    const entries: TimelineEntry[] = [
+      {
+        id: 'test-id',
+        activityId: null,
+        activityName: 'Test Activity',
+        startTime,
+        endTime: undefined,
+      },
+    ];
+    const totalDuration = 60 * 1000;
+
+    const result = calculateTimeSpans({
+      entries,
+      totalDuration,
+      allActivitiesCompleted: false,
+      timeLeft: 0,
+      nowMs: snapshotNow,
+    });
+
+    // Duration should be based on snapshotNow - startTime, not Date.now()
+    expect(result.items).toHaveLength(1);
+    const duration = snapshotNow - startTime; // 5s
+    expect(result.items[0]?.duration).toBe(duration);
+    expect(result.items[0]?.height).toBeCloseTo((duration / totalDuration) * 100);
+  });
 });

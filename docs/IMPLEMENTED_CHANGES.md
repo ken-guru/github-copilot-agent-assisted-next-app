@@ -86,6 +86,13 @@ Resolved two user-facing issues and modernized transitive dependencies to remove
 - Added `"use client"` directive to `Timeline.tsx` to satisfy Next.js client-hook requirements
 - Rebuilt and validated: tests, lint, type-check, and production build all passing
 
+#### Addendum: Freeze "now" in Shared Timeline (2025-08-25)
+
+- Eliminated drift caused by `Date.now()` in static/shared views by introducing an optional `nowMs` parameter to `timelineCalculations`
+- `Timeline` now computes a snapshot `nowMs` as `firstEntry.startTime + (elapsedTime * 1000)` and passes it into calculations
+- Shared `/shared/[id]` view sets `timerActive={false}` so no ticking occurs; the snapshot ensures the post-last-activity break remains constant across refreshes
+- Retains backwards compatibility: when `nowMs` is not provided, runtime views still rely on `Date.now()`
+
 ## 2025 July
 
 ### JSON Import/Export Improvements - COMPLETED (2025-07-25)

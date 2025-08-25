@@ -14,6 +14,7 @@ interface TimelineProps {
   elapsedTime: number;
   timerActive?: boolean;
   allActivitiesCompleted?: boolean;
+  showCounter?: boolean;
 }
 
 function calculateTimeIntervals(duration: number): { interval: number; count: number } {
@@ -34,7 +35,7 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
   }
 }
 
-export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
+export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, timerActive = false, allActivitiesCompleted = false, showCounter = true }: TimelineProps) {
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
   
@@ -294,9 +295,11 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     <Card className="border h-100 d-flex flex-column">
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0">Timeline</h5>
-        <Badge bg="secondary" className="ms-2 text-nowrap" data-testid="time-display">
-          {timeDisplay}
-        </Badge>
+        {showCounter && (
+          <Badge bg="secondary" className="ms-2 text-nowrap" data-testid="time-display">
+            {timeDisplay}
+          </Badge>
+        )}
       </Card.Header>
         
         <Card.Body className="p-0 flex-grow-1 d-flex flex-column overflow-hidden">

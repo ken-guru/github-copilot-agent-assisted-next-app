@@ -107,7 +107,7 @@ export default async function SharedPage({ params }: Props) {
   const allActivitiesCompleted = data.sessionData.sessionType === 'completed';
 
   return (
-    <div style={{ padding: 20 }}>
+    <div className="container-fluid min-vh-100 d-flex flex-column py-3">
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
           <h1 className="h3 mb-0">Shared Session</h1>
@@ -128,14 +128,14 @@ export default async function SharedPage({ params }: Props) {
         </div>
       </div>
 
-      <div className="row mt-3 g-3">
-        <div className="col-12 col-lg-6">
-          <section>
-            <div className="card h-100">
+      <div className="row mt-3 g-3 flex-grow-1">
+        <div className="col-12 col-lg-6 d-flex">
+          <section className="w-100 d-flex">
+            <div className="card h-100 flex-grow-1 d-flex flex-column">
               <div className="card-header card-header-consistent">
                 <h5 className="mb-0">Summary</h5>
               </div>
-              <div className="card-body">
+              <div className="card-body flex-grow-1 d-flex flex-column">
                 <Summary
                   entries={entries}
                   totalDuration={totalDuration}
@@ -148,14 +148,15 @@ export default async function SharedPage({ params }: Props) {
             </div>
           </section>
         </div>
-        <div className="col-12 col-lg-6 d-none d-lg-block">
-          <section>
+        <div className="col-12 col-lg-6 d-none d-lg-flex">
+          <section className="w-100 d-flex">
             <Timeline
               entries={entries}
               totalDuration={totalDuration}
               elapsedTime={elapsedTime}
               allActivitiesCompleted={allActivitiesCompleted}
               timerActive={false}
+              showCounter={false}
             />
           </section>
         </div>
