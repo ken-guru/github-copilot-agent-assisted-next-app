@@ -78,6 +78,14 @@ Resolved two user-facing issues and modernized transitive dependencies to remove
 - No breaking public APIs.
 - Shared view remains SSR-safe and theme-aware.
 
+#### Adjustment: Canonical Timeline in Shared View Only (2025-08-25)
+
+- Reverted main app Completed state to render `Summary` only (no Timeline)
+- Updated `/shared/[id]` to reuse the canonical `src/components/Timeline.tsx`
+- Ensured shared Timeline is frozen by passing `timerActive={false}`; internal logic only ticks if last entry is ongoing
+- Added `"use client"` directive to `Timeline.tsx` to satisfy Next.js client-hook requirements
+- Rebuilt and validated: tests, lint, type-check, and production build all passing
+
 ## 2025 July
 
 ### JSON Import/Export Improvements - COMPLETED (2025-07-25)

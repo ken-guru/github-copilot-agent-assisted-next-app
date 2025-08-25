@@ -174,10 +174,8 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       }
     };
 
-    // Only run timer if we need real-time updates
-    // Tick when timer is active OR the last entry is ongoing (no endTime yet)
-    const hasOngoingEntry = hasEntries && entries[entries.length - 1]?.endTime == null;
-    if ((timerActive && hasEntries) || hasOngoingEntry) {
+    // Only run timer if explicitly active; shared/static views remain frozen
+    if (timerActive && hasEntries) {
       updateTime(); // Initial update
       timeoutId = setInterval(updateTime, 1000);
     }
@@ -237,11 +235,17 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   // Use currentElapsedTime to avoid wall-clock drift for static/shared views
   const currentTimeLeft = (totalDuration - currentElapsedTime) * 1000;
   
+  // Compute a snapshot 'now' based on the first entry start + currentElapsedTime
+  const snapshotNow = hasEntries && entries[0]?.startTime
+    ? entries[0]!.startTime + currentElapsedTime * 1000
+    : undefined;
+
   const timeSpansData = calculateTimeSpans({
     entries,
     totalDuration: effectiveDuration,
     allActivitiesCompleted,
     timeLeft: currentTimeLeft,
+    nowMs: snapshotNow,
   });
   
   const calculateEntryStyle = (item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number } | undefined) => {
