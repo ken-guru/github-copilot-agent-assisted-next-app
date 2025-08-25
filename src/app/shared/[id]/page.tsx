@@ -128,9 +128,9 @@ export default async function SharedPage({ params }: Props) {
         </div>
       </div>
 
-      <div className="row mt-3 g-3 flex-grow-1">
+      <div className="row mt-3 g-3 flex-grow-1 align-items-stretch">
         <div className="col-12 col-lg-6 d-flex">
-          <section className="w-100 d-flex">
+          <section className="w-100 d-flex h-100">
             <div className="card h-100 flex-grow-1 d-flex flex-column">
               <div className="card-header card-header-consistent">
                 <h5 className="mb-0">Summary</h5>
@@ -149,7 +149,7 @@ export default async function SharedPage({ params }: Props) {
           </section>
         </div>
         <div className="col-12 col-lg-6 d-none d-lg-flex">
-          <section className="w-100 d-flex">
+          <section className="w-100 d-flex h-100">
             <Timeline
               entries={entries}
               totalDuration={totalDuration}

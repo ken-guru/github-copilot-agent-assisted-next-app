@@ -9,6 +9,7 @@
   overflow: hidden; /* Constrain children from overflowing vertically */
   background: var(--background);
   height: 100%; /* Allow full height growth */
+  width: 100%; /* Ensure full width usage within flex/grid parent */
 }
 
 .timelineRuler {

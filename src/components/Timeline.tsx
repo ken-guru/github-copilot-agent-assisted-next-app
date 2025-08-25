@@ -292,7 +292,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   };
   
   return (
-    <Card className="border h-100 d-flex flex-column">
+    <Card className="border h-100 d-flex flex-column w-100">
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0">Timeline</h5>
         {showCounter && (
