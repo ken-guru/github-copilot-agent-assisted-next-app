@@ -45,5 +45,10 @@
     "jest-axe": "^10.0.0",
     "jest-environment-jsdom": "^30.0.5",
     "typescript": "^5"
+  },
+  "overrides": {
+    "glob": "^10",
+    "test-exclude": "^7.0.1",
+    "inflight": "npm:@empty-package/no-inflight@0.0.0"
   }
 }

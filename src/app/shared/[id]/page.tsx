@@ -1,8 +1,8 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { getSession } from '../../../utils/sessionSharing/storage';
-import Summary from '@/components/feature/Summary';
-import Timeline from '@/components/feature/Timeline';
+import Summary from '@/components/Summary';
+import Timeline from '@/components/Timeline';
 import type { StoredSession } from '@/types/sessionSharing';
 import ShareControls from '@/components/ShareControls';
 import { internalActivityColors } from '@/utils/colors';
@@ -107,8 +107,11 @@ export default async function SharedPage({ params }: Props) {
   const allActivitiesCompleted = data.sessionData.sessionType === 'completed';
 
   return (
-    <div style={{ padding: 20 }}>
-      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div
+      className="container-fluid d-flex flex-column overflow-x-hidden"
+      style={{ height: 'calc(100vh - var(--navbar-height))' }}
+    >
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 py-3 px-3">
         <div>
           <h1 className="h3 mb-0">Shared Session</h1>
           <small className="text-muted">
@@ -128,43 +131,27 @@ export default async function SharedPage({ params }: Props) {
         </div>
       </div>
 
-      <div className="row mt-3 g-3">
-        <div className="col-12 col-lg-6">
-          <section>
-            <div className="card h-100">
-              <div className="card-header card-header-consistent">
-                <h5 className="mb-0">Summary</h5>
-              </div>
-              <div className="card-body">
-                <Summary
-                  entries={entries}
-                  totalDuration={totalDuration}
-                  elapsedTime={elapsedTime}
-                  timerActive={false}
-                  allActivitiesCompleted={allActivitiesCompleted}
-                  isTimeUp={isTimeUp}
-                />
-              </div>
-            </div>
-          </section>
+      <div className="row g-3 px-3 pb-3 flex-grow-1 align-items-stretch overflow-hidden">
+        <div className="col-12 col-lg-6 d-flex flex-column h-100 overflow-hidden">
+          {/* Reuse canonical Summary card directly (no extra nesting) */}
+          <Summary
+            entries={entries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            timerActive={false}
+            allActivitiesCompleted={allActivitiesCompleted}
+            isTimeUp={isTimeUp}
+          />
         </div>
-        <div className="col-12 col-lg-6 d-none d-lg-block">
-          <section>
-            <div className="card h-100">
-              <div className="card-header card-header-consistent">
-                <h5 className="mb-0">Timeline</h5>
-              </div>
-              <div className="card-body">
-                <Timeline
-                  entries={entries}
-                  totalDuration={totalDuration}
-                  elapsedTime={elapsedTime}
-                  isTimeUp={isTimeUp}
-                  hideHeader
-                />
-              </div>
-            </div>
-          </section>
+        <div className="col-12 col-lg-6 d-none d-lg-flex flex-column h-100 overflow-hidden">
+          <Timeline
+            entries={entries}
+            totalDuration={totalDuration}
+            elapsedTime={elapsedTime}
+            allActivitiesCompleted={allActivitiesCompleted}
+            timerActive={false}
+            showCounter={false}
+          />
         </div>
       </div>
     </div>

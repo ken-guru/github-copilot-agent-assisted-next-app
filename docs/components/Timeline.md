@@ -14,7 +14,7 @@
 
 The Timeline component provides a visual representation of activities and the time between them (breaks). It features a time ruler with appropriate time intervals, activity blocks with duration information, and specialized handling for breaks and overtime scenarios. The component is designed to update in real-time and adapt to different theme modes.
 
-**Bootstrap Integration**: This component has been migrated to use Bootstrap's layout system, typography utilities, and components while preserving the specialized timeline visualization. It uses a hybrid approach combining Bootstrap's layout components (Container, Card, Row, Col) with custom CSS for timeline-specific functionality.
+**Bootstrap Integration**: This component uses Bootstrap's Card layout and utilities while preserving the specialized timeline visualization. It renders inside a `Card` with a header and body, and relies on custom CSS for the ruler, markers, and entries.
 
 ## Table of Contents
 - [Props](#props)
@@ -52,7 +52,7 @@ The Timeline component provides a visual representation of activities and the ti
 | `entries` | `TimelineEntry[]` | Yes | - | Array of timeline entries to visualize |
 | `totalDuration` | `number` | Yes | - | Total duration in seconds for the timeline |
 | `elapsedTime` | `number` | Yes | - | Current elapsed time in seconds |
-| `isTimeUp` | `boolean` | No | `false` | Flag indicating if time is up |
+| `showCounter` | `boolean` | No | `true` | Whether to show the time counter badge in the header |
 | `timerActive` | `boolean` | No | `false` | Flag indicating if timer is active |
 | `allActivitiesCompleted` | `boolean` | No | `false` | Flag indicating if all activities are completed |
 
@@ -77,7 +77,7 @@ interface TimelineEntry {
 
 The Timeline component manages several pieces of state:
 
-1. **Current elapsed time**: Updates in real-time when the timer is active
+1. **Current elapsed time**: Updates in real-time when the timer is active. In shared/static views, pass `timerActive={false}` to keep the view frozen at the provided `elapsedTime`.
    ```typescript
    const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
    ```
@@ -138,11 +138,10 @@ The Timeline component is designed to be fully responsive:
 
 ## Example Usage
 
-### Bootstrap Usage Example
+### Usage Example
 
 ```tsx
-import Timeline from '../components/Timeline';
-import { Container } from 'react-bootstrap';
+import Timeline from '@/components/Timeline';
 
 // Timeline now uses Bootstrap components internally
 const timelineEntries = [
@@ -153,9 +152,9 @@ const timelineEntries = [
     startTime: Date.now() - 1800000,
     endTime: Date.now() - 900000,
     colors: {
-      background: '#E8F5E9',
-      text: '#1B5E20',
-      border: '#2E7D32'
+      background: 'hsl(140, 40%, 92%)',
+      text: 'hsl(140, 36%, 20%)',
+      border: 'hsl(140, 36%, 30%)'
     }
   }
 ];
@@ -166,11 +165,12 @@ return (
     totalDuration={3600}  // 1 hour in seconds
     elapsedTime={1800}    // 30 minutes in seconds
     timerActive={true}
+    showCounter
   />
 );
 ```
 
-### With Bootstrap Alert for Overtime
+### Overtime Example
 
 ```tsx
 <Timeline 
@@ -191,20 +191,15 @@ return (
 
 ## Bootstrap Integration
 
-### Layout Components Used
-- **Container**: `Container` with fluid layout and responsive padding (`container-fluid`, `p-3`)
-- **Card**: Primary wrapper with header and body sections (`card`, `card-header`, `card-body`, `border`)
-- **Row/Col**: Grid system for header layout and responsive design (`row`, `g-3`, `col`, `col-auto`)
-- **Badge**: Time display with variant support (`badge-primary`, `badge-danger`, `text-nowrap`)
-- **Alert**: Overtime warning with proper accessibility (`alert-danger`, `role="alert"`)
+### Layout Elements Used
+- **Card**: Primary wrapper with header and body sections (`Card`, `Card.Header`, `Card.Body`, `border`)
+- **Badge**: Time display badge (`Badge`, `text-nowrap`)
 
-### Bootstrap Classes Applied
-- **Layout**: `container-fluid`, `p-3`, `row`, `g-3`, `col`, `col-auto`
-- **Typography**: `h2`, `mb-0`, `fw-medium`, `small`, `text-muted`, `text-nowrap`, `fst-italic`, `text-center`
-- **Flex**: `d-flex`, `justify-content-between`, `align-items-center`, `flex-column`
+### Bootstrap Utilities Applied
+- **Typography**: `mb-0`, `fw-medium`, `small`, `text-muted`, `text-nowrap`, `fst-italic`, `text-center`
+- **Flex**: `d-flex`, `justify-content-between`, `align-items-center`, `flex-column`, `flex-grow-1`
 - **Position**: `position-relative`, `position-absolute`
 - **Border**: `border`, `rounded`
-- **Accessibility**: `role`, `aria-label`, `aria-level`
 
 ### Hybrid Design Approach
 The Timeline component uses Bootstrap for layout, typography, and standard UI elements while preserving custom CSS for timeline-specific visualization including:
@@ -218,7 +213,7 @@ The Timeline component uses Bootstrap for layout, typography, and standard UI el
 
 The Timeline component has extensive test coverage across multiple test files:
 
-### Bootstrap Integration Tests (35 tests)
+### Bootstrap Integration Tests
 - **Layout Structure**: Container, Row, Col grid system validation
 - **Card Integration**: Card, Card.Header, Card.Body component usage
 - **Typography**: Bootstrap heading classes, text utilities, font utilities
@@ -231,7 +226,7 @@ The Timeline component has extensive test coverage across multiple test files:
 - **Accessibility**: ARIA attributes, semantic structure, alert roles
 - **Custom Preservation**: Timeline visualization, overtime features, marker functionality
 
-### Existing Functionality Tests (31 tests)
+### Existing Functionality Tests
 - **Timeline.render.test.tsx**: Basic rendering tests
 - **Timeline.test.tsx**: Core functionality tests
 - **Timeline.breaks.test.tsx**: Tests for break visualization
@@ -255,17 +250,13 @@ Key tested scenarios include:
 
 ## Implementation Details
 
-The Timeline uses several helper functions:
+- `calculateTimeIntervals`: Determines appropriate time intervals based on total duration
+- `getThemeAppropriateColor`: Adjusts colors based on the current theme
+- `calculateEntryStyle`: Generates the CSS styles for timeline entries
 
-1. `calculateTimeIntervals`: Determines appropriate time intervals based on total duration
-2. `getThemeAppropriateColor`: Adjusts colors based on the current theme
-3. `calculateEntryStyle`: Generates the CSS styles for timeline entries
-
-The component architecture:
-- Time header with countdown/timer display
-- Timeline ruler with appropriate time markers
-- Entries container with activities and breaks
-- Visual indicators for overtime scenarios
+Ticking rule:
+- The component sets up a 1s interval only when `timerActive` is true and entries exist.
+- Shared/static views must pass `timerActive={false}` to remain frozen; the component computes a snapshot `now` based on the first entry start plus `elapsedTime` to eliminate wall-clock drift.
 
 ## Change History
 

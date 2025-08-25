@@ -5,6 +5,7 @@ interface CalculateTimeSpansProps {
   totalDuration: number;
   allActivitiesCompleted: boolean;
   timeLeft: number;
+  nowMs?: number;
 }
 
 interface TimeSpanItem {
@@ -24,7 +25,9 @@ function calculateTimeSpans({
   totalDuration,
   allActivitiesCompleted,
   timeLeft,
+  nowMs,
 }: CalculateTimeSpansProps): CalculateTimeSpansResult {
+  const now = typeof nowMs === 'number' ? nowMs : Date.now();
   let totalGapsDuration = 0;
   const items: TimeSpanItem[] = [];
   let previousEndTime: number | undefined = undefined;
@@ -57,7 +60,7 @@ function calculateTimeSpans({
     if (currentEndTime) {
       activityDuration = currentEndTime - currentStartTime;
     } else {
-      activityDuration = Date.now() - currentStartTime;
+      activityDuration = now - currentStartTime;
     }
 
     const activityHeight = (activityDuration / totalDuration) * 100;
@@ -78,7 +81,7 @@ function calculateTimeSpans({
   if (entries.length > 0) {
     const lastEntry = entries[entries.length - 1];
     if (lastEntry && lastEntry.endTime) {
-      const ongoingBreakDuration = Date.now() - lastEntry.endTime;
+      const ongoingBreakDuration = now - lastEntry.endTime;
       if (ongoingBreakDuration > 0) {
         const breakHeight = (ongoingBreakDuration / totalDuration) * 100;
         items.push({

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useMemo, useEffect, useState } from 'react';
 import { Card, Badge } from 'react-bootstrap';
 import styles from './Timeline.module.css';
@@ -12,6 +14,7 @@ interface TimelineProps {
   elapsedTime: number;
   timerActive?: boolean;
   allActivitiesCompleted?: boolean;
+  showCounter?: boolean;
 }
 
 function calculateTimeIntervals(duration: number): { interval: number; count: number } {
@@ -32,7 +35,7 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
   }
 }
 
-export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, timerActive = false, allActivitiesCompleted = false }: TimelineProps) {
+export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, timerActive = false, allActivitiesCompleted = false, showCounter = true }: TimelineProps) {
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
   
@@ -172,9 +175,10 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       }
     };
 
-    // Only run timer if we need real-time updates
-    const hasOngoingBreak = hasEntries && entries[entries.length - 1]?.endTime != null;
-    if ((timerActive && hasEntries) || hasOngoingBreak) {
+  // Only run timer if explicitly active and there are entries.
+  // Intentionally NOT ticking for mere presence of an ongoing entry when timerActive is false
+  // to guarantee that shared/static views remain frozen.
+  if (timerActive && hasEntries) {
       updateTime(); // Initial update
       timeoutId = setInterval(updateTime, 1000);
     }
@@ -231,15 +235,20 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   }, [totalDuration, effectiveDuration, isOvertime]);
   
   // Calculate data for timeline entries
-  const firstEntry = hasEntries && entries.length > 0 ? entries[0] : undefined;
-  const firstEntryStartTime = firstEntry ? firstEntry.startTime : undefined;
-  const currentTimeLeft = totalDuration * 1000 - (firstEntryStartTime ? Date.now() - firstEntryStartTime : 0);
+  // Use currentElapsedTime to avoid wall-clock drift for static/shared views
+  const currentTimeLeft = (totalDuration - currentElapsedTime) * 1000;
   
+  // Compute a snapshot 'now' based on the first entry start + currentElapsedTime
+  const snapshotNow = hasEntries && entries[0]?.startTime
+    ? entries[0]!.startTime + currentElapsedTime * 1000
+    : undefined;
+
   const timeSpansData = calculateTimeSpans({
     entries,
     totalDuration: effectiveDuration,
     allActivitiesCompleted,
     timeLeft: currentTimeLeft,
+    nowMs: snapshotNow,
   });
   
   const calculateEntryStyle = (item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number } | undefined) => {
@@ -285,12 +294,14 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   };
   
   return (
-    <Card className="border h-100 d-flex flex-column">
+    <Card className="border h-100 d-flex flex-column w-100">
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0">Timeline</h5>
-        <Badge bg="secondary" className="ms-2 text-nowrap" data-testid="time-display">
-          {timeDisplay}
-        </Badge>
+        {showCounter && (
+          <Badge bg="secondary" className="ms-2 text-nowrap" data-testid="time-display">
+            {timeDisplay}
+          </Badge>
+        )}
       </Card.Header>
         
         <Card.Body className="p-0 flex-grow-1 d-flex flex-column overflow-hidden">

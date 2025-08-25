@@ -170,8 +170,9 @@ export default function Timeline({
     };
 
     // Only run timer if we need real-time updates
-    const hasOngoingBreak = hasEntries && entries[entries.length - 1]?.endTime != null;
-    if ((timerActive && hasEntries) || hasOngoingBreak) {
+    // We update when the timer is active, or when the last entry is ongoing (no endTime yet)
+    const hasOngoingEntry = hasEntries && entries[entries.length - 1]?.endTime == null;
+    if ((timerActive && hasEntries) || hasOngoingEntry) {
       updateTime(); // Initial update
       timeoutId = setInterval(updateTime, 1000);
     }
@@ -228,8 +229,9 @@ export default function Timeline({
   }, [totalDuration, effectiveDuration, isOvertime]);
   
   // Calculate data for timeline entries
-  const firstEntryStartTime = hasEntries && entries.length > 0 ? entries[0]?.startTime : undefined;
-  const currentTimeLeft = totalDuration * 1000 - (firstEntryStartTime ? Date.now() - firstEntryStartTime : 0);
+  // Compute remaining time based on the currentElapsedTime rather than wall-clock time.
+  // This ensures shared/archived sessions render correctly without drifting over time.
+  const currentTimeLeft = (totalDuration - currentElapsedTime) * 1000;
   const timeSpansData = calculateTimeSpans({
     entries,
     totalDuration: effectiveDuration,
@@ -237,7 +239,9 @@ export default function Timeline({
     timeLeft: currentTimeLeft,
   });
   
-  const calculateEntryStyle = (item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number }) => {
+  type ItemEntry = TimelineEntry | { id: string; activityId: string | null; activityName?: string | null; startTime: number; endTime?: number | null; colors?: { background: string; text: string; border: string } | { light: { background: string; text: string; border: string }; dark: { background: string; text: string; border: string } } };
+  type Item = { type: 'activity' | 'gap'; entry?: ItemEntry; duration: number; height: number };
+  const calculateEntryStyle = (item: Item) => {
     const style: React.CSSProperties = {
       height: `${item.height}%`,
       minHeight: item.height < 5 ? '2rem' : undefined // Minimum height for very short entries
@@ -354,10 +358,11 @@ export default function Timeline({
           
           <div className={styles.entriesWrapper}>
             {hasEntries ? (
-              timeSpansData.items.map((item: { type: 'activity' | 'gap'; entry?: TimelineEntry; duration: number; height: number }, index: number) => {
-                const style = calculateEntryStyle(item);
+              timeSpansData.items.map((item, index: number) => {
+                const typedItem = item as Item;
+                const style = calculateEntryStyle(typedItem);
                 
-                if (item.type === 'gap') {
+                if (typedItem.type === 'gap') {
                   if (allActivitiesCompleted && index === timeSpansData.items.length - 1) {
                     return (
                       <div
@@ -365,7 +370,7 @@ export default function Timeline({
                         className={styles.timeGap}
                         style={style}
                       >
-                        <span>Time Remaining ({formatTimeHuman(item.duration)})</span>
+                        <span>Time Remaining ({formatTimeHuman(typedItem.duration)})</span>
                       </div>
                     );
                   }
@@ -375,22 +380,22 @@ export default function Timeline({
                       className={styles.timeGap}
                       style={style}
                     >
-                      <span>Break ({formatTimeHuman(item.duration)})</span>
+                      <span>Break ({formatTimeHuman(typedItem.duration)})</span>
                     </div>
                   );
                 }
                 return (
-                  <div key={item.entry!.id} className={styles.timelineEntry} style={style}>
+                  <div key={typedItem.entry!.id} className={styles.timelineEntry} style={style}>
                     <div className={styles.entryContent}>
                       <div className={styles.entryHeader}>
                         <span
                           className={styles.activityName}
                           data-testid="timeline-activity-name"
                         >
-                          {item.entry!.activityName}
+                          {typedItem.entry!.activityName}
                         </span>
                         <span className={styles.timeInfo}>
-                          {formatTimeHuman(item.duration)}
+                          {formatTimeHuman(typedItem.duration)}
                         </span>
                       </div>
                     </div>

@@ -46,6 +46,53 @@ Implemented end-to-end Session Sharing with strong privacy, SSR safety, and resi
 - Theme-aware shared view
 - Descriptions and colors preserved end-to-end
 
+### Timeline Sharing Scaling Fix, CRUD Smart Color Suggestion, and Dependency Modernization - COMPLETED (2025-08-25)
+
+**Summary:**
+Resolved two user-facing issues and modernized transitive dependencies to remove deprecated packages:
+- Fixes timeline scaling and break rendering in the sharing view by basing calculations on provided `elapsedTime` and limiting ticking to active/ongoing states.
+- Enables smart default color suggestion in Activity CRUD add form by delegating to `getSmartColorIndex` using existing activities.
+- Enforces `glob@^10` across the dependency tree and removes deprecated `inflight@1.0.6`.
+
+**Issues Resolved:**
+- Issue #349: Sharing timeline not scaling/marking correctly
+- Issue #345: CRUD form should suggest next available color
+
+**PR/Branch:**
+- PR: #351
+- Branch: `fix-345-349-deps-upgrade`
+
+**Key Changes:**
+- `src/components/Timeline.tsx`: Compute time-left from `elapsedTime` for shared/static views; include overtime for effective duration and markers. Ticking occurs only in live views when `timerActive` is true.
+- `src/components/feature/ActivityCrud.tsx`: Pass `existingActivities={activities}` to `ActivityForm` to enable smart default color preselection.
+- `package.json`: Add `overrides` to force `glob@^10`, upgrade `test-exclude` to `^7.0.1` (uses `glob@10`), and alias deprecated `inflight` to an empty placeholder.
+
+**Testing and Quality Gates:**
+- Updated CRUD test expectation for default color to match smart selection behavior (defaults occupy indices 0–3, next is Red at index 4).
+- Jest: 132/132 suites passing; all tests green.
+- `npm run lint`: PASS
+- `npm run type-check`: PASS
+- `npm run build`: PASS
+
+**Notes:**
+- No breaking public APIs.
+- Shared view remains SSR-safe and theme-aware.
+
+#### Adjustment: Canonical Timeline in Shared View Only (2025-08-25)
+
+- Reverted main app Completed state to render `Summary` only (no Timeline)
+- Updated `/shared/[id]` to reuse the canonical `src/components/Timeline.tsx`
+- Ensured shared Timeline is frozen by passing `timerActive={false}`; internal logic never ticks in shared/static views
+- Added `"use client"` directive to `Timeline.tsx` to satisfy Next.js client-hook requirements
+- Rebuilt and validated: tests, lint, type-check, and production build all passing
+
+#### Addendum: Freeze "now" in Shared Timeline (2025-08-25)
+
+- Eliminated drift caused by `Date.now()` in static/shared views by introducing an optional `nowMs` parameter to `timelineCalculations`
+- `Timeline` now computes a snapshot `nowMs` as `firstEntry.startTime + (elapsedTime * 1000)` and passes it into calculations
+- Shared `/shared/[id]` view sets `timerActive={false}` so no ticking occurs; the snapshot ensures the post-last-activity break remains constant across refreshes
+- Retains backwards compatibility: when `nowMs` is not provided, runtime views still rely on `Date.now()`
+
 ## 2025 July
 
 ### JSON Import/Export Improvements - COMPLETED (2025-07-25)
