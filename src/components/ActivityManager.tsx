@@ -69,6 +69,11 @@ export default function ActivityManager({
   const [activities, setActivities] = useState<Activity[]>([]);
   // Unified current activity id used by UI and handlers
   const derivedCurrentActivityId = useMemo(() => effective.currentActivityId ?? currentActivityId, [effective.currentActivityId, currentActivityId]);
+  // Completed ids prefer global context when present
+  const effectiveCompletedIds = useMemo(
+    () => (timerCtx ? timerCtx.completedActivities.map(a => a.id) : completedActivityIds),
+    [timerCtx, completedActivityIds]
+  );
   
   // State preservation for form values during unmount/remount cycles
   const [preservedFormValues, setPreservedFormValues] = useState<{
@@ -338,7 +343,7 @@ export default function ActivityManager({
               >
                 <ActivityButton
                   activity={activity}
-                  isCompleted={completedActivityIds.includes(activity.id)}
+                  isCompleted={effectiveCompletedIds.includes(activity.id)}
                   isRunning={activity.id === derivedCurrentActivityId}
                   onSelect={handleActivitySelect}
                   onRemove={onActivityRemove ? handleRemoveActivity : undefined}

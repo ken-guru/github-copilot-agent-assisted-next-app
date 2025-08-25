@@ -129,7 +129,7 @@ const TimerDrawer: React.FC = () => {
               {currentActivity ? <RunningActivityCard /> : currentBreakStartTime ? <ActiveBreakCard /> : null}
 
               {/* Quick actions */}
-              <div className="d-flex gap-2 flex-nowrap">
+              <div className="d-flex gap-2 flex-nowrap" data-testid="drawer-actions-row">
                 <AddMinuteButton
                   onClick={() => addOneMinute()}
                   variant="primary"
