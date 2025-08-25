@@ -239,7 +239,7 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
     updateLocalStateFromMachine();
   }, [stateMachine, updateLocalStateFromMachine]);
   
-  // New methods that directly use the state machine
+  // Direct accessors that proxy to the ActivityStateMachine
   const getCurrentActivity = useCallback(() => {
     return stateMachine.getCurrentActivity();
   }, [stateMachine]);
@@ -264,7 +264,7 @@ export function useActivitiesTracking(): UseActivitiesTrackingResult {
     completeActivity,
     removeActivity,
     resetActivities,
-    // New methods
+  // Direct state machine accessors
     getCurrentActivity,
     isCompleted,
     getActivityState

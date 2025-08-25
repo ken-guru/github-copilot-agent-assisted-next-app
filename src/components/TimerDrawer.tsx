@@ -28,7 +28,7 @@ const TimerDrawer: React.FC = () => {
     if (!el) return () => {};
     let ro: ResizeObserver | undefined;
     if ('ResizeObserver' in window) {
-      ro = new window.ResizeObserver((entries) => {
+      ro = new ResizeObserver((entries) => {
         const entry = entries[0];
         if (!entry) return;
         const h = Math.ceil(entry.contentRect.height);

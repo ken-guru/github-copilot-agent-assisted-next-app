@@ -39,17 +39,14 @@ function renderWithProvider(ui: React.ReactElement) {
 
 describe('TimerDrawer expanded content – activity/break states', () => {
   const FIXED_NOW = new Date('2024-01-01T12:00:00Z').getTime();
-  let originalNow: () => number;
+  let nowSpy: jest.SpyInstance<number, []>;
 
   beforeAll(() => {
-    originalNow = Date.now;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (Date as any).now = () => FIXED_NOW;
+    nowSpy = jest.spyOn(Date, 'now').mockReturnValue(FIXED_NOW);
   });
 
   afterAll(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (Date as any).now = originalNow;
+    nowSpy.mockRestore();
   });
 
   beforeEach(() => {

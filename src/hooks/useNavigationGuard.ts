@@ -17,7 +17,10 @@ export function useNavigationGuard() {
         if (typeof window !== 'undefined' && window.sessionStorage) {
           window.sessionStorage.setItem('mrTimely.leftOriginAt', String(Date.now()));
         }
-      } catch {}
+      } catch (err) {
+        // Non-blocking: log to aid debugging; ignore quota or storage access errors
+        console.error('useNavigationGuard: failed to set session flag', err);
+      }
       // Do not set e.returnValue or call preventDefault — avoids leave-site confirmation
     }
 
