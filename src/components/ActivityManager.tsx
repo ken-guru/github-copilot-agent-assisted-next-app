@@ -309,13 +309,15 @@ export default function ActivityManager({
         </div>
       </Card.Header>
       <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden p-3">
-        {/* Timer Progress Section - isolated from activity form */}
-        <TimerProgressSection
-          entries={timelineEntries}
-          totalDuration={effective.totalDuration ?? totalDuration}
-          elapsedTime={effectiveElapsed}
-          timerActive={effective.timerActive}
-        />
+        {/* Timer Progress Section - hidden when GlobalTimerContext is present to avoid duplicate progress UI */}
+        {(!timerCtx) && (
+          <TimerProgressSection
+            entries={timelineEntries}
+            totalDuration={effective.totalDuration ?? totalDuration}
+            elapsedTime={effectiveElapsed}
+            timerActive={effective.timerActive}
+          />
+        )}
         
         {/* Activity Form Section - isolated from timer updates */}
         <ActivityFormSection

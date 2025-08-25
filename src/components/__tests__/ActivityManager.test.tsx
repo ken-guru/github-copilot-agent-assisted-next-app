@@ -363,7 +363,7 @@ describe('ActivityManager Component', () => {
       elapsedTime: 0,
     };
 
-    it('renders progress bar when totalDuration and timerActive props are provided', () => {
+    it('renders progress bar when not using GlobalTimerContext and totalDuration/timerActive provided', () => {
       render(
         <ActivityManager 
           {...mockProps}
@@ -377,7 +377,7 @@ describe('ActivityManager Component', () => {
       expect(progressContainer).toHaveClass('w-100');
     });
 
-    it('renders progress bar even when timer is not active', () => {
+    it('renders progress bar even when timer is not active (no context)', () => {
       render(
         <ActivityManager 
           {...mockProps}
@@ -390,7 +390,7 @@ describe('ActivityManager Component', () => {
       expect(screen.getByTestId('progress-container')).toBeInTheDocument();
     });
 
-    it('does not render progress bar when totalDuration is not provided', () => {
+    it('still renders container when no totalDuration (no context)', () => {
       render(
         <ActivityManager 
           {...mockProps}

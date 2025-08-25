@@ -404,7 +404,7 @@ Phase F: Remove Duplicate Progress (Item 7)
 - [x] B: Drawer progress updates live without interaction; after restore, ticking resumes immediately
   - [x] C: “+1 min” in drawer and ActivityManager share identical behavior (single dispatcher)
 - [x] D: Expanded drawer shows current activity or active break accurately with timing
-- [ ] E: On reload/return from outside the app, no setup flash; toast “Session restored” appears; in-app nav shows no toast
+- [x] E: On reload/return from outside the app, no setup flash; toast “Session restored” appears; in-app nav shows no toast
 - [ ] F: Only one progress bar displayed (drawer replaces ActivityManager’s top progress)
 - [ ] All tests updated and passing; lint/type-check/build remain green
 - [ ] Accessibility preserved (roles/labels/aria-expanded); responsive behavior maintained
