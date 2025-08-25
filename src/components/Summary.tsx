@@ -12,6 +12,7 @@ import type { ChatCompletion } from '@/types/ai';
 import ShareControls from './ShareControls';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
 import { mapTimelineEntriesForShare } from '@/utils/sharing';
+import useNetworkStatus from '@/hooks/useNetworkStatus';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -45,6 +46,7 @@ export default function Summary({
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const { apiKey } = useApiKey();
   const { callOpenAI } = useOpenAIClient();
+  const { online } = useNetworkStatus();
   // Auto mode: BYOK if available, else server mock route
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
@@ -54,6 +56,11 @@ export default function Summary({
   // Extracted handler for creating a share to keep JSX minimal and readable
   const handleCreateShare = async () => {
     try {
+      // Guard against offline attempts — provide clear user feedback
+      if (!online) {
+        addToast({ message: 'Cannot create share: no network connection. Please reconnect and try again.', variant: 'warning' });
+        return;
+      }
       setShareLoading(true);
 
       // Build payload matching SessionSummaryDataSchema
@@ -707,6 +714,17 @@ export default function Summary({
         <Modal.Body>
           <p id="share-modal-desc">Share a read-only copy of the current session. This will create a public URL that anyone can open.</p>
           <p className="text-muted small">The shared session will contain summary and timeline data only.</p>
+          {/* Offline warning shown prominently inside dialog body, not between footer buttons */}
+          {!showShareControls && !online && (
+            <Alert
+              variant="warning"
+              role="alert"
+              className="mb-3"
+              data-testid="share-offline-warning"
+            >
+              Sharing requires a network connection — you are currently offline.
+            </Alert>
+          )}
           {shareLoading && (
             <div className="d-flex align-items-center">
               <Spinner animation="border" size="sm" className="me-2" /> Creating share...
@@ -719,7 +737,7 @@ export default function Summary({
           )}
         </Modal.Body>
         <Modal.Footer>
-              {!showShareControls && (
+          {!showShareControls && (
             <>
               <Button
                 variant="secondary"
@@ -730,6 +748,9 @@ export default function Summary({
               <Button
                 variant="success"
                 onClick={handleCreateShare}
+                disabled={!online}
+                aria-disabled={!online}
+                title={!online ? 'You are offline. Reconnect to create a share.' : 'Create share'}
               >
                 Create share
               </Button>
