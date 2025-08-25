@@ -2,7 +2,7 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { getSession } from '../../../utils/sessionSharing/storage';
 import Summary from '@/components/feature/Summary';
-import Timeline from '@/components/feature/Timeline';
+import Timeline from '@/components/Timeline';
 import type { StoredSession } from '@/types/sessionSharing';
 import ShareControls from '@/components/ShareControls';
 import { internalActivityColors } from '@/utils/colors';
@@ -150,20 +150,13 @@ export default async function SharedPage({ params }: Props) {
         </div>
         <div className="col-12 col-lg-6 d-none d-lg-block">
           <section>
-            <div className="card h-100">
-              <div className="card-header card-header-consistent">
-                <h5 className="mb-0">Timeline</h5>
-              </div>
-              <div className="card-body">
-                <Timeline
-                  entries={entries}
-                  totalDuration={totalDuration}
-                  elapsedTime={elapsedTime}
-                  isTimeUp={isTimeUp}
-                  hideHeader
-                />
-              </div>
-            </div>
+            <Timeline
+              entries={entries}
+              totalDuration={totalDuration}
+              elapsedTime={elapsedTime}
+              allActivitiesCompleted={allActivitiesCompleted}
+              timerActive={false}
+            />
           </section>
         </div>
       </div>

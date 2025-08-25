@@ -194,26 +194,15 @@ function AppContent() {
           )}
           
           {appState === 'completed' && (
-            <div className="row flex-grow-1 g-3 px-3 pt-3 pb-3 overflow-x-hidden overflow-y-auto">
-              <div className="col-lg-5 d-flex flex-column overflow-x-hidden overflow-y-auto">
-                <Summary 
-                  entries={processedEntries}
-                  totalDuration={totalDuration} 
-                  elapsedTime={elapsedTime}
-                  allActivitiesCompleted={allActivitiesCompleted}
-                  skippedActivityIds={removedActivityIds}
-                  onReset={handleReset}
-                />
-              </div>
-              <div className="col-lg-7 d-none d-lg-flex flex-column overflow-hidden">
-                <Timeline 
-                  entries={processedEntries}
-                  totalDuration={totalDuration} 
-                  elapsedTime={elapsedTime}
-                  allActivitiesCompleted={allActivitiesCompleted}
-                  timerActive={false}
-                />
-              </div>
+            <div className="d-flex justify-content-center flex-grow-1 p-4">
+              <Summary 
+                entries={processedEntries}
+                totalDuration={totalDuration} 
+                elapsedTime={elapsedTime}
+                allActivitiesCompleted={allActivitiesCompleted}
+                skippedActivityIds={removedActivityIds}
+                onReset={handleReset}
+              />
             </div>
           )}
         </div>

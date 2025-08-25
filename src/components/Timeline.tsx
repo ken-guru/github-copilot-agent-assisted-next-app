@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useMemo, useEffect, useState } from 'react';
 import { Card, Badge } from 'react-bootstrap';
 import styles from './Timeline.module.css';
@@ -173,8 +175,9 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     };
 
     // Only run timer if we need real-time updates
-    const hasOngoingBreak = hasEntries && entries[entries.length - 1]?.endTime != null;
-    if ((timerActive && hasEntries) || hasOngoingBreak) {
+    // Tick when timer is active OR the last entry is ongoing (no endTime yet)
+    const hasOngoingEntry = hasEntries && entries[entries.length - 1]?.endTime == null;
+    if ((timerActive && hasEntries) || hasOngoingEntry) {
       updateTime(); // Initial update
       timeoutId = setInterval(updateTime, 1000);
     }
@@ -231,9 +234,8 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   }, [totalDuration, effectiveDuration, isOvertime]);
   
   // Calculate data for timeline entries
-  const firstEntry = hasEntries && entries.length > 0 ? entries[0] : undefined;
-  const firstEntryStartTime = firstEntry ? firstEntry.startTime : undefined;
-  const currentTimeLeft = totalDuration * 1000 - (firstEntryStartTime ? Date.now() - firstEntryStartTime : 0);
+  // Use currentElapsedTime to avoid wall-clock drift for static/shared views
+  const currentTimeLeft = (totalDuration - currentElapsedTime) * 1000;
   
   const timeSpansData = calculateTimeSpans({
     entries,
