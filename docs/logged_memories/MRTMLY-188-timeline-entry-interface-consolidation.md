@@ -68,7 +68,7 @@ The codebase had multiple inconsistent definitions of the TimelineEntry interfac
    }
    ```
 
-5. In `components/feature/Timeline.tsx`:
+5. In `src/components/Timeline.tsx`:
    ```typescript
    export interface TimelineEntry {
      id: string;

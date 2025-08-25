@@ -175,8 +175,10 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       }
     };
 
-    // Only run timer if explicitly active; shared/static views remain frozen
-    if (timerActive && hasEntries) {
+  // Only run timer if explicitly active and there are entries.
+  // Intentionally NOT ticking for mere presence of an ongoing entry when timerActive is false
+  // to guarantee that shared/static views remain frozen.
+  if (timerActive && hasEntries) {
       updateTime(); // Initial update
       timeoutId = setInterval(updateTime, 1000);
     }

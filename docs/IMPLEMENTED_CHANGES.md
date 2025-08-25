@@ -63,7 +63,7 @@ Resolved two user-facing issues and modernized transitive dependencies to remove
 - Branch: `fix-345-349-deps-upgrade`
 
 **Key Changes:**
-- `src/components/feature/Timeline.tsx`: Compute time-left from `elapsedTime` for shared/static views; start ticking only when `timerActive` or an ongoing entry exists; include overtime for effective duration and markers.
+- `src/components/Timeline.tsx`: Compute time-left from `elapsedTime` for shared/static views; include overtime for effective duration and markers. Ticking occurs only in live views when `timerActive` is true.
 - `src/components/feature/ActivityCrud.tsx`: Pass `existingActivities={activities}` to `ActivityForm` to enable smart default color preselection.
 - `package.json`: Add `overrides` to force `glob@^10`, upgrade `test-exclude` to `^7.0.1` (uses `glob@10`), and alias deprecated `inflight` to an empty placeholder.
 
@@ -82,7 +82,7 @@ Resolved two user-facing issues and modernized transitive dependencies to remove
 
 - Reverted main app Completed state to render `Summary` only (no Timeline)
 - Updated `/shared/[id]` to reuse the canonical `src/components/Timeline.tsx`
-- Ensured shared Timeline is frozen by passing `timerActive={false}`; internal logic only ticks if last entry is ongoing
+- Ensured shared Timeline is frozen by passing `timerActive={false}`; internal logic never ticks in shared/static views
 - Added `"use client"` directive to `Timeline.tsx` to satisfy Next.js client-hook requirements
 - Rebuilt and validated: tests, lint, type-check, and production build all passing
 
