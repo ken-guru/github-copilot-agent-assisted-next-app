@@ -76,6 +76,21 @@ describe('TimerDrawer expanded content – activity/break states', () => {
     expect(running).toHaveAttribute('aria-label', expect.stringContaining('Focus Work'));
   });
 
+  it('does not show RunningActivityCard when collapsed', async () => {
+    const activityStart = FIXED_NOW - 30_000; // 30s ago
+    renderWithProvider(
+      <>
+        <StartSessionOnMount totalDuration={300} startTime={activityStart} />
+        <SetActivityOnMount name="Focus Work" startTime={activityStart} />
+        <TimerDrawer />
+      </>
+    );
+
+    await waitFor(() => expect(screen.getByTestId('timer-drawer')).toBeTruthy());
+    // Default is collapsed — running card should not be present
+    expect(screen.queryByTestId('running-activity-card')).toBeNull();
+  });
+
   it('shows ActiveBreakCard when on a break (no current activity)', async () => {
     const breakStart = FIXED_NOW - 45_000; // 45s ago
     renderWithProvider(

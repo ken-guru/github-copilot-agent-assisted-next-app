@@ -444,3 +444,53 @@ See `docs/session-sharing-design.md` for full details and staged implementation 
 
 Phase 7 Status: Completed
 - Theming and accessibility validated across light/dark modes and focus order; ARIA attributes and region labeling verified; animations honor reduced-motion.
+
+## New: Issue #344 Post-Launch Bugfixes and UX Refinements (Planned Work)
+
+### Context
+Additional issues were identified after rolling out the persistent timer drawer. The goals are to ensure consistent UI reuse, accurate state restoration, stable layouts, and correct behavior across routes (including shared sessions), with no intrusive leave-site prompts.
+
+### Planned Fixes and Approaches
+1) Drawer shows running activity (reuse existing component)
+  - Problem: The running activity details should appear inside the drawer when expanded, using the same presentation as in ActivityManager; hidden when collapsed.
+  - Approach: Reuse the existing activity display component leveraged by ActivityManager (e.g., `RunningActivityCard` or Activity card subcomponent) within `TimerDrawer` expanded region. Keep collapsed state compact. Ensure props/state map cleanly from `GlobalTimerContext`.
+  - Tests: Update `TimerDrawer.expanded-content.test.tsx` to assert running activity appears with correct name/color/time when expanded and is hidden when collapsed.
+
+2) Unify “+1 minute” button styling/component
+  - Problem: The drawer’s +1 minute button should match the ActivityManager header button (style and ideally implementation).
+  - Approach: Extract the header button to a shared component (e.g., `AddMinuteButton`) or reuse the exact component with context wiring. Apply same Bootstrap classes and aria-labels. Ensure both dispatch the same context action.
+  - Tests: Visual class assertions (data-testid/className), and interaction tests verifying dispatch once and consistent behavior.
+
+3) Restore ActivityManager from global state
+  - Problem: On returning to the timer page, the running activity must render as running and completed ones as completed, sourced entirely from global state.
+  - Approach: Ensure ActivityManager hydration path reads from `GlobalTimerContext` first. Map `completedActivities` and `currentActivity` with their timestamps; correct status badges and timers. Maintain backward-compatible props for isolated tests.
+  - Tests: Integration test mounting ActivityManager within provider with pre-seeded context; assert statuses (running/completed) and timing render correctly immediately on first paint.
+
+4) Prevent “+1 minute” button wrap on open
+  - Problem: When opening the drawer, the +1 minute button should not wrap to the next line.
+  - Approach: Adjust drawer layout to use a non-wrapping flex container (e.g., `d-flex align-items-center gap-2 flex-nowrap`) and responsive utility classes. Add minimal CSS if needed to maintain single-line layout across breakpoints.
+  - Tests: DOM structure assertions for layout classes; snapshot-free queries that check element order stays on one line (via computed style mocks or presence of `flex-nowrap`).
+
+5) Fix remove activity action
+  - Problem: The remove activity button in ActivityManager no longer works.
+  - Approach: Trace the handler path (button → ActivityManager → state/actions). Reconnect to either local reducer or global context action (e.g., `removeActivity`). Guard single-running constraint and update tests.
+  - Tests: User clicks remove; activity disappears; if removing running activity, ensure session transitions correctly. Include regression test for non-running removals.
+
+6) Remove leave-site confirmation entirely
+  - Problem: The beforeunload confirmation is no longer desired.
+  - Approach: Remove the window `beforeunload` guard from `useNavigationGuard` and any related code paths. Delete tests expecting prompts; add tests confirming no listeners added and no prompts shown.
+  - Tests: `useNavigationGuard` tests updated to assert no `beforeunload` registration and no confirm dialog conditions.
+
+7) Hide drawer on shared session page
+  - Problem: The drawer should not be visible on `/shared/[id]` routes.
+  - Approach: Extend `usePageStateSync`/layout to mark shared routes distinctly (e.g., `currentPage: 'shared'`) and suppress rendering of `TimerDrawer` for that page. Alternatively, conditional in `LayoutClient` based on pathname begins with `/shared/`.
+  - Tests: Layout test rendering `/shared/[id]`; assert no `TimerDrawer` is present.
+
+### Delivery Plan
+- Implement and commit fixes one by one in the order listed above.
+- Run quality gates after each change:
+  - `npm run test`
+  - `npm run lint`
+  - `npm run type-check`
+  - `npm run build`
+- Update this section with status notes per item as they are completed.
