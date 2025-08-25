@@ -40,7 +40,7 @@ export default function ActivityManager({
   onActivityRemove,
   currentActivityId, 
   completedActivityIds,
-  removedActivityIds = [], // eslint-disable-line @typescript-eslint/no-unused-vars
+  removedActivityIds = [],
   timelineEntries,
   elapsedTime = 0,
   totalDuration = 0,
@@ -67,6 +67,12 @@ export default function ActivityManager({
   }, [timerCtx, timerActive, currentActivityId, totalDuration, onReset, onExtendDuration, onActivitySelect]);
 
   const [activities, setActivities] = useState<Activity[]>([]);
+  // Derive visible activities by filtering out removed ones provided by parent state (session-level hide)
+  const visibleActivities = useMemo(() => {
+    if (!removedActivityIds || removedActivityIds.length === 0) return activities;
+    const removedSet = new Set(removedActivityIds);
+    return activities.filter(a => !removedSet.has(a.id));
+  }, [activities, removedActivityIds]);
   // Unified current activity id used by UI and handlers
   const derivedCurrentActivityId = useMemo(() => effective.currentActivityId ?? currentActivityId, [effective.currentActivityId, currentActivityId]);
   // Completed ids prefer global context when present
@@ -335,7 +341,7 @@ export default function ActivityManager({
         {/* Activities List - scrollable if needed */}
         <div className="flex-grow-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
           <Row className="gy-3" data-testid="activity-list">
-            {activities.map((activity) => (
+            {visibleActivities.map((activity) => (
               <Col 
                 key={activity.id} 
                 xs={12}
