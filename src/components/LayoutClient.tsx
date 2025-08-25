@@ -12,6 +12,7 @@ import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
 import Navigation from '@/components/Navigation';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import TimerDrawer from '@/components/TimerDrawer';
+import { usePathname } from 'next/navigation';
 import { useOptionalGlobalTimer } from '@/contexts/GlobalTimerContext';
 
 // Add TypeScript interface for the global window object
@@ -26,6 +27,7 @@ interface LayoutClientProps {
 }
 
 export function LayoutClient({ children }: LayoutClientProps) {
+  const pathname = usePathname?.() ?? '/';
   // Apply dynamic bottom padding to body to avoid overlap with fixed TimerDrawer
   const timerCtx = useOptionalGlobalTimer();
   useEffect(() => {
@@ -195,8 +197,8 @@ export function LayoutClient({ children }: LayoutClientProps) {
         
         {children}
 
-        {/* Persistent timer controls and status */}
-        <TimerDrawer />
+        {/* Persistent timer controls and status - hidden on shared session pages */}
+        {!pathname.startsWith('/shared/') && <TimerDrawer />}
       </ToastProvider>
       </ApiKeyProvider>
     </ThemeProvider>
