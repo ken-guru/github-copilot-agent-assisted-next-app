@@ -356,6 +356,7 @@ const ActivityCrud: React.FC = () => {
             activity={editingActivity}
             onSubmit={handleFormSubmit}
             error={formError}
+            existingActivities={activities}
           />
         </Modal.Body>
         <Modal.Footer>

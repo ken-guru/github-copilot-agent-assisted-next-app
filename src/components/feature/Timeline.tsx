@@ -170,8 +170,9 @@ export default function Timeline({
     };
 
     // Only run timer if we need real-time updates
-    const hasOngoingBreak = hasEntries && entries[entries.length - 1]?.endTime != null;
-    if ((timerActive && hasEntries) || hasOngoingBreak) {
+    // We update when the timer is active, or when the last entry is ongoing (no endTime yet)
+    const hasOngoingEntry = hasEntries && entries[entries.length - 1]?.endTime == null;
+    if ((timerActive && hasEntries) || hasOngoingEntry) {
       updateTime(); // Initial update
       timeoutId = setInterval(updateTime, 1000);
     }
@@ -228,8 +229,9 @@ export default function Timeline({
   }, [totalDuration, effectiveDuration, isOvertime]);
   
   // Calculate data for timeline entries
-  const firstEntryStartTime = hasEntries && entries.length > 0 ? entries[0]?.startTime : undefined;
-  const currentTimeLeft = totalDuration * 1000 - (firstEntryStartTime ? Date.now() - firstEntryStartTime : 0);
+  // Compute remaining time based on the currentElapsedTime rather than wall-clock time.
+  // This ensures shared/archived sessions render correctly without drifting over time.
+  const currentTimeLeft = (totalDuration - currentElapsedTime) * 1000;
   const timeSpansData = calculateTimeSpans({
     entries,
     totalDuration: effectiveDuration,

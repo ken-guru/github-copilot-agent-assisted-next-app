@@ -35,7 +35,8 @@ describe('ActivityCrud', () => {
     fireEvent.click(screen.getByRole('button', { name: /Add Activity/i }));
     expect(screen.getByLabelText(/Name/i)).toBeInTheDocument();
     // Check for the color dropdown button by ID since it contains dynamic text
-    expect(screen.getByText(/Green/i)).toBeInTheDocument();
+    // With default activities present (colors 0-3 in use), the smart default should be the first unused color (index 4 = Red)
+    expect(screen.getByText(/Red/i)).toBeInTheDocument();
   });
 
   it('validates required fields when trying to save empty activity', async () => {
