@@ -7,6 +7,7 @@ import { useApiKey } from '@/contexts/ApiKeyContext';
 import { useOpenAIClient } from '@/utils/ai/byokClient';
 import type { ChatCompletion } from '@/types/ai';
 import { MAX_AI_ACTIVITIES } from '@/types/ai';
+import useNetworkStatus from '@/hooks/useNetworkStatus';
 
 export default function AIPlannerPage() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function AIPlannerPage() {
   const { apiKey, setApiKey, clearApiKey } = useApiKey();
   const { callOpenAI } = useOpenAIClient();
   const PROMPT_STORAGE_KEY = 'ai_planner_last_prompt';
+  const { online } = useNetworkStatus();
 
   useEffect(() => {
     // Hydration guard for client-only rendering
@@ -201,6 +203,12 @@ export default function AIPlannerPage() {
           </h5>
         </Card.Header>
         <Card.Body>
+          {/* Show prominent offline warning when not connected */}
+          {!online && (
+            <Alert variant="warning" role="alert" data-testid="ai-offline-warning" className="mb-3">
+              AI planning requires a network connection — you are currently offline. Reconnect to use this feature.
+            </Alert>
+          )}
           <Form onSubmit={handlePlan} aria-label="AI planning form">
             <Form.Group className="mb-3">
               <Form.Label htmlFor="aiPrompt">Describe your session</Form.Label>
@@ -221,7 +229,14 @@ export default function AIPlannerPage() {
               <Alert variant="danger" role="alert">{error}</Alert>
             )}
             <div className="d-flex gap-2">
-              <Button type="submit" variant="primary" disabled={loading} aria-label="Generate AI plan">
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={loading || !online}
+                aria-disabled={loading || !online}
+                title={!online ? 'You are offline. Reconnect to plan with AI.' : 'Generate AI plan'}
+                aria-label="Generate AI plan"
+              >
                 {loading ? (<><Spinner size="sm" className="me-2" animation="border" />Planning…</>) : 'Plan with AI'}
               </Button>
               <Button type="button" variant="outline-danger" onClick={() => { clearApiKey(); addToast({ message: 'API key cleared', variant: 'success' }); }}>
