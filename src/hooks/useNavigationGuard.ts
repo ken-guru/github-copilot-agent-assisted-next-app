@@ -11,23 +11,20 @@ export function useNavigationGuard() {
   useEffect(() => {
     const hasActiveSession = Boolean(sessionStartTime);
 
-    function handleBeforeUnload(e: BeforeUnloadEvent) {
+    function handleBeforeUnload() {
       try {
         // Mark that we left the origin while a session was active
         if (typeof window !== 'undefined' && window.sessionStorage) {
           window.sessionStorage.setItem('mrTimely.leftOriginAt', String(Date.now()));
         }
       } catch {}
-      // Standard pattern: set returnValue to a non-empty string
-      e.preventDefault();
-      e.returnValue = '';
-      return '';
+      // Do not set e.returnValue or call preventDefault — avoids leave-site confirmation
     }
 
     if (hasActiveSession) {
-      window.addEventListener('beforeunload', handleBeforeUnload);
+      window.addEventListener('beforeunload', handleBeforeUnload as EventListener);
       return () => {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
+        window.removeEventListener('beforeunload', handleBeforeUnload as EventListener);
       };
     }
 
