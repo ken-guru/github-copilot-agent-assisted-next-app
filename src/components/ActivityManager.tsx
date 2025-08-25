@@ -6,6 +6,7 @@ import { ActivityButton } from './ActivityButton';
 import TimerProgressSection from './TimerProgressSection';
 import ActivityFormSection from './ActivityFormSection';
 import ShareControls from './ShareControls';
+import AddMinuteButton from './AddMinuteButton';
 import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 import { getActivities, addActivity as persistActivity, deleteActivity as persistDeleteActivity } from '../utils/activity-storage';
 import { Activity as CanonicalActivity } from '../types/activity';
@@ -267,16 +268,12 @@ export default function ActivityManager({
         <h5 className="mb-0">Activities</h5>
         <div className="d-flex gap-2">
           {(effective.onExtend) && (
-            <Button 
-              variant="outline-primary" 
-              size="sm" 
+            <AddMinuteButton
               onClick={handleExtendDuration}
-              className="d-flex align-items-center"
+              variant="outline-primary"
+              size="sm"
               title="Add 1 minute to session duration"
-            >
-              <i className="bi bi-plus-circle me-2"></i>
-              1 min
-            </Button>
+            />
           )}
           {effective.onReset && (
             <Button 

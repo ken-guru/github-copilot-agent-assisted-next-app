@@ -5,6 +5,7 @@ import { formatTime } from '@/utils/timeUtils';
 import useGlobalTimerProgress from '@/hooks/useGlobalTimerProgress';
 import RunningActivityCard from '@/components/RunningActivityCard';
 import ActiveBreakCard from '@/components/ActiveBreakCard';
+import AddMinuteButton from '@/components/AddMinuteButton';
 
 const TimerDrawer: React.FC = () => {
   const {
@@ -80,13 +81,12 @@ const TimerDrawer: React.FC = () => {
             </div>
           </div>
           {currentPage === 'timer' && !drawerExpanded && (
-            <button
-              type="button"
-              className="btn btn-primary btn-sm"
+            <AddMinuteButton
               onClick={() => addOneMinute()}
-            >
-              Add 1 min
-            </button>
+              variant="primary"
+              size="sm"
+              ariaLabel="Add 1 min"
+            />
           )}
           <button
             type="button"
@@ -129,14 +129,13 @@ const TimerDrawer: React.FC = () => {
               {currentActivity ? <RunningActivityCard /> : currentBreakStartTime ? <ActiveBreakCard /> : null}
 
               {/* Quick actions */}
-              <div className="d-flex gap-2">
-                <button
-                  type="button"
-                  className="btn btn-primary btn-sm"
+              <div className="d-flex gap-2 flex-nowrap">
+                <AddMinuteButton
                   onClick={() => addOneMinute()}
-                >
-                  Add 1 min
-                </button>
+                  variant="primary"
+                  size="sm"
+                  ariaLabel="Add 1 min"
+                />
               </div>
             </div>
           )}

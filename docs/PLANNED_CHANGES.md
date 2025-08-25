@@ -494,3 +494,14 @@ Additional issues were identified after rolling out the persistent timer drawer.
   - `npm run type-check`
   - `npm run build`
 - Update this section with status notes per item as they are completed.
+
+### Status Updates
+- 1) Drawer shows running activity — Completed
+  - Implemented with existing `RunningActivityCard` reuse in `TimerDrawer` and new test asserting visibility only when expanded.
+- 2) Unify “+1 minute” button — Completed
+  - Introduced `AddMinuteButton` component and reused in `ActivityManager` and `TimerDrawer` (collapsed and expanded); retained ARIA/labels for tests.
+- 3) Restore ActivityManager from global state — Pending
+- 4) Prevent “+1 minute” wrap — Pending (partial layout `flex-nowrap` added in expanded actions; add test and verify)
+- 5) Fix remove activity action — Pending
+- 6) Remove leave-site confirmation — Pending
+- 7) Hide drawer on shared session page — Pending
