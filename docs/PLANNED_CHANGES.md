@@ -398,6 +398,10 @@ Phase E: Restore UX and Toast (Item 5)
 Phase F: Remove Duplicate Progress (Item 7)
 - Remove/disable ActivityManager top-of-card progress when drawer is present.
 - Tests: ensure only one progress bar is visible and accessible.
+\n+Status — Completed (2025-08-25)
+- Implemented conditional rendering in `ActivityManager` to hide its local `TimerProgressSection` when `GlobalTimerContext` is present, leaving the `TimerDrawer` as the single progress source
+- Added/updated tests to assert absence of the local progress container under context and continued visibility via the drawer
+- Quality gates: Jest PASS, ESLint PASS, Type-check PASS, Next.js production build PASS
 
 ### Validation Criteria
 - [x] A: Internal navigation never triggers confirm; external leave still prompts
@@ -405,9 +409,9 @@ Phase F: Remove Duplicate Progress (Item 7)
   - [x] C: “+1 min” in drawer and ActivityManager share identical behavior (single dispatcher)
 - [x] D: Expanded drawer shows current activity or active break accurately with timing
 - [x] E: On reload/return from outside the app, no setup flash; toast “Session restored” appears; in-app nav shows no toast
-- [ ] F: Only one progress bar displayed (drawer replaces ActivityManager’s top progress)
-- [ ] All tests updated and passing; lint/type-check/build remain green
-- [ ] Accessibility preserved (roles/labels/aria-expanded); responsive behavior maintained
+- [x] F: Only one progress bar displayed (drawer replaces ActivityManager’s top progress)
+- [x] All tests updated and passing; lint/type-check/build remain green
+- [x] Accessibility preserved (roles/labels/aria-expanded); responsive behavior maintained
 
 ### Branch and PR Strategy
 - Do NOT create a new branch or PR for these fixes.
