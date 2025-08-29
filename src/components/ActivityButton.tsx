@@ -1,10 +1,11 @@
 import React from 'react';
-import { Button, Card, Badge } from 'react-bootstrap';
 import { Activity } from '../types/activity';
 import { getActivityColorsForTheme } from '../utils/colors';
 import { useThemeReactive } from '../hooks/useThemeReactive';
 import { TimelineEntry } from '@/types';
 import { formatTime } from '@/utils/timeUtils';
+import Material3Card from '@/design-system/components/Card';
+import Material3Button from '@/design-system/components/Button';
 
 interface ActivityButtonProps {
   activity: Activity;
@@ -46,47 +47,45 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
     }
   };
 
-  // Extract word wrap styles to avoid duplication
-  const wordWrapStyles = {
-    wordWrap: 'break-word' as const,
-    overflowWrap: 'break-word' as const,
-  };
-
   return (
-    <Card 
-      className={`${isCompleted ? 'border-success' : ''}`}
+    <Material3Card 
+      className={`${isCompleted ? 'border-success-container' : ''} cursor-pointer transition-all duration-200 hover:shadow-md`}
       style={colors ? {
         backgroundColor: colors.background,
         borderColor: colors.border
       } : undefined}
+      onClick={handleClick}
     >
-      <Card.Body className="py-2 px-3">
-        <div className="d-flex justify-content-between align-items-center">
+      <div className="py-3 px-4">
+        <div className="flex justify-between items-center">
           {/* Left side: Activity name */}
-          <div className="d-flex flex-column flex-grow-1">
+          <div className="flex flex-col flex-grow">
             <h6 
-              className={`fw-bold mb-0 ${isCompleted ? 'text-success' : ''}`}
+              className={`font-medium mb-0 break-words ${isCompleted ? 'text-success' : ''}`}
               style={colors ? { 
                 color: colors.text,
-                ...wordWrapStyles
-              } : wordWrapStyles}
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word'
+              } : {
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word'
+              }}
             >
               {name}
             </h6>
           </div>
 
           {/* Right side: Status badge and action buttons */}
-          <div className="d-flex align-items-center gap-2 flex-shrink-0" style={{ minHeight: '32px' }}>
+          <div className="flex items-center gap-2 flex-shrink-0" style={{ minHeight: '32px' }}>
             {/* Status Badge */}
             {isRunning && (
-              <Badge bg="primary" className="d-flex align-items-center">
-                <span className="fw-normal text-white">{formatTime(elapsedTime)}</span>
-              </Badge>
+              <div className="bg-primary text-on-primary px-2 py-1 rounded-full text-xs font-medium flex items-center">
+                <span className="text-white">{formatTime(elapsedTime)}</span>
+              </div>
             )}
             {isCompleted && (
-              <Badge 
-                bg="success"
-                className="d-flex align-items-center gap-1"
+              <div 
+                className="bg-success-container text-on-success-container px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1"
                 title="Completed"
                 aria-label="Completed"
               >
@@ -94,46 +93,53 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg>
                 Done
-              </Badge>
+              </div>
             )}
             
             {/* Action buttons */}
             {!isCompleted && (
-              <div className="d-flex gap-1">
-                <Button
-                  variant={isRunning ? "success" : "primary"}
-                  size="sm"
-                  onClick={handleClick}
+              <div className="flex gap-1">
+                <Material3Button
+                  variant={isRunning ? "filled" : "filled"}
+                  size="small"
+                  onClick={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    handleClick();
+                  }}
                   disabled={isCompleted}
-                  className="text-nowrap"
+                  className="whitespace-nowrap"
                   title={isRunning ? "Complete" : "Start"}
                   aria-label={isRunning ? "Complete" : "Start"}
                   data-testid={`${isRunning ? 'complete' : 'start'}-activity-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
                 >
                   {isRunning ? (
                     <>
-                      <svg className="me-1" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="mr-1" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                       </svg>
                       Complete
                     </>
                   ) : (
                     <>
-                      <svg className="me-1" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="mr-1" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z" />
                       </svg>
                       Start
                     </>
                   )}
-                </Button>
+                </Material3Button>
                 
                 {onRemove && (
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    onClick={handleRemove}
+                  <Material3Button
+                    variant="outlined"
+                    color="error"
+                    size="small"
+                    onClick={(e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      handleRemove(e);
+                    }}
                     disabled={isInUse}
-                    className={`text-nowrap ${isInUse ? "disabled" : ""}`}
+                    className={`whitespace-nowrap ${isInUse ? "opacity-50" : ""}`}
                     title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
                     aria-label="Remove"
                     data-testid={`remove-activity-${name.toLowerCase().replace(/\s+/g, '-')}`}
@@ -141,14 +147,14 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
                     <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                     </svg>
-                  </Button>
+                  </Material3Button>
                 )}
               </div>
             )}
           </div>
         </div>
-      </Card.Body>
-    </Card>
+      </div>
+    </Material3Card>
   );
 };
 

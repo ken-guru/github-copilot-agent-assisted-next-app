@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Card, Row, Col, Button, Modal, Spinner } from 'react-bootstrap';
 import { getNextAvailableColorSet, ColorSet } from '../utils/colors';
 import { TimelineEntry } from '@/types';
 import { ActivityButton } from './ActivityButton';
@@ -11,6 +10,10 @@ import { getActivities, addActivity as persistActivity, deleteActivity as persis
 import { Activity as CanonicalActivity } from '../types/activity';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
 import useNetworkStatus from '@/hooks/useNetworkStatus';
+// Import Material 3 components instead of Bootstrap
+import Material3Card from '@/design-system/components/Card';
+import Material3Button from '@/design-system/components/Button';
+import Material3Modal from '@/design-system/components/Modal';
 
 // Use canonical Activity type
 type Activity = CanonicalActivity & { colors?: ColorSet };
@@ -240,54 +243,59 @@ export default function ActivityManager({
   // Note: `online` is intentionally included in the handleCreateShare dependency array
 
   return (
-    <Card className="h-100 d-flex flex-column" data-testid="activity-manager">
-      <Card.Header className="card-header-consistent">
-        <h5 className="mb-0">Activities</h5>
-        <div className="d-flex gap-2">
-          {onExtendDuration && (
-            <Button 
-              variant="outline-primary" 
-              size="sm" 
-              onClick={handleExtendDuration}
-              className="d-flex align-items-center"
-              title="Add 1 minute to session duration"
-            >
-              <i className="bi bi-plus-circle me-2"></i>
-              1 min
-            </Button>
-          )}
-          {onReset && (
-            <Button 
-              variant="outline-danger" 
-              size="sm" 
-              onClick={handleResetSession}
-              className="d-flex align-items-center"
-              title="Reset session and return to time setup"
-            >
-              <i className="bi bi-arrow-clockwise me-2"></i>
-              Reset
-            </Button>
-          )}
-          {/* Share action - creates a public share of current session
-              Only show after the session is complete (summary state). */}
-          {/* Summary state heuristic: timer is inactive, we have timeline entries, and there's no running activity */}
-          {(!timerActive && timelineEntries.length > 0 && currentActivityId == null) && (
-            <Button
-              variant="outline-success"
-              size="sm"
-              onClick={() => setShowShareModal(true)}
-              disabled={!online}
-              className="d-flex align-items-center"
-              title="Share session"
-              data-testid="open-share-modal"
-            >
-              <i className="bi bi-share me-2" />
-              Share
-            </Button>
-          )}
+    <Material3Card className="h-full flex flex-col" data-testid="activity-manager">
+      {/* Header with title and action buttons */}
+      <div className="p-6 pb-4 border-b border-outline-variant">
+        <div className="flex justify-between items-center">
+          <h5 className="text-lg font-medium mb-0">Activities</h5>
+          <div className="flex gap-2">
+            {onExtendDuration && (
+              <Material3Button 
+                variant="outlined" 
+                size="small"
+                onClick={handleExtendDuration}
+                className="flex items-center"
+                title="Add 1 minute to session duration"
+              >
+                <i className="bi bi-plus-circle mr-2"></i>
+                1 min
+              </Material3Button>
+            )}
+            {onReset && (
+              <Material3Button 
+                variant="outlined"
+                color="error"
+                size="small"
+                onClick={handleResetSession}
+                className="flex items-center"
+                title="Reset session and return to time setup"
+              >
+                <i className="bi bi-arrow-clockwise mr-2"></i>
+                Reset
+              </Material3Button>
+            )}
+            {/* Share action - creates a public share of current session
+                Only show after the session is complete (summary state). */}
+            {/* Summary state heuristic: timer is inactive, we have timeline entries, and there's no running activity */}
+            {(!timerActive && timelineEntries.length > 0 && currentActivityId == null) && (
+              <Material3Button
+                variant="outlined"
+                size="small"
+                onClick={() => setShowShareModal(true)}
+                disabled={!online}
+                className="flex items-center"
+                title="Share session"
+                data-testid="open-share-modal"
+              >
+                <i className="bi bi-share mr-2" />
+                Share
+              </Material3Button>
+            )}
+          </div>
         </div>
-      </Card.Header>
-      <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden p-3">
+      </div>
+      
+      <div className="flex flex-col flex-grow overflow-hidden p-6 pt-4">
         {/* Timer Progress Section - isolated from activity form */}
         <TimerProgressSection
           entries={timelineEntries}
@@ -308,12 +316,11 @@ export default function ActivityManager({
         />
         
         {/* Activities List - scrollable if needed */}
-        <div className="flex-grow-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
-          <Row className="gy-3" data-testid="activity-list">
+        <div className="flex-grow" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
+          <div className="space-y-3" data-testid="activity-list">
             {visibleActivities.map((activity) => (
-              <Col 
-                key={activity.id} 
-                xs={12}
+              <div 
+                key={activity.id}
                 data-testid={`activity-column-${activity.id}`}
               >
                 <ActivityButton
@@ -325,41 +332,40 @@ export default function ActivityManager({
                   timelineEntries={timelineEntries}
                   elapsedTime={elapsedTime}
                 />
-              </Col>
+              </div>
             ))}
-          </Row>
+          </div>
 
           {/* Hidden activities control */}
           {hiddenActivities.length > 0 && (
-            <div className="mt-3">
-              <Button
-                variant="outline-secondary"
-                size="sm"
-                className="d-inline-flex align-items-center hidden-activities-toggle"
+            <div className="mt-6">
+              <Material3Button
+                variant="outlined"
+                size="small"
+                className="flex items-center"
                 onClick={() => setShowHiddenList(v => !v)}
                 data-testid="toggle-hidden-activities"
               >
-                <i className={`bi ${showHiddenList ? 'bi-eye-slash' : 'bi-eye'} me-2`} />
+                <i className={`bi ${showHiddenList ? 'bi-eye-slash' : 'bi-eye'} mr-2`} />
                 {showHiddenList ? 'Hide' : 'Show'} {hiddenActivities.length} hidden {hiddenActivities.length === 1 ? 'activity' : 'activities'}
-              </Button>
+              </Material3Button>
 
               {showHiddenList && (
                 <div
-                  className="hidden-activities-panel bg-body-tertiary border rounded-3 p-2 mt-2"
+                  className="bg-surface-container-high border border-outline-variant rounded-lg p-4 mt-3"
                   data-testid="hidden-activities-panel"
                 >
                   {hiddenActivities.map((activity) => (
-                    <div key={activity.id} className="d-flex justify-content-between align-items-center py-1">
-                      <span className="text-body-secondary small">{activity.name}</span>
-                      <Button
-                        variant="outline-secondary"
-                        size="sm"
-                        className="px-2 py-1"
+                    <div key={activity.id} className="flex justify-between items-center py-2">
+                      <span className="text-on-surface-variant text-sm">{activity.name}</span>
+                      <Material3Button
+                        variant="outlined"
+                        size="small"
                         onClick={() => handleRestoreActivity(activity.id)}
                         data-testid={`restore-activity-${activity.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
                       >
                         Restore
-                      </Button>
+                      </Material3Button>
                     </div>
                   ))}
                 </div>
@@ -367,48 +373,57 @@ export default function ActivityManager({
             </div>
           )}
         </div>
-      </Card.Body>
+      </div>
 
       {/* Share confirmation modal */}
-      <Modal show={showShareModal} onHide={() => setShowShareModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Share session</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <Material3Modal 
+        open={showShareModal} 
+        onClose={() => setShowShareModal(false)}
+        title="Share session"
+      >
+        <div className="space-y-4">
           <p>Share a read-only copy of the current session. This will create a public URL that anyone can open.</p>
-          <p className="text-muted small">The shared session will contain summary and timeline data only.</p>
+          <p className="text-on-surface-variant text-sm">The shared session will contain summary and timeline data only.</p>
           {shareLoading && (
-            <div className="d-flex align-items-center">
-              <Spinner animation="border" size="sm" className="me-2" /> Creating share...
+            <div className="flex items-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+              Creating share...
             </div>
           )}
-            {!online && (
-              <div className="text-muted small mt-2" data-testid="activitymanager-share-offline-warning">Sharing requires a network connection — you are currently offline.</div>
-            )}
+          {!online && (
+            <div className="text-on-surface-variant text-sm mt-2" data-testid="activitymanager-share-offline-warning">
+              Sharing requires a network connection — you are currently offline.
+            </div>
+          )}
           {showShareControls && shareUrl && (
             <div className="mt-3">
               <ShareControls shareUrl={shareUrl} />
             </div>
           )}
-        </Modal.Body>
-        <Modal.Footer>
+        </div>
+        
+        <div className="flex justify-end gap-2 mt-6">
           {!showShareControls && (
             <>
-              <Button variant="secondary" onClick={() => setShowShareModal(false)}>Cancel</Button>
-              <Button
-                variant="success"
+              <Material3Button variant="outlined" onClick={() => setShowShareModal(false)}>
+                Cancel
+              </Material3Button>
+              <Material3Button
+                variant="filled"
                 onClick={handleCreateShare}
                 disabled={!online}
               >
                 Create share
-              </Button>
+              </Material3Button>
             </>
           )}
           {showShareControls && (
-            <Button variant="primary" onClick={() => setShowShareModal(false)}>Done</Button>
+            <Material3Button variant="filled" onClick={() => setShowShareModal(false)}>
+              Done
+            </Material3Button>
           )}
-        </Modal.Footer>
-      </Modal>
-    </Card>
+        </div>
+      </Material3Modal>
+    </Material3Card>
   );
 }

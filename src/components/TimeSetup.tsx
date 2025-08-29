@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Card, Form, Button, Row, Col, ButtonGroup } from 'react-bootstrap';
+// Import Material 3 components instead of Bootstrap
+import Material3Card from '@/design-system/components/Card';
+import Material3Input from '@/design-system/components/Input';
+import Material3Button from '@/design-system/components/Button';
 
 interface TimeSetupProps {
   onTimeSet: (durationInSeconds: number) => void;
@@ -53,100 +56,106 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   };
 
   return (
-    <Card className="mb-4" data-testid="time-setup">
-      <Card.Header className="card-header-consistent">
-        <h5 className="mb-0">Set Time</h5>
-      </Card.Header>
-      
-      <Card.Body>
-        <ButtonGroup 
-          className="w-100 mb-3" 
+    <Material3Card className="w-full max-w-md" data-testid="time-setup">
+      <div className="p-6">
+        <h5 className="text-lg font-medium mb-6">Set Time</h5>
+        
+        {/* Material 3 Segmented Button Group for mode selection */}
+        <div 
+          className="flex bg-surface-container-highest rounded-full p-1 mb-6" 
           role="group" 
           aria-label="Time setup mode selection"
         >
-          <Button
-            variant={setupMode === 'duration' ? 'primary' : 'outline-primary'}
+          <Material3Button
+            variant={setupMode === 'duration' ? 'filled' : 'text'}
             onClick={() => setSetupMode('duration')}
+            className="flex-1 rounded-full"
           >
             Set Duration
-          </Button>
-          <Button
-            variant={setupMode === 'deadline' ? 'primary' : 'outline-primary'}
+          </Material3Button>
+          <Material3Button
+            variant={setupMode === 'deadline' ? 'filled' : 'text'}
             onClick={() => setSetupMode('deadline')}
+            className="flex-1 rounded-full"
           >
             Set Deadline
-          </Button>
-        </ButtonGroup>
+          </Material3Button>
+        </div>
         
-        <Form onSubmit={handleSubmit} role="form" id="time-setup-form">
+        <form onSubmit={handleSubmit} role="form" id="time-setup-form">
           {setupMode === 'duration' ? (
-            <Row className="g-3" data-testid="duration-inputs">
-              <Col xs={12} md={4} data-testid="hours-input-group">
-                <Form.Label htmlFor="hours">Hours</Form.Label>
-                <Form.Control
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4" data-testid="duration-inputs">
+              <div data-testid="hours-input-group">
+                <Material3Input
                   type="number"
                   id="hours"
-                  min="0"
+                  label="Hours"
+                  min={0}
                   value={isClient ? hours.toString() : "0"}
-                  onChange={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const parsedValue = parseInt(e.target.value, 10);
                     setHours(isNaN(parsedValue) ? 0 : parsedValue);
                   }}
+                  fullWidth
                 />
-              </Col>
-              <Col xs={12} md={4} data-testid="minutes-input-group">
-                <Form.Label htmlFor="minutes">Minutes</Form.Label>
-                <Form.Control
+              </div>
+              <div data-testid="minutes-input-group">
+                <Material3Input
                   type="number"
                   id="minutes"
-                  min="0"
-                  max="59"
+                  label="Minutes"
+                  min={0}
+                  max={59}
                   value={isClient ? minutes.toString() : "0"}
-                  onChange={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const value = parseInt(e.target.value, 10);
                     setMinutes(isNaN(value) ? 0 : value);
                   }}
+                  fullWidth
                 />
-              </Col>
-              <Col xs={12} md={4} data-testid="seconds-input-group">
-                <Form.Label htmlFor="seconds">Seconds</Form.Label>
-                <Form.Control
+              </div>
+              <div data-testid="seconds-input-group">
+                <Material3Input
                   type="number"
                   id="seconds"
-                  min="0"
-                  max="59"
+                  label="Seconds"
+                  min={0}
+                  max={59}
                   value={isClient ? seconds.toString() : "0"}
-                  onChange={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const value = parseInt(e.target.value, 10);
                     setSeconds(isNaN(value) ? 0 : value);
                   }}
+                  fullWidth
                 />
-              </Col>
-            </Row>
+              </div>
+            </div>
           ) : (
             <div data-testid="deadline-input-group">
-              <Form.Label htmlFor="deadlineTime">Deadline Time</Form.Label>
-              <Form.Control
+              <Material3Input
                 type="time"
                 id="deadlineTime"
+                label="Deadline Time"
                 value={isClient ? (deadlineTime || '') : ''}
-                onChange={(e) => setDeadlineTime(e.target.value || '')}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDeadlineTime(e.target.value || '')}
+                fullWidth
               />
             </div>
           )}
-        </Form>
-      </Card.Body>
-      
-      <Card.Footer>
-        <Button
-          type="submit"
-          variant="success"
-          className="w-100"
-          form="time-setup-form"
-        >
-          Set Time
-        </Button>
-      </Card.Footer>
-    </Card>
+        </form>
+        
+        {/* Submit button */}
+        <div className="mt-6">
+          <Material3Button
+            type="submit"
+            variant="filled"
+            form="time-setup-form"
+            fullWidth
+          >
+            Set Time
+          </Material3Button>
+        </div>
+      </div>
+    </Material3Card>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { Card, Alert, Row, Col, ListGroup, Badge, Button, Spinner, Modal } from 'react-bootstrap';
 import { TimelineEntry } from '@/types';
 import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
 import { getActivities } from '@/utils/activity-storage';
@@ -13,6 +12,9 @@ import ShareControls from './ShareControls';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
 import { mapTimelineEntriesForShare } from '@/utils/sharing';
 import useNetworkStatus from '@/hooks/useNetworkStatus';
+import Material3Card from '@/design-system/components/Card';
+import Material3Button from '@/design-system/components/Button';
+import Material3Modal from '@/design-system/components/Modal';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -444,13 +446,6 @@ export default function Summary({
     }));
   };
 
-  // Helper function to convert CSS module classes to Bootstrap Alert variants
-  const getBootstrapVariant = (className: string): 'success' | 'warning' | 'info' => {
-    if (className.includes('statusMessageEarly')) return 'success';
-    if (className.includes('statusMessageLate')) return 'warning';
-    return 'info';
-  };
-
   const status = getStatusMessage();
   const stats = calculateActivityStats();
 
@@ -531,125 +526,132 @@ export default function Summary({
   };
 
   return (
-    <Card data-testid="summary" className="summary-card h-100">
-      <Card.Header className="card-header-consistent">
-        <h5 className="mb-0" role="heading" aria-level={2}>Summary</h5>
-        <div className="d-flex gap-2 align-items-center">
-  {apiKey && (!aiSummary) && (
-          <Button
-            variant="outline-primary"
-            size="sm"
-            disabled={aiLoading}
-            onClick={async () => {
-              try {
-                setAiLoading(true);
-    const summary = await generateAISummary();
-    setAiSummary(summary);
-              } catch (e: unknown) {
-                const message = e instanceof Error ? e.message : 'AI summary failed';
-                addToast({ message, variant: 'error' });
-              } finally {
-                setAiLoading(false);
-              }
-            }}
-            title="Generate AI summary"
-          >
-            {aiLoading ? (<><Spinner size="sm" className="me-2" animation="border" />Summarizing…</>) : 'AI Summary'}
-          </Button>
-  )}
-  {/* Auto BYOK mode indicated by presence of apiKey; no manual switch */}
-        {onReset && (
-          <Button 
-            variant="outline-danger" 
-            size="sm" 
-            onClick={onReset}
-            className="d-flex align-items-center"
-            title="Reset to default activities"
-          >
-            <i className="bi bi-arrow-clockwise me-2"></i>
-            Reset
-          </Button>
-        )}
-        {/* Share action available in summary view */}
-        <Button
-          variant="outline-success"
-          size="sm"
-          onClick={(e) => {
-            // capture trigger element so we can return focus after modal closes
-            setShareTriggerElement(e.currentTarget as HTMLElement);
-            setShowShareModal(true);
-          }}
-          className="d-flex align-items-center"
-          title="Share session"
-          data-testid="open-share-modal-summary"
-        >
-          <i className="bi bi-share me-2" />
-          Share
-        </Button>
+    <Material3Card data-testid="summary" className="h-full">
+      {/* Header */}
+      <div className="p-6 pb-4 border-b border-outline-variant">
+        <div className="flex justify-between items-center">
+          <h5 className="mb-0 text-lg font-medium" role="heading" aria-level={2}>Summary</h5>
+          <div className="flex gap-2 items-center">
+            {apiKey && (!aiSummary) && (
+              <Material3Button
+                variant="outlined"
+                size="small"
+                disabled={aiLoading}
+                onClick={async () => {
+                  try {
+                    setAiLoading(true);
+                    const summary = await generateAISummary();
+                    setAiSummary(summary);
+                  } catch (e: unknown) {
+                    const message = e instanceof Error ? e.message : 'AI summary failed';
+                    addToast({ message, variant: 'error' });
+                  } finally {
+                    setAiLoading(false);
+                  }
+                }}
+                title="Generate AI summary"
+              >
+                {aiLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                    Summarizing…
+                  </>
+                ) : 'AI Summary'}
+              </Material3Button>
+            )}
+            {onReset && (
+              <Material3Button 
+                variant="outlined"
+                color="error"
+                size="small" 
+                onClick={onReset}
+                className="flex items-center"
+                title="Reset to default activities"
+              >
+                <i className="bi bi-arrow-clockwise mr-2"></i>
+                Reset
+              </Material3Button>
+            )}
+            <Material3Button
+              variant="outlined"
+              size="small"
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                setShareTriggerElement(e.currentTarget as HTMLElement);
+                setShowShareModal(true);
+              }}
+              className="flex items-center"
+              title="Share session"
+              data-testid="open-share-modal-summary"
+            >
+              <i className="bi bi-share mr-2" />
+              Share
+            </Material3Button>
+          </div>
         </div>
-      </Card.Header>
+      </div>
       
-      <Card.Body data-testid="summary-body">
+      <div className="p-6" data-testid="summary-body">
         {status && (
-          <Alert variant={getBootstrapVariant(status.className)} className="mb-3" data-testid="summary-status">
+          <div 
+            className={`p-4 rounded-lg mb-6 ${
+              status.className.includes('statusMessageEarly') 
+                ? 'bg-success-container text-on-success-container'
+                : status.className.includes('statusMessageLate')
+                ? 'bg-error-container text-on-error-container'
+                : 'bg-primary-container text-on-primary-container'
+            }`}
+            data-testid="summary-status"
+          >
             {status.message}
-          </Alert>
+          </div>
         )}
 
-        <Row className="stats-grid g-3 mb-4" data-testid="stats-grid">
-          <Col xs={6} md={3} data-testid="stat-card-planned">
-            <Card className="text-center h-100">
-              <Card.Body className="text-center">
-                <div className="card-title small text-muted" data-testid="stat-label-planned">Planned Time</div>
-                <div className="card-text fs-4 fw-bold" data-testid="stat-value-planned">{formatDuration(totalDuration)}</div>
-              </Card.Body>
-            </Card>
-          </Col>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" data-testid="stats-grid">
+          <Material3Card className="text-center" data-testid="stat-card-planned">
+            <div className="p-4 text-center">
+              <div className="text-sm text-on-surface-variant mb-2" data-testid="stat-label-planned">Planned Time</div>
+              <div className="text-2xl font-bold" data-testid="stat-value-planned">{formatDuration(totalDuration)}</div>
+            </div>
+          </Material3Card>
           
-          <Col xs={6} md={3} data-testid="stat-card-spent">
-            <Card className="text-center h-100">
-              <Card.Body className="text-center">
-                <div className="card-title small text-muted" data-testid="stat-label-spent">Spent Time</div>
-                <div className="card-text fs-4 fw-bold" data-testid="stat-value-spent">{formatDuration(elapsedTime)}</div>
-              </Card.Body>
-            </Card>
-          </Col>
+          <Material3Card className="text-center" data-testid="stat-card-spent">
+            <div className="p-4 text-center">
+              <div className="text-sm text-on-surface-variant mb-2" data-testid="stat-label-spent">Spent Time</div>
+              <div className="text-2xl font-bold" data-testid="stat-value-spent">{formatDuration(elapsedTime)}</div>
+            </div>
+          </Material3Card>
           
-          <Col xs={6} md={3} data-testid="stat-card-idle">
-            <Card className="text-center h-100">
-              <Card.Body className="text-center">
-                <div className="card-title small text-muted" data-testid="stat-label-idle">Idle Time</div>
-                <div className="card-text fs-4 fw-bold" data-testid="stat-value-idle">{formatDuration(stats.idleTime)}</div>
-              </Card.Body>
-            </Card>
-          </Col>
+          <Material3Card className="text-center" data-testid="stat-card-idle">
+            <div className="p-4 text-center">
+              <div className="text-sm text-on-surface-variant mb-2" data-testid="stat-label-idle">Idle Time</div>
+              <div className="text-2xl font-bold" data-testid="stat-value-idle">{formatDuration(stats.idleTime)}</div>
+            </div>
+          </Material3Card>
           
-          <Col xs={6} md={3} data-testid="stat-card-overtime">
-            <Card className="text-center h-100">
-              <Card.Body className="text-center">
-                <div className="card-title small text-muted" data-testid="stat-label-overtime">Overtime</div>
-                <div className="card-text fs-4 fw-bold" data-testid="stat-value-overtime">{formatDuration(overtime)}</div>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+          <Material3Card className="text-center" data-testid="stat-card-overtime">
+            <div className="p-4 text-center">
+              <div className="text-sm text-on-surface-variant mb-2" data-testid="stat-label-overtime">Overtime</div>
+              <div className="text-2xl font-bold" data-testid="stat-value-overtime">{formatDuration(overtime)}</div>
+            </div>
+          </Material3Card>
+        </div>
 
         {activityTimes.length > 0 && (
-          <div className="mt-4">
-            <h3 className="h5 mb-3" data-testid="activity-list-heading">
+          <div className="mt-6">
+            <h3 className="text-lg font-medium mb-4" data-testid="activity-list-heading">
               Time Spent per Activity
             </h3>
-            <ListGroup className="list-group-flush" data-testid="activity-list">
+            <div className="space-y-2" data-testid="activity-list">
               {activityTimes.map((activity) => {
-                // Get theme-appropriate colors
                 const themeColors = activity.colors ? 
                   getThemeAppropriateColor(activity.colors) || activity.colors : 
                   undefined;
                 
                 return (
-                  <ListGroup.Item 
+                  <div 
                     key={activity.id}
-                    className="activity-item d-flex justify-content-between align-items-center"
+                    className="flex justify-between items-center p-3 border border-outline-variant rounded-lg"
                     data-testid={`activity-summary-item-${activity.id}`}
                     style={themeColors ? {
                       backgroundColor: (themeColors as ColorSet).background,
@@ -657,116 +659,117 @@ export default function Summary({
                     } : undefined}
                   >
                     <span 
-                      className="activity-name"
+                      className="font-medium"
                       data-testid={`activity-name-${activity.id}`}
                       style={themeColors ? { color: (themeColors as ColorSet).text } : undefined}
                     >
                       {activity.name}
                     </span>
-                    <Badge bg="primary" className="activity-time ms-auto text-bg-primary shadow-none">
+                    <div className="bg-primary text-on-primary px-3 py-1 rounded-full text-sm font-medium">
                       {formatDuration(activity.duration)}
-                    </Badge>
-                  </ListGroup.Item>
+                    </div>
+                  </div>
                 );
               })}
-            </ListGroup>
+            </div>
           </div>
         )}
 
         {aiSummary && (
-          <div className="mt-4" data-testid="ai-summary">
-            <h3 className="h6 mb-2">AI Summary</h3>
-            <Alert variant="info">{aiSummary}</Alert>
+          <div className="mt-6" data-testid="ai-summary">
+            <h3 className="text-base font-medium mb-2">AI Summary</h3>
+            <div className="bg-primary-container text-on-primary-container p-4 rounded-lg">
+              {aiSummary}
+            </div>
           </div>
         )}
 
         {skippedActivities.length > 0 && (
-          <div className="mt-4" data-testid="skipped-activities">
-            <h3 className="h6 mb-2">Skipped activities ({skippedActivities.length})</h3>
-            <ListGroup className="list-group-flush">
+          <div className="mt-6" data-testid="skipped-activities">
+            <h3 className="text-base font-medium mb-2">Skipped activities ({skippedActivities.length})</h3>
+            <div className="space-y-2">
               {skippedActivities.map(item => (
-                <ListGroup.Item key={item.id} className="d-flex justify-content-between align-items-center">
-                  <span className="text-body-secondary" data-testid={`skipped-activity-name-${item.id}`}>{item.name}</span>
-                  <Badge bg="light" text="secondary" className="border fw-normal">Skipped</Badge>
-                </ListGroup.Item>
+                <div key={item.id} className="flex justify-between items-center p-3 border border-outline-variant rounded-lg">
+                  <span className="text-on-surface-variant" data-testid={`skipped-activity-name-${item.id}`}>{item.name}</span>
+                  <div className="bg-surface-container-high text-on-surface px-3 py-1 rounded-full text-sm border">
+                    Skipped
+                  </div>
+                </div>
               ))}
-            </ListGroup>
+            </div>
           </div>
         )}
-      </Card.Body>
+      </div>
 
       {/* Share confirmation modal */}
-        <Modal
-          show={showShareModal}
-          onHide={() => {
-            setShowShareModal(false);
-            // Return focus to the trigger element for keyboard users
-            setTimeout(() => {
-              if (shareTriggerElement) shareTriggerElement.focus();
-            }, 0);
-          }}
-          aria-labelledby="share-modal-title"
-          aria-describedby="share-modal-desc"
-        >
-        <Modal.Header closeButton>
-          <Modal.Title id="share-modal-title">Share session</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p id="share-modal-desc">Share a read-only copy of the current session. This will create a public URL that anyone can open.</p>
-          <p className="text-muted small">The shared session will contain summary and timeline data only.</p>
-          {/* Offline warning shown prominently inside dialog body, not between footer buttons */}
+      <Material3Modal
+        open={showShareModal}
+        onClose={() => {
+          setShowShareModal(false);
+          setTimeout(() => {
+            if (shareTriggerElement) shareTriggerElement.focus();
+          }, 0);
+        }}
+        title="Share session"
+      >
+        <div className="space-y-4">
+          <p>Share a read-only copy of the current session. This will create a public URL that anyone can open.</p>
+          <p className="text-on-surface-variant text-sm">The shared session will contain summary and timeline data only.</p>
+          
           {!showShareControls && !online && (
-            <Alert
-              variant="warning"
+            <div
+              className="bg-error-container text-on-error-container p-3 rounded-lg"
               role="alert"
-              className="mb-3"
               data-testid="share-offline-warning"
             >
               Sharing requires a network connection — you are currently offline.
-            </Alert>
-          )}
-          {shareLoading && (
-            <div className="d-flex align-items-center">
-              <Spinner animation="border" size="sm" className="me-2" /> Creating share...
             </div>
           )}
+          
+          {shareLoading && (
+            <div className="flex items-center">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+              Creating share...
+            </div>
+          )}
+          
           {showShareControls && shareUrl && (
             <div className="mt-3">
               <ShareControls shareUrl={shareUrl} showOpen={true} showReplace={false} />
             </div>
           )}
-        </Modal.Body>
-        <Modal.Footer>
+        </div>
+        
+        <div className="flex justify-end gap-2 mt-6">
           {!showShareControls && (
             <>
-              <Button
-                variant="secondary"
+              <Material3Button
+                variant="outlined"
                 onClick={() => setShowShareModal(false)}
               >
                 Cancel
-              </Button>
-              <Button
-                variant="success"
+              </Material3Button>
+              <Material3Button
+                variant="filled"
                 onClick={handleCreateShare}
                 disabled={!online}
-                aria-disabled={!online}
                 title={!online ? 'You are offline. Reconnect to create a share.' : 'Create share'}
               >
                 Create share
-              </Button>
+              </Material3Button>
             </>
           )}
           {showShareControls && (
-            <Button
-              variant="primary"
+            <Material3Button
+              variant="filled"
               onClick={() => setShowShareModal(false)}
               aria-label="Close share dialog"
             >
               Done
-            </Button>
+            </Material3Button>
           )}
-        </Modal.Footer>
-      </Modal>
-    </Card>
+        </div>
+      </Material3Modal>
+    </Material3Card>
   );
 }
