@@ -6,8 +6,9 @@ import { ApiKeyProvider } from '@/contexts/ApiKeyContext';
 import { ToastProvider } from '@/contexts/ToastContext';
 import { ToastContainer } from '@/components/ui/ToastContainer';
 import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
-import Navigation from '@/components/Navigation';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
+// Import Material 3 navigation components instead of Bootstrap navigation
+import Material3NavigationLayout from '@/design-system/components/NavigationLayout';
 
 // Add TypeScript interface for the global window object
 declare global {
@@ -128,7 +129,7 @@ export function LayoutClient({ children }: LayoutClientProps) {
     <ThemeProvider>
       <ApiKeyProvider>
       <ToastProvider>
-        {/* Bootstrap JavaScript for responsive navigation */}
+        {/* Note: Bootstrap JavaScript still needed for legacy modals and components */}
         <Script 
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
           strategy="afterInteractive"
@@ -145,10 +146,10 @@ export function LayoutClient({ children }: LayoutClientProps) {
         {/* Global offline indicator - visible across all app states */}
         <OfflineIndicator />
         
-        {/* Main navigation */}
-        <Navigation />
-        
-        {children}
+        {/* Material 3 Navigation Layout wrapping content */}
+        <Material3NavigationLayout>
+          {children}
+        </Material3NavigationLayout>
       </ToastProvider>
       </ApiKeyProvider>
     </ThemeProvider>
