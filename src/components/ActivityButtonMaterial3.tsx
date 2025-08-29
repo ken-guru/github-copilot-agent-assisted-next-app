@@ -91,11 +91,11 @@ const ActivityButtonMaterial3: React.FC<ActivityButtonMaterial3Props> = ({
 
     // Add state-specific color overrides
     if (isRunning) {
-      baseStyles['--activity-accent-color'] = 'var(--md-sys-color-primary)';
+      (baseStyles as any)['--activity-accent-color'] = 'var(--md-sys-color-primary)';
     } else if (isCompleted) {
-      baseStyles['--activity-accent-color'] = 'var(--md-sys-color-tertiary)';
+      (baseStyles as any)['--activity-accent-color'] = 'var(--md-sys-color-tertiary)';
     } else {
-      baseStyles['--activity-accent-color'] = colors.border;
+      (baseStyles as any)['--activity-accent-color'] = colors.border;
     }
 
     return baseStyles;

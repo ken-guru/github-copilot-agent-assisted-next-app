@@ -40,7 +40,7 @@ const ActivityFormMaterial3: React.FC<ActivityFormMaterial3Props> = ({
     setNewActivityName('');
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setNewActivityName(e.target.value);
     if (error) {
       setError(''); // Clear error when user starts typing

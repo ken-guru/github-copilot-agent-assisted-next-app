@@ -1,0 +1,349 @@
+/**
+ * Browser Fallbacks and Progressive Enhancement
+ * 
+ * CSS fallbacks for unsupported features and progressive enhancement
+ * for Material 3 Expressive components across different browsers.
+ */
+
+/* ===== FEATURE DETECTION CLASSES ===== */
+
+/* CSS Custom Properties fallbacks */
+.no-cssCustomProperties {
+  /* Fallback colors when CSS custom properties aren't supported */
+  --md-sys-color-primary: #6750a4;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #eaddff;
+  --md-sys-color-on-primary-container: #21005d;
+  --md-sys-color-secondary: #625b71;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #e8def8;
+  --md-sys-color-on-secondary-container: #1d192b;
+  --md-sys-color-surface: #fffbfe;
+  --md-sys-color-on-surface: #1c1b1f;
+  --md-sys-color-surface-variant: #e7e0ec;
+  --md-sys-color-on-surface-variant: #49454f;
+  --md-sys-color-outline: #79747e;
+  --md-sys-color-outline-variant: #cac4d0;
+}
+
+/* CSS Grid fallbacks */
+.no-cssGrid .m3-grid-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.no-cssGrid .m3-grid-item {
+  flex: 1 1 auto;
+  min-width: 280px;
+}
+
+/* Flexbox fallbacks (for very old browsers) */
+.no-flexbox .m3-flex-container {
+  display: block;
+}
+
+.no-flexbox .m3-flex-item {
+  display: inline-block;
+  vertical-align: top;
+}
+
+/* Transform fallbacks */
+.no-transforms .m3-transform-scale {
+  /* Use opacity changes instead of scale transforms */
+  opacity: 0.9;
+}
+
+.no-transforms .m3-transform-translate {
+  /* Use margin instead of translate */
+  margin-left: 8px;
+  margin-top: 8px;
+}
+
+/* Transition fallbacks */
+.no-transitions .m3-transition,
+.no-transitions .m3-button,
+.no-transitions .m3-text-field,
+.no-transitions .m3-card {
+  transition: none !important;
+}
+
+/* Animation fallbacks */
+.no-animations .m3-animated,
+.no-animations .m3-ripple,
+.no-animations .m3-loading-spinner {
+  animation: none !important;
+}
+
+/* Backdrop filter fallbacks */
+.no-backdropFilter .m3-backdrop-blur {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.no-backdropFilter .m3-backdrop-blur-dark {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* Clip path fallbacks */
+.no-clipPath .m3-clip-path-circle {
+  border-radius: 50%;
+}
+
+.no-clipPath .m3-clip-path-rounded {
+  border-radius: 12px;
+}
+
+/* Container queries fallbacks */
+.no-containerQueries .m3-container-responsive {
+  /* Use viewport-based responsive design instead */
+}
+
+@media (max-width: 480px) {
+  .no-containerQueries .m3-container-responsive {
+    padding: 16px;
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .no-containerQueries .m3-container-responsive {
+    padding: 24px;
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 769px) {
+  .no-containerQueries .m3-container-responsive {
+    padding: 32px;
+    font-size: 18px;
+  }
+}
+
+/* Aspect ratio fallbacks */
+.no-aspectRatio .m3-aspect-ratio-1-1::before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+}
+
+.no-aspectRatio .m3-aspect-ratio-16-9::before {
+  content: '';
+  display: block;
+  padding-top: 56.25%;
+}
+
+.no-aspectRatio .m3-aspect-ratio-4-3::before {
+  content: '';
+  display: block;
+  padding-top: 75%;
+}
+
+/* Color scheme fallbacks */
+.no-colorScheme {
+  /* Provide explicit light/dark theme classes */
+}
+
+.no-colorScheme.theme-dark {
+  background: #121212;
+  color: #ffffff;
+}
+
+.no-colorScheme.theme-light {
+  background: #ffffff;
+  color: #000000;
+}
+
+/* ===== BROWSER-SPECIFIC FIXES ===== */
+
+/* Safari-specific fixes */
+.browser-safari .m3-button {
+  /* Fix button appearance in Safari */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.browser-safari .m3-text-field input {
+  /* Fix input styling in Safari */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Firefox-specific fixes */
+.browser-firefox .m3-button {
+  /* Fix button focus outline in Firefox */
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.browser-firefox .m3-text-field input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* Chrome/Edge-specific fixes */
+.browser-chrome .m3-text-field input::-webkit-outer-spin-button,
+.browser-chrome .m3-text-field input::-webkit-inner-spin-button,
+.browser-edge .m3-text-field input::-webkit-outer-spin-button,
+.browser-edge .m3-text-field input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ===== MOBILE-SPECIFIC FALLBACKS ===== */
+
+/* Touch event fallbacks */
+.no-touchEvents .m3-touch-target {
+  /* Increase click targets for mouse users */
+  min-height: 32px;
+  min-width: 32px;
+}
+
+/* Pointer events fallbacks */
+.no-pointerEvents .m3-pointer-interaction {
+  /* Use mouse events instead of pointer events */
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* Reduce animations on low-end devices */
+@media (max-resolution: 1dppx) {
+  .m3-animation-heavy {
+    animation-duration: 0.1s !important;
+  }
+}
+
+/* Disable expensive effects on mobile */
+.is-mobile .m3-expensive-effect {
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+/* Optimize for high DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+  .m3-high-dpi-optimized {
+    /* Use higher quality assets or effects */
+  }
+}
+
+/* ===== ACCESSIBILITY FALLBACKS ===== */
+
+/* Reduced motion fallbacks */
+@media (prefers-reduced-motion: reduce) {
+  .m3-motion-sensitive {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .m3-motion-sensitive * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .m3-high-contrast {
+    border: 2px solid;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+}
+
+/* Forced colors mode (Windows High Contrast) */
+@media (forced-colors: active) {
+  .m3-forced-colors {
+    background: ButtonFace !important;
+    color: ButtonText !important;
+    border-color: ButtonText !important;
+  }
+  
+  .m3-forced-colors:hover {
+    background: Highlight !important;
+    color: HighlightText !important;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+
+@media print {
+  .m3-no-print {
+    display: none !important;
+  }
+  
+  .m3-print-optimized {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+}
+
+/* ===== LEGACY BROWSER SUPPORT ===== */
+
+/* Internet Explorer 11 fallbacks (if needed) */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .m3-ie11-fallback {
+    /* IE11 specific styles */
+    display: block;
+  }
+}
+
+/* ===== UTILITY CLASSES FOR PROGRESSIVE ENHANCEMENT ===== */
+
+.supports-cssCustomProperties .m3-enhanced-colors {
+  /* Enhanced color features when custom properties are supported */
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.supports-backdropFilter .m3-enhanced-blur {
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.supports-clipPath .m3-enhanced-shapes {
+  clip-path: polygon(0% 0%, 100% 0%, 95% 100%, 5% 100%);
+}
+
+.supports-containerQueries .m3-enhanced-responsive {
+  container-type: inline-size;
+}
+
+.supports-aspectRatio .m3-enhanced-aspect {
+  aspect-ratio: 16 / 9;
+}
+
+/* ===== LOADING STATES AND SKELETON SCREENS ===== */
+
+.m3-loading-fallback {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.no-animations .m3-loading-fallback {
+  background: #f0f0f0;
+  animation: none;
+}
+
+/* ===== ERROR STATES ===== */
+
+.m3-feature-unavailable {
+  padding: 16px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  color: #856404;
+}
+
+.m3-feature-unavailable::before {
+  content: '⚠️ ';
+  margin-right: 8px;
+}
