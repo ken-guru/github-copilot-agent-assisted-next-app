@@ -1,0 +1,424 @@
+/* Material 3 Expressive Text Field Component */
+
+.textField {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+  font-family: var(--md-sys-typescale-font-family-plain);
+}
+
+/* Input Container */
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+/* Base Input Styles */
+.input {
+  position: relative;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--md-comp-outlined-text-field-input-text-font);
+  font-size: var(--md-comp-outlined-text-field-input-text-size);
+  font-weight: var(--md-sys-typescale-body-large-font-weight);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  letter-spacing: var(--md-sys-typescale-body-large-letter-spacing);
+  color: var(--md-sys-color-on-surface);
+  z-index: 1;
+  transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+.input::placeholder {
+  color: var(--md-sys-color-on-surface-variant);
+  opacity: 0.6;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+/* Textarea specific styles */
+.input[rows] {
+  resize: vertical;
+  min-height: 56px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+/* Label Styles */
+.label {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--md-comp-outlined-text-field-label-text-font);
+  font-size: var(--md-comp-outlined-text-field-label-text-size);
+  font-weight: var(--md-sys-typescale-body-large-font-weight);
+  color: var(--md-sys-color-on-surface-variant);
+  pointer-events: none;
+  transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized-decelerate);
+  transform-origin: left center;
+  z-index: 2;
+  background: var(--md-sys-color-surface);
+  padding: 0 4px;
+  margin-left: -4px;
+}
+
+.required {
+  color: var(--md-sys-color-error);
+  margin-left: 2px;
+}
+
+/* Floating Label Animation */
+.focused .label,
+.hasValue .label {
+  top: 0;
+  transform: translateY(-50%) scale(0.75);
+  color: var(--md-sys-color-primary);
+  font-weight: var(--md-sys-typescale-label-small-font-weight);
+}
+
+.error .label {
+  color: var(--md-sys-color-error);
+}
+
+.error.focused .label,
+.error.hasValue .label {
+  color: var(--md-sys-color-error);
+}
+
+/* Outline Styles */
+.outline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.outlineStart,
+.outlineEnd {
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-comp-outlined-text-field-container-shape);
+  transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+.outlineStart {
+  flex: 0 0 12px;
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.outlineNotch {
+  flex: 0 0 auto;
+  border-top: 1px solid var(--md-sys-color-outline);
+  border-bottom: 1px solid var(--md-sys-color-outline);
+  transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+  max-width: calc(100% - 24px);
+}
+
+.outlineEnd {
+  flex: 1;
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* Focus State */
+.focused .outlineStart,
+.focused .outlineEnd {
+  border-color: var(--md-sys-color-primary);
+  border-width: 2px;
+}
+
+.focused .outlineNotch {
+  border-top-color: var(--md-sys-color-primary);
+  border-bottom-color: var(--md-sys-color-primary);
+  border-top-width: 2px;
+  border-bottom-width: 2px;
+}
+
+/* Error State */
+.error .outlineStart,
+.error .outlineEnd {
+  border-color: var(--md-sys-color-error);
+}
+
+.error .outlineNotch {
+  border-top-color: var(--md-sys-color-error);
+  border-bottom-color: var(--md-sys-color-error);
+}
+
+.error.focused .outlineStart,
+.error.focused .outlineEnd {
+  border-color: var(--md-sys-color-error);
+  border-width: 2px;
+}
+
+.error.focused .outlineNotch {
+  border-top-color: var(--md-sys-color-error);
+  border-bottom-color: var(--md-sys-color-error);
+  border-top-width: 2px;
+  border-bottom-width: 2px;
+}
+
+/* Disabled State */
+.disabled .input {
+  color: var(--md-sys-color-on-surface);
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.disabled .label {
+  color: var(--md-sys-color-on-surface);
+  opacity: 0.38;
+}
+
+.disabled .outlineStart,
+.disabled .outlineEnd {
+  border-color: var(--md-sys-color-on-surface);
+  opacity: 0.12;
+}
+
+.disabled .outlineNotch {
+  border-top-color: var(--md-sys-color-on-surface);
+  border-bottom-color: var(--md-sys-color-on-surface);
+  opacity: 0.12;
+}
+
+/* Read Only State */
+.readOnly .input {
+  cursor: default;
+}
+
+.readOnly .outlineStart,
+.readOnly .outlineEnd {
+  border-color: var(--md-sys-color-outline-variant);
+}
+
+.readOnly .outlineNotch {
+  border-top-color: var(--md-sys-color-outline-variant);
+  border-bottom-color: var(--md-sys-color-outline-variant);
+}
+
+/* Icon Styles */
+.startIcon,
+.endIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--md-sys-color-on-surface-variant);
+  transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  z-index: 1;
+}
+
+.startIcon {
+  margin-right: 12px;
+  margin-left: 12px;
+}
+
+.endIcon {
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
+.focused .startIcon,
+.focused .endIcon {
+  color: var(--md-sys-color-primary);
+}
+
+.error .startIcon,
+.error .endIcon {
+  color: var(--md-sys-color-error);
+}
+
+.disabled .startIcon,
+.disabled .endIcon {
+  color: var(--md-sys-color-on-surface);
+  opacity: 0.38;
+}
+
+/* Helper Text */
+.helperText {
+  margin-top: 4px;
+  padding-left: 16px;
+  padding-right: 16px;
+  font-family: var(--md-sys-typescale-body-small-font-family);
+  font-size: var(--md-sys-typescale-body-small-font-size);
+  font-weight: var(--md-sys-typescale-body-small-font-weight);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  letter-spacing: var(--md-sys-typescale-body-small-letter-spacing);
+  color: var(--md-sys-color-on-surface-variant);
+  transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.error .helperText {
+  color: var(--md-sys-color-error);
+}
+
+.disabled .helperText {
+  color: var(--md-sys-color-on-surface);
+  opacity: 0.38;
+}
+
+/* Size Variants */
+.small {
+  font-size: var(--md-sys-typescale-body-small-font-size);
+}
+
+.small .input {
+  font-size: var(--md-sys-typescale-body-small-font-size);
+  padding: 8px 12px;
+  min-height: 40px;
+}
+
+.small .label {
+  font-size: var(--md-sys-typescale-body-small-font-size);
+}
+
+.small.focused .label,
+.small.hasValue .label {
+  font-size: var(--md-sys-typescale-label-small-font-size);
+}
+
+.medium .input {
+  padding: 16px 12px;
+  min-height: 56px;
+}
+
+.large .input {
+  font-size: var(--md-sys-typescale-body-large-font-size);
+  padding: 20px 16px;
+  min-height: 64px;
+}
+
+.large .label {
+  font-size: var(--md-sys-typescale-body-large-font-size);
+}
+
+.large.focused .label,
+.large.hasValue .label {
+  font-size: var(--md-sys-typescale-label-medium-font-size);
+}
+
+/* Adjustments for icons */
+.hasStartIcon .input {
+  padding-left: 0;
+}
+
+.hasEndIcon .input {
+  padding-right: 0;
+}
+
+.hasStartIcon .label {
+  left: 48px;
+}
+
+.hasStartIcon.small .label {
+  left: 40px;
+}
+
+.hasStartIcon.large .label {
+  left: 56px;
+}
+
+/* Filled Variant */
+.filled {
+  /* Filled variant styles would go here */
+  /* For now, we'll focus on outlined variant */
+}
+
+/* Hover Effects */
+.textField:hover:not(.disabled):not(.focused) .outlineStart,
+.textField:hover:not(.disabled):not(.focused) .outlineEnd {
+  border-color: var(--md-sys-color-on-surface);
+}
+
+.textField:hover:not(.disabled):not(.focused) .outlineNotch {
+  border-top-color: var(--md-sys-color-on-surface);
+  border-bottom-color: var(--md-sys-color-on-surface);
+}
+
+.error:hover:not(.disabled):not(.focused) .outlineStart,
+.error:hover:not(.disabled):not(.focused) .outlineEnd {
+  border-color: var(--md-sys-color-error);
+}
+
+.error:hover:not(.disabled):not(.focused) .outlineNotch {
+  border-top-color: var(--md-sys-color-error);
+  border-bottom-color: var(--md-sys-color-error);
+}
+
+/* Responsive Design */
+@media (max-width: 599px) {
+  .input {
+    font-size: calc(var(--md-comp-outlined-text-field-input-text-size) * 0.9);
+    padding: 14px 12px;
+    min-height: 48px;
+  }
+  
+  .medium .input {
+    padding: 14px 12px;
+    min-height: 48px;
+  }
+  
+  .large .input {
+    padding: 16px 14px;
+    min-height: 56px;
+  }
+  
+  .helperText {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .outlineStart,
+  .outlineEnd {
+    border-width: 2px;
+  }
+  
+  .outlineNotch {
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+  }
+  
+  .focused .outlineStart,
+  .focused .outlineEnd {
+    border-width: 3px;
+  }
+  
+  .focused .outlineNotch {
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .input,
+  .label,
+  .outlineStart,
+  .outlineEnd,
+  .outlineNotch,
+  .startIcon,
+  .endIcon,
+  .helperText {
+    transition: none;
+  }
+}

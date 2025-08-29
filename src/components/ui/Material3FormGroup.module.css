@@ -1,0 +1,145 @@
+/* Material 3 Expressive Form Group Component */
+
+.formGroup {
+  display: flex;
+  width: 100%;
+}
+
+/* Direction */
+.column {
+  flex-direction: column;
+}
+
+.row {
+  flex-direction: row;
+}
+
+/* Alignment */
+.align-start {
+  align-items: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-end {
+  align-items: flex-end;
+}
+
+.align-stretch {
+  align-items: stretch;
+}
+
+/* Justification */
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-space-between {
+  justify-content: space-between;
+}
+
+.justify-space-around {
+  justify-content: space-around;
+}
+
+.justify-space-evenly {
+  justify-content: space-evenly;
+}
+
+/* Wrap */
+.wrap {
+  flex-wrap: wrap;
+}
+
+/* Spacing Variants */
+.compact.column > * + * {
+  margin-top: 12px;
+}
+
+.compact.row > * + * {
+  margin-left: 12px;
+}
+
+.comfortable.column > * + * {
+  margin-top: 16px;
+}
+
+.comfortable.row > * + * {
+  margin-left: 16px;
+}
+
+.spacious.column > * + * {
+  margin-top: 24px;
+}
+
+.spacious.row > * + * {
+  margin-left: 24px;
+}
+
+/* Responsive Spacing */
+@media (max-width: 599px) {
+  .compact.column > * + * {
+    margin-top: 8px;
+  }
+  
+  .compact.row > * + * {
+    margin-left: 8px;
+  }
+  
+  .comfortable.column > * + * {
+    margin-top: 12px;
+  }
+  
+  .comfortable.row > * + * {
+    margin-left: 12px;
+  }
+  
+  .spacious.column > * + * {
+    margin-top: 16px;
+  }
+  
+  .spacious.row > * + * {
+    margin-left: 16px;
+  }
+}
+
+/* Wrap spacing adjustments */
+.wrap.compact > * {
+  margin-bottom: 12px;
+}
+
+.wrap.comfortable > * {
+  margin-bottom: 16px;
+}
+
+.wrap.spacious > * {
+  margin-bottom: 24px;
+}
+
+.wrap > *:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 599px) {
+  .wrap.compact > * {
+    margin-bottom: 8px;
+  }
+  
+  .wrap.comfortable > * {
+    margin-bottom: 12px;
+  }
+  
+  .wrap.spacious > * {
+    margin-bottom: 16px;
+  }
+}

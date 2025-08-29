@@ -1,0 +1,216 @@
+/* Material 3 Expressive Time Setup Component */
+
+.timeSetup {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-large);
+  box-shadow: var(--md-sys-elevation-level1);
+  overflow: hidden;
+  transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+.timeSetup:hover {
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.header {
+  padding: 24px 24px 16px 24px;
+  background: var(--md-sys-color-surface-container);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--md-sys-typescale-headline-small-font-family);
+  font-size: var(--md-sys-typescale-headline-small-font-size);
+  font-weight: var(--md-sys-typescale-headline-small-font-weight);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  letter-spacing: var(--md-sys-typescale-headline-small-letter-spacing);
+  color: var(--md-sys-color-on-surface);
+}
+
+.content {
+  padding: 24px;
+  flex: 1;
+}
+
+.modeSelector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 4px;
+  background: var(--md-sys-color-surface-container-highest);
+  border-radius: var(--md-sys-shape-corner-full);
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modeButton {
+  min-width: 120px;
+  border-radius: var(--md-sys-shape-corner-full) !important;
+  transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-emphasized);
+}
+
+.form {
+  width: 100%;
+}
+
+.durationInputs {
+  gap: 16px;
+}
+
+.generalError {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  border-radius: var(--md-sys-shape-corner-small);
+  font-family: var(--md-sys-typescale-body-small-font-family);
+  font-size: var(--md-sys-typescale-body-small-font-size);
+  font-weight: var(--md-sys-typescale-body-small-font-weight);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  border: 1px solid var(--md-sys-color-error);
+}
+
+.footer {
+  padding: 16px 24px 24px 24px;
+  background: var(--md-sys-color-surface-container);
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.submitButton {
+  width: 100%;
+  min-height: 48px;
+}
+
+/* Responsive Design */
+@media (max-width: 599px) {
+  .timeSetup {
+    max-width: 100%;
+    border-radius: var(--md-sys-shape-corner-medium);
+    margin: 0 8px;
+  }
+  
+  .header {
+    padding: 20px 16px 12px 16px;
+  }
+  
+  .title {
+    font-size: calc(var(--md-sys-typescale-headline-small-font-size) * 0.9);
+  }
+  
+  .content {
+    padding: 20px 16px;
+  }
+  
+  .modeSelector {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .modeButton {
+    flex: 1;
+    min-width: auto;
+  }
+  
+  .durationInputs {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .footer {
+    padding: 12px 16px 20px 16px;
+  }
+  
+  .submitButton {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .timeSetup {
+    margin: 0 4px;
+  }
+  
+  .durationInputs {
+    gap: 8px;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .durationInputs {
+    gap: 20px;
+  }
+  
+  .modeSelector {
+    gap: 12px;
+  }
+  
+  .modeButton {
+    min-width: 140px;
+  }
+}
+
+/* Desktop enhancements */
+@media (min-width: 1024px) {
+  .timeSetup {
+    max-width: 640px;
+  }
+  
+  .header {
+    padding: 28px 28px 20px 28px;
+  }
+  
+  .content {
+    padding: 28px;
+  }
+  
+  .footer {
+    padding: 20px 28px 28px 28px;
+  }
+  
+  .durationInputs {
+    gap: 24px;
+  }
+  
+  .modeSelector {
+    gap: 16px;
+  }
+  
+  .modeButton {
+    min-width: 160px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .timeSetup {
+    border: 2px solid var(--md-sys-color-outline);
+  }
+  
+  .header {
+    border-bottom-width: 2px;
+  }
+  
+  .footer {
+    border-top-width: 2px;
+  }
+  
+  .generalError {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .timeSetup,
+  .modeButton {
+    transition: none;
+  }
+}

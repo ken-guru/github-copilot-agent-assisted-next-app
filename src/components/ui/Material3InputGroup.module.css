@@ -1,0 +1,86 @@
+/* Material 3 Expressive Input Group Component */
+
+.inputGroup {
+  display: flex;
+  width: 100%;
+}
+
+/* Alignment */
+.align-start {
+  align-items: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-end {
+  align-items: flex-end;
+}
+
+.align-stretch {
+  align-items: stretch;
+}
+
+/* Variant: Attached - Elements are visually connected */
+.attached {
+  gap: 0;
+}
+
+.attached > *:first-child {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  margin-right: -1px;
+  z-index: 1;
+}
+
+.attached > *:last-child {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  z-index: 2;
+}
+
+.attached > *:not(:first-child):not(:last-child) {
+  border-radius: 0 !important;
+  margin-left: -1px;
+  margin-right: -1px;
+  z-index: 1;
+}
+
+/* Variant: Spaced - Elements have space between them */
+.spaced {
+  gap: 8px;
+}
+
+/* Focus handling for attached elements */
+.attached > *:focus-within {
+  z-index: 3;
+}
+
+/* Hover handling for attached elements */
+.attached > *:hover {
+  z-index: 2;
+}
+
+.attached > *:focus-within:hover {
+  z-index: 4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 599px) {
+  .spaced {
+    gap: 6px;
+  }
+  
+  /* On mobile, consider stacking for better usability */
+  .inputGroup.mobile-stack {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .inputGroup.mobile-stack > * {
+    border-radius: var(--md-sys-shape-corner-small) !important;
+    margin: 0 !important;
+    z-index: auto !important;
+  }
+}
