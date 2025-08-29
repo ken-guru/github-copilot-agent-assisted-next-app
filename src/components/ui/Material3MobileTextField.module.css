@@ -1,0 +1,318 @@
+/**
+ * Material 3 Expressive Mobile-Optimized Text Field Styles
+ */
+
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: var(--m3-shape-corner-small);
+  transition: all 150ms var(--m3-motion-easing-standard);
+}
+
+/* Field variants */
+.filled .inputContainer {
+  background: var(--m3-color-surface-container-highest);
+  border-bottom: 1px solid var(--m3-color-on-surface-variant);
+  border-radius: var(--m3-shape-corner-small) var(--m3-shape-corner-small) 0 0;
+}
+
+.filled.focused .inputContainer {
+  border-bottom: 2px solid var(--m3-color-primary);
+}
+
+.filled.error .inputContainer {
+  border-bottom: 2px solid var(--m3-color-error);
+}
+
+.outlined .inputContainer {
+  background: transparent;
+  border: 1px solid var(--m3-color-outline);
+}
+
+.outlined.focused .inputContainer {
+  border: 2px solid var(--m3-color-primary);
+}
+
+.outlined.error .inputContainer {
+  border: 2px solid var(--m3-color-error);
+}
+
+/* Field sizes */
+.small .inputContainer {
+  min-height: 40px;
+}
+
+.medium .inputContainer {
+  min-height: 48px;
+}
+
+.large .inputContainer {
+  min-height: 56px;
+}
+
+/* Mobile optimizations */
+.mobile .inputContainer {
+  min-height: 56px;
+  padding: 0 16px;
+}
+
+.mobile.small .inputContainer {
+  min-height: 48px;
+  padding: 0 12px;
+}
+
+.mobile.large .inputContainer {
+  min-height: 64px;
+  padding: 0 20px;
+}
+
+/* Input wrapper */
+.inputWrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* Input element */
+.input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--m3-typography-body-large-font);
+  font-size: var(--m3-typography-body-large-size);
+  font-weight: var(--m3-typography-body-large-weight);
+  line-height: var(--m3-typography-body-large-line-height);
+  color: var(--m3-color-on-surface);
+  padding: 16px 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.mobile .input {
+  font-size: 16px; /* Prevents zoom on iOS */
+  padding: 18px 0;
+}
+
+.small .input {
+  padding: 12px 0;
+  font-size: var(--m3-typography-body-medium-size);
+}
+
+.large .input {
+  padding: 20px 0;
+  font-size: var(--m3-typography-body-large-size);
+}
+
+/* Label */
+.label {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--m3-typography-body-large-font);
+  font-size: var(--m3-typography-body-large-size);
+  font-weight: var(--m3-typography-body-large-weight);
+  color: var(--m3-color-on-surface-variant);
+  pointer-events: none;
+  transition: all 150ms var(--m3-motion-easing-standard);
+  transform-origin: left center;
+}
+
+/* Floating label states */
+.focused .label,
+.hasValue .label {
+  transform: translateY(-24px) scale(0.75);
+  color: var(--m3-color-primary);
+}
+
+.error .label {
+  color: var(--m3-color-error);
+}
+
+.mobile .label {
+  font-size: 16px;
+}
+
+.mobile.focused .label,
+.mobile.hasValue .label {
+  transform: translateY(-28px) scale(0.75);
+}
+
+/* Icons */
+.startIcon,
+.endIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--m3-color-on-surface-variant);
+  flex-shrink: 0;
+}
+
+.startIcon {
+  margin-right: 12px;
+}
+
+.endIcon {
+  margin-left: 12px;
+}
+
+.focused .startIcon,
+.focused .endIcon {
+  color: var(--m3-color-primary);
+}
+
+.error .startIcon,
+.error .endIcon {
+  color: var(--m3-color-error);
+}
+
+/* Supporting text */
+.supportingText {
+  margin-top: 4px;
+  padding: 0 16px;
+  font-family: var(--m3-typography-body-small-font);
+  font-size: var(--m3-typography-body-small-size);
+  font-weight: var(--m3-typography-body-small-weight);
+  line-height: var(--m3-typography-body-small-line-height);
+  color: var(--m3-color-on-surface-variant);
+}
+
+.error .supportingText {
+  color: var(--m3-color-error);
+}
+
+/* Disabled state */
+.disabled .inputContainer {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.disabled .input {
+  cursor: not-allowed;
+}
+
+/* Placeholder styles */
+.input::placeholder {
+  color: var(--m3-color-on-surface-variant);
+  opacity: 0.6;
+}
+
+/* Autofill styles */
+.input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--m3-color-surface-container-highest) inset;
+  -webkit-text-fill-color: var(--m3-color-on-surface);
+}
+
+/* Focus styles */
+.input:focus {
+  outline: none;
+}
+
+.focused .inputContainer {
+  outline: none;
+}
+
+/* Mobile-specific input types */
+.input[type="email"] {
+  text-transform: lowercase;
+}
+
+.input[type="url"] {
+  text-transform: lowercase;
+}
+
+.input[type="tel"],
+.input[inputmode="numeric"],
+.input[inputmode="decimal"] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Responsive adjustments */
+@media (max-width: 575px) {
+  .inputContainer {
+    min-height: 48px;
+    padding: 0 12px;
+  }
+  
+  .input {
+    font-size: 16px;
+    padding: 14px 0;
+  }
+  
+  .label {
+    font-size: 16px;
+  }
+  
+  .focused .label,
+  .hasValue .label {
+    transform: translateY(-22px) scale(0.75);
+  }
+  
+  .supportingText {
+    padding: 0 12px;
+    font-size: 12px;
+  }
+}
+
+/* Orientation-aware adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .inputContainer {
+    min-height: 40px;
+  }
+  
+  .input {
+    padding: 10px 0;
+  }
+  
+  .focused .label,
+  .hasValue .label {
+    transform: translateY(-20px) scale(0.75);
+  }
+}
+
+/* Touch-friendly scrolling for long inputs */
+.input {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .outlined .inputContainer {
+    border-width: 2px;
+  }
+  
+  .focused .inputContainer {
+    border-width: 3px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .inputContainer,
+  .label,
+  .startIcon,
+  .endIcon {
+    transition: none;
+  }
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px var(--m3-color-surface-container) inset;
+    -webkit-text-fill-color: var(--m3-color-on-surface);
+  }
+}

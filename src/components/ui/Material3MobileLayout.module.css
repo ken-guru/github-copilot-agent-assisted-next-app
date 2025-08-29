@@ -1,0 +1,378 @@
+/**
+ * Material 3 Expressive Mobile-Optimized Layout Styles
+ */
+
+/* Base layout */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--m3-color-background);
+  color: var(--m3-color-on-background);
+}
+
+/* Layout variants */
+.page {
+  width: 100%;
+  max-width: 100vw;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  background: var(--m3-color-surface-container);
+}
+
+.card {
+  border-radius: var(--m3-shape-corner-large);
+  background: var(--m3-color-surface-container);
+  box-shadow: var(--m3-elevation-level1);
+  overflow: hidden;
+}
+
+.list {
+  background: var(--m3-color-surface);
+}
+
+/* Safe area handling */
+.safeArea {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Touch-optimized scrolling */
+.touchScroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.touchScroll .main {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Orientation handling */
+.portrait {
+  /* Portrait-specific styles */
+}
+
+.landscape {
+  /* Landscape-specific styles */
+}
+
+.transitioning {
+  transition: all 300ms var(--m3-motion-easing-emphasized);
+}
+
+/* Mobile optimizations */
+.mobile {
+  font-size: 16px; /* Prevents zoom on iOS */
+}
+
+.mobile.modal {
+  margin: 0;
+  border-radius: 0;
+}
+
+.tablet {
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+/* Viewport-specific adjustments */
+.xs {
+  padding: 8px;
+}
+
+.sm {
+  padding: 12px;
+}
+
+.md {
+  padding: 16px;
+}
+
+.lg,
+.xl,
+.xxl {
+  padding: 24px;
+}
+
+/* Layout sections */
+.header {
+  flex-shrink: 0;
+  background: var(--m3-color-surface);
+  border-bottom: 1px solid var(--m3-color-outline-variant);
+  z-index: 10;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.footer {
+  flex-shrink: 0;
+  background: var(--m3-color-surface);
+  border-top: 1px solid var(--m3-color-outline-variant);
+}
+
+/* Spacing variants */
+.compact {
+  --layout-spacing: 8px;
+}
+
+.comfortable {
+  --layout-spacing: 16px;
+}
+
+.spacious {
+  --layout-spacing: 24px;
+}
+
+.compact .header,
+.compact .footer {
+  padding: 8px var(--layout-spacing);
+}
+
+.comfortable .header,
+.comfortable .footer {
+  padding: 16px var(--layout-spacing);
+}
+
+.spacious .header,
+.spacious .footer {
+  padding: 24px var(--layout-spacing);
+}
+
+/* Container component */
+.container {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.size-small {
+  max-width: 480px;
+}
+
+.size-medium {
+  max-width: 768px;
+}
+
+.size-large {
+  max-width: 1024px;
+}
+
+.size-full {
+  max-width: 100%;
+}
+
+.centered {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Container padding */
+.padding-none {
+  padding: 0;
+}
+
+.padding-small {
+  padding: 8px;
+}
+
+.padding-medium {
+  padding: 16px;
+}
+
+.padding-large {
+  padding: 24px;
+}
+
+/* Mobile container adjustments */
+.mobileContainer {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.viewport-xs .mobileContainer {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+/* Grid component */
+.grid {
+  display: grid;
+  width: 100%;
+}
+
+.grid.autoFit {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Grid gaps */
+.gap-small {
+  gap: 8px;
+}
+
+.gap-medium {
+  gap: 16px;
+}
+
+.gap-large {
+  gap: 24px;
+}
+
+/* Stack component */
+.stack {
+  display: flex;
+}
+
+.direction-vertical {
+  flex-direction: column;
+}
+
+.direction-horizontal {
+  flex-direction: row;
+}
+
+/* Stack alignment */
+.align-start {
+  align-items: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-end {
+  align-items: flex-end;
+}
+
+.align-stretch {
+  align-items: stretch;
+}
+
+/* Stack justification */
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.justify-evenly {
+  justify-content: space-evenly;
+}
+
+/* Stack wrapping */
+.wrap {
+  flex-wrap: wrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 575px) {
+  .layout {
+    padding: 0;
+  }
+  
+  .header,
+  .footer {
+    padding: 12px 16px;
+  }
+  
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .direction-horizontal {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 767px) {
+  .modal {
+    margin: 16px;
+    max-height: calc(100vh - 32px);
+    border-radius: var(--m3-shape-corner-large) var(--m3-shape-corner-large) 0 0;
+  }
+}
+
+/* Orientation-specific adjustments */
+@media (orientation: portrait) {
+  .layout {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .header,
+  .footer {
+    padding: 8px 16px;
+  }
+  
+  .compact .header,
+  .compact .footer {
+    padding: 4px 12px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .transitioning {
+    transition: none;
+  }
+  
+  .touchScroll {
+    scroll-behavior: auto;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .header,
+  .footer {
+    border-width: 2px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .layout {
+    min-height: auto;
+    background: white;
+    color: black;
+  }
+  
+  .header,
+  .footer {
+    border: none;
+    background: transparent;
+  }
+}

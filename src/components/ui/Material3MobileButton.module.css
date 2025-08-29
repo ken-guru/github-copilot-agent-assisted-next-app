@@ -1,0 +1,311 @@
+/**
+ * Material 3 Expressive Mobile-Optimized Button Styles
+ */
+
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--m3-shape-corner-full);
+  font-family: var(--m3-typography-label-large-font);
+  font-size: var(--m3-typography-label-large-size);
+  font-weight: var(--m3-typography-label-large-weight);
+  line-height: var(--m3-typography-label-large-line-height);
+  letter-spacing: var(--m3-typography-label-large-tracking);
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 150ms var(--m3-motion-easing-standard);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Button variants */
+.filled {
+  background: var(--m3-color-primary);
+  color: var(--m3-color-on-primary);
+  box-shadow: var(--m3-elevation-level1);
+}
+
+.filled:hover {
+  background: color-mix(in srgb, var(--m3-color-primary) 92%, var(--m3-color-on-primary) 8%);
+  box-shadow: var(--m3-elevation-level2);
+}
+
+.filled:active {
+  background: color-mix(in srgb, var(--m3-color-primary) 88%, var(--m3-color-on-primary) 12%);
+  box-shadow: var(--m3-elevation-level1);
+}
+
+.outlined {
+  background: transparent;
+  color: var(--m3-color-primary);
+  border: 1px solid var(--m3-color-outline);
+}
+
+.outlined:hover {
+  background: color-mix(in srgb, var(--m3-color-primary) 8%, transparent 92%);
+  border-color: var(--m3-color-primary);
+}
+
+.outlined:active {
+  background: color-mix(in srgb, var(--m3-color-primary) 12%, transparent 88%);
+}
+
+.text {
+  background: transparent;
+  color: var(--m3-color-primary);
+}
+
+.text:hover {
+  background: color-mix(in srgb, var(--m3-color-primary) 8%, transparent 92%);
+}
+
+.text:active {
+  background: color-mix(in srgb, var(--m3-color-primary) 12%, transparent 88%);
+}
+
+.elevated {
+  background: var(--m3-color-surface-container-low);
+  color: var(--m3-color-primary);
+  box-shadow: var(--m3-elevation-level1);
+}
+
+.elevated:hover {
+  background: color-mix(in srgb, var(--m3-color-surface-container-low) 92%, var(--m3-color-primary) 8%);
+  box-shadow: var(--m3-elevation-level2);
+}
+
+.elevated:active {
+  background: color-mix(in srgb, var(--m3-color-surface-container-low) 88%, var(--m3-color-primary) 12%);
+  box-shadow: var(--m3-elevation-level1);
+}
+
+.tonal {
+  background: var(--m3-color-secondary-container);
+  color: var(--m3-color-on-secondary-container);
+}
+
+.tonal:hover {
+  background: color-mix(in srgb, var(--m3-color-secondary-container) 92%, var(--m3-color-on-secondary-container) 8%);
+  box-shadow: var(--m3-elevation-level1);
+}
+
+.tonal:active {
+  background: color-mix(in srgb, var(--m3-color-secondary-container) 88%, var(--m3-color-on-secondary-container) 12%);
+}
+
+/* Button sizes */
+.small {
+  min-height: 32px;
+  padding: 6px 16px;
+  font-size: var(--m3-typography-label-medium-size);
+}
+
+.medium {
+  min-height: 40px;
+  padding: 10px 24px;
+}
+
+.large {
+  min-height: 48px;
+  padding: 14px 32px;
+  font-size: var(--m3-typography-label-large-size);
+}
+
+/* Mobile optimizations */
+.mobile {
+  min-height: 44px;
+  padding: 12px 24px;
+  font-size: 16px; /* Prevents zoom on iOS */
+}
+
+.mobile.small {
+  min-height: 40px;
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.mobile.large {
+  min-height: 56px;
+  padding: 16px 32px;
+  font-size: 16px;
+}
+
+/* Touch optimizations */
+.touch {
+  transform-origin: center;
+}
+
+.touch:active {
+  transform: scale(0.95);
+}
+
+/* Disable hover effects on touch devices */
+@media (hover: none) {
+  .button:hover {
+    background: var(--m3-color-primary);
+    box-shadow: var(--m3-elevation-level1);
+  }
+  
+  .outlined:hover {
+    background: transparent;
+    border-color: var(--m3-color-outline);
+  }
+  
+  .text:hover {
+    background: transparent;
+  }
+  
+  .elevated:hover {
+    background: var(--m3-color-surface-container-low);
+    box-shadow: var(--m3-elevation-level1);
+  }
+  
+  .tonal:hover {
+    background: var(--m3-color-secondary-container);
+    box-shadow: none;
+  }
+}
+
+/* Button states */
+.disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.loading {
+  cursor: wait;
+}
+
+/* Button content */
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.startIcon,
+.endIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+}
+
+.text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Loading spinner */
+.loadingSpinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading .content {
+  opacity: 0;
+}
+
+/* Ripple effect */
+.rippleContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Focus styles */
+.button:focus-visible {
+  outline: 2px solid var(--m3-color-primary);
+  outline-offset: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 575px) {
+  .button {
+    min-height: 44px;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+  
+  .small {
+    min-height: 36px;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .large {
+    min-height: 52px;
+    padding: 14px 28px;
+    font-size: 15px;
+  }
+}
+
+/* Orientation-aware adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .button {
+    min-height: 36px;
+    padding: 8px 20px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+  
+  .touch:active {
+    transform: none;
+  }
+  
+  .spinner {
+    animation: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .button {
+    border: 2px solid currentColor;
+  }
+  
+  .outlined {
+    border-width: 2px;
+  }
+}

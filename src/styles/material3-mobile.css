@@ -1,0 +1,420 @@
+/**
+ * Material 3 Expressive Mobile Optimizations
+ * 
+ * CSS for touch-optimized interactions, responsive layouts,
+ * and mobile-specific Material 3 Expressive patterns.
+ */
+
+/* Touch target optimization */
+.m3-touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.m3-touch-target-standard {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+.m3-touch-target-large {
+  min-height: 56px;
+  min-width: 56px;
+}
+
+.m3-touch-target-extra-large {
+  min-height: 64px;
+  min-width: 64px;
+}
+
+/* Touch feedback and ripple effects */
+.m3-touch-feedback {
+  position: relative;
+  overflow: hidden;
+  transition: transform 150ms var(--m3-motion-easing-standard);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.m3-touch-feedback:active {
+  transform: scale(0.95);
+}
+
+/* Hover effects only on devices that support hover */
+@media (hover: hover) {
+  .m3-touch-feedback:hover {
+    transform: scale(1.02);
+  }
+}
+
+/* Disable hover effects on touch devices */
+@media (hover: none) {
+  .m3-touch-feedback:hover {
+    transform: none;
+  }
+}
+
+/* Ripple effect container */
+.m3-ripple-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Ripple animation */
+@keyframes m3-ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.12;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.m3-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: currentColor;
+  animation: m3-ripple 600ms ease-out;
+  pointer-events: none;
+}
+
+/* Mobile-optimized spacing */
+.m3-mobile-spacing-xs {
+  padding: 4px;
+}
+
+.m3-mobile-spacing-sm {
+  padding: 8px;
+}
+
+.m3-mobile-spacing-md {
+  padding: 16px;
+}
+
+.m3-mobile-spacing-lg {
+  padding: 24px;
+}
+
+.m3-mobile-spacing-xl {
+  padding: 32px;
+}
+
+.m3-mobile-spacing-xxl {
+  padding: 48px;
+}
+
+/* Responsive spacing utilities */
+@media (max-width: 575px) {
+  .m3-responsive-spacing {
+    padding: 8px;
+  }
+  
+  .m3-responsive-margin {
+    margin: 8px;
+  }
+  
+  .m3-responsive-gap {
+    gap: 8px;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+  .m3-responsive-spacing {
+    padding: 16px;
+  }
+  
+  .m3-responsive-margin {
+    margin: 16px;
+  }
+  
+  .m3-responsive-gap {
+    gap: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .m3-responsive-spacing {
+    padding: 24px;
+  }
+  
+  .m3-responsive-margin {
+    margin: 24px;
+  }
+  
+  .m3-responsive-gap {
+    gap: 24px;
+  }
+}
+
+/* Mobile-optimized form elements */
+.m3-mobile-form-field {
+  min-height: 56px;
+  font-size: 16px; /* Prevents zoom on iOS */
+}
+
+@media (max-width: 575px) {
+  .m3-mobile-form-field {
+    min-height: 48px;
+    padding: 12px 16px;
+  }
+}
+
+/* Mobile-optimized buttons */
+.m3-mobile-button {
+  min-height: 48px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--m3-shape-corner-full);
+  transition: all 150ms var(--m3-motion-easing-standard);
+}
+
+@media (max-width: 575px) {
+  .m3-mobile-button {
+    min-height: 44px;
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}
+
+/* Mobile navigation optimizations */
+.m3-mobile-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--m3-color-surface);
+  border-bottom: 1px solid var(--m3-color-outline-variant);
+}
+
+@media (max-width: 767px) {
+  .m3-mobile-nav {
+    padding: 8px 16px;
+  }
+  
+  .m3-mobile-nav-item {
+    padding: 8px 12px;
+    min-height: 40px;
+  }
+}
+
+/* Orientation-aware layouts */
+@media (orientation: portrait) {
+  .m3-portrait-layout {
+    flex-direction: column;
+  }
+  
+  .m3-portrait-spacing {
+    padding: 16px 12px;
+  }
+}
+
+@media (orientation: landscape) {
+  .m3-landscape-layout {
+    flex-direction: row;
+  }
+  
+  .m3-landscape-spacing {
+    padding: 12px 24px;
+  }
+}
+
+/* Device rotation transitions */
+.m3-rotation-transition {
+  transition: all 300ms var(--m3-motion-easing-emphasized);
+}
+
+/* Mobile-optimized cards */
+.m3-mobile-card {
+  border-radius: var(--m3-shape-corner-large);
+  background: var(--m3-color-surface-container);
+  transition: all 200ms var(--m3-motion-easing-standard);
+}
+
+@media (max-width: 575px) {
+  .m3-mobile-card {
+    margin: 8px;
+    border-radius: var(--m3-shape-corner-medium);
+  }
+}
+
+/* Touch-optimized scrolling */
+.m3-touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Mobile-optimized modals and dialogs */
+@media (max-width: 767px) {
+  .m3-mobile-modal {
+    margin: 16px;
+    max-height: calc(100vh - 32px);
+    border-radius: var(--m3-shape-corner-large) var(--m3-shape-corner-large) 0 0;
+  }
+  
+  .m3-mobile-modal-fullscreen {
+    margin: 0;
+    height: 100vh;
+    border-radius: 0;
+  }
+}
+
+/* Gesture-friendly interactive areas */
+.m3-gesture-area {
+  padding: 12px;
+  margin: -12px;
+  border-radius: var(--m3-shape-corner-medium);
+}
+
+/* Mobile-optimized typography */
+@media (max-width: 575px) {
+  .m3-mobile-headline {
+    font-size: var(--m3-typography-headline-small-size);
+    line-height: var(--m3-typography-headline-small-line-height);
+  }
+  
+  .m3-mobile-title {
+    font-size: var(--m3-typography-title-medium-size);
+    line-height: var(--m3-typography-title-medium-line-height);
+  }
+  
+  .m3-mobile-body {
+    font-size: var(--m3-typography-body-medium-size);
+    line-height: var(--m3-typography-body-medium-line-height);
+  }
+}
+
+/* Safe area handling for devices with notches */
+.m3-safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.m3-safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.m3-safe-area-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.m3-safe-area-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+.m3-safe-area-all {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .m3-touch-feedback,
+  .m3-rotation-transition,
+  .m3-mobile-card,
+  .m3-mobile-button {
+    transition: none;
+  }
+  
+  .m3-ripple {
+    animation: none;
+    opacity: 0.12;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .m3-touch-feedback {
+    border: 2px solid currentColor;
+  }
+  
+  .m3-mobile-button {
+    border: 2px solid var(--m3-color-outline);
+  }
+}
+
+/* Focus management for mobile */
+.m3-mobile-focus {
+  outline: 2px solid var(--m3-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--m3-shape-corner-small);
+}
+
+/* Mobile-optimized loading states */
+.m3-mobile-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 16px;
+}
+
+@media (max-width: 575px) {
+  .m3-mobile-loading {
+    min-height: 40px;
+    padding: 12px;
+  }
+}
+
+/* Contextual keyboard optimizations */
+.m3-numeric-input {
+  font-variant-numeric: tabular-nums;
+}
+
+.m3-email-input {
+  text-transform: lowercase;
+}
+
+.m3-url-input {
+  text-transform: lowercase;
+}
+
+/* Mobile-optimized animations */
+@media (max-width: 767px) {
+  .m3-mobile-animation-fast {
+    animation-duration: 200ms;
+  }
+  
+  .m3-mobile-animation-standard {
+    animation-duration: 300ms;
+  }
+  
+  .m3-mobile-animation-slow {
+    animation-duration: 400ms;
+  }
+}
+
+/* Touch-friendly scrollbars */
+.m3-mobile-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--m3-color-outline-variant) transparent;
+}
+
+.m3-mobile-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.m3-mobile-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.m3-mobile-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--m3-color-outline-variant);
+  border-radius: 4px;
+}
+
+.m3-mobile-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--m3-color-outline);
+}
