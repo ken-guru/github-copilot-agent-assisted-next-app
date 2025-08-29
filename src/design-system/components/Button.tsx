@@ -1,34 +1,36 @@
 /**
  * Material 3 Button Component
- * Comprehensive button implementation following Material 3 design principles
+ * Comprehensive button implementation using Material 3 design tokens
  */
 
 'use client';
 
 import React from 'react';
-import type { Material3ElevationLevel, Material3ShapeSize } from '../types';
-import { createRippleEffect, isTouchDevice } from '../utils/mobile-touch';
+import { Material3Colors } from '../tokens/colors';
+import { Material3Typography } from '../tokens/typography';
+import { Material3SpacingSystem } from '../tokens/spacing';
+import { Material3ElevationSystem } from '../tokens/elevation';
+import { RippleEffect } from './MicroInteractions';
+import { MotionContainer } from './SharedMotion';
 
 export interface Material3ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'filled' | 'outlined' | 'text' | 'elevated' | 'tonal';
   size?: 'small' | 'medium' | 'large';
-  shape?: Material3ShapeSize;
-  elevation?: Material3ElevationLevel;
   loading?: boolean;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
+  iconOnly?: boolean;
   fullWidth?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const Material3Button = React.forwardRef<HTMLButtonElement, Material3ButtonProps>(({
   variant = 'filled',
   size = 'medium',
-  shape = 'full',
-  elevation,
   loading = false,
   startIcon,
   endIcon,
+  iconOnly = false,
   fullWidth = false,
   disabled = false,
   className = '',
@@ -37,253 +39,325 @@ const Material3Button = React.forwardRef<HTMLButtonElement, Material3ButtonProps
   ...props
 }, ref) => {
   const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const [isDark, setIsDark] = React.useState(false);
+  const [rippleTrigger, setRippleTrigger] = React.useState(false);
   
+  // Interactive state management
+  const [interactionState, setInteractionState] = React.useState({
+    isHovered: false,
+    isFocused: false,
+    isPressed: false
+  });
+  
+  // Event handlers for interactive states
+  const handleMouseEnter = React.useCallback(() => {
+    setInteractionState(prev => ({ ...prev, isHovered: true }));
+  }, []);
+  
+  const handleMouseLeave = React.useCallback(() => {
+    setInteractionState(prev => ({ ...prev, isHovered: false, isPressed: false }));
+  }, []);
+  
+  const handleFocus = React.useCallback(() => {
+    setInteractionState(prev => ({ ...prev, isFocused: true }));
+  }, []);
+  
+  const handleBlur = React.useCallback(() => {
+    setInteractionState(prev => ({ ...prev, isFocused: false }));
+  }, []);
+  
+  const handleMouseDown = React.useCallback(() => {
+    setInteractionState(prev => ({ ...prev, isPressed: true }));
+  }, []);
+  
+  const handleMouseUp = React.useCallback(() => {
+    setInteractionState(prev => ({ ...prev, isPressed: false }));
+  }, []);
+
   // Forward ref handling
   React.useImperativeHandle(ref, () => buttonRef.current as HTMLButtonElement);
 
-  // Base classes
-  const baseClasses = [
-    // Layout and positioning
-    'relative',
-    'inline-flex',
-    'items-center',
-    'justify-center',
-    'gap-2',
-    'border',
-    'outline-none',
-    'cursor-pointer',
-    'select-none',
-    'transition-all',
+  // Check for dark mode
+  React.useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
     
-    // Typography
-    'm3-label-large',
-    'font-medium',
+    checkDarkMode();
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { 
+      attributes: true, 
+      attributeFilter: ['class'] 
+    });
     
-    // Motion
-    'm3-motion-button',
-    'm3-duration-short4',
-    'm3-motion-easing-standard',
-    
-    // Focus ring
-    'focus-visible:outline-2',
-    'focus-visible:outline-offset-2',
-    'focus-visible:outline-primary',
-  ];
+    return () => observer.disconnect();
+  }, []);
 
-  // Size-specific classes with mobile-optimized touch targets
-  const sizeClasses = {
-    small: [
-      'h-8 sm:h-8',  // 32px minimum for mobile, same on desktop
-      'px-3 sm:px-3',
-      'text-sm',
-      'min-w-16',
-      'min-h-[40px] sm:min-h-[32px]', // 40px minimum touch target on mobile
-    ],
-    medium: [
-      'h-10 sm:h-10', // 40px, good for both mobile and desktop
-      'px-6 sm:px-6',
-      'min-w-20',
-      'min-h-[48px] sm:min-h-[40px]', // 48px minimum touch target on mobile
-    ],
-    large: [
-      'h-12 sm:h-12', // 48px, good for both mobile and desktop
-      'px-8 sm:px-8',
-      'text-lg',
-      'min-w-24',
-      'min-h-[56px] sm:min-h-[48px]', // 56px minimum touch target on mobile
-    ],
+  // Get design tokens
+  const colors = isDark ? Material3Colors.dark : Material3Colors.light;
+  const { base: spacing } = Material3SpacingSystem;
+  const { scale: typography } = Material3Typography;
+
+  // Size configurations
+  const sizeConfig = {
+    small: {
+      height: '2rem', // 32px
+      paddingX: spacing.medium2, // 16px
+      paddingY: spacing.small3, // 8px
+      fontSize: typography.labelMedium.fontSize,
+      fontWeight: typography.labelMedium.fontWeight,
+      iconSize: '1rem'
+    },
+    medium: {
+      height: '2.5rem', // 40px
+      paddingX: spacing.medium4, // 24px
+      paddingY: spacing.small4, // 10px
+      fontSize: typography.labelLarge.fontSize,
+      fontWeight: typography.labelLarge.fontWeight,
+      iconSize: '1.25rem'
+    },
+    large: {
+      height: '3.5rem', // 56px
+      paddingX: spacing.large2, // 32px
+      paddingY: spacing.medium2, // 16px
+      fontSize: typography.titleMedium.fontSize,
+      fontWeight: typography.titleMedium.fontWeight,
+      iconSize: '1.5rem'
+    }
   };
 
-  // Variant-specific classes
-  const variantClasses = {
-    filled: [
-      'bg-primary',
-      'text-on-primary',
-      'border-primary',
-      'hover:bg-primary/90',
-      'hover:shadow-md',
-      'active:bg-primary/80',
-      'disabled:bg-on-surface/12',
-      'disabled:text-on-surface/38',
-      'disabled:border-on-surface/12',
-    ],
-    outlined: [
-      'bg-transparent',
-      'text-primary',
-      'border-outline',
-      'hover:bg-primary/8',
-      'hover:border-primary',
-      'active:bg-primary/12',
-      'disabled:text-on-surface/38',
-      'disabled:border-on-surface/12',
-    ],
-    text: [
-      'bg-transparent',
-      'text-primary',
-      'border-transparent',
-      'hover:bg-primary/8',
-      'active:bg-primary/12',
-      'disabled:text-on-surface/38',
-    ],
-    elevated: [
-      'bg-surface-container-low',
-      'text-primary',
-      'border-transparent',
-      'm3-elevation-1',
-      'hover:m3-elevation-2',
-      'hover:bg-surface-container-low/90',
-      'active:m3-elevation-1',
-      'disabled:bg-on-surface/12',
-      'disabled:text-on-surface/38',
-      'disabled:shadow-none',
-    ],
-    tonal: [
-      'bg-secondary-container',
-      'text-on-secondary-container',
-      'border-secondary-container',
-      'hover:bg-secondary-container/90',
-      'hover:shadow-sm',
-      'active:bg-secondary-container/80',
-      'disabled:bg-on-surface/12',
-      'disabled:text-on-surface/38',
-      'disabled:border-on-surface/12',
-    ],
+  // Variant configurations
+  const variantConfig = {
+    filled: {
+      backgroundColor: colors.primary,
+      color: colors.onPrimary,
+      border: 'none',
+      elevation: Material3ElevationSystem.components.button
+    },
+    elevated: {
+      backgroundColor: colors.surfaceContainerLow,
+      color: colors.primary,
+      border: 'none',
+      elevation: Material3ElevationSystem.components.button
+    },
+    tonal: {
+      backgroundColor: colors.secondaryContainer,
+      color: colors.onSecondaryContainer,
+      border: 'none',
+      elevation: Material3ElevationSystem.levels.level0
+    },
+    outlined: {
+      backgroundColor: 'transparent',
+      color: colors.primary,
+      border: `1px solid ${colors.outline}`,
+      elevation: Material3ElevationSystem.levels.level0
+    },
+    text: {
+      backgroundColor: 'transparent',
+      color: colors.primary,
+      border: 'none',
+      elevation: Material3ElevationSystem.levels.level0
+    }
   };
 
-  // Shape classes
-  const shapeClasses = {
-    none: 'rounded-none',
-    xs: 'm3-shape-xs',
-    sm: 'm3-shape-sm', 
-    md: 'm3-shape-md',
-    lg: 'm3-shape-lg',
-    xl: 'm3-shape-xl',
-    full: 'm3-shape-full',
+  const currentSize = sizeConfig[size];
+  const currentVariant = variantConfig[variant];
+
+  // Calculate state overlay
+  const getStateOverlay = () => {
+    if (disabled) return 'rgba(0, 0, 0, 0.12)';
+    if (interactionState.isPressed) return Material3Colors.utils.withStateOverlay(currentVariant.backgroundColor, colors.onSurface, 'pressed');
+    if (interactionState.isFocused) return Material3Colors.utils.withStateOverlay(currentVariant.backgroundColor, colors.onSurface, 'focus');
+    if (interactionState.isHovered) return Material3Colors.utils.withStateOverlay(currentVariant.backgroundColor, colors.onSurface, 'hover');
+    return 'transparent';
   };
 
-  // Width classes
-  const widthClasses = fullWidth ? ['w-full'] : [];
-
-  // Disabled classes
-  const disabledClasses = disabled ? [
-    'cursor-not-allowed',
-    'pointer-events-none',
-  ] : [];
-
-  // Loading classes
-  const loadingClasses = loading ? [
-    'cursor-wait',
-    'pointer-events-none',
-  ] : [];
-
-  // Elevation classes (only for elevated variant or when explicitly set)
-  const elevationClasses = elevation !== undefined ? [
-    `m3-elevation-${elevation}`,
-  ] : [];
-
-  // Combine all classes
-  const allClasses = [
-    ...baseClasses,
-    ...sizeClasses[size],
-    ...variantClasses[variant],
-    ...shapeClasses[shape],
-    ...widthClasses,
-    ...disabledClasses,
-    ...loadingClasses,
-    ...elevationClasses,
-    className,
-  ].filter(Boolean).join(' ');
-
-  // Handle click with loading state and mobile-optimized ripple
+  // Handle click with ripple effect
   const handleClick = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     if (loading || disabled) {
       event.preventDefault();
       return;
     }
 
-    // Add Material 3 ripple effect with mobile optimization
-    if (buttonRef.current) {
-      const rippleColor = variant === 'filled' 
-        ? 'rgba(var(--md-sys-color-on-primary), 0.12)'
-        : variant === 'outlined' || variant === 'text'
-        ? 'rgba(var(--md-sys-color-primary), 0.12)'
-        : 'rgba(var(--md-sys-color-on-surface), 0.12)';
-
-      createRippleEffect(buttonRef.current, event.nativeEvent, {
-        color: rippleColor,
-        duration: 600,
-        bounded: true
-      });
-    }
-
+    setRippleTrigger(true);
+    setTimeout(() => setRippleTrigger(false), 100);
     onClick?.(event);
-  }, [loading, disabled, onClick, variant]);
+  }, [loading, disabled, onClick]);
 
-  // Enhanced mobile touch handling
-  const handleTouchStart = React.useCallback((_event: React.TouchEvent<HTMLButtonElement>) => {
-    if (loading || disabled) return;
+  // Dynamic styles
+  const buttonStyles: React.CSSProperties = {
+    position: 'relative',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.small3,
+    height: currentSize.height,
+    paddingLeft: iconOnly ? '0' : currentSize.paddingX,
+    paddingRight: iconOnly ? '0' : currentSize.paddingX,
+    paddingTop: currentSize.paddingY,
+    paddingBottom: currentSize.paddingY,
+    minWidth: iconOnly ? currentSize.height : undefined,
+    width: fullWidth ? '100%' : undefined,
+    
+    // Typography
+    fontSize: currentSize.fontSize,
+    fontWeight: currentSize.fontWeight,
+    fontFamily: typography.labelLarge.fontFamily,
+    lineHeight: typography.labelLarge.lineHeight,
+    letterSpacing: typography.labelLarge.letterSpacing,
+    textTransform: 'none',
+    textDecoration: 'none',
+    
+    // Colors
+    backgroundColor: currentVariant.backgroundColor,
+    color: disabled ? Material3Colors.utils.withAlpha(currentVariant.color, 0.38) : currentVariant.color,
+    border: currentVariant.border,
+    
+    // Shape
+    borderRadius: '1.25rem', // Material 3 standard button radius
+    
+    // Elevation
+    boxShadow: disabled ? 'none' : currentVariant.elevation.shadow,
+    
+    // States
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    userSelect: 'none',
+    outline: 'none',
+    
+    // Transitions
+    transition: 'all 200ms cubic-bezier(0.2, 0, 0, 1)'
+  };
 
-    // Add touch feedback for mobile devices
-    if (buttonRef.current && isTouchDevice()) {
-      const button = buttonRef.current;
-      button.style.transform = 'scale(0.98)';
-      button.style.transition = 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)';
-    }
-  }, [loading, disabled]);
-
-  const handleTouchEnd = React.useCallback((_event: React.TouchEvent<HTMLButtonElement>) => {
-    if (loading || disabled) return;
-
-    // Reset touch feedback
-    if (buttonRef.current && isTouchDevice()) {
-      const button = buttonRef.current;
-      setTimeout(() => {
-        button.style.transform = '';
-        button.style.transition = '';
-      }, 100);
-    }
-  }, [loading, disabled]);
-
-  // Loading spinner component
-  const LoadingSpinner = () => (
-    <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
-  );
+  // Focus ring styles
+  const focusStyles = interactionState.isFocused ? {
+    outline: `2px solid ${colors.primary}`,
+    outlineOffset: '2px'
+  } : {};
 
   return (
-    <button
-      ref={buttonRef}
-      type="button"
-      disabled={disabled || loading}
-      className={allClasses}
-      onClick={handleClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onTouchCancel={handleTouchEnd}
-      aria-disabled={disabled || loading}
-      aria-busy={loading}
-      {...props}
+    <MotionContainer
+      preset="scaleIn"
+      trigger={true}
+      duration="short2"
     >
-      {/* Start icon or loading spinner */}
-      {loading ? (
-        <LoadingSpinner />
-      ) : startIcon ? (
-        <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center">
-          {startIcon}
-        </span>
-      ) : null}
-
-      {/* Button text */}
-      <span className={loading ? 'opacity-70' : ''}>
-        {children}
-      </span>
-
-      {/* End icon */}
-      {endIcon && !loading && (
-        <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center">
-          {endIcon}
-        </span>
-      )}
-    </button>
+      <button
+        ref={buttonRef}
+        type="button"
+        disabled={disabled || loading}
+        className={className}
+        onClick={handleClick}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        style={{
+          ...buttonStyles,
+          ...focusStyles
+        }}
+        aria-disabled={disabled || loading}
+        aria-busy={loading}
+        {...props}
+      >
+        {/* State overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: getStateOverlay(),
+            borderRadius: 'inherit',
+            pointerEvents: 'none',
+            transition: 'background-color 200ms cubic-bezier(0.2, 0, 0, 1)'
+          }}
+        />
+        
+        {/* Ripple effect */}
+        <RippleEffect
+          trigger={rippleTrigger}
+          color={Material3Colors.utils.withAlpha(colors.onSurface, 0.2)}
+        />
+        
+        {/* Content */}
+        <div
+          style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            gap: spacing.small3,
+            zIndex: 1
+          }}
+        >
+          {/* Start icon or loading */}
+          {loading ? (
+            <div
+              style={{
+                width: currentSize.iconSize,
+                height: currentSize.iconSize,
+                border: '2px solid currentColor',
+                borderTop: '2px solid transparent',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }}
+            />
+          ) : startIcon && !iconOnly ? (
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                fontSize: currentSize.iconSize
+              }}
+            >
+              {startIcon}
+            </span>
+          ) : null}
+          
+          {/* Icon only content */}
+          {iconOnly && !loading ? (
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                fontSize: currentSize.iconSize
+              }}
+            >
+              {startIcon || endIcon}
+            </span>
+          ) : null}
+          
+          {/* Text content */}
+          {!iconOnly && !loading ? (
+            <span style={{ whiteSpace: 'nowrap' }}>
+              {children}
+            </span>
+          ) : null}
+          
+          {/* End icon */}
+          {endIcon && !iconOnly && !loading ? (
+            <span
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                fontSize: currentSize.iconSize
+              }}
+            >
+              {endIcon}
+            </span>
+          ) : null}
+        </div>
+        
+        {/* Spinner keyframes */}
+        <style jsx>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </button>
+    </MotionContainer>
   );
 });
 
