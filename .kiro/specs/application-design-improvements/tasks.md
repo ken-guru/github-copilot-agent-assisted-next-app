@@ -102,7 +102,7 @@
   - Write component tests for activity management functionality
   - _Requirements: 2.2, 2.5, 4.5, 7.1_
 
-- [ ] 12. Update ActivityButton component with Material 3 Expressive styling
+- [x] 12. Update ActivityButton component with Material 3 Expressive styling
   - Replace Bootstrap list items with Material 3 Expressive activity cards
   - Implement organic card shapes with varied corner radius
   - Add dynamic color application based on activity state and theme

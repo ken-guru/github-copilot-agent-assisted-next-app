@@ -1,0 +1,427 @@
+/* Material 3 Expressive Activity Button Styles */
+
+/* ===== ACTIVITY CARD BASE ===== */
+
+.activityCard {
+  /* Override container defaults for activity-specific styling */
+  position: relative;
+  overflow: visible; /* Allow indicators to extend beyond bounds */
+  min-height: 64px;
+  
+  /* Custom properties for dynamic theming */
+  background-color: var(--activity-bg-color, var(--md-sys-color-surface-container));
+  color: var(--activity-text-color, var(--md-sys-color-on-surface));
+  border: 1px solid var(--activity-border-color, var(--md-sys-color-outline-variant));
+  
+  /* Enhanced transitions for expressive interactions */
+  transition: 
+    transform var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized),
+    box-shadow var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+}
+
+/* ===== CARD CONTENT LAYOUT ===== */
+
+.cardContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  min-height: 40px;
+}
+
+.activityInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0; /* Allow text truncation */
+}
+
+.activityName {
+  /* Material 3 Expressive typography */
+  font-family: var(--md-sys-typescale-title-medium-font-family);
+  font-weight: var(--md-sys-typescale-title-medium-font-weight);
+  font-size: var(--md-sys-typescale-title-medium-font-size);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+  letter-spacing: var(--md-sys-typescale-title-medium-letter-spacing);
+  
+  margin: 0;
+  color: inherit;
+  
+  /* Text overflow handling */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ===== STATUS BADGE ===== */
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--md-sys-shape-corner-full);
+  
+  /* Typography */
+  font-family: var(--md-sys-typescale-label-small-font-family);
+  font-weight: var(--md-sys-typescale-label-small-font-weight);
+  font-size: var(--md-sys-typescale-label-small-font-size);
+  line-height: var(--md-sys-typescale-label-small-line-height);
+  letter-spacing: var(--md-sys-typescale-label-small-letter-spacing);
+  
+  /* Smooth transitions */
+  transition: 
+    background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard),
+    color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.statusBadge[data-status="running"] {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.statusBadge[data-status="completed"] {
+  background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+
+.statusText {
+  font-weight: 500;
+}
+
+/* ===== ACTION BUTTONS ===== */
+
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.primaryAction {
+  /* Ensure consistent sizing */
+  min-width: 80px;
+}
+
+.removeAction {
+  /* Icon button specific adjustments */
+  opacity: 0.7;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.removeAction:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.removeAction:disabled {
+  opacity: 0.38;
+}
+
+/* ===== ACTIVITY CARD STATES ===== */
+
+/* Running state */
+.activityCard.running {
+  background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 20%, var(--activity-bg-color, var(--md-sys-color-surface-container)));
+  border-color: var(--md-sys-color-primary);
+  
+  /* Enhanced elevation for active state */
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.activityCard.running .activityName {
+  color: var(--md-sys-color-primary);
+  font-weight: 600;
+}
+
+/* Completed state */
+.activityCard.completed {
+  background-color: color-mix(in srgb, var(--md-sys-color-tertiary-container) 15%, var(--activity-bg-color, var(--md-sys-color-surface-container)));
+  border-color: var(--md-sys-color-tertiary);
+  opacity: 0.8;
+}
+
+.activityCard.completed .activityName {
+  color: var(--md-sys-color-tertiary);
+  text-decoration: line-through;
+  text-decoration-color: var(--md-sys-color-tertiary);
+  text-decoration-thickness: 1px;
+}
+
+/* ===== INTERACTIVE STATES ===== */
+
+.activityCard:hover:not(.completed) {
+  /* Expressive hover with subtle scale and elevation */
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: var(--md-sys-elevation-level3);
+  border-color: var(--activity-accent-color, var(--md-sys-color-primary));
+}
+
+.activityCard.running:hover {
+  /* Enhanced hover for running activities */
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--md-sys-elevation-level4);
+}
+
+.activityCard:focus-within {
+  /* Focus state with expressive outline */
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+  border-color: var(--md-sys-color-primary);
+}
+
+.activityCard:active:not(.completed) {
+  /* Pressed state */
+  transform: translateY(0) scale(0.99);
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+/* ===== VISUAL INDICATORS ===== */
+
+.runningIndicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    var(--md-sys-color-primary) 0%,
+    var(--md-sys-color-primary-container) 100%
+  );
+  border-radius: 0 2px 2px 0;
+  
+  /* Subtle pulse animation */
+  animation: runningPulse 2s ease-in-out infinite;
+}
+
+@keyframes runningPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scaleY(0.95);
+  }
+}
+
+.completedIndicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background-color: var(--md-sys-color-tertiary);
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Mobile optimizations */
+@media (max-width: 599px) {
+  .cardContent {
+    padding: 10px 12px;
+    gap: 12px;
+  }
+  
+  .activityName {
+    font-size: var(--md-sys-typescale-body-large-font-size);
+  }
+  
+  .actionButtons {
+    gap: 6px;
+  }
+  
+  .primaryAction {
+    min-width: 70px;
+    font-size: var(--md-sys-typescale-label-medium-font-size);
+  }
+  
+  /* Reduce hover effects on touch devices */
+  .activityCard:hover:not(.completed) {
+    transform: translateY(-1px) scale(1.005);
+  }
+  
+  .activityCard.running:hover {
+    transform: translateY(-1px) scale(1.01);
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .cardContent {
+    padding: 14px 18px;
+  }
+  
+  .actionButtons {
+    gap: 10px;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1024px) {
+  .cardContent {
+    padding: 16px 20px;
+  }
+  
+  .actionButtons {
+    gap: 12px;
+  }
+  
+  /* Enhanced hover effects on desktop */
+  .activityCard:hover:not(.completed) {
+    transform: translateY(-3px) scale(1.02);
+  }
+  
+  .activityCard.running:hover {
+    transform: translateY(-4px) scale(1.025);
+  }
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .activityCard,
+  .statusBadge,
+  .removeAction {
+    transition: none !important;
+  }
+  
+  .activityCard:hover:not(.completed),
+  .activityCard.running:hover,
+  .activityCard:active:not(.completed) {
+    transform: none !important;
+  }
+  
+  .runningIndicator {
+    animation: none !important;
+  }
+  
+  .runningPulse {
+    animation: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .activityCard {
+    border-width: 2px;
+  }
+  
+  .activityCard:focus-within {
+    outline-width: 3px;
+  }
+  
+  .statusBadge {
+    border: 1px solid currentColor;
+  }
+  
+  .runningIndicator {
+    width: 6px;
+  }
+  
+  .completedIndicator {
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--md-sys-color-surface);
+  }
+}
+
+/* Dark theme adjustments */
+@media (prefers-color-scheme: dark) {
+  .activityCard.running {
+    background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 25%, var(--activity-bg-color, var(--md-sys-color-surface-container)));
+  }
+  
+  .activityCard.completed {
+    background-color: color-mix(in srgb, var(--md-sys-color-tertiary-container) 20%, var(--activity-bg-color, var(--md-sys-color-surface-container)));
+  }
+  
+  .runningIndicator {
+    background: linear-gradient(
+      180deg,
+      var(--md-sys-color-primary) 0%,
+      color-mix(in srgb, var(--md-sys-color-primary) 60%, transparent) 100%
+    );
+  }
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+.activityCard--compact {
+  min-height: 48px;
+}
+
+.activityCard--compact .cardContent {
+  padding: 8px 12px;
+}
+
+.activityCard--compact .activityName {
+  font-size: var(--md-sys-typescale-body-medium-font-size);
+}
+
+.activityCard--spacious {
+  min-height: 80px;
+}
+
+.activityCard--spacious .cardContent {
+  padding: 20px 24px;
+}
+
+.activityCard--spacious .activityName {
+  font-size: var(--md-sys-typescale-title-large-font-size);
+}
+
+/* Loading state */
+.activityCard--loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.activityCard--loading .cardContent {
+  position: relative;
+}
+
+.activityCard--loading .cardContent::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Error state */
+.activityCard--error {
+  background-color: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  border-color: var(--md-sys-color-error);
+}
+
+.activityCard--error .activityName {
+  color: var(--md-sys-color-error);
+}
