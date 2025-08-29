@@ -113,6 +113,7 @@ export interface Material3ExpressiveTokens {
   };
   
   shapes: {
+    // Base corner radius
     cornerNone: ShapeToken;
     cornerExtraSmall: ShapeToken;
     cornerSmall: ShapeToken;
@@ -121,25 +122,106 @@ export interface Material3ExpressiveTokens {
     cornerExtraLarge: ShapeToken;
     cornerFull: ShapeToken;
     
-    // Expressive variations
+    // Organic corner variations
     cornerExtraSmallTop: ShapeToken;
     cornerSmallTop: ShapeToken;
     cornerMediumTop: ShapeToken;
     cornerLargeTop: ShapeToken;
+    cornerExtraLargeTop: ShapeToken;
     
-    // Asymmetric variations
+    // Asymmetric corner variations
     cornerAsymmetricSmall: ShapeToken;
     cornerAsymmetricMedium: ShapeToken;
     cornerAsymmetricLarge: ShapeToken;
+    cornerAsymmetricExtraLarge: ShapeToken;
+    
+    // Organic pill variations
+    cornerPillSmall: ShapeToken;
+    cornerPillMedium: ShapeToken;
+    cornerPillLarge: ShapeToken;
+    
+    // Contextual shape variations
+    cornerButtonPrimary: ShapeToken;
+    cornerButtonSecondary: ShapeToken;
+    cornerButtonTertiary: ShapeToken;
+    cornerCardElevated: ShapeToken;
+    cornerCardFilled: ShapeToken;
+    cornerCardOutlined: ShapeToken;
+    cornerFieldOutlined: ShapeToken;
+    cornerFieldFilled: ShapeToken;
+    cornerNavigationItem: ShapeToken;
+    cornerNavigationRail: ShapeToken;
+    cornerDialog: ShapeToken;
+    cornerSheet: ShapeToken;
+    
+    // Component-specific organic shapes
+    cornerActivityCard: ShapeToken;
+    cornerTimerContainer: ShapeToken;
+    cornerSummaryCard: ShapeToken;
+    cornerProgressIndicator: ShapeToken;
+    cornerFloatingAction: ShapeToken;
+    cornerChip: ShapeToken;
+    
+    // Responsive scaling factors
+    scaleFactorCompact: ShapeToken;
+    scaleFactorComfortable: ShapeToken;
+    scaleFactorSpacious: ShapeToken;
   };
   
   elevation: {
+    // Base elevation levels
     level0: ElevationToken;
     level1: ElevationToken;
     level2: ElevationToken;
     level3: ElevationToken;
     level4: ElevationToken;
     level5: ElevationToken;
+    level6: ElevationToken;
+    level7: ElevationToken;
+    level8: ElevationToken;
+    
+    // Contextual elevation tokens
+    surface: ElevationToken;
+    surfaceLow: ElevationToken;
+    surfaceMedium: ElevationToken;
+    surfaceHigh: ElevationToken;
+    surfaceHighest: ElevationToken;
+    
+    // Component-specific elevation states
+    cardResting: ElevationToken;
+    cardHover: ElevationToken;
+    cardPressed: ElevationToken;
+    cardDragged: ElevationToken;
+    
+    buttonResting: ElevationToken;
+    buttonHover: ElevationToken;
+    buttonPressed: ElevationToken;
+    buttonFocused: ElevationToken;
+    
+    fabResting: ElevationToken;
+    fabHover: ElevationToken;
+    fabPressed: ElevationToken;
+    fabFocused: ElevationToken;
+    
+    navigationDrawer: ElevationToken;
+    navigationRail: ElevationToken;
+    navigationBar: ElevationToken;
+    
+    dialog: ElevationToken;
+    menu: ElevationToken;
+    tooltip: ElevationToken;
+    snackbar: ElevationToken;
+    
+    // Organic shadow variations
+    organicSubtle: ElevationToken;
+    organicModerate: ElevationToken;
+    organicPronounced: ElevationToken;
+    
+    // Directional shadow variations
+    directionalTop: ElevationToken;
+    directionalBottom: ElevationToken;
+    directionalLeft: ElevationToken;
+    directionalRight: ElevationToken;
   };
   
   motion: {
@@ -456,6 +538,7 @@ export const Material3CSSProperties = {
   
   // Shapes
   shapes: {
+    // Base corner radius
     cornerNone: '--md-sys-shape-corner-none',
     cornerExtraSmall: '--md-sys-shape-corner-extra-small',
     cornerSmall: '--md-sys-shape-corner-small',
@@ -463,23 +546,109 @@ export const Material3CSSProperties = {
     cornerLarge: '--md-sys-shape-corner-large',
     cornerExtraLarge: '--md-sys-shape-corner-extra-large',
     cornerFull: '--md-sys-shape-corner-full',
+    
+    // Organic corner variations
     cornerExtraSmallTop: '--md-sys-shape-corner-extra-small-top',
     cornerSmallTop: '--md-sys-shape-corner-small-top',
     cornerMediumTop: '--md-sys-shape-corner-medium-top',
     cornerLargeTop: '--md-sys-shape-corner-large-top',
+    cornerExtraLargeTop: '--md-sys-shape-corner-extra-large-top',
+    
+    // Asymmetric corner variations
     cornerAsymmetricSmall: '--md-sys-shape-corner-asymmetric-small',
     cornerAsymmetricMedium: '--md-sys-shape-corner-asymmetric-medium',
     cornerAsymmetricLarge: '--md-sys-shape-corner-asymmetric-large',
+    cornerAsymmetricExtraLarge: '--md-sys-shape-corner-asymmetric-extra-large',
+    
+    // Organic pill variations
+    cornerPillSmall: '--md-sys-shape-corner-pill-small',
+    cornerPillMedium: '--md-sys-shape-corner-pill-medium',
+    cornerPillLarge: '--md-sys-shape-corner-pill-large',
+    
+    // Contextual shape variations
+    cornerButtonPrimary: '--md-sys-shape-corner-button-primary',
+    cornerButtonSecondary: '--md-sys-shape-corner-button-secondary',
+    cornerButtonTertiary: '--md-sys-shape-corner-button-tertiary',
+    cornerCardElevated: '--md-sys-shape-corner-card-elevated',
+    cornerCardFilled: '--md-sys-shape-corner-card-filled',
+    cornerCardOutlined: '--md-sys-shape-corner-card-outlined',
+    cornerFieldOutlined: '--md-sys-shape-corner-field-outlined',
+    cornerFieldFilled: '--md-sys-shape-corner-field-filled',
+    cornerNavigationItem: '--md-sys-shape-corner-navigation-item',
+    cornerNavigationRail: '--md-sys-shape-corner-navigation-rail',
+    cornerDialog: '--md-sys-shape-corner-dialog',
+    cornerSheet: '--md-sys-shape-corner-sheet',
+    
+    // Component-specific organic shapes
+    cornerActivityCard: '--md-sys-shape-corner-activity-card',
+    cornerTimerContainer: '--md-sys-shape-corner-timer-container',
+    cornerSummaryCard: '--md-sys-shape-corner-summary-card',
+    cornerProgressIndicator: '--md-sys-shape-corner-progress-indicator',
+    cornerFloatingAction: '--md-sys-shape-corner-floating-action',
+    cornerChip: '--md-sys-shape-corner-chip',
+    
+    // Responsive scaling factors
+    scaleFactor: '--md-sys-shape-scale-factor',
+    scaleFactorCompact: '--md-sys-shape-scale-factor-compact',
+    scaleFactorComfortable: '--md-sys-shape-scale-factor-comfortable',
+    scaleFactorSpacious: '--md-sys-shape-scale-factor-spacious',
   },
   
   // Elevation
   elevation: {
+    // Base elevation levels
     level0: '--md-sys-elevation-level0',
     level1: '--md-sys-elevation-level1',
     level2: '--md-sys-elevation-level2',
     level3: '--md-sys-elevation-level3',
     level4: '--md-sys-elevation-level4',
     level5: '--md-sys-elevation-level5',
+    level6: '--md-sys-elevation-level6',
+    level7: '--md-sys-elevation-level7',
+    level8: '--md-sys-elevation-level8',
+    
+    // Contextual elevation tokens
+    surface: '--md-sys-elevation-surface',
+    surfaceLow: '--md-sys-elevation-surface-low',
+    surfaceMedium: '--md-sys-elevation-surface-medium',
+    surfaceHigh: '--md-sys-elevation-surface-high',
+    surfaceHighest: '--md-sys-elevation-surface-highest',
+    
+    // Component-specific elevation states
+    cardResting: '--md-sys-elevation-card-resting',
+    cardHover: '--md-sys-elevation-card-hover',
+    cardPressed: '--md-sys-elevation-card-pressed',
+    cardDragged: '--md-sys-elevation-card-dragged',
+    
+    buttonResting: '--md-sys-elevation-button-resting',
+    buttonHover: '--md-sys-elevation-button-hover',
+    buttonPressed: '--md-sys-elevation-button-pressed',
+    buttonFocused: '--md-sys-elevation-button-focused',
+    
+    fabResting: '--md-sys-elevation-fab-resting',
+    fabHover: '--md-sys-elevation-fab-hover',
+    fabPressed: '--md-sys-elevation-fab-pressed',
+    fabFocused: '--md-sys-elevation-fab-focused',
+    
+    navigationDrawer: '--md-sys-elevation-navigation-drawer',
+    navigationRail: '--md-sys-elevation-navigation-rail',
+    navigationBar: '--md-sys-elevation-navigation-bar',
+    
+    dialog: '--md-sys-elevation-dialog',
+    menu: '--md-sys-elevation-menu',
+    tooltip: '--md-sys-elevation-tooltip',
+    snackbar: '--md-sys-elevation-snackbar',
+    
+    // Organic shadow variations
+    organicSubtle: '--md-sys-elevation-organic-subtle',
+    organicModerate: '--md-sys-elevation-organic-moderate',
+    organicPronounced: '--md-sys-elevation-organic-pronounced',
+    
+    // Directional shadow variations
+    directionalTop: '--md-sys-elevation-directional-top',
+    directionalBottom: '--md-sys-elevation-directional-bottom',
+    directionalLeft: '--md-sys-elevation-directional-left',
+    directionalRight: '--md-sys-elevation-directional-right',
   },
   
   // Motion

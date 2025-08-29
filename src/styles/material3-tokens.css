@@ -167,7 +167,7 @@
   
   /* ===== SHAPE TOKENS ===== */
   
-  /* Corner Radius - Expressive variations */
+  /* Base Corner Radius - Material 3 Expressive */
   --md-sys-shape-corner-none: 0px;
   --md-sys-shape-corner-extra-small: 4px;
   --md-sys-shape-corner-small: 8px;
@@ -176,20 +176,55 @@
   --md-sys-shape-corner-extra-large: 28px;
   --md-sys-shape-corner-full: 50%;
   
-  /* Expressive corner variations for organic shapes */
+  /* Organic Corner Variations - Expressive asymmetry */
   --md-sys-shape-corner-extra-small-top: 4px 4px 2px 2px;
   --md-sys-shape-corner-small-top: 8px 8px 4px 4px;
   --md-sys-shape-corner-medium-top: 12px 12px 8px 8px;
   --md-sys-shape-corner-large-top: 16px 16px 12px 12px;
+  --md-sys-shape-corner-extra-large-top: 28px 28px 16px 16px;
   
-  /* Asymmetric corner variations */
+  /* Asymmetric Corner Variations - Natural irregularity */
   --md-sys-shape-corner-asymmetric-small: 8px 12px 8px 4px;
   --md-sys-shape-corner-asymmetric-medium: 12px 20px 12px 8px;
   --md-sys-shape-corner-asymmetric-large: 16px 28px 16px 12px;
+  --md-sys-shape-corner-asymmetric-extra-large: 28px 40px 28px 20px;
+  
+  /* Organic Pill Variations - For navigation and buttons */
+  --md-sys-shape-corner-pill-small: 20px 16px 20px 16px;
+  --md-sys-shape-corner-pill-medium: 24px 20px 24px 20px;
+  --md-sys-shape-corner-pill-large: 32px 28px 32px 28px;
+  
+  /* Contextual Shape Variations */
+  --md-sys-shape-corner-button-primary: var(--md-sys-shape-corner-full);
+  --md-sys-shape-corner-button-secondary: var(--md-sys-shape-corner-large);
+  --md-sys-shape-corner-button-tertiary: var(--md-sys-shape-corner-medium);
+  --md-sys-shape-corner-card-elevated: var(--md-sys-shape-corner-medium);
+  --md-sys-shape-corner-card-filled: var(--md-sys-shape-corner-large);
+  --md-sys-shape-corner-card-outlined: var(--md-sys-shape-corner-small);
+  --md-sys-shape-corner-field-outlined: var(--md-sys-shape-corner-extra-small);
+  --md-sys-shape-corner-field-filled: var(--md-sys-shape-corner-extra-small-top);
+  --md-sys-shape-corner-navigation-item: var(--md-sys-shape-corner-pill-medium);
+  --md-sys-shape-corner-navigation-rail: var(--md-sys-shape-corner-large);
+  --md-sys-shape-corner-dialog: var(--md-sys-shape-corner-extra-large);
+  --md-sys-shape-corner-sheet: var(--md-sys-shape-corner-large-top);
+  
+  /* Responsive Shape Scaling Factors */
+  --md-sys-shape-scale-factor: 1;
+  --md-sys-shape-scale-factor-compact: 0.75;
+  --md-sys-shape-scale-factor-comfortable: 1;
+  --md-sys-shape-scale-factor-spacious: 1.25;
+  
+  /* Component-specific organic shapes */
+  --md-sys-shape-corner-activity-card: 12px 16px 12px 8px;
+  --md-sys-shape-corner-timer-container: 16px 20px 16px 12px;
+  --md-sys-shape-corner-summary-card: 8px 12px 16px 8px;
+  --md-sys-shape-corner-progress-indicator: var(--md-sys-shape-corner-full);
+  --md-sys-shape-corner-floating-action: var(--md-sys-shape-corner-large);
+  --md-sys-shape-corner-chip: 16px 20px 16px 12px;
   
   /* ===== ELEVATION TOKENS ===== */
   
-  /* Elevation levels with Material 3 shadows */
+  /* Base Elevation Levels - Material 3 Expressive shadows */
   --md-sys-elevation-level0: none;
   --md-sys-elevation-level1: 
     0px 1px 2px 0px rgba(0, 0, 0, 0.3),
@@ -206,6 +241,74 @@
   --md-sys-elevation-level5: 
     0px 4px 4px 0px rgba(0, 0, 0, 0.3),
     0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+  
+  /* Extended Elevation Levels for Expressive Design */
+  --md-sys-elevation-level6:
+    0px 6px 6px 0px rgba(0, 0, 0, 0.3),
+    0px 10px 14px 8px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level7:
+    0px 8px 8px 0px rgba(0, 0, 0, 0.3),
+    0px 12px 16px 10px rgba(0, 0, 0, 0.15);
+  --md-sys-elevation-level8:
+    0px 10px 10px 0px rgba(0, 0, 0, 0.3),
+    0px 14px 18px 12px rgba(0, 0, 0, 0.15);
+  
+  /* Contextual Elevation Tokens */
+  --md-sys-elevation-surface: var(--md-sys-elevation-level0);
+  --md-sys-elevation-surface-low: var(--md-sys-elevation-level1);
+  --md-sys-elevation-surface-medium: var(--md-sys-elevation-level2);
+  --md-sys-elevation-surface-high: var(--md-sys-elevation-level3);
+  --md-sys-elevation-surface-highest: var(--md-sys-elevation-level4);
+  
+  /* Component-specific Elevation */
+  --md-sys-elevation-card-resting: var(--md-sys-elevation-level1);
+  --md-sys-elevation-card-hover: var(--md-sys-elevation-level2);
+  --md-sys-elevation-card-pressed: var(--md-sys-elevation-level0);
+  --md-sys-elevation-card-dragged: var(--md-sys-elevation-level4);
+  
+  --md-sys-elevation-button-resting: var(--md-sys-elevation-level0);
+  --md-sys-elevation-button-hover: var(--md-sys-elevation-level1);
+  --md-sys-elevation-button-pressed: var(--md-sys-elevation-level0);
+  --md-sys-elevation-button-focused: var(--md-sys-elevation-level0);
+  
+  --md-sys-elevation-fab-resting: var(--md-sys-elevation-level3);
+  --md-sys-elevation-fab-hover: var(--md-sys-elevation-level4);
+  --md-sys-elevation-fab-pressed: var(--md-sys-elevation-level3);
+  --md-sys-elevation-fab-focused: var(--md-sys-elevation-level3);
+  
+  --md-sys-elevation-navigation-drawer: var(--md-sys-elevation-level1);
+  --md-sys-elevation-navigation-rail: var(--md-sys-elevation-level0);
+  --md-sys-elevation-navigation-bar: var(--md-sys-elevation-level2);
+  
+  --md-sys-elevation-dialog: var(--md-sys-elevation-level6);
+  --md-sys-elevation-menu: var(--md-sys-elevation-level2);
+  --md-sys-elevation-tooltip: var(--md-sys-elevation-level2);
+  --md-sys-elevation-snackbar: var(--md-sys-elevation-level3);
+  
+  /* Organic Shadow Variations - Expressive asymmetric shadows */
+  --md-sys-elevation-organic-subtle:
+    0px 1px 3px 0px rgba(0, 0, 0, 0.2),
+    0px 2px 4px 1px rgba(0, 0, 0, 0.1);
+  --md-sys-elevation-organic-moderate:
+    0px 2px 4px 0px rgba(0, 0, 0, 0.25),
+    0px 3px 8px 2px rgba(0, 0, 0, 0.12);
+  --md-sys-elevation-organic-pronounced:
+    0px 4px 8px 0px rgba(0, 0, 0, 0.3),
+    0px 6px 12px 4px rgba(0, 0, 0, 0.15);
+  
+  /* Directional Shadow Variations */
+  --md-sys-elevation-directional-top:
+    0px -2px 4px 0px rgba(0, 0, 0, 0.2),
+    0px -1px 6px 1px rgba(0, 0, 0, 0.1);
+  --md-sys-elevation-directional-bottom:
+    0px 2px 4px 0px rgba(0, 0, 0, 0.2),
+    0px 1px 6px 1px rgba(0, 0, 0, 0.1);
+  --md-sys-elevation-directional-left:
+    -2px 0px 4px 0px rgba(0, 0, 0, 0.2),
+    -1px 0px 6px 1px rgba(0, 0, 0, 0.1);
+  --md-sys-elevation-directional-right:
+    2px 0px 4px 0px rgba(0, 0, 0, 0.2),
+    1px 0px 6px 1px rgba(0, 0, 0, 0.1);
   
   /* ===== MOTION TOKENS ===== */
   
@@ -401,10 +504,12 @@
   --md-sys-typescale-font-weight-black: 900;
 }
 
-/* Responsive typography scaling for different screen sizes */
+/* ===== RESPONSIVE SHAPE AND ELEVATION SCALING ===== */
+
+/* Mobile shape scaling - smaller for touch targets and screen space */
 @media (max-width: 599px) {
   :root {
-    /* Mobile scaling - slightly smaller for better readability */
+    /* Typography scaling - slightly smaller for better readability */
     --md-sys-typescale-display-large-font-size: calc(3.5625rem * 0.875); /* 49.5px */
     --md-sys-typescale-display-medium-font-size: calc(2.8125rem * 0.875); /* 39.4px */
     --md-sys-typescale-display-small-font-size: calc(2.25rem * 0.875); /* 31.5px */
@@ -416,24 +521,127 @@
     --md-sys-typescale-display-large-line-height: calc(4rem * 0.875); /* 56px */
     --md-sys-typescale-display-medium-line-height: calc(3.25rem * 0.875); /* 45.5px */
     --md-sys-typescale-display-small-line-height: calc(2.75rem * 0.875); /* 38.5px */
+    
+    /* Shape scaling for mobile - slightly smaller for better touch targets */
+    --md-sys-shape-scale-factor: 0.875;
+    --md-sys-shape-corner-extra-small: 3px;
+    --md-sys-shape-corner-small: 6px;
+    --md-sys-shape-corner-medium: 10px;
+    --md-sys-shape-corner-large: 14px;
+    --md-sys-shape-corner-extra-large: 24px;
+    
+    /* Mobile-optimized organic shapes */
+    --md-sys-shape-corner-extra-small-top: 3px 3px 2px 2px;
+    --md-sys-shape-corner-small-top: 6px 6px 3px 3px;
+    --md-sys-shape-corner-medium-top: 10px 10px 6px 6px;
+    --md-sys-shape-corner-large-top: 14px 14px 10px 10px;
+    
+    /* Mobile asymmetric variations */
+    --md-sys-shape-corner-asymmetric-small: 6px 10px 6px 3px;
+    --md-sys-shape-corner-asymmetric-medium: 10px 16px 10px 6px;
+    --md-sys-shape-corner-asymmetric-large: 14px 24px 14px 10px;
+    
+    /* Mobile pill variations */
+    --md-sys-shape-corner-pill-small: 16px 14px 16px 14px;
+    --md-sys-shape-corner-pill-medium: 20px 18px 20px 18px;
+    --md-sys-shape-corner-pill-large: 28px 24px 28px 24px;
+    
+    /* Mobile component shapes */
+    --md-sys-shape-corner-activity-card: 10px 14px 10px 6px;
+    --md-sys-shape-corner-timer-container: 14px 18px 14px 10px;
+    --md-sys-shape-corner-summary-card: 6px 10px 14px 6px;
+    --md-sys-shape-corner-chip: 14px 18px 14px 10px;
+    
+    /* Mobile elevation adjustments - subtler shadows for smaller screens */
+    --md-sys-elevation-level1: 
+      0px 1px 2px 0px rgba(0, 0, 0, 0.25),
+      0px 1px 3px 1px rgba(0, 0, 0, 0.12);
+    --md-sys-elevation-level2: 
+      0px 1px 2px 0px rgba(0, 0, 0, 0.25),
+      0px 2px 6px 2px rgba(0, 0, 0, 0.12);
+    --md-sys-elevation-level3: 
+      0px 1px 3px 0px rgba(0, 0, 0, 0.25),
+      0px 4px 8px 3px rgba(0, 0, 0, 0.12);
   }
 }
 
+/* Tablet shape scaling - balanced for medium screens */
 @media (min-width: 600px) and (max-width: 1023px) {
   :root {
-    /* Tablet scaling - maintain proportions */
+    /* Typography scaling - maintain proportions */
     --md-sys-typescale-display-large-font-size: calc(3.5625rem * 0.95); /* 54px */
     --md-sys-typescale-display-medium-font-size: calc(2.8125rem * 0.95); /* 42.8px */
     --md-sys-typescale-display-small-font-size: calc(2.25rem * 0.95); /* 34.2px */
+    
+    /* Shape scaling for tablet - standard proportions */
+    --md-sys-shape-scale-factor: 0.95;
+    --md-sys-shape-corner-extra-small: 4px;
+    --md-sys-shape-corner-small: 8px;
+    --md-sys-shape-corner-medium: 11px;
+    --md-sys-shape-corner-large: 15px;
+    --md-sys-shape-corner-extra-large: 27px;
+    
+    /* Tablet organic shapes */
+    --md-sys-shape-corner-asymmetric-small: 8px 11px 8px 4px;
+    --md-sys-shape-corner-asymmetric-medium: 11px 19px 11px 8px;
+    --md-sys-shape-corner-asymmetric-large: 15px 27px 15px 11px;
+    
+    /* Tablet component shapes */
+    --md-sys-shape-corner-activity-card: 11px 15px 11px 8px;
+    --md-sys-shape-corner-timer-container: 15px 19px 15px 11px;
+    --md-sys-shape-corner-summary-card: 8px 11px 15px 8px;
   }
 }
 
+/* Desktop shape scaling - larger for better visual hierarchy */
 @media (min-width: 1024px) {
   :root {
-    /* Desktop scaling - full size or slightly larger for better hierarchy */
+    /* Typography scaling - full size or slightly larger for better hierarchy */
     --md-sys-typescale-display-large-font-size: calc(3.5625rem * 1.05); /* 59.9px */
     --md-sys-typescale-display-medium-font-size: calc(2.8125rem * 1.05); /* 47.3px */
     --md-sys-typescale-display-small-font-size: calc(2.25rem * 1.05); /* 37.8px */
+    
+    /* Shape scaling for desktop - slightly larger for better visual presence */
+    --md-sys-shape-scale-factor: 1.05;
+    --md-sys-shape-corner-extra-small: 4px;
+    --md-sys-shape-corner-small: 8px;
+    --md-sys-shape-corner-medium: 13px;
+    --md-sys-shape-corner-large: 17px;
+    --md-sys-shape-corner-extra-large: 29px;
+    
+    /* Desktop organic shapes - more pronounced for larger screens */
+    --md-sys-shape-corner-extra-small-top: 4px 4px 2px 2px;
+    --md-sys-shape-corner-small-top: 8px 8px 4px 4px;
+    --md-sys-shape-corner-medium-top: 13px 13px 8px 8px;
+    --md-sys-shape-corner-large-top: 17px 17px 13px 13px;
+    
+    /* Desktop asymmetric variations - more expressive */
+    --md-sys-shape-corner-asymmetric-small: 8px 13px 8px 4px;
+    --md-sys-shape-corner-asymmetric-medium: 13px 21px 13px 8px;
+    --md-sys-shape-corner-asymmetric-large: 17px 29px 17px 13px;
+    --md-sys-shape-corner-asymmetric-extra-large: 29px 42px 29px 21px;
+    
+    /* Desktop pill variations */
+    --md-sys-shape-corner-pill-small: 21px 17px 21px 17px;
+    --md-sys-shape-corner-pill-medium: 25px 21px 25px 21px;
+    --md-sys-shape-corner-pill-large: 34px 29px 34px 29px;
+    
+    /* Desktop component shapes - more expressive */
+    --md-sys-shape-corner-activity-card: 13px 17px 13px 8px;
+    --md-sys-shape-corner-timer-container: 17px 21px 17px 13px;
+    --md-sys-shape-corner-summary-card: 8px 13px 17px 8px;
+    --md-sys-shape-corner-chip: 17px 21px 17px 13px;
+    
+    /* Desktop elevation - more pronounced shadows */
+    --md-sys-elevation-level1: 
+      0px 1px 2px 0px rgba(0, 0, 0, 0.3),
+      0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+    --md-sys-elevation-level2: 
+      0px 1px 2px 0px rgba(0, 0, 0, 0.3),
+      0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+    --md-sys-elevation-level3: 
+      0px 1px 3px 0px rgba(0, 0, 0, 0.3),
+      0px 4px 8px 3px rgba(0, 0, 0, 0.15);
   }
 }
 
@@ -678,7 +886,9 @@
   letter-spacing: var(--md-sys-typescale-headline-small-letter-spacing);
 }
 
-/* Shape utility classes */
+/* ===== SHAPE UTILITY CLASSES ===== */
+
+/* Base Shape Classes */
 .md-shape-corner-none { border-radius: var(--md-sys-shape-corner-none); }
 .md-shape-corner-extra-small { border-radius: var(--md-sys-shape-corner-extra-small); }
 .md-shape-corner-small { border-radius: var(--md-sys-shape-corner-small); }
@@ -687,20 +897,144 @@
 .md-shape-corner-extra-large { border-radius: var(--md-sys-shape-corner-extra-large); }
 .md-shape-corner-full { border-radius: var(--md-sys-shape-corner-full); }
 
-/* Expressive shape variations */
+/* Organic Shape Variations */
 .md-shape-corner-extra-small-top { border-radius: var(--md-sys-shape-corner-extra-small-top); }
 .md-shape-corner-small-top { border-radius: var(--md-sys-shape-corner-small-top); }
 .md-shape-corner-medium-top { border-radius: var(--md-sys-shape-corner-medium-top); }
 .md-shape-corner-large-top { border-radius: var(--md-sys-shape-corner-large-top); }
+.md-shape-corner-extra-large-top { border-radius: var(--md-sys-shape-corner-extra-large-top); }
 
+/* Asymmetric Shape Variations */
 .md-shape-corner-asymmetric-small { border-radius: var(--md-sys-shape-corner-asymmetric-small); }
 .md-shape-corner-asymmetric-medium { border-radius: var(--md-sys-shape-corner-asymmetric-medium); }
 .md-shape-corner-asymmetric-large { border-radius: var(--md-sys-shape-corner-asymmetric-large); }
+.md-shape-corner-asymmetric-extra-large { border-radius: var(--md-sys-shape-corner-asymmetric-extra-large); }
 
-/* Elevation utility classes */
+/* Organic Pill Variations */
+.md-shape-corner-pill-small { border-radius: var(--md-sys-shape-corner-pill-small); }
+.md-shape-corner-pill-medium { border-radius: var(--md-sys-shape-corner-pill-medium); }
+.md-shape-corner-pill-large { border-radius: var(--md-sys-shape-corner-pill-large); }
+
+/* Contextual Shape Classes */
+.md-shape-button-primary { border-radius: var(--md-sys-shape-corner-button-primary); }
+.md-shape-button-secondary { border-radius: var(--md-sys-shape-corner-button-secondary); }
+.md-shape-button-tertiary { border-radius: var(--md-sys-shape-corner-button-tertiary); }
+.md-shape-card-elevated { border-radius: var(--md-sys-shape-corner-card-elevated); }
+.md-shape-card-filled { border-radius: var(--md-sys-shape-corner-card-filled); }
+.md-shape-card-outlined { border-radius: var(--md-sys-shape-corner-card-outlined); }
+.md-shape-field-outlined { border-radius: var(--md-sys-shape-corner-field-outlined); }
+.md-shape-field-filled { border-radius: var(--md-sys-shape-corner-field-filled); }
+.md-shape-navigation-item { border-radius: var(--md-sys-shape-corner-navigation-item); }
+.md-shape-navigation-rail { border-radius: var(--md-sys-shape-corner-navigation-rail); }
+.md-shape-dialog { border-radius: var(--md-sys-shape-corner-dialog); }
+.md-shape-sheet { border-radius: var(--md-sys-shape-corner-sheet); }
+
+/* Component-specific Organic Shapes */
+.md-shape-activity-card { border-radius: var(--md-sys-shape-corner-activity-card); }
+.md-shape-timer-container { border-radius: var(--md-sys-shape-corner-timer-container); }
+.md-shape-summary-card { border-radius: var(--md-sys-shape-corner-summary-card); }
+.md-shape-progress-indicator { border-radius: var(--md-sys-shape-corner-progress-indicator); }
+.md-shape-floating-action { border-radius: var(--md-sys-shape-corner-floating-action); }
+.md-shape-chip { border-radius: var(--md-sys-shape-corner-chip); }
+
+/* Responsive Shape Classes */
+.md-shape-responsive {
+  border-radius: calc(var(--md-sys-shape-corner-medium) * var(--md-sys-shape-scale-factor));
+}
+
+.md-shape-responsive-small {
+  border-radius: calc(var(--md-sys-shape-corner-small) * var(--md-sys-shape-scale-factor));
+}
+
+.md-shape-responsive-large {
+  border-radius: calc(var(--md-sys-shape-corner-large) * var(--md-sys-shape-scale-factor));
+}
+
+/* Shape Context Classes */
+.md-shape-context-compact {
+  --md-sys-shape-scale-factor: var(--md-sys-shape-scale-factor-compact);
+}
+
+.md-shape-context-comfortable {
+  --md-sys-shape-scale-factor: var(--md-sys-shape-scale-factor-comfortable);
+}
+
+.md-shape-context-spacious {
+  --md-sys-shape-scale-factor: var(--md-sys-shape-scale-factor-spacious);
+}
+
+/* ===== ELEVATION UTILITY CLASSES ===== */
+
+/* Base Elevation Classes */
 .md-elevation-level0 { box-shadow: var(--md-sys-elevation-level0); }
 .md-elevation-level1 { box-shadow: var(--md-sys-elevation-level1); }
 .md-elevation-level2 { box-shadow: var(--md-sys-elevation-level2); }
+.md-elevation-level3 { box-shadow: var(--md-sys-elevation-level3); }
+.md-elevation-level4 { box-shadow: var(--md-sys-elevation-level4); }
+.md-elevation-level5 { box-shadow: var(--md-sys-elevation-level5); }
+.md-elevation-level6 { box-shadow: var(--md-sys-elevation-level6); }
+.md-elevation-level7 { box-shadow: var(--md-sys-elevation-level7); }
+.md-elevation-level8 { box-shadow: var(--md-sys-elevation-level8); }
+
+/* Contextual Elevation Classes */
+.md-elevation-surface { box-shadow: var(--md-sys-elevation-surface); }
+.md-elevation-surface-low { box-shadow: var(--md-sys-elevation-surface-low); }
+.md-elevation-surface-medium { box-shadow: var(--md-sys-elevation-surface-medium); }
+.md-elevation-surface-high { box-shadow: var(--md-sys-elevation-surface-high); }
+.md-elevation-surface-highest { box-shadow: var(--md-sys-elevation-surface-highest); }
+
+/* Component-specific Elevation Classes */
+.md-elevation-card-resting { box-shadow: var(--md-sys-elevation-card-resting); }
+.md-elevation-card-hover { box-shadow: var(--md-sys-elevation-card-hover); }
+.md-elevation-card-pressed { box-shadow: var(--md-sys-elevation-card-pressed); }
+.md-elevation-card-dragged { box-shadow: var(--md-sys-elevation-card-dragged); }
+
+.md-elevation-button-resting { box-shadow: var(--md-sys-elevation-button-resting); }
+.md-elevation-button-hover { box-shadow: var(--md-sys-elevation-button-hover); }
+.md-elevation-button-pressed { box-shadow: var(--md-sys-elevation-button-pressed); }
+.md-elevation-button-focused { box-shadow: var(--md-sys-elevation-button-focused); }
+
+.md-elevation-fab-resting { box-shadow: var(--md-sys-elevation-fab-resting); }
+.md-elevation-fab-hover { box-shadow: var(--md-sys-elevation-fab-hover); }
+.md-elevation-fab-pressed { box-shadow: var(--md-sys-elevation-fab-pressed); }
+.md-elevation-fab-focused { box-shadow: var(--md-sys-elevation-fab-focused); }
+
+.md-elevation-navigation-drawer { box-shadow: var(--md-sys-elevation-navigation-drawer); }
+.md-elevation-navigation-rail { box-shadow: var(--md-sys-elevation-navigation-rail); }
+.md-elevation-navigation-bar { box-shadow: var(--md-sys-elevation-navigation-bar); }
+
+.md-elevation-dialog { box-shadow: var(--md-sys-elevation-dialog); }
+.md-elevation-menu { box-shadow: var(--md-sys-elevation-menu); }
+.md-elevation-tooltip { box-shadow: var(--md-sys-elevation-tooltip); }
+.md-elevation-snackbar { box-shadow: var(--md-sys-elevation-snackbar); }
+
+/* Organic Elevation Classes */
+.md-elevation-organic-subtle { box-shadow: var(--md-sys-elevation-organic-subtle); }
+.md-elevation-organic-moderate { box-shadow: var(--md-sys-elevation-organic-moderate); }
+.md-elevation-organic-pronounced { box-shadow: var(--md-sys-elevation-organic-pronounced); }
+
+/* Directional Elevation Classes */
+.md-elevation-directional-top { box-shadow: var(--md-sys-elevation-directional-top); }
+.md-elevation-directional-bottom { box-shadow: var(--md-sys-elevation-directional-bottom); }
+.md-elevation-directional-left { box-shadow: var(--md-sys-elevation-directional-left); }
+.md-elevation-directional-right { box-shadow: var(--md-sys-elevation-directional-right); }
+
+/* Interactive Elevation Classes with Transitions */
+.md-elevation-interactive {
+  transition: box-shadow var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.md-elevation-interactive:hover {
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.md-elevation-interactive:active {
+  box-shadow: var(--md-sys-elevation-level0);
+}
+
+.md-elevation-interactive:focus-visible {
+  box-shadow: var(--md-sys-elevation-level1);
+} { box-shadow: var(--md-sys-elevation-level2); }
 .md-elevation-level3 { box-shadow: var(--md-sys-elevation-level3); }
 .md-elevation-level4 { box-shadow: var(--md-sys-elevation-level4); }
 .md-elevation-level5 { box-shadow: var(--md-sys-elevation-level5); }

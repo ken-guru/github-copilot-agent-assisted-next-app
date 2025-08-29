@@ -683,3 +683,354 @@ export function getMaterial3SemanticColor(
       return getMaterial3AccessibleColors(onContainerColorRole, containerColorRole);
   }
 }
+
+/**
+ * ===== SHAPE AND ELEVATION UTILITIES =====
+ */
+
+/**
+ * Create responsive shape styles that adapt to screen size
+ * @param baseShape - Base shape token to use
+ * @param context - Context for scaling (compact, comfortable, spacious)
+ * @returns React CSSProperties object with responsive shape
+ */
+export function getMaterial3ResponsiveShape(
+  baseShape: keyof typeof Material3CSSProperties.shapes,
+  context: 'compact' | 'comfortable' | 'spacious' = 'comfortable'
+): React.CSSProperties {
+  const shapeToken = Material3CSSProperties.shapes[baseShape];
+  
+  return {
+    borderRadius: `calc(${getMaterial3Token(shapeToken)} * var(--md-sys-shape-scale-factor-${context}))`,
+  };
+}
+
+/**
+ * Create organic shape variations for expressive design
+ * @param componentType - Type of component (button, card, field, etc.)
+ * @param variant - Shape variant (primary, secondary, organic, asymmetric)
+ * @returns React CSSProperties object with organic shape
+ */
+export function getMaterial3OrganicShape(
+  componentType: 'button' | 'card' | 'field' | 'navigation' | 'activity' | 'timer' | 'summary' | 'chip',
+  variant: 'primary' | 'secondary' | 'tertiary' | 'organic' | 'asymmetric' = 'primary'
+): React.CSSProperties {
+  const shapeMap = {
+    button: {
+      primary: 'cornerButtonPrimary',
+      secondary: 'cornerButtonSecondary',
+      tertiary: 'cornerButtonTertiary',
+      organic: 'cornerPillMedium',
+      asymmetric: 'cornerAsymmetricMedium',
+    },
+    card: {
+      primary: 'cornerCardElevated',
+      secondary: 'cornerCardFilled',
+      tertiary: 'cornerCardOutlined',
+      organic: 'cornerMediumTop',
+      asymmetric: 'cornerAsymmetricLarge',
+    },
+    field: {
+      primary: 'cornerFieldOutlined',
+      secondary: 'cornerFieldFilled',
+      tertiary: 'cornerExtraSmall',
+      organic: 'cornerExtraSmallTop',
+      asymmetric: 'cornerAsymmetricSmall',
+    },
+    navigation: {
+      primary: 'cornerNavigationItem',
+      secondary: 'cornerNavigationRail',
+      tertiary: 'cornerMedium',
+      organic: 'cornerPillLarge',
+      asymmetric: 'cornerAsymmetricMedium',
+    },
+    activity: {
+      primary: 'cornerActivityCard',
+      secondary: 'cornerMedium',
+      tertiary: 'cornerSmall',
+      organic: 'cornerMediumTop',
+      asymmetric: 'cornerAsymmetricMedium',
+    },
+    timer: {
+      primary: 'cornerTimerContainer',
+      secondary: 'cornerLarge',
+      tertiary: 'cornerMedium',
+      organic: 'cornerLargeTop',
+      asymmetric: 'cornerAsymmetricLarge',
+    },
+    summary: {
+      primary: 'cornerSummaryCard',
+      secondary: 'cornerMedium',
+      tertiary: 'cornerSmall',
+      organic: 'cornerSmallTop',
+      asymmetric: 'cornerAsymmetricSmall',
+    },
+    chip: {
+      primary: 'cornerChip',
+      secondary: 'cornerPillSmall',
+      tertiary: 'cornerMedium',
+      organic: 'cornerPillMedium',
+      asymmetric: 'cornerAsymmetricSmall',
+    },
+  } as const;
+  
+  const shapeToken = shapeMap[componentType][variant] as keyof typeof Material3CSSProperties.shapes;
+  
+  return getMaterial3Shape(shapeToken);
+}
+
+/**
+ * Create contextual elevation styles for different component states
+ * @param componentType - Type of component (card, button, fab, navigation, etc.)
+ * @param state - Component state (resting, hover, pressed, focused, dragged)
+ * @returns React CSSProperties object with contextual elevation
+ */
+export function getMaterial3ContextualElevation(
+  componentType: 'card' | 'button' | 'fab' | 'navigation' | 'dialog' | 'menu' | 'tooltip' | 'snackbar',
+  state: 'resting' | 'hover' | 'pressed' | 'focused' | 'dragged' = 'resting'
+): React.CSSProperties {
+  const elevationMap = {
+    card: {
+      resting: 'cardResting',
+      hover: 'cardHover',
+      pressed: 'cardPressed',
+      focused: 'cardResting',
+      dragged: 'cardDragged',
+    },
+    button: {
+      resting: 'buttonResting',
+      hover: 'buttonHover',
+      pressed: 'buttonPressed',
+      focused: 'buttonFocused',
+      dragged: 'buttonResting',
+    },
+    fab: {
+      resting: 'fabResting',
+      hover: 'fabHover',
+      pressed: 'fabPressed',
+      focused: 'fabFocused',
+      dragged: 'fabResting',
+    },
+    navigation: {
+      resting: 'navigationRail',
+      hover: 'navigationBar',
+      pressed: 'navigationRail',
+      focused: 'navigationRail',
+      dragged: 'navigationDrawer',
+    },
+    dialog: {
+      resting: 'dialog',
+      hover: 'dialog',
+      pressed: 'dialog',
+      focused: 'dialog',
+      dragged: 'dialog',
+    },
+    menu: {
+      resting: 'menu',
+      hover: 'menu',
+      pressed: 'menu',
+      focused: 'menu',
+      dragged: 'menu',
+    },
+    tooltip: {
+      resting: 'tooltip',
+      hover: 'tooltip',
+      pressed: 'tooltip',
+      focused: 'tooltip',
+      dragged: 'tooltip',
+    },
+    snackbar: {
+      resting: 'snackbar',
+      hover: 'snackbar',
+      pressed: 'snackbar',
+      focused: 'snackbar',
+      dragged: 'snackbar',
+    },
+  } as const;
+  
+  const elevationToken = elevationMap[componentType][state] as keyof typeof Material3CSSProperties.elevation;
+  
+  return getMaterial3Elevation(elevationToken);
+}
+
+/**
+ * Create organic elevation variations for expressive design
+ * @param intensity - Elevation intensity (subtle, moderate, pronounced)
+ * @param direction - Optional directional shadow (top, bottom, left, right)
+ * @returns React CSSProperties object with organic elevation
+ */
+export function getMaterial3OrganicElevation(
+  intensity: 'subtle' | 'moderate' | 'pronounced' = 'moderate',
+  direction?: 'top' | 'bottom' | 'left' | 'right'
+): React.CSSProperties {
+  if (direction) {
+    const directionalToken = `directional${direction.charAt(0).toUpperCase() + direction.slice(1)}` as keyof typeof Material3CSSProperties.elevation;
+    return getMaterial3Elevation(directionalToken);
+  }
+  
+  const organicToken = `organic${intensity.charAt(0).toUpperCase() + intensity.slice(1)}` as keyof typeof Material3CSSProperties.elevation;
+  return getMaterial3Elevation(organicToken);
+}
+
+/**
+ * Create interactive elevation styles with smooth transitions
+ * @param baseElevation - Base elevation level
+ * @param hoverElevation - Elevation on hover
+ * @param pressedElevation - Elevation when pressed
+ * @returns React CSSProperties object with interactive elevation
+ */
+export function getMaterial3InteractiveElevation(
+  baseElevation: keyof typeof Material3CSSProperties.elevation = 'level1',
+  hoverElevation: keyof typeof Material3CSSProperties.elevation = 'level2',
+  pressedElevation: keyof typeof Material3CSSProperties.elevation = 'level0'
+): React.CSSProperties {
+  return {
+    boxShadow: getMaterial3Token(Material3CSSProperties.elevation[baseElevation]),
+    transition: `box-shadow ${getMaterial3Token(Material3CSSProperties.motion.duration.short2)} ${getMaterial3Token(Material3CSSProperties.motion.easing.standard)}`,
+    '&:hover': {
+      boxShadow: getMaterial3Token(Material3CSSProperties.elevation[hoverElevation]),
+    },
+    '&:active': {
+      boxShadow: getMaterial3Token(Material3CSSProperties.elevation[pressedElevation]),
+    },
+  };
+}
+
+/**
+ * Create shape and elevation combination for Material 3 Expressive components
+ * @param config - Configuration object for shape and elevation
+ * @returns React CSSProperties object with combined shape and elevation
+ */
+export function getMaterial3ExpressiveContainer(config: {
+  componentType: 'button' | 'card' | 'field' | 'navigation' | 'activity' | 'timer' | 'summary' | 'chip';
+  shapeVariant?: 'primary' | 'secondary' | 'tertiary' | 'organic' | 'asymmetric';
+  elevationState?: 'resting' | 'hover' | 'pressed' | 'focused' | 'dragged';
+  responsive?: boolean;
+  context?: 'compact' | 'comfortable' | 'spacious';
+  interactive?: boolean;
+}): React.CSSProperties {
+  const {
+    componentType,
+    shapeVariant = 'primary',
+    elevationState = 'resting',
+    responsive = true,
+    context = 'comfortable',
+    interactive = false,
+  } = config;
+  
+  let styles: React.CSSProperties = {};
+  
+  // Add shape styles
+  if (responsive) {
+    const baseShape = getMaterial3OrganicShape(componentType, shapeVariant);
+    styles = {
+      ...styles,
+      borderRadius: `calc(${baseShape.borderRadius} * var(--md-sys-shape-scale-factor-${context}))`,
+    };
+  } else {
+    styles = {
+      ...styles,
+      ...getMaterial3OrganicShape(componentType, shapeVariant),
+    };
+  }
+  
+  // Add elevation styles
+  const elevationComponentType = componentType === 'activity' || componentType === 'timer' || componentType === 'summary' ? 'card' : componentType;
+  if (elevationComponentType === 'field' || elevationComponentType === 'chip') {
+    // Fields and chips typically don't have elevation
+    styles = {
+      ...styles,
+      ...getMaterial3Elevation('level0'),
+    };
+  } else {
+    styles = {
+      ...styles,
+      ...getMaterial3ContextualElevation(elevationComponentType as any, elevationState),
+    };
+  }
+  
+  // Add interactive transitions if specified
+  if (interactive) {
+    styles = {
+      ...styles,
+      transition: `all ${getMaterial3Token(Material3CSSProperties.motion.duration.short2)} ${getMaterial3Token(Material3CSSProperties.motion.easing.standard)}`,
+    };
+  }
+  
+  return styles;
+}
+
+/**
+ * Create responsive shape scaling utilities for different breakpoints
+ * @param baseShapes - Object with shape tokens for different breakpoints
+ * @returns Object with media query styles for responsive shapes
+ */
+export function getMaterial3ResponsiveShapeBreakpoints(baseShapes: {
+  mobile?: keyof typeof Material3CSSProperties.shapes;
+  tablet?: keyof typeof Material3CSSProperties.shapes;
+  desktop?: keyof typeof Material3CSSProperties.shapes;
+  base: keyof typeof Material3CSSProperties.shapes;
+}): {
+  base: React.CSSProperties;
+  mobile?: React.CSSProperties;
+  tablet?: React.CSSProperties;
+  desktop?: React.CSSProperties;
+} {
+  const result: any = {
+    base: getMaterial3Shape(baseShapes.base),
+  };
+  
+  if (baseShapes.mobile) {
+    result.mobile = getMaterial3Shape(baseShapes.mobile);
+  }
+  
+  if (baseShapes.tablet) {
+    result.tablet = getMaterial3Shape(baseShapes.tablet);
+  }
+  
+  if (baseShapes.desktop) {
+    result.desktop = getMaterial3Shape(baseShapes.desktop);
+  }
+  
+  return result;
+}
+
+/**
+ * Create shape utility classes generator for consistent application
+ * @param componentType - Type of component
+ * @param variants - Array of shape variants to generate classes for
+ * @returns Object with CSS class names for different shape variants
+ */
+export function getMaterial3ShapeClasses(
+  componentType: 'button' | 'card' | 'field' | 'navigation' | 'activity' | 'timer' | 'summary' | 'chip',
+  variants: Array<'primary' | 'secondary' | 'tertiary' | 'organic' | 'asymmetric'> = ['primary']
+): Record<string, string> {
+  const classes: Record<string, string> = {};
+  
+  variants.forEach(variant => {
+    const className = `md-shape-${componentType}-${variant}`;
+    classes[variant] = className;
+  });
+  
+  return classes;
+}
+
+/**
+ * Create elevation utility classes generator for consistent application
+ * @param componentType - Type of component
+ * @param states - Array of elevation states to generate classes for
+ * @returns Object with CSS class names for different elevation states
+ */
+export function getMaterial3ElevationClasses(
+  componentType: 'card' | 'button' | 'fab' | 'navigation' | 'dialog' | 'menu' | 'tooltip' | 'snackbar',
+  states: Array<'resting' | 'hover' | 'pressed' | 'focused' | 'dragged'> = ['resting']
+): Record<string, string> {
+  const classes: Record<string, string> = {};
+  
+  states.forEach(state => {
+    const className = `md-elevation-${componentType}-${state}`;
+    classes[state] = className;
+  });
+  
+  return classes;
+}
