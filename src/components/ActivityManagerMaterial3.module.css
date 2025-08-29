@@ -1,0 +1,381 @@
+/* Material 3 Expressive Activity Manager Styles */
+
+.activityHub {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 400px;
+  position: relative;
+  overflow: hidden;
+  /* Dynamic elevation transitions */
+  transition: 
+    box-shadow var(--md-motion-duration-medium1) var(--md-motion-easing-standard),
+    transform var(--md-motion-duration-medium1) var(--md-motion-easing-standard);
+}
+
+/* Header with expressive typography */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--md-spacing-lg) var(--md-spacing-lg) var(--md-spacing-md);
+  border-bottom: 1px solid var(--md-color-outline-variant);
+  background: linear-gradient(
+    135deg,
+    var(--md-color-surface-container) 0%,
+    var(--md-color-surface-container-low) 100%
+  );
+}
+
+.title {
+  font-family: var(--md-typography-headline-medium-font);
+  font-size: var(--md-typography-headline-medium-size);
+  font-weight: var(--md-typography-headline-medium-weight);
+  line-height: var(--md-typography-headline-medium-line-height);
+  letter-spacing: var(--md-typography-headline-medium-tracking);
+  color: var(--md-color-on-surface);
+  margin: 0;
+  /* Expressive font weight variation */
+  font-variation-settings: 'wght' 500, 'opsz' 24;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--md-spacing-sm);
+}
+
+/* Content area with organic spacing */
+.content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--md-spacing-md) var(--md-spacing-lg);
+  gap: var(--md-spacing-lg);
+  overflow: hidden;
+}
+
+.progressSection {
+  flex-shrink: 0;
+}
+
+.formSection {
+  flex-shrink: 0;
+}
+
+/* Activities container with organic motion */
+.activitiesContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-spacing-md);
+  overflow: hidden;
+}
+
+.activitiesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-spacing-sm);
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Custom scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-color-outline-variant) transparent;
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  /* Organic padding for visual breathing room */
+  padding-right: var(--md-spacing-xs);
+}
+
+.activitiesList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.activitiesList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.activitiesList::-webkit-scrollbar-thumb {
+  background-color: var(--md-color-outline-variant);
+  border-radius: var(--md-shape-corner-full);
+  transition: background-color var(--md-motion-duration-short2) var(--md-motion-easing-standard);
+}
+
+.activitiesList::-webkit-scrollbar-thumb:hover {
+  background-color: var(--md-color-outline);
+}
+
+.activityItem {
+  /* Organic motion for activity items */
+  transition: 
+    transform var(--md-motion-duration-short3) var(--md-motion-easing-emphasized),
+    opacity var(--md-motion-duration-short2) var(--md-motion-easing-standard);
+}
+
+.activityItem:hover {
+  transform: translateY(-1px);
+}
+
+/* Hidden activities section with expressive styling */
+.hiddenActivitiesSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-spacing-sm);
+  margin-top: var(--md-spacing-md);
+  flex-shrink: 0;
+}
+
+.hiddenActivitiesPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md-spacing-xs);
+  padding: var(--md-spacing-md);
+  /* Organic entrance animation */
+  animation: slideInUp var(--md-motion-duration-medium2) var(--md-motion-easing-emphasized);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hiddenActivityItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--md-spacing-sm) 0;
+  border-bottom: 1px solid var(--md-color-outline-variant);
+}
+
+.hiddenActivityItem:last-child {
+  border-bottom: none;
+}
+
+.hiddenActivityName {
+  font-family: var(--md-typography-body-medium-font);
+  font-size: var(--md-typography-body-medium-size);
+  font-weight: var(--md-typography-body-medium-weight);
+  color: var(--md-color-on-surface-variant);
+  flex: 1;
+  margin-right: var(--md-spacing-md);
+}
+
+/* Floating Action Button container */
+.fabContainer {
+  position: absolute;
+  bottom: var(--md-spacing-xl);
+  right: var(--md-spacing-xl);
+  z-index: 10;
+  /* Organic entrance animation */
+  animation: fabEntrance var(--md-motion-duration-medium3) var(--md-motion-easing-emphasized);
+}
+
+@keyframes fabEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Enhanced state communication through elevation and color */
+.activityHub[data-content-state="active"] {
+  /* Elevated state for active timer */
+  box-shadow: var(--md-elevation-level3);
+  background: linear-gradient(
+    135deg,
+    var(--md-color-primary-container) 0%,
+    var(--md-color-surface-container) 100%
+  );
+}
+
+.activityHub[data-content-state="active"] .header {
+  background: linear-gradient(
+    135deg,
+    var(--md-color-primary-container) 0%,
+    var(--md-color-surface-container-high) 100%
+  );
+  border-bottom-color: var(--md-color-primary);
+}
+
+.activityHub[data-content-state="active"] .title {
+  color: var(--md-color-on-primary-container);
+  /* Enhanced expressive weight for active state */
+  font-variation-settings: 'wght' 600, 'opsz' 24;
+}
+
+.activityHub[data-content-state="loading"] {
+  /* Reduced elevation for loading state */
+  box-shadow: var(--md-elevation-level0);
+  opacity: 0.8;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .header {
+    padding: var(--md-spacing-md);
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--md-spacing-sm);
+  }
+
+  .title {
+    font-size: var(--md-typography-headline-small-size);
+    text-align: center;
+  }
+
+  .headerActions {
+    justify-content: center;
+  }
+
+  .content {
+    padding: var(--md-spacing-sm) var(--md-spacing-md);
+    gap: var(--md-spacing-md);
+  }
+
+  .fabContainer {
+    bottom: var(--md-spacing-lg);
+    right: var(--md-spacing-lg);
+  }
+
+  .activitiesList {
+    /* Improved touch scrolling on mobile */
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: var(--md-spacing-sm);
+  }
+
+  .content {
+    padding: var(--md-spacing-xs) var(--md-spacing-sm);
+  }
+
+  .fabContainer {
+    bottom: var(--md-spacing-md);
+    right: var(--md-spacing-md);
+  }
+
+  .hiddenActivitiesPanel {
+    padding: var(--md-spacing-sm);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .header {
+    border-bottom-width: 2px;
+  }
+
+  .hiddenActivityItem {
+    border-bottom-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .activityHub,
+  .activityItem,
+  .hiddenActivitiesPanel,
+  .fabContainer {
+    animation: none;
+    transition: none;
+  }
+
+  .activitiesList {
+    scroll-behavior: auto;
+  }
+
+  .activityItem:hover {
+    transform: none;
+  }
+}
+
+/* Focus management for accessibility */
+.activityHub:focus-within {
+  outline: 2px solid var(--md-color-primary);
+  outline-offset: 2px;
+}
+
+/* Enhanced visual hierarchy through organic spacing */
+.content > * + * {
+  margin-top: 0; /* Reset default margins */
+}
+
+/* Expressive progress indicators with organic motion */
+.progressSection {
+  position: relative;
+  overflow: hidden;
+}
+
+.progressSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--md-color-primary) 50%,
+    transparent 100%
+  );
+  animation: progressShimmer 2s infinite;
+  opacity: 0;
+}
+
+.activityHub[data-content-state="active"] .progressSection::before {
+  opacity: 1;
+}
+
+@keyframes progressShimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Contextual color application for different interface states */
+.activityHub[data-timer-active="true"] {
+  border: 1px solid var(--md-color-primary);
+}
+
+.activityHub[data-timer-active="false"][data-has-timeline="true"] {
+  border: 1px solid var(--md-color-tertiary);
+}
+
+/* Smooth transitions between different activity states */
+.activitiesList > * {
+  transition: 
+    transform var(--md-motion-duration-short3) var(--md-motion-easing-emphasized),
+    opacity var(--md-motion-duration-short2) var(--md-motion-easing-standard),
+    box-shadow var(--md-motion-duration-short3) var(--md-motion-easing-standard);
+}
+
+/* Enhanced accessibility for screen readers */
+.activityHub[aria-busy="true"] {
+  cursor: wait;
+}
+
+.activityHub[aria-busy="true"] * {
+  pointer-events: none;
+}
+
+.activityHub[aria-busy="false"] * {
+  pointer-events: auto;
+}
