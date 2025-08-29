@@ -14,6 +14,7 @@ import useNetworkStatus from '@/hooks/useNetworkStatus';
 import Material3Card from '@/design-system/components/Card';
 import Material3Button from '@/design-system/components/Button';
 import Material3Modal from '@/design-system/components/Modal';
+import { getResponsivePadding, getResponsiveGap } from '@/design-system/utils/responsive-layout';
 
 // Use canonical Activity type
 type Activity = CanonicalActivity & { colors?: ColorSet };
@@ -245,10 +246,10 @@ export default function ActivityManager({
   return (
     <Material3Card className="h-full flex flex-col" data-testid="activity-manager">
       {/* Header with title and action buttons */}
-      <div className="p-6 pb-4 border-b border-outline-variant">
+      <div className={`${getResponsivePadding('card')} pb-3 sm:pb-4 border-b border-outline-variant`}>
         <div className="flex justify-between items-center">
           <h5 className="text-lg font-medium mb-0">Activities</h5>
-          <div className="flex gap-2">
+          <div className={`flex ${getResponsiveGap('sm')}`}>
             {onExtendDuration && (
               <Material3Button 
                 variant="outlined" 
@@ -295,7 +296,7 @@ export default function ActivityManager({
         </div>
       </div>
       
-      <div className="flex flex-col flex-grow overflow-hidden p-6 pt-4">
+      <div className={`flex flex-col flex-grow overflow-hidden ${getResponsivePadding('card')} pt-3 sm:pt-4`}>
         {/* Timer Progress Section - isolated from activity form */}
         <TimerProgressSection
           entries={timelineEntries}
@@ -317,7 +318,7 @@ export default function ActivityManager({
         
         {/* Activities List - scrollable if needed */}
         <div className="flex-grow" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
-          <div className="space-y-3" data-testid="activity-list">
+          <div className={`${getResponsiveGap('sm')} space-y-3 sm:space-y-2`} data-testid="activity-list">
             {visibleActivities.map((activity) => (
               <div 
                 key={activity.id}

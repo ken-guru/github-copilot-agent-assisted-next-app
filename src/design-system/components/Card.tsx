@@ -223,7 +223,7 @@ const Material3Card = React.forwardRef<HTMLDivElement, Material3CardProps>(({
       onKeyDown={interactive ? (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          handleClick(e as any);
+          handleClick(e as unknown as React.MouseEvent<HTMLDivElement>);
         }
       } : undefined}
       {...props}

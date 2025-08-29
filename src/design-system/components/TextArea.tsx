@@ -1,6 +1,6 @@
 /**
- * Material 3 Input Component
- * Comprehensive input implementation following Material 3 design principles
+ * Material 3 TextArea Component
+ * Mobile-optimized textarea implementation following Material 3 design principles
  */
 
 'use client';
@@ -8,65 +8,65 @@
 import React from 'react';
 import { isTouchDevice, getTouchTargetSize, addTouchHandlers } from '../utils/mobile-touch';
 
-export interface Material3InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+export interface Material3TextAreaProps extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'> {
   variant?: 'filled' | 'outlined';
   size?: 'small' | 'medium' | 'large';
   label?: string;
   helperText?: string;
   errorText?: string;
-  leadingIcon?: React.ReactNode;
-  trailingIcon?: React.ReactNode;
   fullWidth?: boolean;
   error?: boolean;
   success?: boolean;
+  resizable?: boolean;
+  minRows?: number;
+  maxRows?: number;
   // Mobile-specific props
   mobileOptimized?: boolean;
-  keyboardType?: 'text' | 'email' | 'tel' | 'url' | 'numeric' | 'decimal';
-  autocomplete?: string;
   touchFeedback?: boolean;
+  autoResize?: boolean;
 }
 
-const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>(({
+const Material3TextArea = React.forwardRef<HTMLTextAreaElement, Material3TextAreaProps>(({
   variant = 'outlined',
   size = 'medium',
   label,
   helperText,
   errorText,
-  leadingIcon,
-  trailingIcon,
   fullWidth = false,
   error = false,
   success = false,
   disabled = false,
+  resizable = true,
+  minRows = 3,
+  maxRows = 8,
   id,
   mobileOptimized = true,
-  keyboardType = 'text',
-  autocomplete,
   touchFeedback = true,
+  autoResize = true,
   ...props
 }, ref) => {
   const [focused, setFocused] = React.useState(false);
   const [hasValue, setHasValue] = React.useState(false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
   
   // Generate unique ID if not provided
-  const inputId = React.useId();
-  const finalInputId = id || inputId;
-  const helperTextId = `${finalInputId}-helper`;
-  const errorTextId = `${finalInputId}-error`;
+  const textareaId = React.useId();
+  const finalTextareaId = id || textareaId;
+  const helperTextId = `${finalTextareaId}-helper`;
+  const errorTextId = `${finalTextareaId}-error`;
 
   // Forward ref handling
-  React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+  React.useImperativeHandle(ref, () => textareaRef.current as HTMLTextAreaElement);
 
   // Mobile detection
   const isTouch = isTouchDevice();
   const shouldOptimizeForMobile = mobileOptimized && isTouch;
 
-  // Check if input has value
+  // Check if textarea has value
   React.useEffect(() => {
-    if (inputRef.current) {
-      setHasValue(inputRef.current.value.length > 0);
+    if (textareaRef.current) {
+      setHasValue(textareaRef.current.value.length > 0);
     }
   }, [props.value, props.defaultValue]);
 
@@ -75,7 +75,7 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
     if (shouldOptimizeForMobile && touchFeedback && containerRef.current) {
       const cleanup = addTouchHandlers(containerRef.current, {
         onTouchStart: () => {
-          // Subtle touch feedback for input focus
+          // Subtle touch feedback for textarea focus
           if (containerRef.current) {
             containerRef.current.style.transform = 'scale(0.998)';
             containerRef.current.style.transition = 'transform 0.1s ease-out';
@@ -91,31 +91,49 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
     }
   }, [shouldOptimizeForMobile, touchFeedback]);
 
+  // Auto-resize functionality
+  const handleAutoResize = React.useCallback(() => {
+    if (autoResize && textareaRef.current) {
+      const textarea = textareaRef.current;
+      
+      // Reset height to get accurate scrollHeight
+      textarea.style.height = 'auto';
+      
+      // Calculate new height based on content
+      const computed = window.getComputedStyle(textarea);
+      const lineHeight = parseInt(computed.lineHeight) || 20;
+      const minHeight = lineHeight * minRows;
+      const maxHeight = lineHeight * maxRows;
+      
+      const newHeight = Math.min(Math.max(textarea.scrollHeight, minHeight), maxHeight);
+      textarea.style.height = `${newHeight}px`;
+    }
+  }, [autoResize, minRows, maxRows]);
+
+  // Auto-resize on content change
+  React.useEffect(() => {
+    handleAutoResize();
+  }, [props.value, handleAutoResize]);
+
   // Get mobile-optimized touch target size
-  const touchTargetSize = shouldOptimizeForMobile ? getTouchTargetSize('medium') : null;
+  const touchTargetSize = shouldOptimizeForMobile ? getTouchTargetSize(size) : null;
 
   // Size-specific classes with mobile optimization
   const sizeClasses = {
     small: {
-      container: shouldOptimizeForMobile ? 'min-h-[48px]' : 'h-12',
-      input: shouldOptimizeForMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm',
+      container: shouldOptimizeForMobile ? 'min-h-[80px]' : 'min-h-[72px]',
+      textarea: shouldOptimizeForMobile ? 'px-4 py-3 text-base leading-6' : 'px-3 py-2 text-sm leading-5',
       label: 'text-sm',
-      icon: 'w-4 h-4',
-      iconContainer: shouldOptimizeForMobile ? 'w-12 min-h-[48px]' : 'w-8',
     },
     medium: {
-      container: shouldOptimizeForMobile ? 'min-h-[52px]' : 'h-14',
-      input: shouldOptimizeForMobile ? 'px-4 py-4 text-base' : 'px-4 py-3',
+      container: shouldOptimizeForMobile ? 'min-h-[96px]' : 'min-h-[88px]',
+      textarea: shouldOptimizeForMobile ? 'px-4 py-4 text-base leading-6' : 'px-4 py-3 leading-6',
       label: '',
-      icon: 'w-5 h-5',
-      iconContainer: shouldOptimizeForMobile ? 'w-14 min-h-[52px]' : 'w-10',
     },
     large: {
-      container: shouldOptimizeForMobile ? 'min-h-[56px]' : 'h-16',
-      input: shouldOptimizeForMobile ? 'px-4 py-5 text-lg' : 'px-4 py-4 text-lg',
+      container: shouldOptimizeForMobile ? 'min-h-[112px]' : 'min-h-[104px]',
+      textarea: shouldOptimizeForMobile ? 'px-4 py-5 text-lg leading-7' : 'px-4 py-4 text-lg leading-7',
       label: 'text-lg',
-      icon: 'w-6 h-6',
-      iconContainer: shouldOptimizeForMobile ? 'w-16 min-h-[56px]' : 'w-12',
     },
   };
 
@@ -159,7 +177,6 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
   const containerClasses = [
     'relative',
     'flex',
-    'items-center',
     'transition-all',
     'duration-200',
     'ease-in-out',
@@ -173,9 +190,9 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
     disabled ? 'cursor-not-allowed' : 'cursor-text',
   ].filter(Boolean).join(' ');
 
-  // Input classes
-  const inputClasses = [
-    'flex-1',
+  // TextArea classes
+  const textareaClasses = [
+    'w-full',
     'bg-transparent',
     'outline-none',
     'border-none',
@@ -184,9 +201,9 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
     'placeholder:text-on-surface-variant/60',
     'disabled:text-on-surface/38',
     'disabled:placeholder:text-on-surface/38',
-    sizeClasses[size].input,
-    leadingIcon ? 'pl-0' : '',
-    trailingIcon ? 'pr-0' : '',
+    sizeClasses[size].textarea,
+    resizable ? 'resize-y' : 'resize-none',
+    autoResize ? 'overflow-hidden' : 'overflow-auto',
   ].filter(Boolean).join(' ');
 
   // Label classes
@@ -209,98 +226,51 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
       'scale-90',
       'origin-left',
     ] : [
-      'top-1/2',
-      '-translate-y-1/2',
+      'top-4',
     ],
-    leadingIcon && !labelFloating ? 'left-12' : '',
   ].flat().filter(Boolean).join(' ');
 
-  // Icon classes
-  const iconClasses = [
-    'flex',
-    'items-center',
-    'justify-center',
-    'text-on-surface-variant',
-    sizeClasses[size].iconContainer,
-    sizeClasses[size].icon,
-    disabled ? 'text-on-surface/38' : '',
-  ].filter(Boolean).join(' ');
-
   // Handle focus events
-  const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleFocus = (event: React.FocusEvent<HTMLTextAreaElement>) => {
     setFocused(true);
     props.onFocus?.(event);
   };
 
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = (event: React.FocusEvent<HTMLTextAreaElement>) => {
     setFocused(false);
     setHasValue(event.target.value.length > 0);
     props.onBlur?.(event);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setHasValue(event.target.value.length > 0);
+    handleAutoResize();
     props.onChange?.(event);
   };
 
-  // Handle container click to focus input
+  // Handle container click to focus textarea
   const handleContainerClick = () => {
-    if (!disabled && inputRef.current) {
-      inputRef.current.focus();
+    if (!disabled && textareaRef.current) {
+      textareaRef.current.focus();
     }
   };
 
-  // Map keyboard types to input attributes
-  const getInputAttributes = () => {
-    const baseAttributes: React.InputHTMLAttributes<HTMLInputElement> = {
+  // Get mobile-optimized attributes
+  const getTextAreaAttributes = () => {
+    const baseAttributes: React.TextareaHTMLAttributes<HTMLTextAreaElement> = {
       ...props
     };
 
     if (shouldOptimizeForMobile) {
-      switch (keyboardType) {
-        case 'email':
-          baseAttributes.type = 'email';
-          baseAttributes.inputMode = 'email';
-          baseAttributes.autoCapitalize = 'none';
-          baseAttributes.autoCorrect = 'off';
-          baseAttributes.spellCheck = false;
-          break;
-        case 'tel':
-          baseAttributes.type = 'tel';
-          baseAttributes.inputMode = 'tel';
-          baseAttributes.autoComplete = 'tel';
-          break;
-        case 'url':
-          baseAttributes.type = 'url';
-          baseAttributes.inputMode = 'url';
-          baseAttributes.autoCapitalize = 'none';
-          baseAttributes.autoCorrect = 'off';
-          baseAttributes.spellCheck = false;
-          break;
-        case 'numeric':
-          baseAttributes.type = 'text';
-          baseAttributes.inputMode = 'numeric';
-          baseAttributes.pattern = '[0-9]*';
-          break;
-        case 'decimal':
-          baseAttributes.type = 'text';
-          baseAttributes.inputMode = 'decimal';
-          baseAttributes.pattern = '[0-9]*';
-          break;
-        default:
-          baseAttributes.type = props.type || 'text';
-          baseAttributes.inputMode = 'text';
-          break;
-      }
-
-      // Add autocomplete if provided
-      if (autocomplete) {
-        baseAttributes.autoComplete = autocomplete;
-      }
-
-      // Improve mobile input experience
+      // Improve mobile textarea experience
       baseAttributes.autoCorrect = baseAttributes.autoCorrect ?? 'on';
       baseAttributes.spellCheck = baseAttributes.spellCheck ?? true;
+      baseAttributes.autoCapitalize = baseAttributes.autoCapitalize ?? 'sentences';
+      
+      // Set initial rows based on size and minRows
+      if (!baseAttributes.rows) {
+        baseAttributes.rows = minRows;
+      }
     }
 
     return baseAttributes;
@@ -308,26 +278,19 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
 
   return (
     <div className={fullWidth ? 'w-full' : 'w-auto'}>
-      {/* Input Container */}
+      {/* TextArea Container */}
       <div 
         ref={containerRef}
         className={containerClasses}
         onClick={handleContainerClick}
         style={touchTargetSize ? { minHeight: touchTargetSize.minHeight } : undefined}
       >
-        {/* Leading Icon */}
-        {leadingIcon && (
-          <div className={iconClasses}>
-            {leadingIcon}
-          </div>
-        )}
-
-        {/* Input Field */}
-        <div className="relative flex-1">
-          <input
-            ref={inputRef}
-            id={finalInputId}
-            className={inputClasses}
+        {/* TextArea Field */}
+        <div className="relative w-full">
+          <textarea
+            ref={textareaRef}
+            id={finalTextareaId}
+            className={textareaClasses}
             disabled={disabled}
             onFocus={handleFocus}
             onBlur={handleBlur}
@@ -338,26 +301,19 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
               : undefined
             }
             aria-invalid={error}
-            {...getInputAttributes()}
+            {...getTextAreaAttributes()}
           />
           
           {/* Floating Label */}
           {label && (
             <label
-              htmlFor={finalInputId}
+              htmlFor={finalTextareaId}
               className={labelClasses}
             >
               {label}
             </label>
           )}
         </div>
-
-        {/* Trailing Icon */}
-        {trailingIcon && (
-          <div className={iconClasses}>
-            {trailingIcon}
-          </div>
-        )}
       </div>
 
       {/* Helper/Error Text */}
@@ -384,6 +340,6 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
   );
 });
 
-Material3Input.displayName = 'Material3Input';
+Material3TextArea.displayName = 'Material3TextArea';
 
-export default Material3Input;
+export default Material3TextArea;
