@@ -1,0 +1,388 @@
+/**
+ * Material 3 Page Transition Styles
+ */
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.transitioning {
+  pointer-events: none;
+}
+
+.page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.page[data-transition="current"] {
+  position: relative;
+}
+
+.page[data-transition="enter"] {
+  z-index: 2;
+}
+
+.page[data-transition="exit"] {
+  z-index: 1;
+}
+
+/* Direction-based transitions */
+
+/* Forward transitions */
+.exitForward {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.enterForward {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.enterForward {
+  animation: pageEnterForward var(--md-motion-duration-medium3) var(--md-motion-easing-emphasized) forwards;
+}
+
+.exitForward {
+  animation: pageExitForward var(--md-motion-duration-medium3) var(--md-motion-easing-emphasized) forwards;
+}
+
+/* Backward transitions */
+.exitBackward {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.enterBackward {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.enterBackward {
+  animation: pageEnterBackward var(--md-motion-duration-medium3) var(--md-motion-easing-emphasized) forwards;
+}
+
+.exitBackward {
+  animation: pageExitBackward var(--md-motion-duration-medium3) var(--md-motion-easing-emphasized) forwards;
+}
+
+/* Up transitions */
+.exitUp {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.enterUp {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.enterUp {
+  animation: pageEnterUp var(--md-motion-duration-medium3) var(--md-motion-easing-emphasized) forwards;
+}
+
+.exitUp {
+  animation: pageExitUp var(--md-motion-duration-medium3) var(--md-motion-easing-emphasized) forwards;
+}
+
+/* Down transitions */
+.exitDown {
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.enterDown {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.enterDown {
+  animation: pageEnterDown var(--md-motion-duration-medium3) var(--md-motion-easing-emphasized) forwards;
+}
+
+.exitDown {
+  animation: pageExitDown var(--md-motion-duration-medium3) var(--md-motion-easing-emphasized) forwards;
+}
+
+/* Duration modifiers */
+.durationShort {
+  animation-duration: var(--md-motion-duration-short4) !important;
+}
+
+.durationMedium {
+  animation-duration: var(--md-motion-duration-medium3) !important;
+}
+
+.durationLong {
+  animation-duration: var(--md-motion-duration-long2) !important;
+}
+
+/* Easing modifiers */
+.easingStandard {
+  animation-timing-function: var(--md-motion-easing-standard) !important;
+}
+
+.easingEmphasized {
+  animation-timing-function: var(--md-motion-easing-emphasized) !important;
+}
+
+.easingDecelerated {
+  animation-timing-function: var(--md-motion-easing-decelerated) !important;
+}
+
+.easingAccelerated {
+  animation-timing-function: var(--md-motion-easing-accelerated) !important;
+}
+
+/* Keyframe animations */
+@keyframes pageEnterForward {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pageExitForward {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes pageEnterBackward {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pageExitBackward {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes pageEnterUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pageExitUp {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes pageEnterDown {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pageExitDown {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+/* Fade transitions for subtle changes */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.fadeIn {
+  animation: fadeIn var(--md-motion-duration-medium2) var(--md-motion-easing-standard) forwards;
+}
+
+.fadeOut {
+  animation: fadeOut var(--md-motion-duration-medium2) var(--md-motion-easing-standard) forwards;
+}
+
+/* Scale transitions for modal-like content */
+@keyframes scaleIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleOut {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+.scaleIn {
+  animation: scaleIn var(--md-motion-duration-medium2) var(--md-motion-easing-emphasized) forwards;
+}
+
+.scaleOut {
+  animation: scaleOut var(--md-motion-duration-medium2) var(--md-motion-easing-emphasized) forwards;
+}
+
+/* Shared element transition styles */
+.sharedElement {
+  position: relative;
+  z-index: 1000;
+}
+
+.sharedElementContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Performance optimizations */
+.container,
+.page {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  
+  .exitForward,
+  .exitBackward,
+  .exitUp,
+  .exitDown {
+    display: none;
+  }
+  
+  .enterForward,
+  .enterBackward,
+  .enterUp,
+  .enterDown {
+    position: relative;
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .page {
+    border: 1px solid currentColor;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .container {
+    /* Optimize for mobile performance */
+    transform: translateZ(0);
+  }
+  
+  .page {
+    /* Reduce animation complexity on mobile */
+    will-change: transform;
+  }
+  
+  /* Faster transitions on mobile */
+  .durationMedium {
+    animation-duration: var(--md-motion-duration-short4) !important;
+  }
+  
+  .durationLong {
+    animation-duration: var(--md-motion-duration-medium2) !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .page {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    position: relative !important;
+  }
+  
+  .exitForward,
+  .exitBackward,
+  .exitUp,
+  .exitDown {
+    display: none !important;
+  }
+}

@@ -1477,3 +1477,6 @@
 /* ===
 == MOBILE OPTIMIZATION IMPORTS ===== */
 /* Import mobile-specific styles and optimizations */
+/* Impo
+rt Material 3 animation styles */
+@import './material3-animations.css';
