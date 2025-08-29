@@ -15,6 +15,7 @@ import useNetworkStatus from '@/hooks/useNetworkStatus';
 import Material3Card from '@/design-system/components/Card';
 import Material3Button from '@/design-system/components/Button';
 import Material3Modal from '@/design-system/components/Modal';
+import { getResponsiveSpacing } from '@/design-system/utils/mobile-touch';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -525,13 +526,18 @@ export default function Summary({
     return '';
   };
 
+  // Get responsive spacing for mobile optimization
+  const cardSpacing = getResponsiveSpacing('md');
+  const sectionSpacing = getResponsiveSpacing('sm');
+  const buttonSpacing = getResponsiveSpacing('xs');
+
   return (
     <Material3Card data-testid="summary" className="h-full">
       {/* Header */}
-      <div className="p-6 pb-4 border-b border-outline-variant">
+      <div className={`${cardSpacing.padding} pb-4 border-b border-outline-variant`}>
         <div className="flex justify-between items-center">
           <h5 className="mb-0 text-lg font-medium" role="heading" aria-level={2}>Summary</h5>
-          <div className="flex gap-2 items-center">
+          <div className={`flex ${buttonSpacing.gap} items-center`}>
             {apiKey && (!aiSummary) && (
               <Material3Button
                 variant="outlined"
@@ -590,10 +596,10 @@ export default function Summary({
         </div>
       </div>
       
-      <div className="p-6" data-testid="summary-body">
+      <div className={`${cardSpacing.padding}`} data-testid="summary-body">
         {status && (
           <div 
-            className={`p-4 rounded-lg mb-6 ${
+            className={`p-4 rounded-lg ${sectionSpacing.margin}b-6 ${
               status.className.includes('statusMessageEarly') 
                 ? 'bg-success-container text-on-success-container'
                 : status.className.includes('statusMessageLate')
@@ -607,39 +613,39 @@ export default function Summary({
         )}
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" data-testid="stats-grid">
+        <div className={`grid grid-cols-2 md:grid-cols-4 ${sectionSpacing.gap} ${sectionSpacing.margin}b-6`} data-testid="stats-grid">
           <Material3Card className="text-center" data-testid="stat-card-planned">
-            <div className="p-4 text-center">
-              <div className="text-sm text-on-surface-variant mb-2" data-testid="stat-label-planned">Planned Time</div>
+            <div className={`${sectionSpacing.padding} text-center`}>
+              <div className={`text-sm text-on-surface-variant ${sectionSpacing.margin}b-2`} data-testid="stat-label-planned">Planned Time</div>
               <div className="text-2xl font-bold" data-testid="stat-value-planned">{formatDuration(totalDuration)}</div>
             </div>
           </Material3Card>
           
           <Material3Card className="text-center" data-testid="stat-card-spent">
-            <div className="p-4 text-center">
-              <div className="text-sm text-on-surface-variant mb-2" data-testid="stat-label-spent">Spent Time</div>
+            <div className={`${sectionSpacing.padding} text-center`}>
+              <div className={`text-sm text-on-surface-variant ${sectionSpacing.margin}b-2`} data-testid="stat-label-spent">Spent Time</div>
               <div className="text-2xl font-bold" data-testid="stat-value-spent">{formatDuration(elapsedTime)}</div>
             </div>
           </Material3Card>
           
           <Material3Card className="text-center" data-testid="stat-card-idle">
-            <div className="p-4 text-center">
-              <div className="text-sm text-on-surface-variant mb-2" data-testid="stat-label-idle">Idle Time</div>
+            <div className={`${sectionSpacing.padding} text-center`}>
+              <div className={`text-sm text-on-surface-variant ${sectionSpacing.margin}b-2`} data-testid="stat-label-idle">Idle Time</div>
               <div className="text-2xl font-bold" data-testid="stat-value-idle">{formatDuration(stats.idleTime)}</div>
             </div>
           </Material3Card>
           
           <Material3Card className="text-center" data-testid="stat-card-overtime">
-            <div className="p-4 text-center">
-              <div className="text-sm text-on-surface-variant mb-2" data-testid="stat-label-overtime">Overtime</div>
+            <div className={`${sectionSpacing.padding} text-center`}>
+              <div className={`text-sm text-on-surface-variant ${sectionSpacing.margin}b-2`} data-testid="stat-label-overtime">Overtime</div>
               <div className="text-2xl font-bold" data-testid="stat-value-overtime">{formatDuration(overtime)}</div>
             </div>
           </Material3Card>
         </div>
 
         {activityTimes.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-lg font-medium mb-4" data-testid="activity-list-heading">
+          <div className={`${sectionSpacing.margin}t-6`}>
+            <h3 className={`text-lg font-medium ${sectionSpacing.margin}b-4`} data-testid="activity-list-heading">
               Time Spent per Activity
             </h3>
             <div className="space-y-2" data-testid="activity-list">

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Material3Card from '@/design-system/components/Card';
 import Material3Input from '@/design-system/components/Input';
 import Material3Button from '@/design-system/components/Button';
+import { getResponsiveSpacing } from '@/design-system/utils/mobile-touch';
 
 interface TimeSetupProps {
   onTimeSet: (durationInSeconds: number) => void;
@@ -55,14 +56,19 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
     onTimeSet(durationInSeconds);
   };
 
+  // Get responsive spacing for mobile optimization
+  const cardSpacing = getResponsiveSpacing('md');
+  const formSpacing = getResponsiveSpacing('sm');
+  const buttonSpacing = getResponsiveSpacing('lg');
+
   return (
     <Material3Card className="w-full max-w-md" data-testid="time-setup">
-      <div className="p-6">
-        <h5 className="text-lg font-medium mb-6">Set Time</h5>
+      <div className={`${cardSpacing.padding}`}>
+        <h5 className={`text-lg font-medium ${formSpacing.margin}b-6`}>Set Time</h5>
         
         {/* Material 3 Segmented Button Group for mode selection */}
         <div 
-          className="flex bg-surface-container-highest rounded-full p-1 mb-6" 
+          className={`flex bg-surface-container-highest rounded-full p-1 ${formSpacing.margin}b-6`}
           role="group" 
           aria-label="Time setup mode selection"
         >
@@ -84,7 +90,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
         
         <form onSubmit={handleSubmit} role="form" id="time-setup-form">
           {setupMode === 'duration' ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4" data-testid="duration-inputs">
+            <div className={`grid grid-cols-1 md:grid-cols-3 ${formSpacing.gap}`} data-testid="duration-inputs">
               <div data-testid="hours-input-group">
                 <Material3Input
                   type="number"
@@ -145,7 +151,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
         </form>
         
         {/* Submit button */}
-        <div className="mt-6">
+        <div className={`${buttonSpacing.margin}t-6`}>
           <Material3Button
             type="submit"
             variant="filled"

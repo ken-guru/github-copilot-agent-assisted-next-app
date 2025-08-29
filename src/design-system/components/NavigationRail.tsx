@@ -10,6 +10,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { Material3ElevationLevel } from '../types';
+import { getTouchTargetSize, isTouchDevice, createRippleEffect } from '../utils/mobile-touch';
 
 export interface Material3NavigationRailItem {
   href: string;
@@ -151,8 +152,10 @@ const Material3NavigationRailItem: React.FC<Material3NavigationRailItemProps> = 
   onClick,
 }) => {
   const { href, label, icon, badge, disabled = false } = item;
+  const isTouch = isTouchDevice();
+  const touchTarget = getTouchTargetSize('medium');
 
-  // Base classes for navigation rail item
+  // Base classes for navigation rail item with touch target compliance
   const baseClasses = [
     'relative',
     'flex',
@@ -160,7 +163,7 @@ const Material3NavigationRailItem: React.FC<Material3NavigationRailItemProps> = 
     'items-center',
     'justify-center',
     'w-full',
-    'h-14', // 56px height
+    isTouch ? 'min-h-[48px]' : 'h-14', // Ensure 48px minimum on touch devices
     'p-2',
     'text-center',
     'transition-all',
@@ -226,14 +229,22 @@ const Material3NavigationRailItem: React.FC<Material3NavigationRailItemProps> = 
     ...indicatorClasses,
   ].filter(Boolean).join(' ');
 
-  // Handle click
+  // Handle click with ripple effect
   const handleClick = React.useCallback((event: React.MouseEvent) => {
     if (disabled) {
       event.preventDefault();
       return;
     }
+
+    // Create ripple effect
+    createRippleEffect(event.currentTarget as HTMLElement, event.nativeEvent, {
+      color: isActive ? 'rgba(var(--md-sys-color-on-secondary-container), 0.12)' : 'rgba(var(--md-sys-color-on-surface), 0.12)',
+      bounded: true,
+      duration: 600
+    });
+
     onClick?.(href);
-  }, [disabled, href, onClick]);
+  }, [disabled, href, onClick, isActive]);
 
   // Handle keyboard navigation
   const handleKeyDown = React.useCallback((event: React.KeyboardEvent) => {

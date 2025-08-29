@@ -1,6 +1,6 @@
 /**
  * Material 3 Button Component
- * Comprehensive button implementation using Material 3 design tokens
+ * Comprehensive button implementation using Material 3 design tokens with loading animations
  */
 
 'use client';
@@ -12,11 +12,14 @@ import { Material3SpacingSystem } from '../tokens/spacing';
 import { Material3ElevationSystem } from '../tokens/elevation';
 import { RippleEffect } from './MicroInteractions';
 import { MotionContainer } from './SharedMotion';
+import { getTouchTargetSize, isTouchDevice } from '../utils/mobile-touch';
+import { useLoadingAnimation } from '../hooks/useAnimations';
 
 export interface Material3ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'filled' | 'outlined' | 'text' | 'elevated' | 'tonal';
   size?: 'small' | 'medium' | 'large';
   loading?: boolean;
+  loadingType?: 'spinner' | 'pulse' | 'shimmer';
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
   iconOnly?: boolean;
@@ -28,6 +31,7 @@ const Material3Button = React.forwardRef<HTMLButtonElement, Material3ButtonProps
   variant = 'filled',
   size = 'medium',
   loading = false,
+  loadingType = 'spinner',
   startIcon,
   endIcon,
   iconOnly = false,
@@ -42,37 +46,98 @@ const Material3Button = React.forwardRef<HTMLButtonElement, Material3ButtonProps
   const [isDark, setIsDark] = React.useState(false);
   const [rippleTrigger, setRippleTrigger] = React.useState(false);
   
+  // Loading animation hook
+  const loadingAnimationRef = useLoadingAnimation(loadingType);
+  const [stopLoading, setStopLoading] = React.useState<(() => void) | null>(null);
+  
   // Interactive state management
   const [interactionState, setInteractionState] = React.useState({
     isHovered: false,
     isFocused: false,
     isPressed: false
   });
+
+  // Handle loading state changes
+  React.useEffect(() => {
+    if (loading && loadingAnimationRef.ref.current) {
+      const stop = loadingAnimationRef.startLoading();
+      setStopLoading(() => stop);
+    } else if (!loading && stopLoading) {
+      stopLoading();
+      setStopLoading(null);
+    }
+  }, [loading, loadingAnimationRef, stopLoading]);
   
-  // Event handlers for interactive states
+  // Enhanced interaction handlers with animations
   const handleMouseEnter = React.useCallback(() => {
     setInteractionState(prev => ({ ...prev, isHovered: true }));
-  }, []);
+    
+    if (buttonRef.current && !loading && !disabled) {
+      // Create hover animation
+      const { createHoverAnimation } = require('../utils/animation-utils');
+      const { onMouseEnter } = createHoverAnimation(buttonRef.current, {
+        scale: 1.02,
+        elevation: variant === 'text' ? 1 : 2
+      });
+      onMouseEnter();
+    }
+  }, [loading, disabled, variant]);
   
   const handleMouseLeave = React.useCallback(() => {
     setInteractionState(prev => ({ ...prev, isHovered: false, isPressed: false }));
-  }, []);
+    
+    if (buttonRef.current && !loading && !disabled) {
+      // Create hover exit animation
+      const { createHoverAnimation } = require('../utils/animation-utils');
+      const { onMouseLeave } = createHoverAnimation(buttonRef.current, {
+        scale: 1.02,
+        elevation: variant === 'text' ? 1 : 2
+      });
+      onMouseLeave();
+    }
+  }, [loading, disabled, variant]);
   
   const handleFocus = React.useCallback(() => {
     setInteractionState(prev => ({ ...prev, isFocused: true }));
-  }, []);
+    
+    if (buttonRef.current && !loading && !disabled) {
+      // Create focus animation
+      const { createFocusAnimation } = require('../utils/animation-utils');
+      const { onFocus } = createFocusAnimation(buttonRef.current);
+      onFocus();
+    }
+  }, [loading, disabled]);
   
   const handleBlur = React.useCallback(() => {
     setInteractionState(prev => ({ ...prev, isFocused: false }));
-  }, []);
+    
+    if (buttonRef.current && !loading && !disabled) {
+      // Create focus exit animation
+      const { createFocusAnimation } = require('../utils/animation-utils');
+      const { onBlur } = createFocusAnimation(buttonRef.current);
+      onBlur();
+    }
+  }, [loading, disabled]);
   
   const handleMouseDown = React.useCallback(() => {
     setInteractionState(prev => ({ ...prev, isPressed: true }));
-  }, []);
+    
+    if (buttonRef.current && !loading && !disabled) {
+      // Create press animation (scale down)
+      buttonRef.current.style.transform = 'scale(0.98)';
+      buttonRef.current.style.transition = 'transform 100ms cubic-bezier(0.3, 0.0, 0.8, 0.15)';
+    }
+  }, [loading, disabled]);
   
   const handleMouseUp = React.useCallback(() => {
     setInteractionState(prev => ({ ...prev, isPressed: false }));
-  }, []);
+    
+    if (buttonRef.current && !loading && !disabled) {
+      // Create press release animation (scale back up)
+      buttonRef.current.style.transform = 'scale(1)';
+      buttonRef.current.style.transition = 'transform 150ms cubic-bezier(0.05, 0.7, 0.1, 1.0)';
+    }
+  }, [loading, disabled]);
 
   // Forward ref handling
   React.useImperativeHandle(ref, () => buttonRef.current as HTMLButtonElement);
@@ -98,31 +163,37 @@ const Material3Button = React.forwardRef<HTMLButtonElement, Material3ButtonProps
   const { base: spacing } = Material3SpacingSystem;
   const { scale: typography } = Material3Typography;
 
-  // Size configurations
+  // Check if device is touch-enabled for optimized sizing
+  const isTouch = isTouchDevice();
+  
+  // Size configurations with Material 3 touch target compliance
   const sizeConfig = {
     small: {
-      height: '2rem', // 32px
+      height: isTouch ? '3rem' : '2rem', // 48px on touch, 32px on desktop
       paddingX: spacing.medium2, // 16px
       paddingY: spacing.small3, // 8px
       fontSize: typography.labelMedium.fontSize,
       fontWeight: typography.labelMedium.fontWeight,
-      iconSize: '1rem'
+      iconSize: '1rem',
+      ...getTouchTargetSize('small')
     },
     medium: {
-      height: '2.5rem', // 40px
+      height: isTouch ? '3rem' : '2.5rem', // 48px on touch, 40px on desktop
       paddingX: spacing.medium4, // 24px
       paddingY: spacing.small4, // 10px
       fontSize: typography.labelLarge.fontSize,
       fontWeight: typography.labelLarge.fontWeight,
-      iconSize: '1.25rem'
+      iconSize: '1.25rem',
+      ...getTouchTargetSize('medium')
     },
     large: {
-      height: '3.5rem', // 56px
+      height: '3.5rem', // 56px (already exceeds 48px minimum)
       paddingX: spacing.large2, // 32px
       paddingY: spacing.medium2, // 16px
       fontSize: typography.titleMedium.fontSize,
       fontWeight: typography.titleMedium.fontWeight,
-      iconSize: '1.5rem'
+      iconSize: '1.5rem',
+      ...getTouchTargetSize('large')
     }
   };
 
@@ -184,7 +255,7 @@ const Material3Button = React.forwardRef<HTMLButtonElement, Material3ButtonProps
     onClick?.(event);
   }, [loading, disabled, onClick]);
 
-  // Dynamic styles
+  // Dynamic styles with touch target compliance
   const buttonStyles: React.CSSProperties = {
     position: 'relative',
     display: 'inline-flex',
@@ -196,7 +267,8 @@ const Material3Button = React.forwardRef<HTMLButtonElement, Material3ButtonProps
     paddingRight: iconOnly ? '0' : currentSize.paddingX,
     paddingTop: currentSize.paddingY,
     paddingBottom: currentSize.paddingY,
-    minWidth: iconOnly ? currentSize.height : undefined,
+    minWidth: iconOnly ? currentSize.height : isTouch ? currentSize.minWidth : undefined,
+    minHeight: isTouch ? currentSize.minHeight : undefined,
     width: fullWidth ? '100%' : undefined,
     
     // Typography
@@ -234,6 +306,17 @@ const Material3Button = React.forwardRef<HTMLButtonElement, Material3ButtonProps
     outlineOffset: '2px'
   } : {};
 
+  // Combined ref for both button and loading animation
+  const combinedRef = React.useCallback((node: HTMLButtonElement | null) => {
+    buttonRef.current = node;
+    loadingAnimationRef.ref.current = node;
+    if (typeof ref === 'function') {
+      ref(node);
+    } else if (ref) {
+      ref.current = node;
+    }
+  }, [ref, loadingAnimationRef.ref]);
+
   return (
     <MotionContainer
       preset="scaleIn"
@@ -241,10 +324,10 @@ const Material3Button = React.forwardRef<HTMLButtonElement, Material3ButtonProps
       duration="short2"
     >
       <button
-        ref={buttonRef}
+        ref={combinedRef}
         type="button"
         disabled={disabled || loading}
-        className={className}
+        className={`material3-button ${loading ? 'loading' : ''} ${className}`}
         onClick={handleClick}
         onFocus={handleFocus}
         onBlur={handleBlur}
@@ -288,65 +371,88 @@ const Material3Button = React.forwardRef<HTMLButtonElement, Material3ButtonProps
             display: 'flex',
             alignItems: 'center',
             gap: spacing.small3,
-            zIndex: 1
+            zIndex: 1,
+            opacity: loading ? 0.7 : 1,
+            transition: 'opacity 200ms cubic-bezier(0.2, 0, 0, 1)'
           }}
         >
-          {/* Start icon or loading */}
-          {loading ? (
+          {/* Loading state content */}
+          {loading && (
             <div
               style={{
-                width: currentSize.iconSize,
-                height: currentSize.iconSize,
-                border: '2px solid currentColor',
-                borderTop: '2px solid transparent',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite'
-              }}
-            />
-          ) : startIcon && !iconOnly ? (
-            <span
-              style={{
                 display: 'flex',
                 alignItems: 'center',
-                fontSize: currentSize.iconSize
+                gap: spacing.small3
               }}
             >
-              {startIcon}
-            </span>
-          ) : null}
+              {loadingType === 'spinner' && (
+                <div
+                  className="loading-spinner"
+                  style={{
+                    width: currentSize.iconSize,
+                    height: currentSize.iconSize,
+                    border: '2px solid currentColor',
+                    borderTop: '2px solid transparent',
+                    borderRadius: '50%'
+                  }}
+                />
+              )}
+              {!iconOnly && (
+                <span style={{ whiteSpace: 'nowrap' }}>
+                  {children}
+                </span>
+              )}
+            </div>
+          )}
           
-          {/* Icon only content */}
-          {iconOnly && !loading ? (
-            <span
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                fontSize: currentSize.iconSize
-              }}
-            >
-              {startIcon || endIcon}
-            </span>
-          ) : null}
-          
-          {/* Text content */}
-          {!iconOnly && !loading ? (
-            <span style={{ whiteSpace: 'nowrap' }}>
-              {children}
-            </span>
-          ) : null}
-          
-          {/* End icon */}
-          {endIcon && !iconOnly && !loading ? (
-            <span
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                fontSize: currentSize.iconSize
-              }}
-            >
-              {endIcon}
-            </span>
-          ) : null}
+          {/* Normal state content */}
+          {!loading && (
+            <>
+              {/* Start icon */}
+              {startIcon && !iconOnly && (
+                <span
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: currentSize.iconSize
+                  }}
+                >
+                  {startIcon}
+                </span>
+              )}
+              
+              {/* Icon only content */}
+              {iconOnly ? (
+                <span
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: currentSize.iconSize
+                  }}
+                >
+                  {startIcon || endIcon}
+                </span>
+              ) : (
+                /* Text content */
+                <span style={{ whiteSpace: 'nowrap' }}>
+                  {children}
+                </span>
+              )}
+              
+              {/* End icon */}
+              {endIcon && !iconOnly && (
+                <span
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: currentSize.iconSize
+                  }}
+                >
+                  {endIcon}
+                </span>
+              )}
+            </>
+          )}
         </div>
         
         {/* Spinner keyframes */}

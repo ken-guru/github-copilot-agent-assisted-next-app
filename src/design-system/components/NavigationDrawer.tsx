@@ -10,6 +10,8 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { Material3ElevationLevel } from '../types';
+import { getTouchTargetSize, isTouchDevice, createRippleEffect } from '../utils/mobile-touch';
+import { addDrawerSwipeGestures } from '../utils/gesture-handlers';
 
 export interface Material3DrawerItem {
   href: string;
@@ -49,6 +51,26 @@ const Material3NavigationDrawer = React.forwardRef<HTMLElement, Material3Navigat
   onItemClick,
 }, ref) => {
   const pathname = usePathname();
+
+  // Enable swipe gestures for modal drawer
+  React.useEffect(() => {
+    if (variant !== 'modal' || !isTouchDevice()) return;
+
+    const cleanup = addDrawerSwipeGestures({
+      onOpen: () => {
+        // Only open if not already open
+        if (!isOpen) {
+          // Note: In a real implementation, you'd need to detect edge swipes
+          // This is simplified for demo purposes
+        }
+      },
+      onClose,
+      isOpen: () => isOpen,
+      edgeThreshold: 20
+    });
+
+    return cleanup;
+  }, [variant, isOpen, onClose]);
 
   // Handle escape key
   React.useEffect(() => {
@@ -259,15 +281,17 @@ const Material3DrawerItem: React.FC<Material3DrawerItemProps> = ({
   onClick,
 }) => {
   const { href, label, icon, badge, disabled = false } = item;
+  const isTouch = isTouchDevice();
+  const touchTarget = getTouchTargetSize('medium');
 
-  // Base classes for drawer item
+  // Base classes for drawer item with touch target compliance
   const baseClasses = [
     'relative',
     'flex',
     'items-center',
     'gap-3',
     'w-full',
-    'h-14', // 56px height
+    isTouch ? 'min-h-[48px]' : 'h-14', // Ensure 48px minimum on touch devices
     'px-3',
     'transition-all',
     'm3-duration-short4',
@@ -317,14 +341,22 @@ const Material3DrawerItem: React.FC<Material3DrawerItemProps> = ({
     ...backgroundClasses,
   ].filter(Boolean).join(' ');
 
-  // Handle click
+  // Handle click with ripple effect
   const handleClick = React.useCallback((event: React.MouseEvent) => {
     if (disabled) {
       event.preventDefault();
       return;
     }
+
+    // Create ripple effect
+    createRippleEffect(event.currentTarget as HTMLElement, event.nativeEvent, {
+      color: isActive ? 'rgba(var(--md-sys-color-on-secondary-container), 0.12)' : 'rgba(var(--md-sys-color-on-surface), 0.12)',
+      bounded: true,
+      duration: 600
+    });
+
     onClick(href);
-  }, [disabled, href, onClick]);
+  }, [disabled, href, onClick, isActive]);
 
   // Handle keyboard navigation
   const handleKeyDown = React.useCallback((event: React.KeyboardEvent) => {

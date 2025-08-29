@@ -15,6 +15,7 @@ import Material3Card from '@/design-system/components/Card';
 import Material3Button from '@/design-system/components/Button';
 import Material3Modal from '@/design-system/components/Modal';
 import { getResponsivePadding, getResponsiveGap } from '@/design-system/utils/responsive-layout';
+import { getResponsiveSpacing } from '@/design-system/utils/mobile-touch';
 
 // Use canonical Activity type
 type Activity = CanonicalActivity & { colors?: ColorSet };
@@ -243,13 +244,18 @@ export default function ActivityManager({
 
   // Note: `online` is intentionally included in the handleCreateShare dependency array
 
+  // Get responsive spacing for mobile optimization
+  const cardSpacing = getResponsiveSpacing('md');
+  const sectionSpacing = getResponsiveSpacing('sm');
+  const buttonSpacing = getResponsiveSpacing('xs');
+
   return (
     <Material3Card className="h-full flex flex-col" data-testid="activity-manager">
       {/* Header with title and action buttons */}
-      <div className={`${getResponsivePadding('card')} pb-3 sm:pb-4 border-b border-outline-variant`}>
+      <div className={`${cardSpacing.padding} pb-3 sm:pb-4 border-b border-outline-variant`}>
         <div className="flex justify-between items-center">
           <h5 className="text-lg font-medium mb-0">Activities</h5>
-          <div className={`flex ${getResponsiveGap('sm')}`}>
+          <div className={`flex ${buttonSpacing.gap}`}>
             {onExtendDuration && (
               <Material3Button 
                 variant="outlined" 
@@ -296,7 +302,7 @@ export default function ActivityManager({
         </div>
       </div>
       
-      <div className={`flex flex-col flex-grow overflow-hidden ${getResponsivePadding('card')} pt-3 sm:pt-4`}>
+      <div className={`flex flex-col flex-grow overflow-hidden ${cardSpacing.padding} pt-3 sm:pt-4`}>
         {/* Timer Progress Section - isolated from activity form */}
         <TimerProgressSection
           entries={timelineEntries}
@@ -318,7 +324,7 @@ export default function ActivityManager({
         
         {/* Activities List - scrollable if needed */}
         <div className="flex-grow" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
-          <div className={`${getResponsiveGap('sm')} space-y-3 sm:space-y-2`} data-testid="activity-list">
+          <div className={`${sectionSpacing.gap} space-y-3 sm:space-y-2`} data-testid="activity-list">
             {visibleActivities.map((activity) => (
               <div 
                 key={activity.id}
@@ -339,7 +345,7 @@ export default function ActivityManager({
 
           {/* Hidden activities control */}
           {hiddenActivities.length > 0 && (
-            <div className="mt-6">
+            <div className={`${sectionSpacing.margin}t-6`}>
               <Material3Button
                 variant="outlined"
                 size="small"

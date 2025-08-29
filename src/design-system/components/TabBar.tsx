@@ -10,6 +10,8 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { Material3ElevationLevel } from '../types';
+import { getTouchTargetSize, isTouchDevice, createRippleEffect } from '../utils/mobile-touch';
+import { addTabSwipeNavigation } from '../utils/gesture-handlers';
 
 export interface Material3TabItem {
   href: string;
@@ -40,6 +42,25 @@ const Material3TabBar = React.forwardRef<HTMLElement, Material3TabBarProps>(({
 }, ref) => {
   const pathname = usePathname();
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const tabBarRef = React.useRef<HTMLElement>(null);
+
+  // Enable swipe navigation for mobile devices
+  React.useEffect(() => {
+    if (!isTouchDevice() || !scrollContainerRef.current || !onTabClick) return;
+
+    const tabElements = tabs.map(tab => ({
+      id: tab.href,
+      element: scrollContainerRef.current!.querySelector(`[data-tab-href="${tab.href}"]`) as HTMLElement
+    })).filter(tab => tab.element);
+
+    const cleanup = addTabSwipeNavigation(scrollContainerRef.current, tabElements, {
+      onTabChange: (tabId) => onTabClick(tabId),
+      getCurrentTab: () => pathname,
+      enableSwipeNavigation: true
+    });
+
+    return cleanup;
+  }, [tabs, pathname, onTabClick]);
 
   // Base classes for tab bar container
   const baseClasses = [
@@ -137,15 +158,17 @@ const Material3Tab: React.FC<Material3TabProps> = ({
   onClick,
 }) => {
   const { href, label, icon, badge, disabled = false } = tab;
+  const isTouch = isTouchDevice();
+  const touchTarget = getTouchTargetSize('medium');
 
-  // Base classes for tab item
+  // Base classes for tab item with touch target compliance
   const baseClasses = [
     'relative',
     'flex',
     'items-center',
     'justify-center',
     'gap-2',
-    'h-12', // 48px height
+    isTouch ? 'min-h-[48px]' : 'h-12', // Ensure 48px minimum on touch devices
     'px-4',
     'text-center',
     'transition-all',
@@ -214,14 +237,22 @@ const Material3Tab: React.FC<Material3TabProps> = ({
     ...indicatorClasses,
   ].filter(Boolean).join(' ');
 
-  // Handle click
+  // Handle click with ripple effect
   const handleClick = React.useCallback((event: React.MouseEvent) => {
     if (disabled) {
       event.preventDefault();
       return;
     }
+
+    // Create ripple effect
+    createRippleEffect(event.currentTarget as HTMLElement, event.nativeEvent, {
+      color: isActive ? 'rgba(var(--md-sys-color-primary), 0.16)' : 'rgba(var(--md-sys-color-on-surface), 0.12)',
+      bounded: true,
+      duration: 600
+    });
+
     onClick?.(href);
-  }, [disabled, href, onClick]);
+  }, [disabled, href, onClick, isActive]);
 
   // Handle keyboard navigation
   const handleKeyDown = React.useCallback((event: React.KeyboardEvent) => {
@@ -243,6 +274,7 @@ const Material3Tab: React.FC<Material3TabProps> = ({
       aria-label={label}
       aria-selected={isActive}
       aria-disabled={disabled}
+      data-tab-href={href} // Add data attribute for gesture navigation
     >
       {/* Icon */}
       {showIcon && icon && (

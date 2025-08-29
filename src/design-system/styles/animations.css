@@ -1,0 +1,497 @@
+/**
+ * Material 3 Expressive Animation CSS Classes
+ * Provides CSS-based animations that complement the JavaScript animation utilities
+ */
+
+/* Animation base classes */
+.animate-fade-in {
+  animation: material3-fade-in var(--m3-motion-duration-medium2) var(--m3-motion-easing-emphasized) forwards;
+}
+
+.animate-fade-out {
+  animation: material3-fade-out var(--m3-motion-duration-medium2) var(--m3-motion-easing-emphasized) forwards;
+}
+
+.animate-scale-in {
+  animation: material3-scale-in var(--m3-motion-duration-medium2) var(--m3-motion-easing-expressive-entrance) forwards;
+}
+
+.animate-scale-out {
+  animation: material3-scale-out var(--m3-motion-duration-medium2) var(--m3-motion-easing-expressive-exit) forwards;
+}
+
+.animate-slide-in-up {
+  animation: material3-slide-in-up var(--m3-motion-duration-medium2) var(--m3-motion-easing-expressive-entrance) forwards;
+}
+
+.animate-slide-in-down {
+  animation: material3-slide-in-down var(--m3-motion-duration-medium2) var(--m3-motion-easing-expressive-entrance) forwards;
+}
+
+.animate-slide-in-left {
+  animation: material3-slide-in-left var(--m3-motion-duration-medium2) var(--m3-motion-easing-expressive-entrance) forwards;
+}
+
+.animate-slide-in-right {
+  animation: material3-slide-in-right var(--m3-motion-duration-medium2) var(--m3-motion-easing-expressive-entrance) forwards;
+}
+
+.animate-bounce-in {
+  animation: material3-bounce-in var(--m3-motion-duration-long2) var(--m3-motion-easing-bounce) forwards;
+}
+
+.animate-bounce-out {
+  animation: material3-bounce-out var(--m3-motion-duration-medium3) var(--m3-motion-easing-emphasized) forwards;
+}
+
+.animate-pulse {
+  animation: material3-pulse var(--m3-motion-duration-long1) var(--m3-motion-easing-standard) infinite;
+}
+
+.animate-spin {
+  animation: material3-spin var(--m3-motion-duration-long2) linear infinite;
+}
+
+.animate-shimmer {
+  animation: material3-shimmer var(--m3-motion-duration-extra-long2) linear infinite;
+}
+
+/* Keyframe definitions */
+@keyframes material3-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes material3-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes material3-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes material3-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes material3-slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes material3-slide-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes material3-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes material3-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes material3-bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes material3-bounce-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes material3-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes material3-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes material3-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* State-based animations */
+.hover-state {
+  transform: scale(1.02);
+  box-shadow: var(--m3-elevation-2);
+  transition: transform var(--m3-motion-duration-short4) var(--m3-motion-easing-expressive-entrance),
+              box-shadow var(--m3-motion-duration-short4) var(--m3-motion-easing-expressive-entrance);
+}
+
+.focus-state {
+  outline: 2px solid var(--m3-primary);
+  box-shadow: 0 0 0 4px rgba(var(--m3-primary-rgb), 0.12);
+  transition: outline var(--m3-motion-duration-short3) var(--m3-motion-easing-expressive-entrance),
+              box-shadow var(--m3-motion-duration-short3) var(--m3-motion-easing-expressive-entrance);
+}
+
+.loading {
+  pointer-events: none;
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* Page transition classes */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity var(--m3-motion-duration-medium3) var(--m3-motion-easing-emphasized),
+              transform var(--m3-motion-duration-medium3) var(--m3-motion-easing-emphasized);
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity var(--m3-motion-duration-medium3) var(--m3-motion-easing-emphasized),
+              transform var(--m3-motion-duration-medium3) var(--m3-motion-easing-emphasized);
+}
+
+/* Stagger animation utilities */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+}
+
+.stagger-item.animate {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity var(--m3-motion-duration-medium2) var(--m3-motion-easing-expressive-entrance),
+              transform var(--m3-motion-duration-medium2) var(--m3-motion-easing-expressive-entrance);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-fade-in,
+  .animate-fade-out,
+  .animate-scale-in,
+  .animate-scale-out,
+  .animate-slide-in-up,
+  .animate-slide-in-down,
+  .animate-slide-in-left,
+  .animate-slide-in-right,
+  .animate-bounce-in,
+  .animate-bounce-out {
+    animation: none !important;
+  }
+
+  .animate-pulse,
+  .animate-spin,
+  .animate-shimmer {
+    animation: none !important;
+  }
+
+  .hover-state {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .focus-state {
+    transition: none !important;
+  }
+
+  .page-transition-enter,
+  .page-transition-enter-active,
+  .page-transition-exit,
+  .page-transition-exit-active {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .stagger-item {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .stagger-item.animate {
+    transition: none !important;
+  }
+}
+
+/* Loading spinner styles */
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--m3-surface-variant);
+  border-top: 2px solid var(--m3-primary);
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* Shimmer background for loading states */
+.shimmer-background {
+  background: linear-gradient(90deg, 
+    var(--m3-surface) 0%, 
+    var(--m3-surface-variant) 50%, 
+    var(--m3-surface) 100%);
+  background-size: 200% 100%;
+}
+
+/* Interactive element hover effects */
+.material3-interactive {
+  transition: all var(--m3-motion-duration-short4) var(--m3-motion-easing-standard);
+  cursor: pointer;
+}
+
+.material3-interactive:hover {
+  transform: scale(1.01);
+  box-shadow: var(--m3-elevation-2);
+}
+
+.material3-interactive:active {
+  transform: scale(0.99);
+  transition-duration: var(--m3-motion-duration-short1);
+}
+
+/* Card hover animations */
+.material3-card {
+  transition: all var(--m3-motion-duration-short4) var(--m3-motion-easing-standard);
+}
+
+.material3-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--m3-elevation-3);
+}
+
+/* Button press animations */
+.material3-button {
+  transition: all var(--m3-motion-duration-short3) var(--m3-motion-easing-standard);
+  position: relative;
+  overflow: hidden;
+}
+
+.material3-button:active {
+  transform: scale(0.98);
+  transition-duration: var(--m3-motion-duration-short1);
+}
+
+/* Ripple effect container */
+.material3-ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.material3-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(var(--m3-primary-rgb), 0.2);
+  pointer-events: none;
+  animation: material3-ripple-effect var(--m3-motion-duration-medium2) var(--m3-motion-easing-standard) forwards;
+}
+
+@keyframes material3-ripple-effect {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Navigation transition effects */
+.nav-item {
+  transition: all var(--m3-motion-duration-short3) var(--m3-motion-easing-standard);
+}
+
+.nav-item:hover {
+  background-color: rgba(var(--m3-primary-rgb), 0.08);
+  color: var(--m3-primary);
+}
+
+.nav-item.active {
+  background-color: rgba(var(--m3-primary-rgb), 0.12);
+  color: var(--m3-primary);
+}
+
+/* Form field animations */
+.material3-field {
+  position: relative;
+  transition: all var(--m3-motion-duration-short3) var(--m3-motion-easing-standard);
+}
+
+.material3-field:focus-within {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(var(--m3-primary-rgb), 0.15);
+}
+
+.material3-field label {
+  transition: all var(--m3-motion-duration-short3) var(--m3-motion-easing-standard);
+}
+
+.material3-field:focus-within label,
+.material3-field.has-value label {
+  transform: translateY(-12px) scale(0.75);
+  color: var(--m3-primary);
+}
+
+/* Error state animations */
+.error-state {
+  animation: material3-shake var(--m3-motion-duration-medium1) var(--m3-motion-easing-emphasized);
+  border-color: var(--m3-error) !important;
+  color: var(--m3-error);
+}
+
+@keyframes material3-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+/* Success state animations */
+.success-state {
+  animation: material3-success-pulse var(--m3-motion-duration-medium2) var(--m3-motion-easing-emphasized);
+  border-color: var(--m3-tertiary) !important;
+  color: var(--m3-tertiary);
+}
+
+@keyframes material3-success-pulse {
+  0% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(var(--m3-tertiary-rgb), 0.7);
+  }
+  70% { 
+    transform: scale(1.02);
+    box-shadow: 0 0 0 4px rgba(var(--m3-tertiary-rgb), 0);
+  }
+  100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(var(--m3-tertiary-rgb), 0);
+  }
+}
+
+/* Toast/notification animations */
+.toast-enter {
+  opacity: 0;
+  transform: translateY(-100%) scale(0.9);
+}
+
+.toast-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: all var(--m3-motion-duration-medium2) var(--m3-motion-easing-expressive-entrance);
+}
+
+.toast-exit {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.toast-exit-active {
+  opacity: 0;
+  transform: translateY(-100%) scale(0.9);
+  transition: all var(--m3-motion-duration-medium2) var(--m3-motion-easing-expressive-exit);
+}

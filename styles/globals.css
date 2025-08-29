@@ -1,5 +1,6 @@
 /* Import Material 3 Expressive Design System */
 @import '../src/design-system/material-3-design-system.css';
+@import '../src/design-system/styles/animations.css';
 
 /* Global styles for the application */
 :root {

@@ -1,12 +1,13 @@
 /**
  * Material 3 Input Component
- * Comprehensive input implementation following Material 3 design principles
+ * Comprehensive input implementation following Material 3 design principles with enhanced animations
  */
 
 'use client';
 
 import React from 'react';
-import { isTouchDevice, getTouchTargetSize, addTouchHandlers } from '../utils/mobile-touch';
+import { isTouchDevice, getTouchTargetSize, addTouchHandlers, getResponsiveTextSize } from '../utils/mobile-touch';
+import { useHoverAnimation, useFocusAnimation } from '../hooks/useAnimations';
 
 export interface Material3InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   variant?: 'filled' | 'outlined';
@@ -24,6 +25,8 @@ export interface Material3InputProps extends Omit<React.InputHTMLAttributes<HTML
   keyboardType?: 'text' | 'email' | 'tel' | 'url' | 'numeric' | 'decimal';
   autocomplete?: string;
   touchFeedback?: boolean;
+  // Animation props
+  enhancedAnimations?: boolean;
 }
 
 const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>(({
@@ -43,12 +46,22 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
   keyboardType = 'text',
   autocomplete,
   touchFeedback = true,
+  enhancedAnimations = true,
   ...props
 }, ref) => {
   const [focused, setFocused] = React.useState(false);
   const [hasValue, setHasValue] = React.useState(false);
+  const [viewportHeight, setViewportHeight] = React.useState(0);
+  const [isHovered, setIsHovered] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+
+  // Animation hooks
+  const hoverAnimationRef = useHoverAnimation({
+    scale: 1.01,
+    elevation: 1
+  });
+  const focusAnimationRef = useFocusAnimation();
   
   // Generate unique ID if not provided
   const inputId = React.useId();
@@ -62,6 +75,37 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
   // Mobile detection
   const isTouch = isTouchDevice();
   const shouldOptimizeForMobile = mobileOptimized && isTouch;
+
+  // Virtual keyboard detection for iOS/Android
+  React.useEffect(() => {
+    if (!shouldOptimizeForMobile) return;
+
+    const initialViewportHeight = window.visualViewport?.height || window.innerHeight;
+    setViewportHeight(initialViewportHeight);
+
+    const handleViewportChange = () => {
+      const currentHeight = window.visualViewport?.height || window.innerHeight;
+      setViewportHeight(currentHeight);
+      
+      // Auto-scroll input into view when virtual keyboard appears
+      if (focused && currentHeight < initialViewportHeight * 0.75) {
+        setTimeout(() => {
+          inputRef.current?.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+        }, 100);
+      }
+    };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleViewportChange);
+      return () => window.visualViewport?.removeEventListener('resize', handleViewportChange);
+    } else {
+      window.addEventListener('resize', handleViewportChange);
+      return () => window.removeEventListener('resize', handleViewportChange);
+    }
+  }, [shouldOptimizeForMobile, focused]);
 
   // Check if input has value
   React.useEffect(() => {
@@ -94,26 +138,26 @@ const Material3Input = React.forwardRef<HTMLInputElement, Material3InputProps>((
   // Get mobile-optimized touch target size
   const touchTargetSize = shouldOptimizeForMobile ? getTouchTargetSize('medium') : null;
 
-  // Size-specific classes with mobile optimization
+  // Size-specific classes with mobile optimization and responsive text
   const sizeClasses = {
     small: {
       container: shouldOptimizeForMobile ? 'min-h-[48px]' : 'h-12',
-      input: shouldOptimizeForMobile ? 'px-4 py-3 text-base' : 'px-3 py-2 text-sm',
-      label: 'text-sm',
+      input: shouldOptimizeForMobile ? `px-4 py-3 ${getResponsiveTextSize('base')}` : 'px-3 py-2 text-sm',
+      label: getResponsiveTextSize('sm'),
       icon: 'w-4 h-4',
       iconContainer: shouldOptimizeForMobile ? 'w-12 min-h-[48px]' : 'w-8',
     },
     medium: {
       container: shouldOptimizeForMobile ? 'min-h-[52px]' : 'h-14',
-      input: shouldOptimizeForMobile ? 'px-4 py-4 text-base' : 'px-4 py-3',
-      label: '',
+      input: shouldOptimizeForMobile ? `px-4 py-4 ${getResponsiveTextSize('base')}` : 'px-4 py-3',
+      label: getResponsiveTextSize('base'),
       icon: 'w-5 h-5',
       iconContainer: shouldOptimizeForMobile ? 'w-14 min-h-[52px]' : 'w-10',
     },
     large: {
       container: shouldOptimizeForMobile ? 'min-h-[56px]' : 'h-16',
-      input: shouldOptimizeForMobile ? 'px-4 py-5 text-lg' : 'px-4 py-4 text-lg',
-      label: 'text-lg',
+      input: shouldOptimizeForMobile ? `px-4 py-5 ${getResponsiveTextSize('lg')}` : 'px-4 py-4 text-lg',
+      label: getResponsiveTextSize('lg'),
       icon: 'w-6 h-6',
       iconContainer: shouldOptimizeForMobile ? 'w-16 min-h-[56px]' : 'w-12',
     },
