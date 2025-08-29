@@ -21,7 +21,13 @@
     "type-check": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tests.json --noEmit",
     "clean-build": "node scripts/clean-build.js",
     "clean-build:full": "node scripts/clean-build.js --full",
-    "update-sw-version": "node scripts/update-service-worker-version.js"
+    "update-sw-version": "node scripts/update-service-worker-version.js",
+    "test:visual": "ts-node src/tests/visual-regression/run-visual-tests.ts",
+    "test:visual:update": "ts-node src/tests/visual-regression/run-visual-tests.ts -- --update-baselines",
+    "test:visual:headed": "ts-node src/tests/visual-regression/run-visual-tests.ts -- --headed",
+    "test:visual:suite": "ts-node src/tests/visual-regression/run-visual-tests.ts -- --suite=",
+    "test:visual:jest": "jest --config src/tests/visual-regression/jest.visual.config.js",
+    "test:qa": "npm run test:visual && npm run cypress:run && npm run test"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
@@ -45,12 +51,18 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "axe-playwright": "^2.0.3",
     "cypress": "^14.5.4",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
     "jest": "^30.0.5",
     "jest-axe": "^10.0.0",
     "jest-environment-jsdom": "^30.0.5",
+    "pixelmatch": "^6.0.0",
+    "playwright": "^1.49.1",
+    "pngjs": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   },
   "overrides": {
