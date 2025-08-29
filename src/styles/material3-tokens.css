@@ -377,6 +377,85 @@
   }
 }
 
+/* ===== RESPONSIVE TYPOGRAPHY TOKENS ===== */
+
+/* Responsive font size scaling */
+:root {
+  /* Base scale factor for responsive typography */
+  --md-sys-typescale-scale-factor: 1;
+  
+  /* Context-aware scaling factors */
+  --md-sys-typescale-scale-factor-compact: 0.875;
+  --md-sys-typescale-scale-factor-comfortable: 1;
+  --md-sys-typescale-scale-factor-spacious: 1.125;
+  
+  /* Expressive font weight variations */
+  --md-sys-typescale-font-weight-thin: 100;
+  --md-sys-typescale-font-weight-extra-light: 200;
+  --md-sys-typescale-font-weight-light: 300;
+  --md-sys-typescale-font-weight-regular: 400;
+  --md-sys-typescale-font-weight-medium: 500;
+  --md-sys-typescale-font-weight-semi-bold: 600;
+  --md-sys-typescale-font-weight-bold: 700;
+  --md-sys-typescale-font-weight-extra-bold: 800;
+  --md-sys-typescale-font-weight-black: 900;
+}
+
+/* Responsive typography scaling for different screen sizes */
+@media (max-width: 599px) {
+  :root {
+    /* Mobile scaling - slightly smaller for better readability */
+    --md-sys-typescale-display-large-font-size: calc(3.5625rem * 0.875); /* 49.5px */
+    --md-sys-typescale-display-medium-font-size: calc(2.8125rem * 0.875); /* 39.4px */
+    --md-sys-typescale-display-small-font-size: calc(2.25rem * 0.875); /* 31.5px */
+    --md-sys-typescale-headline-large-font-size: calc(2rem * 0.9); /* 28.8px */
+    --md-sys-typescale-headline-medium-font-size: calc(1.75rem * 0.9); /* 25.2px */
+    --md-sys-typescale-headline-small-font-size: calc(1.5rem * 0.9); /* 21.6px */
+    
+    /* Adjust line heights for mobile */
+    --md-sys-typescale-display-large-line-height: calc(4rem * 0.875); /* 56px */
+    --md-sys-typescale-display-medium-line-height: calc(3.25rem * 0.875); /* 45.5px */
+    --md-sys-typescale-display-small-line-height: calc(2.75rem * 0.875); /* 38.5px */
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1023px) {
+  :root {
+    /* Tablet scaling - maintain proportions */
+    --md-sys-typescale-display-large-font-size: calc(3.5625rem * 0.95); /* 54px */
+    --md-sys-typescale-display-medium-font-size: calc(2.8125rem * 0.95); /* 42.8px */
+    --md-sys-typescale-display-small-font-size: calc(2.25rem * 0.95); /* 34.2px */
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    /* Desktop scaling - full size or slightly larger for better hierarchy */
+    --md-sys-typescale-display-large-font-size: calc(3.5625rem * 1.05); /* 59.9px */
+    --md-sys-typescale-display-medium-font-size: calc(2.8125rem * 1.05); /* 47.3px */
+    --md-sys-typescale-display-small-font-size: calc(2.25rem * 1.05); /* 37.8px */
+  }
+}
+
+/* Context-aware typography scaling */
+.md-typography-context-compact {
+  --md-sys-typescale-scale-factor: var(--md-sys-typescale-scale-factor-compact);
+}
+
+.md-typography-context-comfortable {
+  --md-sys-typescale-scale-factor: var(--md-sys-typescale-scale-factor-comfortable);
+}
+
+.md-typography-context-spacious {
+  --md-sys-typescale-scale-factor: var(--md-sys-typescale-scale-factor-spacious);
+}
+
+/* Dynamic font sizing utility classes */
+.md-typography-dynamic {
+  font-size: calc(var(--md-sys-typescale-font-size, 1rem) * var(--md-sys-typescale-scale-factor));
+  line-height: calc(var(--md-sys-typescale-line-height, 1.5) * var(--md-sys-typescale-scale-factor));
+}
+
 /* ===== UTILITY CLASSES FOR MATERIAL 3 EXPRESSIVE ===== */
 
 /* Typography utility classes */
@@ -498,6 +577,105 @@
   font-size: var(--md-sys-typescale-label-small-font-size);
   line-height: var(--md-sys-typescale-label-small-line-height);
   letter-spacing: var(--md-sys-typescale-label-small-letter-spacing);
+}
+
+/* Expressive font weight utility classes */
+.md-font-weight-thin { font-weight: var(--md-sys-typescale-font-weight-thin); }
+.md-font-weight-extra-light { font-weight: var(--md-sys-typescale-font-weight-extra-light); }
+.md-font-weight-light { font-weight: var(--md-sys-typescale-font-weight-light); }
+.md-font-weight-regular { font-weight: var(--md-sys-typescale-font-weight-regular); }
+.md-font-weight-medium { font-weight: var(--md-sys-typescale-font-weight-medium); }
+.md-font-weight-semi-bold { font-weight: var(--md-sys-typescale-font-weight-semi-bold); }
+.md-font-weight-bold { font-weight: var(--md-sys-typescale-font-weight-bold); }
+.md-font-weight-extra-bold { font-weight: var(--md-sys-typescale-font-weight-extra-bold); }
+.md-font-weight-black { font-weight: var(--md-sys-typescale-font-weight-black); }
+
+/* Responsive typography utility classes */
+.md-typescale-responsive {
+  font-size: calc(var(--md-sys-typescale-font-size, 1rem) * var(--md-sys-typescale-scale-factor));
+  line-height: calc(var(--md-sys-typescale-line-height, 1.5) * var(--md-sys-typescale-scale-factor));
+}
+
+/* Enhanced visual hierarchy utility classes */
+.md-typography-hierarchy-primary {
+  font-weight: var(--md-sys-typescale-font-weight-bold);
+  color: var(--md-sys-color-on-surface);
+}
+
+.md-typography-hierarchy-secondary {
+  font-weight: var(--md-sys-typescale-font-weight-medium);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.md-typography-hierarchy-tertiary {
+  font-weight: var(--md-sys-typescale-font-weight-regular);
+  color: var(--md-sys-color-on-surface-variant);
+  opacity: 0.8;
+}
+
+/* Contextual typography variations */
+.md-typography-emphasis-high {
+  font-weight: var(--md-sys-typescale-font-weight-bold);
+  color: var(--md-sys-color-primary);
+}
+
+.md-typography-emphasis-medium {
+  font-weight: var(--md-sys-typescale-font-weight-medium);
+  color: var(--md-sys-color-on-surface);
+}
+
+.md-typography-emphasis-low {
+  font-weight: var(--md-sys-typescale-font-weight-regular);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Responsive typography classes for each scale */
+.md-typescale-display-large-responsive {
+  font-family: var(--md-sys-typescale-display-large-font-family);
+  font-weight: var(--md-sys-typescale-display-large-font-weight);
+  font-size: var(--md-sys-typescale-display-large-font-size);
+  line-height: var(--md-sys-typescale-display-large-line-height);
+  letter-spacing: var(--md-sys-typescale-display-large-letter-spacing);
+}
+
+.md-typescale-display-medium-responsive {
+  font-family: var(--md-sys-typescale-display-medium-font-family);
+  font-weight: var(--md-sys-typescale-display-medium-font-weight);
+  font-size: var(--md-sys-typescale-display-medium-font-size);
+  line-height: var(--md-sys-typescale-display-medium-line-height);
+  letter-spacing: var(--md-sys-typescale-display-medium-letter-spacing);
+}
+
+.md-typescale-display-small-responsive {
+  font-family: var(--md-sys-typescale-display-small-font-family);
+  font-weight: var(--md-sys-typescale-display-small-font-weight);
+  font-size: var(--md-sys-typescale-display-small-font-size);
+  line-height: var(--md-sys-typescale-display-small-line-height);
+  letter-spacing: var(--md-sys-typescale-display-small-letter-spacing);
+}
+
+.md-typescale-headline-large-responsive {
+  font-family: var(--md-sys-typescale-headline-large-font-family);
+  font-weight: var(--md-sys-typescale-headline-large-font-weight);
+  font-size: var(--md-sys-typescale-headline-large-font-size);
+  line-height: var(--md-sys-typescale-headline-large-line-height);
+  letter-spacing: var(--md-sys-typescale-headline-large-letter-spacing);
+}
+
+.md-typescale-headline-medium-responsive {
+  font-family: var(--md-sys-typescale-headline-medium-font-family);
+  font-weight: var(--md-sys-typescale-headline-medium-font-weight);
+  font-size: var(--md-sys-typescale-headline-medium-font-size);
+  line-height: var(--md-sys-typescale-headline-medium-line-height);
+  letter-spacing: var(--md-sys-typescale-headline-medium-letter-spacing);
+}
+
+.md-typescale-headline-small-responsive {
+  font-family: var(--md-sys-typescale-headline-small-font-family);
+  font-weight: var(--md-sys-typescale-headline-small-font-weight);
+  font-size: var(--md-sys-typescale-headline-small-font-size);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  letter-spacing: var(--md-sys-typescale-headline-small-letter-spacing);
 }
 
 /* Shape utility classes */

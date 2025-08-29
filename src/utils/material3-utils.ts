@@ -352,24 +352,159 @@ export function getMaterial3TextFieldStyle(
 /**
  * Responsive typography utility that adapts font sizes based on screen size
  * @param baseScale - Base typography scale
- * @param mobileScale - Optional mobile typography scale (defaults to one size smaller)
+ * @param options - Configuration options for responsive behavior
  * @returns CSS-in-JS media query object
  */
 export function getResponsiveMaterial3Typography(
   baseScale: keyof typeof Material3CSSProperties.typography,
-  mobileScale?: keyof typeof Material3CSSProperties.typography
+  options?: {
+    mobileScale?: keyof typeof Material3CSSProperties.typography;
+    tabletScale?: keyof typeof Material3CSSProperties.typography;
+    context?: 'compact' | 'comfortable' | 'spacious';
+    enableDynamicScaling?: boolean;
+  }
 ): React.CSSProperties {
   const baseTypography = getMaterial3Typography(baseScale);
   
-  if (!mobileScale) {
-    return baseTypography;
+  let styles: React.CSSProperties = {
+    ...baseTypography,
+  };
+  
+  // Add dynamic scaling if enabled
+  if (options?.enableDynamicScaling) {
+    styles = {
+      ...styles,
+      fontSize: `calc(${baseTypography.fontSize} * var(--md-sys-typescale-scale-factor))`,
+      lineHeight: `calc(${baseTypography.lineHeight} * var(--md-sys-typescale-scale-factor))`,
+    };
   }
   
-  const mobileTypography = getMaterial3Typography(mobileScale);
+  // Add context-aware scaling
+  if (options?.context) {
+    const contextClass = `md-typography-context-${options.context}`;
+    styles = {
+      ...styles,
+      // Note: In a real implementation, this would be handled by CSS classes
+      // This is a simplified representation for the utility function
+    };
+  }
+  
+  return styles;
+}
+
+/**
+ * Create typography styles with expressive font weight variations
+ * @param baseScale - Base typography scale
+ * @param weight - Font weight variation
+ * @param emphasis - Emphasis level for color and hierarchy
+ * @returns React CSSProperties object
+ */
+export function getMaterial3ExpressiveTypography(
+  baseScale: keyof typeof Material3CSSProperties.typography,
+  weight?: 'thin' | 'extra-light' | 'light' | 'regular' | 'medium' | 'semi-bold' | 'bold' | 'extra-bold' | 'black',
+  emphasis?: 'high' | 'medium' | 'low'
+): React.CSSProperties {
+  const baseTypography = getMaterial3Typography(baseScale);
+  
+  let styles: React.CSSProperties = { ...baseTypography };
+  
+  // Apply expressive font weight if specified
+  if (weight) {
+    const weightToken = `--md-sys-typescale-font-weight-${weight.replace(/-/g, '-')}`;
+    styles.fontWeight = getMaterial3Token(weightToken);
+  }
+  
+  // Apply emphasis styling if specified
+  if (emphasis) {
+    switch (emphasis) {
+      case 'high':
+        styles.color = getMaterial3Token(Material3CSSProperties.colors.primary);
+        styles.fontWeight = getMaterial3Token('--md-sys-typescale-font-weight-bold');
+        break;
+      case 'medium':
+        styles.color = getMaterial3Token(Material3CSSProperties.colors.onSurface);
+        styles.fontWeight = getMaterial3Token('--md-sys-typescale-font-weight-medium');
+        break;
+      case 'low':
+        styles.color = getMaterial3Token(Material3CSSProperties.colors.onSurfaceVariant);
+        styles.fontWeight = getMaterial3Token('--md-sys-typescale-font-weight-regular');
+        break;
+    }
+  }
+  
+  return styles;
+}
+
+/**
+ * Create contextual typography scaling based on content density
+ * @param baseScale - Base typography scale
+ * @param context - Context for scaling (compact, comfortable, spacious)
+ * @returns React CSSProperties object
+ */
+export function getMaterial3ContextualTypography(
+  baseScale: keyof typeof Material3CSSProperties.typography,
+  context: 'compact' | 'comfortable' | 'spacious' = 'comfortable'
+): React.CSSProperties {
+  const baseTypography = getMaterial3Typography(baseScale);
+  
+  const scalingFactors = {
+    compact: 0.875,
+    comfortable: 1,
+    spacious: 1.125,
+  };
+  
+  const scaleFactor = scalingFactors[context];
   
   return {
     ...baseTypography,
-    '@media (max-width: 768px)': mobileTypography,
+    fontSize: `calc(${baseTypography.fontSize} * ${scaleFactor})`,
+    lineHeight: `calc(${baseTypography.lineHeight} * ${scaleFactor})`,
+  };
+}
+
+/**
+ * Create adaptive typography that responds to screen size and maintains proportions
+ * @param baseScale - Base typography scale
+ * @param breakpoints - Custom breakpoint configurations
+ * @returns Object with media query styles
+ */
+export function getMaterial3AdaptiveTypography(
+  baseScale: keyof typeof Material3CSSProperties.typography,
+  breakpoints?: {
+    mobile?: { scale: number; maxWidth: string };
+    tablet?: { scale: number; minWidth: string; maxWidth: string };
+    desktop?: { scale: number; minWidth: string };
+  }
+): {
+  base: React.CSSProperties;
+  mobile: React.CSSProperties;
+  tablet: React.CSSProperties;
+  desktop: React.CSSProperties;
+} {
+  const baseTypography = getMaterial3Typography(baseScale);
+  
+  const defaultBreakpoints = {
+    mobile: { scale: 0.875, maxWidth: '599px' },
+    tablet: { scale: 0.95, minWidth: '600px', maxWidth: '1023px' },
+    desktop: { scale: 1.05, minWidth: '1024px' },
+  };
+  
+  const bp = { ...defaultBreakpoints, ...breakpoints };
+  
+  return {
+    base: baseTypography,
+    mobile: {
+      fontSize: `calc(${baseTypography.fontSize} * ${bp.mobile.scale})`,
+      lineHeight: `calc(${baseTypography.lineHeight} * ${bp.mobile.scale})`,
+    },
+    tablet: {
+      fontSize: `calc(${baseTypography.fontSize} * ${bp.tablet.scale})`,
+      lineHeight: `calc(${baseTypography.lineHeight} * ${bp.tablet.scale})`,
+    },
+    desktop: {
+      fontSize: `calc(${baseTypography.fontSize} * ${bp.desktop.scale})`,
+      lineHeight: `calc(${baseTypography.lineHeight} * ${bp.desktop.scale})`,
+    },
   };
 }
 

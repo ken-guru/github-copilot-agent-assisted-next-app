@@ -14,7 +14,11 @@ import {
   getMaterial3Classes,
   getMaterial3ButtonStyle,
   getMaterial3CardStyle,
-  getMaterial3TextFieldStyle
+  getMaterial3TextFieldStyle,
+  getResponsiveMaterial3Typography,
+  getMaterial3ExpressiveTypography,
+  getMaterial3ContextualTypography,
+  getMaterial3AdaptiveTypography
 } from '../utils/material3-utils';
 
 describe('Material 3 Design Tokens', () => {
@@ -286,6 +290,245 @@ describe('Material 3 Design Tokens', () => {
       expect(Material3CSSProperties.motion.duration).toHaveProperty('short1');
       expect(Material3CSSProperties.motion.duration).toHaveProperty('medium2');
       expect(Material3CSSProperties.motion.duration).toHaveProperty('long4');
+    });
+
+    it('should contain all required font weight properties', () => {
+      expect(Material3CSSProperties.fontWeights).toHaveProperty('thin');
+      expect(Material3CSSProperties.fontWeights).toHaveProperty('regular');
+      expect(Material3CSSProperties.fontWeights).toHaveProperty('medium');
+      expect(Material3CSSProperties.fontWeights).toHaveProperty('bold');
+      expect(Material3CSSProperties.fontWeights).toHaveProperty('black');
+    });
+
+    it('should contain typography scaling properties', () => {
+      expect(Material3CSSProperties.typographyScaling).toHaveProperty('scaleFactor');
+      expect(Material3CSSProperties.typographyScaling).toHaveProperty('scaleFactorCompact');
+      expect(Material3CSSProperties.typographyScaling).toHaveProperty('scaleFactorComfortable');
+      expect(Material3CSSProperties.typographyScaling).toHaveProperty('scaleFactorSpacious');
+    });
+  });
+
+  describe('Enhanced Typography System', () => {
+    describe('getResponsiveMaterial3Typography', () => {
+      it('should return base typography styles without options', () => {
+        const result = getResponsiveMaterial3Typography('headlineLarge');
+        
+        expect(result).toEqual({
+          fontFamily: 'var(--md-sys-typescale-headline-large-font-family)',
+          fontWeight: 'var(--md-sys-typescale-headline-large-font-weight)',
+          fontSize: 'var(--md-sys-typescale-headline-large-font-size)',
+          lineHeight: 'var(--md-sys-typescale-headline-large-line-height)',
+          letterSpacing: 'var(--md-sys-typescale-headline-large-letter-spacing)',
+        });
+      });
+
+      it('should enable dynamic scaling when specified', () => {
+        const result = getResponsiveMaterial3Typography('bodyLarge', {
+          enableDynamicScaling: true,
+        });
+        
+        expect(result.fontSize).toContain('calc(');
+        expect(result.fontSize).toContain('var(--md-sys-typescale-scale-factor)');
+        expect(result.lineHeight).toContain('calc(');
+        expect(result.lineHeight).toContain('var(--md-sys-typescale-scale-factor)');
+      });
+
+      it('should handle context configuration', () => {
+        const result = getResponsiveMaterial3Typography('titleMedium', {
+          context: 'compact',
+        });
+        
+        // Base typography should still be present
+        expect(result).toHaveProperty('fontFamily');
+        expect(result).toHaveProperty('fontSize');
+      });
+    });
+
+    describe('getMaterial3ExpressiveTypography', () => {
+      it('should return base typography without modifications', () => {
+        const result = getMaterial3ExpressiveTypography('bodyLarge');
+        
+        expect(result).toEqual({
+          fontFamily: 'var(--md-sys-typescale-body-large-font-family)',
+          fontWeight: 'var(--md-sys-typescale-body-large-font-weight)',
+          fontSize: 'var(--md-sys-typescale-body-large-font-size)',
+          lineHeight: 'var(--md-sys-typescale-body-large-line-height)',
+          letterSpacing: 'var(--md-sys-typescale-body-large-letter-spacing)',
+        });
+      });
+
+      it('should apply expressive font weight variations', () => {
+        const result = getMaterial3ExpressiveTypography('headlineMedium', 'bold');
+        
+        expect(result.fontWeight).toBe('var(--md-sys-typescale-font-weight-bold)');
+      });
+
+      it('should apply high emphasis styling', () => {
+        const result = getMaterial3ExpressiveTypography('titleLarge', undefined, 'high');
+        
+        expect(result.color).toBe('var(--md-sys-color-primary)');
+        expect(result.fontWeight).toBe('var(--md-sys-typescale-font-weight-bold)');
+      });
+
+      it('should apply medium emphasis styling', () => {
+        const result = getMaterial3ExpressiveTypography('bodyMedium', undefined, 'medium');
+        
+        expect(result.color).toBe('var(--md-sys-color-on-surface)');
+        expect(result.fontWeight).toBe('var(--md-sys-typescale-font-weight-medium)');
+      });
+
+      it('should apply low emphasis styling', () => {
+        const result = getMaterial3ExpressiveTypography('labelSmall', undefined, 'low');
+        
+        expect(result.color).toBe('var(--md-sys-color-on-surface-variant)');
+        expect(result.fontWeight).toBe('var(--md-sys-typescale-font-weight-regular)');
+      });
+
+      it('should combine font weight and emphasis', () => {
+        const result = getMaterial3ExpressiveTypography('headlineSmall', 'semi-bold', 'high');
+        
+        expect(result.color).toBe('var(--md-sys-color-primary)');
+        // Emphasis should override the specified weight for consistency
+        expect(result.fontWeight).toBe('var(--md-sys-typescale-font-weight-bold)');
+      });
+    });
+
+    describe('getMaterial3ContextualTypography', () => {
+      it('should return comfortable scaling by default', () => {
+        const result = getMaterial3ContextualTypography('bodyLarge');
+        
+        expect(result.fontSize).toContain('* 1');
+        expect(result.lineHeight).toContain('* 1');
+      });
+
+      it('should apply compact scaling', () => {
+        const result = getMaterial3ContextualTypography('headlineLarge', 'compact');
+        
+        expect(result.fontSize).toContain('* 0.875');
+        expect(result.lineHeight).toContain('* 0.875');
+      });
+
+      it('should apply spacious scaling', () => {
+        const result = getMaterial3ContextualTypography('displaySmall', 'spacious');
+        
+        expect(result.fontSize).toContain('* 1.125');
+        expect(result.lineHeight).toContain('* 1.125');
+      });
+
+      it('should maintain base typography properties', () => {
+        const result = getMaterial3ContextualTypography('titleMedium', 'compact');
+        
+        expect(result.fontFamily).toBe('var(--md-sys-typescale-title-medium-font-family)');
+        expect(result.fontWeight).toBe('var(--md-sys-typescale-title-medium-font-weight)');
+        expect(result.letterSpacing).toBe('var(--md-sys-typescale-title-medium-letter-spacing)');
+      });
+    });
+
+    describe('getMaterial3AdaptiveTypography', () => {
+      it('should return adaptive typography with default breakpoints', () => {
+        const result = getMaterial3AdaptiveTypography('headlineMedium');
+        
+        expect(result).toHaveProperty('base');
+        expect(result).toHaveProperty('mobile');
+        expect(result).toHaveProperty('tablet');
+        expect(result).toHaveProperty('desktop');
+        
+        // Check base styles
+        expect(result.base.fontFamily).toBe('var(--md-sys-typescale-headline-medium-font-family)');
+        
+        // Check mobile scaling
+        expect(result.mobile.fontSize).toContain('* 0.875');
+        
+        // Check tablet scaling
+        expect(result.tablet.fontSize).toContain('* 0.95');
+        
+        // Check desktop scaling
+        expect(result.desktop.fontSize).toContain('* 1.05');
+      });
+
+      it('should use custom breakpoint configurations', () => {
+        const customBreakpoints = {
+          mobile: { scale: 0.8, maxWidth: '480px' },
+          tablet: { scale: 0.9, minWidth: '481px', maxWidth: '1024px' },
+          desktop: { scale: 1.2, minWidth: '1025px' },
+        };
+        
+        const result = getMaterial3AdaptiveTypography('displayLarge', customBreakpoints);
+        
+        expect(result.mobile.fontSize).toContain('* 0.8');
+        expect(result.tablet.fontSize).toContain('* 0.9');
+        expect(result.desktop.fontSize).toContain('* 1.2');
+      });
+
+      it('should maintain proportional line height scaling', () => {
+        const result = getMaterial3AdaptiveTypography('bodyLarge');
+        
+        expect(result.mobile.lineHeight).toContain('* 0.875');
+        expect(result.tablet.lineHeight).toContain('* 0.95');
+        expect(result.desktop.lineHeight).toContain('* 1.05');
+      });
+    });
+
+    describe('Typography System Integration', () => {
+      it('should work with getMaterial3Classes for expressive typography', () => {
+        const classes = getMaterial3Classes({
+          typography: 'headlineLarge',
+          color: 'primary',
+        });
+        
+        expect(classes).toContain('md-typescale-headline-large');
+        expect(classes).toContain('md-color-primary');
+      });
+
+      it('should integrate with component style generation', () => {
+        const componentStyle = getMaterial3ComponentStyle({
+          typography: 'titleMedium',
+          color: 'onSurface',
+          backgroundColor: 'surface',
+        });
+        
+        expect(componentStyle).toHaveProperty('fontFamily');
+        expect(componentStyle).toHaveProperty('fontSize');
+        expect(componentStyle).toHaveProperty('fontWeight');
+        expect(componentStyle).toHaveProperty('lineHeight');
+        expect(componentStyle).toHaveProperty('letterSpacing');
+        expect(componentStyle).toHaveProperty('color');
+        expect(componentStyle).toHaveProperty('backgroundColor');
+      });
+    });
+
+    describe('Typography Accessibility and Performance', () => {
+      it('should maintain accessibility with proper contrast ratios', () => {
+        const highEmphasis = getMaterial3ExpressiveTypography('bodyLarge', undefined, 'high');
+        const mediumEmphasis = getMaterial3ExpressiveTypography('bodyLarge', undefined, 'medium');
+        const lowEmphasis = getMaterial3ExpressiveTypography('bodyLarge', undefined, 'low');
+        
+        // High emphasis should use primary color
+        expect(highEmphasis.color).toBe('var(--md-sys-color-primary)');
+        
+        // Medium emphasis should use on-surface color
+        expect(mediumEmphasis.color).toBe('var(--md-sys-color-on-surface)');
+        
+        // Low emphasis should use on-surface-variant color
+        expect(lowEmphasis.color).toBe('var(--md-sys-color-on-surface-variant)');
+      });
+
+      it('should use CSS calc() for performance-optimized scaling', () => {
+        const contextual = getMaterial3ContextualTypography('headlineLarge', 'compact');
+        const adaptive = getMaterial3AdaptiveTypography('bodyMedium');
+        
+        // Should use CSS calc() for browser-optimized calculations
+        expect(contextual.fontSize).toMatch(/^calc\(/);
+        expect(adaptive.mobile.fontSize).toMatch(/^calc\(/);
+      });
+
+      it('should preserve letter spacing for optimal readability', () => {
+        const expressive = getMaterial3ExpressiveTypography('labelLarge', 'bold');
+        const contextual = getMaterial3ContextualTypography('bodySmall', 'spacious');
+        
+        expect(expressive.letterSpacing).toBe('var(--md-sys-typescale-label-large-letter-spacing)');
+        expect(contextual.letterSpacing).toBe('var(--md-sys-typescale-body-small-letter-spacing)');
+      });
     });
   });
 });

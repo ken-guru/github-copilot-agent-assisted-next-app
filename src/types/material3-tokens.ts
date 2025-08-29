@@ -228,6 +228,49 @@ export interface Material3Theme {
 }
 
 /**
+ * Font weight variations for expressive typography
+ */
+export type FontWeightVariation = 
+  | 'thin' 
+  | 'extra-light' 
+  | 'light' 
+  | 'regular' 
+  | 'medium' 
+  | 'semi-bold' 
+  | 'bold' 
+  | 'extra-bold' 
+  | 'black';
+
+/**
+ * Typography emphasis levels
+ */
+export type TypographyEmphasis = 'high' | 'medium' | 'low';
+
+/**
+ * Typography context for density scaling
+ */
+export type TypographyContext = 'compact' | 'comfortable' | 'spacious';
+
+/**
+ * Responsive typography configuration
+ */
+export interface ResponsiveTypographyConfig {
+  mobileScale?: keyof Material3ExpressiveTokens['typography'];
+  tabletScale?: keyof Material3ExpressiveTokens['typography'];
+  context?: TypographyContext;
+  enableDynamicScaling?: boolean;
+}
+
+/**
+ * Adaptive typography breakpoint configuration
+ */
+export interface AdaptiveTypographyBreakpoints {
+  mobile?: { scale: number; maxWidth: string };
+  tablet?: { scale: number; minWidth: string; maxWidth: string };
+  desktop?: { scale: number; minWidth: string };
+}
+
+/**
  * CSS Custom Property names for Material 3 tokens
  * These correspond to the actual CSS custom properties defined in material3-tokens.css
  */
@@ -443,6 +486,27 @@ export const Material3CSSProperties = {
     focus: '--md-sys-state-focus-state-layer-opacity',
     pressed: '--md-sys-state-pressed-state-layer-opacity',
     dragged: '--md-sys-state-dragged-state-layer-opacity',
+  },
+  
+  // Font weight variations
+  fontWeights: {
+    thin: '--md-sys-typescale-font-weight-thin',
+    extraLight: '--md-sys-typescale-font-weight-extra-light',
+    light: '--md-sys-typescale-font-weight-light',
+    regular: '--md-sys-typescale-font-weight-regular',
+    medium: '--md-sys-typescale-font-weight-medium',
+    semiBold: '--md-sys-typescale-font-weight-semi-bold',
+    bold: '--md-sys-typescale-font-weight-bold',
+    extraBold: '--md-sys-typescale-font-weight-extra-bold',
+    black: '--md-sys-typescale-font-weight-black',
+  },
+  
+  // Typography scaling factors
+  typographyScaling: {
+    scaleFactor: '--md-sys-typescale-scale-factor',
+    scaleFactorCompact: '--md-sys-typescale-scale-factor-compact',
+    scaleFactorComfortable: '--md-sys-typescale-scale-factor-comfortable',
+    scaleFactorSpacious: '--md-sys-typescale-scale-factor-spacious',
   },
   
   // Component tokens
