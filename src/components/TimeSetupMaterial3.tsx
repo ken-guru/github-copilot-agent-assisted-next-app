@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Material3TextField } from './ui/Material3TextField';
-import { Material3Button } from './ui/Material3Button';
-import { Material3FormGroup } from './ui/Material3FormGroup';
 import styles from './TimeSetupMaterial3.module.css';
 
 interface TimeSetupMaterial3Props {
@@ -131,8 +128,7 @@ export default function TimeSetupMaterial3({ onTimeSet }: TimeSetupMaterial3Prop
 
   const handleHoursChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
-    const clampedValue = isNaN(value) ? 0 : Math.max(0, Math.min(23, value));
-    setHours(clampedValue);
+    setHours(isNaN(value) ? 0 : value);
     if (errors.hours || errors.general) {
       setErrors(prev => ({ ...prev, hours: undefined, general: undefined }));
     }
@@ -140,8 +136,7 @@ export default function TimeSetupMaterial3({ onTimeSet }: TimeSetupMaterial3Prop
 
   const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
-    const clampedValue = isNaN(value) ? 0 : Math.max(0, Math.min(59, value));
-    setMinutes(clampedValue);
+    setMinutes(isNaN(value) ? 0 : value);
     if (errors.minutes || errors.general) {
       setErrors(prev => ({ ...prev, minutes: undefined, general: undefined }));
     }
@@ -149,8 +144,7 @@ export default function TimeSetupMaterial3({ onTimeSet }: TimeSetupMaterial3Prop
 
   const handleSecondsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
-    const clampedValue = isNaN(value) ? 0 : Math.max(0, Math.min(59, value));
-    setSeconds(clampedValue);
+    setSeconds(isNaN(value) ? 0 : value);
     if (errors.seconds || errors.general) {
       setErrors(prev => ({ ...prev, seconds: undefined, general: undefined }));
     }
@@ -164,96 +158,99 @@ export default function TimeSetupMaterial3({ onTimeSet }: TimeSetupMaterial3Prop
   };
 
   return (
-    <div className={styles.timeSetup} data-testid="time-setup-material3">
+    <div
+      className={styles.timeSetup}
+      data-testid="time-setup-material3"
+      data-mode={setupMode}
+    >
       <div className={styles.header}>
         <h2 className={styles.title}>Set Time</h2>
       </div>
       
       <div className={styles.content}>
-        <div className={styles.modeSelector}>
-          <Material3Button
-            variant={setupMode === 'duration' ? 'filled' : 'outlined'}
+        {/* Expressive segmented button group for mode selection */}
+        <div className={styles.modeSelector} role="group" aria-label="Time setup mode selection">
+          <button
+            type="button"
             onClick={() => setSetupMode('duration')}
-            className={styles.modeButton}
+            className={`${styles.modeButton} ${setupMode === 'duration' ? styles.modeButtonActive : ''}`}
             data-testid="duration-mode-button"
           >
             Set Duration
-          </Material3Button>
-          <Material3Button
-            variant={setupMode === 'deadline' ? 'filled' : 'outlined'}
+          </button>
+          <button
+            type="button"
             onClick={() => setSetupMode('deadline')}
-            className={styles.modeButton}
+            className={`${styles.modeButton} ${setupMode === 'deadline' ? styles.modeButtonActive : ''}`}
             data-testid="deadline-mode-button"
           >
             Set Deadline
-          </Material3Button>
+          </button>
         </div>
         
         <form onSubmit={handleSubmit} className={styles.form} data-testid="time-setup-form" id="time-setup-form">
           {setupMode === 'duration' ? (
-            <Material3FormGroup 
-              direction="row" 
-              spacing="comfortable"
-              className={styles.durationInputs}
-              data-testid="duration-inputs"
-            >
-              <Material3TextField
-                id="hours"
-                label="Hours"
-                type="number"
-                value={isClient ? hours.toString() : "0"}
-                onChange={handleHoursChange}
-                min="0"
-                max="23"
-                error={!!errors.hours}
-                helperText={errors.hours}
-                size="medium"
-                data-testid="hours-input"
-              />
-              <Material3TextField
-                id="minutes"
-                label="Minutes"
-                type="number"
-                value={isClient ? minutes.toString() : "0"}
-                onChange={handleMinutesChange}
-                min="0"
-                max="59"
-                error={!!errors.minutes}
-                helperText={errors.minutes}
-                size="medium"
-                data-testid="minutes-input"
-              />
-              <Material3TextField
-                id="seconds"
-                label="Seconds"
-                type="number"
-                value={isClient ? seconds.toString() : "0"}
-                onChange={handleSecondsChange}
-                min="0"
-                max="59"
-                error={!!errors.seconds}
-                helperText={errors.seconds}
-                size="medium"
-                data-testid="seconds-input"
-              />
-            </Material3FormGroup>
+            <div className={styles.durationInputs} data-testid="duration-inputs">
+              <div className={styles.inputGroup}>
+                <label htmlFor="hours" className={styles.inputLabel}>Hours</label>
+                <input
+                  id="hours"
+                  type="number"
+                  min="0"
+                  max="23"
+                  value={isClient ? hours.toString() : "0"}
+                  onChange={handleHoursChange}
+                  className={`${styles.input} ${errors.hours ? styles.inputError : ''}`}
+                  data-testid="hours-input"
+                />
+                {errors.hours && <div className={styles.helperText}>{errors.hours}</div>}
+              </div>
+              <div className={styles.inputGroup}>
+                <label htmlFor="minutes" className={styles.inputLabel}>Minutes</label>
+                <input
+                  id="minutes"
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={isClient ? minutes.toString() : "0"}
+                  onChange={handleMinutesChange}
+                  className={`${styles.input} ${errors.minutes ? styles.inputError : ''}`}
+                  data-testid="minutes-input"
+                />
+                {errors.minutes && <div className={styles.helperText}>{errors.minutes}</div>}
+              </div>
+              <div className={styles.inputGroup}>
+                <label htmlFor="seconds" className={styles.inputLabel}>Seconds</label>
+                <input
+                  id="seconds"
+                  type="number"
+                  min="0"
+                  max="59"
+                  value={isClient ? seconds.toString() : "0"}
+                  onChange={handleSecondsChange}
+                  className={`${styles.input} ${errors.seconds ? styles.inputError : ''}`}
+                  data-testid="seconds-input"
+                />
+                {errors.seconds && <div className={styles.helperText}>{errors.seconds}</div>}
+              </div>
+            </div>
           ) : (
-            <Material3FormGroup 
-              spacing="comfortable"
-              data-testid="deadline-input-group"
-            >
-              <Material3TextField
-                id="deadlineTime"
-                label="Deadline Time"
-                type="time"
-                value={isClient ? (deadlineTime || '') : ''}
-                onChange={handleDeadlineChange}
-                error={!!errors.deadline}
-                helperText={errors.deadline || "Select a time for today or tomorrow"}
-                size="medium"
-                data-testid="deadline-input"
-              />
-            </Material3FormGroup>
+            <div data-testid="deadline-input-group">
+              <div className={styles.inputGroup}>
+                <label htmlFor="deadlineTime" className={styles.inputLabel}>Deadline Time</label>
+                <input
+                  id="deadlineTime"
+                  type="time"
+                  value={isClient ? (deadlineTime || '') : ''}
+                  onChange={handleDeadlineChange}
+                  className={`${styles.input} ${errors.deadline ? styles.inputError : ''}`}
+                  data-testid="deadline-input"
+                />
+                <div className={styles.helperText}>
+                  {errors.deadline || "Select a time for today or tomorrow"}
+                </div>
+              </div>
+            </div>
           )}
           
           {errors.general && (
@@ -265,17 +262,15 @@ export default function TimeSetupMaterial3({ onTimeSet }: TimeSetupMaterial3Prop
       </div>
       
       <div className={styles.footer}>
-        <Material3Button
+        <button
           type="submit"
-          variant="filled"
-          size="large"
           form="time-setup-form"
           className={styles.submitButton}
           data-testid="set-time-button"
           onClick={handleSubmit}
         >
           Set Time
-        </Material3Button>
+        </button>
       </div>
     </div>
   );
