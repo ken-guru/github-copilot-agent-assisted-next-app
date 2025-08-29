@@ -517,32 +517,169 @@ export function getMaterial3AdaptiveTypography(
 export function getMaterial3InteractionStates(
   baseColor: keyof typeof Material3CSSProperties.colors,
   stateLayerOpacity?: number
-): {
-  '&:hover': React.CSSProperties;
-  '&:focus-visible': React.CSSProperties;
-  '&:active': React.CSSProperties;
-} {
+): React.CSSProperties {
   const hoverOpacity = stateLayerOpacity || 0.08;
   const focusOpacity = stateLayerOpacity || 0.12;
   const pressedOpacity = stateLayerOpacity || 0.12;
   
   return {
-    '&:hover': {
-      '&::before': {
-        opacity: hoverOpacity,
-      },
+    position: 'relative',
+    overflow: 'hidden',
+    // State layer implementation using CSS custom properties
+    '--md-state-layer-color': getMaterial3Token(Material3CSSProperties.colors[baseColor]),
+    '--md-state-layer-opacity': '0',
+    transition: getMaterial3Token(Material3CSSProperties.motion.duration.short2) + ' ' + 
+                getMaterial3Token(Material3CSSProperties.motion.easing.standard),
+  };
+}
+
+/**
+ * Create dynamic color variations for different interface states
+ * @param baseColorRole - Base color role
+ * @param includeStateLayer - Whether to include state layer effects
+ * @returns Object with state-specific color styles
+ */
+export function getMaterial3DynamicColorStates(
+  baseColorRole: keyof typeof Material3CSSProperties.colors,
+  includeStateLayer: boolean = true
+): {
+  default: React.CSSProperties;
+  hover: React.CSSProperties;
+  focus: React.CSSProperties;
+  pressed: React.CSSProperties;
+  disabled: React.CSSProperties;
+  selected: React.CSSProperties;
+} {
+  const baseColor = getMaterial3Token(Material3CSSProperties.colors[baseColorRole]);
+  
+  const stateStyles = {
+    default: {
+      color: baseColor,
     },
-    '&:focus-visible': {
-      '&::before': {
-        opacity: focusOpacity,
-      },
-      outline: `2px solid ${getMaterial3Token(Material3CSSProperties.colors[baseColor])}`,
+    hover: {
+      color: `color-mix(in srgb, ${baseColor} 92%, transparent)`,
+      ...(includeStateLayer && {
+        backgroundColor: `color-mix(in srgb, ${baseColor} 8%, transparent)`,
+      }),
+    },
+    focus: {
+      color: `color-mix(in srgb, ${baseColor} 88%, transparent)`,
+      outline: `2px solid ${baseColor}`,
       outlineOffset: '2px',
+      ...(includeStateLayer && {
+        backgroundColor: `color-mix(in srgb, ${baseColor} 12%, transparent)`,
+      }),
     },
-    '&:active': {
-      '&::before': {
-        opacity: pressedOpacity,
-      },
+    pressed: {
+      color: `color-mix(in srgb, ${baseColor} 88%, transparent)`,
+      ...(includeStateLayer && {
+        backgroundColor: `color-mix(in srgb, ${baseColor} 12%, transparent)`,
+      }),
+    },
+    disabled: {
+      color: `color-mix(in srgb, ${baseColor} 38%, transparent)`,
+      cursor: 'not-allowed',
+    },
+    selected: {
+      color: baseColor,
+      backgroundColor: `color-mix(in srgb, ${baseColor} 12%, transparent)`,
     },
   };
+  
+  return stateStyles;
+}
+
+/**
+ * Create theme-aware color utility that adapts to light/dark modes
+ * @param lightColor - Color role for light theme
+ * @param darkColor - Color role for dark theme (optional, defaults to same as light)
+ * @returns CSS custom property that adapts to theme
+ */
+export function getMaterial3ThemeAwareColor(
+  lightColor: keyof typeof Material3CSSProperties.colors,
+  darkColor?: keyof typeof Material3CSSProperties.colors
+): string {
+  const lightColorToken = Material3CSSProperties.colors[lightColor];
+  const darkColorToken = darkColor ? Material3CSSProperties.colors[darkColor] : lightColorToken;
+  
+  // Use CSS custom properties that automatically switch based on theme
+  return `light-dark(var(${lightColorToken}), var(${darkColorToken}))`;
+}
+
+/**
+ * Create accessible color combinations with automatic contrast validation
+ * @param foregroundRole - Foreground color role
+ * @param backgroundRole - Background color role
+ * @param options - Configuration options
+ * @returns Style object with validated color combination
+ */
+export function getMaterial3AccessibleColors(
+  foregroundRole: keyof typeof Material3CSSProperties.colors,
+  backgroundRole: keyof typeof Material3CSSProperties.colors,
+  options?: {
+    fallbackForeground?: keyof typeof Material3CSSProperties.colors;
+    fallbackBackground?: keyof typeof Material3CSSProperties.colors;
+    enforceContrast?: boolean;
+  }
+): React.CSSProperties {
+  const foregroundColor = getMaterial3Token(Material3CSSProperties.colors[foregroundRole]);
+  const backgroundColor = getMaterial3Token(Material3CSSProperties.colors[backgroundRole]);
+  
+  const style: React.CSSProperties = {
+    color: foregroundColor,
+    backgroundColor: backgroundColor,
+  };
+  
+  // Add fallback colors if specified
+  if (options?.fallbackForeground) {
+    style.color = `${foregroundColor}, ${getMaterial3Token(Material3CSSProperties.colors[options.fallbackForeground])}`;
+  }
+  
+  if (options?.fallbackBackground) {
+    style.backgroundColor = `${backgroundColor}, ${getMaterial3Token(Material3CSSProperties.colors[options.fallbackBackground])}`;
+  }
+  
+  return style;
+}
+
+/**
+ * Generate contextual color variations for semantic meaning
+ * @param intent - Semantic intent (success, warning, info, etc.)
+ * @param variant - Color variant (filled, outlined, text)
+ * @returns Style configuration for the semantic color
+ */
+export function getMaterial3SemanticColor(
+  intent: 'success' | 'warning' | 'info' | 'neutral',
+  variant: 'filled' | 'outlined' | 'text' = 'filled'
+): React.CSSProperties {
+  // Map semantic intents to Material 3 color roles
+  const intentColorMap = {
+    success: 'tertiary' as const,
+    warning: 'error' as const, // Using error for warning as Material 3 doesn't have dedicated warning
+    info: 'primary' as const,
+    neutral: 'surface' as const,
+  };
+  
+  const baseColorRole = intentColorMap[intent];
+  const containerColorRole = `${baseColorRole}Container` as keyof typeof Material3CSSProperties.colors;
+  const onColorRole = `on${baseColorRole.charAt(0).toUpperCase() + baseColorRole.slice(1)}` as keyof typeof Material3CSSProperties.colors;
+  const onContainerColorRole = `on${baseColorRole.charAt(0).toUpperCase() + baseColorRole.slice(1)}Container` as keyof typeof Material3CSSProperties.colors;
+  
+  switch (variant) {
+    case 'filled':
+      return getMaterial3AccessibleColors(onColorRole, baseColorRole);
+    case 'outlined':
+      return {
+        color: getMaterial3Token(Material3CSSProperties.colors[baseColorRole]),
+        backgroundColor: 'transparent',
+        border: `1px solid ${getMaterial3Token(Material3CSSProperties.colors[baseColorRole])}`,
+      };
+    case 'text':
+      return {
+        color: getMaterial3Token(Material3CSSProperties.colors[baseColorRole]),
+        backgroundColor: 'transparent',
+      };
+    default:
+      return getMaterial3AccessibleColors(onContainerColorRole, containerColorRole);
+  }
 }

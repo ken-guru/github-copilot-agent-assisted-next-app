@@ -219,6 +219,38 @@ export interface Material3ComponentTokens {
 export type ThemeMode = 'light' | 'dark' | 'auto';
 
 /**
+ * Dynamic color system types
+ */
+export interface DynamicColorConfig {
+  seedColor: string;
+  customColors?: {
+    [key: string]: string;
+  };
+  contrastLevel?: 'standard' | 'medium' | 'high';
+}
+
+/**
+ * Color state variations for interactive elements
+ */
+export interface ColorStateVariations {
+  default: string;
+  hover: string;
+  focus: string;
+  pressed: string;
+  disabled: string;
+  selected: string;
+}
+
+/**
+ * Accessibility color validation configuration
+ */
+export interface AccessibilityColorConfig {
+  enforceWCAG: 'AA' | 'AAA';
+  largeTextThreshold: number; // in pixels
+  autoCorrect: boolean;
+}
+
+/**
  * Material 3 Expressive theme configuration
  */
 export interface Material3Theme {
