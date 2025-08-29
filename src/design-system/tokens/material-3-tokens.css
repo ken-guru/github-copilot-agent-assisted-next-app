@@ -1,0 +1,288 @@
+/**
+ * Material 3 Expressive Design Tokens
+ * 
+ * This file defines the core design tokens for the Material 3 Expressive design system.
+ * These tokens provide the foundation for typography, color, shape, motion, and elevation.
+ * 
+ * Based on Material Design 3 specifications with Expressive theme customizations
+ * https://m3.material.io/foundations/design-tokens
+ */
+
+:root {
+  /* ===================================
+   * TYPOGRAPHY TOKENS
+   * =================================== */
+  
+  /* Display Scale - For large, dramatic headers */
+  --m3-typescale-display-large-font: 400 57px/64px var(--m3-font-family-display);
+  --m3-typescale-display-large-weight: 400;
+  --m3-typescale-display-large-size: 57px;
+  --m3-typescale-display-large-line-height: 64px;
+  --m3-typescale-display-large-tracking: -0.25px;
+  
+  --m3-typescale-display-medium-font: 400 45px/52px var(--m3-font-family-display);
+  --m3-typescale-display-medium-weight: 400;
+  --m3-typescale-display-medium-size: 45px;
+  --m3-typescale-display-medium-line-height: 52px;
+  --m3-typescale-display-medium-tracking: 0px;
+  
+  --m3-typescale-display-small-font: 400 36px/44px var(--m3-font-family-display);
+  --m3-typescale-display-small-weight: 400;
+  --m3-typescale-display-small-size: 36px;
+  --m3-typescale-display-small-line-height: 44px;
+  --m3-typescale-display-small-tracking: 0px;
+  
+  /* Headline Scale - For section headers and important content */
+  --m3-typescale-headline-large-font: 400 32px/40px var(--m3-font-family-display);
+  --m3-typescale-headline-large-weight: 400;
+  --m3-typescale-headline-large-size: 32px;
+  --m3-typescale-headline-large-line-height: 40px;
+  --m3-typescale-headline-large-tracking: 0px;
+  
+  --m3-typescale-headline-medium-font: 400 28px/36px var(--m3-font-family-display);
+  --m3-typescale-headline-medium-weight: 400;
+  --m3-typescale-headline-medium-size: 28px;
+  --m3-typescale-headline-medium-line-height: 36px;
+  --m3-typescale-headline-medium-tracking: 0px;
+  
+  --m3-typescale-headline-small-font: 400 24px/32px var(--m3-font-family-display);
+  --m3-typescale-headline-small-weight: 400;
+  --m3-typescale-headline-small-size: 24px;
+  --m3-typescale-headline-small-line-height: 32px;
+  --m3-typescale-headline-small-tracking: 0px;
+  
+  /* Title Scale - For component headers and card titles */
+  --m3-typescale-title-large-font: 500 22px/28px var(--m3-font-family-display);
+  --m3-typescale-title-large-weight: 500;
+  --m3-typescale-title-large-size: 22px;
+  --m3-typescale-title-large-line-height: 28px;
+  --m3-typescale-title-large-tracking: 0px;
+  
+  --m3-typescale-title-medium-font: 500 16px/24px var(--m3-font-family-display);
+  --m3-typescale-title-medium-weight: 500;
+  --m3-typescale-title-medium-size: 16px;
+  --m3-typescale-title-medium-line-height: 24px;
+  --m3-typescale-title-medium-tracking: 0.15px;
+  
+  --m3-typescale-title-small-font: 500 14px/20px var(--m3-font-family-display);
+  --m3-typescale-title-small-weight: 500;
+  --m3-typescale-title-small-size: 14px;
+  --m3-typescale-title-small-line-height: 20px;
+  --m3-typescale-title-small-tracking: 0.1px;
+  
+  /* Body Scale - For body text and readable content */
+  --m3-typescale-body-large-font: 400 16px/24px var(--m3-font-family-body);
+  --m3-typescale-body-large-weight: 400;
+  --m3-typescale-body-large-size: 16px;
+  --m3-typescale-body-large-line-height: 24px;
+  --m3-typescale-body-large-tracking: 0.5px;
+  
+  --m3-typescale-body-medium-font: 400 14px/20px var(--m3-font-family-body);
+  --m3-typescale-body-medium-weight: 400;
+  --m3-typescale-body-medium-size: 14px;
+  --m3-typescale-body-medium-line-height: 20px;
+  --m3-typescale-body-medium-tracking: 0.25px;
+  
+  --m3-typescale-body-small-font: 400 12px/16px var(--m3-font-family-body);
+  --m3-typescale-body-small-weight: 400;
+  --m3-typescale-body-small-size: 12px;
+  --m3-typescale-body-small-line-height: 16px;
+  --m3-typescale-body-small-tracking: 0.4px;
+  
+  /* Label Scale - For buttons, form labels, and small UI text */
+  --m3-typescale-label-large-font: 500 14px/20px var(--m3-font-family-body);
+  --m3-typescale-label-large-weight: 500;
+  --m3-typescale-label-large-size: 14px;
+  --m3-typescale-label-large-line-height: 20px;
+  --m3-typescale-label-large-tracking: 0.1px;
+  
+  --m3-typescale-label-medium-font: 500 12px/16px var(--m3-font-family-body);
+  --m3-typescale-label-medium-weight: 500;
+  --m3-typescale-label-medium-size: 12px;
+  --m3-typescale-label-medium-line-height: 16px;
+  --m3-typescale-label-medium-tracking: 0.5px;
+  
+  --m3-typescale-label-small-font: 500 11px/16px var(--m3-font-family-body);
+  --m3-typescale-label-small-weight: 500;
+  --m3-typescale-label-small-size: 11px;
+  --m3-typescale-label-small-line-height: 16px;
+  --m3-typescale-label-small-tracking: 0.5px;
+  
+  /* Font Families */
+  --m3-font-family-display: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --m3-font-family-body: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  
+  /* ===================================
+   * SHAPE TOKENS - Expressive Corner Radius
+   * =================================== */
+  
+  /* Material 3 Shape Scale with Expressive variations */
+  --m3-shape-corner-none: 0px;
+  --m3-shape-corner-extra-small: 4px;
+  --m3-shape-corner-small: 8px;
+  --m3-shape-corner-medium: 12px;
+  --m3-shape-corner-large: 16px;
+  --m3-shape-corner-extra-large: 24px;
+  --m3-shape-corner-full: 9999px;
+  
+  /* Expressive shape variations for organic feel */
+  --m3-shape-corner-extra-small-expressive: 4px 6px 4px 6px;
+  --m3-shape-corner-small-expressive: 8px 12px 8px 12px;
+  --m3-shape-corner-medium-expressive: 12px 16px 12px 16px;
+  --m3-shape-corner-large-expressive: 16px 24px 16px 24px;
+  --m3-shape-corner-extra-large-expressive: 24px 32px 24px 32px;
+  
+  /* Component-specific shape tokens */
+  --m3-shape-button: var(--m3-shape-corner-large);
+  --m3-shape-button-expressive: var(--m3-shape-corner-large-expressive);
+  --m3-shape-card: var(--m3-shape-corner-medium);
+  --m3-shape-card-expressive: var(--m3-shape-corner-medium-expressive);
+  --m3-shape-text-field: var(--m3-shape-corner-extra-small);
+  --m3-shape-text-field-expressive: var(--m3-shape-corner-extra-small-expressive);
+  --m3-shape-fab: var(--m3-shape-corner-large);
+  --m3-shape-chip: var(--m3-shape-corner-small);
+  --m3-shape-dialog: var(--m3-shape-corner-extra-large);
+  
+  /* ===================================
+   * ELEVATION TOKENS
+   * =================================== */
+  
+  /* Material 3 Elevation Scale */
+  --m3-elevation-level0: none;
+  --m3-elevation-level1: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --m3-elevation-level2: 0px 1px 2px 0px rgba(0, 0, 0, 0.3), 0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --m3-elevation-level3: 0px 1px 3px 0px rgba(0, 0, 0, 0.3), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+  --m3-elevation-level4: 0px 2px 3px 0px rgba(0, 0, 0, 0.3), 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
+  --m3-elevation-level5: 0px 4px 4px 0px rgba(0, 0, 0, 0.3), 0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+  
+  /* Component-specific elevation tokens */
+  --m3-elevation-surface: var(--m3-elevation-level0);
+  --m3-elevation-surface-low: var(--m3-elevation-level1);
+  --m3-elevation-surface-container: var(--m3-elevation-level0);
+  --m3-elevation-surface-container-low: var(--m3-elevation-level1);
+  --m3-elevation-surface-container-high: var(--m3-elevation-level2);
+  --m3-elevation-surface-container-highest: var(--m3-elevation-level5);
+  
+  /* ===================================
+   * MOTION TOKENS
+   * =================================== */
+  
+  /* Easing Curves */
+  --m3-motion-easing-standard: cubic-bezier(0.2, 0.0, 0, 1.0);
+  --m3-motion-easing-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1.0);
+  --m3-motion-easing-decelerated: cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --m3-motion-easing-accelerated: cubic-bezier(0.3, 0.0, 1.0, 1.0);
+  --m3-motion-easing-legacy: cubic-bezier(0.4, 0.0, 0.2, 1.0);
+  
+  /* Duration Tokens */
+  --m3-motion-duration-short1: 50ms;
+  --m3-motion-duration-short2: 100ms;
+  --m3-motion-duration-short3: 150ms;
+  --m3-motion-duration-short4: 200ms;
+  --m3-motion-duration-medium1: 250ms;
+  --m3-motion-duration-medium2: 300ms;
+  --m3-motion-duration-medium3: 350ms;
+  --m3-motion-duration-medium4: 400ms;
+  --m3-motion-duration-long1: 450ms;
+  --m3-motion-duration-long2: 500ms;
+  --m3-motion-duration-long3: 550ms;
+  --m3-motion-duration-long4: 600ms;
+  --m3-motion-duration-extra-long1: 700ms;
+  --m3-motion-duration-extra-long2: 800ms;
+  --m3-motion-duration-extra-long3: 900ms;
+  --m3-motion-duration-extra-long4: 1000ms;
+  
+  /* ===================================
+   * SPACING TOKENS
+   * =================================== */
+  
+  /* Material 3 Spacing Scale */
+  --m3-space-none: 0px;
+  --m3-space-extra-small: 4px;
+  --m3-space-small: 8px;
+  --m3-space-medium: 12px;
+  --m3-space-large: 16px;
+  --m3-space-extra-large: 24px;
+  --m3-space-extra-extra-large: 32px;
+  --m3-space-extra-extra-extra-large: 48px;
+  
+  /* Component-specific spacing tokens */
+  --m3-space-button-padding-horizontal: var(--m3-space-extra-large);
+  --m3-space-button-padding-vertical: var(--m3-space-medium);
+  --m3-space-card-padding: var(--m3-space-large);
+  --m3-space-text-field-padding: var(--m3-space-large);
+  --m3-space-list-item-padding: var(--m3-space-large);
+  
+  /* ===================================
+   * STATE TOKENS
+   * =================================== */
+  
+  /* State Layer Opacities */
+  --m3-state-hover-opacity: 0.08;
+  --m3-state-focus-opacity: 0.12;
+  --m3-state-pressed-opacity: 0.12;
+  --m3-state-dragged-opacity: 0.16;
+  --m3-state-disabled-opacity: 0.12;
+  --m3-state-disabled-content-opacity: 0.38;
+  
+  /* ===================================
+   * RESPONSIVE TOKENS
+   * =================================== */
+  
+  /* Breakpoints */
+  --m3-breakpoint-compact: 600px;
+  --m3-breakpoint-medium: 840px;
+  --m3-breakpoint-expanded: 1200px;
+  --m3-breakpoint-large: 1600px;
+  --m3-breakpoint-extra-large: 2000px;
+}
+
+/* ===================================
+ * RESPONSIVE TYPOGRAPHY ADJUSTMENTS
+ * =================================== */
+
+/* Compact screen adjustments */
+@media (max-width: 600px) {
+  :root {
+    /* Reduce display sizes for mobile */
+    --m3-typescale-display-large-size: 45px;
+    --m3-typescale-display-large-line-height: 52px;
+    --m3-typescale-display-medium-size: 36px;
+    --m3-typescale-display-medium-line-height: 44px;
+    --m3-typescale-display-small-size: 28px;
+    --m3-typescale-display-small-line-height: 36px;
+    
+    /* Adjust headline sizes */
+    --m3-typescale-headline-large-size: 28px;
+    --m3-typescale-headline-large-line-height: 36px;
+    --m3-typescale-headline-medium-size: 24px;
+    --m3-typescale-headline-medium-line-height: 32px;
+    
+    /* Adjust spacing for mobile */
+    --m3-space-card-padding: var(--m3-space-medium);
+    --m3-space-text-field-padding: var(--m3-space-medium);
+  }
+}
+
+/* Dark theme elevation adjustments */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not(.light-mode) {
+    --m3-elevation-level1: 0px 1px 2px 0px rgba(0, 0, 0, 0.15), 0px 1px 3px 1px rgba(0, 0, 0, 0.3);
+    --m3-elevation-level2: 0px 1px 2px 0px rgba(0, 0, 0, 0.15), 0px 2px 6px 2px rgba(0, 0, 0, 0.3);
+    --m3-elevation-level3: 0px 1px 3px 0px rgba(0, 0, 0, 0.15), 0px 4px 8px 3px rgba(0, 0, 0, 0.3);
+    --m3-elevation-level4: 0px 2px 3px 0px rgba(0, 0, 0, 0.15), 0px 6px 10px 4px rgba(0, 0, 0, 0.3);
+    --m3-elevation-level5: 0px 4px 4px 0px rgba(0, 0, 0, 0.15), 0px 8px 12px 6px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.dark,
+.dark-mode,
+[data-theme="dark"],
+:root.dark-mode,
+:root[data-theme="dark"] {
+  --m3-elevation-level1: 0px 1px 2px 0px rgba(0, 0, 0, 0.15), 0px 1px 3px 1px rgba(0, 0, 0, 0.3);
+  --m3-elevation-level2: 0px 1px 2px 0px rgba(0, 0, 0, 0.15), 0px 2px 6px 2px rgba(0, 0, 0, 0.3);
+  --m3-elevation-level3: 0px 1px 3px 0px rgba(0, 0, 0, 0.15), 0px 4px 8px 3px rgba(0, 0, 0, 0.3);
+  --m3-elevation-level4: 0px 2px 3px 0px rgba(0, 0, 0, 0.15), 0px 6px 10px 4px rgba(0, 0, 0, 0.3);
+  --m3-elevation-level5: 0px 4px 4px 0px rgba(0, 0, 0, 0.15), 0px 8px 12px 6px rgba(0, 0, 0, 0.3);
+}

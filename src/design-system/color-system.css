@@ -1,0 +1,427 @@
+/**
+ * Material 3 Expressive Dynamic Color System - Enhanced
+ * 
+ * This file extends the base color system with dynamic color utilities,
+ * contextual color application, and enhanced accessibility features.
+ * 
+ * Features:
+ * - Dynamic color generation utilities
+ * - Contextual color application classes
+ * - State-aware color variations
+ * - Accessibility-first color combinations
+ * - Theme-aware color transitions
+ */
+
+/* ===================================
+ * DYNAMIC COLOR UTILITIES
+ * =================================== */
+
+/* Color application utilities */
+.m3-color-primary { color: var(--m3-color-primary); }
+.m3-color-on-primary { color: var(--m3-color-on-primary); }
+.m3-color-primary-container { color: var(--m3-color-primary-container); }
+.m3-color-on-primary-container { color: var(--m3-color-on-primary-container); }
+
+.m3-color-secondary { color: var(--m3-color-secondary); }
+.m3-color-on-secondary { color: var(--m3-color-on-secondary); }
+.m3-color-secondary-container { color: var(--m3-color-secondary-container); }
+.m3-color-on-secondary-container { color: var(--m3-color-on-secondary-container); }
+
+.m3-color-tertiary { color: var(--m3-color-tertiary); }
+.m3-color-on-tertiary { color: var(--m3-color-on-tertiary); }
+.m3-color-tertiary-container { color: var(--m3-color-tertiary-container); }
+.m3-color-on-tertiary-container { color: var(--m3-color-on-tertiary-container); }
+
+.m3-color-error { color: var(--m3-color-error); }
+.m3-color-on-error { color: var(--m3-color-on-error); }
+.m3-color-error-container { color: var(--m3-color-error-container); }
+.m3-color-on-error-container { color: var(--m3-color-on-error-container); }
+
+.m3-color-surface { color: var(--m3-color-surface); }
+.m3-color-on-surface { color: var(--m3-color-on-surface); }
+.m3-color-surface-variant { color: var(--m3-color-surface-variant); }
+.m3-color-on-surface-variant { color: var(--m3-color-on-surface-variant); }
+
+.m3-color-outline { color: var(--m3-color-outline); }
+.m3-color-outline-variant { color: var(--m3-color-outline-variant); }
+
+.m3-color-background { color: var(--m3-color-background); }
+.m3-color-on-background { color: var(--m3-color-on-background); }
+
+.m3-color-success { color: var(--m3-color-success); }
+.m3-color-on-success { color: var(--m3-color-on-success); }
+.m3-color-warning { color: var(--m3-color-warning); }
+.m3-color-on-warning { color: var(--m3-color-on-warning); }
+.m3-color-info { color: var(--m3-color-info); }
+.m3-color-on-info { color: var(--m3-color-on-info); }
+
+/* Background color utilities */
+.m3-bg-primary { background-color: var(--m3-color-primary); }
+.m3-bg-on-primary { background-color: var(--m3-color-on-primary); }
+.m3-bg-primary-container { background-color: var(--m3-color-primary-container); }
+.m3-bg-on-primary-container { background-color: var(--m3-color-on-primary-container); }
+
+.m3-bg-secondary { background-color: var(--m3-color-secondary); }
+.m3-bg-on-secondary { background-color: var(--m3-color-on-secondary); }
+.m3-bg-secondary-container { background-color: var(--m3-color-secondary-container); }
+.m3-bg-on-secondary-container { background-color: var(--m3-color-on-secondary-container); }
+
+.m3-bg-tertiary { background-color: var(--m3-color-tertiary); }
+.m3-bg-on-tertiary { background-color: var(--m3-color-on-tertiary); }
+.m3-bg-tertiary-container { background-color: var(--m3-color-tertiary-container); }
+.m3-bg-on-tertiary-container { background-color: var(--m3-color-on-tertiary-container); }
+
+.m3-bg-error { background-color: var(--m3-color-error); }
+.m3-bg-on-error { background-color: var(--m3-color-on-error); }
+.m3-bg-error-container { background-color: var(--m3-color-error-container); }
+.m3-bg-on-error-container { background-color: var(--m3-color-on-error-container); }
+
+.m3-bg-surface { background-color: var(--m3-color-surface); }
+.m3-bg-on-surface { background-color: var(--m3-color-on-surface); }
+.m3-bg-surface-variant { background-color: var(--m3-color-surface-variant); }
+.m3-bg-on-surface-variant { background-color: var(--m3-color-on-surface-variant); }
+
+.m3-bg-background { background-color: var(--m3-color-background); }
+.m3-bg-on-background { background-color: var(--m3-color-on-background); }
+
+.m3-bg-success { background-color: var(--m3-color-success); }
+.m3-bg-on-success { background-color: var(--m3-color-on-success); }
+.m3-bg-success-container { background-color: var(--m3-color-success-container); }
+.m3-bg-on-success-container { background-color: var(--m3-color-on-success-container); }
+
+.m3-bg-warning { background-color: var(--m3-color-warning); }
+.m3-bg-on-warning { background-color: var(--m3-color-on-warning); }
+.m3-bg-warning-container { background-color: var(--m3-color-warning-container); }
+.m3-bg-on-warning-container { background-color: var(--m3-color-on-warning-container); }
+
+.m3-bg-info { background-color: var(--m3-color-info); }
+.m3-bg-on-info { background-color: var(--m3-color-on-info); }
+.m3-bg-info-container { background-color: var(--m3-color-info-container); }
+.m3-bg-on-info-container { background-color: var(--m3-color-on-info-container); }
+
+/* Border color utilities */
+.m3-border-outline { border-color: var(--m3-color-outline); }
+.m3-border-outline-variant { border-color: var(--m3-color-outline-variant); }
+.m3-border-primary { border-color: var(--m3-color-primary); }
+.m3-border-secondary { border-color: var(--m3-color-secondary); }
+.m3-border-tertiary { border-color: var(--m3-color-tertiary); }
+.m3-border-error { border-color: var(--m3-color-error); }
+.m3-border-success { border-color: var(--m3-color-success); }
+.m3-border-warning { border-color: var(--m3-color-warning); }
+.m3-border-info { border-color: var(--m3-color-info); }
+
+/* ===================================
+ * CONTEXTUAL COLOR COMBINATIONS
+ * =================================== */
+
+/* Primary surface combinations */
+.m3-surface-primary {
+  background-color: var(--m3-color-primary-container);
+  color: var(--m3-color-on-primary-container);
+}
+
+.m3-surface-secondary {
+  background-color: var(--m3-color-secondary-container);
+  color: var(--m3-color-on-secondary-container);
+}
+
+.m3-surface-tertiary {
+  background-color: var(--m3-color-tertiary-container);
+  color: var(--m3-color-on-tertiary-container);
+}
+
+.m3-surface-error {
+  background-color: var(--m3-color-error-container);
+  color: var(--m3-color-on-error-container);
+}
+
+.m3-surface-success {
+  background-color: var(--m3-color-success-container);
+  color: var(--m3-color-on-success-container);
+}
+
+.m3-surface-warning {
+  background-color: var(--m3-color-warning-container);
+  color: var(--m3-color-on-warning-container);
+}
+
+.m3-surface-info {
+  background-color: var(--m3-color-info-container);
+  color: var(--m3-color-on-info-container);
+}
+
+/* Neutral surface combinations */
+.m3-surface-base {
+  background-color: var(--m3-color-surface);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-variant {
+  background-color: var(--m3-color-surface-variant);
+  color: var(--m3-color-on-surface-variant);
+}
+
+.m3-surface-inverse {
+  background-color: var(--m3-color-inverse-surface);
+  color: var(--m3-color-inverse-on-surface);
+}
+
+/* ===================================
+ * STATE-AWARE COLOR VARIATIONS
+ * =================================== */
+
+/* Hover states with transparency overlays */
+.m3-hover-primary:hover {
+  background-color: color-mix(in srgb, var(--m3-color-primary) 8%, transparent);
+}
+
+.m3-hover-secondary:hover {
+  background-color: color-mix(in srgb, var(--m3-color-secondary) 8%, transparent);
+}
+
+.m3-hover-tertiary:hover {
+  background-color: color-mix(in srgb, var(--m3-color-tertiary) 8%, transparent);
+}
+
+.m3-hover-surface:hover {
+  background-color: color-mix(in srgb, var(--m3-color-on-surface) 8%, var(--m3-color-surface));
+}
+
+/* Focus states */
+.m3-focus-primary:focus {
+  outline: 2px solid var(--m3-color-primary);
+  outline-offset: 2px;
+}
+
+.m3-focus-secondary:focus {
+  outline: 2px solid var(--m3-color-secondary);
+  outline-offset: 2px;
+}
+
+.m3-focus-tertiary:focus {
+  outline: 2px solid var(--m3-color-tertiary);
+  outline-offset: 2px;
+}
+
+/* Pressed states */
+.m3-pressed-primary:active {
+  background-color: color-mix(in srgb, var(--m3-color-primary) 12%, transparent);
+}
+
+.m3-pressed-secondary:active {
+  background-color: color-mix(in srgb, var(--m3-color-secondary) 12%, transparent);
+}
+
+.m3-pressed-tertiary:active {
+  background-color: color-mix(in srgb, var(--m3-color-tertiary) 12%, transparent);
+}
+
+/* Disabled states */
+.m3-disabled {
+  color: color-mix(in srgb, var(--m3-color-on-surface) 38%, transparent) !important;
+  background-color: color-mix(in srgb, var(--m3-color-on-surface) 12%, transparent) !important;
+  cursor: not-allowed;
+}
+
+/* ===================================
+ * ACCESSIBILITY ENHANCEMENTS
+ * =================================== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --m3-color-outline: var(--m3-color-on-surface);
+    --m3-color-outline-variant: var(--m3-color-on-surface);
+  }
+  
+  .m3-border-outline,
+  .m3-border-outline-variant {
+    border-width: 2px;
+  }
+  
+  .m3-focus-primary:focus,
+  .m3-focus-secondary:focus,
+  .m3-focus-tertiary:focus {
+    outline-width: 3px;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .m3-hover-primary,
+  .m3-hover-secondary,
+  .m3-hover-tertiary,
+  .m3-hover-surface,
+  .m3-pressed-primary,
+  .m3-pressed-secondary,
+  .m3-pressed-tertiary {
+    transition: none;
+  }
+}
+
+/* ===================================
+ * THEME TRANSITION UTILITIES
+ * =================================== */
+
+/* Smooth theme transitions */
+.m3-theme-transition {
+  transition: 
+    background-color var(--m3-motion-duration-medium2) var(--m3-motion-easing-standard),
+    color var(--m3-motion-duration-medium2) var(--m3-motion-easing-standard),
+    border-color var(--m3-motion-duration-medium2) var(--m3-motion-easing-standard);
+}
+
+/* Apply theme transitions to common elements */
+*:not(.m3-no-theme-transition) {
+  transition: 
+    background-color var(--m3-motion-duration-short2) var(--m3-motion-easing-standard),
+    color var(--m3-motion-duration-short2) var(--m3-motion-easing-standard),
+    border-color var(--m3-motion-duration-short2) var(--m3-motion-easing-standard);
+}
+
+/* Disable theme transitions for specific elements */
+.m3-no-theme-transition {
+  transition: none !important;
+}
+
+/* ===================================
+ * SEMANTIC COLOR UTILITIES
+ * =================================== */
+
+/* Success indicators */
+.m3-success {
+  color: var(--m3-color-success);
+}
+
+.m3-success-subtle {
+  color: var(--m3-color-on-success-container);
+  background-color: var(--m3-color-success-container);
+  border-color: var(--m3-color-success);
+}
+
+/* Warning indicators */
+.m3-warning {
+  color: var(--m3-color-warning);
+}
+
+.m3-warning-subtle {
+  color: var(--m3-color-on-warning-container);
+  background-color: var(--m3-color-warning-container);
+  border-color: var(--m3-color-warning);
+}
+
+/* Error indicators */
+.m3-error {
+  color: var(--m3-color-error);
+}
+
+.m3-error-subtle {
+  color: var(--m3-color-on-error-container);
+  background-color: var(--m3-color-error-container);
+  border-color: var(--m3-color-error);
+}
+
+/* Info indicators */
+.m3-info {
+  color: var(--m3-color-info);
+}
+
+.m3-info-subtle {
+  color: var(--m3-color-on-info-container);
+  background-color: var(--m3-color-info-container);
+  border-color: var(--m3-color-info);
+}
+
+/* ===================================
+ * TONAL SURFACE UTILITIES
+ * =================================== */
+
+/* Surface elevation levels with appropriate colors */
+.m3-surface-level-0 {
+  background-color: var(--m3-color-surface);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-level-1 {
+  background-color: var(--m3-color-surface-container-low);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-level-2 {
+  background-color: var(--m3-color-surface-container);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-level-3 {
+  background-color: var(--m3-color-surface-container-high);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-level-4 {
+  background-color: var(--m3-color-surface-container-highest);
+  color: var(--m3-color-on-surface);
+}
+
+/* ===================================
+ * RESPONSIVE COLOR ADAPTATIONS
+ * =================================== */
+
+/* Mobile-optimized color combinations */
+@media (max-width: 599px) {
+  .m3-mobile-high-contrast {
+    --m3-color-outline: var(--m3-color-on-surface);
+    --m3-color-outline-variant: var(--m3-color-on-surface);
+  }
+  
+  .m3-mobile-high-contrast .m3-border-outline,
+  .m3-mobile-high-contrast .m3-border-outline-variant {
+    border-width: 1.5px;
+  }
+}
+
+/* Large screen optimizations */
+@media (min-width: 1200px) {
+  .m3-desktop-subtle {
+    --m3-hover-opacity: 0.04;
+    --m3-focus-opacity: 0.08;
+    --m3-pressed-opacity: 0.10;
+  }
+}
+
+/* ===================================
+ * UTILITY CLASSES FOR DYNAMIC USAGE
+ * =================================== */
+
+/* Color scheme switching */
+.m3-force-light-theme {
+  color-scheme: light;
+}
+
+.m3-force-dark-theme {
+  color-scheme: dark;
+}
+
+/* Dynamic color application */
+.m3-dynamic-primary {
+  background-color: var(--m3-dynamic-primary, var(--m3-color-primary));
+  color: var(--m3-dynamic-on-primary, var(--m3-color-on-primary));
+}
+
+.m3-dynamic-secondary {
+  background-color: var(--m3-dynamic-secondary, var(--m3-color-secondary));
+  color: var(--m3-dynamic-on-secondary, var(--m3-color-on-secondary));
+}
+
+.m3-dynamic-tertiary {
+  background-color: var(--m3-dynamic-tertiary, var(--m3-color-tertiary));
+  color: var(--m3-dynamic-on-tertiary, var(--m3-color-on-tertiary));
+}
+
+/* Color debugging utilities (development only) */
+.m3-debug-colors * {
+  outline: 1px solid red;
+}
+
+.m3-debug-colors .m3-surface-primary { outline-color: var(--m3-color-primary); }
+.m3-debug-colors .m3-surface-secondary { outline-color: var(--m3-color-secondary); }
+.m3-debug-colors .m3-surface-tertiary { outline-color: var(--m3-color-tertiary); }

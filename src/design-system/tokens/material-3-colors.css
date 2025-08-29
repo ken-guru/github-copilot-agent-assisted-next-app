@@ -1,0 +1,389 @@
+/**
+ * Material 3 Expressive Dynamic Color System
+ * 
+ * This file implements the Material 3 dynamic color system with expressive
+ * color tokens that adapt to theme changes and provide semantic meaning.
+ * 
+ * Based on Material Design 3 color specifications:
+ * https://m3.material.io/styles/color/system/overview
+ */
+
+:root {
+  /* ===================================
+   * PRIMARY COLOR PALETTE
+   * =================================== */
+  
+  /* Primary color - main brand color */
+  --m3-color-primary-10: #000f33;
+  --m3-color-primary-20: #001e66;
+  --m3-color-primary-30: #002d99;
+  --m3-color-primary-40: #003dcc;
+  --m3-color-primary-50: #0070f3; /* Base primary */
+  --m3-color-primary-60: #3395ff;
+  --m3-color-primary-70: #66b3ff;
+  --m3-color-primary-80: #99d0ff;
+  --m3-color-primary-90: #ccebff;
+  --m3-color-primary-95: #e6f5ff;
+  --m3-color-primary-99: #fcfeff;
+  
+  /* Primary container - surfaces related to primary */
+  --m3-color-primary-container-10: #000a1a;
+  --m3-color-primary-container-20: #001433;
+  --m3-color-primary-container-30: #001e4d;
+  --m3-color-primary-container-40: #002866;
+  --m3-color-primary-container-50: #003280;
+  --m3-color-primary-container-60: #1a5699;
+  --m3-color-primary-container-70: #3370b3;
+  --m3-color-primary-container-80: #4d8acc;
+  --m3-color-primary-container-90: #d6ebff;
+  --m3-color-primary-container-95: #ebf5ff;
+  --m3-color-primary-container-99: #fdfeff;
+  
+  /* ===================================
+   * SECONDARY COLOR PALETTE
+   * =================================== */
+  
+  /* Secondary color - supporting actions */
+  --m3-color-secondary-10: #1a1a2e;
+  --m3-color-secondary-20: #2e2e5c;
+  --m3-color-secondary-30: #424289;
+  --m3-color-secondary-40: #5656b7;
+  --m3-color-secondary-50: #6a6ae4;
+  --m3-color-secondary-60: #8888ea;
+  --m3-color-secondary-70: #a6a6ef;
+  --m3-color-secondary-80: #c4c4f5;
+  --m3-color-secondary-90: #e2e2fa;
+  --m3-color-secondary-95: #f0f0fd;
+  --m3-color-secondary-99: #fefefe;
+  
+  /* Secondary container */
+  --m3-color-secondary-container-10: #0f0f23;
+  --m3-color-secondary-container-20: #1e1e46;
+  --m3-color-secondary-container-30: #2d2d69;
+  --m3-color-secondary-container-40: #3c3c8c;
+  --m3-color-secondary-container-50: #4b4baf;
+  --m3-color-secondary-container-60: #6969c2;
+  --m3-color-secondary-container-70: #8787d5;
+  --m3-color-secondary-container-80: #a5a5e8;
+  --m3-color-secondary-container-90: #dcdcf7;
+  --m3-color-secondary-container-95: #eeeefb;
+  --m3-color-secondary-container-99: #fefefe;
+  
+  /* ===================================
+   * TERTIARY COLOR PALETTE
+   * =================================== */
+  
+  /* Tertiary color - accent and highlighting */
+  --m3-color-tertiary-10: #2e1a2e;
+  --m3-color-tertiary-20: #5c2e5c;
+  --m3-color-tertiary-30: #894289;
+  --m3-color-tertiary-40: #b756b7;
+  --m3-color-tertiary-50: #e46ae4;
+  --m3-color-tertiary-60: #ea88ea;
+  --m3-color-tertiary-70: #efa6ef;
+  --m3-color-tertiary-80: #f5c4f5;
+  --m3-color-tertiary-90: #fae2fa;
+  --m3-color-tertiary-95: #fdf0fd;
+  --m3-color-tertiary-99: #fefefe;
+  
+  /* Tertiary container */
+  --m3-color-tertiary-container-10: #230f23;
+  --m3-color-tertiary-container-20: #461e46;
+  --m3-color-tertiary-container-30: #692d69;
+  --m3-color-tertiary-container-40: #8c3c8c;
+  --m3-color-tertiary-container-50: #af4baf;
+  --m3-color-tertiary-container-60: #c269c2;
+  --m3-color-tertiary-container-70: #d587d5;
+  --m3-color-tertiary-container-80: #e8a5e8;
+  --m3-color-tertiary-container-90: #f7dcf7;
+  --m3-color-tertiary-container-95: #fbeeeb;
+  --m3-color-tertiary-container-99: #fefefe;
+  
+  /* ===================================
+   * NEUTRAL COLOR PALETTE
+   * =================================== */
+  
+  /* Neutral colors - backgrounds and surfaces */
+  --m3-color-neutral-0: #000000;
+  --m3-color-neutral-10: #1a1a1a;
+  --m3-color-neutral-20: #333333;
+  --m3-color-neutral-30: #4d4d4d;
+  --m3-color-neutral-40: #666666;
+  --m3-color-neutral-50: #808080;
+  --m3-color-neutral-60: #999999;
+  --m3-color-neutral-70: #b3b3b3;
+  --m3-color-neutral-80: #cccccc;
+  --m3-color-neutral-90: #e6e6e6;
+  --m3-color-neutral-95: #f3f3f3;
+  --m3-color-neutral-99: #fefefe;
+  --m3-color-neutral-100: #ffffff;
+  
+  /* Neutral variant - subtle backgrounds */
+  --m3-color-neutral-variant-0: #000000;
+  --m3-color-neutral-variant-10: #1a1a1e;
+  --m3-color-neutral-variant-20: #33333c;
+  --m3-color-neutral-variant-30: #4d4d5a;
+  --m3-color-neutral-variant-40: #666678;
+  --m3-color-neutral-variant-50: #808096;
+  --m3-color-neutral-variant-60: #9999b4;
+  --m3-color-neutral-variant-70: #b3b3d2;
+  --m3-color-neutral-variant-80: #ccccf0;
+  --m3-color-neutral-variant-90: #e6e6f7;
+  --m3-color-neutral-variant-95: #f3f3fb;
+  --m3-color-neutral-variant-99: #fefefe;
+  --m3-color-neutral-variant-100: #ffffff;
+  
+  /* ===================================
+   * ERROR COLOR PALETTE
+   * =================================== */
+  
+  --m3-color-error-10: #410002;
+  --m3-color-error-20: #690005;
+  --m3-color-error-30: #93000a;
+  --m3-color-error-40: #ba1a1a;
+  --m3-color-error-50: #dc2626;
+  --m3-color-error-60: #e54c4c;
+  --m3-color-error-70: #ee7272;
+  --m3-color-error-80: #f79999;
+  --m3-color-error-90: #ffc0c0;
+  --m3-color-error-95: #ffe0e0;
+  --m3-color-error-99: #fffbf9;
+  
+  /* Error container */
+  --m3-color-error-container-10: #2d0001;
+  --m3-color-error-container-20: #5a0002;
+  --m3-color-error-container-30: #870004;
+  --m3-color-error-container-40: #b40005;
+  --m3-color-error-container-50: #e10006;
+  --m3-color-error-container-60: #ff2d32;
+  --m3-color-error-container-70: #ff5a5f;
+  --m3-color-error-container-80: #ff878c;
+  --m3-color-error-container-90: #ffdad6;
+  --m3-color-error-container-95: #ffedea;
+  --m3-color-error-container-99: #fffbf9;
+  
+  /* ===================================
+   * SEMANTIC COLOR ROLES - LIGHT THEME
+   * =================================== */
+  
+  /* Primary roles */
+  --m3-color-primary: var(--m3-color-primary-40);
+  --m3-color-on-primary: var(--m3-color-primary-100);
+  --m3-color-primary-container: var(--m3-color-primary-container-90);
+  --m3-color-on-primary-container: var(--m3-color-primary-container-10);
+  
+  /* Secondary roles */
+  --m3-color-secondary: var(--m3-color-secondary-40);
+  --m3-color-on-secondary: var(--m3-color-secondary-100);
+  --m3-color-secondary-container: var(--m3-color-secondary-container-90);
+  --m3-color-on-secondary-container: var(--m3-color-secondary-container-10);
+  
+  /* Tertiary roles */
+  --m3-color-tertiary: var(--m3-color-tertiary-40);
+  --m3-color-on-tertiary: var(--m3-color-tertiary-100);
+  --m3-color-tertiary-container: var(--m3-color-tertiary-container-90);
+  --m3-color-on-tertiary-container: var(--m3-color-tertiary-container-10);
+  
+  /* Error roles */
+  --m3-color-error: var(--m3-color-error-40);
+  --m3-color-on-error: var(--m3-color-error-100);
+  --m3-color-error-container: var(--m3-color-error-container-90);
+  --m3-color-on-error-container: var(--m3-color-error-container-10);
+  
+  /* Surface roles */
+  --m3-color-surface: var(--m3-color-neutral-99);
+  --m3-color-on-surface: var(--m3-color-neutral-10);
+  --m3-color-surface-variant: var(--m3-color-neutral-variant-90);
+  --m3-color-on-surface-variant: var(--m3-color-neutral-variant-30);
+  --m3-color-surface-container-lowest: var(--m3-color-neutral-100);
+  --m3-color-surface-container-low: var(--m3-color-neutral-96);
+  --m3-color-surface-container: var(--m3-color-neutral-94);
+  --m3-color-surface-container-high: var(--m3-color-neutral-92);
+  --m3-color-surface-container-highest: var(--m3-color-neutral-90);
+  
+  /* Outline roles */
+  --m3-color-outline: var(--m3-color-neutral-variant-50);
+  --m3-color-outline-variant: var(--m3-color-neutral-variant-80);
+  
+  /* Inverse roles */
+  --m3-color-inverse-surface: var(--m3-color-neutral-20);
+  --m3-color-inverse-on-surface: var(--m3-color-neutral-95);
+  --m3-color-inverse-primary: var(--m3-color-primary-80);
+  
+  /* Background */
+  --m3-color-background: var(--m3-color-neutral-99);
+  --m3-color-on-background: var(--m3-color-neutral-10);
+  
+  /* Shadow and scrim */
+  --m3-color-shadow: var(--m3-color-neutral-0);
+  --m3-color-scrim: var(--m3-color-neutral-0);
+  
+  /* ===================================
+   * SUCCESS AND WARNING COLORS
+   * =================================== */
+  
+  /* Success colors (using green) */
+  --m3-color-success: #16a34a;
+  --m3-color-on-success: #ffffff;
+  --m3-color-success-container: #dcfce7;
+  --m3-color-on-success-container: #14532d;
+  
+  /* Warning colors (using amber) */
+  --m3-color-warning: #ca8a04;
+  --m3-color-on-warning: #ffffff;
+  --m3-color-warning-container: #fef3c7;
+  --m3-color-on-warning-container: #451a03;
+  
+  /* Info colors (using blue) */
+  --m3-color-info: #2563eb;
+  --m3-color-on-info: #ffffff;
+  --m3-color-info-container: #dbeafe;
+  --m3-color-on-info-container: #1e3a8a;
+}
+
+/* ===================================
+ * DARK THEME COLOR OVERRIDES
+ * =================================== */
+
+.dark,
+.dark-mode,
+[data-theme="dark"],
+:root.dark-mode,
+:root[data-theme="dark"] {
+  /* Primary roles - dark theme */
+  --m3-color-primary: var(--m3-color-primary-80);
+  --m3-color-on-primary: var(--m3-color-primary-20);
+  --m3-color-primary-container: var(--m3-color-primary-container-30);
+  --m3-color-on-primary-container: var(--m3-color-primary-container-90);
+  
+  /* Secondary roles - dark theme */
+  --m3-color-secondary: var(--m3-color-secondary-80);
+  --m3-color-on-secondary: var(--m3-color-secondary-20);
+  --m3-color-secondary-container: var(--m3-color-secondary-container-30);
+  --m3-color-on-secondary-container: var(--m3-color-secondary-container-90);
+  
+  /* Tertiary roles - dark theme */
+  --m3-color-tertiary: var(--m3-color-tertiary-80);
+  --m3-color-on-tertiary: var(--m3-color-tertiary-20);
+  --m3-color-tertiary-container: var(--m3-color-tertiary-container-30);
+  --m3-color-on-tertiary-container: var(--m3-color-tertiary-container-90);
+  
+  /* Error roles - dark theme */
+  --m3-color-error: var(--m3-color-error-80);
+  --m3-color-on-error: var(--m3-color-error-20);
+  --m3-color-error-container: var(--m3-color-error-container-30);
+  --m3-color-on-error-container: var(--m3-color-error-container-90);
+  
+  /* Surface roles - dark theme */
+  --m3-color-surface: var(--m3-color-neutral-10);
+  --m3-color-on-surface: var(--m3-color-neutral-90);
+  --m3-color-surface-variant: var(--m3-color-neutral-variant-30);
+  --m3-color-on-surface-variant: var(--m3-color-neutral-variant-80);
+  --m3-color-surface-container-lowest: var(--m3-color-neutral-4);
+  --m3-color-surface-container-low: var(--m3-color-neutral-10);
+  --m3-color-surface-container: var(--m3-color-neutral-12);
+  --m3-color-surface-container-high: var(--m3-color-neutral-17);
+  --m3-color-surface-container-highest: var(--m3-color-neutral-22);
+  
+  /* Outline roles - dark theme */
+  --m3-color-outline: var(--m3-color-neutral-variant-60);
+  --m3-color-outline-variant: var(--m3-color-neutral-variant-30);
+  
+  /* Inverse roles - dark theme */
+  --m3-color-inverse-surface: var(--m3-color-neutral-90);
+  --m3-color-inverse-on-surface: var(--m3-color-neutral-20);
+  --m3-color-inverse-primary: var(--m3-color-primary-40);
+  
+  /* Background - dark theme */
+  --m3-color-background: var(--m3-color-neutral-10);
+  --m3-color-on-background: var(--m3-color-neutral-90);
+  
+  /* Success colors - dark theme */
+  --m3-color-success: #4ade80;
+  --m3-color-on-success: #14532d;
+  --m3-color-success-container: rgba(22, 163, 74, 0.2);
+  --m3-color-on-success-container: #4ade80;
+  
+  /* Warning colors - dark theme */
+  --m3-color-warning: #fcd34d;
+  --m3-color-on-warning: #451a03;
+  --m3-color-warning-container: rgba(202, 138, 4, 0.2);
+  --m3-color-on-warning-container: #fcd34d;
+  
+  /* Info colors - dark theme */
+  --m3-color-info: #60a5fa;
+  --m3-color-on-info: #1e3a8a;
+  --m3-color-info-container: rgba(37, 99, 235, 0.2);
+  --m3-color-on-info-container: #60a5fa;
+}
+
+/* System preference dark mode */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not(.light-mode) {
+    /* Primary roles - dark theme */
+    --m3-color-primary: var(--m3-color-primary-80);
+    --m3-color-on-primary: var(--m3-color-primary-20);
+    --m3-color-primary-container: var(--m3-color-primary-container-30);
+    --m3-color-on-primary-container: var(--m3-color-primary-container-90);
+    
+    /* Secondary roles - dark theme */
+    --m3-color-secondary: var(--m3-color-secondary-80);
+    --m3-color-on-secondary: var(--m3-color-secondary-20);
+    --m3-color-secondary-container: var(--m3-color-secondary-container-30);
+    --m3-color-on-secondary-container: var(--m3-color-secondary-container-90);
+    
+    /* Tertiary roles - dark theme */
+    --m3-color-tertiary: var(--m3-color-tertiary-80);
+    --m3-color-on-tertiary: var(--m3-color-tertiary-20);
+    --m3-color-tertiary-container: var(--m3-color-tertiary-container-30);
+    --m3-color-on-tertiary-container: var(--m3-color-tertiary-container-90);
+    
+    /* Error roles - dark theme */
+    --m3-color-error: var(--m3-color-error-80);
+    --m3-color-on-error: var(--m3-color-error-20);
+    --m3-color-error-container: var(--m3-color-error-container-30);
+    --m3-color-on-error-container: var(--m3-color-error-container-90);
+    
+    /* Surface roles - dark theme */
+    --m3-color-surface: var(--m3-color-neutral-10);
+    --m3-color-on-surface: var(--m3-color-neutral-90);
+    --m3-color-surface-variant: var(--m3-color-neutral-variant-30);
+    --m3-color-on-surface-variant: var(--m3-color-neutral-variant-80);
+    --m3-color-surface-container-lowest: var(--m3-color-neutral-4);
+    --m3-color-surface-container-low: var(--m3-color-neutral-10);
+    --m3-color-surface-container: var(--m3-color-neutral-12);
+    --m3-color-surface-container-high: var(--m3-color-neutral-17);
+    --m3-color-surface-container-highest: var(--m3-color-neutral-22);
+    
+    /* Outline roles - dark theme */
+    --m3-color-outline: var(--m3-color-neutral-variant-60);
+    --m3-color-outline-variant: var(--m3-color-neutral-variant-30);
+    
+    /* Inverse roles - dark theme */
+    --m3-color-inverse-surface: var(--m3-color-neutral-90);
+    --m3-color-inverse-on-surface: var(--m3-color-neutral-20);
+    --m3-color-inverse-primary: var(--m3-color-primary-40);
+    
+    /* Background - dark theme */
+    --m3-color-background: var(--m3-color-neutral-10);
+    --m3-color-on-background: var(--m3-color-neutral-90);
+    
+    /* Success colors - dark theme */
+    --m3-color-success: #4ade80;
+    --m3-color-on-success: #14532d;
+    --m3-color-success-container: rgba(22, 163, 74, 0.2);
+    --m3-color-on-success-container: #4ade80;
+    
+    /* Warning colors - dark theme */
+    --m3-color-warning: #fcd34d;
+    --m3-color-on-warning: #451a03;
+    --m3-color-warning-container: rgba(202, 138, 4, 0.2);
+    --m3-color-on-warning-container: #fcd34d;
+    
+    /* Info colors - dark theme */
+    --m3-color-info: #60a5fa;
+    --m3-color-on-info: #1e3a8a;
+    --m3-color-info-container: rgba(37, 99, 235, 0.2);
+    --m3-color-on-info-container: #60a5fa;
+  }
+}

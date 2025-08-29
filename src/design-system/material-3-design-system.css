@@ -1,0 +1,449 @@
+/**
+ * Material 3 Expressive Design System
+ * 
+ * Main design system file that imports all token files and provides
+ * the foundation for the Material 3 Expressive transformation.
+ * 
+ * This file should be imported in the main application CSS file.
+ */
+
+/* Material 3 Expressive Design System - Main Entry Point */
+@import './tokens/material-3-tokens.css';
+@import './tokens/material-3-colors.css';
+@import './typography.css';
+@import './color-system.css';
+
+/* ===================================
+ * DESIGN SYSTEM INITIALIZATION
+ * =================================== */
+
+/* Ensure consistent box-sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Set up font loading and fallbacks */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+/* ===================================
+ * BASE TYPOGRAPHY CLASSES
+ * =================================== */
+
+.m3-display-large {
+  font: var(--m3-typescale-display-large-font);
+  letter-spacing: var(--m3-typescale-display-large-tracking);
+}
+
+.m3-display-medium {
+  font: var(--m3-typescale-display-medium-font);
+  letter-spacing: var(--m3-typescale-display-medium-tracking);
+}
+
+.m3-display-small {
+  font: var(--m3-typescale-display-small-font);
+  letter-spacing: var(--m3-typescale-display-small-tracking);
+}
+
+.m3-headline-large {
+  font: var(--m3-typescale-headline-large-font);
+  letter-spacing: var(--m3-typescale-headline-large-tracking);
+}
+
+.m3-headline-medium {
+  font: var(--m3-typescale-headline-medium-font);
+  letter-spacing: var(--m3-typescale-headline-medium-tracking);
+}
+
+.m3-headline-small {
+  font: var(--m3-typescale-headline-small-font);
+  letter-spacing: var(--m3-typescale-headline-small-tracking);
+}
+
+.m3-title-large {
+  font: var(--m3-typescale-title-large-font);
+  letter-spacing: var(--m3-typescale-title-large-tracking);
+}
+
+.m3-title-medium {
+  font: var(--m3-typescale-title-medium-font);
+  letter-spacing: var(--m3-typescale-title-medium-tracking);
+}
+
+.m3-title-small {
+  font: var(--m3-typescale-title-small-font);
+  letter-spacing: var(--m3-typescale-title-small-tracking);
+}
+
+.m3-body-large {
+  font: var(--m3-typescale-body-large-font);
+  letter-spacing: var(--m3-typescale-body-large-tracking);
+}
+
+.m3-body-medium {
+  font: var(--m3-typescale-body-medium-font);
+  letter-spacing: var(--m3-typescale-body-medium-tracking);
+}
+
+.m3-body-small {
+  font: var(--m3-typescale-body-small-font);
+  letter-spacing: var(--m3-typescale-body-small-tracking);
+}
+
+.m3-label-large {
+  font: var(--m3-typescale-label-large-font);
+  letter-spacing: var(--m3-typescale-label-large-tracking);
+}
+
+.m3-label-medium {
+  font: var(--m3-typescale-label-medium-font);
+  letter-spacing: var(--m3-typescale-label-medium-tracking);
+}
+
+.m3-label-small {
+  font: var(--m3-typescale-label-small-font);
+  letter-spacing: var(--m3-typescale-label-small-tracking);
+}
+
+/* ===================================
+ * SURFACE AND ELEVATION UTILITIES
+ * =================================== */
+
+.m3-surface {
+  background-color: var(--m3-color-surface);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-variant {
+  background-color: var(--m3-color-surface-variant);
+  color: var(--m3-color-on-surface-variant);
+}
+
+.m3-surface-container {
+  background-color: var(--m3-color-surface-container);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-container-low {
+  background-color: var(--m3-color-surface-container-low);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-container-high {
+  background-color: var(--m3-color-surface-container-high);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-container-highest {
+  background-color: var(--m3-color-surface-container-highest);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-elevation-0 {
+  box-shadow: var(--m3-elevation-level0);
+}
+
+.m3-elevation-1 {
+  box-shadow: var(--m3-elevation-level1);
+}
+
+.m3-elevation-2 {
+  box-shadow: var(--m3-elevation-level2);
+}
+
+.m3-elevation-3 {
+  box-shadow: var(--m3-elevation-level3);
+}
+
+.m3-elevation-4 {
+  box-shadow: var(--m3-elevation-level4);
+}
+
+.m3-elevation-5 {
+  box-shadow: var(--m3-elevation-level5);
+}
+
+/* ===================================
+ * COLOR UTILITIES
+ * =================================== */
+
+.m3-color-primary {
+  color: var(--m3-color-primary);
+}
+
+.m3-color-on-primary {
+  color: var(--m3-color-on-primary);
+}
+
+.m3-color-secondary {
+  color: var(--m3-color-secondary);
+}
+
+.m3-color-on-secondary {
+  color: var(--m3-color-on-secondary);
+}
+
+.m3-color-tertiary {
+  color: var(--m3-color-tertiary);
+}
+
+.m3-color-on-tertiary {
+  color: var(--m3-color-on-tertiary);
+}
+
+.m3-color-error {
+  color: var(--m3-color-error);
+}
+
+.m3-color-on-error {
+  color: var(--m3-color-on-error);
+}
+
+.m3-color-success {
+  color: var(--m3-color-success);
+}
+
+.m3-color-warning {
+  color: var(--m3-color-warning);
+}
+
+.m3-color-info {
+  color: var(--m3-color-info);
+}
+
+/* Background color utilities */
+.m3-bg-primary {
+  background-color: var(--m3-color-primary);
+  color: var(--m3-color-on-primary);
+}
+
+.m3-bg-primary-container {
+  background-color: var(--m3-color-primary-container);
+  color: var(--m3-color-on-primary-container);
+}
+
+.m3-bg-secondary {
+  background-color: var(--m3-color-secondary);
+  color: var(--m3-color-on-secondary);
+}
+
+.m3-bg-secondary-container {
+  background-color: var(--m3-color-secondary-container);
+  color: var(--m3-color-on-secondary-container);
+}
+
+.m3-bg-tertiary {
+  background-color: var(--m3-color-tertiary);
+  color: var(--m3-color-on-tertiary);
+}
+
+.m3-bg-tertiary-container {
+  background-color: var(--m3-color-tertiary-container);
+  color: var(--m3-color-on-tertiary-container);
+}
+
+.m3-bg-error {
+  background-color: var(--m3-color-error);
+  color: var(--m3-color-on-error);
+}
+
+.m3-bg-error-container {
+  background-color: var(--m3-color-error-container);
+  color: var(--m3-color-on-error-container);
+}
+
+.m3-bg-success {
+  background-color: var(--m3-color-success);
+  color: var(--m3-color-on-success);
+}
+
+.m3-bg-success-container {
+  background-color: var(--m3-color-success-container);
+  color: var(--m3-color-on-success-container);
+}
+
+.m3-bg-warning {
+  background-color: var(--m3-color-warning);
+  color: var(--m3-color-on-warning);
+}
+
+.m3-bg-warning-container {
+  background-color: var(--m3-color-warning-container);
+  color: var(--m3-color-on-warning-container);
+}
+
+.m3-bg-info {
+  background-color: var(--m3-color-info);
+  color: var(--m3-color-on-info);
+}
+
+.m3-bg-info-container {
+  background-color: var(--m3-color-info-container);
+  color: var(--m3-color-on-info-container);
+}
+
+/* ===================================
+ * SHAPE UTILITIES
+ * =================================== */
+
+.m3-shape-none {
+  border-radius: var(--m3-shape-corner-none);
+}
+
+.m3-shape-extra-small {
+  border-radius: var(--m3-shape-corner-extra-small);
+}
+
+.m3-shape-small {
+  border-radius: var(--m3-shape-corner-small);
+}
+
+.m3-shape-medium {
+  border-radius: var(--m3-shape-corner-medium);
+}
+
+.m3-shape-large {
+  border-radius: var(--m3-shape-corner-large);
+}
+
+.m3-shape-extra-large {
+  border-radius: var(--m3-shape-corner-extra-large);
+}
+
+.m3-shape-full {
+  border-radius: var(--m3-shape-corner-full);
+}
+
+/* Expressive shape utilities */
+.m3-shape-extra-small-expressive {
+  border-radius: var(--m3-shape-corner-extra-small-expressive);
+}
+
+.m3-shape-small-expressive {
+  border-radius: var(--m3-shape-corner-small-expressive);
+}
+
+.m3-shape-medium-expressive {
+  border-radius: var(--m3-shape-corner-medium-expressive);
+}
+
+.m3-shape-large-expressive {
+  border-radius: var(--m3-shape-corner-large-expressive);
+}
+
+.m3-shape-extra-large-expressive {
+  border-radius: var(--m3-shape-corner-extra-large-expressive);
+}
+
+/* ===================================
+ * MOTION UTILITIES
+ * =================================== */
+
+.m3-motion-standard {
+  transition-timing-function: var(--m3-motion-easing-standard);
+}
+
+.m3-motion-emphasized {
+  transition-timing-function: var(--m3-motion-easing-emphasized);
+}
+
+.m3-motion-decelerated {
+  transition-timing-function: var(--m3-motion-easing-decelerated);
+}
+
+.m3-motion-accelerated {
+  transition-timing-function: var(--m3-motion-easing-accelerated);
+}
+
+.m3-duration-short {
+  transition-duration: var(--m3-motion-duration-short2);
+}
+
+.m3-duration-medium {
+  transition-duration: var(--m3-motion-duration-medium2);
+}
+
+.m3-duration-long {
+  transition-duration: var(--m3-motion-duration-long2);
+}
+
+/* ===================================
+ * STATE LAYER UTILITIES
+ * =================================== */
+
+.m3-state-layer {
+  position: relative;
+  overflow: hidden;
+}
+
+.m3-state-layer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: currentColor;
+  opacity: 0;
+  transition: opacity var(--m3-motion-duration-short2) var(--m3-motion-easing-standard);
+  pointer-events: none;
+}
+
+.m3-state-layer:hover::before {
+  opacity: var(--m3-state-hover-opacity);
+}
+
+.m3-state-layer:focus-visible::before {
+  opacity: var(--m3-state-focus-opacity);
+}
+
+.m3-state-layer:active::before {
+  opacity: var(--m3-state-pressed-opacity);
+}
+
+/* ===================================
+ * ACCESSIBILITY UTILITIES
+ * =================================== */
+
+.m3-focus-ring {
+  outline: 2px solid var(--m3-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--m3-shape-corner-small);
+}
+
+.m3-focus-ring:focus-visible {
+  outline: 2px solid var(--m3-color-primary);
+  outline-offset: 2px;
+}
+
+/* Screen reader only content */
+.m3-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ===================================
+ * REDUCED MOTION SUPPORT
+ * =================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .m3-state-layer::before {
+    transition: none;
+  }
+}

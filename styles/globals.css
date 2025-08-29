@@ -1,3 +1,6 @@
+/* Import Material 3 Expressive Design System */
+@import '../src/design-system/material-3-design-system.css';
+
 /* Global styles for the application */
 :root {
   /* Layout variables */

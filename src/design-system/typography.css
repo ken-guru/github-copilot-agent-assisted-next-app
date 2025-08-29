@@ -1,0 +1,560 @@
+/**
+ * Material 3 Expressive Typography System
+ * 
+ * Enhanced typography utilities with responsive behavior, expressive font weights,
+ * and dynamic sizing that adapts to screen size and context.
+ * 
+ * Extends the base typography tokens with additional utilities and responsive patterns.
+ */
+
+/* ===================================
+ * ENHANCED TYPOGRAPHY UTILITIES
+ * =================================== */
+
+/* Display typography with enhanced responsive behavior */
+.m3-display-large {
+  font: var(--m3-typescale-display-large-font);
+  letter-spacing: var(--m3-typescale-display-large-tracking);
+  margin: 0;
+  line-height: 1.12; /* Improved line height for readability */
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+}
+
+.m3-display-medium {
+  font: var(--m3-typescale-display-medium-font);
+  letter-spacing: var(--m3-typescale-display-medium-tracking);
+  margin: 0;
+  line-height: 1.16;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+}
+
+.m3-display-small {
+  font: var(--m3-typescale-display-small-font);
+  letter-spacing: var(--m3-typescale-display-small-tracking);
+  margin: 0;
+  line-height: 1.22;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+}
+
+/* Headline typography with expressive weights */
+.m3-headline-large {
+  font: var(--m3-typescale-headline-large-font);
+  letter-spacing: var(--m3-typescale-headline-large-tracking);
+  margin: 0;
+  line-height: 1.25;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+.m3-headline-medium {
+  font: var(--m3-typescale-headline-medium-font);
+  letter-spacing: var(--m3-typescale-headline-medium-tracking);
+  margin: 0;
+  line-height: 1.29;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+.m3-headline-small {
+  font: var(--m3-typescale-headline-small-font);
+  letter-spacing: var(--m3-typescale-headline-small-tracking);
+  margin: 0;
+  line-height: 1.33;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+/* Title typography with medium weight for emphasis */
+.m3-title-large {
+  font: var(--m3-typescale-title-large-font);
+  letter-spacing: var(--m3-typescale-title-large-tracking);
+  margin: 0;
+  line-height: 1.27;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+.m3-title-medium {
+  font: var(--m3-typescale-title-medium-font);
+  letter-spacing: var(--m3-typescale-title-medium-tracking);
+  margin: 0;
+  line-height: 1.5;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+.m3-title-small {
+  font: var(--m3-typescale-title-small-font);
+  letter-spacing: var(--m3-typescale-title-small-tracking);
+  margin: 0;
+  line-height: 1.43;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+/* Body typography optimized for readability */
+.m3-body-large {
+  font: var(--m3-typescale-body-large-font);
+  letter-spacing: var(--m3-typescale-body-large-tracking);
+  margin: 0;
+  line-height: 1.5;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+.m3-body-medium {
+  font: var(--m3-typescale-body-medium-font);
+  letter-spacing: var(--m3-typescale-body-medium-tracking);
+  margin: 0;
+  line-height: 1.43;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+.m3-body-small {
+  font: var(--m3-typescale-body-small-font);
+  letter-spacing: var(--m3-typescale-body-small-tracking);
+  margin: 0;
+  line-height: 1.33;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+/* Label typography for UI elements */
+.m3-label-large {
+  font: var(--m3-typescale-label-large-font);
+  letter-spacing: var(--m3-typescale-label-large-tracking);
+  margin: 0;
+  line-height: 1.43;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+.m3-label-medium {
+  font: var(--m3-typescale-label-medium-font);
+  letter-spacing: var(--m3-typescale-label-medium-tracking);
+  margin: 0;
+  line-height: 1.33;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+.m3-label-small {
+  font: var(--m3-typescale-label-small-font);
+  letter-spacing: var(--m3-typescale-label-small-tracking);
+  margin: 0;
+  line-height: 1.45;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+/* ===================================
+ * EXPRESSIVE TYPOGRAPHY VARIANTS
+ * =================================== */
+
+/* Expressive weight variants for enhanced visual hierarchy */
+.m3-display-large-expressive {
+  font: var(--m3-typescale-display-large-font);
+  letter-spacing: var(--m3-typescale-display-large-tracking);
+  margin: 0;
+  line-height: 1.12;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  font-weight: 300; /* Lighter weight for expressive feel */
+  letter-spacing: -0.5px; /* Tighter tracking for display */
+}
+
+.m3-headline-large-expressive {
+  font: var(--m3-typescale-headline-large-font);
+  letter-spacing: var(--m3-typescale-headline-large-tracking);
+  margin: 0;
+  line-height: 1.25;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  font-weight: 600; /* Bolder for emphasis */
+  letter-spacing: -0.25px;
+}
+
+.m3-title-large-expressive {
+  font: var(--m3-typescale-title-large-font);
+  letter-spacing: var(--m3-typescale-title-large-tracking);
+  margin: 0;
+  line-height: 1.27;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  font-weight: 600; /* Enhanced weight for prominence */
+  letter-spacing: 0.25px;
+}
+
+.m3-body-large-expressive {
+  font: var(--m3-typescale-body-large-font);
+  letter-spacing: var(--m3-typescale-body-large-tracking);
+  margin: 0;
+  line-height: 1.5;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  font-weight: 450; /* Slightly heavier for enhanced readability */
+  letter-spacing: 0.75px;
+}
+
+/* ===================================
+ * SEMANTIC TYPOGRAPHY CLASSES
+ * =================================== */
+
+/* Page and section headers */
+.m3-page-title {
+  font: var(--m3-typescale-headline-large-font);
+  letter-spacing: var(--m3-typescale-headline-large-tracking);
+  margin: 0;
+  line-height: 1.25;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-on-surface);
+  margin-bottom: var(--m3-space-large);
+}
+
+.m3-section-title {
+  font: var(--m3-typescale-headline-medium-font);
+  letter-spacing: var(--m3-typescale-headline-medium-tracking);
+  margin: 0;
+  line-height: 1.29;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-on-surface);
+  margin-bottom: var(--m3-space-medium);
+}
+
+.m3-subsection-title {
+  font: var(--m3-typescale-headline-small-font);
+  letter-spacing: var(--m3-typescale-headline-small-tracking);
+  margin: 0;
+  line-height: 1.33;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-on-surface);
+  margin-bottom: var(--m3-space-small);
+}
+
+/* Component and card headers */
+.m3-card-title {
+  font: var(--m3-typescale-title-large-font);
+  letter-spacing: var(--m3-typescale-title-large-tracking);
+  margin: 0;
+  line-height: 1.27;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-on-surface);
+}
+
+.m3-card-subtitle {
+  font: var(--m3-typescale-title-medium-font);
+  letter-spacing: var(--m3-typescale-title-medium-tracking);
+  margin: 0;
+  line-height: 1.5;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-on-surface-variant);
+}
+
+.m3-component-title {
+  font: var(--m3-typescale-title-medium-font);
+  letter-spacing: var(--m3-typescale-title-medium-tracking);
+  margin: 0;
+  line-height: 1.5;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-on-surface);
+}
+
+/* Body text variants */
+.m3-paragraph {
+  font: var(--m3-typescale-body-large-font);
+  letter-spacing: var(--m3-typescale-body-large-tracking);
+  margin: 0;
+  line-height: 1.5;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-on-surface);
+  margin-bottom: var(--m3-space-medium);
+}
+
+.m3-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.m3-caption {
+  font: var(--m3-typescale-body-small-font);
+  letter-spacing: var(--m3-typescale-body-small-tracking);
+  margin: 0;
+  line-height: 1.33;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-on-surface-variant);
+}
+
+.m3-helper-text {
+  font: var(--m3-typescale-body-small-font);
+  letter-spacing: var(--m3-typescale-body-small-tracking);
+  margin: 0;
+  line-height: 1.33;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-on-surface-variant);
+  margin-top: var(--m3-space-extra-small);
+}
+
+/* Interactive element labels */
+.m3-button-text {
+  font: var(--m3-typescale-label-large-font);
+  letter-spacing: var(--m3-typescale-label-large-tracking);
+  margin: 0;
+  line-height: 1.43;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: inherit;
+  text-transform: none;
+}
+
+.m3-form-label {
+  font: var(--m3-typescale-body-medium-font);
+  letter-spacing: var(--m3-typescale-body-medium-tracking);
+  margin: 0;
+  line-height: 1.43;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-on-surface);
+  margin-bottom: var(--m3-space-extra-small);
+  display: block;
+}
+
+.m3-input-label {
+  font: var(--m3-typescale-body-medium-font);
+  letter-spacing: var(--m3-typescale-body-medium-tracking);
+  margin: 0;
+  line-height: 1.43;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-on-surface-variant);
+  transition: color var(--m3-motion-duration-short2) var(--m3-motion-easing-standard);
+}
+
+/* Status and feedback text */
+.m3-error-text {
+  font: var(--m3-typescale-body-small-font);
+  letter-spacing: var(--m3-typescale-body-small-tracking);
+  margin: 0;
+  line-height: 1.33;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-error);
+}
+
+.m3-success-text {
+  font: var(--m3-typescale-body-small-font);
+  letter-spacing: var(--m3-typescale-body-small-tracking);
+  margin: 0;
+  line-height: 1.33;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-success);
+}
+
+.m3-warning-text {
+  font: var(--m3-typescale-body-small-font);
+  letter-spacing: var(--m3-typescale-body-small-tracking);
+  margin: 0;
+  line-height: 1.33;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-warning);
+}
+
+.m3-info-text {
+  font: var(--m3-typescale-body-small-font);
+  letter-spacing: var(--m3-typescale-body-small-tracking);
+  margin: 0;
+  line-height: 1.33;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  color: var(--m3-color-info);
+}
+
+/* ===================================
+ * RESPONSIVE TYPOGRAPHY BEHAVIOR
+ * =================================== */
+
+/* Enhanced mobile typography adjustments */
+@media (max-width: 600px) {
+  .m3-display-large,
+  .m3-display-large-expressive {
+    font-size: var(--m3-typescale-display-medium-size);
+    line-height: var(--m3-typescale-display-medium-line-height);
+  }
+  
+  .m3-display-medium {
+    font-size: var(--m3-typescale-display-small-size);
+    line-height: var(--m3-typescale-display-small-line-height);
+  }
+  
+  .m3-headline-large,
+  .m3-headline-large-expressive {
+    font-size: var(--m3-typescale-headline-medium-size);
+    line-height: var(--m3-typescale-headline-medium-line-height);
+  }
+  
+  .m3-headline-medium {
+    font-size: var(--m3-typescale-headline-small-size);
+    line-height: var(--m3-typescale-headline-small-line-height);
+  }
+  
+  /* Adjust semantic classes for mobile */
+  .m3-page-title {
+    margin-bottom: var(--m3-space-medium);
+  }
+  
+  .m3-section-title {
+    margin-bottom: var(--m3-space-small);
+  }
+  
+  .m3-paragraph {
+    margin-bottom: var(--m3-space-small);
+  }
+}
+
+/* Medium screen adjustments */
+@media (min-width: 601px) and (max-width: 840px) {
+  .m3-display-large,
+  .m3-display-large-expressive {
+    font-size: 48px;
+    line-height: 56px;
+  }
+  
+  .m3-headline-large,
+  .m3-headline-large-expressive {
+    font-size: 30px;
+    line-height: 38px;
+  }
+}
+
+/* Large screen enhancements */
+@media (min-width: 1200px) {
+  .m3-display-large,
+  .m3-display-large-expressive {
+    font-size: 64px;
+    line-height: 72px;
+    letter-spacing: -0.5px;
+  }
+  
+  .m3-headline-large,
+  .m3-headline-large-expressive {
+    font-size: 36px;
+    line-height: 44px;
+  }
+  
+  .m3-page-title {
+    margin-bottom: var(--m3-space-extra-large);
+  }
+}
+
+/* ===================================
+ * TYPOGRAPHY UTILITIES
+ * =================================== */
+
+/* Text alignment utilities */
+.m3-text-left {
+  text-align: left;
+}
+
+.m3-text-center {
+  text-align: center;
+}
+
+.m3-text-right {
+  text-align: right;
+}
+
+.m3-text-justify {
+  text-align: justify;
+}
+
+/* Text transform utilities */
+.m3-text-uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.m3-text-lowercase {
+  text-transform: lowercase;
+}
+
+.m3-text-capitalize {
+  text-transform: capitalize;
+}
+
+/* Font weight utilities */
+.m3-font-light {
+  font-weight: 300;
+}
+
+.m3-font-regular {
+  font-weight: 400;
+}
+
+.m3-font-medium {
+  font-weight: 500;
+}
+
+.m3-font-semibold {
+  font-weight: 600;
+}
+
+.m3-font-bold {
+  font-weight: 700;
+}
+
+/* Line height utilities */
+.m3-leading-tight {
+  line-height: 1.2;
+}
+
+.m3-leading-normal {
+  line-height: 1.5;
+}
+
+.m3-leading-loose {
+  line-height: 1.8;
+}
+
+/* Text decoration utilities */
+.m3-no-underline {
+  text-decoration: none;
+}
+
+.m3-underline {
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.125em;
+}
+
+.m3-line-through {
+  text-decoration: line-through;
+}
+
+/* Text overflow utilities */
+.m3-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.m3-text-wrap {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.m3-text-nowrap {
+  white-space: nowrap;
+}
+
+/* ===================================
+ * ACCESSIBILITY ENHANCEMENTS
+ * =================================== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .m3-display-large,
+  .m3-display-medium,
+  .m3-display-small,
+  .m3-headline-large,
+  .m3-headline-medium,
+  .m3-headline-small {
+    font-weight: 600; /* Increase weight for better contrast */
+  }
+  
+  .m3-error-text {
+    text-decoration: underline;
+  }
+  
+  .m3-success-text {
+    text-decoration: underline;
+  }
+  
+  .m3-warning-text {
+    text-decoration: underline;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .m3-input-label {
+    transition: none;
+  }
+}
