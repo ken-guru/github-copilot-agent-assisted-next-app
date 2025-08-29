@@ -1,3 +1,6 @@
+/* Import Material 3 Expressive Design Tokens */
+@import '../styles/material3-tokens.css';
+
 :root {
   /* App-specific layout variables */
   --max-width: 1100px;
@@ -10,6 +13,7 @@
   --background-rgb: 255, 255, 255;
   
   /* Note: Theme variables like --bg-primary are imported from styles/globals.css */
+  /* Material 3 tokens are now available via material3-tokens.css import */
 }
 
 /* Dark theme overrides for app-specific colors */
