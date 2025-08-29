@@ -2,7 +2,7 @@
 
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { useMicroInteraction } from '@/hooks/useMotionSystem';
-import { createTransition } from '@/utils/material3-motion-system';
+import { useAccessibility } from '@/hooks/useAccessibility';
 import styles from './Material3Button.module.css';
 
 /**
@@ -48,6 +48,25 @@ export interface Material3ButtonProps extends Omit<React.ButtonHTMLAttributes<HT
   
   /** Children content */
   children?: React.ReactNode;
+  
+  // Accessibility props
+  /** Accessible label for screen readers */
+  'aria-label'?: string;
+  
+  /** ID of element that describes the button */
+  'aria-describedby'?: string;
+  
+  /** Indicates if button is pressed (for toggle buttons) */
+  'aria-pressed'?: boolean;
+  
+  /** Indicates if button controls expanded content */
+  'aria-expanded'?: boolean;
+  
+  /** ID of element controlled by this button */
+  'aria-controls'?: string;
+  
+  /** Announces loading state changes */
+  announceStateChanges?: boolean;
 }
 
 /**
@@ -76,19 +95,34 @@ export const Material3Button = forwardRef<HTMLButtonElement, Material3ButtonProp
   onMouseDown,
   onMouseUp,
   onMouseLeave,
+  announceStateChanges = true,
+  'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedBy,
+  'aria-pressed': ariaPressed,
+  'aria-expanded': ariaExpanded,
+  'aria-controls': ariaControls,
   ...props
 }, ref) => {
   const [isPressed, setIsPressed] = useState(false);
   const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([]);
+  const [previousLoading, setPreviousLoading] = useState(loading);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const rippleIdRef = useRef(0);
 
+  // Use accessibility hook
+  const { 
+    announce, 
+    enhanceButton, 
+    prefersReducedMotion,
+    accessibilityState 
+  } = useAccessibility();
+
   // Use micro-interaction hook for button press feedback
-  const { isActive: isPressActive, activate: activatePress, deactivate: deactivatePress } = useMicroInteraction('buttonPress');
+  const { activate: activatePress, deactivate: deactivatePress } = useMicroInteraction('buttonPress');
 
   // Handle ripple effect
   const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (disableRipple || disabled || loading) return;
+    if (disableRipple || disabled || loading || prefersReducedMotion) return;
 
     const button = buttonRef.current;
     if (!button) return;
@@ -108,7 +142,7 @@ export const Material3Button = forwardRef<HTMLButtonElement, Material3ButtonProp
     // Remove ripple after animation
     setTimeout(() => {
       setRipples(prev => prev.filter(ripple => ripple.id !== newRipple.id));
-    }, 600);
+    }, prefersReducedMotion ? 0 : 600);
   };
 
   // Handle mouse events
@@ -150,6 +184,31 @@ export const Material3Button = forwardRef<HTMLButtonElement, Material3ButtonProp
     }
   }, [ref]);
 
+  // Enhance button with accessibility features
+  useEffect(() => {
+    if (buttonRef.current) {
+      enhanceButton(buttonRef.current, {
+        label: ariaLabel,
+        describedBy: ariaDescribedBy,
+        pressed: ariaPressed,
+        expanded: ariaExpanded,
+        controls: ariaControls,
+      });
+    }
+  }, [enhanceButton, ariaLabel, ariaDescribedBy, ariaPressed, ariaExpanded, ariaControls]);
+
+  // Announce loading state changes
+  useEffect(() => {
+    if (announceStateChanges && loading !== previousLoading) {
+      if (loading) {
+        announce('Button is loading', 'polite');
+      } else if (previousLoading) {
+        announce('Button loading complete', 'polite');
+      }
+      setPreviousLoading(loading);
+    }
+  }, [loading, previousLoading, announce, announceStateChanges]);
+
   // Generate CSS classes
   const baseClasses = [
     styles['md-button'],
@@ -160,6 +219,9 @@ export const Material3Button = forwardRef<HTMLButtonElement, Material3ButtonProp
     loading && styles['md-button--loading'],
     disabled && styles['md-button--disabled'],
     isPressed && styles['md-button--pressed'],
+    'm3-focus-visible', // Add accessibility focus class
+    'm3-touch-target', // Add touch target class
+    accessibilityState.keyboardNavigation && 'm3-keyboard-navigation',
     className
   ].filter(Boolean).join(' ');
 
@@ -172,6 +234,12 @@ export const Material3Button = forwardRef<HTMLButtonElement, Material3ButtonProp
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
+      aria-label={ariaLabel}
+      aria-describedby={ariaDescribedBy}
+      aria-pressed={ariaPressed}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
+      aria-disabled={disabled || loading}
       {...props}
     >
       {/* Ripple container */}

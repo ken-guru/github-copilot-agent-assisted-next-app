@@ -1,4 +1,7 @@
 /* Material 3 Expressive Design Tokens */
+
+/* Import accessibility styles */
+@import './material3-accessibility.css';
 :root {
   /* ===== TYPOGRAPHY TOKENS ===== */
   

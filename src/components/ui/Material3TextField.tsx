@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, forwardRef } from 'react';
+import { useAccessibility } from '../../hooks/useAccessibility';
 import styles from './Material3TextField.module.css';
 
 export interface Material3TextFieldProps {
@@ -12,7 +13,7 @@ export interface Material3TextFieldProps {
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   required?: boolean;
-  error?: boolean;
+  error?: boolean | string;
   helperText?: string;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
@@ -34,6 +35,13 @@ export interface Material3TextFieldProps {
   onBlur?: (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onKeyUp?: (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  
+  // Accessibility props
+  'aria-label'?: string;
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean;
+  'aria-required'?: boolean;
+  announceValidation?: boolean;
 }
 
 export const Material3TextField = forwardRef<
@@ -72,15 +80,25 @@ export const Material3TextField = forwardRef<
   onBlur,
   onKeyDown,
   onKeyUp,
+  'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedBy,
+  'aria-invalid': ariaInvalid,
+  'aria-required': ariaRequired,
+  announceValidation = true,
 }, ref) => {
   const [focused, setFocused] = useState(false);
   const [hasValue, setHasValue] = useState(false);
+  const [previousError, setPreviousError] = useState(error);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   
+  // Use accessibility hook
+  const { announce, enhanceFormField } = useAccessibility();
+  
   // Generate unique ID if not provided
-  const fieldId = id || `material3-textfield-${Math.random().toString(36).substr(2, 9)}`;
+  const fieldId = id || `material3-textfield-${Math.random().toString(36).substring(2, 9)}`;
   const labelId = label ? `${fieldId}-label` : undefined;
   const helperTextId = helperText ? `${fieldId}-helper-text` : undefined;
+  const errorId = error ? `${fieldId}-error` : undefined;
 
   // Combine refs
   const combinedRef = (element: HTMLInputElement | HTMLTextAreaElement | null) => {
@@ -101,6 +119,33 @@ export const Material3TextField = forwardRef<
     const currentValue = value !== undefined ? value : defaultValue || '';
     setHasValue(currentValue.toString().length > 0);
   }, [value, defaultValue]);
+
+  // Enhance form field with accessibility features
+  useEffect(() => {
+    if (inputRef.current) {
+      const errorMessage = typeof error === 'string' ? error : '';
+      enhanceFormField(inputRef.current, {
+        label: ariaLabel || label,
+        required: ariaRequired ?? required,
+        invalid: ariaInvalid ?? !!error,
+        describedBy: ariaDescribedBy,
+        errorMessage,
+      });
+    }
+  }, [enhanceFormField, ariaLabel, label, ariaRequired, required, ariaInvalid, error, ariaDescribedBy]);
+
+  // Announce validation state changes
+  useEffect(() => {
+    if (announceValidation && error !== previousError) {
+      if (error && !previousError) {
+        const errorMessage = typeof error === 'string' ? error : 'Field has an error';
+        announce(errorMessage, 'assertive');
+      } else if (!error && previousError) {
+        announce('Field error resolved', 'polite');
+      }
+      setPreviousError(error);
+    }
+  }, [error, previousError, announce, announceValidation]);
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFocused(true);
@@ -128,7 +173,16 @@ export const Material3TextField = forwardRef<
     readOnly && styles.readOnly,
     startIcon && styles.hasStartIcon,
     endIcon && styles.hasEndIcon,
+    'm3-focus-visible', // Add accessibility focus class
+    'm3-form-field', // Add form field class
     className
+  ].filter(Boolean).join(' ');
+
+  // Build aria-describedby string
+  const describedByIds = [
+    helperText && helperTextId,
+    error && errorId,
+    ariaDescribedBy
   ].filter(Boolean).join(' ');
 
   const inputProps = {
@@ -138,7 +192,7 @@ export const Material3TextField = forwardRef<
     defaultValue,
     placeholder: focused || hasValue ? placeholder : undefined,
     disabled,
-    required,
+    required: ariaRequired ?? required,
     readOnly,
     autoComplete,
     autoFocus,
@@ -149,9 +203,10 @@ export const Material3TextField = forwardRef<
     pattern,
     'data-testid': dataTestId,
     'aria-labelledby': label ? labelId : undefined,
-    'aria-describedby': helperText ? helperTextId : undefined,
-    'aria-invalid': error,
-    'aria-label': !label ? placeholder : undefined,
+    'aria-describedby': describedByIds || undefined,
+    'aria-invalid': ariaInvalid ?? !!error,
+    'aria-required': ariaRequired ?? required,
+    'aria-label': ariaLabel || (!label ? placeholder : undefined),
     className: styles.input,
     onChange: handleChange,
     onFocus: handleFocus,
@@ -215,6 +270,17 @@ export const Material3TextField = forwardRef<
           role={error ? 'alert' : undefined}
         >
           {helperText}
+        </div>
+      )}
+      
+      {error && typeof error === 'string' && (
+        <div
+          id={errorId}
+          className={styles.errorText}
+          role="alert"
+          aria-live="assertive"
+        >
+          {error}
         </div>
       )}
     </div>
