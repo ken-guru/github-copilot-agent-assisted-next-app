@@ -1,0 +1,282 @@
+/* Material 3 Expressive Navigation Component */
+
+.navigation {
+  /* Base navigation container */
+  background-color: var(--md-sys-color-surface-container);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  padding: var(--md-sys-spacing-2) var(--md-sys-spacing-4);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: 
+    background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+}
+
+.navigationContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: var(--md-sys-spacing-4);
+}
+
+/* Brand styling */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-spacing-2);
+  color: var(--md-sys-color-on-surface);
+  text-decoration: none;
+  font-family: var(--md-sys-typescale-title-large-font-family);
+  font-size: var(--md-sys-typescale-title-large-font-size);
+  font-weight: var(--md-sys-typescale-title-large-font-weight);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  letter-spacing: var(--md-sys-typescale-title-large-letter-spacing);
+  transition: color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+.brand:hover {
+  color: var(--md-sys-color-primary);
+}
+
+.brandIcon {
+  font-size: 1.5rem;
+  color: var(--md-sys-color-primary);
+}
+
+.brandText {
+  font-weight: var(--md-sys-typescale-font-weight-medium);
+}
+
+/* Navigation controls container */
+.navigationControls {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-spacing-6);
+}
+
+.themeToggleContainer {
+  display: flex;
+  align-items: center;
+}
+
+/* Navigation items container */
+.navigationItems {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-spacing-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navigationItem {
+  position: relative;
+}
+
+/* Navigation link styling - Material 3 Expressive */
+.navigationLink {
+  display: flex;
+  align-items: center;
+  gap: var(--md-sys-spacing-2);
+  padding: var(--md-sys-spacing-3) var(--md-sys-spacing-4);
+  border-radius: var(--md-sys-shape-corner-navigation-item);
+  color: var(--md-sys-color-on-surface-variant);
+  text-decoration: none;
+  font-family: var(--md-sys-typescale-label-large-font-family);
+  font-size: var(--md-sys-typescale-label-large-font-size);
+  font-weight: var(--md-sys-typescale-label-large-font-weight);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  letter-spacing: var(--md-sys-typescale-label-large-letter-spacing);
+  position: relative;
+  overflow: hidden;
+  transition: 
+    color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized-decelerate);
+  min-height: 40px;
+  white-space: nowrap;
+}
+
+/* Hover state */
+.navigationLink:hover {
+  color: var(--md-sys-color-on-surface);
+  background-color: rgba(var(--md-sys-color-on-surface-rgb, 28, 27, 31), var(--md-sys-state-hover-state-layer-opacity));
+  transform: scale(1.02);
+}
+
+/* Focus state - Enhanced focus indicators */
+.navigationLink:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+  color: var(--md-sys-color-primary);
+  background-color: rgba(var(--md-sys-color-primary-rgb, 103, 80, 164), 0.08);
+}
+
+/* Active state - Organic pill-shaped indicator with subtle asymmetry */
+.navigationLink.active {
+  color: var(--md-sys-color-on-primary-container);
+  background-color: var(--md-sys-color-primary-container);
+  border-radius: var(--md-sys-shape-corner-pill-medium);
+  font-weight: var(--md-sys-typescale-font-weight-medium);
+  transform: scale(1.05);
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+.navigationLink.active:hover {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  transform: scale(1.05);
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+/* Navigation icon styling */
+.navigationIcon {
+  font-size: 1.25rem;
+  transition: transform var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-emphasized-decelerate);
+}
+
+.navigationLink:hover .navigationIcon {
+  transform: scale(1.1);
+}
+
+.navigationLink.active .navigationIcon {
+  transform: scale(1.15);
+}
+
+/* Navigation text */
+.navigationText {
+  font-weight: inherit;
+  transition: opacity var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+/* Ripple effect for click feedback */
+.navigationLink::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: 
+    width var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized),
+    height var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized),
+    opacity var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+  pointer-events: none;
+}
+
+.navigationLink:active::before {
+  width: 100px;
+  height: 100px;
+  opacity: 0.12;
+}
+
+/* Responsive design - Mobile optimizations */
+@media (max-width: 768px) {
+  .navigation {
+    padding: var(--md-sys-spacing-2) var(--md-sys-spacing-3);
+  }
+  
+  .navigationContainer {
+    gap: var(--md-sys-spacing-3);
+  }
+  
+  .navigationControls {
+    gap: var(--md-sys-spacing-4);
+  }
+  
+  .navigationItems {
+    gap: var(--md-sys-spacing-half);
+  }
+  
+  .navigationLink {
+    padding: var(--md-sys-spacing-2) var(--md-sys-spacing-3);
+    min-height: 36px;
+  }
+  
+  .brandText {
+    display: none;
+  }
+  
+  .navigationText {
+    display: none;
+  }
+  
+  .navigationIcon {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navigation {
+    padding: var(--md-sys-spacing-2);
+  }
+  
+  .navigationContainer {
+    gap: var(--md-sys-spacing-2);
+  }
+  
+  .navigationControls {
+    gap: var(--md-sys-spacing-3);
+  }
+  
+  .navigationLink {
+    padding: var(--md-sys-spacing-2);
+    min-height: 32px;
+  }
+  
+  .navigationIcon {
+    font-size: 1rem;
+  }
+}
+
+/* Enhanced accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .navigationLink,
+  .navigationIcon,
+  .navigationText,
+  .navigationLink::before {
+    transition: none;
+  }
+  
+  .navigationLink:hover {
+    transform: none;
+  }
+  
+  .navigationLink.active {
+    transform: none;
+  }
+  
+  .navigationLink:hover .navigationIcon,
+  .navigationLink.active .navigationIcon {
+    transform: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .navigation {
+    border-bottom-width: 2px;
+  }
+  
+  .navigationLink:focus-visible {
+    outline-width: 3px;
+  }
+  
+  .navigationLink.active {
+    border: 2px solid var(--md-sys-color-primary);
+  }
+}
+
+/* Print styles */
+@media print {
+  .navigation {
+    display: none;
+  }
+}

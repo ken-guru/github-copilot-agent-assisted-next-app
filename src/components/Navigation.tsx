@@ -1,22 +1,19 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useThemeReactive } from '@/hooks/useThemeReactive';
 import ThemeToggle from '@/components/ThemeToggle';
-// AI nav is always visible; gating handled on page
+import styles from './Navigation.module.css';
 
 /**
- * Enhanced navigation with active state management and tab-like styling
- * - Bootstrap nav pills for active state indication
- * - Visual separation between theme toggle and navigation items
- * - Tab-like appearance extending into header space
- * - Mobile-friendly with icon-only display on small screens
- * - Automatic light/dark theme switching with proper active state styling
- * Issue #245: Removed dropdown complexity + active state UX improvements
+ * Material 3 Expressive Navigation Component
+ * - Organic pill-shaped active indicators with subtle asymmetry
+ * - Dynamic color adaptation based on theme and context
+ * - Smooth state transitions with shared element animations
+ * - Enhanced focus indicators with expressive outlines
+ * - Responsive navigation behavior for mobile devices
+ * - Material 3 Expressive design tokens and motion system
  */
 const Navigation: React.FC = () => {
-  // Get theme reactively to ensure component responds to theme changes (fixes issue #252)
-  const theme = useThemeReactive(); 
   const pathname = usePathname();
   
   // Determine active states based on current path
@@ -25,74 +22,69 @@ const Navigation: React.FC = () => {
   const isAIActive = pathname === '/ai';
   // Always show AI nav item; page handles gating/setup
   const showAI = true;
-  
-  // Use Bootstrap's theme-aware classes (removed navbar-expand-lg for always-expanded behavior)
-  const navClasses = theme === 'dark' 
-    ? 'navbar navbar-dark bg-dark'
-    : 'navbar navbar-light bg-light';
 
   return (
-  <nav className={navClasses} aria-label="Main navigation">
-      <div className="container-fluid d-flex justify-content-between align-items-center flex-wrap">
-        <Link className="navbar-brand" href="/">
+    <nav className={styles.navigation} aria-label="Main navigation">
+      <div className={styles.navigationContainer}>
+        <Link className={styles.brand} href="/">
           <span data-testid="navbar-brand">
-            <i className="bi bi-clock me-2" aria-hidden="true"></i>
-            <span className="brand-text d-none d-sm-inline">Mr. Timely</span>
+            <i className={`bi bi-clock ${styles.brandIcon}`} aria-hidden="true"></i>
+            <span className={styles.brandText}>Mr. Timely</span>
           </span>
         </Link>
         
-        {/* Navigation with separated theme toggle and nav pills */}
-        <div className="d-flex align-items-center">
+        {/* Navigation controls with theme toggle and nav items */}
+        <div className={styles.navigationControls}>
           {/* Theme Toggle - Visually separated from navigation */}
-          <div className="d-flex align-items-center me-4" data-testid="theme-toggle-container">
+          <div className={styles.themeToggleContainer} data-testid="theme-toggle-container">
             <ThemeToggle size="sm" variant="navbar" />
           </div>
           
-          {/* Navigation Items - Using Bootstrap nav pills for tab-like appearance */}
-          <ul className="nav nav-pills nav-items-group" data-testid="nav-items-container">
+          {/* Navigation Items - Material 3 Expressive pills */}
+          <ul className={styles.navigationItems} data-testid="nav-items-container">
             {/* Timer - First navigation item */}
-            <li className="nav-item timer-item" data-testid="timer-nav-item">
+            <li className={styles.navigationItem} data-testid="timer-nav-item">
               <Link 
-                className={`nav-link ${isTimerActive ? 'active' : ''}`} 
+                className={`${styles.navigationLink} ${isTimerActive ? styles.active : ''}`} 
                 href="/"
                 aria-current={isTimerActive ? 'page' : undefined}
               >
                 <span aria-label="Go to Timer">
-                  <i className="bi bi-stopwatch me-sm-1" aria-hidden="true"></i>
-                  <span className="nav-text d-none d-sm-inline">Timer</span>
+                  <i className={`bi bi-stopwatch ${styles.navigationIcon}`} aria-hidden="true"></i>
+                  <span className={styles.navigationText}>Timer</span>
                 </span>
               </Link>
             </li>
             
             {/* Activities - Second navigation item */}
-            <li className="nav-item activities-item" data-testid="activities-nav-item">
+            <li className={styles.navigationItem} data-testid="activities-nav-item">
               <Link 
-                className={`nav-link ${isActivitiesActive ? 'active' : ''}`} 
+                className={`${styles.navigationLink} ${isActivitiesActive ? styles.active : ''}`} 
                 href="/activities"
                 aria-current={isActivitiesActive ? 'page' : undefined}
               >
                 <span aria-label="Go to Activities Management">
-                  <i className="bi bi-list-check me-sm-1" aria-hidden="true"></i>
-                  <span className="nav-text d-none d-sm-inline">Activities</span>
+                  <i className={`bi bi-list-check ${styles.navigationIcon}`} aria-hidden="true"></i>
+                  <span className={styles.navigationText}>Activities</span>
                 </span>
               </Link>
             </li>
 
-              {/* AI - Conditional navigation item */}
-              {showAI && (
-                <li className="nav-item ai-item" data-testid="ai-nav-item">
-                  <Link
-                    className={`nav-link ${isAIActive ? 'active' : ''}`}
-                    href="/ai"
-                    aria-current={isAIActive ? 'page' : undefined}
-                  >
-                    <span aria-label="Go to AI Planner">
-                      <i className="bi bi-stars me-sm-1" aria-hidden="true"></i>
-                      <span className="nav-text d-none d-sm-inline">AI</span>
-                    </span>
-                  </Link>
-                </li>
-              )}
+            {/* AI - Conditional navigation item */}
+            {showAI && (
+              <li className={styles.navigationItem} data-testid="ai-nav-item">
+                <Link
+                  className={`${styles.navigationLink} ${isAIActive ? styles.active : ''}`}
+                  href="/ai"
+                  aria-current={isAIActive ? 'page' : undefined}
+                >
+                  <span aria-label="Go to AI Planner">
+                    <i className={`bi bi-stars ${styles.navigationIcon}`} aria-hidden="true"></i>
+                    <span className={styles.navigationText}>AI</span>
+                  </span>
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>
