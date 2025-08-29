@@ -144,7 +144,7 @@ function AppContent() {
   
   return (
     <>
-      <main className="container-fluid d-flex flex-column overflow-x-hidden overflow-y-auto" style={{ height: 'calc(100vh - var(--navbar-height))' }}>
+      <main className="flex flex-col overflow-x-hidden overflow-y-auto" style={{ height: 'calc(100vh - var(--navbar-height))' }}>
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}
@@ -155,16 +155,16 @@ function AppContent() {
           onCancel={dialogActions.onCancel}
         />
         
-        <div className="flex-grow-1 d-flex flex-column overflow-x-hidden overflow-y-auto">
+        <div className="flex-grow flex flex-col overflow-x-hidden overflow-y-auto">
           {appState === 'setup' && (
-            <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
+            <div className="flex justify-center items-start flex-grow p-6">
               <TimeSetup onTimeSet={handleTimeSet} />
             </div>
           )}
           
           {appState === 'activity' && (
-            <div className="row flex-grow-1 g-3 px-3 pt-3 pb-3 overflow-x-hidden overflow-y-auto">
-              <div className="col-lg-5 d-flex flex-column overflow-x-hidden overflow-y-auto">
+            <div className="flex-grow flex flex-col lg:flex-row gap-6 px-6 pt-6 pb-6 overflow-x-hidden overflow-y-auto">
+              <div className="lg:w-5/12 flex flex-col overflow-x-hidden overflow-y-auto">
                 <ActivityManager 
                   onActivitySelect={handleActivitySelect} 
                   onActivityRemove={handleActivityRemoval}
@@ -181,7 +181,7 @@ function AppContent() {
                   onExtendDuration={handleExtendDuration}
                 />
               </div>
-              <div className="col-lg-7 d-none d-lg-flex flex-column overflow-hidden">
+              <div className="lg:w-7/12 hidden lg:flex flex-col overflow-hidden">
                 <Timeline 
                   entries={processedEntries}
                   totalDuration={totalDuration} 
@@ -194,7 +194,7 @@ function AppContent() {
           )}
           
           {appState === 'completed' && (
-            <div className="d-flex justify-content-center flex-grow-1 p-4">
+            <div className="flex justify-center flex-grow p-6">
               <Summary 
                 entries={processedEntries}
                 totalDuration={totalDuration} 

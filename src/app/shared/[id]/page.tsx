@@ -108,19 +108,19 @@ export default async function SharedPage({ params }: Props) {
 
   return (
     <div
-      className="container-fluid d-flex flex-column overflow-x-hidden"
+      className="flex flex-col overflow-x-hidden"
       style={{ height: 'calc(100vh - var(--navbar-height))' }}
     >
-      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 py-3 px-3">
+      <div className="flex justify-between items-center flex-wrap gap-4 py-6 px-6">
         <div>
-          <h1 className="h3 mb-0">Shared Session</h1>
-          <small className="text-muted">
+          <h1 className="text-xl font-medium mb-0">Shared Session</h1>
+          <small className="text-on-surface-variant">
             Created: {new Date(data.metadata.createdAt).toLocaleString(undefined, {
               year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit'
             })}
           </small>
         </div>
-        <div className="ms-auto">
+        <div className="ml-auto">
           {/* Build shareUrl from NEXT_PUBLIC_BASE_URL if present so copy/open works in different environments */}
           <ShareControls
             shareUrl={
@@ -131,8 +131,8 @@ export default async function SharedPage({ params }: Props) {
         </div>
       </div>
 
-      <div className="row g-3 px-3 pb-3 flex-grow-1 align-items-stretch overflow-hidden">
-        <div className="col-12 col-lg-6 d-flex flex-column h-100 overflow-hidden">
+      <div className="flex-grow flex flex-col lg:flex-row gap-6 px-6 pb-6 items-stretch overflow-hidden">
+        <div className="flex flex-col w-full lg:w-1/2 h-full overflow-hidden">
           {/* Reuse canonical Summary card directly (no extra nesting) */}
           <Summary
             entries={entries}
@@ -143,7 +143,7 @@ export default async function SharedPage({ params }: Props) {
             isTimeUp={isTimeUp}
           />
         </div>
-        <div className="col-12 col-lg-6 d-none d-lg-flex flex-column h-100 overflow-hidden">
+        <div className="hidden lg:flex flex-col w-full lg:w-1/2 h-full overflow-hidden">
           <Timeline
             entries={entries}
             totalDuration={totalDuration}
