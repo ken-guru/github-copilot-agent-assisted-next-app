@@ -1,0 +1,427 @@
+/* Material 3 Expressive Container Component */
+
+.container {
+  /* Base container styles */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  
+  /* Material 3 Expressive foundation */
+  font-family: var(--md-sys-typescale-font-family-plain);
+  
+  /* Default transition for smooth state changes */
+  transition: 
+    box-shadow var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard),
+    transform var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-standard),
+    background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard);
+}
+
+/* ===== VARIANT STYLES ===== */
+
+.variant-elevated {
+  /* Elevated containers have subtle shadows and surface colors */
+  background-color: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
+}
+
+.variant-filled {
+  /* Filled containers use container colors for emphasis */
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+}
+
+.variant-outlined {
+  /* Outlined containers have borders instead of elevation */
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  box-shadow: none !important; /* Override elevation */
+}
+
+.variant-surface {
+  /* Surface containers blend with the background */
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+}
+
+/* ===== ELEVATION STATES ===== */
+
+.elevation-level0 {
+  box-shadow: var(--md-sys-elevation-level0);
+}
+
+.elevation-level1 {
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+.elevation-level2 {
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.elevation-level3 {
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+.elevation-level4 {
+  box-shadow: var(--md-sys-elevation-level4);
+}
+
+.elevation-level5 {
+  box-shadow: var(--md-sys-elevation-level5);
+}
+
+/* ===== SHAPE VARIATIONS ===== */
+
+.shape-none {
+  border-radius: var(--md-sys-shape-corner-none);
+}
+
+.shape-extraSmall {
+  border-radius: var(--md-sys-shape-corner-extra-small);
+}
+
+.shape-small {
+  border-radius: var(--md-sys-shape-corner-small);
+}
+
+.shape-medium {
+  border-radius: var(--md-sys-shape-corner-medium);
+}
+
+.shape-large {
+  border-radius: var(--md-sys-shape-corner-large);
+}
+
+.shape-extraLarge {
+  border-radius: var(--md-sys-shape-corner-extra-large);
+}
+
+/* Organic shape variations */
+.shape-asymmetricSmall {
+  border-radius: var(--md-sys-shape-corner-asymmetric-small);
+}
+
+.shape-asymmetricMedium {
+  border-radius: var(--md-sys-shape-corner-asymmetric-medium);
+}
+
+.shape-asymmetricLarge {
+  border-radius: var(--md-sys-shape-corner-asymmetric-large);
+}
+
+/* Component-specific shapes */
+.shape-cardElevated {
+  border-radius: var(--md-sys-shape-corner-card-elevated);
+}
+
+.shape-cardFilled {
+  border-radius: var(--md-sys-shape-corner-card-filled);
+}
+
+.shape-summaryCard {
+  border-radius: var(--md-sys-shape-corner-summary-card);
+}
+
+.shape-activityCard {
+  border-radius: var(--md-sys-shape-corner-activity-card);
+}
+
+.shape-timerContainer {
+  border-radius: var(--md-sys-shape-corner-timer-container);
+}
+
+/* ===== COLOR ROLE VARIATIONS ===== */
+
+.color-surface {
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+}
+
+.color-surfaceContainer {
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+}
+
+.color-surfaceContainerLow {
+  background-color: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
+}
+
+.color-surfaceContainerHigh {
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+}
+
+.color-surfaceContainerHighest {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface);
+}
+
+.color-primary {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.color-secondary {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+.color-tertiary {
+  background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+
+/* ===== CONTENT STATE VARIATIONS ===== */
+
+.state-active {
+  /* Active state gets elevated and slightly scaled */
+  transform: translateY(-1px);
+}
+
+.state-active.elevation-level0 {
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+.state-active.elevation-level1 {
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.state-active.elevation-level2 {
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+.state-loading {
+  /* Loading state has reduced elevation and subtle animation */
+  box-shadow: var(--md-sys-elevation-level0);
+  opacity: 0.8;
+}
+
+.state-error {
+  /* Error state uses error container colors */
+  background-color: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+  border-color: var(--md-sys-color-error);
+}
+
+.state-success {
+  /* Success state uses primary container colors */
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  border-color: var(--md-sys-color-primary);
+}
+
+/* ===== INTERACTIVE STATES ===== */
+
+.interactive {
+  cursor: pointer;
+  user-select: none;
+}
+
+.interactive:hover {
+  /* Hover elevation increase */
+  transform: translateY(-2px);
+}
+
+.interactive.elevation-level0:hover {
+  box-shadow: var(--md-sys-elevation-level1);
+}
+
+.interactive.elevation-level1:hover {
+  box-shadow: var(--md-sys-elevation-level2);
+}
+
+.interactive.elevation-level2:hover {
+  box-shadow: var(--md-sys-elevation-level3);
+}
+
+.interactive.elevation-level3:hover {
+  box-shadow: var(--md-sys-elevation-level4);
+}
+
+.interactive:active {
+  /* Pressed state reduces elevation */
+  transform: translateY(0);
+}
+
+.interactive.elevation-level1:active,
+.interactive.elevation-level2:active,
+.interactive.elevation-level3:active {
+  box-shadow: var(--md-sys-elevation-level0);
+}
+
+/* ===== FOCUS STATES ===== */
+
+.focusable {
+  outline: none;
+}
+
+.focusable:focus-visible {
+  /* Material 3 Expressive focus ring */
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+.focusable:focus-visible::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--md-sys-color-primary);
+  border-radius: inherit;
+  opacity: 0.12;
+  background-color: var(--md-sys-color-primary);
+  pointer-events: none;
+}
+
+/* ===== MOTION ENHANCEMENTS ===== */
+
+.motion {
+  /* Enhanced motion with organic easing */
+  transition: 
+    box-shadow var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized),
+    transform var(--md-sys-motion-duration-medium1) var(--md-sys-motion-easing-emphasized),
+    background-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    border-color var(--md-sys-motion-duration-short3) var(--md-sys-motion-easing-standard),
+    opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+/* ===== RESPONSIVE BEHAVIOR ===== */
+
+.responsive {
+  /* Base responsive container */
+  width: 100%;
+  min-width: 0; /* Allow shrinking */
+}
+
+/* Mobile optimizations */
+@media (max-width: 599px) {
+  .responsive {
+    /* Slightly reduced padding on mobile */
+    padding: 12px;
+  }
+  
+  .responsive.interactive:hover {
+    /* Reduced hover effects on touch devices */
+    transform: translateY(-1px);
+  }
+  
+  /* Adjust shapes for mobile */
+  .responsive.shape-medium {
+    border-radius: var(--md-sys-shape-corner-small);
+  }
+  
+  .responsive.shape-large {
+    border-radius: var(--md-sys-shape-corner-medium);
+  }
+  
+  .responsive.shape-asymmetricMedium {
+    border-radius: var(--md-sys-shape-corner-asymmetric-small);
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .responsive {
+    padding: 16px;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1024px) {
+  .responsive {
+    padding: 20px;
+  }
+  
+  .responsive.interactive:hover {
+    /* Enhanced hover effects on desktop */
+    transform: translateY(-3px);
+  }
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .container,
+  .motion {
+    transition: none !important;
+    transform: none !important;
+  }
+  
+  .interactive:hover {
+    transform: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .variant-outlined {
+    border-width: 2px;
+  }
+  
+  .focusable:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+.container-header {
+  /* Header section within container */
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  margin-bottom: 16px;
+}
+
+.container-body {
+  /* Body section within container */
+  flex: 1;
+  min-height: 0; /* Allow shrinking */
+}
+
+.container-footer {
+  /* Footer section within container */
+  padding-top: 12px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  margin-top: 16px;
+}
+
+/* Content spacing utilities */
+.container-spacing-compact {
+  padding: 8px;
+}
+
+.container-spacing-comfortable {
+  padding: 16px;
+}
+
+.container-spacing-spacious {
+  padding: 24px;
+}
+
+/* Flex utilities for container content */
+.container-flex-row {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.container-flex-column {
+  flex-direction: column;
+  gap: 16px;
+}
+
+.container-flex-center {
+  align-items: center;
+  justify-content: center;
+}
+
+.container-flex-between {
+  justify-content: space-between;
+}
+
+.container-flex-end {
+  justify-content: flex-end;
+}

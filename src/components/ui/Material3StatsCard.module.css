@@ -1,0 +1,257 @@
+/* Material 3 Expressive Stats Card Component */
+
+.statsCard {
+  /* Base stats card styles */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 80px;
+  
+  /* Ensure consistent aspect ratio */
+  aspect-ratio: 3/2;
+}
+
+.content {
+  /* Content container */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* ===== SIZE VARIANTS ===== */
+
+.size-compact {
+  min-height: 60px;
+  padding: 8px;
+}
+
+.size-comfortable {
+  min-height: 80px;
+  padding: 12px;
+}
+
+.size-spacious {
+  min-height: 100px;
+  padding: 16px;
+}
+
+/* ===== CONTENT SECTIONS ===== */
+
+.icon {
+  /* Icon container */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--md-sys-color-primary);
+  opacity: 0.8;
+}
+
+.textContent {
+  /* Text content container */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.label {
+  /* Label styling */
+  font-family: var(--md-sys-typescale-label-medium-font-family);
+  font-weight: var(--md-sys-typescale-label-medium-font-weight);
+  font-size: var(--md-sys-typescale-label-medium-font-size);
+  line-height: var(--md-sys-typescale-label-medium-line-height);
+  letter-spacing: var(--md-sys-typescale-label-medium-letter-spacing);
+  color: var(--md-sys-color-on-surface-variant);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.value {
+  /* Value styling */
+  font-family: var(--md-sys-typescale-headline-small-font-family);
+  font-weight: var(--md-sys-typescale-headline-small-font-weight);
+  font-size: var(--md-sys-typescale-headline-small-font-size);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  letter-spacing: var(--md-sys-typescale-headline-small-letter-spacing);
+  color: var(--md-sys-color-on-surface);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.secondaryValue {
+  /* Secondary value styling */
+  font-family: var(--md-sys-typescale-body-small-font-family);
+  font-weight: var(--md-sys-typescale-body-small-font-weight);
+  font-size: var(--md-sys-typescale-body-small-font-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  letter-spacing: var(--md-sys-typescale-body-small-letter-spacing);
+  color: var(--md-sys-color-on-surface-variant);
+  opacity: 0.7;
+}
+
+.trendIndicator {
+  /* Trend indicator styling */
+  font-size: 0.875em;
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+/* ===== VALUE COLOR VARIANTS ===== */
+
+.value-color-default .value {
+  color: var(--md-sys-color-on-surface);
+}
+
+.value-color-primary .value {
+  color: var(--md-sys-color-primary);
+}
+
+.value-color-secondary .value {
+  color: var(--md-sys-color-secondary);
+}
+
+.value-color-success .value {
+  color: var(--md-sys-color-tertiary);
+}
+
+.value-color-warning .value {
+  color: var(--md-sys-color-secondary);
+}
+
+.value-color-error .value {
+  color: var(--md-sys-color-error);
+}
+
+/* ===== TREND VARIANTS ===== */
+
+.trend-up .trendIndicator {
+  color: var(--md-sys-color-tertiary);
+}
+
+.trend-down .trendIndicator {
+  color: var(--md-sys-color-error);
+}
+
+.trend-neutral .trendIndicator {
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* ===== SIZE-SPECIFIC ADJUSTMENTS ===== */
+
+.size-compact .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.size-compact .label {
+  font-size: var(--md-sys-typescale-label-small-font-size);
+}
+
+.size-compact .value {
+  font-size: var(--md-sys-typescale-title-large-font-size);
+}
+
+.size-spacious .icon {
+  width: 28px;
+  height: 28px;
+}
+
+.size-spacious .label {
+  font-size: var(--md-sys-typescale-label-large-font-size);
+}
+
+.size-spacious .value {
+  font-size: var(--md-sys-typescale-headline-medium-font-size);
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+
+/* Mobile optimizations */
+@media (max-width: 599px) {
+  .statsCard {
+    min-height: 70px;
+    aspect-ratio: 2.5/2;
+  }
+  
+  .size-comfortable {
+    min-height: 70px;
+    padding: 10px;
+  }
+  
+  .size-spacious {
+    min-height: 85px;
+    padding: 12px;
+  }
+  
+  .value {
+    font-size: var(--md-sys-typescale-title-large-font-size);
+  }
+  
+  .label {
+    font-size: var(--md-sys-typescale-label-small-font-size);
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .statsCard {
+    aspect-ratio: 3/2;
+  }
+  
+  .size-spacious {
+    min-height: 95px;
+    padding: 14px;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1024px) {
+  .statsCard {
+    aspect-ratio: 3.5/2;
+  }
+  
+  .size-spacious {
+    min-height: 110px;
+    padding: 18px;
+  }
+  
+  .size-spacious .value {
+    font-size: var(--md-sys-typescale-headline-large-font-size);
+  }
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+/* Screen reader support */
+.trendIndicator {
+  /* Hide decorative trend arrows from screen readers */
+  aria-hidden: true;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .label,
+  .secondaryValue {
+    opacity: 1;
+  }
+  
+  .icon {
+    opacity: 1;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .statsCard {
+    transition: none;
+  }
+}

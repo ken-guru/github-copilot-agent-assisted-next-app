@@ -1,0 +1,150 @@
+/* Material 3 Expressive Card Component */
+
+.card {
+  /* Base card styles */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Ensure content doesn't overflow rounded corners */
+}
+
+/* ===== PADDING VARIANTS ===== */
+
+.padding-none {
+  padding: 0;
+}
+
+.padding-compact {
+  padding: 12px;
+}
+
+.padding-comfortable {
+  padding: 16px;
+}
+
+.padding-spacious {
+  padding: 24px;
+}
+
+/* ===== CARD SECTIONS ===== */
+
+.header {
+  /* Card header styling */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  
+  /* Typography for header */
+  font-family: var(--md-sys-typescale-title-large-font-family);
+  font-weight: var(--md-sys-typescale-title-large-font-weight);
+  font-size: var(--md-sys-typescale-title-large-font-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  letter-spacing: var(--md-sys-typescale-title-large-letter-spacing);
+  color: var(--md-sys-color-on-surface);
+}
+
+.body {
+  /* Card body - main content area */
+  flex: 1;
+  min-height: 0; /* Allow shrinking */
+  
+  /* Typography for body */
+  font-family: var(--md-sys-typescale-body-medium-font-family);
+  font-weight: var(--md-sys-typescale-body-medium-font-weight);
+  font-size: var(--md-sys-typescale-body-medium-font-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  letter-spacing: var(--md-sys-typescale-body-medium-letter-spacing);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.footer {
+  /* Card footer styling */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.actions {
+  /* Card actions container */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+
+/* Mobile optimizations */
+@media (max-width: 599px) {
+  .padding-comfortable {
+    padding: 12px;
+  }
+  
+  .padding-spacious {
+    padding: 16px;
+  }
+  
+  .header {
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    font-size: var(--md-sys-typescale-title-medium-font-size);
+  }
+  
+  .footer {
+    padding-top: 12px;
+    margin-top: 12px;
+  }
+  
+  .actions {
+    gap: 6px;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .padding-spacious {
+    padding: 20px;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1024px) {
+  .padding-spacious {
+    padding: 28px;
+  }
+  
+  .header {
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .footer {
+    padding-top: 20px;
+    margin-top: 20px;
+  }
+}
+
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+
+/* Focus management for card actions */
+.actions button:focus-visible,
+.actions a:focus-visible {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--md-sys-shape-corner-small);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .header,
+  .footer {
+    border-color: var(--md-sys-color-outline);
+    border-width: 2px;
+  }
+}
