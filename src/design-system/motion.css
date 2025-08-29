@@ -1,0 +1,471 @@
+/**
+ * Material 3 Motion System
+ * Comprehensive motion tokens, easing curves, duration scales, and transition utilities
+ * Following Material 3 motion principles for expressive and purposeful animations
+ */
+
+/* === Material 3 Motion Tokens === */
+:root {
+  /* Duration Scale - Material 3 standard timings */
+  --m3-motion-duration-short1: 50ms;     /* Micro-interactions */
+  --m3-motion-duration-short2: 100ms;    /* Quick feedback */
+  --m3-motion-duration-short3: 150ms;    /* Small component changes */
+  --m3-motion-duration-short4: 200ms;    /* Standard transitions */
+  --m3-motion-duration-medium1: 250ms;   /* Medium component transitions */
+  --m3-motion-duration-medium2: 300ms;   /* Card/surface movements */
+  --m3-motion-duration-medium3: 350ms;   /* Complex state changes */
+  --m3-motion-duration-medium4: 400ms;   /* Layout transitions */
+  --m3-motion-duration-long1: 450ms;     /* Large component animations */
+  --m3-motion-duration-long2: 500ms;     /* Page transitions */
+  --m3-motion-duration-long3: 550ms;     /* Complex animations */
+  --m3-motion-duration-long4: 600ms;     /* Extended transitions */
+  --m3-motion-duration-extra-long1: 700ms;  /* Dramatic effects */
+  --m3-motion-duration-extra-long2: 800ms;  /* Complex sequences */
+  --m3-motion-duration-extra-long3: 900ms;  /* Elaborate animations */
+  --m3-motion-duration-extra-long4: 1000ms; /* Full transitions */
+
+  /* Material 3 Easing Curves */
+  --m3-motion-easing-linear: linear;
+  --m3-motion-easing-standard: cubic-bezier(0.2, 0.0, 0, 1.0);        /* Natural ease */
+  --m3-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);  /* Speed up */
+  --m3-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);    /* Slow down */
+  --m3-motion-easing-emphasized: cubic-bezier(0.2, 0.0, 0, 1.0);       /* Expressive */
+  --m3-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0.0, 0.8, 0.15); /* Strong start */
+  --m3-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1.0); /* Gentle landing */
+  --m3-motion-easing-legacy: cubic-bezier(0.4, 0.0, 0.2, 1);          /* Legacy support */
+  --m3-motion-easing-legacy-accelerate: cubic-bezier(0.4, 0.0, 1, 1);  /* Legacy speed */
+  --m3-motion-easing-legacy-decelerate: cubic-bezier(0.0, 0.0, 0.2, 1); /* Legacy slow */
+
+  /* Expressive Easing Curves - Enhanced for Material 3 Expressive */
+  --m3-motion-easing-expressive-standard: cubic-bezier(0.2, 0.0, 0, 1.0);
+  --m3-motion-easing-expressive-entrance: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --m3-motion-easing-expressive-exit: cubic-bezier(0.4, 0.0, 1, 1);
+  --m3-motion-easing-expressive-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --m3-motion-easing-expressive-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --m3-motion-easing-expressive-back: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+
+  /* Motion Paths for Complex Animations */
+  --m3-motion-path-arc: path('M 0 0 Q 50 -20 100 0');
+  --m3-motion-path-wave: path('M 0 0 Q 25 -10 50 0 Q 75 10 100 0');
+  --m3-motion-path-spiral: path('M 0 0 Q 25 -15 50 0 Q 75 15 100 0 Q 125 -15 150 0');
+}
+
+/* === Motion Utility Classes === */
+
+/* Duration Utilities */
+.m3-motion-duration-short1 { transition-duration: var(--m3-motion-duration-short1); }
+.m3-motion-duration-short2 { transition-duration: var(--m3-motion-duration-short2); }
+.m3-motion-duration-short3 { transition-duration: var(--m3-motion-duration-short3); }
+.m3-motion-duration-short4 { transition-duration: var(--m3-motion-duration-short4); }
+.m3-motion-duration-medium1 { transition-duration: var(--m3-motion-duration-medium1); }
+.m3-motion-duration-medium2 { transition-duration: var(--m3-motion-duration-medium2); }
+.m3-motion-duration-medium3 { transition-duration: var(--m3-motion-duration-medium3); }
+.m3-motion-duration-medium4 { transition-duration: var(--m3-motion-duration-medium4); }
+.m3-motion-duration-long1 { transition-duration: var(--m3-motion-duration-long1); }
+.m3-motion-duration-long2 { transition-duration: var(--m3-motion-duration-long2); }
+.m3-motion-duration-long3 { transition-duration: var(--m3-motion-duration-long3); }
+.m3-motion-duration-long4 { transition-duration: var(--m3-motion-duration-long4); }
+.m3-motion-duration-extra-long1 { transition-duration: var(--m3-motion-duration-extra-long1); }
+.m3-motion-duration-extra-long2 { transition-duration: var(--m3-motion-duration-extra-long2); }
+.m3-motion-duration-extra-long3 { transition-duration: var(--m3-motion-duration-extra-long3); }
+.m3-motion-duration-extra-long4 { transition-duration: var(--m3-motion-duration-extra-long4); }
+
+/* Easing Utilities */
+.m3-motion-easing-linear { transition-timing-function: var(--m3-motion-easing-linear); }
+.m3-motion-easing-standard { transition-timing-function: var(--m3-motion-easing-standard); }
+.m3-motion-easing-standard-accelerate { transition-timing-function: var(--m3-motion-easing-standard-accelerate); }
+.m3-motion-easing-standard-decelerate { transition-timing-function: var(--m3-motion-easing-standard-decelerate); }
+.m3-motion-easing-emphasized { transition-timing-function: var(--m3-motion-easing-emphasized); }
+.m3-motion-easing-emphasized-accelerate { transition-timing-function: var(--m3-motion-easing-emphasized-accelerate); }
+.m3-motion-easing-emphasized-decelerate { transition-timing-function: var(--m3-motion-easing-emphasized-decelerate); }
+.m3-motion-easing-expressive-standard { transition-timing-function: var(--m3-motion-easing-expressive-standard); }
+.m3-motion-easing-expressive-entrance { transition-timing-function: var(--m3-motion-easing-expressive-entrance); }
+.m3-motion-easing-expressive-exit { transition-timing-function: var(--m3-motion-easing-expressive-exit); }
+.m3-motion-easing-expressive-bounce { transition-timing-function: var(--m3-motion-easing-expressive-bounce); }
+.m3-motion-easing-expressive-elastic { transition-timing-function: var(--m3-motion-easing-expressive-elastic); }
+.m3-motion-easing-expressive-back { transition-timing-function: var(--m3-motion-easing-expressive-back); }
+
+/* Combined Motion Classes - Duration + Easing */
+.m3-motion-quick-standard {
+  transition-duration: var(--m3-motion-duration-short4);
+  transition-timing-function: var(--m3-motion-easing-standard);
+}
+
+.m3-motion-smooth-emphasized {
+  transition-duration: var(--m3-motion-duration-medium2);
+  transition-timing-function: var(--m3-motion-easing-emphasized);
+}
+
+.m3-motion-expressive-entrance {
+  transition-duration: var(--m3-motion-duration-medium3);
+  transition-timing-function: var(--m3-motion-easing-expressive-entrance);
+}
+
+.m3-motion-expressive-exit {
+  transition-duration: var(--m3-motion-duration-medium1);
+  transition-timing-function: var(--m3-motion-easing-expressive-exit);
+}
+
+.m3-motion-bounce {
+  transition-duration: var(--m3-motion-duration-long1);
+  transition-timing-function: var(--m3-motion-easing-expressive-bounce);
+}
+
+.m3-motion-elastic {
+  transition-duration: var(--m3-motion-duration-long2);
+  transition-timing-function: var(--m3-motion-easing-expressive-elastic);
+}
+
+/* Property-Specific Transitions */
+.m3-motion-all {
+  transition-property: all;
+}
+
+.m3-motion-transform {
+  transition-property: transform;
+}
+
+.m3-motion-opacity {
+  transition-property: opacity;
+}
+
+.m3-motion-colors {
+  transition-property: color, background-color, border-color, fill, stroke;
+}
+
+.m3-motion-shadows {
+  transition-property: box-shadow, filter;
+}
+
+.m3-motion-layout {
+  transition-property: width, height, top, left, right, bottom, margin, padding;
+}
+
+/* === Component-Specific Motion === */
+
+/* Button Transitions */
+.m3-motion-button {
+  transition: background-color var(--m3-motion-duration-short4) var(--m3-motion-easing-standard),
+              box-shadow var(--m3-motion-duration-short4) var(--m3-motion-easing-standard),
+              transform var(--m3-motion-duration-short2) var(--m3-motion-easing-standard);
+}
+
+.m3-motion-button:hover {
+  transition-duration: var(--m3-motion-duration-short2);
+}
+
+.m3-motion-button:active {
+  transform: scale(0.98);
+  transition-duration: var(--m3-motion-duration-short1);
+}
+
+/* Card Transitions */
+.m3-motion-card {
+  transition: transform var(--m3-motion-duration-medium2) var(--m3-motion-easing-emphasized),
+              box-shadow var(--m3-motion-duration-medium2) var(--m3-motion-easing-emphasized);
+}
+
+.m3-motion-card:hover {
+  transform: translateY(-4px);
+}
+
+/* FAB Transitions */
+.m3-motion-fab {
+  transition: transform var(--m3-motion-duration-medium1) var(--m3-motion-easing-expressive-bounce),
+              box-shadow var(--m3-motion-duration-medium1) var(--m3-motion-easing-standard);
+}
+
+.m3-motion-fab:hover {
+  transform: scale(1.1);
+}
+
+.m3-motion-fab:active {
+  transform: scale(0.95);
+}
+
+/* Navigation Transitions */
+.m3-motion-nav-item {
+  transition: background-color var(--m3-motion-duration-short4) var(--m3-motion-easing-standard),
+              transform var(--m3-motion-duration-short3) var(--m3-motion-easing-standard);
+}
+
+/* Modal/Dialog Transitions */
+.m3-motion-modal {
+  transition: opacity var(--m3-motion-duration-medium3) var(--m3-motion-easing-emphasized),
+              transform var(--m3-motion-duration-medium3) var(--m3-motion-easing-emphasized);
+}
+
+.m3-motion-modal-backdrop {
+  transition: opacity var(--m3-motion-duration-medium2) var(--m3-motion-easing-standard);
+}
+
+/* === Animation Keyframes === */
+
+/* Fade Animations */
+@keyframes m3-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes m3-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes m3-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes m3-fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale Animations */
+@keyframes m3-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes m3-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* Slide Animations */
+@keyframes m3-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes m3-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Bounce Animations */
+@keyframes m3-bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+    animation-timing-function: var(--m3-motion-easing-emphasized);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    animation-timing-function: var(--m3-motion-easing-emphasized);
+  }
+}
+
+@keyframes m3-elastic-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  20% {
+    transform: scale(1.1);
+  }
+  40% {
+    transform: scale(0.9);
+  }
+  60% {
+    transform: scale(1.03);
+  }
+  80% {
+    transform: scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Rotation Animations */
+@keyframes m3-rotate-in {
+  from {
+    opacity: 0;
+    transform: rotate(-180deg);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes m3-flip-in {
+  from {
+    opacity: 0;
+    transform: rotateY(-90deg);
+  }
+  to {
+    opacity: 1;
+    transform: rotateY(0deg);
+  }
+}
+
+/* === Animation Classes === */
+
+/* Fade Animation Classes */
+.m3-anim-fade-in {
+  animation: m3-fade-in var(--m3-motion-duration-medium2) var(--m3-motion-easing-emphasized);
+}
+
+.m3-anim-fade-out {
+  animation: m3-fade-out var(--m3-motion-duration-medium1) var(--m3-motion-easing-emphasized);
+}
+
+.m3-anim-fade-in-up {
+  animation: m3-fade-in-up var(--m3-motion-duration-medium3) var(--m3-motion-easing-expressive-entrance);
+}
+
+.m3-anim-fade-in-down {
+  animation: m3-fade-in-down var(--m3-motion-duration-medium3) var(--m3-motion-easing-expressive-entrance);
+}
+
+/* Scale Animation Classes */
+.m3-anim-scale-in {
+  animation: m3-scale-in var(--m3-motion-duration-medium2) var(--m3-motion-easing-emphasized);
+}
+
+.m3-anim-scale-out {
+  animation: m3-scale-out var(--m3-motion-duration-medium1) var(--m3-motion-easing-emphasized);
+}
+
+/* Slide Animation Classes */
+.m3-anim-slide-in-left {
+  animation: m3-slide-in-left var(--m3-motion-duration-medium3) var(--m3-motion-easing-expressive-entrance);
+}
+
+.m3-anim-slide-in-right {
+  animation: m3-slide-in-right var(--m3-motion-duration-medium3) var(--m3-motion-easing-expressive-entrance);
+}
+
+/* Bounce Animation Classes */
+.m3-anim-bounce-in {
+  animation: m3-bounce-in var(--m3-motion-duration-long1) var(--m3-motion-easing-expressive-bounce);
+}
+
+.m3-anim-elastic-in {
+  animation: m3-elastic-in var(--m3-motion-duration-long2) var(--m3-motion-easing-expressive-elastic);
+}
+
+/* Rotation Animation Classes */
+.m3-anim-rotate-in {
+  animation: m3-rotate-in var(--m3-motion-duration-medium4) var(--m3-motion-easing-emphasized);
+}
+
+.m3-anim-flip-in {
+  animation: m3-flip-in var(--m3-motion-duration-medium4) var(--m3-motion-easing-emphasized);
+}
+
+/* === Responsive Motion === */
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .m3-motion-respect-preference,
+  .m3-motion-button,
+  .m3-motion-card,
+  .m3-motion-fab,
+  .m3-motion-nav-item,
+  .m3-motion-modal {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High Performance Mode */
+@media (prefers-reduced-motion: no-preference) and (min-resolution: 2dppx) {
+  .m3-motion-high-performance {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+}
+
+/* === State-based Motion === */
+
+/* Loading States */
+.m3-motion-loading {
+  animation: m3-loading-pulse 2s var(--m3-motion-easing-emphasized) infinite;
+}
+
+@keyframes m3-loading-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Focus Transitions */
+.m3-motion-focus {
+  transition: outline-color var(--m3-motion-duration-short3) var(--m3-motion-easing-standard),
+              outline-width var(--m3-motion-duration-short3) var(--m3-motion-easing-standard);
+}
+
+/* Error State Animations */
+.m3-motion-error {
+  animation: m3-error-shake var(--m3-motion-duration-medium1) var(--m3-motion-easing-emphasized);
+}
+
+@keyframes m3-error-shake {
+  0%, 20%, 50%, 80%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-4px); }
+  30% { transform: translateX(4px); }
+  60% { transform: translateX(-2px); }
+  90% { transform: translateX(2px); }
+}
+
+/* Success State Animations */
+.m3-motion-success {
+  animation: m3-success-bounce var(--m3-motion-duration-long1) var(--m3-motion-easing-expressive-bounce);
+}
+
+@keyframes m3-success-bounce {
+  0% { transform: scale(1); }
+  15% { transform: scale(1.1); }
+  30% { transform: scale(0.95); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}

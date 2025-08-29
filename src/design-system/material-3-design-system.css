@@ -12,6 +12,8 @@
 @import './tokens/material-3-colors.css';
 @import './typography.css';
 @import './color-system.css';
+@import './shape-elevation.css';
+@import './motion.css';
 
 /* ===================================
  * DESIGN SYSTEM INITIALIZATION

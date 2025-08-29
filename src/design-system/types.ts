@@ -74,36 +74,41 @@ export type Material3SurfaceLevel =
   | 'surface-container-highest'
   | 'surface-container-lowest';
 
-export type Material3ElevationLevel = 
-  | 'level0'
-  | 'level1'
-  | 'level2'
-  | 'level3'
-  | 'level4'
-  | 'level5';
+export type Material3ElevationLevel = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type Material3ShapeSize = 
   | 'none'
-  | 'extra-small'
-  | 'small'
-  | 'medium'
-  | 'large'
-  | 'extra-large'
+  | 'xs'
+  | 'sm'
+  | 'md'
+  | 'lg'
+  | 'xl'
   | 'full';
 
 export type Material3ShapeExpressive = 
-  | 'extra-small-expressive'
-  | 'small-expressive'
-  | 'medium-expressive'
-  | 'large-expressive'
-  | 'extra-large-expressive';
+  | 'xs-expressive'
+  | 'sm-expressive'
+  | 'md-expressive'
+  | 'lg-expressive'
+  | 'xl-expressive';
 
 export type Material3MotionEasing = 
+  | 'linear'
   | 'standard'
+  | 'standard-accelerate'
+  | 'standard-decelerate'
   | 'emphasized'
-  | 'decelerated'
-  | 'accelerated'
-  | 'legacy';
+  | 'emphasized-accelerate'
+  | 'emphasized-decelerate'
+  | 'expressive-standard'
+  | 'expressive-entrance'
+  | 'expressive-exit'
+  | 'expressive-bounce'
+  | 'expressive-elastic'
+  | 'expressive-back'
+  | 'legacy'
+  | 'legacy-accelerate'
+  | 'legacy-decelerate';
 
 export type Material3MotionDuration = 
   | 'short1'
@@ -139,6 +144,21 @@ export type Material3StateLayer =
   | 'pressed'
   | 'dragged'
   | 'disabled';
+
+// Animation and motion configuration interfaces
+export interface Material3MotionConfig {
+  duration?: Material3MotionDuration;
+  easing?: Material3MotionEasing;
+  properties?: string[];
+  fill?: FillMode;
+  iterations?: number;
+}
+
+export type Material3AnimationState = 
+  | 'idle'
+  | 'running'
+  | 'paused'
+  | 'finished';
 
 export type Material3Breakpoint = 
   | 'compact'

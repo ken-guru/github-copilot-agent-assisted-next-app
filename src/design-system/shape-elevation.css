@@ -1,0 +1,506 @@
+/**
+ * Material 3 Expressive Shape and Elevation System
+ * 
+ * This file implements the Material 3 shape and elevation tokens with:
+ * - Organic corner radius system with expressive variations
+ * - Elevation levels with appropriate shadow styles
+ * - Shape utilities for consistent application
+ * - Responsive shape adaptations
+ * 
+ * Based on Material Design 3 specifications:
+ * https://m3.material.io/styles/shape/overview
+ * https://m3.material.io/styles/elevation/overview
+ */
+
+/* ===================================
+ * SHAPE UTILITIES
+ * =================================== */
+
+/* Basic corner radius utilities */
+.m3-shape-none {
+  border-radius: var(--m3-shape-corner-none);
+}
+
+.m3-shape-xs {
+  border-radius: var(--m3-shape-corner-xs);
+}
+
+.m3-shape-sm {
+  border-radius: var(--m3-shape-corner-sm);
+}
+
+.m3-shape-md {
+  border-radius: var(--m3-shape-corner-md);
+}
+
+.m3-shape-lg {
+  border-radius: var(--m3-shape-corner-lg);
+}
+
+.m3-shape-xl {
+  border-radius: var(--m3-shape-corner-xl);
+}
+
+.m3-shape-full {
+  border-radius: var(--m3-shape-corner-full);
+}
+
+/* Expressive shape variations */
+.m3-shape-xs-expressive {
+  border-radius: var(--m3-shape-corner-xs-expressive);
+}
+
+.m3-shape-sm-expressive {
+  border-radius: var(--m3-shape-corner-sm-expressive);
+}
+
+.m3-shape-md-expressive {
+  border-radius: var(--m3-shape-corner-md-expressive);
+}
+
+.m3-shape-lg-expressive {
+  border-radius: var(--m3-shape-corner-lg-expressive);
+}
+
+.m3-shape-xl-expressive {
+  border-radius: var(--m3-shape-corner-xl-expressive);
+}
+
+/* Component-specific shape classes */
+.m3-shape-button {
+  border-radius: var(--m3-shape-corner-full);
+}
+
+.m3-shape-button-small {
+  border-radius: var(--m3-shape-corner-lg);
+}
+
+.m3-shape-card {
+  border-radius: var(--m3-shape-corner-md);
+}
+
+.m3-shape-card-expressive {
+  border-radius: var(--m3-shape-corner-md-expressive);
+}
+
+.m3-shape-dialog {
+  border-radius: var(--m3-shape-corner-xl);
+}
+
+.m3-shape-dialog-expressive {
+  border-radius: var(--m3-shape-corner-xl-expressive);
+}
+
+.m3-shape-sheet {
+  border-radius: var(--m3-shape-corner-lg) var(--m3-shape-corner-lg) 0 0;
+}
+
+.m3-shape-sheet-expressive {
+  border-radius: var(--m3-shape-corner-lg-expressive) var(--m3-shape-corner-lg-expressive) 0 0;
+}
+
+.m3-shape-chip {
+  border-radius: var(--m3-shape-corner-sm);
+}
+
+.m3-shape-fab {
+  border-radius: var(--m3-shape-corner-lg);
+}
+
+.m3-shape-fab-large {
+  border-radius: var(--m3-shape-corner-xl);
+}
+
+/* Directional shape utilities */
+.m3-shape-top {
+  border-radius: var(--m3-shape-corner-md) var(--m3-shape-corner-md) 0 0;
+}
+
+.m3-shape-bottom {
+  border-radius: 0 0 var(--m3-shape-corner-md) var(--m3-shape-corner-md);
+}
+
+.m3-shape-left {
+  border-radius: var(--m3-shape-corner-md) 0 0 var(--m3-shape-corner-md);
+}
+
+.m3-shape-right {
+  border-radius: 0 var(--m3-shape-corner-md) var(--m3-shape-corner-md) 0;
+}
+
+/* Asymmetric shape utilities for expressive design */
+.m3-shape-asymmetric-1 {
+  border-radius: var(--m3-shape-corner-xs) var(--m3-shape-corner-lg) var(--m3-shape-corner-xs) var(--m3-shape-corner-lg);
+}
+
+.m3-shape-asymmetric-2 {
+  border-radius: var(--m3-shape-corner-sm) var(--m3-shape-corner-xl) var(--m3-shape-corner-md) var(--m3-shape-corner-sm);
+}
+
+.m3-shape-asymmetric-3 {
+  border-radius: var(--m3-shape-corner-lg) var(--m3-shape-corner-xs) var(--m3-shape-corner-xl) var(--m3-shape-corner-md);
+}
+
+/* ===================================
+ * ELEVATION UTILITIES
+ * =================================== */
+
+/* Basic elevation levels */
+.m3-elevation-0 {
+  box-shadow: var(--m3-elevation-level0);
+}
+
+.m3-elevation-1 {
+  box-shadow: var(--m3-elevation-level1);
+}
+
+.m3-elevation-2 {
+  box-shadow: var(--m3-elevation-level2);
+}
+
+.m3-elevation-3 {
+  box-shadow: var(--m3-elevation-level3);
+}
+
+.m3-elevation-4 {
+  box-shadow: var(--m3-elevation-level4);
+}
+
+.m3-elevation-5 {
+  box-shadow: var(--m3-elevation-level5);
+}
+
+/* Component-specific elevation classes */
+.m3-elevation-surface {
+  box-shadow: var(--m3-elevation-level0);
+}
+
+.m3-elevation-card {
+  box-shadow: var(--m3-elevation-level1);
+}
+
+.m3-elevation-card-hovered {
+  box-shadow: var(--m3-elevation-level2);
+}
+
+.m3-elevation-card-dragged {
+  box-shadow: var(--m3-elevation-level4);
+}
+
+.m3-elevation-button {
+  box-shadow: var(--m3-elevation-level0);
+}
+
+.m3-elevation-button-hovered {
+  box-shadow: var(--m3-elevation-level1);
+}
+
+.m3-elevation-fab {
+  box-shadow: var(--m3-elevation-level3);
+}
+
+.m3-elevation-fab-hovered {
+  box-shadow: var(--m3-elevation-level4);
+}
+
+.m3-elevation-fab-pressed {
+  box-shadow: var(--m3-elevation-level3);
+}
+
+.m3-elevation-dialog {
+  box-shadow: var(--m3-elevation-level3);
+}
+
+.m3-elevation-modal {
+  box-shadow: var(--m3-elevation-level5);
+}
+
+.m3-elevation-navigation {
+  box-shadow: var(--m3-elevation-level2);
+}
+
+.m3-elevation-app-bar {
+  box-shadow: var(--m3-elevation-level0);
+}
+
+.m3-elevation-app-bar-scrolled {
+  box-shadow: var(--m3-elevation-level2);
+}
+
+.m3-elevation-menu {
+  box-shadow: var(--m3-elevation-level2);
+}
+
+.m3-elevation-tooltip {
+  box-shadow: var(--m3-elevation-level2);
+}
+
+/* ===================================
+ * INTERACTIVE ELEVATION STATES
+ * =================================== */
+
+/* Hover elevation transitions */
+.m3-elevation-interactive {
+  transition: box-shadow var(--m3-motion-duration-short2) var(--m3-motion-easing-standard);
+}
+
+.m3-elevation-interactive:hover {
+  box-shadow: var(--m3-elevation-level2);
+}
+
+.m3-elevation-interactive.m3-elevation-1:hover {
+  box-shadow: var(--m3-elevation-level2);
+}
+
+.m3-elevation-interactive.m3-elevation-2:hover {
+  box-shadow: var(--m3-elevation-level3);
+}
+
+.m3-elevation-interactive.m3-elevation-3:hover {
+  box-shadow: var(--m3-elevation-level4);
+}
+
+.m3-elevation-interactive.m3-elevation-4:hover {
+  box-shadow: var(--m3-elevation-level5);
+}
+
+/* Focus elevation states */
+.m3-elevation-focusable:focus {
+  box-shadow: 
+    var(--m3-elevation-level2),
+    0 0 0 2px var(--m3-color-primary);
+}
+
+/* Pressed elevation states */
+.m3-elevation-pressable:active {
+  box-shadow: var(--m3-elevation-level1);
+  transition: box-shadow var(--m3-motion-duration-short1) var(--m3-motion-easing-standard);
+}
+
+/* Dragged elevation states */
+.m3-elevation-draggable[draggable="true"]:active {
+  box-shadow: var(--m3-elevation-level5);
+  transform: scale(1.02);
+  transition: 
+    box-shadow var(--m3-motion-duration-short2) var(--m3-motion-easing-emphasized),
+    transform var(--m3-motion-duration-short2) var(--m3-motion-easing-emphasized);
+}
+
+/* ===================================
+ * SHAPE AND ELEVATION COMBINATIONS
+ * =================================== */
+
+/* Surface combinations with appropriate elevation and shape */
+.m3-surface-card {
+  border-radius: var(--m3-shape-corner-md);
+  box-shadow: var(--m3-elevation-level1);
+  background-color: var(--m3-color-surface-container-low);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-card-elevated {
+  border-radius: var(--m3-shape-corner-md);
+  box-shadow: var(--m3-elevation-level2);
+  background-color: var(--m3-color-surface-container);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-card-expressive {
+  border-radius: var(--m3-shape-corner-md-expressive);
+  box-shadow: var(--m3-elevation-level1);
+  background-color: var(--m3-color-surface-container-low);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-dialog {
+  border-radius: var(--m3-shape-corner-xl);
+  box-shadow: var(--m3-elevation-level3);
+  background-color: var(--m3-color-surface-container-high);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-modal {
+  border-radius: var(--m3-shape-corner-xl);
+  box-shadow: var(--m3-elevation-level5);
+  background-color: var(--m3-color-surface-container-highest);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-sheet {
+  border-radius: var(--m3-shape-corner-lg) var(--m3-shape-corner-lg) 0 0;
+  box-shadow: var(--m3-elevation-level2);
+  background-color: var(--m3-color-surface-container);
+  color: var(--m3-color-on-surface);
+}
+
+.m3-surface-fab {
+  border-radius: var(--m3-shape-corner-lg);
+  box-shadow: var(--m3-elevation-level3);
+  background-color: var(--m3-color-primary-container);
+  color: var(--m3-color-on-primary-container);
+}
+
+.m3-surface-fab-large {
+  border-radius: var(--m3-shape-corner-xl);
+  box-shadow: var(--m3-elevation-level3);
+  background-color: var(--m3-color-primary-container);
+  color: var(--m3-color-on-primary-container);
+}
+
+/* ===================================
+ * RESPONSIVE SHAPE ADAPTATIONS
+ * =================================== */
+
+/* Compact screens (mobile) */
+@media (max-width: 599px) {
+  .m3-shape-responsive-sm {
+    border-radius: var(--m3-shape-corner-sm);
+  }
+  
+  .m3-shape-responsive-md {
+    border-radius: var(--m3-shape-corner-md);
+  }
+  
+  .m3-shape-responsive-lg {
+    border-radius: var(--m3-shape-corner-lg);
+  }
+  
+  .m3-surface-dialog {
+    border-radius: var(--m3-shape-corner-lg);
+  }
+  
+  .m3-surface-sheet {
+    border-radius: var(--m3-shape-corner-md) var(--m3-shape-corner-md) 0 0;
+  }
+}
+
+/* Medium screens (tablet) */
+@media (min-width: 600px) and (max-width: 1199px) {
+  .m3-shape-responsive-sm {
+    border-radius: var(--m3-shape-corner-sm);
+  }
+  
+  .m3-shape-responsive-md {
+    border-radius: var(--m3-shape-corner-lg);
+  }
+  
+  .m3-shape-responsive-lg {
+    border-radius: var(--m3-shape-corner-xl);
+  }
+}
+
+/* Large screens (desktop) */
+@media (min-width: 1200px) {
+  .m3-shape-responsive-sm {
+    border-radius: var(--m3-shape-corner-md);
+  }
+  
+  .m3-shape-responsive-md {
+    border-radius: var(--m3-shape-corner-lg);
+  }
+  
+  .m3-shape-responsive-lg {
+    border-radius: var(--m3-shape-corner-xl);
+  }
+  
+  .m3-surface-card-expressive {
+    border-radius: var(--m3-shape-corner-lg-expressive);
+  }
+}
+
+/* ===================================
+ * ACCESSIBILITY ENHANCEMENTS
+ * =================================== */
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  .m3-elevation-1,
+  .m3-elevation-2,
+  .m3-elevation-3,
+  .m3-elevation-4,
+  .m3-elevation-5 {
+    border: 1px solid var(--m3-color-outline);
+  }
+  
+  .m3-elevation-focusable:focus {
+    outline: 3px solid var(--m3-color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .m3-elevation-interactive,
+  .m3-elevation-pressable,
+  .m3-elevation-draggable {
+    transition: none;
+  }
+  
+  .m3-elevation-draggable[draggable="true"]:active {
+    transform: none;
+  }
+}
+
+/* ===================================
+ * SHAPE AND ELEVATION ANIMATIONS
+ * =================================== */
+
+/* Shape morphing animations */
+.m3-shape-morph {
+  transition: border-radius var(--m3-motion-duration-medium2) var(--m3-motion-easing-emphasized);
+}
+
+.m3-shape-morph:hover {
+  border-radius: var(--m3-shape-corner-lg);
+}
+
+/* Elevation float animation */
+.m3-elevation-float {
+  transition: 
+    transform var(--m3-motion-duration-medium2) var(--m3-motion-easing-standard),
+    box-shadow var(--m3-motion-duration-medium2) var(--m3-motion-easing-standard);
+}
+
+.m3-elevation-float:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--m3-elevation-level3);
+}
+
+/* Pulse elevation animation */
+@keyframes m3-elevation-pulse {
+  0%, 100% {
+    box-shadow: var(--m3-elevation-level1);
+  }
+  50% {
+    box-shadow: var(--m3-elevation-level3);
+  }
+}
+
+.m3-elevation-pulse {
+  animation: m3-elevation-pulse 2s ease-in-out infinite;
+}
+
+/* ===================================
+ * UTILITY MODIFIERS
+ * =================================== */
+
+/* Shape override utilities */
+.m3-shape-override-none { border-radius: 0 !important; }
+.m3-shape-override-xs { border-radius: var(--m3-shape-corner-xs) !important; }
+.m3-shape-override-sm { border-radius: var(--m3-shape-corner-sm) !important; }
+.m3-shape-override-md { border-radius: var(--m3-shape-corner-md) !important; }
+.m3-shape-override-lg { border-radius: var(--m3-shape-corner-lg) !important; }
+.m3-shape-override-xl { border-radius: var(--m3-shape-corner-xl) !important; }
+.m3-shape-override-full { border-radius: var(--m3-shape-corner-full) !important; }
+
+/* Elevation override utilities */
+.m3-elevation-override-0 { box-shadow: var(--m3-elevation-level0) !important; }
+.m3-elevation-override-1 { box-shadow: var(--m3-elevation-level1) !important; }
+.m3-elevation-override-2 { box-shadow: var(--m3-elevation-level2) !important; }
+.m3-elevation-override-3 { box-shadow: var(--m3-elevation-level3) !important; }
+.m3-elevation-override-4 { box-shadow: var(--m3-elevation-level4) !important; }
+.m3-elevation-override-5 { box-shadow: var(--m3-elevation-level5) !important; }
+
+/* Remove elevation and shape utilities */
+.m3-no-elevation { box-shadow: none !important; }
+.m3-no-shape { border-radius: 0 !important; }
