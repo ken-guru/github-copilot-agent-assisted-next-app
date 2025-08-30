@@ -72,11 +72,11 @@ export default function RootLayout({
         <link rel="manifest" href="/api/manifest" />
         
         {/* Theme initialization script - runs before React hydration */}
-        <script
+                <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                // Don't run during SSR
+                // Skip on server
                 if (typeof window === 'undefined' || typeof document === 'undefined') {
                   return;
                 }

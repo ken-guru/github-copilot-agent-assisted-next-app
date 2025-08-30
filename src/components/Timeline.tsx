@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useEffect, useState } from 'react';
-import { Card, Badge, Collapse, Button } from 'react-bootstrap';
+import { Card, Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
@@ -39,20 +39,46 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
   
-  // State to track expanded timeline entries
-  const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set());
+  // State to track expanded timeline entries - removing as we're using tooltips now
+  // const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set());
   
-  // Function to toggle entry expansion
-  const toggleEntryExpansion = (entryId: string) => {
-    setExpandedEntries(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(entryId)) {
-        newSet.delete(entryId);
-      } else {
-        newSet.add(entryId);
-      }
-      return newSet;
-    });
+  // Function to toggle entry expansion - removing as we're using tooltips now
+  // const toggleEntryExpansion = (entryId: string) => {
+  //   setExpandedEntries(prev => {
+  //     const newSet = new Set(prev);
+  //     if (newSet.has(entryId)) {
+  //       newSet.delete(entryId);
+  //     } else {
+  //       newSet.add(entryId);
+  //     }
+  //     return newSet;
+  //   });
+  // };
+  
+  // Helper function to generate tooltip content for activity details
+  const generateTooltipContent = (entry: TimelineEntry, duration: number) => {
+    const details = [];
+    
+    if (entry.startTime) {
+      details.push(`Started: ${new Date(entry.startTime).toLocaleTimeString()}`);
+    }
+    if (entry.endTime) {
+      details.push(`Ended: ${new Date(entry.endTime).toLocaleTimeString()}`);
+    }
+    details.push(`Duration: ${formatTimeHuman(duration)}`);
+    if (entry.description) {
+      details.push(`Description: ${entry.description}`);
+    }
+    
+    return (
+      <div style={{ textAlign: 'left' }}>
+        {details.map((detail, index) => (
+          <div key={index} style={{ marginBottom: index < details.length - 1 ? '4px' : '0' }}>
+            {detail}
+          </div>
+        ))}
+      </div>
+    );
   };
   
   // Add state to track current theme mode
@@ -418,52 +444,28 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                       <div key={item.entry!.id} className={`${styles.timelineEntry} timeline-entry d-flex flex-column border rounded`} style={style}>
                         <div className={styles.entryContent}>
                           <div className={styles.entryHeader}>
-                            <span
-                              className={`${styles.activityName} fw-medium`}
-                              data-testid="timeline-activity-name"
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={
+                                <Tooltip id={`tooltip-${item.entry!.id}`}>
+                                  {generateTooltipContent(item.entry!, item.duration)}
+                                </Tooltip>
+                              }
                             >
-                              {item.entry!.activityName}
-                            </span>
+                              <span
+                                className={`${styles.activityName} fw-medium`}
+                                data-testid="timeline-activity-name"
+                                style={{ cursor: 'help' }}
+                              >
+                                {item.entry!.activityName}
+                              </span>
+                            </OverlayTrigger>
                             <div className="d-flex align-items-center gap-1">
                               <span className={`${styles.timeInfo} time-info small text-nowrap`}>
                                 {formatTimeHuman(item.duration)}
                               </span>
-                              <Button
-                                type="button"
-                                variant="link"
-                                size="sm"
-                                className="p-0 text-decoration-none"
-                                onClick={() => toggleEntryExpansion(item.entry!.id)}
-                                aria-expanded={expandedEntries.has(item.entry!.id)}
-                                aria-label={`${expandedEntries.has(item.entry!.id) ? 'Collapse' : 'Expand'} details for ${item.entry!.activityName}`}
-                                style={{ color: 'inherit', fontSize: '0.75rem' }}
-                              >
-                                <i className={`bi bi-chevron-${expandedEntries.has(item.entry!.id) ? 'up' : 'down'}`} />
-                              </Button>
                             </div>
                           </div>
-                          <Collapse in={expandedEntries.has(item.entry!.id)}>
-                            <div className="mt-2 pt-2 border-top" style={{ borderColor: 'inherit' }}>
-                              <div className="small">
-                                <div className="mb-1">
-                                  <strong>Started:</strong> {item.entry!.startTime ? new Date(item.entry!.startTime).toLocaleTimeString() : 'N/A'}
-                                </div>
-                                {item.entry!.endTime && (
-                                  <div className="mb-1">
-                                    <strong>Ended:</strong> {new Date(item.entry!.endTime).toLocaleTimeString()}
-                                  </div>
-                                )}
-                                <div className="mb-1">
-                                  <strong>Duration:</strong> {formatTimeHuman(item.duration)}
-                                </div>
-                                {item.entry!.description && (
-                                  <div className="mb-1">
-                                    <strong>Description:</strong> {item.entry!.description}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </Collapse>
                         </div>
                       </div>
                     );
