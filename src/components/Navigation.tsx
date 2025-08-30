@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Navbar, Nav, Offcanvas } from 'react-bootstrap';
+import { Navbar, Nav } from 'react-bootstrap';
 import { useThemeReactive } from '@/hooks/useThemeReactive';
 import ThemeToggle from '@/components/ThemeToggle';
 // AI nav is always visible; gating handled on page
@@ -42,7 +41,7 @@ const Navigation: React.FC = () => {
       aria-label="Main navigation"
     >
       <div className="container-fluid">
-        <Navbar.Brand as={Link} href="/" data-testid="navbar-brand">
+        <Navbar.Brand href="/" data-testid="navbar-brand">
           <i className="bi bi-clock me-2" aria-hidden="true"></i>
           <span className="brand-text d-none d-sm-inline">Mr. Timely</span>
         </Navbar.Brand>
@@ -64,7 +63,6 @@ const Navigation: React.FC = () => {
           <Nav className="ms-auto me-lg-4">
             {/* Timer - First navigation item */}
             <Nav.Link 
-              as={Link} 
               href="/"
               active={isTimerActive}
               onClick={closeMobileNav}
@@ -76,7 +74,6 @@ const Navigation: React.FC = () => {
             
             {/* Activities - Second navigation item */}
             <Nav.Link 
-              as={Link} 
               href="/activities"
               active={isActivitiesActive}
               onClick={closeMobileNav}
@@ -89,7 +86,6 @@ const Navigation: React.FC = () => {
             {/* AI - Conditional navigation item */}
             {showAI && (
               <Nav.Link 
-                as={Link} 
                 href="/ai"
                 active={isAIActive}
                 onClick={closeMobileNav}

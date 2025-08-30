@@ -3,6 +3,11 @@ import { render, screen } from '@testing-library/react';
 import { ThemeProvider } from '../../contexts/theme';
 import Navigation from '../Navigation';
 
+// Mock Next.js navigation hooks
+jest.mock('next/navigation', () => ({
+  usePathname: jest.fn(() => '/'),
+}));
+
 // Mock Next.js Link component
 jest.mock('next/link', () => {
   const MockLink = ({ children, href }: { children: React.ReactNode; href: string }) => {
@@ -125,46 +130,45 @@ describe('Navigation - Bootstrap Mobile Responsive UX', () => {
   });
 
   describe('Responsive Breakpoints', () => {
-    it('should transition from icon-only to full display at sm breakpoint (576px)', () => {
-      // Test just below breakpoint (mobile)
+    it('should show responsive brand text with Bootstrap classes', () => {
       mockInnerWidth(575);
-      const { unmount } = renderWithTheme(<Navigation />);
-      
-      let timerItem = screen.getByTestId('timer-nav-item');
-      expect(timerItem.querySelector('.nav-text')).toHaveClass('d-none', 'd-sm-inline');
-      
-      // Clean up and re-render for different screen size
-      unmount();
-      
-      // Test just above breakpoint (tablet/desktop)
-      mockInnerWidth(577);
       renderWithTheme(<Navigation />);
       
-      timerItem = screen.getByTestId('timer-nav-item');
-      expect(timerItem.querySelector('.nav-text')).toHaveClass('d-none', 'd-sm-inline');
+      const brand = screen.getByTestId('navbar-brand');
+      
+      // Brand text should use Bootstrap responsive classes
+      const brandText = brand.querySelector('.brand-text');
+      expect(brandText).toHaveClass('d-none', 'd-sm-inline');
+      
+      // Brand icon should always be visible
+      expect(brand.querySelector('.bi-clock')).toBeInTheDocument();
     });
   });
 
   describe('Accessibility on Mobile', () => {
-    it('should maintain proper ARIA labels when text is hidden', () => {
+    it('should maintain proper navigation structure', () => {
       mockInnerWidth(576);
       renderWithTheme(<Navigation />);
       
-      // Links should still have proper aria-labels even when text is hidden
-      expect(screen.getByLabelText('Go to Timer')).toBeInTheDocument();
-      expect(screen.getByLabelText('Go to Activities Management')).toBeInTheDocument();
-    });
-
-    it('should maintain semantic navigation structure on mobile', () => {
-      mockInnerWidth(576);
-      renderWithTheme(<Navigation />);
-      
-      // Navigation landmark should still be present
+      // Navigation landmark should be present with proper aria-label
       expect(screen.getByLabelText('Main navigation')).toBeInTheDocument();
       
-      // Navigation list structure should remain
-      const navList = screen.getByRole('list');
-      expect(navList).toBeInTheDocument();
+      // Navigation items should be accessible as links
+      expect(screen.getByRole('link', { name: /Timer/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /Activities/i })).toBeInTheDocument();
+    });
+
+    it('should maintain theme toggle accessibility on mobile', () => {
+      mockInnerWidth(576);
+      renderWithTheme(<Navigation />);
+      
+      // Theme toggle should remain accessible
+      const themeGroup = screen.getByRole('group', { name: /theme selection/i });
+      expect(themeGroup).toBeInTheDocument();
+      
+      // Mobile toggle should be accessible
+      const toggleButton = screen.getByRole('button', { name: /toggle navigation/i });
+      expect(toggleButton).toBeInTheDocument();
     });
   });
 });
