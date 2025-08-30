@@ -4,6 +4,8 @@ const path = require('path');
 const nextConfig = {
   reactStrictMode: true,
   
+
+  
   // App Router is enabled by default in Next.js 15+
   experimental: {
     // Add any experimental features here if needed

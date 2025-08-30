@@ -43,9 +43,9 @@ const ActivityButtonMaterial3: React.FC<ActivityButtonMaterial3Props> = ({
   const themeColors = getActivityColorsForTheme(theme);
   const colors = themeColors[colorIndex] || themeColors[0];
   const isInUse = timelineEntries?.some(entry => entry.activityId === id);
-  const motionSystem = useMotionSystem();
+  const _motionSystem = useMotionSystem(); // TODO: Use for animations
   
-  const [isHovered, setIsHovered] = useState(false);
+  const [_isHovered, setIsHovered] = useState(false); // TODO: Use for hover effects
 
   const handleClick = () => {
     onSelect(activity);

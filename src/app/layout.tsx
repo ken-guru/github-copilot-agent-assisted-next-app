@@ -9,6 +9,8 @@ import { LayoutClient } from "../components/LayoutClient";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+// Initialize final polish optimizations
+import "../utils/init-final-polish";
 
 // Font configuration
 const geistSans = Geist({

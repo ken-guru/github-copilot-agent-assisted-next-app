@@ -12,6 +12,8 @@ export interface Material3ContainerProps extends HTMLAttributes<HTMLDivElement> 
   shape?: 'none' | 'extraSmall' | 'small' | 'medium' | 'large' | 'extraLarge' | 'asymmetricSmall' | 'asymmetricMedium' | 'asymmetricLarge' | 'cardElevated' | 'cardFilled' | 'summaryCard' | 'activityCard' | 'timerContainer';
   /** Color role for contextual theming */
   colorRole?: 'surface' | 'surfaceContainer' | 'surfaceContainerLow' | 'surfaceContainerHigh' | 'surfaceContainerHighest' | 'primary' | 'secondary' | 'tertiary';
+  /** Padding variation for content spacing */
+  padding?: 'none' | 'compact' | 'comfortable' | 'spacious';
   /** Enable hover elevation transitions */
   interactive?: boolean;
   /** Enable focus management for accessibility */

@@ -10,19 +10,13 @@ import { Material3Button } from '@/components/ui/Material3Button';
 import { Material3TextField } from '@/components/ui/Material3TextField';
 import { Material3Container } from '@/components/ui/Material3Container';
 import { ActivityButtonMaterial3 } from '@/components/ActivityButtonMaterial3';
-import { SummaryMaterial3 } from '@/components/SummaryMaterial3';
-import { Navigation } from '@/components/Navigation';
-
-interface TestComponentProps {
-  component: string;
-  variant?: string;
-  props?: Record<string, any>;
-}
+import SummaryMaterial3 from '@/components/SummaryMaterial3';
+import Navigation from '@/components/Navigation';
 
 export default function TestComponentsPage() {
   const [currentComponent, setCurrentComponent] = useState<string>('Material3Button');
   const [currentVariant, setCurrentVariant] = useState<string>('filled');
-  const [currentProps, setCurrentProps] = useState<Record<string, any>>({});
+  const [currentProps, setCurrentProps] = useState<Record<string, unknown>>({});
 
   // Listen for URL parameters to set component and variant
   useEffect(() => {
@@ -54,7 +48,7 @@ export default function TestComponentsPage() {
         return (
           <Material3Button
             {...commonProps}
-            variant={currentVariant as any}
+            variant={currentVariant as 'filled' | 'outlined' | 'text'}
             onClick={() => console.log('Button clicked')}
           >
             {currentProps.children || 'Test Button'}
@@ -65,7 +59,7 @@ export default function TestComponentsPage() {
         return (
           <Material3TextField
             {...commonProps}
-            variant={currentVariant as any}
+            variant={currentVariant as 'filled' | 'outlined'}
             label="Test Field"
             placeholder="Enter text..."
           />
@@ -75,7 +69,7 @@ export default function TestComponentsPage() {
         return (
           <Material3Container
             {...commonProps}
-            variant={currentVariant as any}
+            variant={currentVariant as 'elevated' | 'filled' | 'outlined' | 'surface'}
           >
             <p>Test container content</p>
           </Material3Container>
@@ -88,9 +82,9 @@ export default function TestComponentsPage() {
             activity={{
               id: '1',
               name: 'Test Activity',
-              status: currentProps.status || 'idle',
-              duration: 1800,
-              color: '#6750A4'
+              colorIndex: 0,
+              createdAt: new Date().toISOString(),
+              isActive: false
             }}
             onStart={() => {}}
             onStop={() => {}}
@@ -103,7 +97,7 @@ export default function TestComponentsPage() {
         return (
           <SummaryMaterial3
             {...commonProps}
-            activities={currentProps.activities || [
+            entries={currentProps.activities || [
               { id: '1', name: 'Work', duration: 3600, status: 'completed' },
               { id: '2', name: 'Break', duration: 900, status: 'completed' }
             ]}
@@ -115,7 +109,7 @@ export default function TestComponentsPage() {
         return (
           <Navigation
             {...commonProps}
-            activeItem={currentProps.activeItem || 'timer'}
+            // activeItem={currentProps.activeItem || 'timer'} // Removed - not part of Navigation props
           />
         );
 
