@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Toast } from 'react-bootstrap';
+import { Toast, Button } from 'react-bootstrap';
 
 /**
  * Props for the ServiceWorkerUpdater component
@@ -132,25 +132,26 @@ const ServiceWorkerUpdater: React.FC<ServiceWorkerUpdaterProps> = ({
           A new version of this application is available.
         </p>
         <div className="d-flex gap-2 mt-2" data-testid="button-container">
-          <button 
+          <Button 
             onClick={handleUpdate}
-            className="btn btn-light btn-sm me-2"
-            type="button"
+            variant="light"
+            size="sm"
+            className="me-2"
             data-testid="update-button"
           >
             Update Now
-          </button>
-          <button 
+          </Button>
+          <Button 
             onClick={() => {
               setUpdateAvailable(false);
               onDismiss?.();
             }}
-            className="btn btn-outline-light btn-sm"
-            type="button"
+            variant="outline-light"
+            size="sm"
             data-testid="dismiss-button"
           >
             Later
-          </button>
+          </Button>
         </div>
       </Toast.Body>
     </Toast>

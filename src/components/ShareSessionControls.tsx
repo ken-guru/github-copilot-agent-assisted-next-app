@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
 import type { SessionSummaryData } from '../types/sessionSharing';
 
 type Props = { sessionData: SessionSummaryData };
@@ -33,9 +34,9 @@ export default function ShareSessionControls({ sessionData }: Props) {
           <div><a href={shareUrl}>{shareUrl}</a></div>
         </div>
       ) : (
-        <button className="btn btn-primary" onClick={createShare} disabled={sharing} data-testid="create-share">
+        <Button variant="primary" onClick={createShare} disabled={sharing} data-testid="create-share">
           {sharing ? 'Sharing...' : 'Create Share'}
-        </button>
+        </Button>
       )}
       {error && <div className="text-danger">{error}</div>}
     </div>

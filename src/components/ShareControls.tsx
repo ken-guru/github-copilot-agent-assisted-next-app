@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from 'react-bootstrap';
 import { useResponsiveToast } from '@/hooks/useResponsiveToast';
 import useNetworkStatus from '@/hooks/useNetworkStatus';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
@@ -154,33 +155,33 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
 
   return (
     <div
-      style={{ display: 'flex', gap: 8, alignItems: 'center' }}
+      className="d-flex gap-2 align-items-center"
       role="group"
       aria-label="Share controls"
     >
-      <button
-        type="button"
-        className="btn btn-outline-primary d-flex align-items-center"
+      <Button
+        variant="outline-primary"
+        className="d-flex align-items-center"
         onClick={copy}
         aria-label="Copy share link"
       >
         <i className="bi bi-clipboard me-2" aria-hidden="true"></i>
         Copy link
-      </button>
-      <button
-        type="button"
-        className="btn btn-outline-secondary d-flex align-items-center"
+      </Button>
+      <Button
+        variant="outline-secondary"
+        className="d-flex align-items-center"
         onClick={downloadJson}
         disabled={!online}
         aria-label="Download JSON"
       >
         <i className="bi bi-download me-2" aria-hidden="true"></i>
         Download JSON
-      </button>
+      </Button>
       {showOpen && (
-        <button
-          type="button"
-          className="btn btn-outline-success d-flex align-items-center"
+        <Button
+          variant="outline-success"
+          className="d-flex align-items-center"
           onClick={() => {
             try {
               if (!shareUrl) return;
@@ -205,12 +206,12 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
         >
           <i className="bi bi-box-arrow-up-right me-2" aria-hidden="true"></i>
           Open
-        </button>
+        </Button>
       )}
       {showReplace && (
-        <button
-          type="button"
-      className="btn btn-outline-warning d-flex align-items-center"
+        <Button
+          variant="outline-warning"
+          className="d-flex align-items-center"
           onClick={replaceMyActivities}
           disabled={isReplacing || !online}
           aria-label="Replace my activities"
@@ -218,7 +219,7 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
         >
           <i className="bi bi-arrow-repeat me-2" aria-hidden="true"></i>
           {isReplacing ? 'Replacing…' : 'Replace activities'}
-        </button>
+        </Button>
       )}
       <ConfirmationDialog
         ref={confirmRef}
