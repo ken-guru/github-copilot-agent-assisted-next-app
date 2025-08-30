@@ -34,7 +34,7 @@ export default function ShareSessionControls({ sessionData }: Props) {
           <div><a href={shareUrl}>{shareUrl}</a></div>
         </div>
       ) : (
-        <Button variant="primary" onClick={createShare} disabled={sharing} data-testid="create-share">
+        <Button type="button" variant="primary" onClick={createShare} disabled={sharing} data-testid="create-share">
           {sharing ? 'Sharing...' : 'Create Share'}
         </Button>
       )}

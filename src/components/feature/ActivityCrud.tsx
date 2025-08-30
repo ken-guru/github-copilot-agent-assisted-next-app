@@ -497,7 +497,13 @@ const ActivityCrud: React.FC = () => {
               accept="application/json,.json"
               onChange={handleImportFileChange}
               aria-label="Import JSON File"
+              isValid={!!importFile}
             />
+            {importFile && (
+              <Form.Control.Feedback type="valid">
+                File selected: {importFile.name}
+              </Form.Control.Feedback>
+            )}
           </div>
         </Modal.Body>
         <Modal.Footer>

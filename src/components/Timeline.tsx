@@ -429,6 +429,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                                 {formatTimeHuman(item.duration)}
                               </span>
                               <Button
+                                type="button"
                                 variant="link"
                                 size="sm"
                                 className="p-0 text-decoration-none"

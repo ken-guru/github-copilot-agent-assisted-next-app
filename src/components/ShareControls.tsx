@@ -160,6 +160,7 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
       aria-label="Share controls"
     >
       <Button
+        type="button"
         variant="outline-primary"
         className="d-flex align-items-center"
         onClick={copy}
@@ -169,6 +170,7 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
         Copy link
       </Button>
       <Button
+        type="button"
         variant="outline-secondary"
         className="d-flex align-items-center"
         onClick={downloadJson}
@@ -180,6 +182,7 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
       </Button>
       {showOpen && (
         <Button
+          type="button"
           variant="outline-success"
           className="d-flex align-items-center"
           onClick={() => {
@@ -210,6 +213,7 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
       )}
       {showReplace && (
         <Button
+          type="button"
           variant="outline-warning"
           className="d-flex align-items-center"
           onClick={replaceMyActivities}

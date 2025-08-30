@@ -133,6 +133,7 @@ const ServiceWorkerUpdater: React.FC<ServiceWorkerUpdaterProps> = ({
         </p>
         <div className="d-flex gap-2 mt-2" data-testid="button-container">
           <Button 
+            type="button"
             onClick={handleUpdate}
             variant="light"
             size="sm"
@@ -142,6 +143,7 @@ const ServiceWorkerUpdater: React.FC<ServiceWorkerUpdaterProps> = ({
             Update Now
           </Button>
           <Button 
+            type="button"
             onClick={() => {
               setUpdateAvailable(false);
               onDismiss?.();
