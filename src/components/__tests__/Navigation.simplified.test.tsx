@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ThemeProvider } from '@/contexts/theme';
-import Navigation from '@/components/Navigation';
+import { ThemeProvider } from '../../contexts/theme';
+import Navigation from '../Navigation';
 
 // Mock Next.js Link component
 jest.mock('next/link', () => {
@@ -20,25 +20,24 @@ const renderWithTheme = (component: React.ReactElement) => {
   );
 };
 
-describe('Navigation - Simplified Layout (Issue #245)', () => {
-  it('should render all navigation items inline without collapse toggle on all screen sizes', () => {
+describe('Navigation - Responsive Bootstrap Layout', () => {
+  it('should use Bootstrap responsive navbar with proper structure', () => {
     renderWithTheme(<Navigation />);
     
-    // Check for Bootstrap navbar classes but without expand-lg (no collapsing)
+    // Check for Bootstrap navbar with responsive behavior
     const navbar = screen.getByRole('navigation');
-    expect(navbar).toHaveClass('navbar');
-    expect(navbar).not.toHaveClass('navbar-expand-lg');
+    expect(navbar).toHaveClass('navbar', 'navbar-expand-lg');
     
-    // Should NOT have hamburger toggle button since we're simplifying
-    const toggleButton = screen.queryByRole('button', { name: /toggle navigation/i });
-    expect(toggleButton).not.toBeInTheDocument();
+    // Should have mobile toggle for smaller screens
+    const toggleButton = screen.getByRole('button', { name: /toggle navigation/i });
+    expect(toggleButton).toBeInTheDocument();
     
-    // Should NOT have collapsible div structure
-    const collapseDiv = screen.queryByTestId('navbarNav');
-    expect(collapseDiv).not.toBeInTheDocument();
+    // Should have collapsible content for responsive behavior
+    const navContent = navbar.querySelector('#basic-navbar-nav');
+    expect(navContent).toBeInTheDocument();
   });
 
-  it('should render navigation items in a simple horizontal layout', () => {
+  it('should render navigation items with Bootstrap structure', () => {
     renderWithTheme(<Navigation />);
     
     // Check for navbar brand
@@ -58,20 +57,18 @@ describe('Navigation - Simplified Layout (Issue #245)', () => {
     expect(themeGroup).toBeInTheDocument();
   });
 
-  it('should use flexbox for simple responsive layout', () => {
+  it('should use Bootstrap responsive layout with collapse', () => {
     renderWithTheme(<Navigation />);
     
-    // The nav items should be in a simple flex container
+    // The nav items should be in Bootstrap navbar structure
     const navbar = screen.getByRole('navigation');
     const containerFluid = navbar.querySelector('.container-fluid');
     expect(containerFluid).toBeInTheDocument();
     
-    // Should have a simple nav structure without collapse classes
-    const navContent = containerFluid?.querySelector('.navbar-nav');
-    if (navContent) {
-      expect(navContent).not.toHaveClass('collapse');
-      expect(navContent).not.toHaveClass('navbar-collapse');
-    }
+    // Should have Bootstrap responsive navigation structure
+    const navContent = containerFluid?.querySelector('.navbar-collapse');
+    expect(navContent).toBeInTheDocument();
+    expect(navContent).toHaveClass('navbar-collapse');
   });
 
   it('should maintain theme awareness in simplified layout', () => {
@@ -82,18 +79,18 @@ describe('Navigation - Simplified Layout (Issue #245)', () => {
     expect(navbar).toHaveClass('navbar-light', 'bg-light');
   });
 
-  it('should maintain accessibility in simplified layout', () => {
+  it('should maintain accessibility with Bootstrap components', () => {
     renderWithTheme(<Navigation />);
     
     // Main navigation label
     expect(screen.getByLabelText('Main navigation')).toBeInTheDocument();
     
-    // Individual link labels
-    expect(screen.getByLabelText('Go to Timer')).toBeInTheDocument();
-    expect(screen.getByLabelText('Go to Activities Management')).toBeInTheDocument();
+    // Navigation items should be accessible via test IDs
+    expect(screen.getByTestId('timer-nav-item')).toBeInTheDocument();
+    expect(screen.getByTestId('activities-nav-item')).toBeInTheDocument();
   });
 
-  it('should work on mobile screens without dropdown complexity', () => {
+  it('should provide mobile responsiveness with Bootstrap toggle', () => {
     // Mock window.innerWidth for mobile
     Object.defineProperty(window, 'innerWidth', {
       writable: true,
@@ -103,11 +100,11 @@ describe('Navigation - Simplified Layout (Issue #245)', () => {
 
     renderWithTheme(<Navigation />);
     
-    // Even on mobile, no toggle button should exist
-    const toggleButton = screen.queryByRole('button', { name: /toggle navigation/i });
-    expect(toggleButton).not.toBeInTheDocument();
+    // Should have toggle button for mobile responsiveness
+    const toggleButton = screen.getByRole('button', { name: /toggle navigation/i });
+    expect(toggleButton).toBeInTheDocument();
     
-    // All navigation items should be visible
+    // All navigation items should be present in collapsed nav
     expect(screen.getByText('Timer')).toBeInTheDocument();
     expect(screen.getByText('Activities')).toBeInTheDocument();
     expect(screen.getByRole('group', { name: /theme selection/i })).toBeInTheDocument();

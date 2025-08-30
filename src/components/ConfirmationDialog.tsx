@@ -45,6 +45,8 @@ const ConfirmationDialog = forwardRef<ConfirmationDialogRef, ConfirmationDialogP
         keyboard
         centered
         aria-modal="true"
+        animation={true}
+        className="fade"
       >
         <Modal.Body>
           <p>{message}</p>

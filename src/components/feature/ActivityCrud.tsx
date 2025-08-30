@@ -345,6 +345,8 @@ const ActivityCrud: React.FC = () => {
         centered
         backdrop="static"
         onKeyDown={handleFormModalKeyDown}
+        animation={true}
+        className="fade"
       >
         <Modal.Header closeButton>
           <Modal.Title id="activity-form-modal">{editingActivity ? 'Edit Activity' : 'Add Activity'}</Modal.Title>

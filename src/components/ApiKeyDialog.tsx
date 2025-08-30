@@ -26,7 +26,7 @@ export const ApiKeyDialog: React.FC<ApiKeyDialogProps> = ({ show, onClose }) => 
   };
 
   return (
-    <Modal show={show} onHide={onClose} backdrop="static" centered>
+    <Modal show={show} onHide={onClose} backdrop="static" centered animation={true} className="fade">
       <Modal.Header closeButton>
         <Modal.Title>OpenAI API Key</Modal.Title>
       </Modal.Header>

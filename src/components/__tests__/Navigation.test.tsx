@@ -13,18 +13,18 @@ describe('Navigation', () => {
   it('has accessible ARIA labels', () => {
     render(<Navigation />);
     expect(screen.getByLabelText('Main navigation')).toBeInTheDocument();
-    // No longer has toggle navigation button - removed for simplification (Issue #245)
-    expect(screen.getByLabelText('Go to Timer')).toBeInTheDocument();
-    expect(screen.getByLabelText('Go to Activities Management')).toBeInTheDocument();
+    // Bootstrap Nav.Link components provide basic accessibility
+    expect(screen.getByTestId('timer-nav-item')).toBeInTheDocument();
+    expect(screen.getByTestId('activities-nav-item')).toBeInTheDocument();
   });
 
-  it('is simplified (no navbar-toggler needed)', () => {
+  it('has responsive mobile navigation with toggle', () => {
     render(<Navigation />);
-    // Verify simplified navigation doesn't have toggle button (Issue #245 fix)
-    const toggleButton = screen.queryByRole('button', { name: /toggle navigation/i });
-    expect(toggleButton).not.toBeInTheDocument();
+    // Bootstrap implementation includes a toggle button for mobile responsiveness
+    const toggleButton = screen.getByRole('button', { name: /toggle navigation/i });
+    expect(toggleButton).toBeInTheDocument();
     
-    // All navigation items should be visible
+    // All navigation items should be present
     expect(screen.getByText('Timer')).toBeInTheDocument();
     expect(screen.getByText('Activities')).toBeInTheDocument();
   });

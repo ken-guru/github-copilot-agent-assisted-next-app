@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useEffect, useState } from 'react';
-import { Card, Badge } from 'react-bootstrap';
+import { Card, Badge, Collapse, Button } from 'react-bootstrap';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
@@ -38,6 +38,22 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, timerActive = false, allActivitiesCompleted = false, showCounter = true }: TimelineProps) {
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
+  
+  // State to track expanded timeline entries
+  const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set());
+  
+  // Function to toggle entry expansion
+  const toggleEntryExpansion = (entryId: string) => {
+    setExpandedEntries(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(entryId)) {
+        newSet.delete(entryId);
+      } else {
+        newSet.add(entryId);
+      }
+      return newSet;
+    });
+  };
   
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
@@ -408,10 +424,45 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                             >
                               {item.entry!.activityName}
                             </span>
-                            <span className={`${styles.timeInfo} time-info small text-nowrap`}>
-                              {formatTimeHuman(item.duration)}
-                            </span>
+                            <div className="d-flex align-items-center gap-1">
+                              <span className={`${styles.timeInfo} time-info small text-nowrap`}>
+                                {formatTimeHuman(item.duration)}
+                              </span>
+                              <Button
+                                variant="link"
+                                size="sm"
+                                className="p-0 text-decoration-none"
+                                onClick={() => toggleEntryExpansion(item.entry!.id)}
+                                aria-expanded={expandedEntries.has(item.entry!.id)}
+                                aria-label={`${expandedEntries.has(item.entry!.id) ? 'Collapse' : 'Expand'} details for ${item.entry!.activityName}`}
+                                style={{ color: 'inherit', fontSize: '0.75rem' }}
+                              >
+                                <i className={`bi bi-chevron-${expandedEntries.has(item.entry!.id) ? 'up' : 'down'}`} />
+                              </Button>
+                            </div>
                           </div>
+                          <Collapse in={expandedEntries.has(item.entry!.id)}>
+                            <div className="mt-2 pt-2 border-top" style={{ borderColor: 'inherit' }}>
+                              <div className="small">
+                                <div className="mb-1">
+                                  <strong>Started:</strong> {item.entry!.startTime ? new Date(item.entry!.startTime).toLocaleTimeString() : 'N/A'}
+                                </div>
+                                {item.entry!.endTime && (
+                                  <div className="mb-1">
+                                    <strong>Ended:</strong> {new Date(item.entry!.endTime).toLocaleTimeString()}
+                                  </div>
+                                )}
+                                <div className="mb-1">
+                                  <strong>Duration:</strong> {formatTimeHuman(item.duration)}
+                                </div>
+                                {item.entry!.description && (
+                                  <div className="mb-1">
+                                    <strong>Description:</strong> {item.entry!.description}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </Collapse>
                         </div>
                       </div>
                     );

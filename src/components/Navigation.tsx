@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Navbar, Nav, Offcanvas } from 'react-bootstrap';
 import { useThemeReactive } from '@/hooks/useThemeReactive';
 import ThemeToggle from '@/components/ThemeToggle';
 // AI nav is always visible; gating handled on page
@@ -19,84 +20,89 @@ const Navigation: React.FC = () => {
   const theme = useThemeReactive(); 
   const pathname = usePathname();
   
+  // State for mobile navigation collapse
+  const [showMobileNav, setShowMobileNav] = useState(false);
+  
+  // Function to close mobile navigation
+  const closeMobileNav = () => setShowMobileNav(false);
+  
   // Determine active states based on current path
   const isTimerActive = pathname === '/';
   const isActivitiesActive = pathname === '/activities';
   const isAIActive = pathname === '/ai';
   // Always show AI nav item; page handles gating/setup
   const showAI = true;
-  
-  // Use Bootstrap's theme-aware classes (removed navbar-expand-lg for always-expanded behavior)
-  const navClasses = theme === 'dark' 
-    ? 'navbar navbar-dark bg-dark'
-    : 'navbar navbar-light bg-light';
 
   return (
-  <nav className={navClasses} aria-label="Main navigation">
-      <div className="container-fluid d-flex justify-content-between align-items-center flex-wrap">
-        <Link className="navbar-brand" href="/">
-          <span data-testid="navbar-brand">
-            <i className="bi bi-clock me-2" aria-hidden="true"></i>
-            <span className="brand-text d-none d-sm-inline">Mr. Timely</span>
-          </span>
-        </Link>
+    <Navbar 
+      expand="lg" 
+      variant={theme}
+      bg={theme}
+      className="border-bottom"
+      aria-label="Main navigation"
+    >
+      <div className="container-fluid">
+        <Navbar.Brand as={Link} href="/" data-testid="navbar-brand">
+          <i className="bi bi-clock me-2" aria-hidden="true"></i>
+          <span className="brand-text d-none d-sm-inline">Mr. Timely</span>
+        </Navbar.Brand>
         
-        {/* Navigation with separated theme toggle and nav pills */}
-        <div className="d-flex align-items-center">
-          {/* Theme Toggle - Visually separated from navigation */}
-          <div className="d-flex align-items-center me-4" data-testid="theme-toggle-container">
+        <div className="d-flex align-items-center order-lg-2">
+          {/* Theme Toggle - Always visible */}
+          <div className="me-3" data-testid="theme-toggle-container">
             <ThemeToggle size="sm" variant="navbar" />
           </div>
           
-          {/* Navigation Items - Using Bootstrap nav pills for tab-like appearance */}
-          <ul className="nav nav-pills nav-items-group" data-testid="nav-items-container">
+          {/* Mobile menu toggle */}
+          <Navbar.Toggle 
+            aria-controls="basic-navbar-nav"
+            onClick={() => setShowMobileNav(!showMobileNav)}
+          />
+        </div>
+        
+        <Navbar.Collapse id="basic-navbar-nav" className="order-lg-1">
+          <Nav className="ms-auto me-lg-4">
             {/* Timer - First navigation item */}
-            <li className="nav-item timer-item" data-testid="timer-nav-item">
-              <Link 
-                className={`nav-link ${isTimerActive ? 'active' : ''}`} 
-                href="/"
-                aria-current={isTimerActive ? 'page' : undefined}
-              >
-                <span aria-label="Go to Timer">
-                  <i className="bi bi-stopwatch me-sm-1" aria-hidden="true"></i>
-                  <span className="nav-text d-none d-sm-inline">Timer</span>
-                </span>
-              </Link>
-            </li>
+            <Nav.Link 
+              as={Link} 
+              href="/"
+              active={isTimerActive}
+              onClick={closeMobileNav}
+              data-testid="timer-nav-item"
+            >
+              <i className="bi bi-stopwatch me-1" aria-hidden="true"></i>
+              Timer
+            </Nav.Link>
             
             {/* Activities - Second navigation item */}
-            <li className="nav-item activities-item" data-testid="activities-nav-item">
-              <Link 
-                className={`nav-link ${isActivitiesActive ? 'active' : ''}`} 
-                href="/activities"
-                aria-current={isActivitiesActive ? 'page' : undefined}
-              >
-                <span aria-label="Go to Activities Management">
-                  <i className="bi bi-list-check me-sm-1" aria-hidden="true"></i>
-                  <span className="nav-text d-none d-sm-inline">Activities</span>
-                </span>
-              </Link>
-            </li>
+            <Nav.Link 
+              as={Link} 
+              href="/activities"
+              active={isActivitiesActive}
+              onClick={closeMobileNav}
+              data-testid="activities-nav-item"
+            >
+              <i className="bi bi-list-check me-1" aria-hidden="true"></i>
+              Activities
+            </Nav.Link>
 
-              {/* AI - Conditional navigation item */}
-              {showAI && (
-                <li className="nav-item ai-item" data-testid="ai-nav-item">
-                  <Link
-                    className={`nav-link ${isAIActive ? 'active' : ''}`}
-                    href="/ai"
-                    aria-current={isAIActive ? 'page' : undefined}
-                  >
-                    <span aria-label="Go to AI Planner">
-                      <i className="bi bi-stars me-sm-1" aria-hidden="true"></i>
-                      <span className="nav-text d-none d-sm-inline">AI</span>
-                    </span>
-                  </Link>
-                </li>
-              )}
-          </ul>
-        </div>
+            {/* AI - Conditional navigation item */}
+            {showAI && (
+              <Nav.Link 
+                as={Link} 
+                href="/ai"
+                active={isAIActive}
+                onClick={closeMobileNav}
+                data-testid="ai-nav-item"
+              >
+                <i className="bi bi-stars me-1" aria-hidden="true"></i>
+                AI
+              </Nav.Link>
+            )}
+          </Nav>
+        </Navbar.Collapse>
       </div>
-    </nav>
+    </Navbar>
   );
 };
 

@@ -28,7 +28,7 @@ export function OfflineIndicator(): React.ReactElement | null {
   return (
     <Alert 
       variant="warning" 
-      className="text-center mb-3"
+      className="text-center mb-3 fade show"
       data-testid="offline-indicator"
     >
       You are offline
