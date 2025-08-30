@@ -27,7 +27,7 @@ test('ActivityCrud import preview modal should have no basic accessibility viola
   );
 
   // Open import dialog
-  const importBtn = screen.getByTitle('Import activities from JSON file');
+  const importBtn = screen.getByRole('button', { name: /Import/i });
   fireEvent.click(importBtn);
 
   // Find file input and set file

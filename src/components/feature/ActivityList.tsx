@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ListGroup, Card } from 'react-bootstrap';
+import { Button, ListGroup, Card, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Activity } from '../../types/activity';
 import { getColorDisplay } from '../../utils/colorNames';
 import { getActivityColorsForTheme } from '../../utils/colors';
@@ -26,10 +26,15 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
         <Card.Header className="card-header-consistent">
           <h5 className="mb-0">Your Activities</h5>
           {onAdd && (
-            <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center px-3">
-              <i className="bi bi-plus me-2"></i>
-              Add Activity
-            </Button>
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip>Create a new custom activity</Tooltip>}
+            >
+              <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center px-3">
+                <i className="bi bi-plus me-2"></i>
+                Add Activity
+              </Button>
+            </OverlayTrigger>
           )}
         </Card.Header>
         <Card.Body>
@@ -45,28 +50,36 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
           <Card.Footer className={theme === 'dark' ? 'bg-dark text-light' : 'bg-light'}>
             <div className="d-flex gap-2 justify-content-center">
               {onImport && (
-                <Button 
-                  variant="outline-secondary" 
-                  size="sm" 
-                  onClick={onImport}
-                  className="d-flex align-items-center px-3"
-                  title="Import activities from JSON file"
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip>Import activities from a JSON file</Tooltip>}
                 >
-                  <i className="bi bi-upload me-2"></i>
-                  Import
-                </Button>
+                  <Button 
+                    variant="outline-secondary" 
+                    size="sm" 
+                    onClick={onImport}
+                    className="d-flex align-items-center px-3"
+                  >
+                    <i className="bi bi-upload me-2"></i>
+                    Import
+                  </Button>
+                </OverlayTrigger>
               )}
               {onReset && (
-                <Button 
-                  variant="outline-danger" 
-                  size="sm" 
-                  onClick={onReset}
-                  className="d-flex align-items-center px-3"
-                  title="Reset to default activities"
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip>Reset to default activities (this will replace all current activities)</Tooltip>}
                 >
-                  <i className="bi bi-arrow-clockwise me-2"></i>
-                  Reset Activities
-                </Button>
+                  <Button 
+                    variant="outline-danger" 
+                    size="sm" 
+                    onClick={onReset}
+                    className="d-flex align-items-center px-3"
+                  >
+                    <i className="bi bi-arrow-clockwise me-2"></i>
+                    Reset Activities
+                  </Button>
+                </OverlayTrigger>
               )}
             </div>
           </Card.Footer>
@@ -80,10 +93,15 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0">Your Activities</h5>
         {onAdd && (
-          <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center px-3">
-            <i className="bi bi-plus me-2"></i>
-            Add Activity
-          </Button>
+          <OverlayTrigger
+            placement="bottom"
+            overlay={<Tooltip>Create a new custom activity</Tooltip>}
+          >
+            <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center px-3">
+              <i className="bi bi-plus me-2"></i>
+              Add Activity
+            </Button>
+          </OverlayTrigger>
         )}
       </Card.Header>
       <Card.Body className="p-0">
@@ -121,26 +139,36 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
             </div>
             
             <div className="d-flex gap-2">
-              <Button 
-                variant="outline-primary" 
-                size="sm" 
-                onClick={() => onEdit?.(activity)} 
-                aria-label={`Edit ${activity.name}`}
-                className="d-flex align-items-center px-3"
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip>Edit this activity&apos;s name, description, and color</Tooltip>}
               >
-                <i className="bi bi-pencil me-2"></i>
-                Edit
-              </Button>
-              <Button 
-                variant="outline-danger" 
-                size="sm" 
-                onClick={() => onDelete?.(activity)} 
-                aria-label={`Delete ${activity.name}`}
-                className="d-flex align-items-center px-3"
+                <Button 
+                  variant="outline-primary" 
+                  size="sm" 
+                  onClick={() => onEdit?.(activity)} 
+                  aria-label={`Edit ${activity.name}`}
+                  className="d-flex align-items-center px-3"
+                >
+                  <i className="bi bi-pencil me-2"></i>
+                  Edit
+                </Button>
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip>Permanently delete this activity</Tooltip>}
               >
-                <i className="bi bi-trash me-2"></i>
-                Delete
-              </Button>
+                <Button 
+                  variant="outline-danger" 
+                  size="sm" 
+                  onClick={() => onDelete?.(activity)} 
+                  aria-label={`Delete ${activity.name}`}
+                  className="d-flex align-items-center px-3"
+                >
+                  <i className="bi bi-trash me-2"></i>
+                  Delete
+                </Button>
+              </OverlayTrigger>
             </div>
           </ListGroup.Item>
         ))}
@@ -151,40 +179,52 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
         <Card.Footer className={theme === 'dark' ? 'bg-dark text-light' : 'bg-light'}>
           <div className="d-flex gap-2 justify-content-center">
             {onImport && (
-              <Button 
-                variant="outline-secondary" 
-                size="sm" 
-                onClick={onImport}
-                className="d-flex align-items-center px-3"
-                title="Import activities from JSON file"
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip>Import activities from a JSON file</Tooltip>}
               >
-                <i className="bi bi-upload me-2"></i>
-                Import
-              </Button>
+                <Button 
+                  variant="outline-secondary" 
+                  size="sm" 
+                  onClick={onImport}
+                  className="d-flex align-items-center px-3"
+                >
+                  <i className="bi bi-upload me-2"></i>
+                  Import
+                </Button>
+              </OverlayTrigger>
             )}
             {onExport && (
-              <Button 
-                variant="outline-secondary" 
-                size="sm" 
-                onClick={onExport}
-                className="d-flex align-items-center px-3"
-                title="Export activities to JSON file"
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip>Download activities as a JSON file</Tooltip>}
               >
-                <i className="bi bi-download me-2"></i>
-                Export
-              </Button>
+                <Button 
+                  variant="outline-secondary" 
+                  size="sm" 
+                  onClick={onExport}
+                  className="d-flex align-items-center px-3"
+                >
+                  <i className="bi bi-download me-2"></i>
+                  Export
+                </Button>
+              </OverlayTrigger>
             )}
             {onReset && (
-              <Button 
-                variant="outline-danger" 
-                size="sm" 
-                onClick={onReset}
-                className="d-flex align-items-center px-3"
-                title="Reset to default activities"
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip>Reset to default activities (this will replace all current activities)</Tooltip>}
               >
-                <i className="bi bi-arrow-clockwise me-2"></i>
-                Reset Activities
-              </Button>
+                <Button 
+                  variant="outline-danger" 
+                  size="sm" 
+                  onClick={onReset}
+                  className="d-flex align-items-center px-3"
+                >
+                  <i className="bi bi-arrow-clockwise me-2"></i>
+                  Reset Activities
+                </Button>
+              </OverlayTrigger>
             )}
           </div>
         </Card.Footer>

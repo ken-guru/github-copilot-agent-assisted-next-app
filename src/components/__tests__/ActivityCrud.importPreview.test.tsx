@@ -36,8 +36,8 @@ describe('ActivityCrud import preview', () => {
       </ToastProvider>
     );
 
-    // Click Import button in ActivityList (find by title)
-    const importBtn = screen.getByTitle('Import activities from JSON file');
+    // Click Import button in ActivityList (find by role and name)
+    const importBtn = screen.getByRole('button', { name: /Import/i });
     fireEvent.click(importBtn);
 
     // Find file input and set file

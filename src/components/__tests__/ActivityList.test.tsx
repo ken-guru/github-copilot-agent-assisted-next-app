@@ -85,7 +85,6 @@ describe('ActivityList', () => {
       
       const importButton = screen.getByRole('button', { name: /Import/i });
       expect(importButton).toBeInTheDocument();
-      expect(importButton).toHaveAttribute('title', 'Import activities from JSON file');
       
       fireEvent.click(importButton);
       expect(onImport).toHaveBeenCalledTimes(1);
@@ -97,7 +96,6 @@ describe('ActivityList', () => {
       
       const exportButton = screen.getByRole('button', { name: /Export/i });
       expect(exportButton).toBeInTheDocument();
-      expect(exportButton).toHaveAttribute('title', 'Export activities to JSON file');
       
       fireEvent.click(exportButton);
       expect(onExport).toHaveBeenCalledTimes(1);
@@ -109,7 +107,6 @@ describe('ActivityList', () => {
       
       const resetButton = screen.getByRole('button', { name: /Reset Activities/i });
       expect(resetButton).toBeInTheDocument();
-      expect(resetButton).toHaveAttribute('title', 'Reset to default activities');
       expect(resetButton).toHaveClass('btn-outline-danger');
       
       fireEvent.click(resetButton);
