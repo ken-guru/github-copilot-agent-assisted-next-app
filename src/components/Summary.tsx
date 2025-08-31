@@ -591,7 +591,7 @@ export default function Summary({
       
       <Card.Body data-testid="summary-body">
         {status && (
-          <Alert variant={getBootstrapVariant(status.className)} className="mb-3" data-testid="summary-status">
+          <Alert variant={getBootstrapVariant(status.className)} className="mb-3 fade show" data-testid="summary-status">
             {status.message}
           </Alert>
         )}
@@ -676,7 +676,24 @@ export default function Summary({
         {aiSummary && (
           <div className="mt-4" data-testid="ai-summary">
             <h3 className="h6 mb-2">AI Summary</h3>
-            <Alert variant="info">{aiSummary}</Alert>
+            <Alert variant="info" className="fade show">{aiSummary}</Alert>
+          </div>
+        )}
+
+        {aiLoading && (
+          <div className="mt-4" data-testid="ai-summary-loading">
+            <h3 className="h6 mb-2">AI Summary</h3>
+            <div className="card">
+              <div className="card-body">
+                <p className="placeholder-glow">
+                  <span className="placeholder col-7"></span>
+                  <span className="placeholder col-4"></span>
+                  <span className="placeholder col-4"></span>
+                  <span className="placeholder col-6"></span>
+                  <span className="placeholder col-8"></span>
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
@@ -707,6 +724,8 @@ export default function Summary({
           }}
           aria-labelledby="share-modal-title"
           aria-describedby="share-modal-desc"
+          animation={true}
+          className="fade"
         >
         <Modal.Header closeButton>
           <Modal.Title id="share-modal-title">Share session</Modal.Title>

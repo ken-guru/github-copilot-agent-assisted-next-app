@@ -46,7 +46,7 @@ const ActivityFormSection = React.memo<ActivityFormSectionProps>(({
 
   if (activities.length === 0) {
     return (
-      <Alert variant="info" className="text-center flex-shrink-0" data-testid="empty-state">
+      <Alert variant="info" className="text-center flex-shrink-0 fade show" data-testid="empty-state">
         No activities defined
       </Alert>
     );

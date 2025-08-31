@@ -1,7 +1,12 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ThemeProvider } from '@/contexts/theme';
-import Navigation from '@/components/Navigation';
+import { ThemeProvider } from '../../contexts/theme';
+import Navigation from '../Navigation';
+
+// Mock Next.js navigation hooks
+jest.mock('next/navigation', () => ({
+  usePathname: jest.fn(() => '/'),
+}));
 
 // Mock Next.js Link component
 jest.mock('next/link', () => {
@@ -30,34 +35,33 @@ const mockInnerWidth = (width: number) => {
   window.dispatchEvent(new Event('resize'));
 };
 
-describe('Navigation - Enhanced Mobile UX (Follow-up improvements)', () => {
+describe('Navigation - Bootstrap Mobile Responsive UX', () => {
   beforeEach(() => {
     // Reset to desktop width by default
     mockInnerWidth(1024);
   });
 
-  describe('Item Order', () => {
-    it('should render items in correct order: Theme Toggle, Timer, Activities', () => {
+  describe('Bootstrap Structure', () => {
+    it('should render with proper Bootstrap navbar structure', () => {
       renderWithTheme(<Navigation />);
       
       // Theme toggle should be in its separate container
       const themeToggleContainer = screen.getByTestId('theme-toggle-container');
       expect(themeToggleContainer).toBeInTheDocument();
       
-      // Navigation items should be in the nav pills container
-      const navItems = screen.getByTestId('nav-items-container');
-      const navListItems = navItems.querySelectorAll('li');
+      // Navigation should use Bootstrap structure
+      const navbar = screen.getByRole('navigation');
+      expect(navbar).toHaveClass('navbar', 'navbar-expand-lg');
       
-      // Check the navigation items order: Timer (first), Activities (second)
-      expect(navListItems[0]).toHaveClass('timer-item');
-      expect(navListItems[1]).toHaveClass('activities-item');
+      // Should have Bootstrap navbar navigation
+      const navContent = navbar.querySelector('.navbar-nav');
+      expect(navContent).toBeInTheDocument();
       
-      // Check that theme toggle appears before navigation items in DOM order
-      const themeToggleRect = themeToggleContainer.getBoundingClientRect();
-      const navItemsRect = navItems.getBoundingClientRect();
-      
-      // In a horizontal layout, theme toggle should be to the left (or equal for testing)
-      expect(themeToggleRect.left).toBeLessThanOrEqual(navItemsRect.left);
+      // Navigation items should be properly structured
+      const timerLink = screen.getByTestId('timer-nav-item');
+      const activitiesLink = screen.getByTestId('activities-nav-item');
+      expect(timerLink).toBeInTheDocument();
+      expect(activitiesLink).toBeInTheDocument();
     });
   });
 
@@ -80,31 +84,28 @@ describe('Navigation - Enhanced Mobile UX (Follow-up improvements)', () => {
     });
   });
 
-  describe('Mobile Icon-Only Display', () => {
-    it('should show icon-only navigation items on small screens', () => {
+  describe('Mobile Responsive Display', () => {
+    it('should provide responsive navigation with Bootstrap collapse', () => {
       mockInnerWidth(400); // Mobile width
       renderWithTheme(<Navigation />);
       
-      // Icons should be present
+      // Should have mobile toggle button
+      const toggleButton = screen.getByRole('button', { name: /toggle navigation/i });
+      expect(toggleButton).toBeInTheDocument();
+      
+      // Icons should be present in navigation items
       const timerIcon = screen.getByTestId('timer-nav-item').querySelector('i.bi-stopwatch');
       const activitiesIcon = screen.getByTestId('activities-nav-item').querySelector('i.bi-list-check');
       
       expect(timerIcon).toBeInTheDocument();
       expect(activitiesIcon).toBeInTheDocument();
       
-      // Icons should have responsive margin classes (me-sm-1 for proper centering)
-      expect(timerIcon).toHaveClass('me-sm-1');
-      expect(activitiesIcon).toHaveClass('me-sm-1');
-      
-      // Text should be hidden on mobile
-      const timerText = screen.getByTestId('timer-nav-item').querySelector('.nav-text');
-      const activitiesText = screen.getByTestId('activities-nav-item').querySelector('.nav-text');
-      
-      expect(timerText).toHaveClass('d-none', 'd-sm-inline');
-      expect(activitiesText).toHaveClass('d-none', 'd-sm-inline');
+      // Text should be visible (Bootstrap handles responsive behavior via collapse)
+      expect(screen.getByText('Timer')).toBeInTheDocument();
+      expect(screen.getByText('Activities')).toBeInTheDocument();
     });
 
-    it('should show icon-only brand on small screens', () => {
+    it('should show responsive brand text', () => {
       mockInnerWidth(576);
       renderWithTheme(<Navigation />);
       
@@ -129,46 +130,45 @@ describe('Navigation - Enhanced Mobile UX (Follow-up improvements)', () => {
   });
 
   describe('Responsive Breakpoints', () => {
-    it('should transition from icon-only to full display at sm breakpoint (576px)', () => {
-      // Test just below breakpoint (mobile)
+    it('should show responsive brand text with Bootstrap classes', () => {
       mockInnerWidth(575);
-      const { unmount } = renderWithTheme(<Navigation />);
-      
-      let timerItem = screen.getByTestId('timer-nav-item');
-      expect(timerItem.querySelector('.nav-text')).toHaveClass('d-none', 'd-sm-inline');
-      
-      // Clean up and re-render for different screen size
-      unmount();
-      
-      // Test just above breakpoint (tablet/desktop)
-      mockInnerWidth(577);
       renderWithTheme(<Navigation />);
       
-      timerItem = screen.getByTestId('timer-nav-item');
-      expect(timerItem.querySelector('.nav-text')).toHaveClass('d-none', 'd-sm-inline');
+      const brand = screen.getByTestId('navbar-brand');
+      
+      // Brand text should use Bootstrap responsive classes
+      const brandText = brand.querySelector('.brand-text');
+      expect(brandText).toHaveClass('d-none', 'd-sm-inline');
+      
+      // Brand icon should always be visible
+      expect(brand.querySelector('.bi-clock')).toBeInTheDocument();
     });
   });
 
   describe('Accessibility on Mobile', () => {
-    it('should maintain proper ARIA labels when text is hidden', () => {
+    it('should maintain proper navigation structure', () => {
       mockInnerWidth(576);
       renderWithTheme(<Navigation />);
       
-      // Links should still have proper aria-labels even when text is hidden
-      expect(screen.getByLabelText('Go to Timer')).toBeInTheDocument();
-      expect(screen.getByLabelText('Go to Activities Management')).toBeInTheDocument();
-    });
-
-    it('should maintain semantic navigation structure on mobile', () => {
-      mockInnerWidth(576);
-      renderWithTheme(<Navigation />);
-      
-      // Navigation landmark should still be present
+      // Navigation landmark should be present with proper aria-label
       expect(screen.getByLabelText('Main navigation')).toBeInTheDocument();
       
-      // Navigation list structure should remain
-      const navList = screen.getByRole('list');
-      expect(navList).toBeInTheDocument();
+      // Navigation items should be accessible as links
+      expect(screen.getByRole('link', { name: /Timer/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /Activities/i })).toBeInTheDocument();
+    });
+
+    it('should maintain theme toggle accessibility on mobile', () => {
+      mockInnerWidth(576);
+      renderWithTheme(<Navigation />);
+      
+      // Theme toggle should remain accessible
+      const themeGroup = screen.getByRole('group', { name: /theme selection/i });
+      expect(themeGroup).toBeInTheDocument();
+      
+      // Mobile toggle should be accessible
+      const toggleButton = screen.getByRole('button', { name: /toggle navigation/i });
+      expect(toggleButton).toBeInTheDocument();
     });
   });
 });

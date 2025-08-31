@@ -67,6 +67,8 @@ export default function ProgressBar({
         style={{ height: '16px' }}
         data-testid="bootstrap-progress-bar"
         aria-label="Progress towards total duration"
+        animated={isActive && timerActive}
+        striped={isActive}
       />
     </div>
   );

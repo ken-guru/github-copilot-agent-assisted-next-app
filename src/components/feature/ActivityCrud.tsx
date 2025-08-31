@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Form } from 'react-bootstrap';
 import ActivityForm from './ActivityForm';
 import ActivityList from './ActivityList';
 import { Activity } from '../../types/activity';
@@ -345,6 +345,8 @@ const ActivityCrud: React.FC = () => {
         centered
         backdrop="static"
         onKeyDown={handleFormModalKeyDown}
+        animation={true}
+        className="fade"
       >
         <Modal.Header closeButton>
           <Modal.Title id="activity-form-modal">{editingActivity ? 'Edit Activity' : 'Add Activity'}</Modal.Title>
@@ -489,14 +491,19 @@ const ActivityCrud: React.FC = () => {
           </div>
 
           <div className="mb-3">
-            <label className="form-label fw-bold">Select JSON file:</label>
-            <input
+            <Form.Label className="fw-bold">Select JSON file:</Form.Label>
+            <Form.Control
               type="file"
-              className="form-control"
               accept="application/json,.json"
               onChange={handleImportFileChange}
               aria-label="Import JSON File"
+              isValid={!!importFile}
             />
+            {importFile && (
+              <Form.Control.Feedback type="valid">
+                File selected: {importFile.name}
+              </Form.Control.Feedback>
+            )}
           </div>
         </Modal.Body>
         <Modal.Footer>

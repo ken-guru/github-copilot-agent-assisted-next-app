@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useEffect, useState } from 'react';
-import { Card, Badge } from 'react-bootstrap';
+import { Card, Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
@@ -38,6 +38,48 @@ function calculateTimeIntervals(duration: number): { interval: number; count: nu
 export default function Timeline({ entries, totalDuration, elapsedTime: initialElapsedTime, timerActive = false, allActivitiesCompleted = false, showCounter = true }: TimelineProps) {
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
+  
+  // State to track expanded timeline entries - removing as we're using tooltips now
+  // const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set());
+  
+  // Function to toggle entry expansion - removing as we're using tooltips now
+  // const toggleEntryExpansion = (entryId: string) => {
+  //   setExpandedEntries(prev => {
+  //     const newSet = new Set(prev);
+  //     if (newSet.has(entryId)) {
+  //       newSet.delete(entryId);
+  //     } else {
+  //       newSet.add(entryId);
+  //     }
+  //     return newSet;
+  //   });
+  // };
+  
+  // Helper function to generate tooltip content for activity details
+  const generateTooltipContent = (entry: TimelineEntry, duration: number) => {
+    const details = [];
+    
+    if (entry.startTime) {
+      details.push(`Started: ${new Date(entry.startTime).toLocaleTimeString()}`);
+    }
+    if (entry.endTime) {
+      details.push(`Ended: ${new Date(entry.endTime).toLocaleTimeString()}`);
+    }
+    details.push(`Duration: ${formatTimeHuman(duration)}`);
+    if (entry.description) {
+      details.push(`Description: ${entry.description}`);
+    }
+    
+    return (
+      <div style={{ textAlign: 'left' }}>
+        {details.map((detail, index) => (
+          <div key={index} style={{ marginBottom: index < details.length - 1 ? '4px' : '0' }}>
+            {detail}
+          </div>
+        ))}
+      </div>
+    );
+  };
   
   // Add state to track current theme mode
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
@@ -402,15 +444,27 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
                       <div key={item.entry!.id} className={`${styles.timelineEntry} timeline-entry d-flex flex-column border rounded`} style={style}>
                         <div className={styles.entryContent}>
                           <div className={styles.entryHeader}>
-                            <span
-                              className={`${styles.activityName} fw-medium`}
-                              data-testid="timeline-activity-name"
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={
+                                <Tooltip id={`tooltip-${item.entry!.id}`}>
+                                  {generateTooltipContent(item.entry!, item.duration)}
+                                </Tooltip>
+                              }
                             >
-                              {item.entry!.activityName}
-                            </span>
-                            <span className={`${styles.timeInfo} time-info small text-nowrap`}>
-                              {formatTimeHuman(item.duration)}
-                            </span>
+                              <span
+                                className={`${styles.activityName} fw-medium`}
+                                data-testid="timeline-activity-name"
+                                style={{ cursor: 'help' }}
+                              >
+                                {item.entry!.activityName}
+                              </span>
+                            </OverlayTrigger>
+                            <div className="d-flex align-items-center gap-1">
+                              <span className={`${styles.timeInfo} time-info small text-nowrap`}>
+                                {formatTimeHuman(item.duration)}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
