@@ -75,8 +75,9 @@ describe('Navigation - Responsive Bootstrap Layout', () => {
     renderWithTheme(<Navigation />);
     
     const navbar = screen.getByRole('navigation');
-    // Should still have theme-aware classes
-    expect(navbar).toHaveClass('navbar-light', 'bg-light');
+    // Should have modern Bootstrap data-bs-theme attribute
+    expect(navbar).toHaveAttribute('data-bs-theme', 'light');
+    expect(navbar).toHaveClass('bg-light');
   });
 
   it('should maintain accessibility with Bootstrap components', () => {

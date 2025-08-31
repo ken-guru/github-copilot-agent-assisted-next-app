@@ -353,12 +353,16 @@ a {
 }
 
 /* Override Bootstrap defaults for immediate theme application */
-.navbar-dark {
+[data-bs-theme="dark"] .navbar,
+.navbar[data-bs-theme="dark"] {
   background-color: #212529 !important;
+  border-color: #495057 !important;
 }
 
-.navbar-light {
+[data-bs-theme="light"] .navbar,
+.navbar[data-bs-theme="light"] {
   background-color: #f8f9fa !important;
+  border-color: #dee2e6 !important;
 }
 
 .modal-content {
@@ -377,4 +381,36 @@ a {
   background-color: #ffffff !important;
   color: #212529 !important;
   border-color: #dee2e6 !important;
+}
+
+/* Ensure navbar theme is applied immediately during navigation */
+.navbar {
+  /* Force immediate background color application */
+  background-color: var(--bs-body-bg, #f8f9fa) !important;
+  color: var(--bs-body-color, #212529) !important;
+}
+
+/* Override and remove conflicting Bootstrap default navbar variant classes */
+.navbar.navbar-light,
+.navbar.navbar-dark {
+  /* Reset to neutral state and let data-bs-theme control styling */
+  background-color: inherit !important;
+  color: inherit !important;
+}
+
+/* Apply specific navbar colors based on data-bs-theme */
+[data-bs-theme="dark"] .navbar {
+  --bs-navbar-color: rgba(255, 255, 255, 0.85) !important;
+  --bs-navbar-brand-color: #fff !important;
+  --bs-navbar-nav-link-color: rgba(255, 255, 255, 0.75) !important;
+  background-color: #212529 !important;
+  color: #fff !important;
+}
+
+[data-bs-theme="light"] .navbar {
+  --bs-navbar-color: rgba(0, 0, 0, 0.85) !important;
+  --bs-navbar-brand-color: #000 !important;
+  --bs-navbar-nav-link-color: rgba(0, 0, 0, 0.75) !important;
+  background-color: #f8f9fa !important;
+  color: #000 !important;
 }

@@ -35,10 +35,9 @@ const Navigation: React.FC = () => {
   return (
     <Navbar 
       expand="lg" 
-      variant={theme}
-      bg={theme}
-      className="border-bottom"
+      className={`border-bottom ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}
       aria-label="Main navigation"
+      data-bs-theme={theme}
     >
       <div className="container-fluid">
         <Navbar.Brand href="/" data-testid="navbar-brand">

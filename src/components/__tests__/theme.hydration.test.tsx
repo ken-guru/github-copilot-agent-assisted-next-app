@@ -62,8 +62,9 @@ describe('Theme Hydration Issue #272', () => {
     await waitFor(
       () => {
         const navbar = container.querySelector('nav');
-        // Should have dark theme classes after hydration
-        expect(navbar).toHaveClass('navbar-dark', 'bg-dark');
+        // Should have dark theme attribute after hydration
+        expect(navbar).toHaveAttribute('data-bs-theme', 'dark');
+        expect(navbar).toHaveClass('bg-dark');
       },
       { timeout: 1000 }
     );
@@ -118,7 +119,8 @@ describe('Theme Hydration Issue #272', () => {
     // Component should eventually sync with DOM theme
     await waitFor(() => {
       const navbar = container.querySelector('nav');
-      expect(navbar).toHaveClass('navbar-dark', 'bg-dark');
+      expect(navbar).toHaveAttribute('data-bs-theme', 'dark');
+      expect(navbar).toHaveClass('bg-dark');
     });
   });
 
@@ -136,7 +138,8 @@ describe('Theme Hydration Issue #272', () => {
     // Wait for initial render
     await waitFor(() => {
       const navbar = container.querySelector('nav');
-      expect(navbar).toHaveClass('navbar-light', 'bg-light');
+      expect(navbar).toHaveAttribute('data-bs-theme', 'light');
+      expect(navbar).toHaveClass('bg-light');
     });
     
     // In the real browser, the theme would update via MutationObserver

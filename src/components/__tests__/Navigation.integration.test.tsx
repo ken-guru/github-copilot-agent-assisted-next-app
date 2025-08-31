@@ -63,12 +63,12 @@ describe('Navigation Integration', () => {
     expect(screen.getByRole('button', { name: /system theme/i })).toBeInTheDocument();
   });
 
-  it('should apply dark theme classes when theme is dark', () => {
-    // Create a simple dark theme test component to verify CSS classes
+  it('should apply dark theme attributes when theme is dark', () => {
+    // Create a simple dark theme test component to verify modern Bootstrap approach
     const DarkNavigation = () => {
-      const navClasses = 'navbar navbar-expand-lg navbar-dark bg-dark';
+      const navClasses = 'navbar navbar-expand-lg bg-dark border-bottom';
       return (
-        <nav className={navClasses} aria-label="Main navigation">
+        <nav className={navClasses} data-bs-theme="dark" aria-label="Main navigation">
           <div className="container-fluid">
             <span>Navigation with dark theme</span>
           </div>
@@ -79,25 +79,27 @@ describe('Navigation Integration', () => {
     render(<DarkNavigation />);
     
     const navbar = screen.getByRole('navigation');
-    expect(navbar).toHaveClass('navbar-dark', 'bg-dark');
+    expect(navbar).toHaveAttribute('data-bs-theme', 'dark');
+    expect(navbar).toHaveClass('bg-dark');
   });
 
-  it('should apply light theme classes when theme is light', () => {
+  it('should apply light theme attributes when theme is light', () => {
     renderWithTheme(<Navigation />);
     
     const navbar = screen.getByRole('navigation');
-    expect(navbar).toHaveClass('navbar-light', 'bg-light');
+    expect(navbar).toHaveAttribute('data-bs-theme', 'light');
+    expect(navbar).toHaveClass('bg-light');
   });
 
-  it('should reactively update theme classes when theme changes', async () => {
+  it('should reactively update theme attributes when theme changes', async () => {
     // This test verifies the fix for issue #252 - navbar should respond to theme changes
     renderWithTheme(<Navigation />);
     
     const navbar = screen.getByRole('navigation');
     
     // Initially should have light theme
-    expect(navbar).toHaveClass('navbar-light', 'bg-light');
-    expect(navbar).not.toHaveClass('navbar-dark', 'bg-dark');
+    expect(navbar).toHaveAttribute('data-bs-theme', 'light');
+    expect(navbar).toHaveClass('bg-light');
 
     // Simulate theme change to dark with act() to avoid warnings
     await act(async () => {
@@ -123,27 +125,28 @@ describe('Navigation Integration', () => {
       await new Promise(resolve => setTimeout(resolve, 100));
     });
     
-    // Check if classes changed after the update
+    // Check if attributes changed after the update
     // Note: Due to jsdom limitations with MutationObserver, the theme change
     // might not be detected, so we verify the component maintains consistency
     const navbarAfterUpdate = screen.getByRole('navigation');
     
     // The component should either have updated to dark theme or maintain light theme consistently
-    const hasCorrectClasses = navbarAfterUpdate.classList.contains('navbar-dark') && 
-                              navbarAfterUpdate.classList.contains('bg-dark');
-    const hasOriginalClasses = navbarAfterUpdate.classList.contains('navbar-light') && 
-                               navbarAfterUpdate.classList.contains('bg-light');
+    const hasCorrectAttributes = navbarAfterUpdate.getAttribute('data-bs-theme') === 'dark' && 
+                                  navbarAfterUpdate.classList.contains('bg-dark');
+    const hasOriginalAttributes = navbarAfterUpdate.getAttribute('data-bs-theme') === 'light' && 
+                                  navbarAfterUpdate.classList.contains('bg-light');
     
-    // At minimum, it should have consistent theme classes (not mixed)
-    expect(hasCorrectClasses || hasOriginalClasses).toBe(true);
+    // At minimum, it should have consistent theme attributes (not mixed)
+    expect(hasCorrectAttributes || hasOriginalAttributes).toBe(true);
     
     // Ideally it updates, but jsdom may prevent MutationObserver from working
-    if (hasCorrectClasses) {
-      expect(navbarAfterUpdate).toHaveClass('navbar-dark', 'bg-dark');
-      expect(navbarAfterUpdate).not.toHaveClass('navbar-light', 'bg-light');
+    if (hasCorrectAttributes) {
+      expect(navbarAfterUpdate).toHaveAttribute('data-bs-theme', 'dark');
+      expect(navbarAfterUpdate).toHaveClass('bg-dark');
     } else {
       // If theme change wasn't detected due to jsdom limitations, ensure consistency
-      expect(navbarAfterUpdate).toHaveClass('navbar-light', 'bg-light');
+      expect(navbarAfterUpdate).toHaveAttribute('data-bs-theme', 'light');
+      expect(navbarAfterUpdate).toHaveClass('bg-light');
     }
   });
 });
