@@ -227,13 +227,6 @@ body {
   transition: background-color 0s, color 0s;
 }
 
-/* Ensure body always has a background color even before theme is applied */
-body {
-  /* Default to dark background to prevent white flash in dark mode */
-  background-color: #121212;
-  color: #f5f5f5;
-}
-
 /* Apply light theme when explicitly set */
 body[data-bs-theme="light"],
 html[data-bs-theme="light"] body {
@@ -349,68 +342,68 @@ a {
 .card-header,
 .card-body,
 .card-footer {
-  transition: background-color 0s, color 0s, border-color 0s !important;
+  transition: background-color 0s, color 0s, border-color 0s;
 }
 
 /* Override Bootstrap defaults for immediate theme application */
 [data-bs-theme="dark"] .navbar,
 .navbar[data-bs-theme="dark"] {
-  background-color: #212529 !important;
-  border-color: #495057 !important;
+  background-color: #212529;
+  border-color: #495057;
 }
 
 [data-bs-theme="light"] .navbar,
 .navbar[data-bs-theme="light"] {
-  background-color: #f8f9fa !important;
-  border-color: #dee2e6 !important;
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
 }
 
 .modal-content {
-  background-color: var(--bs-body-bg, var(--bg-primary)) !important;
-  color: var(--bs-body-color, var(--text-primary)) !important;
+  background-color: var(--bs-body-bg, var(--bg-primary));
+  color: var(--bs-body-color, var(--text-primary));
 }
 
 /* Ensure modals respect theme immediately */
 [data-bs-theme="dark"] .modal-content {
-  background-color: #212529 !important;
-  color: #f8f9fa !important;
-  border-color: #495057 !important;
+  background-color: #212529;
+  color: #f8f9fa;
+  border-color: #495057;
 }
 
 [data-bs-theme="light"] .modal-content {
-  background-color: #ffffff !important;
-  color: #212529 !important;
-  border-color: #dee2e6 !important;
+  background-color: #ffffff;
+  color: #212529;
+  border-color: #dee2e6;
 }
 
 /* Ensure navbar theme is applied immediately during navigation */
 .navbar {
   /* Force immediate background color application */
-  background-color: var(--bs-body-bg, #f8f9fa) !important;
-  color: var(--bs-body-color, #212529) !important;
+  background-color: var(--bs-body-bg, #f8f9fa);
+  color: var(--bs-body-color, #212529);
 }
 
 /* Override and remove conflicting Bootstrap default navbar variant classes */
 .navbar.navbar-light,
 .navbar.navbar-dark {
   /* Reset to neutral state and let data-bs-theme control styling */
-  background-color: inherit !important;
-  color: inherit !important;
+  background-color: inherit;
+  color: inherit;
 }
 
 /* Apply specific navbar colors based on data-bs-theme */
 [data-bs-theme="dark"] .navbar {
-  --bs-navbar-color: rgba(255, 255, 255, 0.85) !important;
-  --bs-navbar-brand-color: #fff !important;
-  --bs-navbar-nav-link-color: rgba(255, 255, 255, 0.75) !important;
-  background-color: #212529 !important;
-  color: #fff !important;
+  --bs-navbar-color: rgba(255, 255, 255, 0.85);
+  --bs-navbar-brand-color: #fff;
+  --bs-navbar-nav-link-color: rgba(255, 255, 255, 0.75);
+  background-color: #212529;
+  color: #fff;
 }
 
 [data-bs-theme="light"] .navbar {
-  --bs-navbar-color: rgba(0, 0, 0, 0.85) !important;
-  --bs-navbar-brand-color: #000 !important;
-  --bs-navbar-nav-link-color: rgba(0, 0, 0, 0.75) !important;
-  background-color: #f8f9fa !important;
-  color: #000 !important;
+  --bs-navbar-color: rgba(0, 0, 0, 0.85);
+  --bs-navbar-brand-color: #000;
+  --bs-navbar-nav-link-color: rgba(0, 0, 0, 0.75);
+  background-color: #f8f9fa;
+  color: #000;
 }
