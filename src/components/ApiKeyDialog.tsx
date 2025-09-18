@@ -42,8 +42,9 @@ export const ApiKeyDialog: React.FC<ApiKeyDialogProps> = ({ show, onClose }) => 
               onChange={(e) => setValue(e.target.value)}
               placeholder="sk-..."
               data-testid="openai-api-key-input"
+              aria-describedby="security-info"
             />
-            <Form.Text className="text-body-secondary">
+            <Form.Text id="security-info" className="text-body-secondary">
               <strong>SECURITY:</strong> Never stored on any server or browser storage. Memory-only for this session.
             </Form.Text>
           </Form.Group>
