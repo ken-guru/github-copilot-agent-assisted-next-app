@@ -52,8 +52,8 @@ describe('ActivityManager Spacing and Layout', () => {
       const cardBody = screen.getByTestId('activity-manager').querySelector('.card-body');
       const children = Array.from(cardBody?.children || []);
       
-      // The activities list container (3rd child) should have proper overflow classes
-      const activitiesContainer = children[2] as HTMLElement;
+      // The activities list container (4th child, after progress, form, and live region) should have proper overflow classes
+      const activitiesContainer = children[3] as HTMLElement;
       expect(activitiesContainer).toHaveClass('flex-grow-1');
       
       // Should have overflow properties that prevent horizontal scrolling

@@ -419,10 +419,11 @@ describe('ActivityManager Component', () => {
       const cardBody = screen.getByTestId('activity-manager').querySelector('.card-body');
       const children = Array.from(cardBody?.children || []);
       
-      // Check order: progress container, form column, activities list container
+      // Check order: progress container, form column, live region, activities list container
       expect(children[0]).toHaveClass('flex-shrink-0', 'mb-3'); // Progress bar
       expect(children[1]).toHaveAttribute('data-testid', 'activity-form-column'); // Form
-      expect(children[2]).toHaveClass('flex-grow-1'); // Activities list (overflow now handled by inline styles)
+      expect(children[2]).toHaveClass('sr-only'); // Live region for accessibility
+      expect(children[3]).toHaveClass('flex-grow-1'); // Activities list (overflow now handled by inline styles)
     });
   });
 

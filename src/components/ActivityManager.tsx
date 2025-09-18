@@ -252,7 +252,7 @@ export default function ActivityManager({
               className="d-flex align-items-center"
               title="Add 1 minute to session duration"
             >
-              <i className="bi bi-plus-circle me-2"></i>
+              <i className="bi bi-plus-circle me-2" aria-hidden="true"></i>
               1 min
             </Button>
           )}
@@ -264,7 +264,7 @@ export default function ActivityManager({
               className="d-flex align-items-center"
               title="Reset session and return to time setup"
             >
-              <i className="bi bi-arrow-clockwise me-2"></i>
+              <i className="bi bi-arrow-clockwise me-2" aria-hidden="true"></i>
               Reset
             </Button>
           )}
@@ -281,7 +281,7 @@ export default function ActivityManager({
               title="Share session"
               data-testid="open-share-modal"
             >
-              <i className="bi bi-share me-2" />
+              <i className="bi bi-share me-2" aria-hidden="true" />
               Share
             </Button>
           )}
@@ -307,14 +307,21 @@ export default function ActivityManager({
           isSimplified={timerActive || (activities.length > 0 && timelineEntries.length === 0)} // Simplified when timer is active or when activities exist but timer hasn't started
         />
         
+        {/* Live region for activity updates */}
+        <div aria-live="polite" aria-atomic="true" className="sr-only">
+          {activities.length === 0 ? 'No activities added yet' : 
+           `${activities.length} ${activities.length === 1 ? 'activity' : 'activities'} available`}
+        </div>
+        
         {/* Activities List - scrollable if needed */}
         <div className="flex-grow-1" style={{ overflowY: 'auto', overflowX: 'hidden' }}>
-          <Row className="gy-3" data-testid="activity-list">
+          <Row className="gy-3" data-testid="activity-list" role="list" aria-label="Available activities">
             {visibleActivities.map((activity) => (
               <Col 
                 key={activity.id} 
                 xs={12}
                 data-testid={`activity-column-${activity.id}`}
+                role="listitem"
               >
                 <ActivityButton
                   activity={activity}
@@ -338,15 +345,20 @@ export default function ActivityManager({
                 className="d-inline-flex align-items-center hidden-activities-toggle"
                 onClick={() => setShowHiddenList(v => !v)}
                 data-testid="toggle-hidden-activities"
+                aria-expanded={showHiddenList}
+                aria-controls="hidden-activities-panel"
               >
-                <i className={`bi ${showHiddenList ? 'bi-eye-slash' : 'bi-eye'} me-2`} />
+                <i className={`bi ${showHiddenList ? 'bi-eye-slash' : 'bi-eye'} me-2`} aria-hidden="true" />
                 {showHiddenList ? 'Hide' : 'Show'} {hiddenActivities.length} hidden {hiddenActivities.length === 1 ? 'activity' : 'activities'}
               </Button>
 
               {showHiddenList && (
                 <div
+                  id="hidden-activities-panel"
                   className="hidden-activities-panel bg-body-tertiary border rounded-3 p-2 mt-2"
                   data-testid="hidden-activities-panel"
+                  role="region"
+                  aria-label="Hidden activities"
                 >
                   {hiddenActivities.map((activity) => (
                     <div key={activity.id} className="d-flex justify-content-between align-items-center py-1">
@@ -374,8 +386,8 @@ export default function ActivityManager({
         <Modal.Header closeButton>
           <Modal.Title>Share session</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <p>Share a read-only copy of the current session. This will create a public URL that anyone can open.</p>
+        <Modal.Body aria-describedby="share-description">
+          <p id="share-description">Share a read-only copy of the current session. This will create a public URL that anyone can open.</p>
           <p className="text-muted small">The shared session will contain summary and timeline data only.</p>
           {shareLoading && (
             <div className="d-flex align-items-center">
