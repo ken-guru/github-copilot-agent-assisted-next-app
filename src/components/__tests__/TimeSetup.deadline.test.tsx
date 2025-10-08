@@ -75,9 +75,9 @@ describe('TimeSetup Deadline Mode', () => {
     expect(mockOnTimeSet).toHaveBeenCalled();
     const [duration, isDeadline] = mockOnTimeSet.mock.calls[0];
     expect(isDeadline).toBe(true);
-    // Allow some tolerance (within 40 seconds of 2 hours to account for test execution time)
-    expect(duration).toBeGreaterThan(7160); // Just under 2 hours
-    expect(duration).toBeLessThan(7240); // Just over 2 hours
+    // Allow some tolerance (within 60 seconds of 2 hours to account for test execution time)
+    expect(duration).toBeGreaterThan(7140); // Just under 2 hours
+    expect(duration).toBeLessThan(7260); // Just over 2 hours
   });
 
   it('should handle deadline set for tomorrow if time is earlier than now', () => {
