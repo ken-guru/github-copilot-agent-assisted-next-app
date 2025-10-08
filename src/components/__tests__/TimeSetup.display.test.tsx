@@ -53,8 +53,8 @@ describe('TimeSetup Display Issues', () => {
       // Submit
       fireEvent.click(screen.getByRole('button', { name: 'Set Time' }));
       
-      // Should call with 0 seconds
-      expect(mockOnTimeSet).toHaveBeenCalledWith(0);
+      // Should call with 0 seconds and false for deadline mode
+      expect(mockOnTimeSet).toHaveBeenCalledWith(0, false);
     });
   });
 });

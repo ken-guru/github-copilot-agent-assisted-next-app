@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, Form, Button, Row, Col, ButtonGroup } from 'react-bootstrap';
 
 interface TimeSetupProps {
-  onTimeSet: (durationInSeconds: number) => void;
+  onTimeSet: (durationInSeconds: number, isDeadlineMode?: boolean) => void;
 }
 
 export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
@@ -49,7 +49,7 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
       durationInSeconds = Math.max(0, Math.floor((deadlineDate.getTime() - now.getTime()) / 1000));
     }
     
-    onTimeSet(durationInSeconds);
+    onTimeSet(durationInSeconds, setupMode === 'deadline');
   };
 
   return (

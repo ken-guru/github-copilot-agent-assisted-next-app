@@ -260,8 +260,8 @@ describe('TimeSetup Bootstrap Integration', () => {
       // Submit
       fireEvent.click(screen.getByRole('button', { name: 'Set Time' }));
       
-      // Verify callback was called and Bootstrap structure preserved
-      expect(mockOnTimeSet).toHaveBeenCalledWith(5400); // 1h 30m
+      // Verify callback was called with correct duration and false for deadline mode
+      expect(mockOnTimeSet).toHaveBeenCalledWith(5400, false); // 1h 30m
       
       const form = screen.getByRole('form');
       const cardBody = form.closest('.card-body');
