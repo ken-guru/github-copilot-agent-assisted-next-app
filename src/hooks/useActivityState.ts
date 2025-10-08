@@ -39,6 +39,7 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
   const {
     timelineEntries,
     addTimelineEntry,
+    addBreakEntry,
     completeCurrentTimelineEntry,
     resetTimelineEntries
   } = useTimelineEntries();
@@ -57,6 +58,10 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
       if (currentActivity) {
         completeActivity(currentActivity.id);
         completeCurrentTimelineEntry();
+      } else if (timelineEntries.length > 0 && !currentActivity) {
+        // If there's no current activity but there are timeline entries (e.g., a break),
+        // complete the last entry (which would be the break)
+        completeCurrentTimelineEntry();
       }
 
       setCurrentActivity(activity);
@@ -65,8 +70,12 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
       addTimelineEntry(activity);
       startActivity(activity.id);
       
-      // Call onTimerStart if this is the first activity in the timeline
-      if (timelineEntries.length === 0) {
+      // Check if this is the first actual activity (not a break) in the timeline
+      const hasOnlyBreakEntry = timelineEntries.length === 1 && 
+        timelineEntries[0]?.activityId === null;
+      
+      // Call onTimerStart if this is the first activity in the timeline (or only a break exists)
+      if (timelineEntries.length === 0 || hasOnlyBreakEntry) {
         onTimerStart?.();
       }
     } else if (currentActivity) {
@@ -77,7 +86,7 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     }
   }, [
     currentActivity, 
-    timelineEntries.length, 
+    timelineEntries, 
     addActivity, 
     completeActivity, 
     completeCurrentTimelineEntry,
@@ -164,6 +173,8 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
     // New method to get current activity state
     getCurrentActivityStateDetails,
     // Method to get state of a specific activity
-    getActivityState
+    getActivityState,
+    // Method to add a break entry to the timeline
+    addBreakEntry
   };
 }

@@ -6,6 +6,7 @@ import { TimelineEntry } from '@/types';
 export interface UseTimelineEntriesResult {
   timelineEntries: TimelineEntry[];
   addTimelineEntry: (activity: Activity) => void;
+  addBreakEntry: () => void;
   completeCurrentTimelineEntry: () => void;
   resetTimelineEntries: () => void;
 }
@@ -25,6 +26,23 @@ export function useTimelineEntries(): UseTimelineEntriesResult {
       startTime: Date.now(),
       endTime: null,
   colors: getNextAvailableColorSet(activity.colorIndex || 0)
+    };
+    
+    setTimelineEntries(prev => [...prev, newEntry]);
+  }, []);
+
+  const addBreakEntry = useCallback(() => {
+    const newEntry: TimelineEntry = {
+      id: `break-${Date.now()}`,
+      activityId: null,
+      activityName: null,
+      startTime: Date.now(),
+      endTime: null,
+      colors: {
+        background: 'var(--background-muted)',
+        text: 'var(--foreground-muted)',
+        border: 'var(--border)'
+      }
     };
     
     setTimelineEntries(prev => [...prev, newEntry]);
@@ -61,6 +79,7 @@ export function useTimelineEntries(): UseTimelineEntriesResult {
   return {
     timelineEntries,
     addTimelineEntry,
+    addBreakEntry,
     completeCurrentTimelineEntry,
     resetTimelineEntries
   };

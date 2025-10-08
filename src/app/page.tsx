@@ -28,6 +28,7 @@ function AppContent() {
     handleActivityRemoval,
   restoreActivity,
     resetActivities,
+    addBreakEntry,
   } = useActivityState({
     onTimerStart: () => {
       if (!timerActive) startTimer();
@@ -117,8 +118,9 @@ function AppContent() {
     setIsDeadlineMode(isDeadline);
     setTimeSet(true);
     
-    // If deadline mode, start the timer immediately
+    // If deadline mode, start the timer immediately and add a break entry
     if (isDeadline && !timerActive) {
+      addBreakEntry();
       startTimer();
     }
   };
