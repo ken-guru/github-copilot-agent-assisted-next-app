@@ -39,9 +39,12 @@ function calculateTimeSpans({
     const currentStartTime = entry.startTime;
     const currentEndTime = entry.endTime;
 
-    // Calculate gap duration
+    // Check if this is a break entry (both activityId and activityName are null)
+    const isBreakEntry = entry.activityId === null && entry.activityName === null;
+
+    // Calculate gap duration (only for gaps between activities, not for break entries)
     let gapDuration = 0;
-    if (previousEndTime) {
+    if (previousEndTime && !isBreakEntry) {
       gapDuration = Math.max(0, currentStartTime - previousEndTime);
       totalGapsDuration += gapDuration;
     }
@@ -55,25 +58,48 @@ function calculateTimeSpans({
       });
     }
 
-    // Calculate activity duration
-    let activityDuration: number;
-    if (currentEndTime) {
-      activityDuration = currentEndTime - currentStartTime;
+    // If this is a break entry, treat it as a gap
+    if (isBreakEntry) {
+      let breakDuration: number;
+      if (currentEndTime) {
+        breakDuration = currentEndTime - currentStartTime;
+      } else {
+        breakDuration = now - currentStartTime;
+      }
+
+      const breakHeight = (breakDuration / totalDuration) * 100;
+      items.push({
+        type: 'gap',
+        duration: breakDuration,
+        height: breakHeight,
+      });
+      totalGapsDuration += breakDuration;
+
+      // Update previousEndTime for break entries too
+      if (currentEndTime !== undefined && currentEndTime !== null) {
+        previousEndTime = currentEndTime;
+      }
     } else {
-      activityDuration = now - currentStartTime;
-    }
+      // Calculate activity duration for regular activities
+      let activityDuration: number;
+      if (currentEndTime) {
+        activityDuration = currentEndTime - currentStartTime;
+      } else {
+        activityDuration = now - currentStartTime;
+      }
 
-    const activityHeight = (activityDuration / totalDuration) * 100;
-    items.push({
-      type: 'activity',
-      entry: entry,
-      duration: activityDuration,
-      height: activityHeight,
-    });
+      const activityHeight = (activityDuration / totalDuration) * 100;
+      items.push({
+        type: 'activity',
+        entry: entry,
+        duration: activityDuration,
+        height: activityHeight,
+      });
 
-    // Only assign currentEndTime to previousEndTime if it's defined
-    if (currentEndTime !== undefined && currentEndTime !== null) {
-      previousEndTime = currentEndTime;
+      // Only assign currentEndTime to previousEndTime if it's defined
+      if (currentEndTime !== undefined && currentEndTime !== null) {
+        previousEndTime = currentEndTime;
+      }
     }
   }
 
