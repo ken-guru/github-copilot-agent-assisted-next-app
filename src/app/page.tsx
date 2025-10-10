@@ -15,6 +15,7 @@ function AppContent() {
   const { setIsLoading } = useLoading();
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
+  const [isDeadlineMode, setIsDeadlineMode] = useState(false);
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
   
   const {
@@ -27,6 +28,7 @@ function AppContent() {
     handleActivityRemoval,
   restoreActivity,
     resetActivities,
+    addBreakEntry,
   } = useActivityState({
     onTimerStart: () => {
       if (!timerActive) startTimer();
@@ -102,6 +104,7 @@ function AppContent() {
     const unregisterCallbacks = resetService.registerResetCallback(() => {
       setTimeSet(false);
       setTotalDuration(0);
+      setIsDeadlineMode(false);
       resetActivities();
       resetTimer();
     });
@@ -110,9 +113,16 @@ function AppContent() {
     return unregisterCallbacks;
   }, [resetActivities, resetTimer]);
   
-  const handleTimeSet = (durationInSeconds: number) => {
+  const handleTimeSet = (durationInSeconds: number, isDeadline: boolean = false) => {
     setTotalDuration(durationInSeconds);
+    setIsDeadlineMode(isDeadline);
     setTimeSet(true);
+    
+    // If deadline mode, start the timer immediately and add a break entry
+    if (isDeadline && !timerActive) {
+      addBreakEntry();
+      startTimer();
+    }
   };
   
   const handleExtendDuration = () => {

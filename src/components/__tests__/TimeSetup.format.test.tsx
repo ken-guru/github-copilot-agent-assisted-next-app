@@ -27,8 +27,8 @@ describe('TimeSetup Input Format Consistency Tests', () => {
     const submitButton = screen.getByRole('button', { name: /set time/i });
     fireEvent.click(submitButton);
     
-    // Check that onTimeSet was called with correct value (45 minutes = 2700 seconds)
-    expect(mockOnTimeSet).toHaveBeenCalledWith(2700);
+    // Check that onTimeSet was called with correct value (45 minutes = 2700 seconds) and false for deadline mode
+    expect(mockOnTimeSet).toHaveBeenCalledWith(2700, false);
   });
   
   test('switching between duration and deadline modes preserves settings', () => {
@@ -68,8 +68,8 @@ describe('TimeSetup Input Format Consistency Tests', () => {
     const submitButton = screen.getByRole('button', { name: /set time/i });
     fireEvent.click(submitButton);
     
-    // Check that onTimeSet was called with correct value (8h30m = 30600 seconds)
-    expect(mockOnTimeSet).toHaveBeenCalledWith(30600);
+    // Check that onTimeSet was called with correct value (8h30m = 30600 seconds) and false for deadline mode
+    expect(mockOnTimeSet).toHaveBeenCalledWith(30600, false);
   });
   
   test('handles very short durations correctly', () => {
@@ -88,8 +88,8 @@ describe('TimeSetup Input Format Consistency Tests', () => {
     const submitButton = screen.getByRole('button', { name: /set time/i });
     fireEvent.click(submitButton);
     
-    // Check that onTimeSet was called with correct value (1 minute = 60 seconds)
-    expect(mockOnTimeSet).toHaveBeenCalledWith(60);
+    // Check that onTimeSet was called with correct value (1 minute = 60 seconds) and false for deadline mode
+    expect(mockOnTimeSet).toHaveBeenCalledWith(60, false);
   });
   
   test('handles input validation constraints', () => {
@@ -126,7 +126,7 @@ describe('TimeSetup Input Format Consistency Tests', () => {
     const submitButton = screen.getByRole('button', { name: /set time/i });
     fireEvent.click(submitButton);
     
-    // Check that onTimeSet was called with correct value (30 seconds)
-    expect(mockOnTimeSet).toHaveBeenCalledWith(30);
+    // Check that onTimeSet was called with correct value (30 seconds) and false for deadline mode
+    expect(mockOnTimeSet).toHaveBeenCalledWith(30, false);
   });
 });

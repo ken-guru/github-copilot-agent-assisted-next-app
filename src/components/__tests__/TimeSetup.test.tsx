@@ -60,8 +60,8 @@ describe('TimeSetup Component', () => {
     const submitButton = screen.getByRole('button', { name: 'Set Time' });
     fireEvent.click(submitButton);
     
-    // Check if onTimeSet was called with correct value: 1h30m15s = 5415 seconds
-    expect(mockOnTimeSet).toHaveBeenCalledWith(5415);
+    // Check if onTimeSet was called with correct value: 1h30m15s = 5415 seconds and false for deadline mode
+    expect(mockOnTimeSet).toHaveBeenCalledWith(5415, false);
   });
   
   it('should call onTimeSet with deadline time converted to seconds', () => {
@@ -126,8 +126,8 @@ describe('TimeSetup Component', () => {
     const submitButton = screen.getByRole('button', { name: 'Set Time' });
     fireEvent.click(submitButton);
     
-    // Should pass 0 seconds (new default behavior)
-    expect(mockOnTimeSet).toHaveBeenCalledWith(0);
+    // Should pass 0 seconds (new default behavior) and false for deadline mode
+    expect(mockOnTimeSet).toHaveBeenCalledWith(0, false);
   });
 
   it('should allow setting zero duration when user explicitly sets all inputs to zero', () => {
@@ -141,7 +141,7 @@ describe('TimeSetup Component', () => {
     const submitButton = screen.getByRole('button', { name: 'Set Time' });
     fireEvent.click(submitButton);
     
-    // Should pass 0 seconds when explicitly set
-    expect(mockOnTimeSet).toHaveBeenCalledWith(0);
+    // Should pass 0 seconds when explicitly set and false for deadline mode
+    expect(mockOnTimeSet).toHaveBeenCalledWith(0, false);
   });
 });
