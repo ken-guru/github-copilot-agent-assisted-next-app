@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Activity } from '@/types/activity';
+import { isBreakEntry } from '@/types';
 import { useActivitiesTracking } from './useActivitiesTracking';
 import { useTimelineEntries } from './useTimelineEntries';
 import { ActivityState } from '@/utils/activityStateMachine';
@@ -59,8 +60,8 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
         completeActivity(currentActivity.id);
         completeCurrentTimelineEntry();
       } else if (timelineEntries.length > 0 && !currentActivity) {
-        // If there's no current activity but there are timeline entries (e.g., a break),
-        // complete the last entry (which would be the break)
+        // If there's no current activity but there are timeline entries,
+        // complete the last timeline entry (regardless of its type)
         completeCurrentTimelineEntry();
       }
 
@@ -72,7 +73,7 @@ export function useActivityState({ onTimerStart }: UseActivityStateProps = {}) {
       
       // Check if this is the first actual activity (not a break) in the timeline
       const hasOnlyBreakEntry = timelineEntries.length === 1 && 
-        timelineEntries[0]?.activityId === null;
+        isBreakEntry(timelineEntries[0]);
       
       // Call onTimerStart if this is the first activity in the timeline (or only a break exists)
       if (timelineEntries.length === 0 || hasOnlyBreakEntry) {

@@ -1,4 +1,4 @@
-import { TimelineEntry } from '@/types';
+import { TimelineEntry, isBreakEntry } from '@/types';
 
 interface CalculateTimeSpansProps {
   entries: TimelineEntry[];
@@ -39,12 +39,12 @@ function calculateTimeSpans({
     const currentStartTime = entry.startTime;
     const currentEndTime = entry.endTime;
 
-    // Check if this is a break entry (both activityId and activityName are null)
-    const isBreakEntry = entry.activityId === null && entry.activityName === null;
+    // Check if this is a break entry using the utility function
+    const isBreak = isBreakEntry(entry);
 
     // Calculate gap duration (only for gaps between activities, not for break entries)
     let gapDuration = 0;
-    if (previousEndTime && !isBreakEntry) {
+    if (previousEndTime && !isBreak) {
       gapDuration = Math.max(0, currentStartTime - previousEndTime);
       totalGapsDuration += gapDuration;
     }
@@ -59,7 +59,7 @@ function calculateTimeSpans({
     }
 
     // If this is a break entry, treat it as a gap
-    if (isBreakEntry) {
+    if (isBreak) {
       let breakDuration: number;
       if (currentEndTime) {
         breakDuration = currentEndTime - currentStartTime;

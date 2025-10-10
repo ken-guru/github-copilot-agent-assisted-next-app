@@ -52,3 +52,15 @@ export interface TimelineEntry {
     };
   };
 }
+
+/**
+ * Type guard to check if a timeline entry represents a break.
+ * Break entries have both activityId and activityName set to null.
+ * 
+ * @param entry - The timeline entry to check
+ * @returns true if the entry is a break, false otherwise
+ */
+export function isBreakEntry(entry: TimelineEntry | null | undefined): boolean {
+  if (!entry) return false;
+  return entry.activityId === null && entry.activityName === null;
+}
