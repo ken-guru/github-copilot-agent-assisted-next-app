@@ -1,24 +1,10 @@
 {
 	"servers": {
-		"github": {
-			"command": "docker",
-			"args": [
-				"run",
-				"-i",
-				"--rm",
-				"-e",
-				"GITHUB_PERSONAL_ACCESS_TOKEN",
-				"ghcr.io/github/github-mcp-server"
-			],
-			"env": {
-				"GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_token}"
-			},
-			"type": "stdio"
-		},
 		"time": {
 			"command": "docker",
 			"args": [
 				"run",
+				"--pull=always",
 				"-i",
 				"--rm",
 				"mcp/time"
@@ -29,6 +15,7 @@
 			"command": "docker",
 			"args": [
 				"run",
+				"--pull=always",
 				"--rm",
 				"-i",
 				"mcp/sequentialthinking"
@@ -39,6 +26,7 @@
 			"command": "docker",
 			"args": [
 				"run",
+				"--pull=always",
 				"-i",
 				"-v",
 				"claude-memory:/app/dist",
@@ -46,29 +34,7 @@
 				"mcp/memory"
 			],
 			"type": "stdio"
-		},
-		"playwright": {
-			"command": "docker",
-			"args": [
-				"run",
-				"-i",
-				"--rm",
-				"mcp/playwright"
-			],
-			"type": "stdio"
-		},
-		"context7": {
-			"type": "stdio",
-			"command": "npx",
-			"args": ["-y", "@upstash/context7-mcp"]
-    	}
-	},
-	"inputs": [
-		{
-			"type": "promptString",
-			"id": "github_token",
-			"description": "GitHub Personal Access Token",
-			"password": true
 		}
-	]
+	},
+	"inputs": []
 }
