@@ -88,7 +88,7 @@
   - Test with missing model returns 0
   - _Requirements: 3.2_
 
-- [ ] 7. Add cost display after API response
+- [x] 7. Add cost display after API response
   - In handlePlan, after successful callOpenAI response (after line 95 where data is assigned)
   - Check if response.usage exists
   - Extract prompt_tokens and completion_tokens from response.usage
@@ -97,7 +97,7 @@
   - If no usage data, skip cost display (no error)
   - _Requirements: 3.1, 3.3, 3.4, 3.5_
 
-- [ ]* 7.1 Write property tests for cost display
+- [x] 7.1 Write property tests for cost display
   - **Property 5: Cost display triggers toast**
   - **Validates: Requirements 3.3**
   - **Property 6: Cost formatting precision**
@@ -111,7 +111,7 @@
   - Test token extraction from response.usage field
   - _Requirements: 3.1, 3.3, 3.4, 3.5_
 
-- [ ]* 8. Write integration tests for end-to-end flow
+- [x] 8. Write integration tests for end-to-end flow
   - Test: Load page with no stored model → Verify default selected
   - Test: Select different model → Verify dropdown updates and localStorage saves
   - Test: Generate AI plan → Verify correct model in API call
@@ -119,5 +119,5 @@
   - Test: Cost display flow with mocked response
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 9. Final checkpoint - Ensure all tests pass
+- [x] 9. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.

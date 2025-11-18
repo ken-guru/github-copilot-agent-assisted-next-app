@@ -198,7 +198,7 @@ describe('Cost Calculation - Property-Based Tests', () => {
     const tokenCountArbitrary = fc.integer({ min: 0, max: 10000 });
     
     // Generate realistic pricing (between $0.0001 and $0.1 per 1K tokens)
-    const realisticPricingArbitrary = fc.double({ min: 0.0001, max: 0.1 });
+    const realisticPricingArbitrary = fc.double({ min: 0.0001, max: 0.1, noNaN: true });
 
     fc.assert(
       fc.property(

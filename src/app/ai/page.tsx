@@ -122,6 +122,18 @@ export default function AIPlannerPage() {
           response_format: { type: 'json_object' }
         };
         data = await callOpenAI('/v1/chat/completions', payload);
+        
+        // Display cost if usage data is available
+        const responseData = data as Partial<ChatCompletion>;
+        if (responseData.usage) {
+          const { prompt_tokens, completion_tokens } = responseData.usage;
+          const cost = calculateCost(prompt_tokens, completion_tokens, selectedModelId);
+          addToast({
+            message: `Request cost: $${cost.toFixed(4)}`,
+            variant: 'info'
+          });
+        }
+        
         // Extract JSON from choices
   const cc = (data as Partial<ChatCompletion>) ?? {};
   const firstChoice = (Array.isArray(cc.choices) && cc.choices.length > 0) ? cc.choices[0] : undefined;
