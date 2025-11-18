@@ -8,6 +8,7 @@ import { useOpenAIClient } from '@/utils/ai/byokClient';
 import type { ChatCompletion } from '@/types/ai';
 import { MAX_AI_ACTIVITIES } from '@/types/ai';
 import useNetworkStatus from '@/hooks/useNetworkStatus';
+import { AVAILABLE_MODELS, DEFAULT_MODEL_ID, getModelById } from '@/constants/openai-models';
 
 export default function AIPlannerPage() {
   const router = useRouter();
@@ -22,6 +23,8 @@ export default function AIPlannerPage() {
   const { callOpenAI } = useOpenAIClient();
   const PROMPT_STORAGE_KEY = 'ai_planner_last_prompt';
   const { online } = useNetworkStatus();
+  // Model selection state
+  const [selectedModelId, setSelectedModelId] = useState<string>(DEFAULT_MODEL_ID);
 
   useEffect(() => {
     // Hydration guard for client-only rendering
@@ -40,6 +43,29 @@ export default function AIPlannerPage() {
       // ignore storage access issues
     }
   }, [ready]);
+
+  // Load model selection from localStorage once client is ready
+  useEffect(() => {
+    if (!ready) return;
+    try {
+      const saved = window.localStorage.getItem('selected_ai_model');
+      if (saved && AVAILABLE_MODELS.some(m => m.id === saved)) {
+        setSelectedModelId(saved);
+      }
+    } catch {
+      // ignore storage access issues, use default
+    }
+  }, [ready]);
+
+  // Handle model selection change
+  const handleModelChange = (modelId: string) => {
+    setSelectedModelId(modelId);
+    try {
+      window.localStorage.setItem('selected_ai_model', modelId);
+    } catch {
+      // ignore storage errors
+    }
+  };
 
   const pickActivityName = (a: { title?: unknown; name?: unknown }, idx: number) => {
     if (typeof a.title === 'string' && a.title.trim()) return a.title;
