@@ -101,48 +101,39 @@ describe('Model Selection Persistence - Property-Based Tests', () => {
     // Generate arbitrary valid model IDs from AVAILABLE_MODELS
     const validModelIdArbitrary = fc.constantFrom(...AVAILABLE_MODELS.map(m => m.id));
 
-    // Run property test with manual cleanup between iterations
-    const testResults: boolean[] = [];
-    
-    for (let i = 0; i < 100; i++) {
-      const modelId = await fc.sample(validModelIdArbitrary, 1)[0];
-      
-      // Clear localStorage before each iteration
-      Object.keys(localStorageMock).forEach(key => delete localStorageMock[key]);
-      (global.localStorage.getItem as jest.Mock).mockClear();
-      (global.localStorage.setItem as jest.Mock).mockClear();
-      
-      // Save the model ID to localStorage (simulating user selection)
-      if (modelId) {
+    await fc.assert(
+      fc.asyncProperty(validModelIdArbitrary, async (modelId) => {
+        // Clear localStorage before each iteration
+        Object.keys(localStorageMock).forEach(key => delete localStorageMock[key]);
+        (global.localStorage.getItem as jest.Mock).mockClear();
+        (global.localStorage.setItem as jest.Mock).mockClear();
+        
+        // Save the model ID to localStorage (simulating user selection)
         localStorageMock['selected_ai_model'] = modelId;
-      }
-      
-      // Render the component (simulating page mount)
-      render(<AIPlannerPage />);
-      
-      // Wait for the component to be ready and load from localStorage
-      await waitFor(() => {
-        const forms = screen.queryAllByRole('form', { name: /ai planning form/i });
-        expect(forms.length).toBeGreaterThan(0);
-      }, { timeout: 3000 });
-      
-      // Wait for localStorage to be read (happens in a separate useEffect after ready)
-      await waitFor(() => {
-        expect(global.localStorage.getItem).toHaveBeenCalledWith('selected_ai_model');
-      }, { timeout: 3000 });
-      
-      // Verify the stored value matches what we saved
-      const storedValue = localStorageMock['selected_ai_model'];
-      expect(storedValue).toBe(modelId);
-      
-      // Clean up DOM after each iteration
-      cleanup();
-      
-      testResults.push(true);
-    }
-    
-    // All 100 iterations should pass
-    expect(testResults.length).toBe(100);
+        
+        // Render the component (simulating page mount)
+        render(<AIPlannerPage />);
+        
+        // Wait for the component to be ready and load from localStorage
+        await waitFor(() => {
+          const forms = screen.queryAllByRole('form', { name: /ai planning form/i });
+          expect(forms.length).toBeGreaterThan(0);
+        }, { timeout: 3000 });
+        
+        // Wait for localStorage to be read (happens in a separate useEffect after ready)
+        await waitFor(() => {
+          expect(global.localStorage.getItem).toHaveBeenCalledWith('selected_ai_model');
+        }, { timeout: 3000 });
+        
+        // Verify the stored value matches what we saved
+        const storedValue = localStorageMock['selected_ai_model'];
+        expect(storedValue).toBe(modelId);
+        
+        // Clean up DOM after each iteration
+        cleanup();
+      }),
+      { numRuns: 100 }
+    );
   });
 
   /**

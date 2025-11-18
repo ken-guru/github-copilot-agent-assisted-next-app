@@ -299,14 +299,7 @@ export default function AIPlannerPage() {
                 ))}
               </Form.Select>
               <Form.Text className="text-body-secondary">
-                Context: {(() => {
-                  const currentModel = getModelById(selectedModelId);
-                  if (currentModel) {
-                    return currentModel.contextWindow.toLocaleString();
-                  }
-                  // Fallback to first model if selected model not found
-                  return AVAILABLE_MODELS[0]?.contextWindow.toLocaleString() || '128000';
-                })()} tokens
+                Context: {(getModelById(selectedModelId) || AVAILABLE_MODELS[0])?.contextWindow.toLocaleString() || '128000'} tokens
               </Form.Text>
             </Form.Group>
             {error && (

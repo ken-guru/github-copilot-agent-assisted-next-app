@@ -232,17 +232,12 @@ describe('Cost Display - Property-Based Tests', () => {
             
             if (costToastCall) {
               const message = costToastCall[0].message;
-              // Extract the cost value from "Request cost: X.XXXX"
-              const costMatch = message.match(/request cost:\s*(\d+\.\d+)/i);
+              // Extract the cost value from "Request cost: $X.XXXX" - must have exactly 4 decimal places
+              const costMatch = message.match(/request cost:\s*\$(\d+\.\d{4})/i);
               
-              if (costMatch) {
-                const costString = costMatch[1];
-                const decimalPart = costString.split('.')[1];
-                
-                // Verify exactly 4 decimal places
-                expect(decimalPart).toBeDefined();
-                expect(decimalPart?.length).toBe(4);
-              }
+              // Verify the cost matches the pattern with exactly 4 decimal places
+              expect(costMatch).toBeDefined();
+              expect(costMatch).not.toBeNull();
             }
           }, { timeout: 3000 });
           
@@ -457,13 +452,10 @@ describe('Cost Display - Property-Based Tests', () => {
         
         if (costToastCall) {
           const message = costToastCall[0].message;
-          const costMatch = message.match(/request cost:\s*(\d+\.\d+)/i);
-          
-          if (costMatch) {
-            const costString = costMatch[1];
-            const decimalPart = costString.split('.')[1];
-            expect(decimalPart?.length).toBe(4);
-          }
+          // Verify the cost matches the pattern with exactly 4 decimal places
+          const costMatch = message.match(/request cost:\s*\$(\d+\.\d{4})/i);
+          expect(costMatch).toBeDefined();
+          expect(costMatch).not.toBeNull();
         }
       }, { timeout: 3000 });
       
