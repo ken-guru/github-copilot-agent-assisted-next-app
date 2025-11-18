@@ -8,6 +8,7 @@ import { useOpenAIClient } from '@/utils/ai/byokClient';
 import type { ChatCompletion } from '@/types/ai';
 import { MAX_AI_ACTIVITIES } from '@/types/ai';
 import useNetworkStatus from '@/hooks/useNetworkStatus';
+import { AVAILABLE_MODELS, DEFAULT_MODEL_ID, getModelById } from '@/constants/openai-models';
 
 export default function AIPlannerPage() {
   const router = useRouter();
@@ -22,6 +23,8 @@ export default function AIPlannerPage() {
   const { callOpenAI } = useOpenAIClient();
   const PROMPT_STORAGE_KEY = 'ai_planner_last_prompt';
   const { online } = useNetworkStatus();
+  // Model selection state
+  const [selectedModelId, setSelectedModelId] = useState<string>(DEFAULT_MODEL_ID);
 
   useEffect(() => {
     // Hydration guard for client-only rendering
@@ -41,10 +44,54 @@ export default function AIPlannerPage() {
     }
   }, [ready]);
 
+  // Load model selection from localStorage once client is ready
+  useEffect(() => {
+    if (!ready) return;
+    try {
+      const saved = window.localStorage.getItem('selected_ai_model');
+      if (saved && AVAILABLE_MODELS.some(m => m.id === saved)) {
+        setSelectedModelId(saved);
+      }
+    } catch {
+      // ignore storage access issues, use default
+    }
+  }, [ready]);
+
+  // Handle model selection change
+  const handleModelChange = (modelId: string) => {
+    setSelectedModelId(modelId);
+    try {
+      window.localStorage.setItem('selected_ai_model', modelId);
+    } catch {
+      // ignore storage errors
+    }
+  };
+
   const pickActivityName = (a: { title?: unknown; name?: unknown }, idx: number) => {
     if (typeof a.title === 'string' && a.title.trim()) return a.title;
     if (typeof a.name === 'string' && a.name.trim()) return a.name;
     return `Activity ${idx + 1}`;
+  };
+
+  /**
+   * Calculate the cost of an API request based on token usage and model pricing
+   * @param promptTokens - Number of input tokens used
+   * @param completionTokens - Number of output tokens generated
+   * @param modelId - The ID of the model used
+   * @returns The calculated cost in USD, or 0 if model not found
+   */
+  const calculateCost = (
+    promptTokens: number,
+    completionTokens: number,
+    modelId: string
+  ): number => {
+    const model = getModelById(modelId);
+    if (!model) return 0;
+    
+    const inputCost = (promptTokens / 1000) * model.costPer1kTokens.input;
+    const outputCost = (completionTokens / 1000) * model.costPer1kTokens.output;
+    
+    return inputCost + outputCost;
   };
 
   const handlePlan = async (e: React.FormEvent) => {
@@ -67,7 +114,7 @@ export default function AIPlannerPage() {
         // Client-direct call to OpenAI with BYOK
         // Minimal example: responses API, text generation with JSON instruction
         const payload = {
-          model: 'gpt-4o-mini',
+          model: selectedModelId,
           messages: [
             { role: 'system', content: 'You are planning study/work sessions.' },
             { role: 'user', content: `${prompt}\n\nReturn strict JSON: {"activities": [{"title": string, "description": string, "duration": number}]}` }
@@ -75,6 +122,18 @@ export default function AIPlannerPage() {
           response_format: { type: 'json_object' }
         };
         data = await callOpenAI('/v1/chat/completions', payload);
+        
+        // Display cost if usage data is available
+        const responseData = data as Partial<ChatCompletion>;
+        if (responseData.usage) {
+          const { prompt_tokens, completion_tokens } = responseData.usage;
+          const cost = calculateCost(prompt_tokens, completion_tokens, selectedModelId);
+          addToast({
+            message: `Request cost: $${cost.toFixed(4)}`,
+            variant: 'info'
+          });
+        }
+        
         // Extract JSON from choices
   const cc = (data as Partial<ChatCompletion>) ?? {};
   const firstChoice = (Array.isArray(cc.choices) && cc.choices.length > 0) ? cc.choices[0] : undefined;
@@ -225,6 +284,24 @@ export default function AIPlannerPage() {
             <Alert variant="info" className="mb-3">
               Mode: Client-only (BYOK). Your key stays on this device.
             </Alert>
+            <Form.Group className="mb-3">
+              <Form.Label htmlFor="modelSelect">AI Model</Form.Label>
+              <Form.Select
+                id="modelSelect"
+                value={selectedModelId}
+                onChange={(e) => handleModelChange(e.target.value)}
+                aria-label="Select AI model"
+              >
+                {AVAILABLE_MODELS.map(model => (
+                  <option key={model.id} value={model.id}>
+                    {model.name} - ${model.costPer1kTokens.input}/1K tokens - {model.description}
+                  </option>
+                ))}
+              </Form.Select>
+              <Form.Text className="text-body-secondary">
+                Context: {(getModelById(selectedModelId) || AVAILABLE_MODELS[0])?.contextWindow.toLocaleString() || '128000'} tokens
+              </Form.Text>
+            </Form.Group>
             {error && (
               <Alert variant="danger" role="alert">{error}</Alert>
             )}
