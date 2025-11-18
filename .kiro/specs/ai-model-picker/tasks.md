@@ -35,7 +35,7 @@
   - Test localStorage unavailable doesn't crash (graceful degradation)
   - _Requirements: 1.2, 1.4, 1.5_
 
-- [ ] 3. Add model picker UI component
+- [x] 3. Add model picker UI component
   - Add Form.Group after API key confirmation message (Alert variant="info"), before prompt textarea
   - Add Form.Label with htmlFor="modelSelect" and text "AI Model"
   - Add Form.Select with id, value, onChange, and aria-label
@@ -45,20 +45,20 @@
   - Use currentModel = getModelById(selectedModelId) || AVAILABLE_MODELS[0]
   - _Requirements: 1.1, 2.1, 2.2, 2.3, 2.4_
 
-- [ ]* 3.1 Write accessibility tests for model picker
+- [x] 3.1 Write accessibility tests for model picker
   - Test keyboard navigation through dropdown
   - Test Form.Label properly associated with Form.Select
   - Test ARIA labels present and descriptive
   - Test screen reader announces model selection changes
   - _Requirements: 1.1_
 
-- [ ] 4. Replace hardcoded model with selected model in API request
+- [x] 4. Replace hardcoded model with selected model in API request
   - In handlePlan function, locate the payload object (around line 90)
   - Replace hardcoded 'gpt-4o-mini' with selectedModelId variable
   - Verify payload structure: { model: selectedModelId, messages: [...], response_format: {...} }
   - _Requirements: 1.3_
 
-- [ ]* 4.1 Write property test for API payload correctness
+- [x] 4.1 Write property test for API payload correctness
   - **Property 2: Selected model used in API requests**
   - **Validates: Requirements 1.3**
   - Generate random model selections from AVAILABLE_MODELS
@@ -67,10 +67,10 @@
   - Verify payload.model matches selected model (not hardcoded 'gpt-4o-mini')
   - _Requirements: 1.3_
 
-- [ ] 5. Checkpoint - Ensure all tests pass
+- [x] 5. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Add cost calculation function
+- [x] 6. Add cost calculation function
   - Create calculateCost function accepting promptTokens, completionTokens, modelId
   - Get model using getModelById, return 0 if not found
   - Calculate: (promptTokens / 1000 × input_price) + (completionTokens / 1000 × output_price)
@@ -78,7 +78,7 @@
   - Add function inside AIPlannerPage component or as a separate utility
   - _Requirements: 3.2_
 
-- [ ]* 6.1 Write property test for cost calculation
+- [x] 6.1 Write property test for cost calculation
   - **Property 4: Cost calculation accuracy**
   - **Validates: Requirements 3.2**
   - Generate random token counts (0-10000)

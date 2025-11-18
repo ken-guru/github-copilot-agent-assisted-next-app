@@ -73,6 +73,27 @@ export default function AIPlannerPage() {
     return `Activity ${idx + 1}`;
   };
 
+  /**
+   * Calculate the cost of an API request based on token usage and model pricing
+   * @param promptTokens - Number of input tokens used
+   * @param completionTokens - Number of output tokens generated
+   * @param modelId - The ID of the model used
+   * @returns The calculated cost in USD, or 0 if model not found
+   */
+  const calculateCost = (
+    promptTokens: number,
+    completionTokens: number,
+    modelId: string
+  ): number => {
+    const model = getModelById(modelId);
+    if (!model) return 0;
+    
+    const inputCost = (promptTokens / 1000) * model.costPer1kTokens.input;
+    const outputCost = (completionTokens / 1000) * model.costPer1kTokens.output;
+    
+    return inputCost + outputCost;
+  };
+
   const handlePlan = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -93,7 +114,7 @@ export default function AIPlannerPage() {
         // Client-direct call to OpenAI with BYOK
         // Minimal example: responses API, text generation with JSON instruction
         const payload = {
-          model: 'gpt-4o-mini',
+          model: selectedModelId,
           messages: [
             { role: 'system', content: 'You are planning study/work sessions.' },
             { role: 'user', content: `${prompt}\n\nReturn strict JSON: {"activities": [{"title": string, "description": string, "duration": number}]}` }
@@ -251,6 +272,31 @@ export default function AIPlannerPage() {
             <Alert variant="info" className="mb-3">
               Mode: Client-only (BYOK). Your key stays on this device.
             </Alert>
+            <Form.Group className="mb-3">
+              <Form.Label htmlFor="modelSelect">AI Model</Form.Label>
+              <Form.Select
+                id="modelSelect"
+                value={selectedModelId}
+                onChange={(e) => handleModelChange(e.target.value)}
+                aria-label="Select AI model"
+              >
+                {AVAILABLE_MODELS.map(model => (
+                  <option key={model.id} value={model.id}>
+                    {model.name} - ${model.costPer1kTokens.input}/1K tokens - {model.description}
+                  </option>
+                ))}
+              </Form.Select>
+              <Form.Text className="text-body-secondary">
+                Context: {(() => {
+                  const currentModel = getModelById(selectedModelId);
+                  if (currentModel) {
+                    return currentModel.contextWindow.toLocaleString();
+                  }
+                  // Fallback to first model if selected model not found
+                  return AVAILABLE_MODELS[0]?.contextWindow.toLocaleString() || '128000';
+                })()} tokens
+              </Form.Text>
+            </Form.Group>
             {error && (
               <Alert variant="danger" role="alert">{error}</Alert>
             )}
