@@ -189,6 +189,8 @@ describe('AI Model Picker - Integration Tests', () => {
 
     // Select a specific model
     const testModel = AVAILABLE_MODELS[1]; // Use second model
+    if (!testModel) throw new Error('Test model not found');
+    
     const modelSelect = screen.getByLabelText(/select ai model/i);
     fireEvent.change(modelSelect, { target: { value: testModel.id } });
 
@@ -227,6 +229,8 @@ describe('AI Model Picker - Integration Tests', () => {
   it('should restore previously selected model after page reload', async () => {
     // First render: Select a model
     const selectedModel = AVAILABLE_MODELS[2]; // Use third model
+    if (!selectedModel) throw new Error('Selected model not found');
+    
     localStorageMock['selected_ai_model'] = selectedModel.id;
 
     // Render the page (simulating page load)

@@ -113,7 +113,9 @@ describe('Model Selection Persistence - Property-Based Tests', () => {
       (global.localStorage.setItem as jest.Mock).mockClear();
       
       // Save the model ID to localStorage (simulating user selection)
-      localStorageMock['selected_ai_model'] = modelId;
+      if (modelId) {
+        localStorageMock['selected_ai_model'] = modelId;
+      }
       
       // Render the component (simulating page mount)
       render(<AIPlannerPage />);

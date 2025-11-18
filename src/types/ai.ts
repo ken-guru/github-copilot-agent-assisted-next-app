@@ -20,6 +20,13 @@ export interface ChatChoice {
   message?: ChatMessage;
 }
 
+export interface ChatCompletionUsage {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+}
+
 export interface ChatCompletion {
   choices?: ChatChoice[];
+  usage?: ChatCompletionUsage;
 }

@@ -261,6 +261,8 @@ describe('Model Picker Accessibility Tests', () => {
       
       // Change the selection
       const secondModel = AVAILABLE_MODELS[1];
+      if (!secondModel) throw new Error('Second model not found');
+      
       fireEvent.change(modelSelect, { target: { value: secondModel.id } });
       
       // Verify the value changed
@@ -324,6 +326,8 @@ describe('Model Picker Accessibility Tests', () => {
       
       // Change to a different model
       const secondModel = AVAILABLE_MODELS[1];
+      if (!secondModel) throw new Error('Second model not found');
+      
       fireEvent.change(modelSelect, { target: { value: secondModel.id } });
       
       // Wait for the context to update
@@ -382,8 +386,11 @@ describe('Model Picker Accessibility Tests', () => {
       expect(modelSelect).not.toHaveAttribute('readonly');
       
       // Change event should work
-      fireEvent.change(modelSelect, { target: { value: AVAILABLE_MODELS[1].id } });
-      expect(modelSelect.value).toBe(AVAILABLE_MODELS[1].id);
+      const secondModel = AVAILABLE_MODELS[1];
+      if (!secondModel) throw new Error('Second model not found');
+      
+      fireEvent.change(modelSelect, { target: { value: secondModel.id } });
+      expect(modelSelect.value).toBe(secondModel.id);
     });
 
     it('should be keyboard accessible', async () => {

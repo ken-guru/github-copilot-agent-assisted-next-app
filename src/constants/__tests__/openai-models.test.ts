@@ -87,6 +87,8 @@ describe('OpenAI Models Configuration', () => {
     it('should be case-sensitive', () => {
       // Assuming model IDs are lowercase
       const firstModel = AVAILABLE_MODELS[0];
+      if (!firstModel) throw new Error('First model not found');
+      
       const uppercaseId = firstModel.id.toUpperCase();
       
       if (uppercaseId !== firstModel.id) {
@@ -109,6 +111,8 @@ describe('OpenAI Models Configuration', () => {
     it('should maintain context window integrity across lookups', () => {
       // Multiple lookups of the same model should return the same context window
       const firstModel = AVAILABLE_MODELS[0];
+      if (!firstModel) throw new Error('First model not found');
+      
       const lookup1 = getModelById(firstModel.id);
       const lookup2 = getModelById(firstModel.id);
       
