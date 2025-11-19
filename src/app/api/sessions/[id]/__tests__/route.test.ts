@@ -11,7 +11,7 @@ jest.mock('next/server', () => ({
 describe('GET /api/sessions/[id]', () => {
   it('returns 400 for invalid id', async () => {
     const { GET } = await import('../route');
-    const res = await GET({} as Request, { params: { id: '00000000-0000-0000-0000-000000000000' } });
+    const res = await GET({} as Request, { params: Promise.resolve({ id: '00000000-0000-0000-0000-000000000000' }) });
     expect(res.status).toBe(400);
   });
 
@@ -28,7 +28,7 @@ describe('GET /api/sessions/[id]', () => {
     await fs.writeFile(filePath, JSON.stringify(stored, null, 2), 'utf-8');
 
   const { GET } = await import('../route');
-    const res = await GET({} as Request, { params: { id } });
+    const res = await GET({} as Request, { params: Promise.resolve({ id }) });
     const json = await res.json();
     expect(res.status).toBe(200);
     expect(json.sessionData).toBeDefined();
@@ -46,7 +46,7 @@ describe('GET /api/sessions/[id]', () => {
     await fs.writeFile(filePath, JSON.stringify(stored, null, 2), 'utf-8');
 
   const { GET } = await import('../route');
-    const res = await GET({} as Request, { params: { id } });
+    const res = await GET({} as Request, { params: Promise.resolve({ id }) });
     expect(res.status).toBe(410);
   });
 });

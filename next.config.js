@@ -2,30 +2,17 @@ const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // reactStrictMode is true by default in Next.js 16+
   
-  // App Router is enabled by default in Next.js 15+
-  experimental: {
-    // Add any experimental features here if needed
-  },
-  
-  // Add path aliases that match tsconfig.json
-  webpack: (config, { isServer }) => {
-    // Client-side module fallbacks
-    if (!isServer) {
-      config.resolve.fallback = {
-        fs: false,
-        path: false,
-      };
-    }
-    
-    // Add aliases that match tsconfig.json (avoid absolute paths for security)
-    config.resolve.alias = {
-      ...config.resolve.alias,
+  // Turbopack is the default bundler in Next.js 16+
+  // Migration from webpack config
+  turbopack: {
+    resolveAlias: {
+      // Add aliases that match tsconfig.json (avoid absolute paths for security)
       '@': path.resolve(__dirname, 'src'),
-    };
-    
-    return config;
+    },
+    // Client-side module fallbacks for Node.js built-ins
+    // These are handled automatically by Turbopack, no explicit config needed
   },
   
   // Ensure proper handling of PWA assets and security
