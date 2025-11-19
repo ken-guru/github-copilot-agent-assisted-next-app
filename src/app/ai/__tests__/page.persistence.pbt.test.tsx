@@ -101,7 +101,7 @@ describe('Model Selection Persistence - Property-Based Tests', () => {
     const validModelIdArbitrary = fc.constantFrom(...AVAILABLE_MODELS.map(m => m.id));
 
     await fc.assert(
-      fc.asyncProperty(validModelIdArbitrary, async () => {
+      fc.asyncProperty(validModelIdArbitrary, async (modelId) => {
         // Clear localStorage before each iteration
         Object.keys(localStorageMock).forEach(key => delete localStorageMock[key]);
         (global.localStorage.getItem as jest.Mock).mockClear();
