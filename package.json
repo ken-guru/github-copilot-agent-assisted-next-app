@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "node scripts/update-service-worker-version.js && next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 0",
     "test": "jest",
     "test:watch": "jest --watch",
     "cypress": "cypress open",
@@ -30,7 +30,6 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^30.0.0",

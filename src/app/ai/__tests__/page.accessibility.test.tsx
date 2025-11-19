@@ -127,9 +127,6 @@ describe('Model Picker Accessibility Tests', () => {
       expect(modelSelect.tagName).toBe('SELECT');
       expect(modelSelect).not.toHaveAttribute('disabled');
       
-      // Get the initial value
-      const initialValue = modelSelect.value;
-      
       // Navigate to a different option using arrow keys
       fireEvent.keyDown(modelSelect, { key: 'ArrowDown', code: 'ArrowDown' });
       
@@ -256,9 +253,6 @@ describe('Model Picker Accessibility Tests', () => {
       
       const modelSelect = screen.getByLabelText(/ai model/i) as HTMLSelectElement;
       
-      // Get initial value
-      const initialValue = modelSelect.value;
-      
       // Change the selection
       const secondModel = AVAILABLE_MODELS[1];
       if (!secondModel) throw new Error('Second model not found');
@@ -319,10 +313,6 @@ describe('Model Picker Accessibility Tests', () => {
       });
       
       const modelSelect = screen.getByLabelText(/ai model/i) as HTMLSelectElement;
-      const contextText = screen.getByText(/context:/i);
-      
-      // Get initial context window
-      const initialContext = contextText.textContent;
       
       // Change to a different model
       const secondModel = AVAILABLE_MODELS[1];

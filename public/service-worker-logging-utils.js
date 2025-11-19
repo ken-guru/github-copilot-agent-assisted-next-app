@@ -36,7 +36,7 @@ function isDevelopment() {
     
     // Default to production
     return false;
-  } catch (e) {
+  } catch {
     // If any error occurs while checking, assume production to be safe
     return false;
   }
@@ -56,7 +56,7 @@ function log(message, level = 'log') {
     if (isDevelopment() || isImportant) {
       console[level]('[Service Worker] ' + message);
     }
-  } catch (e) {
+  } catch {
     // Fallback if something goes wrong with logging
     if (level === 'error' || level === 'warn') {
       console[level]('[Service Worker] ' + message);

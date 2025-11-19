@@ -6,10 +6,9 @@
 
 import React from 'react';
 import { render, screen, waitFor, cleanup } from '@testing-library/react';
-import { act } from 'react';
 import * as fc from 'fast-check';
 import AIPlannerPage from '../page';
-import { AVAILABLE_MODELS, DEFAULT_MODEL_ID } from '@/constants/openai-models';
+import { AVAILABLE_MODELS } from '@/constants/openai-models';
 
 // Mock dependencies
 jest.mock('next/navigation', () => ({
@@ -102,7 +101,7 @@ describe('Model Selection Persistence - Property-Based Tests', () => {
     const validModelIdArbitrary = fc.constantFrom(...AVAILABLE_MODELS.map(m => m.id));
 
     await fc.assert(
-      fc.asyncProperty(validModelIdArbitrary, async (modelId) => {
+      fc.asyncProperty(validModelIdArbitrary, async () => {
         // Clear localStorage before each iteration
         Object.keys(localStorageMock).forEach(key => delete localStorageMock[key]);
         (global.localStorage.getItem as jest.Mock).mockClear();
@@ -236,7 +235,7 @@ describe('Model Selection Persistence - Property-Based Tests', () => {
     const validModelIdArbitrary = fc.constantFrom(...AVAILABLE_MODELS.map(m => m.id));
 
     await fc.assert(
-      fc.asyncProperty(validModelIdArbitrary, async (modelId) => {
+      fc.asyncProperty(validModelIdArbitrary, async () => {
         // Clear and reset mocks
         Object.keys(localStorageMock).forEach(key => delete localStorageMock[key]);
         (global.localStorage.setItem as jest.Mock).mockClear();

@@ -4,7 +4,7 @@ try {
   // extend-expect adds toHaveNoViolations matcher
   // require is used so this file still runs even if jest-axe is not installed in some environments
   require('jest-axe/extend-expect');
-} catch (e) {
+} catch {
   // ignore when package not installed in certain environments
 }
 

@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 // Import the type definitions
-/// <reference path="./index.d.ts" />
+import './index.d.ts';
 
 /**
  * Sets the navigator.onLine property to true and triggers an online event
@@ -39,7 +39,7 @@ Cypress.Commands.add('waitForServiceWorkerRegistration', (timeoutMs = 10000) => 
   const startTime = Date.now();
   
   cy.window().then((win) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // If service worker already controlling the page
       if (win.navigator.serviceWorker.controller) {
         cy.log('Service worker already controlling the page');

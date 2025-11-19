@@ -4,7 +4,7 @@
 let DEV_BYPASS = false;
 try {
   DEV_BYPASS = Boolean(self && self.location && (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1'));
-} catch (_) {
+} catch {
   // Ignore errors accessing self in some environments
 }
 
