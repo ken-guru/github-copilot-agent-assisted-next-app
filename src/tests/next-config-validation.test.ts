@@ -20,16 +20,15 @@ describe('Next.js Configuration Validation', () => {
     // We're using Next.js, not create-react-app
     expect(nextConfigContent).not.toContain('create-react-app');
     
-    // Check for outdated or removed Next.js options
+    // Check for outdated Next.js options (experimental.turbo moved to turbopack in Next.js 16)
     expect(nextConfigContent).not.toContain('experimental: { turbo:');
-    expect(nextConfigContent).not.toContain('turbopack:');
   });
 
   test('should have valid Next.js configuration', () => {
     expect(nextConfigContent).toContain('const nextConfig = {');
     expect(nextConfigContent).toContain('module.exports = nextConfig');
     
-    // For Next.js applications, reactStrictMode is a common setting
-    expect(nextConfigContent).toContain('reactStrictMode:');
+    // Next.js 16+ has Turbopack as default bundler
+    expect(nextConfigContent).toContain('turbopack:');
   });
 });

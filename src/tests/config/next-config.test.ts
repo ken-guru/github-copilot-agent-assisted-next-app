@@ -21,16 +21,18 @@ describe('Next.js Config', () => {
         return;
       }
       
-      // Only run these if turbopack is configured
-      expect(nextConfig.turbopack).toHaveProperty('rules');
+      // Turbopack config should have resolveAlias for path mappings
       expect(nextConfig.turbopack).toHaveProperty('resolveAlias');
       
-      // Check if rules exists, but don't require specific patterns
-      // This makes the test more flexible to configuration changes
+      // Verify resolveAlias contains our @ alias
+      if (nextConfig.turbopack.resolveAlias) {
+        expect(nextConfig.turbopack.resolveAlias).toHaveProperty('@');
+        console.info('Turbopack resolveAlias configured correctly');
+      }
+      
+      // Rules are optional in Turbopack, check if they exist
       if (nextConfig.turbopack.rules) {
-        // Just verify that rules is an object with properties
         expect(typeof nextConfig.turbopack.rules).toBe('object');
-        // Document the current rules state for informational purposes
         console.info(`Turbopack rules keys: ${Object.keys(nextConfig.turbopack.rules).join(', ') || 'no keys'}`);
       }
     });
