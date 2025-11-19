@@ -2,12 +2,7 @@ const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  
-  // App Router is enabled by default in Next.js 15+
-  experimental: {
-    // Add any experimental features here if needed
-  },
+  // reactStrictMode is true by default in Next.js 16+
   
   // Add path aliases that match tsconfig.json
   webpack: (config, { isServer }) => {

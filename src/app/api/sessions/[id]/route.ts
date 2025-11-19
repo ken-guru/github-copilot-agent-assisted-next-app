@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import { getSession } from '../../../../utils/sessionSharing/storage';
 import { isValidUUID } from '../../../../utils/sessionSharing/utils';
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = params?.id;
+    const { id } = await params;
     if (!id || !isValidUUID(id)) {
       return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
     }
