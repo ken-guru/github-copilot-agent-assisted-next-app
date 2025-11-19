@@ -57,6 +57,21 @@ mcp_playwright_browser_snapshot()
 
 These tools enable systematic issue resolution and enhanced AI assistance. For complete usage guides, see [GitHub Issue Resolution Workflow](./docs/workflows/github-issue-resolution.md) and [Memory Log Workflow](./docs/dev-guides/memory-log-workflow.md).
 
+### Docker MCP Gateway for MCP Tools
+
+We now run our MCP tools through the Docker MCP Gateway so that each service executes inside an isolated container (no direct access to host files, secrets, or unrestricted network). The approved toolset available through the gateway is:
+
+- **Context7** – knowledge and library documentation during coding sessions.
+- **GitHub Official** – issue reviews, PR automation, and repository data.
+- **Microsoft Learn** – official Azure/Microsoft documentation snippets and examples.
+- **Playwright** – browser automation for UI verification.
+
+The Gateway runs automatically whenever you enable the MCP Toolkit in Docker Desktop, but you can also start it manually with `docker mcp gateway run` (see the official [Docker MCP Gateway guide](https://docs.docker.com/ai/mcp-catalog-and-toolkit/mcp-gateway/) for CLI flags, security defaults, and installation steps). Use the [Docker MCP Toolkit documentation](https://docs.docker.com/ai/mcp-catalog-and-toolkit/toolkit/) to enable the Toolkit UI, browse the MCP Catalog, and authorize each server so that these four tools appear in your Visual Studio Code agent environment.
+
+The CLI command lives in `.vscode/mcp.json`, which applies the security-minded flags we mandate (`--verify-signatures`, `--log-calls`, `--block-network`, `--block-secrets`, `--cpus 1`, `--memory 1Gb`). Keep that file in sync if you customize the gateway startup so the rest of the team can replicate the safe defaults.
+
+Step-by-step setup details are captured in [docs/workflows/docker-mcp-gateway.md](./docs/workflows/docker-mcp-gateway.md). Refer to that guide whenever the gateway needs to be reconfigured or when onboarding a new developer.
+
 ### Change Management Approach
 ```markdown
 The project uses a documentation system for tracking changes:
