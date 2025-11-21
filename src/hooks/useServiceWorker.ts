@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 // Update check interval (30 minutes)
 const UPDATE_CHECK_INTERVAL = 30 * 60 * 1000;
 
-type ServiceWorkerStatus = 
+type ServiceWorkerStatus =
   | 'pending'
   | 'registering'
   | 'registered'
@@ -33,6 +33,7 @@ export function useServiceWorker() {
     // Check if service workers are supported
     if (!('serviceWorker' in navigator)) {
       console.log('Service workers are not supported by this browser');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus('unsupported');
       return;
     }
@@ -43,13 +44,13 @@ export function useServiceWorker() {
     const registerServiceWorker = async () => {
       try {
         setStatus('registering');
-        
+
         // Check if service worker is already registered
         const existingRegistration = await navigator.serviceWorker.getRegistration();
-        
+
         const swUrl = '/service-worker.js';
         let registration: ServiceWorkerRegistration;
-        
+
         if (existingRegistration) {
           // Update existing registration instead of unregistering
           console.log('Updating existing service worker registration');
@@ -60,15 +61,15 @@ export function useServiceWorker() {
           console.log('Registering new service worker');
           registration = await navigator.serviceWorker.register(swUrl);
         }
-        
+
         console.log('Service Worker registered with scope:', registration.scope);
         setRegistration(registration);
-        
+
         // Handle service worker updates without forcing page reload
         if (registration.waiting) {
           console.log('New service worker is waiting, will activate on next visit');
         }
-        
+
         if (registration.installing) {
           registration.installing.addEventListener('statechange', (event) => {
             const worker = event.target as ServiceWorker;
@@ -77,7 +78,7 @@ export function useServiceWorker() {
             }
           });
         }
-        
+
         setStatus('registered');
 
         // Listen for service worker messages
@@ -116,10 +117,10 @@ export function useServiceWorker() {
     };
   }, []);
 
-  return { 
-    status, 
-    errorMessage, 
-    updateCache, 
-    clearOldCaches 
+  return {
+    status,
+    errorMessage,
+    updateCache,
+    clearOldCaches
   };
 }

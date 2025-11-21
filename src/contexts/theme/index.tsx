@@ -11,14 +11,35 @@ interface ThemeContextProps {
 
 const ThemeContext = createContext<ThemeContextProps>({
   theme: 'light',
-  toggleTheme: () => {},
+  toggleTheme: () => { },
 });
 
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>('light');
-  
+
+  // Helper function to apply theme consistently across the app
+  const applyThemeToDOM = (themeValue: Theme) => {
+    const root = document.documentElement;
+    const currentTheme = root.getAttribute('data-theme');
+
+    // Only update if the theme is actually changing
+    if (themeValue !== currentTheme) {
+      if (themeValue === 'dark') {
+        root.classList.add('dark-mode');
+        root.classList.add('dark');
+        root.classList.remove('light-mode');
+        root.setAttribute('data-theme', 'dark');
+      } else {
+        root.classList.add('light-mode');
+        root.classList.remove('dark-mode');
+        root.classList.remove('dark');
+        root.setAttribute('data-theme', 'light');
+      }
+    }
+  };
+
   // Initialize theme from localStorage on mount
   useEffect(() => {
     // Add a slight delay to avoid hydration mismatch
@@ -27,7 +48,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Check what's already been applied by the inline script or ThemeToggle
       const currentTheme = document.documentElement.getAttribute('data-theme') as Theme;
       const savedTheme = localStorage.getItem('theme') as Theme;
-      
+
       if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
         setTheme(savedTheme);
         // Only apply if different from what's already set
@@ -45,7 +66,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
       }
     }, 50); // Slightly longer delay to let ThemeToggle initialize first
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -72,11 +93,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Set up listeners
     window.addEventListener('storage', handleStorageChange);
-    
+
     // Skip MutationObserver in test environment to avoid React act() warnings
     let observer: MutationObserver | null = null;
     const isTestEnvironment = process.env.NODE_ENV === 'test';
-    
+
     if (!isTestEnvironment) {
       observer = new MutationObserver(handleDOMThemeChange);
       observer.observe(document.documentElement, {
@@ -92,27 +113,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     };
   }, [theme]);
-  
+
   // Helper function to apply theme consistently across the app
-  const applyThemeToDOM = (themeValue: Theme) => {
-    const root = document.documentElement;
-    const currentTheme = root.getAttribute('data-theme');
-    
-    // Only update if the theme is actually changing
-    if (themeValue !== currentTheme) {
-      if (themeValue === 'dark') {
-        root.classList.add('dark-mode');
-        root.classList.add('dark');
-        root.classList.remove('light-mode');
-        root.setAttribute('data-theme', 'dark');
-      } else {
-        root.classList.add('light-mode');
-        root.classList.remove('dark-mode');
-        root.classList.remove('dark');
-        root.setAttribute('data-theme', 'light');
-      }
-    }
-  };
+
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';

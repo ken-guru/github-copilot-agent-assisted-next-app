@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import styles from './OfflineIndicator.module.css';
+import { useIsClient } from '@/hooks/useIsClient';
 
 /**
  * Props for the OfflineIndicator component
@@ -8,25 +9,20 @@ import styles from './OfflineIndicator.module.css';
  * for future extensibility and consistency
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface OfflineIndicatorProps {}
+export interface OfflineIndicatorProps { }
 
 /**
  * Component that displays an offline indicator when the user loses network connectivity
  */
-export function OfflineIndicator({}: OfflineIndicatorProps): React.ReactElement | null {
+export function OfflineIndicator({ }: OfflineIndicatorProps): React.ReactElement | null {
   const isOnline = useOnlineStatus();
-  const [mounted, setMounted] = useState(false);
-
-  // Handle SSR
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useIsClient();
 
   // Don't render anything if not mounted (prevents hydration mismatch)
   if (!mounted) {
     return null;
   }
-  
+
   // Don't render anything if online
   if (isOnline) {
     return null;

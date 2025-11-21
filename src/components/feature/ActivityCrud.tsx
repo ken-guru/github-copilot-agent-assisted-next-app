@@ -44,6 +44,7 @@ const ActivityCrud: React.FC = () => {
   // Load activities from localStorage on mount
   useEffect(() => {
     const loadedActivities = getActivities().filter(a => a.isActive);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActivities(loadedActivities);
   }, []);
 
@@ -102,9 +103,9 @@ const ActivityCrud: React.FC = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-  // Revoke object URL after a tick to ensure Safari completes download
-  const urlToRevoke = exportUrl;
-  setTimeout(() => safeRevokeUrl(urlToRevoke), 0);
+      // Revoke object URL after a tick to ensure Safari completes download
+      const urlToRevoke = exportUrl;
+      setTimeout(() => safeRevokeUrl(urlToRevoke), 0);
       setExportUrl(null);
       setShowExport(false);
     }
@@ -183,7 +184,7 @@ const ActivityCrud: React.FC = () => {
 
   // Ensure we clean up any generated object URL when the modal is closed
   const handleCloseExport = () => {
-  safeRevokeUrl(exportUrl);
+    safeRevokeUrl(exportUrl);
     setExportUrl(null);
     setShowExport(false);
   };
@@ -215,11 +216,11 @@ const ActivityCrud: React.FC = () => {
       return;
     }
     try {
-  const text = await importFile.text();
-  const imported = JSON.parse(text);
+      const text = await importFile.text();
+      const imported = JSON.parse(text);
 
-  // Centralized extraction of activities from supported import shapes
-  const importArray = extractActivitiesFromImport(imported);
+      // Centralized extraction of activities from supported import shapes
+      const importArray = extractActivitiesFromImport(imported);
 
       // Use the import utility to process and validate individual activity objects
       const processedActivities = importActivities(importArray, {
@@ -281,12 +282,12 @@ const ActivityCrud: React.FC = () => {
       return;
     }
 
-  // Fallback: try to re-parse the file and process
+    // Fallback: try to re-parse the file and process
     if (importFile) {
       importFile.text().then(text => {
         try {
-      const imported = JSON.parse(text);
-      const importArray = extractActivitiesFromImport(imported);
+          const imported = JSON.parse(text);
+          const importArray = extractActivitiesFromImport(imported);
 
           const processedActivities = importActivities(importArray, {
             existingActivities: activities,
@@ -404,12 +405,12 @@ const ActivityCrud: React.FC = () => {
         </Modal.Footer>
       </Modal>
       {/* Export Modal */}
-      <Modal 
-        show={showExport} 
-        onHide={handleCloseExport} 
-        aria-labelledby="export-modal" 
-        aria-describedby="export-modal-desc" 
-        centered 
+      <Modal
+        show={showExport}
+        onHide={handleCloseExport}
+        aria-labelledby="export-modal"
+        aria-describedby="export-modal-desc"
+        centered
         backdrop="static"
         onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === 'Enter' && exportUrl) {
@@ -445,9 +446,9 @@ const ActivityCrud: React.FC = () => {
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button 
-            variant="secondary" 
-            onClick={handleCloseExport} 
+          <Button
+            variant="secondary"
+            onClick={handleCloseExport}
             className="d-flex align-items-center"
             // Close is primary only when there is nothing to download
             autoFocus={!exportUrl}

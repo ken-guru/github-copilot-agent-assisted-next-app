@@ -26,16 +26,11 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
 }, {
   // Global rules for all files
   rules: {
-    "@typescript-eslint/no-unused-vars": ["warn", { 
+    "@typescript-eslint/no-unused-vars": ["warn", {
       "argsIgnorePattern": "^_",
       "varsIgnorePattern": "^_"
     }],
     "@typescript-eslint/no-explicit-any": "warn",
-    // Disable new strict React Hooks rules from v7 until codebase issues are addressed
-    // These are pre-existing issues, not introduced by Next.js 16 upgrade
-    "react-hooks/immutability": "off",
-    "react-hooks/purity": "off",
-    "react-hooks/set-state-in-effect": "off",
   },
 }, {
   ignores: [

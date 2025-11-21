@@ -1,108 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useSyncExternalStore } from 'react';
 
 type Theme = 'light' | 'dark';
 
 // Helper to detect if we're in a test environment
 const isTestEnvironment = () => {
   return typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
-};
-
-/**
- * Custom hook that provides reactive theme detection for React components.
- * 
- * This hook directly listens to DOM changes and localStorage events to detect theme changes,
- * ensuring that components re-render immediately when the theme switches.
- * 
- * Unlike the ThemeProvider context, this hook works independently and guarantees
- * component updates by using React's useState to trigger re-renders.
- * 
- * Fixes Issue #272: Ensures proper hydration by detecting DOM theme synchronously
- * and avoiding hydration mismatches between server and client rendering.
- * 
- * @returns The current theme ('light' | 'dark')
- */
-export const useThemeReactive = (): Theme => {
-  // Initialize with a consistent default to avoid hydration mismatches
-  // During SSR, always start with 'light', then sync with DOM on client
-  const [theme, setTheme] = useState<Theme>('light');
-
-  // Sync theme immediately after mount and set up listeners
-  // Combined useEffect to avoid race conditions and unnecessary re-renders
-  useEffect(() => {
-    // Immediately detect and set the correct theme on mount
-    const detectedTheme = detectCurrentTheme();
-    setTheme(detectedTheme);
-    
-    // Skip if running on server
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    // Update theme state when detected theme changes
-    const updateTheme = () => {
-      const detectedTheme = detectCurrentTheme();
-      setTheme(detectedTheme);
-    };
-
-    // Set up MutationObserver to watch for DOM theme attribute changes
-    // Skip MutationObserver in test environment to avoid React act() warnings
-    let observer: MutationObserver | null = null;
-    
-    if (!isTestEnvironment()) {
-      try {
-        observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (
-              mutation.type === 'attributes' &&
-              (mutation.attributeName === 'data-theme' ||
-               mutation.attributeName === 'data-bs-theme' ||
-               mutation.attributeName === 'class')
-            ) {
-              updateTheme();
-            }
-          });
-        });
-
-        // Observe document.documentElement for theme-related attribute changes
-        if (document.documentElement && typeof document.documentElement.setAttribute === 'function') {
-          observer.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ['data-theme', 'data-bs-theme', 'class'],
-          });
-        }
-      } catch (error) {
-        // Handle MutationObserver errors in test environments
-        console.warn('MutationObserver setup failed:', error);
-      }
-    }
-
-    // Listen for localStorage changes (cross-tab theme synchronization)
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'theme') {
-        updateTheme();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    // Listen for custom theme change events (for programmatic theme changes)
-    const handleThemeChange = () => {
-      updateTheme();
-    };
-
-    window.addEventListener('themeChange', handleThemeChange);
-
-    // Cleanup function
-    return () => {
-      if (observer) {
-        observer.disconnect();
-      }
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('themeChange', handleThemeChange);
-    };
-  }, []); // Empty dependency array: run once after mount only
-
-  return theme;
 };
 
 /**
@@ -156,5 +58,90 @@ function detectCurrentTheme(): Theme {
     return 'light';
   }
 }
+
+function subscribe(callback: () => void) {
+  if (typeof window === 'undefined') {
+    return () => { };
+  }
+
+  // Set up MutationObserver to watch for DOM theme attribute changes
+  // Skip MutationObserver in test environment to avoid React act() warnings
+  let observer: MutationObserver | null = null;
+
+  if (!isTestEnvironment()) {
+    try {
+      observer = new MutationObserver((mutations) => {
+        let shouldUpdate = false;
+        mutations.forEach((mutation) => {
+          if (
+            mutation.type === 'attributes' &&
+            (mutation.attributeName === 'data-theme' ||
+              mutation.attributeName === 'data-bs-theme' ||
+              mutation.attributeName === 'class')
+          ) {
+            shouldUpdate = true;
+          }
+        });
+        if (shouldUpdate) {
+          callback();
+        }
+      });
+
+      // Observe document.documentElement for theme-related attribute changes
+      if (document.documentElement && typeof document.documentElement.setAttribute === 'function') {
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['data-theme', 'data-bs-theme', 'class'],
+        });
+      }
+    } catch (error) {
+      // Handle MutationObserver errors in test environments
+      console.warn('MutationObserver setup failed:', error);
+    }
+  }
+
+  // Listen for localStorage changes (cross-tab theme synchronization)
+  const handleStorageChange = (event: StorageEvent) => {
+    if (event.key === 'theme') {
+      callback();
+    }
+  };
+
+  window.addEventListener('storage', handleStorageChange);
+
+  // Listen for custom theme change events (for programmatic theme changes)
+  const handleThemeChange = () => {
+    callback();
+  };
+
+  window.addEventListener('themeChange', handleThemeChange);
+
+  // Cleanup function
+  return () => {
+    if (observer) {
+      observer.disconnect();
+    }
+    window.removeEventListener('storage', handleStorageChange);
+    window.removeEventListener('themeChange', handleThemeChange);
+  };
+}
+
+/**
+ * Custom hook that provides reactive theme detection for React components.
+ * 
+ * This hook directly listens to DOM changes and localStorage events to detect theme changes,
+ * ensuring that components re-render immediately when the theme switches.
+ * 
+ * Unlike the ThemeProvider context, this hook works independently and guarantees
+ * component updates by using React's useState to trigger re-renders.
+ * 
+ * Fixes Issue #272: Ensures proper hydration by detecting DOM theme synchronously
+ * and avoiding hydration mismatches between server and client rendering.
+ * 
+ * @returns The current theme ('light' | 'dark')
+ */
+export const useThemeReactive = (): Theme => {
+  return useSyncExternalStore(subscribe, detectCurrentTheme, () => 'light');
+};
 
 export default useThemeReactive;

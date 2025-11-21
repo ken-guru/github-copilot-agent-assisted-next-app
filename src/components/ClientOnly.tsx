@@ -1,5 +1,6 @@
 'use client';
-import { useState, useEffect, ReactNode, ReactElement } from 'react';
+import { ReactNode, ReactElement } from 'react';
+import { useIsClient } from '@/hooks/useIsClient';
 
 interface ClientOnlyProps {
   children: ReactNode;
@@ -7,11 +8,7 @@ interface ClientOnlyProps {
 }
 
 export default function ClientOnly({ children, fallback = null }: ClientOnlyProps): ReactElement | null {
-  const [hasMounted, setHasMounted] = useState(false);
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
+  const hasMounted = useIsClient();
 
   if (!hasMounted) {
     return fallback as ReactElement | null;

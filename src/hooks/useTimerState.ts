@@ -7,9 +7,11 @@ interface UseTimerStateProps {
 
 export function useTimerState({ totalDuration, isCompleted = false }: UseTimerStateProps) {
   const [elapsedTime, setElapsedTime] = useState(0);
-  const [isTimeUp, setIsTimeUp] = useState(false);
   const [timerActive, setTimerActive] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Derived state
+  const isTimeUp = elapsedTime >= totalDuration;
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -20,24 +22,15 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
   }, []);
 
   const extendDuration = useCallback(() => {
-    // Clear isTimeUp state when extending duration
-    setIsTimeUp(false);
+    // No-op: isTimeUp will automatically update when totalDuration changes
   }, []);
 
-  // Effect to update isTimeUp when totalDuration changes
   useEffect(() => {
-    if (timerActive && elapsedTime >= totalDuration) {
-      setIsTimeUp(true);
-    } else if (timerActive && elapsedTime < totalDuration) {
-      setIsTimeUp(false);
-    }
-  }, [totalDuration, elapsedTime, timerActive]);
-
-  useEffect(() => {
-    if (isCompleted) {
+    if (isCompleted && timerActive) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       stopTimer();
     }
-  }, [isCompleted, stopTimer]);
+  }, [isCompleted, timerActive, stopTimer]);
 
   useEffect(() => {
     return () => {
@@ -51,22 +44,20 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
     if (!timerActive && !isCompleted) {
       setTimerActive(true);
       const startTime = Date.now() - elapsedTime * 1000;
-      
+
       timerRef.current = setInterval(() => {
         const currentElapsed = Math.floor((Date.now() - startTime) / 1000);
         setElapsedTime(currentElapsed);
-        
-        if (currentElapsed >= totalDuration) {
-          setIsTimeUp(true);
-        }
+
+        // We don't need to check for isTimeUp here to stop the timer
+        // The timer continues even if time is up (overtime)
       }, 1000);
     }
-  }, [timerActive, isCompleted, elapsedTime, totalDuration]);
+  }, [timerActive, isCompleted, elapsedTime]);
 
   const resetTimer = useCallback(() => {
     stopTimer();
     setElapsedTime(0);
-    setIsTimeUp(false);
   }, [stopTimer]);
 
   return {

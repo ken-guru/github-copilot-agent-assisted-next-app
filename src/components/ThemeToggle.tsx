@@ -14,63 +14,14 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
   const [mounted, setMounted] = useState(false);
 
   // Initialize theme from localStorage or system preference
-  useEffect(() => {
-    setMounted(true);
-    
-    // Get the theme that was set by the inline script during page load
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
-      setTheme(savedTheme);
-      // Only apply if it differs from what's already set
-      if (savedTheme !== 'system') {
-        const expectedTheme = savedTheme;
-        if (currentTheme !== expectedTheme) {
-          applyTheme(savedTheme);
-        }
-      } else {
-        // For system theme, apply based on current system preference
-        const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const systemTheme = darkModePreferred ? 'dark' : 'light';
-        if (currentTheme !== systemTheme) {
-          applyTheme('system');
-        }
-      }
-    } else {
-      // No saved theme, use system preference
-      const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const systemTheme = darkModePreferred ? 'dark' : 'light';
-      setTheme('system');
-      if (currentTheme !== systemTheme) {
-        applyTheme('system');
-      }
-    }
-  }, []);
-
-  // Handle system preference changes
-  useEffect(() => {
-    if (!mounted) return;
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (theme === 'system') {
-        applyTheme(e.matches ? 'dark' : 'light');
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme, mounted]);
-
   const applyTheme = (newTheme: string) => {
     const root = document.documentElement;
-    const isDark = newTheme === 'dark' || 
+    const isDark = newTheme === 'dark' ||
       (newTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
     const currentDataTheme = root.getAttribute('data-theme');
     const targetTheme = isDark ? 'dark' : 'light';
-    
+
     // Only apply changes if the target theme is different from current
     if (currentDataTheme !== targetTheme) {
       // Apply appropriate classes for different styling mechanisms
@@ -110,6 +61,59 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
     }, 100); // Small delay to ensure CSS variables are updated
   };
 
+  useEffect(() => {
+    setMounted(true);
+
+    // Get the theme that was set by the inline script during page load
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTheme(savedTheme);
+      // Only apply if it differs from what's already set
+      if (savedTheme !== 'system') {
+        const expectedTheme = savedTheme;
+        if (currentTheme !== expectedTheme) {
+          applyTheme(savedTheme);
+        }
+      } else {
+        // For system theme, apply based on current system preference
+        const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const systemTheme = darkModePreferred ? 'dark' : 'light';
+        if (currentTheme !== systemTheme) {
+          applyTheme('system');
+        }
+      }
+    } else {
+      // No saved theme, use system preference
+      const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const systemTheme = darkModePreferred ? 'dark' : 'light';
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTheme('system');
+      if (currentTheme !== systemTheme) {
+        applyTheme('system');
+      }
+    }
+  }, []);
+
+  // Handle system preference changes
+  useEffect(() => {
+    if (!mounted) return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (theme === 'system') {
+        applyTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme, mounted]);
+
+
+
   const handleThemeChange = (newTheme: string) => {
     setTheme(newTheme);
     applyTheme(newTheme);
@@ -118,7 +122,7 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
   // Configure sizing based on props
   const buttonSize = size === 'sm' ? '32px' : size === 'lg' ? '48px' : '44px';
   const iconSize = size === 'sm' ? '16px' : size === 'lg' ? '24px' : '20px';
-  const totalWidth = variant === 'navbar' 
+  const totalWidth = variant === 'navbar'
     ? `calc(3 * ${buttonSize} + 0.5rem)` // Smaller gaps for navbar
     : `calc(3 * ${buttonSize} + 1rem)`; // Standard gaps for standalone
 
@@ -184,11 +188,11 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
           type="button"
           style={{ width: buttonSize, height: buttonSize, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
-        <svg xmlns="http://www.w3.org/2000/svg" width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-          <line x1="8" y1="21" x2="16" y2="21"></line>
-          <line x1="12" y1="17" x2="12" y2="21"></line>
-        </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
         </Button>
       </OverlayTrigger>
       <OverlayTrigger
@@ -205,10 +209,10 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
           type="button"
           style={{ width: buttonSize, height: buttonSize, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
-        <svg xmlns="http://www.w3.org/2000/svg" width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-      </Button>
+          <svg xmlns="http://www.w3.org/2000/svg" width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </Button>
       </OverlayTrigger>
     </ButtonGroup>
   );

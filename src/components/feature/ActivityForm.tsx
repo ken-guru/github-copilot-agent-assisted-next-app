@@ -27,284 +27,286 @@ interface ActivityFormRef {
 
 const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormProps>(
   ({ activity, onSubmit, onAddActivity, onFormValuesChange, preservedValues, error, existingActivities = [], isDisabled = false, isSimplified = false }, ref) => {
-  // Initialize with preserved values if available, otherwise use activity or defaults
-  const [name, setName] = useState(() => {
-    if (preservedValues?.name) return preservedValues.name;
-    return activity?.name || '';
-  });
-  const [description, setDescription] = useState(() => {
-    if (preservedValues?.description) return preservedValues.description;
-    return activity?.description || '';
-  });
-  // Use smart color selection for default if no activity is provided
-  const defaultColorIndex = activity?.colorIndex ?? getSmartColorIndex(existingActivities);
-  const [colorIndex, setColorIndex] = useState(defaultColorIndex);
-  const [validated, setValidated] = useState(false);
-  const nameInputRef = React.useRef<HTMLInputElement>(null);
-  
-  // Get theme using new reactive hook - this ensures component re-renders when theme changes
-  const theme = useThemeReactive();
-  
-  // Get current theme colors for visual display - will be reactive to theme changes
-  const activityColors = getActivityColorsForTheme(theme);
+    // Initialize with preserved values if available, otherwise use activity or defaults
+    const [name, setName] = useState(() => {
+      if (preservedValues?.name) return preservedValues.name;
+      return activity?.name || '';
+    });
+    const [description, setDescription] = useState(() => {
+      if (preservedValues?.description) return preservedValues.description;
+      return activity?.description || '';
+    });
+    // Use smart color selection for default if no activity is provided
+    const defaultColorIndex = activity?.colorIndex ?? getSmartColorIndex(existingActivities);
+    const [colorIndex, setColorIndex] = useState(defaultColorIndex);
+    const [validated, setValidated] = useState(false);
+    const nameInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Expose form submission method to parent components
-  React.useImperativeHandle(ref, () => ({
-    submitForm: () => {
-      // Create a synthetic form event for programmatic submission
-      const event = {
-        preventDefault: () => {},
-        currentTarget: null as unknown as HTMLFormElement,
-      } as React.FormEvent<HTMLFormElement>;
-      handleSubmit(event);
-    }
-  }));
+    // Get theme using new reactive hook - this ensures component re-renders when theme changes
+    const theme = useThemeReactive();
 
-  React.useEffect(() => {
-    // Focus on error input for accessibility
-    if (error && nameInputRef.current) {
-      nameInputRef.current.focus();
-    }
-  }, [error]);
+    // Get current theme colors for visual display - will be reactive to theme changes
+    const activityColors = getActivityColorsForTheme(theme);
 
-  // Notify parent of form value changes for state preservation
-  React.useEffect(() => {
-    if (onFormValuesChange) {
-      onFormValuesChange({ name, description });
-    }
-  }, [name, description, onFormValuesChange]);
+    // Expose form submission method to parent components
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      setValidated(true);
+      if (!name || !name.trim() || isDisabled) {
+        if (nameInputRef.current && !isDisabled) {
+          nameInputRef.current.focus();
+        }
+        onSubmit?.(null); // Signal error to parent
+        return;
+      }
 
+      // Generate ID and timestamp safely to prevent hydration issues
+      // Only generate ID when actually submitting, not during render
+      const generateId = () => {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+          return crypto.randomUUID();
+        }
+        // Fallback that's deterministic during SSR
+        return `activity-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setValidated(true);
-    if (!name || !name.trim() || isDisabled) {
-      if (nameInputRef.current && !isDisabled) {
+      const activityId = activity?.id || generateId();
+      const timestamp = activity?.createdAt || new Date().toISOString();
+
+      const activityData = {
+        id: activityId,
+        name: name.trim(), // Trim the name
+        description: isSimplified ? '' : description, // Auto-empty description in simplified mode
+        colorIndex: Number(colorIndex),
+        createdAt: timestamp,
+        isActive: true,
+      };
+
+      // Call the appropriate callback based on what's provided
+      if (onSubmit) {
+        onSubmit(activityData);
+      } else if (onAddActivity) {
+        onAddActivity(activityData);
+        // Clear form after successful add
+        setName('');
+        setDescription('');
+        // Reset to smart color selection for next activity
+        setColorIndex(getSmartColorIndex([...existingActivities, activityData]));
+        setValidated(false);
+      }
+    };
+
+    React.useImperativeHandle(ref, () => ({
+      submitForm: () => {
+        // Create a synthetic form event for programmatic submission
+        const event = {
+          preventDefault: () => { },
+          currentTarget: null as unknown as HTMLFormElement,
+        } as React.FormEvent<HTMLFormElement>;
+        handleSubmit(event);
+      }
+    }));
+
+    React.useEffect(() => {
+      // Focus on error input for accessibility
+      if (error && nameInputRef.current) {
         nameInputRef.current.focus();
       }
-      onSubmit?.(null); // Signal error to parent
-      return;
-    }
-    
-    // Generate ID and timestamp safely to prevent hydration issues
-    // Only generate ID when actually submitting, not during render
-    const generateId = () => {
-      if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-        return crypto.randomUUID();
+    }, [error]);
+
+    // Notify parent of form value changes for state preservation
+    React.useEffect(() => {
+      if (onFormValuesChange) {
+        onFormValuesChange({ name, description });
       }
-      // Fallback that's deterministic during SSR
-      return `activity-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    };
-    
-    const activityId = activity?.id || generateId();
-    const timestamp = activity?.createdAt || new Date().toISOString();
-    
-    const activityData = {
-      id: activityId,
-      name: name.trim(), // Trim the name
-      description: isSimplified ? '' : description, // Auto-empty description in simplified mode
-      colorIndex: Number(colorIndex),
-      createdAt: timestamp,
-      isActive: true,
-    };
-    
-    // Call the appropriate callback based on what's provided
-    if (onSubmit) {
-      onSubmit(activityData);
-    } else if (onAddActivity) {
-      onAddActivity(activityData);
-      // Clear form after successful add
-      setName('');
-      setDescription('');
-      // Reset to smart color selection for next activity
-      setColorIndex(getSmartColorIndex([...existingActivities, activityData]));
-      setValidated(false);
-    }
-  };
+    }, [name, description, onFormValuesChange]);
 
-  return (
-    <Form 
-      noValidate 
-      validated={validated} 
-      onSubmit={handleSubmit} 
-      aria-label="Activity Form"
-      data-testid="activity-form"
-    >
-      {isSimplified ? (
-        // Simplified inline layout for timeline/compact usage
-        <>
-          <InputGroup data-testid="activity-form-input-group">
-            <Form.Control
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
-              aria-required="true"
-              autoFocus
-              ref={nameInputRef}
-              isInvalid={!!error}
-              disabled={isDisabled}
-              placeholder={PLACEHOLDER_TEXT}
-              aria-label="Activity name"
-            />
-            {onAddActivity && (
-              <Button 
-                type="submit"
-                variant="primary"
+
+
+
+    return (
+      <Form
+        noValidate
+        validated={validated}
+        onSubmit={handleSubmit}
+        aria-label="Activity Form"
+        data-testid="activity-form"
+      >
+        {isSimplified ? (
+          // Simplified inline layout for timeline/compact usage
+          <>
+            <InputGroup data-testid="activity-form-input-group">
+              <Form.Control
+                type="text"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                required
+                aria-required="true"
+                autoFocus
+                ref={nameInputRef}
+                isInvalid={!!error}
                 disabled={isDisabled}
+                placeholder={PLACEHOLDER_TEXT}
+                aria-label="Activity name"
+              />
+              {onAddActivity && (
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={isDisabled}
+                >
+                  Add Activity
+                </Button>
+              )}
+            </InputGroup>
+            {/* Error message for simplified mode */}
+            {error && (
+              <div
+                data-testid="activity-form-error"
+                className="text-danger mt-2"
+                style={{ fontSize: '0.875rem' }}
               >
-                Add Activity
-              </Button>
+                {error}
+              </div>
             )}
-          </InputGroup>
-          {/* Error message for simplified mode */}
-          {error && (
-            <div 
-              data-testid="activity-form-error" 
-              className="text-danger mt-2" 
-              style={{ fontSize: '0.875rem' }}
-            >
-              {error}
-            </div>
-          )}
-        </>
-      ) : (
-        // Full vertical layout for modal usage
-        <>
-          <Form.Group controlId="activityName">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
-              aria-required="true"
-              autoFocus
-              ref={nameInputRef}
-              isInvalid={!!error}
-              disabled={isDisabled}
-            />
-            <Form.Control.Feedback type="invalid" data-testid="activity-form-error">
-              {error ? error : ''}
-            </Form.Control.Feedback>
-          </Form.Group>
-          
-          <Form.Group controlId="activityDescription">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              type="text"
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              disabled={isDisabled}
-            />
-          </Form.Group>
-          <Form.Group controlId="activityColor" className="mb-3">
-            <Form.Label>Color</Form.Label>
-            <Dropdown>
-              <Dropdown.Toggle 
-                variant="outline-secondary" 
-                id="activityColor"
-                className="w-100 d-flex align-items-center justify-content-between"
-                style={{ textAlign: 'left' }}
+          </>
+        ) : (
+          // Full vertical layout for modal usage
+          <>
+            <Form.Group controlId="activityName">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                required
+                aria-required="true"
+                autoFocus
+                ref={nameInputRef}
+                isInvalid={!!error}
                 disabled={isDisabled}
-                aria-describedby="activityColor"
-              >
-                <div className="d-flex align-items-center">
-                  <div 
-                    className="me-2 rounded border"
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      backgroundColor: activityColors[colorIndex]?.background,
-                      borderColor: activityColors[colorIndex]?.border,
-                      borderWidth: '2px'
-                    }}
-                    aria-hidden="true"
-                  ></div>
-                  {getColorName(colorIndex)}
-                </div>
-              </Dropdown.Toggle>
+              />
+              <Form.Control.Feedback type="invalid" data-testid="activity-form-error">
+                {error ? error : ''}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-              <Dropdown.Menu className="w-100">
-                {activityColors.map((colorSet, index) => (
-                  <Dropdown.Item 
-                    key={index} 
-                    onClick={() => setColorIndex(index)}
-                    active={index === colorIndex}
-                    className="d-flex align-items-center"
-                  >
-                    <div 
+            <Form.Group controlId="activityDescription">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                type="text"
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                disabled={isDisabled}
+              />
+            </Form.Group>
+            <Form.Group controlId="activityColor" className="mb-3">
+              <Form.Label>Color</Form.Label>
+              <Dropdown>
+                <Dropdown.Toggle
+                  variant="outline-secondary"
+                  id="activityColor"
+                  className="w-100 d-flex align-items-center justify-content-between"
+                  style={{ textAlign: 'left' }}
+                  disabled={isDisabled}
+                  aria-describedby="activityColor"
+                >
+                  <div className="d-flex align-items-center">
+                    <div
                       className="me-2 rounded border"
                       style={{
                         width: '20px',
                         height: '20px',
-                        backgroundColor: colorSet.background,
-                        borderColor: colorSet.border,
+                        backgroundColor: activityColors[colorIndex]?.background,
+                        borderColor: activityColors[colorIndex]?.border,
                         borderWidth: '2px'
                       }}
                       aria-hidden="true"
                     ></div>
-                    {getColorName(index)}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-            {/* Hidden input for form validation */}
-            <input 
-              type="hidden" 
-              value={colorIndex} 
-              required 
-              aria-required="true"
-              aria-label="Selected color index"
-            />
-          </Form.Group>
-          
-          {/* Submit button - only show for standalone usage (not in modal) */}
-          {onAddActivity && (
-            <Button 
-              type="submit" 
-              variant="primary" 
-              disabled={isDisabled}
-              className="w-100"
-            >
-              Add Activity
-            </Button>
-          )}
-        </>
-      )}
-    </Form>
-  );
-}), (prevProps, nextProps) => {
-  // Custom comparison function for React.memo - optimized for performance
-  // Only re-render if these specific props change
-  
-  // Efficient shallow comparison for preservedValues object
-  const preservedValuesEqual = () => {
-    if (prevProps.preservedValues === nextProps.preservedValues) return true;
-    if (!prevProps.preservedValues || !nextProps.preservedValues) return false;
-    
-    const prevKeys = Object.keys(prevProps.preservedValues) as Array<keyof typeof prevProps.preservedValues>;
-    const nextKeys = Object.keys(nextProps.preservedValues) as Array<keyof typeof nextProps.preservedValues>;
-    
-    if (prevKeys.length !== nextKeys.length) return false;
-    
-    return prevKeys.every(key => 
-      prevProps.preservedValues![key] === nextProps.preservedValues![key]
+                    {getColorName(colorIndex)}
+                  </div>
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu className="w-100">
+                  {activityColors.map((colorSet, index) => (
+                    <Dropdown.Item
+                      key={index}
+                      onClick={() => setColorIndex(index)}
+                      active={index === colorIndex}
+                      className="d-flex align-items-center"
+                    >
+                      <div
+                        className="me-2 rounded border"
+                        style={{
+                          width: '20px',
+                          height: '20px',
+                          backgroundColor: colorSet.background,
+                          borderColor: colorSet.border,
+                          borderWidth: '2px'
+                        }}
+                        aria-hidden="true"
+                      ></div>
+                      {getColorName(index)}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+              {/* Hidden input for form validation */}
+              <input
+                type="hidden"
+                value={colorIndex}
+                required
+                aria-required="true"
+                aria-label="Selected color index"
+              />
+            </Form.Group>
+
+            {/* Submit button - only show for standalone usage (not in modal) */}
+            {onAddActivity && (
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={isDisabled}
+                className="w-100"
+              >
+                Add Activity
+              </Button>
+            )}
+          </>
+        )}
+      </Form>
     );
-  };
-  
-  return (
-    prevProps.isDisabled === nextProps.isDisabled &&
-    prevProps.isSimplified === nextProps.isSimplified &&
-    prevProps.existingActivities === nextProps.existingActivities &&
-    prevProps.activity === nextProps.activity &&
-    prevProps.error === nextProps.error &&
-    prevProps.onSubmit === nextProps.onSubmit &&
-    prevProps.onAddActivity === nextProps.onAddActivity &&
-    prevProps.onFormValuesChange === nextProps.onFormValuesChange &&
-    preservedValuesEqual()
-  );
-});
+  }), (prevProps, nextProps) => {
+    // Custom comparison function for React.memo - optimized for performance
+    // Only re-render if these specific props change
+
+    // Efficient shallow comparison for preservedValues object
+    const preservedValuesEqual = () => {
+      if (prevProps.preservedValues === nextProps.preservedValues) return true;
+      if (!prevProps.preservedValues || !nextProps.preservedValues) return false;
+
+      const prevKeys = Object.keys(prevProps.preservedValues) as Array<keyof typeof prevProps.preservedValues>;
+      const nextKeys = Object.keys(nextProps.preservedValues) as Array<keyof typeof nextProps.preservedValues>;
+
+      if (prevKeys.length !== nextKeys.length) return false;
+
+      return prevKeys.every(key =>
+        prevProps.preservedValues![key] === nextProps.preservedValues![key]
+      );
+    };
+
+    return (
+      prevProps.isDisabled === nextProps.isDisabled &&
+      prevProps.isSimplified === nextProps.isSimplified &&
+      prevProps.existingActivities === nextProps.existingActivities &&
+      prevProps.activity === nextProps.activity &&
+      prevProps.error === nextProps.error &&
+      prevProps.onSubmit === nextProps.onSubmit &&
+      prevProps.onAddActivity === nextProps.onAddActivity &&
+      prevProps.onFormValuesChange === nextProps.onFormValuesChange &&
+      preservedValuesEqual()
+    );
+  });
 
 ActivityForm.displayName = 'ActivityForm';
 
