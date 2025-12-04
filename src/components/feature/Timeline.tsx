@@ -145,7 +145,7 @@ export default function Timeline({
   hideHeader = false,
 }: TimelineProps) {
   // React to theme changes to ensure entry colors update live
-  const theme = useThemeReactive();
+  const { theme } = useThemeReactive();
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
   
   const hasEntries = entries && entries.length > 0;

@@ -78,7 +78,7 @@ describe('Theme Hydration Issue #272', () => {
     
     // Use the theme detection directly with hook
     const TestComponent = () => {
-      const theme = useThemeReactive();
+      const { theme } = useThemeReactive();
       return <div data-testid="theme-value">{theme}</div>;
     };
     

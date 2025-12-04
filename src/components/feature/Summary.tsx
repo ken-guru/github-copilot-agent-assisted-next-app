@@ -52,7 +52,7 @@ export default function Summary({
   isTimeUp = false
 }: SummaryProps) {
   // React to theme changes using dedicated hook for reliable updates
-  const currentTheme = useThemeReactive();
+  const { theme: currentTheme } = useThemeReactive();
 
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {

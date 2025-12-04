@@ -83,7 +83,7 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   };
   
   // Use the reactive theme hook for proper theme detection
-  const currentTheme = useThemeReactive();
+  const { theme: currentTheme, ready: themeReady } = useThemeReactive();
   
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors?: TimelineEntry['colors']) => {
@@ -296,6 +296,11 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
       color: colors.text,
     };
   };
+  
+  // Don't render until theme is determined to avoid flash
+  if (!themeReady) {
+    return null;
+  }
   
   return (
     <Card className="border h-100 d-flex flex-column w-100">

@@ -50,7 +50,7 @@ export default function Summary({
   const { online } = useNetworkStatus();
   // Auto mode: BYOK if available, else server mock route
   // Use the reactive theme hook for proper theme detection
-  const currentTheme = useThemeReactive();
+  const { theme: currentTheme, ready: themeReady } = useThemeReactive();
 
   // Extracted handler for creating a share to keep JSX minimal and readable
   const handleCreateShare = async () => {
@@ -491,6 +491,11 @@ export default function Summary({
     }
     return '';
   };
+
+  // Don't render until theme is determined to avoid flash
+  if (!themeReady) {
+    return null;
+  }
 
   return (
     <Card data-testid="summary" className="summary-card h-100">

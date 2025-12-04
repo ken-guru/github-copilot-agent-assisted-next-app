@@ -16,7 +16,7 @@ import ThemeToggle from '@/components/ThemeToggle';
  */
 const Navigation: React.FC = () => {
   // Get theme reactively to ensure component responds to theme changes (fixes issue #252)
-  const theme = useThemeReactive(); 
+  const { theme } = useThemeReactive(); 
   const pathname = usePathname();
   
   // State for mobile navigation collapse

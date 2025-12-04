@@ -17,7 +17,7 @@ interface ActivityListProps {
 
 const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelete, onAdd, onImport, onExport, onReset }) => {
   // Get current theme and theme-appropriate colors for visual indicators
-  const theme = useThemeReactive();
+  const { theme } = useThemeReactive();
   const activityColors = getActivityColorsForTheme(theme);
 
   if (!activities.length) {
