@@ -494,7 +494,11 @@ export default function Summary({
 
   // Don't render until theme is determined to avoid flash
   if (!themeReady) {
-    return null;
+    return (
+      <div role="status" aria-live="polite" className="d-flex align-items-center justify-content-center h-100">
+        <span className="visually-hidden">Loading summary...</span>
+      </div>
+    );
   }
 
   return (
