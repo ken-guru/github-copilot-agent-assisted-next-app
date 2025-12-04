@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -22,18 +22,19 @@ const isTestEnvironment = () => {
  * @returns The current theme ('light' | 'dark')
  */
 export const useThemeReactive = (): Theme => {
-  // Initialize with synchronous theme detection on client, 'light' on server
-  // This prevents the flash of wrong theme on initial render
-  const [theme, setTheme] = useState<Theme>(() => {
-    // During SSR, return 'light' to avoid hydration issues
-    if (typeof window === 'undefined') {
-      return 'light';
-    }
-    // On client, immediately detect the current theme synchronously
-    return detectCurrentTheme();
-  });
+  // Initialize with a consistent default to avoid hydration mismatches
+  // During SSR, always start with 'light', then sync with DOM on client
+  const [theme, setTheme] = useState<Theme>('light');
 
-  // Sync theme immediately after mount and set up listeners
+  // Use useLayoutEffect for immediate theme detection before paint
+  // This prevents the flash of wrong theme while maintaining SSR safety
+  useLayoutEffect(() => {
+    // Immediately detect and set the correct theme before browser paint
+    const detectedTheme = detectCurrentTheme();
+    setTheme(detectedTheme);
+  }, []);
+
+  // Set up theme change listeners in a separate useEffect
   // Combined useEffect to avoid race conditions and unnecessary re-renders
   useEffect(() => {
     // Skip if running on server
