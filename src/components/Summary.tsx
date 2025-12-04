@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, Alert, Row, Col, ListGroup, Badge, Button, Spinner, Modal } from 'react-bootstrap';
 import { TimelineEntry } from '@/types';
-import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
+import { ColorSet, internalActivityColors } from '../utils/colors';
 import { getActivities } from '@/utils/activity-storage';
 import { useToast } from '@/contexts/ToastContext';
 import { useApiKey } from '@/contexts/ApiKeyContext';
@@ -13,6 +13,7 @@ import ShareControls from './ShareControls';
 import { fetchWithVercelBypass } from '@/utils/fetchWithVercelBypass';
 import { mapTimelineEntriesForShare } from '@/utils/sharing';
 import useNetworkStatus from '@/hooks/useNetworkStatus';
+import { useThemeReactive } from '@/hooks/useThemeReactive';
 
 interface SummaryProps {
   entries?: TimelineEntry[];
@@ -48,10 +49,8 @@ export default function Summary({
   const { callOpenAI } = useOpenAIClient();
   const { online } = useNetworkStatus();
   // Auto mode: BYOK if available, else server mock route
-  // Add state to track current theme mode
-  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
-    typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
-  );
+  // Use the reactive theme hook for proper theme detection
+  const { theme: currentTheme, ready: themeReady } = useThemeReactive();
 
   // Extracted handler for creating a share to keep JSX minimal and readable
   const handleCreateShare = async () => {
@@ -239,43 +238,6 @@ export default function Summary({
 
     return closestMatch;
   };
-
-  // Effect to listen for theme changes
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    // Function to handle theme changes
-    const handleThemeChange = () => {
-      setCurrentTheme(isDarkMode() ? 'dark' : 'light');
-    };
-
-    // Initial check
-    handleThemeChange();
-
-    // Set up MutationObserver to watch for class changes on document.documentElement
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === 'attributes' && 
-          mutation.attributeName === 'class'
-        ) {
-          handleThemeChange();
-        }
-      });
-    });
-
-    observer.observe(document.documentElement, { attributes: true });
-
-    // Also listen for system preference changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', handleThemeChange);
-
-    // Clean up
-    return () => {
-      observer.disconnect();
-      mediaQuery.removeEventListener('change', handleThemeChange);
-    };
-  }, []);
 
   const getStatusMessage = () => {
     // First check if time is up, this should take precedence
@@ -529,6 +491,15 @@ export default function Summary({
     }
     return '';
   };
+
+  // Don't render until theme is determined to avoid flash
+  if (!themeReady) {
+    return (
+      <div role="status" aria-live="polite" className="d-flex align-items-center justify-content-center h-100">
+        <span className="visually-hidden">Loading summary...</span>
+      </div>
+    );
+  }
 
   return (
     <Card data-testid="summary" className="summary-card h-100">

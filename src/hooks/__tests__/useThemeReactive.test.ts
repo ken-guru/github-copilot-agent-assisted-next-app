@@ -33,13 +33,13 @@ describe('useThemeReactive', () => {
   describe('Initial theme detection', () => {
     it('should return light theme by default', () => {
       const { result } = renderHook(() => useThemeReactive());
-      expect(result.current).toBe('light');
+      expect(result.current.theme).toBe('light');
     });
 
     it('should detect dark theme from DOM data-theme attribute', () => {
       document.documentElement?.setAttribute('data-theme', 'dark');
       const { result } = renderHook(() => useThemeReactive());
-      expect(result.current).toBe('dark');
+      expect(result.current.theme).toBe('dark');
     });
 
     it('should detect theme from localStorage when DOM attribute missing', () => {
@@ -48,7 +48,7 @@ describe('useThemeReactive', () => {
       document.documentElement.className = '';
       localStorageMock.getItem.mockReturnValue('dark');
       const { result } = renderHook(() => useThemeReactive());
-      expect(result.current).toBe('dark');
+      expect(result.current.theme).toBe('dark');
     });
 
     it('should fallback to light theme when both DOM and localStorage are unavailable', () => {
@@ -57,7 +57,7 @@ describe('useThemeReactive', () => {
       document.documentElement.className = '';
       localStorageMock.getItem.mockReturnValue(null);
       const { result } = renderHook(() => useThemeReactive());
-      expect(result.current).toBe('light');
+      expect(result.current.theme).toBe('light');
     });
   });
 
@@ -70,7 +70,7 @@ describe('useThemeReactive', () => {
       localStorageMock.getItem.mockReturnValue('light');
       
       const { result } = renderHook(() => useThemeReactive());
-      expect(result.current).toBe('light');
+      expect(result.current.theme).toBe('light');
 
       // Simulate localStorage change
       act(() => {
@@ -83,12 +83,12 @@ describe('useThemeReactive', () => {
         window.dispatchEvent(storageEvent);
       });
 
-      expect(result.current).toBe('dark');
+      expect(result.current.theme).toBe('dark');
     });
 
     it('should ignore irrelevant localStorage changes', () => {
       const { result } = renderHook(() => useThemeReactive());
-      const initialTheme = result.current;
+      const initialTheme = result.current.theme;
 
       // Simulate localStorage change for different key
       act(() => {
@@ -100,12 +100,12 @@ describe('useThemeReactive', () => {
         window.dispatchEvent(storageEvent);
       });
 
-      expect(result.current).toBe(initialTheme);
+      expect(result.current.theme).toBe(initialTheme);
     });
 
     it('should update when custom themeChange event is dispatched', () => {
       const { result } = renderHook(() => useThemeReactive());
-      expect(result.current).toBe('light');
+      expect(result.current.theme).toBe('light');
 
       // Simulate theme change via custom event
       act(() => {
@@ -114,7 +114,7 @@ describe('useThemeReactive', () => {
         window.dispatchEvent(themeChangeEvent);
       });
 
-      expect(result.current).toBe('dark');
+      expect(result.current.theme).toBe('dark');
     });
   });
 
@@ -137,7 +137,7 @@ describe('useThemeReactive', () => {
       delete window.localStorage;
 
       const { result } = renderHook(() => useThemeReactive());
-      expect(result.current).toBe('light'); // Should fallback to default
+      expect(result.current.theme).toBe('light'); // Should fallback to default
 
       window.localStorage = originalLocalStorage;
     });
@@ -173,14 +173,14 @@ describe('useThemeReactive', () => {
     it('should handle invalid theme values gracefully', () => {
       document.documentElement?.setAttribute('data-theme', 'invalid-theme');
       const { result } = renderHook(() => useThemeReactive());
-      expect(result.current).toBe('light'); // Should fallback to default
+      expect(result.current.theme).toBe('light'); // Should fallback to default
     });
 
     it('should detect Bootstrap data-bs-theme attribute', () => {
       document.documentElement?.removeAttribute('data-theme');
       document.documentElement?.setAttribute('data-bs-theme', 'dark');
       const { result } = renderHook(() => useThemeReactive());
-      expect(result.current).toBe('dark');
+      expect(result.current.theme).toBe('dark');
     });
 
     it('should detect theme from className when attributes missing', () => {
@@ -189,14 +189,14 @@ describe('useThemeReactive', () => {
       document.documentElement.className = 'dark-mode';
       localStorageMock.getItem.mockReturnValue(null);
       const { result } = renderHook(() => useThemeReactive());
-      expect(result.current).toBe('dark');
+      expect(result.current.theme).toBe('dark');
     });
 
     it('should prioritize DOM attribute over localStorage', () => {
       document.documentElement?.setAttribute('data-theme', 'dark');
       localStorageMock.getItem.mockReturnValue('light');
       const { result } = renderHook(() => useThemeReactive());
-      expect(result.current).toBe('dark'); // DOM should take precedence
+      expect(result.current.theme).toBe('dark'); // DOM should take precedence
     });
   });
 });

@@ -43,7 +43,7 @@ const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormPr
   const nameInputRef = React.useRef<HTMLInputElement>(null);
   
   // Get theme using new reactive hook - this ensures component re-renders when theme changes
-  const theme = useThemeReactive();
+  const { theme } = useThemeReactive();
   
   // Get current theme colors for visual display - will be reactive to theme changes
   const activityColors = getActivityColorsForTheme(theme);

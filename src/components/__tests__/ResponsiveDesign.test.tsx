@@ -32,7 +32,7 @@ jest.mock('../../utils/colors', () => ({
 
 // Mock the useThemeReactive hook
 jest.mock('../../hooks/useThemeReactive', () => ({
-  useThemeReactive: jest.fn(() => 'light')
+  useThemeReactive: jest.fn(() => ({ theme: 'light', ready: true }))
 }));
 
 jest.mock('../../utils/time', () => ({

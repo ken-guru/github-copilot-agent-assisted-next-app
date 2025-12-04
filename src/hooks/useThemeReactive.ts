@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -19,20 +19,30 @@ const isTestEnvironment = () => {
  * Fixes Issue #272: Ensures proper hydration by detecting DOM theme synchronously
  * and avoiding hydration mismatches between server and client rendering.
  * 
- * @returns The current theme ('light' | 'dark')
+ * @returns {{ theme: 'light' | 'dark', ready: boolean }} An object with the current theme and a ready flag indicating if theme has been detected
  */
-export const useThemeReactive = (): Theme => {
+export const useThemeReactive = (): { theme: Theme; ready: boolean } => {
   // Initialize with a consistent default to avoid hydration mismatches
   // During SSR, always start with 'light', then sync with DOM on client
   const [theme, setTheme] = useState<Theme>('light');
+  const [ready, setReady] = useState(false);
 
-  // Sync theme immediately after mount and set up listeners
-  // Combined useEffect to avoid race conditions and unnecessary re-renders
-  useEffect(() => {
-    // Immediately detect and set the correct theme on mount
+  // Use useLayoutEffect for immediate theme detection before paint
+  // This prevents the flash of wrong theme while maintaining SSR safety
+  useLayoutEffect(() => {
+    // Immediately detect and set the correct theme before browser paint.
+    // This ensures that the theme is synchronized before hydration completes,
+    // preventing a flash of incorrect content (FOUC).
+    // The use of useLayoutEffect guarantees this runs before the first paint,
+    // so the user never sees the wrong theme.
     const detectedTheme = detectCurrentTheme();
     setTheme(detectedTheme);
-    
+    setReady(true);
+  }, []);
+
+  // Set up theme change listeners in a separate useEffect
+  // Combined useEffect to avoid race conditions and unnecessary re-renders
+  useEffect(() => {
     // Skip if running on server
     if (typeof window === 'undefined') {
       return;
@@ -102,7 +112,7 @@ export const useThemeReactive = (): Theme => {
     };
   }, []); // Empty dependency array: run once after mount only
 
-  return theme;
+  return { theme, ready };
 };
 
 /**
