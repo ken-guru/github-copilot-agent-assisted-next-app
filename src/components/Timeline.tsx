@@ -5,8 +5,9 @@ import { Card, Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
 import { formatTimeHuman } from '@/utils/time';
-import { isDarkMode, ColorSet, internalActivityColors } from '../utils/colors';
+import { ColorSet, internalActivityColors } from '../utils/colors';
 import { TimelineEntry } from '@/types';
+import { useThemeReactive } from '@/hooks/useThemeReactive';
 
 interface TimelineProps {
   entries: TimelineEntry[];
@@ -81,10 +82,8 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     );
   };
   
-  // Add state to track current theme mode
-  const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(
-    typeof window !== 'undefined' && isDarkMode() ? 'dark' : 'light'
-  );
+  // Use the reactive theme hook for proper theme detection
+  const currentTheme = useThemeReactive();
   
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors?: TimelineEntry['colors']) => {
@@ -160,43 +159,6 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     
     return closestMatch;
   };
-  
-  // Effect to listen for theme changes
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    // Function to handle theme changes
-    const handleThemeChange = () => {
-      setCurrentTheme(isDarkMode() ? 'dark' : 'light');
-    };
-    
-    // Initial check
-    handleThemeChange();
-    
-    // Set up MutationObserver to watch for class changes on document.documentElement
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === 'attributes' && 
-          mutation.attributeName === 'class'
-        ) {
-          handleThemeChange();
-        }
-      });
-    });
-    
-    observer.observe(document.documentElement, { attributes: true });
-    
-    // Also listen for system preference changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', handleThemeChange);
-    
-    // Clean up
-    return () => {
-      observer.disconnect();
-      mediaQuery.removeEventListener('change', handleThemeChange);
-    };
-  }, []);
   
   // Update current elapsed time when prop changes
   useEffect(() => {
