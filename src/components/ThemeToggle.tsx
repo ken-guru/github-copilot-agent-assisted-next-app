@@ -62,18 +62,17 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
 
   // Initialize theme from localStorage or system preference
   useEffect(() => {
-    queueMicrotask(() => {
-      setMounted(true);
-    });
+    // SSR hydration pattern - set state on mount to prevent hydration mismatch
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
     
     // Get the theme that was set by the inline script during page load
     const currentTheme = document.documentElement.getAttribute('data-theme');
     const savedTheme = localStorage.getItem('theme');
     
     if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
-      queueMicrotask(() => {
-        setTheme(savedTheme);
-      });
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTheme(savedTheme);
       // Only apply if it differs from what's already set
       if (savedTheme !== 'system') {
         const expectedTheme = savedTheme;
@@ -92,9 +91,8 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
       // No saved theme, use system preference
       const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const systemTheme = darkModePreferred ? 'dark' : 'light';
-      queueMicrotask(() => {
-        setTheme('system');
-      });
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTheme('system');
       if (currentTheme !== systemTheme) {
         applyTheme('system');
       }

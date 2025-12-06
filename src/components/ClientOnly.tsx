@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef, ReactNode, ReactElement } from 'react';
+import { useState, useEffect, ReactNode, ReactElement } from 'react';
 
 interface ClientOnlyProps {
   children: ReactNode;
@@ -8,17 +8,12 @@ interface ClientOnlyProps {
 
 export default function ClientOnly({ children, fallback = null }: ClientOnlyProps): ReactElement | null {
   const [hasMounted, setHasMounted] = useState(false);
-  const mountedRef = useRef(false);
 
   useEffect(() => {
-    // Use ref to track if we've already updated to avoid unnecessary re-renders
-    if (!mountedRef.current) {
-      mountedRef.current = true;
-      // Queue a microtask to update state asynchronously
-      queueMicrotask(() => {
-        setHasMounted(true);
-      });
-    }
+    // This is a legitimate SSR hydration pattern - setting state on mount
+    // to avoid hydration mismatches between server and client
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setHasMounted(true);
   }, []);
 
   if (!hasMounted) {

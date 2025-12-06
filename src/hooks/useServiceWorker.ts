@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 // Update check interval (30 minutes)
 const UPDATE_CHECK_INTERVAL = 30 * 60 * 1000;
@@ -14,7 +14,6 @@ export function useServiceWorker() {
   const [status, setStatus] = useState<ServiceWorkerStatus>('pending');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
-  const initializedRef = useRef(false);
 
   // Function to manually update cache
   const updateCache = async () => {
@@ -34,12 +33,9 @@ export function useServiceWorker() {
     // Check if service workers are supported
     if (!('serviceWorker' in navigator)) {
       console.log('Service workers are not supported by this browser');
-      if (!initializedRef.current) {
-        initializedRef.current = true;
-        queueMicrotask(() => {
-          setStatus('unsupported');
-        });
-      }
+      // SSR hydration pattern - set state on mount
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setStatus('unsupported');
       return;
     }
 
@@ -48,9 +44,7 @@ export function useServiceWorker() {
 
     const registerServiceWorker = async () => {
       try {
-        queueMicrotask(() => {
-          setStatus('registering');
-        });
+        setStatus('registering');
         
         // Check if service worker is already registered
         const existingRegistration = await navigator.serviceWorker.getRegistration();

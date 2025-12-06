@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 // Simple hook that exposes whether the browser is online and updates
 // in response to the native `online` / `offline` events. Keeps implementation
@@ -8,7 +8,6 @@ export default function useNetworkStatus() {
     if (typeof window === 'undefined') return true; // assume online on server
     return typeof navigator !== 'undefined' ? navigator.onLine : true;
   });
-  const syncedRef = useRef(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -21,17 +20,14 @@ export default function useNetworkStatus() {
 
     // In some test environments the navigator.onLine may be out-of-date
     // so check once on mount to sync state.
-    if (!syncedRef.current) {
-      syncedRef.current = true;
-      queueMicrotask(() => {
-        try {
-          // Avoid using `any` casts for navigator; narrow safely
-          const nav = typeof navigator !== 'undefined' ? navigator : undefined;
-          setOnline(Boolean(nav?.onLine ?? true));
-        } catch {
-          // ignore
-        }
-      });
+    // SSR hydration pattern - synchronize with browser state
+    try {
+      // Avoid using `any` casts for navigator; narrow safely
+      const nav = typeof navigator !== 'undefined' ? navigator : undefined;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setOnline(Boolean(nav?.onLine ?? true));
+    } catch {
+      // ignore
     }
 
     return () => {

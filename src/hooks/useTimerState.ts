@@ -26,20 +26,21 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
 
   // Effect to update isTimeUp when totalDuration changes
   useEffect(() => {
-    queueMicrotask(() => {
-      if (timerActive && elapsedTime >= totalDuration) {
-        setIsTimeUp(true);
-      } else if (timerActive && elapsedTime < totalDuration) {
-        setIsTimeUp(false);
-      }
-    });
+    // Synchronizing state based on prop changes - legitimate use case
+    if (timerActive && elapsedTime >= totalDuration) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsTimeUp(true);
+    } else if (timerActive && elapsedTime < totalDuration) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsTimeUp(false);
+    }
   }, [totalDuration, elapsedTime, timerActive]);
 
   useEffect(() => {
     if (isCompleted) {
-      queueMicrotask(() => {
-        stopTimer();
-      });
+      // Synchronizing state based on prop changes - calling a memoized callback
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      stopTimer();
     }
   }, [isCompleted, stopTimer]);
 

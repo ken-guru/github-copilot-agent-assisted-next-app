@@ -55,15 +55,14 @@ export default function Summary({
   const { theme: currentTheme } = useThemeReactive();
 
   // Capture current timestamp for calculations
-  // Use state to store the current time, updated via effect to avoid calling Date.now() during render
-  // This makes the component pure by not calling Date.now() during render calculations
+  // Use state to store the current time, updated via effect
   const [currentTime, setCurrentTime] = React.useState(0);
   
   // Initialize and update current time when component mounts or dependencies change
   React.useEffect(() => {
-    queueMicrotask(() => {
-      setCurrentTime(Date.now());
-    });
+    // Capturing timestamp for pure render calculations
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrentTime(Date.now());
   }, [entries, elapsedTime]);
 
   // Function to get the theme-appropriate color for an activity

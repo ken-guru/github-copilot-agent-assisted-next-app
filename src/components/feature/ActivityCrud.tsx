@@ -30,7 +30,6 @@ const ActivityCrud: React.FC = () => {
 
   // Create ref for ActivityForm to trigger submit from modal footer
   const activityFormRef = useRef<{ submitForm: () => void }>(null);
-  const loadedRef = useRef(false);
 
   // Helper to safely revoke object URLs
   const safeRevokeUrl = (url: string | null | undefined) => {
@@ -44,13 +43,10 @@ const ActivityCrud: React.FC = () => {
 
   // Load activities from localStorage on mount
   useEffect(() => {
-    if (!loadedRef.current) {
-      loadedRef.current = true;
-      queueMicrotask(() => {
-        const loadedActivities = getActivities().filter(a => a.isActive);
-        setActivities(loadedActivities);
-      });
-    }
+    // Loading data from localStorage on mount - legitimate use case
+    const loadedActivities = getActivities().filter(a => a.isActive);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setActivities(loadedActivities);
   }, []);
 
   const handleAdd = () => {

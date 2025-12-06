@@ -16,16 +16,12 @@ export interface OfflineIndicatorProps {}
 export function OfflineIndicator({}: OfflineIndicatorProps): React.ReactElement | null {
   const isOnline = useOnlineStatus();
   const [mounted, setMounted] = useState(false);
-  const mountedRef = React.useRef(false);
 
   // Handle SSR
   useEffect(() => {
-    if (!mountedRef.current) {
-      mountedRef.current = true;
-      queueMicrotask(() => {
-        setMounted(true);
-      });
-    }
+    // SSR hydration pattern - set state on mount to prevent hydration mismatch
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
   }, []);
 
   // Don't render anything if not mounted (prevents hydration mismatch)

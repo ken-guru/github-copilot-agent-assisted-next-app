@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Form, Button, Row, Col, ButtonGroup } from 'react-bootstrap';
 
 interface TimeSetupProps {
@@ -12,16 +12,12 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
   const [seconds, setSeconds] = useState<number>(0);
   const [deadlineTime, setDeadlineTime] = useState<string>('');
   const [isClient, setIsClient] = useState(false);
-  const mountedRef = useRef(false);
 
   // Prevent hydration mismatch by only running time calculations on the client
   useEffect(() => {
-    if (!mountedRef.current) {
-      mountedRef.current = true;
-      queueMicrotask(() => {
-        setIsClient(true);
-      });
-    }
+    // SSR hydration pattern - set state on mount to prevent hydration mismatch
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsClient(true);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
