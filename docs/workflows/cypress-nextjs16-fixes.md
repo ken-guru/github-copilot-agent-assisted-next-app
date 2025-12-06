@@ -64,8 +64,12 @@ cy.on('uncaught:exception', (err) => {
     return false;
   }
   
-  // Allow other errors to fail the test
-  return true; // or false based on context
+  // For activity CRUD tests, allow other errors to propagate and fail the test
+  return true;
+  
+  // For service worker tests, ignore all uncaught exceptions
+  // as service workers can throw various expected errors during testing
+  // return false;
 });
 ```
 

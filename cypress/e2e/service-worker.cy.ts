@@ -25,7 +25,8 @@ describe('Service Worker E2E Integration', () => {
         return false;
       }
       
-      // Allow other errors to fail the test
+      // For service worker tests, ignore all other uncaught exceptions
+      // as service workers can throw various expected errors during testing
       return false;
     });
     

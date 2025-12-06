@@ -5,9 +5,10 @@ describe('Activity CRUD Operations', () => {
       // Log all uncaught exceptions for debugging purposes
       console.error('Uncaught exception:', err);
       
-      // Ignore specific hydration mismatch errors in development
+      // Ignore specific hydration mismatch errors
+      // These occur due to theme initialization script and service worker registration
       if (err.message.includes('Hydration failed')) {
-        console.warn('Ignoring expected hydration error in development mode');
+        console.warn('Ignoring expected hydration error');
         return false;
       }
       
@@ -16,7 +17,7 @@ describe('Activity CRUD Operations', () => {
       if (err.message.includes('Minified React error #418') || 
           err.message.includes('Minified React error #423') ||
           err.message.includes('Minified React error #425')) {
-        console.warn('Ignoring expected minified React error in production mode');
+        console.warn('Ignoring expected minified React error');
         return false;
       }
       
