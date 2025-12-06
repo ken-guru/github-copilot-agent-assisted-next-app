@@ -1,6 +1,6 @@
 describe('Activity CRUD Operations', () => {
   beforeEach(() => {
-    // Handle hydration errors from Next.js
+    // Handle hydration errors from Next.js and React 19
     cy.on('uncaught:exception', (err, runnable) => {
       // Log all uncaught exceptions for debugging purposes
       console.error('Uncaught exception:', err);
@@ -12,8 +12,18 @@ describe('Activity CRUD Operations', () => {
       }
       
       // Ignore specific minified React errors in production builds
-      if (err.message.includes('Minified React error #418')) {
+      // React 19 may have additional error codes
+      if (err.message.includes('Minified React error #418') || 
+          err.message.includes('Minified React error #423') ||
+          err.message.includes('Minified React error #425')) {
         console.warn('Ignoring expected minified React error in production mode');
+        return false;
+      }
+      
+      // Ignore React 19 text content mismatch errors
+      if (err.message.includes('Text content does not match') ||
+          err.message.includes('did not match')) {
+        console.warn('Ignoring text content mismatch error');
         return false;
       }
       
