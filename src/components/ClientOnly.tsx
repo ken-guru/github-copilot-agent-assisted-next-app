@@ -10,6 +10,9 @@ export default function ClientOnly({ children, fallback = null }: ClientOnlyProp
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
+    // This is a legitimate SSR hydration pattern - setting state on mount
+    // to avoid hydration mismatches between server and client
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHasMounted(true);
   }, []);
 

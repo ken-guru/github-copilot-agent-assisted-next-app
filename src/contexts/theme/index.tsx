@@ -19,6 +19,27 @@ export const useTheme = () => useContext(ThemeContext);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>('light');
   
+  // Helper function to apply theme consistently across the app
+  const applyThemeToDOM = (themeValue: Theme) => {
+    const root = document.documentElement;
+    const currentTheme = root.getAttribute('data-theme');
+    
+    // Only update if the theme is actually changing
+    if (themeValue !== currentTheme) {
+      if (themeValue === 'dark') {
+        root.classList.add('dark-mode');
+        root.classList.add('dark');
+        root.classList.remove('light-mode');
+        root.setAttribute('data-theme', 'dark');
+      } else {
+        root.classList.add('light-mode');
+        root.classList.remove('dark-mode');
+        root.classList.remove('dark');
+        root.setAttribute('data-theme', 'light');
+      }
+    }
+  };
+
   // Initialize theme from localStorage on mount
   useEffect(() => {
     // Add a slight delay to avoid hydration mismatch
@@ -92,27 +113,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     };
   }, [theme]);
-  
-  // Helper function to apply theme consistently across the app
-  const applyThemeToDOM = (themeValue: Theme) => {
-    const root = document.documentElement;
-    const currentTheme = root.getAttribute('data-theme');
-    
-    // Only update if the theme is actually changing
-    if (themeValue !== currentTheme) {
-      if (themeValue === 'dark') {
-        root.classList.add('dark-mode');
-        root.classList.add('dark');
-        root.classList.remove('light-mode');
-        root.setAttribute('data-theme', 'dark');
-      } else {
-        root.classList.add('light-mode');
-        root.classList.remove('dark-mode');
-        root.classList.remove('dark');
-        root.setAttribute('data-theme', 'light');
-      }
-    }
-  };
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
