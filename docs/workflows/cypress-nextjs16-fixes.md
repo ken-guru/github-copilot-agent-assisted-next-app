@@ -18,9 +18,9 @@ After upgrading to Next.js 16 (which uses Turbopack as the default bundler) and 
 
 React 19 introduced stricter hydration checking and new minified error codes in production builds:
 
-- **Error #418**: Server rendered HTML doesn't match client (existing)
-- **Error #423**: Expected markup for a DOM node differs between server/client (new)
-- **Error #425**: Text content does not match server-rendered HTML (new)
+- **Error #418**: Server rendered HTML doesn't match client (existing) - [React Docs](https://react.dev/errors/418)
+- **Error #423**: Expected markup for a DOM node differs between server/client (new) - [React Docs](https://react.dev/errors/423)
+- **Error #425**: Text content does not match server-rendered HTML (new) - [React Docs](https://react.dev/errors/425)
 
 These errors are expected in our application due to:
 - Theme initialization script running before React hydration
