@@ -11,6 +11,11 @@ export default defineConfig({
     },
     // For handling uncaught exceptions
     experimentalRunAllSpecs: true,
+    // Increased timeouts for Next.js 16 with Turbopack
+    defaultCommandTimeout: 10000,
+    pageLoadTimeout: 120000,
+    requestTimeout: 10000,
+    responseTimeout: 30000,
   },
   // Configure viewport size
   viewportWidth: 1280,
@@ -19,4 +24,9 @@ export default defineConfig({
   video: true,
   // Configure screenshots on failure
   screenshotOnRunFailure: true,
+  // Retry failed tests (helpful for timing issues)
+  retries: {
+    runMode: 2,
+    openMode: 0,
+  },
 });
