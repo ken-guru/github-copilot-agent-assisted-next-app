@@ -36,8 +36,10 @@ export const useThemeReactive = (): { theme: Theme; ready: boolean } => {
     // The use of useLayoutEffect guarantees this runs before the first paint,
     // so the user never sees the wrong theme.
     const detectedTheme = detectCurrentTheme();
-    setTheme(detectedTheme);
-    setReady(true);
+    queueMicrotask(() => {
+      setTheme(detectedTheme);
+      setReady(true);
+    });
   }, []);
 
   // Set up theme change listeners in a separate useEffect

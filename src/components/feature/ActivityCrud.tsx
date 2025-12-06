@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import ActivityForm from './ActivityForm';
 import ActivityList from './ActivityList';
@@ -29,7 +29,8 @@ const ActivityCrud: React.FC = () => {
   const [processedImportPreview, setProcessedImportPreview] = useState<Activity[] | null>(null);
 
   // Create ref for ActivityForm to trigger submit from modal footer
-  const activityFormRef = React.useRef<{ submitForm: () => void }>(null);
+  const activityFormRef = useRef<{ submitForm: () => void }>(null);
+  const loadedRef = useRef(false);
 
   // Helper to safely revoke object URLs
   const safeRevokeUrl = (url: string | null | undefined) => {
@@ -43,8 +44,13 @@ const ActivityCrud: React.FC = () => {
 
   // Load activities from localStorage on mount
   useEffect(() => {
-    const loadedActivities = getActivities().filter(a => a.isActive);
-    setActivities(loadedActivities);
+    if (!loadedRef.current) {
+      loadedRef.current = true;
+      queueMicrotask(() => {
+        const loadedActivities = getActivities().filter(a => a.isActive);
+        setActivities(loadedActivities);
+      });
+    }
   }, []);
 
   const handleAdd = () => {

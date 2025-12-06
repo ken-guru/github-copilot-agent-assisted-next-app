@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 /**
  * Custom hook to track online/offline status
@@ -10,10 +10,16 @@ export function useOnlineStatus(): boolean {
     // Default to true for SSR, then check navigator.onLine on client
     typeof window === 'undefined' ? true : navigator.onLine
   );
+  const syncedRef = useRef(false);
 
   useEffect(() => {
     // Update initial state on mount to ensure accuracy
-    setIsOnline(navigator.onLine);
+    if (!syncedRef.current) {
+      syncedRef.current = true;
+      queueMicrotask(() => {
+        setIsOnline(navigator.onLine);
+      });
+    }
 
     // Handler for online event
     const handleOnline = () => {

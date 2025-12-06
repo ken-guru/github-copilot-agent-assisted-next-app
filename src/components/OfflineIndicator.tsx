@@ -9,10 +9,16 @@ import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 export function OfflineIndicator(): React.ReactElement | null {
   const isOnline = useOnlineStatus();
   const [mounted, setMounted] = useState(false);
+  const mountedRef = React.useRef(false);
 
   // Handle SSR
   useEffect(() => {
-    setMounted(true);
+    if (!mountedRef.current) {
+      mountedRef.current = true;
+      queueMicrotask(() => {
+        setMounted(true);
+      });
+    }
   }, []);
 
   // Don't render anything if not mounted (prevents hydration mismatch)

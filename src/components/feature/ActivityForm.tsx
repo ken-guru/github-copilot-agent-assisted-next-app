@@ -48,33 +48,6 @@ const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormPr
   // Get current theme colors for visual display - will be reactive to theme changes
   const activityColors = getActivityColorsForTheme(theme);
 
-  // Expose form submission method to parent components
-  React.useImperativeHandle(ref, () => ({
-    submitForm: () => {
-      // Create a synthetic form event for programmatic submission
-      const event = {
-        preventDefault: () => {},
-        currentTarget: null as unknown as HTMLFormElement,
-      } as React.FormEvent<HTMLFormElement>;
-      handleSubmit(event);
-    }
-  }));
-
-  React.useEffect(() => {
-    // Focus on error input for accessibility
-    if (error && nameInputRef.current) {
-      nameInputRef.current.focus();
-    }
-  }, [error]);
-
-  // Notify parent of form value changes for state preservation
-  React.useEffect(() => {
-    if (onFormValuesChange) {
-      onFormValuesChange({ name, description });
-    }
-  }, [name, description, onFormValuesChange]);
-
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setValidated(true);
@@ -121,6 +94,32 @@ const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormPr
       setValidated(false);
     }
   };
+
+  // Expose form submission method to parent components
+  React.useImperativeHandle(ref, () => ({
+    submitForm: () => {
+      // Create a synthetic form event for programmatic submission
+      const event = {
+        preventDefault: () => {},
+        currentTarget: null as unknown as HTMLFormElement,
+      } as React.FormEvent<HTMLFormElement>;
+      handleSubmit(event);
+    }
+  }));
+
+  React.useEffect(() => {
+    // Focus on error input for accessibility
+    if (error && nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+  }, [error]);
+
+  // Notify parent of form value changes for state preservation
+  React.useEffect(() => {
+    if (onFormValuesChange) {
+      onFormValuesChange({ name, description });
+    }
+  }, [name, description, onFormValuesChange]);
 
   return (
     <Form 

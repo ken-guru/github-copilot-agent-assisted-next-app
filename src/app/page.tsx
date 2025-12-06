@@ -47,6 +47,13 @@ function AppContent() {
     isCompleted: allActivitiesCompleted
   });
 
+  // Store dialog action handlers in state so they're stable across renders
+  const [dialogActions, setDialogActions] = useState({
+    message: 'Are you sure you want to reset the application? All progress will be lost.',
+    onConfirm: () => {},
+    onCancel: () => {}
+  });
+
   // Initialize app and hide loading screen after initialization is complete
   useEffect(() => {
     const initApp = async () => {
@@ -91,13 +98,6 @@ function AppContent() {
       resetService.setDialogCallback(null);
     };
   }, []);
-  
-  // Store dialog action handlers in state so they're stable across renders
-  const [dialogActions, setDialogActions] = useState({
-    message: 'Are you sure you want to reset the application? All progress will be lost.',
-    onConfirm: () => {},
-    onCancel: () => {}
-  });
   
   // Register all reset callbacks
   useEffect(() => {
