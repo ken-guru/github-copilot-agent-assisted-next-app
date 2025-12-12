@@ -3,7 +3,7 @@
 describe('Service Worker E2E Integration', () => {
   beforeEach(() => {
     // Prevent uncaught exceptions from failing tests
-    cy.on('uncaught:exception', (err, _runnable) => {
+    cy.on('uncaught:exception', (err) => {
       // Log for debugging
       console.error('Uncaught exception in service-worker test:', err);
       

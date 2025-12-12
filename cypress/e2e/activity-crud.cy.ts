@@ -1,7 +1,7 @@
 describe('Activity CRUD Operations', () => {
   beforeEach(() => {
     // Handle hydration errors from Next.js and React 19
-    cy.on('uncaught:exception', (err, _runnable) => {
+    cy.on('uncaught:exception', (err) => {
       // Log all uncaught exceptions for debugging purposes
       console.error('Uncaught exception:', err);
       
