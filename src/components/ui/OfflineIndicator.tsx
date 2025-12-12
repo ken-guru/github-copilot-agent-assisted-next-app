@@ -19,6 +19,8 @@ export function OfflineIndicator({}: OfflineIndicatorProps): React.ReactElement 
 
   // Handle SSR
   useEffect(() => {
+    // SSR hydration pattern - set state on mount to prevent hydration mismatch
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

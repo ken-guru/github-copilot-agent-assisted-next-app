@@ -135,8 +135,11 @@ describe('useTimerState', () => {
   });
 
   describe('extend duration functionality', () => {
-    it('should clear isTimeUp when extendDuration is called during overtime', () => {
-      const { result } = renderHook(() => useTimerState({ totalDuration: 30 }));
+    it('should clear isTimeUp when totalDuration is increased during overtime', () => {
+      const { result, rerender } = renderHook(
+        ({ totalDuration }) => useTimerState({ totalDuration }),
+        { initialProps: { totalDuration: 30 } }
+      );
       
       act(() => {
         result.current.startTimer();
@@ -145,8 +148,9 @@ describe('useTimerState', () => {
       
       expect(result.current.isTimeUp).toBe(true);
       
+      // Extend duration by increasing totalDuration prop
       act(() => {
-        result.current.extendDuration();
+        rerender({ totalDuration: 90 }); // Extend to 90 seconds
       });
       
       expect(result.current.isTimeUp).toBe(false);
@@ -163,7 +167,6 @@ describe('useTimerState', () => {
       const elapsedBeforeExtend = result.current.elapsedTime;
       
       act(() => {
-        result.current.extendDuration();
         jest.advanceTimersByTime(5000); // additional 5 seconds
       });
       
@@ -171,8 +174,11 @@ describe('useTimerState', () => {
       expect(result.current.timerActive).toBe(true);
     });
 
-    it('should work correctly when called multiple times', () => {
-      const { result } = renderHook(() => useTimerState({ totalDuration: 30 }));
+    it('should work correctly when totalDuration is increased multiple times', () => {
+      const { result, rerender } = renderHook(
+        ({ totalDuration }) => useTimerState({ totalDuration }),
+        { initialProps: { totalDuration: 30 } }
+      );
       
       act(() => {
         result.current.startTimer();
@@ -181,22 +187,24 @@ describe('useTimerState', () => {
       
       expect(result.current.isTimeUp).toBe(true);
       
+      // First extension
       act(() => {
-        result.current.extendDuration();
+        rerender({ totalDuration: 60 }); // Extend to 60 seconds
       });
       
       expect(result.current.isTimeUp).toBe(false);
       
       // Advance more time to trigger overtime again
       act(() => {
-        jest.advanceTimersByTime(10000); // 10 more seconds
+        jest.advanceTimersByTime(30000); // 30 more seconds (now at 65 seconds)
       });
       
       // Should trigger overtime again
       expect(result.current.isTimeUp).toBe(true);
       
+      // Second extension
       act(() => {
-        result.current.extendDuration();
+        rerender({ totalDuration: 120 }); // Extend to 120 seconds
       });
       
       expect(result.current.isTimeUp).toBe(false);

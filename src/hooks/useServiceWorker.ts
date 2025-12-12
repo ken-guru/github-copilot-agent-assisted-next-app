@@ -33,6 +33,8 @@ export function useServiceWorker() {
     // Check if service workers are supported
     if (!('serviceWorker' in navigator)) {
       console.log('Service workers are not supported by this browser');
+      // SSR hydration pattern - set state on mount
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus('unsupported');
       return;
     }

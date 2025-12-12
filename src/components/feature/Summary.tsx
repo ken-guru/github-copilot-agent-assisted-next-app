@@ -54,6 +54,20 @@ export default function Summary({
   // React to theme changes using dedicated hook for reliable updates
   const { theme: currentTheme } = useThemeReactive();
 
+  // Capture current timestamp for calculations
+  // Initialize with 0 to avoid calling Date.now() during render
+  const [currentTime, setCurrentTime] = React.useState(0);
+  
+  // Update current time when entries change and timer is active
+  React.useEffect(() => {
+    // Only update currentTime if timer is active to avoid unnecessary recalculations
+    if (timerActive) {
+      // Capturing timestamp when activity data changes
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCurrentTime(Date.now());
+    }
+  }, [entries, timerActive]);
+
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
     if (!colors) return undefined;
@@ -152,7 +166,7 @@ export default function Summary({
     return `${remainingSeconds}s`;
   };
 
-  const calculateActivityStats = () => {
+  const calculateActivityStats = (currentTime: number) => {
     if (!entries || entries.length === 0) return null;
     
     const stats = {
@@ -166,7 +180,7 @@ export default function Summary({
       const entry = entries[i];
       if (!entry) continue; // Skip undefined entries
       
-      const endTime = entry.endTime ?? Date.now();
+      const endTime = entry.endTime ?? currentTime;
       
       // Calculate break time between activities
       if (lastEndTime && entry.startTime > lastEndTime) {
@@ -192,7 +206,7 @@ export default function Summary({
     return Math.max(0, elapsedTime - totalDuration);
   };
 
-  const calculateActivityTimes = () => {
+  const calculateActivityTimes = (currentTime: number) => {
     if (!entries || entries.length === 0) return [];
     
     const activityTimes: { id: string; name: string; duration: number; colors?: TimelineEntry['colors'] }[] = [];
@@ -205,7 +219,7 @@ export default function Summary({
     // First pass: Calculate total durations
     for (const entry of sortedEntries) {
       if (entry.activityId && entry.activityName) {
-        const endTime = entry.endTime ?? Date.now();
+        const endTime = entry.endTime ?? currentTime;
         const duration = Math.round((endTime - entry.startTime) / 1000);
         
         if (activityMap.has(entry.activityId)) {
@@ -238,7 +252,7 @@ export default function Summary({
   };
 
   const status = getStatusMessage();
-  const stats = calculateActivityStats();
+  const stats = calculateActivityStats(currentTime);
   
   // Early return modified to handle isTimeUp case
   if ((!allActivitiesCompleted && !isTimeUp) || !stats) {
@@ -246,7 +260,7 @@ export default function Summary({
   }
   
   const overtime = calculateOvertime();
-  const activityTimes = calculateActivityTimes();
+  const activityTimes = calculateActivityTimes(currentTime);
 
   return (
     <div className={`${styles.container}`} data-testid="summary">

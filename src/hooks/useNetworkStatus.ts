@@ -20,9 +20,11 @@ export default function useNetworkStatus() {
 
     // In some test environments the navigator.onLine may be out-of-date
     // so check once on mount to sync state.
+    // SSR hydration pattern - synchronize with browser state
     try {
       // Avoid using `any` casts for navigator; narrow safely
       const nav = typeof navigator !== 'undefined' ? navigator : undefined;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOnline(Boolean(nav?.onLine ?? true));
     } catch {
       // ignore

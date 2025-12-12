@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import ActivityForm from './ActivityForm';
 import ActivityList from './ActivityList';
@@ -12,7 +12,9 @@ import { useToast } from '@/contexts/ToastContext';
 
 const ActivityCrud: React.FC = () => {
   const { addToast } = useToast();
-  const [activities, setActivities] = useState<Activity[]>([]);
+  const [activities, setActivities] = useState<Activity[]>(() => 
+    getActivities().filter(a => a.isActive)
+  );
   const [showForm, setShowFormRaw] = useState(false);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -29,7 +31,7 @@ const ActivityCrud: React.FC = () => {
   const [processedImportPreview, setProcessedImportPreview] = useState<Activity[] | null>(null);
 
   // Create ref for ActivityForm to trigger submit from modal footer
-  const activityFormRef = React.useRef<{ submitForm: () => void }>(null);
+  const activityFormRef = useRef<{ submitForm: () => void }>(null);
 
   // Helper to safely revoke object URLs
   const safeRevokeUrl = (url: string | null | undefined) => {
@@ -40,12 +42,6 @@ const ActivityCrud: React.FC = () => {
       // ignore revoke errors (e.g., double revoke)
     }
   };
-
-  // Load activities from localStorage on mount
-  useEffect(() => {
-    const loadedActivities = getActivities().filter(a => a.isActive);
-    setActivities(loadedActivities);
-  }, []);
 
   const handleAdd = () => {
     setEditingActivity(null);

@@ -31,11 +31,10 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
       "varsIgnorePattern": "^_"
     }],
     "@typescript-eslint/no-explicit-any": "warn",
-    // Disable new strict React Hooks rules from v7 until codebase issues are addressed
-    // These are pre-existing issues, not introduced by Next.js 16 upgrade
-    "react-hooks/immutability": "off",
-    "react-hooks/purity": "off",
-    "react-hooks/set-state-in-effect": "off",
+    // Temporarily enable strict React Hooks rules from v7 to see violations
+    "react-hooks/immutability": "error",
+    "react-hooks/purity": "error",
+    "react-hooks/set-state-in-effect": "error",
   },
 }, {
   ignores: [

@@ -15,6 +15,8 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
 
   // Prevent hydration mismatch by only running time calculations on the client
   useEffect(() => {
+    // SSR hydration pattern - set state on mount to prevent hydration mismatch
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsClient(true);
   }, []);
 

@@ -13,56 +13,6 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
   const [theme, setTheme] = useState('system');
   const [mounted, setMounted] = useState(false);
 
-  // Initialize theme from localStorage or system preference
-  useEffect(() => {
-    setMounted(true);
-    
-    // Get the theme that was set by the inline script during page load
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
-      setTheme(savedTheme);
-      // Only apply if it differs from what's already set
-      if (savedTheme !== 'system') {
-        const expectedTheme = savedTheme;
-        if (currentTheme !== expectedTheme) {
-          applyTheme(savedTheme);
-        }
-      } else {
-        // For system theme, apply based on current system preference
-        const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const systemTheme = darkModePreferred ? 'dark' : 'light';
-        if (currentTheme !== systemTheme) {
-          applyTheme('system');
-        }
-      }
-    } else {
-      // No saved theme, use system preference
-      const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const systemTheme = darkModePreferred ? 'dark' : 'light';
-      setTheme('system');
-      if (currentTheme !== systemTheme) {
-        applyTheme('system');
-      }
-    }
-  }, []);
-
-  // Handle system preference changes
-  useEffect(() => {
-    if (!mounted) return;
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (theme === 'system') {
-        applyTheme(e.matches ? 'dark' : 'light');
-      }
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme, mounted]);
-
   const applyTheme = (newTheme: string) => {
     const root = document.documentElement;
     const isDark = newTheme === 'dark' || 
@@ -109,6 +59,60 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
       validateThemeColors();
     }, 100); // Small delay to ensure CSS variables are updated
   };
+
+  // Initialize theme from localStorage or system preference
+  useEffect(() => {
+    // SSR hydration pattern - set state on mount to prevent hydration mismatch
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+    
+    // Get the theme that was set by the inline script during page load
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTheme(savedTheme);
+      // Only apply if it differs from what's already set
+      if (savedTheme !== 'system') {
+        const expectedTheme = savedTheme;
+        if (currentTheme !== expectedTheme) {
+          applyTheme(savedTheme);
+        }
+      } else {
+        // For system theme, apply based on current system preference
+        const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const systemTheme = darkModePreferred ? 'dark' : 'light';
+        if (currentTheme !== systemTheme) {
+          applyTheme('system');
+        }
+      }
+    } else {
+      // No saved theme, use system preference
+      const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const systemTheme = darkModePreferred ? 'dark' : 'light';
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTheme('system');
+      if (currentTheme !== systemTheme) {
+        applyTheme('system');
+      }
+    }
+  }, []);
+
+  // Handle system preference changes
+  useEffect(() => {
+    if (!mounted) return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (theme === 'system') {
+        applyTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme, mounted]);
 
   const handleThemeChange = (newTheme: string) => {
     setTheme(newTheme);

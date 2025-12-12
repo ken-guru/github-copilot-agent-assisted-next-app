@@ -13,6 +13,8 @@ export function useOnlineStatus(): boolean {
 
   useEffect(() => {
     // Update initial state on mount to ensure accuracy
+    // SSR hydration pattern - synchronize with browser state
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsOnline(navigator.onLine);
 
     // Handler for online event

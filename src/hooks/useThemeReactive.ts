@@ -36,7 +36,11 @@ export const useThemeReactive = (): { theme: Theme; ready: boolean } => {
     // The use of useLayoutEffect guarantees this runs before the first paint,
     // so the user never sees the wrong theme.
     const detectedTheme = detectCurrentTheme();
+    // SSR hydration pattern - set state synchronously in useLayoutEffect
+    // This is intentional to prevent FOUC and is safe within useLayoutEffect
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(detectedTheme);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setReady(true);
   }, []);
 
