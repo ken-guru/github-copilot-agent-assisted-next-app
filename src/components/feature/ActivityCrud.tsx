@@ -12,7 +12,9 @@ import { useToast } from '@/contexts/ToastContext';
 
 const ActivityCrud: React.FC = () => {
   const { addToast } = useToast();
-  const [activities, setActivities] = useState<Activity[]>([]);
+  const [activities, setActivities] = useState<Activity[]>(() => 
+    getActivities().filter(a => a.isActive)
+  );
   const [showForm, setShowFormRaw] = useState(false);
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -40,14 +42,6 @@ const ActivityCrud: React.FC = () => {
       // ignore revoke errors (e.g., double revoke)
     }
   };
-
-  // Load activities from localStorage on mount
-  useEffect(() => {
-    // Loading data from localStorage on mount - legitimate use case
-    const loadedActivities = getActivities().filter(a => a.isActive);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setActivities(loadedActivities);
-  }, []);
 
   const handleAdd = () => {
     setEditingActivity(null);

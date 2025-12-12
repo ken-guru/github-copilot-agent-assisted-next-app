@@ -13,7 +13,10 @@ describe('useTimerState - extendDuration integration scenarios', () => {
 
   describe('Issue #262 scenarios', () => {
     it('should handle scenario 1: 2 minutes duration, 1:10 spent, press +1 min → 3 minutes with 1:10 spent', () => {
-      const { result } = renderHook(() => useTimerState({ totalDuration: 120 })); // 2 minutes
+      const { result, rerender } = renderHook(
+        ({ totalDuration }) => useTimerState({ totalDuration }),
+        { initialProps: { totalDuration: 120 } } // 2 minutes
+      );
       
       // Start timer and advance to 1 minute 10 seconds
       act(() => {
@@ -25,11 +28,9 @@ describe('useTimerState - extendDuration integration scenarios', () => {
       expect(result.current.elapsedTime).toBe(70);
       expect(result.current.isTimeUp).toBe(false);
       
-      // This test verifies that extendDuration clears isTimeUp state
-      // In the actual implementation, the parent component (page.tsx) 
-      // handles updating the totalDuration prop
+      // Extend duration by increasing totalDuration prop (simulating parent component)
       act(() => {
-        result.current.extendDuration();
+        rerender({ totalDuration: 180 }); // 3 minutes
       });
       
       // Verify timer continues running normally
@@ -106,7 +107,10 @@ describe('useTimerState - extendDuration integration scenarios', () => {
     });
 
     it('should work correctly when extending duration multiple times', () => {
-      const { result } = renderHook(() => useTimerState({ totalDuration: 30 })); // 30 seconds
+      const { result, rerender } = renderHook(
+        ({ totalDuration }) => useTimerState({ totalDuration }),
+        { initialProps: { totalDuration: 30 } } // 30 seconds
+      );
       
       // Start timer and go into overtime
       act(() => {
@@ -116,32 +120,34 @@ describe('useTimerState - extendDuration integration scenarios', () => {
       
       expect(result.current.isTimeUp).toBe(true);
       
-      // First extension
+      // First extension - increase duration to 60 seconds
       act(() => {
-        result.current.extendDuration();
+        rerender({ totalDuration: 60 });
       });
       
       expect(result.current.isTimeUp).toBe(false);
       
       // Advance more time to go into overtime again
       act(() => {
-        jest.advanceTimersByTime(30000); // 30 more seconds
+        jest.advanceTimersByTime(30000); // 30 more seconds (now at 75 seconds)
       });
       
       expect(result.current.elapsedTime).toBe(75);
-      // Note: Whether isTimeUp becomes true depends on the updated totalDuration
-      // This test focuses on extendDuration's ability to clear the state
+      expect(result.current.isTimeUp).toBe(true);
       
-      // Second extension
+      // Second extension - increase duration to 120 seconds
       act(() => {
-        result.current.extendDuration();
+        rerender({ totalDuration: 120 });
       });
       
       expect(result.current.isTimeUp).toBe(false);
     });
 
     it('should not interfere with timer active state', () => {
-      const { result } = renderHook(() => useTimerState({ totalDuration: 60 }));
+      const { result, rerender } = renderHook(
+        ({ totalDuration }) => useTimerState({ totalDuration }),
+        { initialProps: { totalDuration: 60 } }
+      );
       
       // Start timer
       act(() => {
@@ -152,9 +158,9 @@ describe('useTimerState - extendDuration integration scenarios', () => {
       expect(result.current.timerActive).toBe(true);
       expect(result.current.isTimeUp).toBe(true);
       
-      // Extend duration
+      // Extend duration by increasing totalDuration prop
       act(() => {
-        result.current.extendDuration();
+        rerender({ totalDuration: 120 }); // Extend to 2 minutes
       });
       
       // Timer should still be active

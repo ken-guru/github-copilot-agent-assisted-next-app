@@ -7,9 +7,11 @@ interface UseTimerStateProps {
 
 export function useTimerState({ totalDuration, isCompleted = false }: UseTimerStateProps) {
   const [elapsedTime, setElapsedTime] = useState(0);
-  const [isTimeUp, setIsTimeUp] = useState(false);
   const [timerActive, setTimerActive] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Derive isTimeUp from current state instead of storing it
+  const isTimeUp = timerActive && elapsedTime >= totalDuration;
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -20,29 +22,16 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
   }, []);
 
   const extendDuration = useCallback(() => {
-    // Clear isTimeUp state when extending duration
-    setIsTimeUp(false);
+    // isTimeUp is now derived, no need to clear it
   }, []);
 
-  // Effect to update isTimeUp when totalDuration changes
+  // Stop timer when component completes
   useEffect(() => {
-    // Synchronizing state based on prop changes - legitimate use case
-    if (timerActive && elapsedTime >= totalDuration) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsTimeUp(true);
-    } else if (timerActive && elapsedTime < totalDuration) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsTimeUp(false);
-    }
-  }, [totalDuration, elapsedTime, timerActive]);
-
-  useEffect(() => {
-    if (isCompleted) {
-      // Synchronizing state based on prop changes - calling a memoized callback
+    if (isCompleted && timerActive) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       stopTimer();
     }
-  }, [isCompleted, stopTimer]);
+  }, [isCompleted, timerActive, stopTimer]);
 
   useEffect(() => {
     return () => {
@@ -60,18 +49,13 @@ export function useTimerState({ totalDuration, isCompleted = false }: UseTimerSt
       timerRef.current = setInterval(() => {
         const currentElapsed = Math.floor((Date.now() - startTime) / 1000);
         setElapsedTime(currentElapsed);
-        
-        if (currentElapsed >= totalDuration) {
-          setIsTimeUp(true);
-        }
       }, 1000);
     }
-  }, [timerActive, isCompleted, elapsedTime, totalDuration]);
+  }, [timerActive, isCompleted, elapsedTime]);
 
   const resetTimer = useCallback(() => {
     stopTimer();
     setElapsedTime(0);
-    setIsTimeUp(false);
   }, [stopTimer]);
 
   return {

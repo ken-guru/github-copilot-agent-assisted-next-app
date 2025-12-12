@@ -55,19 +55,18 @@ export default function Summary({
   const { theme: currentTheme } = useThemeReactive();
 
   // Capture current timestamp for calculations
-  // Initialize with a safe value that won't break calculations
-  const [currentTime, setCurrentTime] = React.useState(() => {
-    // Use a lazy initializer to avoid calling Date.now() during render
-    // but provide a reasonable initial value
-    return typeof window !== 'undefined' ? Date.now() : 0;
-  });
+  // Initialize with 0 to avoid calling Date.now() during render
+  const [currentTime, setCurrentTime] = React.useState(0);
   
-  // Update current time when entries change (new activities added/completed)
+  // Update current time when entries change and timer is active
   React.useEffect(() => {
-    // Capturing timestamp when activity data changes
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCurrentTime(Date.now());
-  }, [entries]);
+    // Only update currentTime if timer is active to avoid unnecessary recalculations
+    if (timerActive) {
+      // Capturing timestamp when activity data changes
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCurrentTime(Date.now());
+    }
+  }, [entries, timerActive]);
 
   // Function to get the theme-appropriate color for an activity
   const getThemeAppropriateColor = (colors: TimelineEntry['colors']) => {
