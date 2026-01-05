@@ -1,22 +1,28 @@
 {
 	"servers": {
-		"MCP_DOCKER": {
-            "command": "docker",
-            "args": [
-                "mcp",
-                "gateway",
-                "run",
-                "--verify-signatures",
-                "--log-calls",
-                "--block-network",
-                "--block-secrets",
-                "--cpus",
-                "1",
-                "--memory",
-                "1Gb"
-            ],
-            "type": "stdio"
-		}
+		"github": {
+			"command": "docker",
+			"args": [
+				"run",
+				"--pull=always",
+				"-i",
+				"--rm",
+				"-e",
+				"GITHUB_PERSONAL_ACCESS_TOKEN",
+				"ghcr.io/github/github-mcp-server"
+			],
+			"env": {
+				"GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github_token}"
+			},
+			"type": "stdio"
+        }
 	},
-	"inputs": []
+	"inputs": [
+		{
+			"type": "promptString",
+			"id": "github_token",
+			"description": "GitHub Personal Access Token",
+			"password": true
+		}
+	]
 }
