@@ -50,6 +50,7 @@
   "overrides": {
     "glob": "^10",
     "test-exclude": "^7.0.1",
-    "inflight": "npm:@empty-package/no-inflight@0.0.0"
+    "inflight": "npm:@empty-package/no-inflight@0.0.0",
+    "qs": "^6.14.1"
   }
 }
