@@ -38,7 +38,7 @@
     "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "cypress": "^15.8.1",
+    "cypress": "^15.9.0",
     "eslint": "^9",
     "eslint-config-next": "^16.1.1",
     "fast-check": "^4.5.3",
