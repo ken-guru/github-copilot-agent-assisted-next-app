@@ -1,5 +1,6 @@
 ---
 name: Reviewer
+description: Code review agent focused on security, accessibility, and best practices
 user-invokable: false
 tools: ['read', 'search', 'problems']
 ---

@@ -1,5 +1,6 @@
 ---
 name: Researcher
+description: Research-focused agent for gathering context and analyzing code patterns
 user-invokable: false
 tools: ['read', 'search', 'problems']
 ---

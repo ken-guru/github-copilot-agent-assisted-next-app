@@ -1,5 +1,6 @@
 ---
 name: Implementer
+description: Focused implementation agent for writing code based on research and plans
 user-invokable: false
 tools: ['read', 'edit', 'terminal', 'testing', 'problems']
 ---
