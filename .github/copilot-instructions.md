@@ -59,8 +59,10 @@ src/components/                    # Bootstrap-wrapped components
 ### Issue Understanding with MCP Tools
 ```bash
 # Get issue details
-mcp_github_get_issue(issue_number=<NUMBER>)
-mcp_github_get_issue_comments(issue_number=<NUMBER>)
+mcp_github_issue_read(issue_number=<NUMBER>)
+
+# Add a comment to an issue
+mcp_github_add_issue_comment(issue_number=<NUMBER>, body="...")
 
 # For complex issues, delegate research to Researcher subagent
 # Search historical solutions in docs/logged_memories/
@@ -102,12 +104,12 @@ mcp_playwright_browser_take_screenshot(filename="issue-<NUMBER>-current-state.pn
 ### Tool Usage Patterns
 ```bash
 # Issue analysis
-mcp_github_get_issue() → understand requirements
-mcp_github_get_issue_comments() → get additional context
+mcp_github_issue_read() → understand requirements and comments
+mcp_github_search_issues() → find related issues
 
 # Documentation lookup
-mcp_microsoft_docs_search() → Azure/Microsoft docs
-mcp_upstash_context7_get-library-docs() → current library documentation
+# Use microsoft.docs.mcp server tools → Azure/Microsoft docs
+# Use upstash/context7 server tools → current library documentation
 
 # UI verification
 mcp_playwright_browser_navigate() → navigate to app
@@ -143,7 +145,7 @@ When a GitHub Copilot code review is requested:
 1. **Request Review**: Create PR and request GitHub Copilot review
 2. **WAIT**: Do not mark work complete until review comments arrive
 3. **Address UNRESOLVED Feedback**: Systematically respond to unresolved review comments only
-   - Use `mcp_github_get_pull_request_comments` to retrieve all feedback
+   - Use `mcp_github_pull_request_read` to retrieve all feedback
    - **CRITICAL**: Only address comments that are NOT already resolved on GitHub
    - **SKIP**: Comments marked as "Resolved" or "Outdated" on GitHub do not need re-addressing
    - Address code quality suggestions, optimization recommendations, and best practice improvements for unresolved comments only

@@ -74,12 +74,6 @@ touch docs/logged_memories/MRTMLY-XXX-brief-description.md
 - [MRTMLY-XXX: Brief Description](#placeholder-link)
 ```
 
-### Step 4: Optional MCP Sync
-```bash
-# Sync to MCP Memory Tool for AI agent access
-node scripts/migrate-memory-logs-to-mcp.js
-```
-
 ## 🎯 COMMON DEBUGGING SCENARIOS
 
 | When You're Stuck | What to Search | Where to Look |
@@ -93,7 +87,6 @@ node scripts/migrate-memory-logs-to-mcp.js
 ## 🔧 MAINTENANCE TASKS
 
 ### Weekly
-- [ ] Run migration script to sync new entries to MCP
 - [ ] Check for missing entries in MEMORY_LOG.md index
 - [ ] Validate that recent debugging sessions are documented
 
@@ -122,5 +115,4 @@ Before closing a debugging session:
 **Update When Revisited**: Add new insights to existing entries
 
 ---
-**Full Documentation**: `docs/dev-guides/memory-log-workflow.md`  
-**AI Agent Quick Reference**: `docs/dev-guides/ai-agent-memory-quick-reference.md`
+**Full Documentation**: `docs/dev-guides/memory-log-workflow.md`

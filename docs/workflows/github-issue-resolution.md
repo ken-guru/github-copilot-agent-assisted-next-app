@@ -25,10 +25,7 @@ When using this workflow in other repositories, update these values accordingly.
 #### 1.1 Retrieve Issue Details
 ```bash
 # Get comprehensive issue information
-mcp_github_get_issue(owner="${REPO_OWNER}", repo="${REPO_NAME}", issue_number=<NUMBER>)
-
-# Get issue comments for additional context
-mcp_github_get_issue_comments(owner="${REPO_OWNER}", repo="${REPO_NAME}", issue_number=<NUMBER>)
+mcp_github_issue_read(owner="${REPO_OWNER}", repo="${REPO_NAME}", issue_number=<NUMBER>)
 ```
 
 #### 1.2 Search Historical Context
@@ -162,7 +159,7 @@ Fixes #<NUMBER>
 #### 8.1 Monitor CI/CD Checks
 ```bash
 # Check PR status and CI/CD results
-mcp_github_get_pull_request_status(owner="${REPO_OWNER}", repo="${REPO_NAME}", pullNumber=<PR_NUMBER>)
+mcp_github_pull_request_read(owner="${REPO_OWNER}", repo="${REPO_NAME}", pullNumber=<PR_NUMBER>)
 
 # Monitor in real-time if needed (fallback to CLI)
 gh pr checks <PR_NUMBER> --fail-fast --watch
@@ -171,9 +168,7 @@ gh pr checks <PR_NUMBER> --fail-fast --watch
 #### 8.2 Handle Code Review Comments
 ```bash
 # Check for review comments
-mcp_github_get_pull_request_reviews(owner="${REPO_OWNER}", repo="${REPO_NAME}", pullNumber=<PR_NUMBER>)
-
-mcp_github_get_pull_request_comments(owner="${REPO_OWNER}", repo="${REPO_NAME}", pullNumber=<PR_NUMBER>)
+mcp_github_pull_request_read(owner="${REPO_OWNER}", repo="${REPO_NAME}", pullNumber=<PR_NUMBER>)
 
 # Address each comment systematically
 # Commit fixes following the same quality process
@@ -206,8 +201,8 @@ Repeat Steps 5-8 until:
 ### Issue Analysis
 ```bash
 # GitHub tools for issue understanding
-mcp_github_get_issue() → understand requirements
-mcp_github_get_issue_comments() → get additional context
+mcp_github_issue_read() → understand requirements and comments
+mcp_github_search_issues() → find related issues
 ```
 
 ### Documentation Lookup
@@ -260,7 +255,7 @@ Before considering any issue resolved:
 - Address all errors before pushing
 
 **Code Review Delays**:
-- Use `mcp_github_get_pull_request_reviews` to check status
+- Use `mcp_github_pull_request_read` to check status
 - Address comments promptly and comprehensively
 - Update PR title/description to reflect current state
 
