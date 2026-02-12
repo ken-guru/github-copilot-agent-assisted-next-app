@@ -212,11 +212,13 @@ mcp_github_get_issue_comments() → get additional context
 
 ### Documentation Lookup
 ```bash
-# Microsoft docs for Azure/Microsoft technologies
-mcp_microsoft_docs_search() → find relevant documentation
+# Tool names vary by MCP client. Use your client's tools panel to find
+# the canonical tool names under the `microsoft.docs.mcp` server, then call e.g.:
+# <your_microsoft_docs_tool_name>(...) → find relevant documentation
 
 # Context7 for library documentation
-mcp_upstash_context7_get-library-docs() → fetch current documentation
+# Likewise, discover the tools exposed by the `upstash/context7` server and use e.g.:
+# <your_context7_tool_name>(...) → fetch current documentation
 ```
 
 ### UI Verification
