@@ -4,13 +4,11 @@ This document outlines the complete workflow for resolving GitHub issues using M
 
 ## Prerequisites
 
-Ensure you have access to these MCP tools:
-- **GitHub MCP Server**: [Documentation](https://github.com/github/github-mcp-server)
-- **Time Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/time)
-- **Sequential Thinking**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking)
-- **Memory Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/memory)
-- **Playwright Automation**: [Documentation](https://github.com/executeautomation/mcp-playwright)
-- **Context7**: [Documentation](https://github.com/upstash/context7)
+Ensure you have access to these MCP servers (configured via VS Code user settings):
+- **github**: [Documentation](https://github.com/github/github-mcp-server) - Issue/PR management
+- **microsoft.docs.mcp**: [Documentation](https://learn.microsoft.com/api/mcp) - Microsoft/Azure documentation
+- **playwright**: [Documentation](https://github.com/microsoft/playwright-mcp) - Browser automation
+- **upstash/context7**: [Documentation](https://context7.com) - Library documentation
 
 ## Repository Configuration
 
@@ -35,23 +33,13 @@ mcp_github_get_issue_comments(owner="${REPO_OWNER}", repo="${REPO_NAME}", issue_
 
 #### 1.2 Search Historical Context
 ```bash
-# Search memory for similar issues
-mcp_memory_search_nodes(query="issue type keywords debugging solution")
-
 # Search existing memory logs for patterns
 # Reference: docs/logged_memories/ for detailed debugging sessions
+grep -r "relevant keywords" docs/logged_memories/
 ```
 
 #### 1.3 Complex Issue Analysis
-For complex or unclear issues, use sequential thinking:
-```bash
-mcp_sequential-th_sequentialthinking({
-  thought: "Breaking down this issue: What are the core problems? What components are affected? What are the user impacts?",
-  nextThoughtNeeded: true,
-  thoughtNumber: 1,
-  totalThoughts: 5
-})
-```
+For complex or unclear issues, delegate to the Researcher subagent for systematic analysis. The Researcher agent can search the codebase, find patterns, and provide a structured summary before implementation.
 
 ### Step 2: Issue Verification (If Applicable)
 
@@ -94,14 +82,11 @@ Create entry in `docs/PLANNED_CHANGES.md` using the template:
 # Reference: docs/templates/PLANNED_CHANGES_TEMPLATE.md
 ```
 
-#### 4.2 Store Implementation Context
+#### 4.2 Document Implementation Context
+Create a memory log entry if the debugging process involves significant investigation:
 ```bash
-# Create memory entities for tracking
-mcp_memory_create_entities([{
-  name: "Issue-<NUMBER>-Resolution",
-  entityType: "debugging_session",
-  observations: ["Initial analysis", "Implementation approach", "Test strategy"]
-}])
+# Create memory log in docs/logged_memories/
+# Use template: docs/templates/DEBUGGING_SESSION_TEMPLATE.md
 ```
 
 ### Step 5: Implementation and Testing
@@ -207,54 +192,46 @@ Repeat Steps 5-8 until:
 
 #### 10.1 Update Memory Logs
 ```bash
-# Create detailed memory log entry
+# Create detailed memory log entry if significant debugging was involved
 # Reference: docs/templates/DEBUGGING_SESSION_TEMPLATE.md
-
-# Update MCP memory with resolution
-mcp_memory_add_observations([{
-  entityName: "Issue-<NUMBER>-Resolution",
-  contents: ["Final solution implemented", "Tests added", "Issue resolved"]
-}])
-
-# Create relationships for future reference
-mcp_memory_create_relations([{
-  from: "Issue-<NUMBER>-Resolution",
-  to: "ComponentName",
-  relationType: "resolved_issue_in"
-}])
+# Add entry to docs/MEMORY_LOG.md index
 ```
 
 #### 10.2 Update Planning Documents
 - Move completed change from `docs/PLANNED_CHANGES.md` to `docs/IMPLEMENTED_CHANGES.md`
 - Clear planning document for next development cycle
 
-## Tool Combination Strategies
+## Tool Usage Patterns
 
-### Complex Problem Analysis
+### Issue Analysis
 ```bash
-# Use Sequential Thinking + Memory + Context7 together
-mcp_sequential-th_sequentialthinking() → analyze problem systematically
-mcp_memory_search_nodes() → find relevant historical context
-mcp_context7_resolve-library-id() → identify relevant libraries
-mcp_context7_get-library-docs() → fetch current documentation
-mcp_memory_create_entities() → document analysis outcomes
-```
-
-### Issue Verification and Testing
-```bash
-# Use Playwright + GitHub + Context7 tools
-mcp_playwright_browser_* → verify issue and test solution
+# GitHub tools for issue understanding
 mcp_github_get_issue() → understand requirements
-mcp_context7_get-library-docs() → get up-to-date library references
-mcp_github_create_pull_request() → document verification results
+mcp_github_get_issue_comments() → get additional context
 ```
 
-### Time Management and Coordination
+### Documentation Lookup
 ```bash
-# Use Time tools for documentation
-mcp_time_get_current_time("UTC") → timestamp memory logs
-mcp_time_convert_time() → coordinate across timezones
+# Microsoft docs for Azure/Microsoft technologies
+mcp_microsoft_docs_search() → find relevant documentation
+
+# Context7 for library documentation
+mcp_upstash_context7_get-library-docs() → fetch current documentation
 ```
+
+### UI Verification
+```bash
+# Playwright for browser automation
+mcp_playwright_browser_navigate() → navigate to app
+mcp_playwright_browser_snapshot() → capture accessibility tree
+mcp_playwright_browser_take_screenshot() → visual documentation
+```
+
+### Subagent Delegation
+For complex tasks, delegate to specialized agents in `.github/agents/`:
+- **Researcher**: Context gathering and code analysis
+- **Implementer**: Focused code implementation
+- **Reviewer**: Security and quality review
 
 ## Quality Gates
 
@@ -286,8 +263,8 @@ Before considering any issue resolved:
 - Update PR title/description to reflect current state
 
 **Complex Problem Analysis**:
-- Use `mcp_sequential-th_sequentialthinking` for systematic breakdown
-- Reference memory logs for similar historical issues
+- Delegate research to Researcher subagent for systematic breakdown
+- Search `docs/logged_memories/` for similar historical issues
 - Verify problems with Playwright tools before implementing solutions
 
 ---

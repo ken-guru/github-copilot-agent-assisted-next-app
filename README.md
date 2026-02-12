@@ -1,9 +1,6 @@
-# Activity Timer and Tracke- **GitHub MCP Server**: [Documentation](https://github.com/github/github-mcp-server) - Issue/PR management and repository operations
-- **Sequential Thinking**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking) - Complex problem analysis
-- **Memory Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) - Knowledge persistence and retrieval
-- **Time Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/time) - Timezone-aware handling
-- **Playwright Tools**: [Documentation](https://github.com/executeautomation/mcp-playwright) - Browser automation and UI verification
-- **Context7**: [Documentation](https://github.com/upstash/context7) - Real-time library documentation and code examples[Dependabot Updates](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates)
+# Activity Timer and Tracker
+
+[![Dependabot Updates](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/dependabot/dependabot-updates)
 [![CodeQL Security Scan](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/codeql.yml)
 
 ## Project Context
@@ -27,50 +24,21 @@ The application is developed using AI-assisted techniques with these principles:
 - Accessibility considerations
 
 ### AI Development Enhancement
-This project leverages Model Context Protocol (MCP) tools to enhance AI-assisted development:
-- **GitHub Tools**: [Documentation](https://github.com/github/github-mcp-server) - Issue/PR management and analysis
-- **Sequential Thinking**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking) - Complex problem analysis
-- **Memory Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) - Knowledge persistence and retrieval
-- **Time Tools**: [Documentation](https://github.com/modelcontextprotocol/servers/tree/main/src/time) - Timezone-aware handling
-- **Playwright Tools**: [Documentation](https://github.com/executeautomation/mcp-playwright) - Browser automation and UI verification
+
+This project leverages AI-assisted development with GitHub Copilot and MCP (Model Context Protocol) servers.
+
+**Available MCP Servers** (configured in VS Code user settings):
+- **github** - Issue/PR management and repository operations
+- **microsoft.docs.mcp** - Microsoft/Azure documentation lookup
+- **playwright** - Browser automation for UI verification
+- **upstash/context7** - Real-time library documentation
+
+**AI Context Files**:
+- [AGENTS.md](./AGENTS.md) - Project context for AI coding agents
+- [.github/copilot-instructions.md](.github/copilot-instructions.md) - GitHub Copilot-specific instructions
+- [.github/agents/](.github/agents/) - Custom subagent definitions (Researcher, Implementer, Reviewer)
 
 **Key Workflow**: [GitHub Issue Resolution](./docs/workflows/github-issue-resolution.md)
-
-**Practical Examples:**
-```bash
-# Issue analysis with GitHub tools
-mcp_github_get_issue(issue_number=123)
-mcp_github_get_issue_comments(issue_number=123)
-
-# Complex problem breakdown
-mcp_sequential-th_sequentialthinking({
-  thought: "Breaking down this issue: components affected, user impact, root cause..."
-})
-
-# Search existing solutions
-mcp_memory_search_nodes(query="similar debugging patterns")
-
-# UI verification
-mcp_playwright_browser_navigate(url="http://localhost:3000")
-mcp_playwright_browser_snapshot()
-```
-
-These tools enable systematic issue resolution and enhanced AI assistance. For complete usage guides, see [GitHub Issue Resolution Workflow](./docs/workflows/github-issue-resolution.md) and [Memory Log Workflow](./docs/dev-guides/memory-log-workflow.md).
-
-### Docker MCP Gateway for MCP Tools
-
-We now run our MCP tools through the Docker MCP Gateway so that each service executes inside an isolated container (no direct access to host files, secrets, or unrestricted network). The approved toolset available through the gateway is:
-
-- **Context7** – knowledge and library documentation during coding sessions.
-- **GitHub Official** – issue reviews, PR automation, and repository data.
-- **Microsoft Learn** – official Azure/Microsoft documentation snippets and examples.
-- **Playwright** – browser automation for UI verification.
-
-The Gateway runs automatically whenever you enable the MCP Toolkit in Docker Desktop, but you can also start it manually with `docker mcp gateway run` (see the official [Docker MCP Gateway guide](https://docs.docker.com/ai/mcp-catalog-and-toolkit/mcp-gateway/) for CLI flags, security defaults, and installation steps). Use the [Docker MCP Toolkit documentation](https://docs.docker.com/ai/mcp-catalog-and-toolkit/toolkit/) to enable the Toolkit UI, browse the MCP Catalog, and authorize each server so that these four tools appear in your Visual Studio Code agent environment.
-
-The CLI command lives in `.vscode/mcp.json`, which applies the security-minded flags we mandate (`--verify-signatures`, `--log-calls`, `--block-network`, `--block-secrets`, `--cpus 1`, `--memory 1Gb`). Keep that file in sync if you customize the gateway startup so the rest of the team can replicate the safe defaults.
-
-Step-by-step setup details are captured in [docs/workflows/docker-mcp-gateway.md](./docs/workflows/docker-mcp-gateway.md). Refer to that guide whenever the gateway needs to be reconfigured or when onboarding a new developer.
 
 ### Change Management Approach
 ```markdown
@@ -336,16 +304,7 @@ Key component categories:
 - [Planning Template](./docs/templates/PLANNED_CHANGES_TEMPLATE.md) - Template for new change requests
 - [Memory Log](./docs/MEMORY_LOG.md) - Project history and issue resolutions
 - **[Memory Log Workflow](./docs/dev-guides/memory-log-workflow.md) - Complete guide for creating and accessing debugging knowledge**
-- **[MCP Memory Tool Usage](./docs/dev-guides/mcp-memory-tool-usage.md) - AI agent guide for semantic search and knowledge building**
 - [Time Utilities Testing Guide](./docs/dev-guides/TIME_UTILITIES_TESTING.md)
-
-### Development Scripts
-
-- **Memory Log Synchronization**: `node scripts/migrate-memory-logs-to-mcp.js`
-  - Syncs markdown memory logs with MCP Memory Tool for AI search
-  - Use `--dry-run` to preview changes before execution
-  - Essential for maintaining hybrid markdown + MCP memory system
-  - Not a one-off tool - keep for ongoing synchronization and disaster recovery
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
