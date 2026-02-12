@@ -85,10 +85,12 @@ grep -r "typescript" docs/logged_memories/
 
 #### 1. Search Memory Logs
 ```bash
-# Use grep or semantic search to find relevant debugging sessions
+# Use grep to search memory logs by keywords
 grep -r "component testing" docs/logged_memories/
 grep -r "state management" docs/logged_memories/
 ```
+
+You can also use VS Code's search functionality to browse memory logs interactively.
 
 #### 2. Read Relevant Files
 - Open specific memory log files for detailed context
