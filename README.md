@@ -111,6 +111,30 @@ When implementing or modifying features, ensure adherence to these core function
    - Privacy-preserving payloads (no PII; includes descriptions and exported colors)
 ```
 
+## Native Mobile App Strategy
+
+The project has completed comprehensive research for transitioning to native mobile apps (iOS & Android). See detailed documentation:
+
+- **[Native App Transition Strategy](./docs/NATIVE_APP_TRANSITION_STRATEGY.md)** - Complete research, framework comparison, and implementation roadmap
+- **[Mobile Quick Reference](./docs/MOBILE_QUICK_REFERENCE.md)** - TL;DR guide with decision matrix and getting started steps
+- **[Mobile Code Comparison](./docs/MOBILE_CODE_COMPARISON.md)** - Side-by-side code examples for each framework
+
+### Recommended Approach: Capacitor Hybrid
+
+**Why Capacitor:**
+- ✅ 80-90% code reuse from existing Next.js app
+- ✅ Fastest time to market (3-4 weeks)
+- ✅ App store presence (iOS + Android)
+- ✅ Cost-effective ($24K vs $67K for React Native)
+- ✅ Team skills match (React, TypeScript, HTML/CSS)
+
+**Alternative:** React Native for best-in-class native experience (8-12 weeks, 40% code reuse)
+
+**Next Steps:**
+1. Review [Mobile Quick Reference](./docs/MOBILE_QUICK_REFERENCE.md) for decision guidance
+2. Approve budget and timeline
+3. Follow Phase 1 implementation (PWA optimization) or Phase 2 (Capacitor deployment)
+
 ## Implementation Guidelines
 
 ### Architecture Patterns
@@ -134,6 +158,9 @@ src/
 docs/                 # Project documentation
   ├── PLANNED_CHANGES.md    # Upcoming changes (uses template format)
   ├── IMPLEMENTED_CHANGES.md # Completed changes
+  ├── NATIVE_APP_TRANSITION_STRATEGY.md # Mobile app research & strategy
+  ├── MOBILE_QUICK_REFERENCE.md # TL;DR mobile strategy guide
+  ├── MOBILE_CODE_COMPARISON.md # Framework code examples
   └── templates/        # Documentation templates
       ├── PLANNED_CHANGES_TEMPLATE.md
       ├── COMPONENT_DOCUMENTATION_TEMPLATE.md
