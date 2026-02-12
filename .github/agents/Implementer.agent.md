@@ -1,7 +1,7 @@
 ---
 name: Implementer
 user-invokable: false
-tools: ['read_file', 'replace_string_in_file', 'create_file', 'run_in_terminal', 'runTests', 'get_errors']
+tools: ['read', 'edit', 'terminal', 'testing', 'problems']
 ---
 
 # Implementer Agent

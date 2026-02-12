@@ -1,7 +1,7 @@
 ---
 name: Reviewer
 user-invokable: false
-tools: ['read_file', 'grep_search', 'semantic_search', 'file_search', 'get_errors']
+tools: ['read', 'search', 'problems']
 ---
 
 # Reviewer Agent
