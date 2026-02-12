@@ -90,7 +90,7 @@ For complex tasks, consider delegating to specialized subagents:
 
 ## Key Documentation
 
-- [GitHub Issue Resolution](.github/copilot-instructions.md) - Complete workflow for issue resolution
+- [GitHub Issue Resolution](docs/workflows/github-issue-resolution.md) - Complete workflow for issue resolution
 - [Testing Procedures](docs/workflows/testing-procedures.md) - Jest vs Cypress decision matrix
 - [Memory Log Index](docs/MEMORY_LOG.md) - Historical debugging sessions
 
