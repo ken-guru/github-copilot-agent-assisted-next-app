@@ -84,8 +84,7 @@ Session Sharing e2e (Cypress):
 ## GitHub PR Check Monitoring
 
 - **PREFER MCP GitHub tools** when available for comprehensive PR information:
-  - Use `mcp_github_get_pull_request_status` for CI/CD check status
-  - Use `mcp_github_get_pull_request` for overall PR state and details
+  - Use `mcp_github_pull_request_read` for CI/CD check status and PR details
   - Use `mcp_github_list_pull_requests` to find PR numbers by branch
 - **FALLBACK to CLI for real-time monitoring**: Use `gh pr checks <PR_NUMBER> --fail-fast --watch` for real-time updates
 - Avoid using `gh pr checks` without flags as it may hang indefinitely
@@ -96,15 +95,12 @@ Session Sharing e2e (Cypress):
 
 - **MANDATORY**: Check for code review comments before considering any PR work complete
 - **ALWAYS use MCP GitHub tools** when available for PR operations:
-  - Use `mcp_github_get_pull_request` to get comprehensive PR details
-  - Use `mcp_github_get_pull_request_comments` to check for review comments
-  - Use `mcp_github_get_pull_request_reviews` to check for formal reviews
-  - Use `mcp_github_get_pull_request_files` to see changed files and line comments
+  - Use `mcp_github_pull_request_read` for PR details, review comments, and changed files
 - **FALLBACK to CLI only when MCP tools unavailable**: `gh pr view <PR_NUMBER>`
 - **NEVER finish PR work** without addressing all code review feedback
 - **ALWAYS respond to reviewer requests** before marking work as done
 - Code review feedback takes precedence over completion - address all comments first
-- Use `mcp_github_create_pull_request_review` or `gh pr review <PR_NUMBER> --approve` only after all feedback is addressed
+- Use `mcp_github_pull_request_review_write` or `gh pr review <PR_NUMBER> --approve` only after all feedback is addressed
 
 ## Specific Testing Patterns
 

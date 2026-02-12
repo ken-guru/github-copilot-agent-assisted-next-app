@@ -44,12 +44,10 @@ Use this template when documenting debugging sessions in the Memory Log system.
 - Applicable to similar issues
 
 #### MCP Tool Usage (when available)
-- **Sequential Thinking**: Record complex analysis steps and hypothesis testing
-- **Memory Tool**: Document patterns and solutions for future reference
-- **Time Tool**: Track debugging session duration and timezone context
 - **GitHub Tools**: Document PR/issue analysis steps
 - **Playwright Tools**: Record UI verification and testing steps
 - **Context7**: Fetch up-to-date library documentation and code examples
+- **Microsoft Docs**: Reference official documentation
 ```
 
 ## Extended Template for Complex Issues
@@ -112,12 +110,10 @@ For complex debugging sessions involving multiple components or systems:
 - **Process Improvements**: Changes to debugging procedures
 
 #### MCP Tool Integration
-- **Sequential Thinking Sessions**: Complex analysis breakdown
-- **Memory Tool Usage**: Knowledge captured and retrieved
 - **GitHub Tool Usage**: PR/issue management steps
 - **Playwright Verification**: UI testing and validation
-- **Time Management**: Session duration and scheduling context
 - **Context7**: Library documentation and code examples integration
+- **Microsoft Docs**: Reference official documentation
 
 #### Future Considerations
 - **Monitoring**: What to watch for ongoing
@@ -149,29 +145,14 @@ Feel free to modify sections based on:
 - Project-specific needs
 - Tool availability
 
-### Integration with MCP Memory Tool
+### Integration with Memory Log System
 
-When creating memory log entries, also add them to the MCP Memory Tool:
+When creating memory log entries, add them to the index:
 
 ```bash
-# Create memory entities
-mcp_memory_create_entities([{
-  name: "MRTMLY-XXX-debugging-session",
-  entityType: "debugging_session",
-  observations: [
-    "Issue: [brief description]",
-    "Root cause: [cause identified]", 
-    "Solution: [approach taken]",
-    "Tools used: [MCP tools employed including Context7 for library docs]"
-  ]
-}])
-
-# Create relationships
-mcp_memory_create_relations([{
-  from: "MRTMLY-XXX-debugging-session",
-  to: "ComponentName",
-  relationType: "debugged_issue_in"
-}])
+# Add entry to docs/MEMORY_LOG.md index
+# Follow the template structure above
+# Include relevant tags for searchability
 ```
 
-This enables future semantic search and knowledge building across debugging sessions.
+This enables future searching and knowledge building across debugging sessions.

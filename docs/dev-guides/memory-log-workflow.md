@@ -1,13 +1,15 @@
 # Memory Log Workflow Guide
 
-This guide documents the complete workflow for creating, managing, and accessing debugging knowledge in this project using our hybrid approach with both markdown files and MCP Memory Tool.
+This guide documents the workflow for creating and managing debugging knowledge in this project using markdown-based memory logs.
 
-## Overview: Hybrid Memory System
+## Overview
 
-We maintain a **dual-system approach** for maximum reliability and accessibility:
+We maintain debugging knowledge in markdown files stored in `docs/logged_memories/`. These files are:
 
-- **📝 Markdown Files** (`docs/logged_memories/`): Authoritative source, human-readable, version-controlled
-- **🧠 MCP Memory Tool**: AI-accessible knowledge graph with semantic search capabilities
+- **Human-readable**: Clear documentation of debugging sessions
+- **Version-controlled**: Full history in Git
+- **Searchable**: Standard text search tools work well
+- **AI-accessible**: Agents can read these files directly
 
 ## For Human Developers
 
@@ -56,13 +58,7 @@ We maintain a **dual-system approach** for maximum reliability and accessibility
 3. **Add Reference to Main Index**
    ```markdown
    # In docs/MEMORY_LOG.md, add:
-   - [MRTMLY-XXX: Brief Description](#placeholder-link)
-   ```
-
-4. **Migrate to MCP (Optional but Recommended)**
-   ```bash
-   # Run migration script to sync to MCP Memory Tool
-   node scripts/migrate-memory-logs-to-mcp.js
+   - [MRTMLY-XXX: Brief Description](logged_memories/MRTMLY-XXX-descriptive-name.md)
    ```
 
 ### Finding Existing Debugging Knowledge
@@ -87,132 +83,67 @@ grep -r "typescript" docs/logged_memories/
 
 ### Accessing Historical Debugging Knowledge
 
-#### 1. Semantic Search First
-```javascript
-// Search for relevant debugging sessions
-mcp_memory_search_nodes("component testing typescript errors")
-mcp_memory_search_nodes("service worker offline functionality")
-mcp_memory_search_nodes("react hooks state management")
+#### 1. Search Memory Logs
+```bash
+# Use grep to search memory logs by keywords
+grep -r "component testing" docs/logged_memories/
+grep -r "state management" docs/logged_memories/
 ```
 
-#### 2. Explore Related Entities
-```javascript
-// Find related debugging sessions, components, technologies
-mcp_memory_open_nodes(["MRTMLY-XXX", "ComponentName", "TechnologyName"])
-```
+You can also use VS Code's search functionality to browse memory logs interactively.
 
-#### 3. Build on Previous Solutions
+#### 2. Read Relevant Files
+- Open specific memory log files for detailed context
 - Reference similar debugging sessions in current analysis
 - Apply learned lessons to new problems
-- Connect current issue to established patterns
+
+#### 3. Delegate Research
+For complex issues, use the Researcher subagent to:
+- Search the codebase for patterns
+- Find related memory logs
+- Provide a structured summary before implementation
 
 ### Creating New Memory Log Entries
 
-#### 1. Document in Markdown First (Authoritative Source)
+#### 1. Document in Markdown
 ```markdown
 # Create complete memory log in docs/logged_memories/MRTMLY-XXX-issue-name.md
 # Include all debugging steps, attempts, and final resolution
 ```
 
-#### 2. Migrate to MCP Memory Tool
-```javascript
-// Create debug session entity
-mcp_memory_create_entities([{
-  entityType: "debug_session",
-  name: "MRTMLY-XXX",
-  observations: [
-    "Date: YYYY-MM-DD",
-    "Problem: [description]",
-    "Resolution: [solution]",
-    "Lesson: [key insight]"
-  ]
-}])
-
-// Create related entities (components, technologies, lessons)
-mcp_memory_create_entities([...])
-
-// Establish relationships
-mcp_memory_create_relations([{
-  from: "MRTMLY-XXX",
-  relationType: "used_technology",
-  to: "TechnologyName"
-}])
+#### 2. Update Index
+```markdown
+# Add entry to docs/MEMORY_LOG.md for discoverability
 ```
 
 ### AI Agent Workflow for Complex Debugging
 
 #### 1. Research Phase
-```javascript
-// Search for similar issues
-mcp_memory_search_nodes("error message keywords")
-mcp_memory_search_nodes("component or technology name")
-```
+- Search existing memory logs for similar issues
+- Use Researcher subagent for codebase analysis
+- Check `docs/logged_memories/` directory
 
 #### 2. Analysis Phase
-```javascript
-// Use sequential thinking for complex problems
-mcp_sequential-th_sequentialthinking({
-  thought: "Analyzing the issue based on historical patterns...",
-  // ... continue systematic analysis
-})
-```
+- Review findings from research
+- Identify patterns from historical debugging sessions
+- Plan implementation approach
 
 #### 3. Documentation Phase
-```javascript
-// Document new findings for future reference
-// 1. Create markdown file (authoritative)
-// 2. Migrate to MCP (searchable)
-// 3. Link to related entities
-```
-
-## Migration and Synchronization
-
-### Full Migration Script
-```bash
-# Migrate all markdown memory logs to MCP
-node scripts/migrate-memory-logs-to-mcp.js
-
-# Dry run to preview changes
-node scripts/migrate-memory-logs-to-mcp.js --dry-run
-```
-
-### Periodic Sync Workflow
-1. **New entries created in markdown** (authoritative source)
-2. **Run migration script** to sync to MCP
-3. **Validate search functionality** with test queries
-4. **Commit changes** to version control
+- Create memory log file (if significant debugging involved)
+- Document findings for future reference
+- Update index for discoverability
 
 ## Data Integrity and Backup
 
 ### Backup Strategy
 - **Primary**: Markdown files in `docs/logged_memories/` (version controlled)
-- **Secondary**: MCP Memory Tool (searchable index)
-- **Recovery**: Re-run migration script to rebuild MCP from markdown
+- **Recovery**: Standard Git history provides full backup
 
 ### Validation Checklist
 - [ ] Markdown file follows template structure
 - [ ] Entry added to `docs/MEMORY_LOG.md` index
-- [ ] MCP entities created successfully
-- [ ] Semantic search returns new entry
-- [ ] Related entities properly connected
+- [ ] Related files and components referenced
 - [ ] Changes committed to version control
-
-## Troubleshooting
-
-### MCP Memory Tool Unavailable
-- **Fallback**: Use markdown files directly
-- **Search**: Standard text search tools (grep, VS Code search)
-- **Recovery**: Re-run migration script when MCP available
-
-### Synchronization Issues
-- **Check**: Run migration script in dry-run mode
-- **Validate**: Test semantic search with known entries
-- **Rebuild**: Delete MCP entities and re-migrate from markdown
-
-### Search Not Finding Expected Results
-- **Verify**: Entity names and observations match search terms
-- **Check**: Relations between entities are properly established
-- **Test**: Use exact entity names from known memory logs
 
 ## Best Practices
 
@@ -223,16 +154,15 @@ node scripts/migrate-memory-logs-to-mcp.js --dry-run
 - Document both successful and failed attempts
 
 ### For Searchability
-- Use descriptive entity names in MCP
-- Include relevant technology/component names
-- Create meaningful relationships between entities
-- Add atomic observations (one fact per observation)
+- Use descriptive file names
+- Include relevant technology/component names in tags
+- Write clear "Lessons Learned" sections
+- Reference related debugging sessions
 
 ### For Maintenance
-- Regular migration script execution
-- Periodic validation of search functionality
-- Backup verification before major changes
-- Documentation updates when workflow changes
+- Regular review of memory log index
+- Periodic cleanup of resolved entries
+- Documentation updates when patterns change
 
 ## Integration with Development Workflow
 
@@ -240,7 +170,6 @@ node scripts/migrate-memory-logs-to-mcp.js --dry-run
 1. **Research**: Search existing memory logs first
 2. **Document**: Record debugging steps in real-time
 3. **Share**: Create memory log for team knowledge
-4. **Sync**: Migrate to MCP for AI agent access
 
 ### During Code Reviews
 - Reference relevant memory logs for context
@@ -250,10 +179,9 @@ node scripts/migrate-memory-logs-to-mcp.js --dry-run
 
 ### During Onboarding
 - New team members read markdown files for learning
-- AI agents use MCP search for quick context
-- Both systems provide comprehensive project knowledge
-- Hybrid approach ensures accessibility for all participants
+- Memory logs provide comprehensive project knowledge
+- Historical debugging sessions teach common patterns
 
 ---
 
-This workflow ensures robust knowledge management while maximizing accessibility for both human developers and AI agents working on the project.
+This workflow ensures knowledge is captured and accessible for both human developers and AI agents working on the project.

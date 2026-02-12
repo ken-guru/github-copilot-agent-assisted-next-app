@@ -13,8 +13,6 @@ This directory contains comprehensive documentation for the activity tracking ap
 - **[dev-guides/](./dev-guides/)** - Development best practices and guides
   - **[test-pyramid-architecture.md](./dev-guides/test-pyramid-architecture.md)** - Complete testing strategy with Jest vs Cypress decision matrix
   - **[memory-log-workflow.md](./dev-guides/memory-log-workflow.md)** - Complete workflow for debugging knowledge management
-  - **[mcp-memory-tool-usage.md](./dev-guides/mcp-memory-tool-usage.md)** - AI agent guide for semantic search and knowledge building
-  - **[ai-agent-memory-quick-reference.md](./dev-guides/ai-agent-memory-quick-reference.md)** - Quick reference for AI agents
   - **[human-developer-memory-quick-reference.md](./dev-guides/human-developer-memory-quick-reference.md)** - Quick reference for human developers
   - Time utilities testing and implementation
   - Development workflow guidelines
@@ -51,11 +49,10 @@ This directory contains comprehensive documentation for the activity tracking ap
 3. Link from **[components/README.md](./components/README.md)**
 
 ### Debugging an Issue
-1. **Search existing solutions**: Check **[MEMORY_LOG.md](./MEMORY_LOG.md)** and use MCP memory search
+1. **Search existing solutions**: Check **[MEMORY_LOG.md](./MEMORY_LOG.md)** and search `logged_memories/`
 2. **Follow workflow**: Use **[memory-log-workflow.md](./dev-guides/memory-log-workflow.md)** for complete process
-3. **Quick reference**: Use **[ai-agent-memory-quick-reference.md](./dev-guides/ai-agent-memory-quick-reference.md)** or **[human-developer-memory-quick-reference.md](./dev-guides/human-developer-memory-quick-reference.md)**
+3. **Quick reference**: Use **[human-developer-memory-quick-reference.md](./dev-guides/human-developer-memory-quick-reference.md)**
 4. **Document process**: Create entry in **[logged_memories/](./logged_memories/)**
-5. **Sync to MCP**: Run migration script for AI agent accessibility
 
 ### Writing Tests
 1. **Review testing strategy**: Start with **[test-pyramid-architecture.md](./dev-guides/test-pyramid-architecture.md)**

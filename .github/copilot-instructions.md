@@ -46,7 +46,7 @@ src/components/                    # Bootstrap-wrapped components
 ### Complete Issue Resolution Process
 **📚 Detailed Workflow**: [/docs/workflows/github-issue-resolution.md](../docs/workflows/github-issue-resolution.md)
 
-1. **Analyze Issue** → Use GitHub MCP tools + Sequential Thinking
+1. **Analyze Issue** → Use GitHub MCP tools, delegate research to Researcher subagent if complex
 2. **Verify Problem** → Use Playwright MCP tools for UI issues  
 3. **Create Branch** → Never work on main directly. If a PR already exists for the task and you're on its branch, continue on that same branch (do not create a new branch/PR).
 4. **Implement Solution** → Test-first development with Jest
@@ -59,16 +59,13 @@ src/components/                    # Bootstrap-wrapped components
 ### Issue Understanding with MCP Tools
 ```bash
 # Get issue details
-mcp_github_get_issue(issue_number=<NUMBER>)
-mcp_github_get_issue_comments(issue_number=<NUMBER>)
+mcp_github_issue_read(issue_number=<NUMBER>)
 
-# Complex analysis
-mcp_sequential-th_sequentialthinking({
-  thought: "Breaking down this issue: components affected, user impact, root cause..."
-})
+# Add a comment to an issue
+mcp_github_add_issue_comment(issue_number=<NUMBER>, body="...")
 
-# Search historical solutions
-mcp_memory_search_nodes(query="similar issue keywords")
+# For complex issues, delegate research to Researcher subagent
+# Search historical solutions in docs/logged_memories/
 ```
 
 ### Issue Verification (UI/UX Issues)
@@ -96,28 +93,35 @@ mcp_playwright_browser_take_screenshot(filename="issue-<NUMBER>-current-state.pn
 
 ## MCP TOOL INTEGRATION
 
-### Available Tools and Documentation
-- **GitHub**: [github-mcp-server](https://github.com/github/github-mcp-server) - Issue/PR management
-- **Sequential Thinking**: [sequentialthinking](https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking) - Complex problem analysis
-- **Memory**: [memory](https://github.com/modelcontextprotocol/servers/tree/main/src/memory) - Knowledge persistence
-- **Time**: [time](https://github.com/modelcontextprotocol/servers/tree/main/src/time) - Timezone handling
-- **Playwright**: [mcp-playwright](https://github.com/executeautomation/mcp-playwright) - Browser automation
-- **Context7**: [context7](https://github.com/upstash/context7) - Real-time library documentation and code examples
+### Available MCP Servers
+| Server | Purpose | Documentation |
+|--------|---------|---------------|
+| **github** | Issue/PR management, repository operations | [github-mcp-server](https://github.com/github/github-mcp-server) |
+| **microsoft.docs.mcp** | Microsoft/Azure documentation lookup | [Microsoft Learn MCP](https://learn.microsoft.com/api/mcp) |
+| **playwright** | Browser automation for UI verification | [Playwright MCP](https://github.com/microsoft/playwright-mcp) |
+| **upstash/context7** | Real-time library documentation and code examples | [Context7](https://context7.com) |
 
-### Tool Combination Strategies
+### Tool Usage Patterns
 ```bash
-# Problem Analysis → Documentation
-mcp_sequential-th_sequentialthinking() → systematic analysis
-mcp_memory_create_entities() → persist insights
-mcp_time_get_current_time() → timestamp entries
-mcp_context7_get-library-docs() → fetch current documentation
+# Issue analysis
+mcp_github_issue_read() → understand requirements and comments
+mcp_github_search_issues() → find related issues
 
-# Issue Verification → Implementation
-mcp_playwright_browser_* → verify problem
-mcp_github_get_issue() → understand requirements  
-mcp_memory_search_nodes() → find similar solutions
-mcp_context7_resolve-library-id() → get accurate library references
+# Documentation lookup
+# Use microsoft.docs.mcp server tools → Azure/Microsoft docs
+# Use upstash/context7 server tools → current library documentation
+
+# UI verification
+mcp_playwright_browser_navigate() → navigate to app
+mcp_playwright_browser_snapshot() → capture accessibility tree
+mcp_playwright_browser_take_screenshot() → visual documentation
 ```
+
+### Subagent Delegation
+For complex tasks, delegate to specialized agents defined in `.github/agents/`:
+- **Researcher**: Context gathering, code analysis (read-only)
+- **Implementer**: Focused code implementation
+- **Reviewer**: Security/quality review (read-only)
 
 ## CRITICAL DEVELOPMENT RULES
 
@@ -141,7 +145,7 @@ When a GitHub Copilot code review is requested:
 1. **Request Review**: Create PR and request GitHub Copilot review
 2. **WAIT**: Do not mark work complete until review comments arrive
 3. **Address UNRESOLVED Feedback**: Systematically respond to unresolved review comments only
-   - Use `mcp_github_get_pull_request_comments` to retrieve all feedback
+   - Use `mcp_github_pull_request_read` to retrieve all feedback
    - **CRITICAL**: Only address comments that are NOT already resolved on GitHub
    - **SKIP**: Comments marked as "Resolved" or "Outdated" on GitHub do not need re-addressing
    - Address code quality suggestions, optimization recommendations, and best practice improvements for unresolved comments only
@@ -175,10 +179,10 @@ npm run cypress:run        # E2E tests (if workflow changes)
 ## DOCUMENTATION AND MEMORY
 
 ### Memory Log System
-- **Search First**: `mcp_memory_search_nodes()` for similar issues
+- **Search First**: Check `docs/logged_memories/` for similar issues
 - **Document Solutions**: Create entries in `docs/logged_memories/`
 - **Template**: [../docs/templates/DEBUGGING_SESSION_TEMPLATE.md](../docs/templates/DEBUGGING_SESSION_TEMPLATE.md)
-- **Sync to MCP**: Use `scripts/migrate-memory-logs-to-mcp.js`
+- **Index**: [../docs/MEMORY_LOG.md](../docs/MEMORY_LOG.md) for organized list
 
 ### Planning Documents
 - **New Features**: Use [../docs/templates/PLANNED_CHANGES_TEMPLATE.md](../docs/templates/PLANNED_CHANGES_TEMPLATE.md)
@@ -207,15 +211,14 @@ npm run cypress:run        # E2E tests (if workflow changes)
 
 When given a GitHub issue number:
 1. ✅ **Analyze**: Use GitHub MCP tools to understand issue and comments
-2. ✅ **Think**: Use Sequential Thinking for complex problems  
-3. ✅ **Search**: Check Memory Tool for similar historical solutions
-4. ✅ **Verify**: Use Playwright tools for UI/UX issues
-5. ✅ **Branch**: Create feature branch (never work on main)
-6. ✅ **Implement**: Write tests first, then implement solution
-7. ✅ **Quality**: Pass all quality gates before pushing
-8. ✅ **PR**: Create PR with clear title/description referencing issue
-9. ✅ **Monitor**: Watch CI/CD and address code review comments iteratively
-10. ✅ **Complete GitHub Copilot Review**: If GitHub Copilot review requested, WAIT for feedback and address ALL unresolved comments
-11. ✅ **Document**: Update memory logs and planning documents
+2. ✅ **Research**: Check `docs/logged_memories/` for similar issues; use Researcher subagent for complex analysis
+3. ✅ **Verify**: Use Playwright tools for UI/UX issues
+4. ✅ **Branch**: Create feature branch (never work on main)
+5. ✅ **Implement**: Write tests first, then implement solution
+6. ✅ **Quality**: Pass all quality gates before pushing
+7. ✅ **PR**: Create PR with clear title/description referencing issue
+8. ✅ **Monitor**: Watch CI/CD and address code review comments iteratively
+9. ✅ **Complete GitHub Copilot Review**: If GitHub Copilot review requested, WAIT for feedback and address ALL unresolved comments
+10. ✅ **Document**: Update memory logs and planning documents
 
 **🚨 CRITICAL**: If you request a GitHub Copilot code review, you MUST wait for the review comments and address ALL unresolved feedback before considering the work finished. The goal is complete issue resolution with all quality checks passed, not just implementation.

@@ -188,11 +188,8 @@ Before adding new packages, DISCUSS:
 
 ### Infrastructure Script Exceptions
 - KEEP scripts with ongoing utility in main `scripts/` directory
-- **Memory Log Sync**: `migrate-memory-logs-to-mcp.js` is infrastructure for hybrid memory system
-  - Syncs new markdown memory logs to MCP knowledge graph
-  - Serves as disaster recovery for rebuilding MCP store
-  - Essential for team onboarding and system migration
-  - NOT a one-off migration tool - retain for ongoing use
+- Examples: `check-markdown-links.js`, `update-service-worker-version.js`
+- Only archive scripts that have completed their one-time purpose
 
 ## Quality Gate Checklist
 
