@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { PWAInstallPrompt } from '../PWAInstallPrompt';
 
 describe('PWAInstallPrompt Component', () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
   let mockPromptEvent: any;
 
   beforeEach(() => {

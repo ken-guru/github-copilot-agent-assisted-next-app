@@ -8,6 +8,7 @@ jest.mock('next/navigation', () => ({
 }));
 
 describe('BottomNavigation Component', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockUsePathname = require('next/navigation').usePathname;
 
   beforeEach(() => {

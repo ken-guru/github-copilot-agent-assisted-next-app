@@ -91,7 +91,7 @@ describe('MobileOptimizedInput Component', () => {
   });
 
   test('marks input as invalid when error is present', () => {
-    const { container } = render(
+    render(
       <MobileOptimizedInput 
         error="Error message"
         placeholder="Invalid input"
