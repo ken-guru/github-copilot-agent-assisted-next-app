@@ -22,6 +22,7 @@
   justify-content: center;
   /* Ensure button text color is applied to SVG */
   color: inherit;
+  transition: color 0.15s ease-in-out;
 }
 
 /* Mobile optimization - ensure icons are visible */
@@ -43,13 +44,14 @@
   stroke: currentColor;
 }
 
-/* Active/secondary button styling */
-.toggleButton[class*="secondary"]:not(.outline-secondary) {
-  /* Filled button should have visible icon */
-  color: inherit;
+/* Active/secondary button styling - ensure high contrast white icon for selected state */
+/* Target the selected (secondary) button - it will have class "btn-secondary" (no "outline-") */
+.toggleButton:not([class*="outline"]) {
+  /* When not outline (i.e., filled/secondary), ensure white text for maximum contrast */
+  color: white !important;
 }
 
-.toggleButton[class*="secondary"]:not(.outline-secondary) svg {
-  stroke: currentColor;
+.toggleButton:not([class*="outline"]) svg {
+  stroke: white !important;
   fill: none;
 }
