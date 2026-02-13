@@ -2,7 +2,7 @@
 # GitHub Copilot Instructions
 
 ## PREAMBLE
-Streamlined guidelines for AI-assisted development of a **Next.js 15 + React 19 + Bootstrap 5 + TypeScript** activity tracking application. Focus on GitHub issue resolution using MCP tools.
+Guidelines for AI-assisted development of a **Next.js 16 + React 19 + Bootstrap 5 + TypeScript** activity tracking PWA. Focus on GitHub issue resolution using MCP tools.
 
 ## PROJECT ARCHITECTURE ESSENTIALS
 
@@ -10,7 +10,7 @@ Streamlined guidelines for AI-assisted development of a **Next.js 15 + React 19 
 ```typescript
 // Activity State Machine: PENDING → RUNNING → COMPLETED/REMOVED
 // Only ONE activity can be RUNNING at a time
-// Located: src/utils/activityStateMachine.ts
+// Location: src/utils/activityStateMachine.ts
 
 // Hook Architecture:
 useActivityState (main orchestrator)
@@ -19,20 +19,20 @@ useActivityState (main orchestrator)
 
 // Theme System: CSS Variables + Bootstrap data-bs-theme
 // Light/Dark/System modes with localStorage persistence
-// Located: src/contexts/ThemeContext.tsx
+// Location: src/contexts/ThemeContext.tsx
 ```
 
 ### Key Files
 ```
 src/hooks/useActivityState.ts      # Main state orchestrator
-src/utils/activityStateMachine.ts  # Business logic core
+src/utils/activityStateMachine.ts  # State machine core
 src/contexts/ThemeContext.tsx      # Theme management
-src/components/                    # Bootstrap-wrapped components
+src/components/                    # Bootstrap components
 ```
 
 ### Test Architecture
-- **85% Jest** (component logic, hooks, utilities) - 15x faster
-- **15% Cypress** (complete user workflows only)
+- **85% Jest** (component logic, hooks, utilities) - ~15 seconds
+- **15% Cypress** (complete user workflows only) - ~60 seconds
 - **Test-First Development**: Write Jest tests BEFORE implementation
 
 ## GITHUB ISSUE RESOLUTION WORKFLOW
@@ -97,24 +97,22 @@ mcp_playwright_browser_take_screenshot(filename="issue-<NUMBER>-current-state.pn
 | Server | Purpose | Documentation |
 |--------|---------|---------------|
 | **github** | Issue/PR management, repository operations | [github-mcp-server](https://github.com/github/github-mcp-server) |
-| **microsoft.docs.mcp** | Microsoft/Azure documentation lookup | [Microsoft Learn MCP](https://learn.microsoft.com/api/mcp) |
 | **playwright** | Browser automation for UI verification | [Playwright MCP](https://github.com/microsoft/playwright-mcp) |
-| **upstash/context7** | Real-time library documentation and code examples | [Context7](https://context7.com) |
+| **context7** | Real-time library documentation and code examples | [Context7](https://context7.com) |
 
 ### Tool Usage Patterns
 ```bash
 # Issue analysis
-mcp_github_issue_read() → understand requirements and comments
-mcp_github_search_issues() → find related issues
+mcp_github_issue_read() → Understand requirements and comments
+mcp_github_search_issues() → Find related issues
 
 # Documentation lookup
-# Use microsoft.docs.mcp server tools → Azure/Microsoft docs
-# Use upstash/context7 server tools → current library documentation
+# Use context7 server tools → Current library documentation
 
 # UI verification
-mcp_playwright_browser_navigate() → navigate to app
-mcp_playwright_browser_snapshot() → capture accessibility tree
-mcp_playwright_browser_take_screenshot() → visual documentation
+mcp_playwright_browser_navigate() → Navigate to app
+mcp_playwright_browser_snapshot() → Capture accessibility tree
+mcp_playwright_browser_take_screenshot() → Visual documentation
 ```
 
 ### Subagent Delegation
