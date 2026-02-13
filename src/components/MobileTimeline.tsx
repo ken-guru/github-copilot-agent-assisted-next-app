@@ -10,8 +10,13 @@ interface MobileTimelineProps {
 }
 
 export const MobileTimeline: React.FC<MobileTimelineProps> = ({ entries, totalDuration, currentTime }) => {
-  const calcPercent = (start: number, end: number | null) => 
-    ((end || currentTime) - start) / totalDuration * 100;
+  // Convert totalDuration from seconds to milliseconds for consistent calculations
+  const totalDurationMs = totalDuration * 1000;
+  
+  const calcPercent = (start: number, end: number | null) => {
+    if (totalDurationMs === 0) return 0;
+    return ((end || currentTime) - start) / totalDurationMs * 100;
+  };
 
   // Helper function to extract colors from theme-aware or simple structure
   const getColors = (entry: TimelineEntry) => {
