@@ -13,6 +13,23 @@ export const MobileTimeline: React.FC<MobileTimelineProps> = ({ entries, totalDu
   const calcPercent = (start: number, end: number | null) => 
     ((end || currentTime) - start) / totalDuration * 100;
 
+  // Helper function to extract colors from theme-aware or simple structure
+  const getColors = (entry: TimelineEntry) => {
+    if (!entry.colors) {
+      return { background: '#e9ecef', border: '#dee2e6' };
+    }
+    
+    if ('background' in entry.colors) {
+      return entry.colors;
+    }
+    
+    if ('light' in entry.colors) {
+      return entry.colors.light;
+    }
+    
+    return { background: '#e9ecef', border: '#dee2e6' };
+  };
+
   return (
     <Card className="mobile-timeline-card mb-3">
       <Card.Header><h6 className="mb-0">Timeline</h6></Card.Header>
@@ -24,13 +41,7 @@ export const MobileTimeline: React.FC<MobileTimelineProps> = ({ entries, totalDu
             {entries.map(entry => {
               const percent = calcPercent(entry.startTime, entry.endTime || null);
               const duration = ((entry.endTime || currentTime) - entry.startTime) / 60000;
-              
-              // Extract colors based on theme-aware or simple structure
-              const colors = entry.colors 
-                ? ('background' in entry.colors 
-                    ? entry.colors 
-                    : ('light' in entry.colors ? entry.colors.light : { background: '#e9ecef', border: '#dee2e6' }))
-                : { background: '#e9ecef', border: '#dee2e6' };
+              const colors = getColors(entry);
               
               return (
                 <div 

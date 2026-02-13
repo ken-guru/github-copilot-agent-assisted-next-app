@@ -4,6 +4,10 @@
   --border-radius: 12px;
   --font-geist-sans: var(--font-geist-sans);
   --font-geist-mono: var(--font-geist-mono);
+  
+  /* Mobile navigation layout */
+  --bottom-nav-height: 56px;
+  --bottom-nav-spacing: 16px;
 
   /* App color variables - will use light theme by default */
   --foreground-rgb: 0, 0, 0;
@@ -194,7 +198,7 @@ button {
 
 @media (max-width: 991.98px) {
   .main-content-wrapper { 
-    padding-bottom: calc(56px + env(safe-area-inset-bottom) + 16px); 
+    padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + var(--bottom-nav-spacing)); 
   }
 }
 
@@ -272,7 +276,7 @@ button {
 /* PWA Install Prompt Styles */
 .pwa-prompt {
   position: fixed; 
-  bottom: calc(72px + env(safe-area-inset-bottom)); 
+  bottom: calc(var(--bottom-nav-height) + var(--bottom-nav-spacing) + env(safe-area-inset-bottom)); 
   left: 16px; 
   right: 16px;
   z-index: 1040; 
