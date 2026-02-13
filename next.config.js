@@ -15,6 +15,29 @@ const nextConfig = {
     // These are handled automatically by Turbopack, no explicit config needed
   },
   
+  // Webpack configuration for code splitting (used in production builds)
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.optimization = config.optimization || {};
+      config.optimization.splitChunks = {
+        chunks: 'all',
+        cacheGroups: {
+          bootstrap: { 
+            name: 'bootstrap', 
+            test: /[\\/]node_modules[\\/](bootstrap|react-bootstrap)[\\/]/, 
+            priority: 40 
+          },
+          react: { 
+            name: 'react', 
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/, 
+            priority: 50 
+          },
+        },
+      };
+    }
+    return config;
+  },
+  
   // Ensure proper handling of PWA assets and security
   async headers() {
     const isProd = process.env.NODE_ENV === 'production';

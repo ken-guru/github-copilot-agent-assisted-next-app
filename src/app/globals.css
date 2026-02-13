@@ -268,3 +268,23 @@ button {
   align-items: center;
   gap: 4px;
 }
+
+/* PWA Install Prompt Styles */
+.pwa-prompt {
+  position: fixed; 
+  bottom: calc(72px + env(safe-area-inset-bottom)); 
+  left: 16px; 
+  right: 16px;
+  z-index: 1040; 
+  max-width: 400px; 
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+}
+
+/* Adjust for desktop - show at bottom without bottom nav offset */
+@media (min-width: 992px) {
+  .pwa-prompt {
+    bottom: 16px;
+  }
+}

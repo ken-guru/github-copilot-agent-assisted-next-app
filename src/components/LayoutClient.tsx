@@ -9,6 +9,7 @@ import ServiceWorkerUpdater from '@/components/ui/ServiceWorkerUpdater';
 import Navigation from '@/components/Navigation';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { BottomNavigation } from '@/components/BottomNavigation';
+import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 
 // Add TypeScript interface for the global window object
 declare global {
@@ -153,6 +154,9 @@ export function LayoutClient({ children }: LayoutClientProps) {
         
         {/* Bottom navigation for mobile */}
         <BottomNavigation />
+        
+        {/* PWA install prompt */}
+        <PWAInstallPrompt />
       </ToastProvider>
       </ApiKeyProvider>
     </ThemeProvider>
