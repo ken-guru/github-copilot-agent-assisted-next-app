@@ -24,7 +24,11 @@
     "incremental": true,
     "plugins": [{ "name": "next" }],
     "baseUrl": ".",
-    "paths": { "@/*": ["./src/*"] },
+    "paths": { 
+      "@/*": ["./src/*"],
+      "@mr-timely/types": ["./packages/types/src"],
+      "@mr-timely/shared": ["./packages/shared/src"]
+    },
     "typeRoots": ["./node_modules/@types"]
   }
 }

@@ -1,8 +1,15 @@
 {
-  "name": "github-copilot-agent-assisted-next-app",
+  "name": "mr-timely-monorepo",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
+    "web": "npm run dev",
+    "mobile": "cd apps/mobile && npm start",
+    "build:mobile": "cd apps/mobile && npx eas build",
     "dev": "next dev",
     "build": "node scripts/update-service-worker-version.js && next build",
     "start": "next start",
@@ -18,6 +25,8 @@
     "update-sw-version": "node scripts/update-service-worker-version.js"
   },
   "dependencies": {
+    "@mr-timely/shared": "*",
+    "@mr-timely/types": "*",
     "@vercel/analytics": "^1.6.1",
     "@vercel/blob": "^2.2.0",
     "@vercel/speed-insights": "^1.3.1",

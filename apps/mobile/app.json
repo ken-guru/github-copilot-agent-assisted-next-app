@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Mr. Timely",
+    "slug": "mr-timely",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#007bff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mrtimely.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#007bff"
+      },
+      "package": "com.mrtimely.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "scheme": "mrtimely",
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
