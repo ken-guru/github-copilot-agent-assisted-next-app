@@ -197,3 +197,36 @@ button {
     padding-bottom: calc(56px + env(safe-area-inset-bottom) + 16px); 
   }
 }
+
+/* Mobile Form Optimization Styles */
+@media (max-width: 767.98px) {
+  .mobile-form-input {
+    font-size: 16px !important; /* Prevents iOS zoom */
+    padding: 12px 16px; 
+    border-radius: 8px; 
+    min-height: 48px;
+  }
+  
+  .mobile-form-label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  
+  .mobile-form-group {
+    margin-bottom: 16px;
+  }
+  
+  .btn { 
+    min-height: 48px; 
+    font-size: 16px;
+    padding: 12px 24px;
+  }
+  
+  /* Ensure Bootstrap button doesn't override */
+  .btn-sm {
+    min-height: 40px;
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
