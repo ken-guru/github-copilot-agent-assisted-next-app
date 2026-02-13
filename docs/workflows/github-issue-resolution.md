@@ -6,9 +6,8 @@ This document outlines the complete workflow for resolving GitHub issues using M
 
 Ensure you have access to these MCP servers (configured via VS Code user settings):
 - **github**: [Documentation](https://github.com/github/github-mcp-server) - Issue/PR management
-- **microsoft.docs.mcp**: [Documentation](https://learn.microsoft.com/api/mcp) - Microsoft/Azure documentation
 - **playwright**: [Documentation](https://github.com/microsoft/playwright-mcp) - Browser automation
-- **upstash/context7**: [Documentation](https://context7.com) - Library documentation
+- **context7**: [Documentation](https://context7.com) - Library documentation
 
 ## Repository Configuration
 
