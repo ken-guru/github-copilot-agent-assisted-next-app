@@ -35,7 +35,7 @@ const Navigation: React.FC = () => {
   return (
     <Navbar 
       expand="lg" 
-      className={`border-bottom ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}
+      className={`border-bottom d-none d-lg-flex ${theme === 'dark' ? 'bg-dark' : 'bg-light'}`}
       aria-label="Main navigation"
       data-bs-theme={theme}
     >
