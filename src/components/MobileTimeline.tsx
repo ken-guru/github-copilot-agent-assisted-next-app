@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
 import type { TimelineEntry } from '@/types';
+import { formatTime } from '@/utils/time/timeFormatters';
 
 interface MobileTimelineProps {
   entries: TimelineEntry[];
@@ -10,14 +11,6 @@ interface MobileTimelineProps {
 }
 
 export const MobileTimeline: React.FC<MobileTimelineProps> = ({ entries, totalDuration, currentTime }) => {
-  // Convert totalDuration from seconds to milliseconds for consistent calculations
-  const totalDurationMs = totalDuration * 1000;
-  
-  const calcPercent = (start: number, end: number | null) => {
-    if (totalDurationMs === 0) return 0;
-    return ((end || currentTime) - start) / totalDurationMs * 100;
-  };
-
   // Helper function to extract colors from theme-aware or simple structure
   const getColors = (entry: TimelineEntry) => {
     if (!entry.colors) {
@@ -44,8 +37,8 @@ export const MobileTimeline: React.FC<MobileTimelineProps> = ({ entries, totalDu
         ) : (
           <div className="mobile-timeline-stack">
             {entries.map(entry => {
-              const percent = calcPercent(entry.startTime, entry.endTime || null);
-              const duration = ((entry.endTime || currentTime) - entry.startTime) / 60000;
+              const durationSeconds = Math.floor(((entry.endTime || currentTime) - entry.startTime) / 1000);
+              const formattedDuration = formatTime(durationSeconds);
               const colors = getColors(entry);
               
               return (
@@ -62,8 +55,7 @@ export const MobileTimeline: React.FC<MobileTimelineProps> = ({ entries, totalDu
                     {!entry.endTime && <span className="badge bg-success">Running</span>}
                   </div>
                   <div className="entry-meta">
-                    <span>{Math.round(duration)}min</span>
-                    <span>{percent.toFixed(1)}%</span>
+                    <span>{formattedDuration}</span>
                   </div>
                 </div>
               );
