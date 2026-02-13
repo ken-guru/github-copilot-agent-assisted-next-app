@@ -76,7 +76,7 @@ export const useActivities = () => {
         name,
         description,
         state: 'PENDING',
-        colors: colorSet || DEFAULT_COLOR_SETS[0],
+        colors: colorSet,
         createdAt: new Date().toISOString(),
       };
 

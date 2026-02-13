@@ -4,6 +4,7 @@
     "slug": "mr-timely",
     "version": "1.0.0",
     "orientation": "portrait",
+    "_comment": "NOTE: Asset files (icon.png, splash.png, adaptive-icon.png, favicon.png) are placeholders and need to be created before production builds",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
