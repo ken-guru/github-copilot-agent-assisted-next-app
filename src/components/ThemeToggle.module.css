@@ -1,0 +1,55 @@
+/* ThemeToggle SVG icon styling for proper visibility on all screen sizes */
+
+/* SVG icons within buttons - ensure proper rendering and visibility */
+.toggleButton svg {
+  /* Ensure SVG inherits button color */
+  color: inherit;
+  /* Prevent SVG from being squeezed or distorted */
+  flex-shrink: 0;
+  /* Ensure stroke rendering is crisp */
+  stroke: currentColor;
+  /* Use round join and cap styles for better visibility */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* Slightly increase stroke width for mobile visibility */
+  stroke-width: 2.2;
+}
+
+/* Ensure buttons have proper sizing and alignment */
+.toggleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Ensure button text color is applied to SVG */
+  color: inherit;
+}
+
+/* Mobile optimization - ensure icons are visible */
+@media (max-width: 576px) {
+  .toggleButton svg {
+    /* Slightly increase stroke width for mobile visibility */
+    stroke-width: 2.4;
+  }
+}
+
+/* Outline button icon color - ensure visibility */
+.toggleButton[class*="outline"] {
+  /* Inherit color from button text */
+  color: inherit;
+}
+
+.toggleButton[class*="outline"] svg {
+  /* Ensure SVG inherits the button's text color */
+  stroke: currentColor;
+}
+
+/* Active/secondary button styling */
+.toggleButton[class*="secondary"]:not(.outline-secondary) {
+  /* Filled button should have visible icon */
+  color: inherit;
+}
+
+.toggleButton[class*="secondary"]:not(.outline-secondary) svg {
+  stroke: currentColor;
+  fill: none;
+}

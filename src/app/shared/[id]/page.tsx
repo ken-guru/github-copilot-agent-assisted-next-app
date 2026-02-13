@@ -143,7 +143,7 @@ export default async function SharedPage({ params }: Props) {
             isTimeUp={isTimeUp}
           />
         </div>
-        <div className="col-12 col-lg-6 d-none d-lg-flex flex-column h-100 overflow-hidden">
+        <div className="col-12 col-lg-6 d-flex flex-column h-100 overflow-hidden">
           <Timeline
             entries={entries}
             totalDuration={totalDuration}
