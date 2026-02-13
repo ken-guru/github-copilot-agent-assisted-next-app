@@ -33,25 +33,25 @@
   }
 }
 
-/* Outline button icon color - ensure visibility */
+/* Outline button styling - ensure visibility with dark text for contrast */
 .toggleButton[class*="outline"] {
-  /* Inherit color from button text */
-  color: inherit;
+  /* Use Bootstrap's body text color for good contrast in light mode */
+  color: var(--bs-body-color, #212529) !important;
 }
 
 .toggleButton[class*="outline"] svg {
-  /* Ensure SVG inherits the button's text color */
-  stroke: currentColor;
+  /* Ensure SVG uses the button's text color */
+  stroke: var(--bs-body-color, #212529);
+  fill: none;
 }
 
-/* Active/secondary button styling - ensure high contrast white icon for selected state */
-/* Target the selected (secondary) button - it will have class "btn-secondary" (no "outline-") */
-.toggleButton:not([class*="outline"]) {
-  /* When not outline (i.e., filled/secondary), ensure white text for maximum contrast */
+/* Secondary (filled) button styling - ensure white icon for selected state */
+.toggleButton.btn-secondary {
+  /* Filled secondary buttons should have white text for maximum contrast */
   color: white !important;
 }
 
-.toggleButton:not([class*="outline"]) svg {
-  stroke: white !important;
+.toggleButton.btn-secondary svg {
+  stroke: white;
   fill: none;
 }
