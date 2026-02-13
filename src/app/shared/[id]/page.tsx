@@ -107,10 +107,7 @@ export default async function SharedPage({ params }: Props) {
   const allActivitiesCompleted = data.sessionData.sessionType === 'completed';
 
   return (
-    <div
-      className="container-fluid d-flex flex-column overflow-x-hidden"
-      style={{ height: 'calc(100vh - var(--navbar-height))' }}
-    >
+    <main className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 py-3 px-3">
         <div>
           <h1 className="h3 mb-0">Shared Session</h1>
@@ -143,7 +140,7 @@ export default async function SharedPage({ params }: Props) {
             isTimeUp={isTimeUp}
           />
         </div>
-        <div className="col-12 col-lg-6 d-none d-lg-flex flex-column h-100 overflow-hidden">
+        <div className="col-12 col-lg-6 d-flex flex-column h-100 overflow-hidden">
           <Timeline
             entries={entries}
             totalDuration={totalDuration}
@@ -154,6 +151,6 @@ export default async function SharedPage({ params }: Props) {
           />
         </div>
       </div>
-    </div>
+    </main>
   );
 }

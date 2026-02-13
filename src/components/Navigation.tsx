@@ -51,14 +51,15 @@ const Navigation: React.FC = () => {
             <ThemeToggle size="sm" variant="navbar" />
           </div>
           
-          {/* Mobile menu toggle */}
+          {/* Mobile menu toggle - hidden on mobile since we have bottom nav */}
           <Navbar.Toggle 
             aria-controls="basic-navbar-nav"
             onClick={() => setShowMobileNav(!showMobileNav)}
+            className="d-none d-lg-inline-block"
           />
         </div>
         
-        <Navbar.Collapse id="basic-navbar-nav" className="order-lg-1">
+        <Navbar.Collapse id="basic-navbar-nav" className="order-lg-1 d-none d-lg-block">
           <Nav className="ms-auto me-lg-4">
             {/* Timer - First navigation item */}
             <Nav.Link 
