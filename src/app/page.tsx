@@ -6,6 +6,7 @@ import ActivityManager from '@/components/ActivityManager';
 import Timeline from '@/components/Timeline';
 import Summary from '@/components/Summary';
 import ConfirmationDialog, { ConfirmationDialogRef } from '@/components/ConfirmationDialog';
+import { CollapsibleTimeline } from '@/components/CollapsibleTimeline';
 import { useActivityState } from '@/hooks/useActivityState';
 import { useTimerState } from '@/hooks/useTimerState';
 import resetService from '@/utils/resetService';
@@ -189,6 +190,13 @@ function AppContent() {
                   timerActive={timerActive}
                   onReset={handleReset}
                   onExtendDuration={handleExtendDuration}
+                />
+              </div>
+              <div className="col-12 d-lg-none">
+                <CollapsibleTimeline 
+                  entries={processedEntries} 
+                  totalDuration={totalDuration} 
+                  currentTime={elapsedTime} 
                 />
               </div>
               <div className="col-lg-7 d-none d-lg-flex flex-column overflow-hidden">
