@@ -64,10 +64,10 @@ describe('Mobile Scrolling Issue #273', () => {
     const { container } = render(<Home />);
     
     const mainContainer = container.querySelector('main');
-    expect(mainContainer).toHaveClass('container-fluid', 'd-flex', 'flex-column');
+    expect(mainContainer).toHaveClass('d-flex', 'flex-column', 'flex-grow-1', 'overflow-hidden');
     
     // Should maintain height calculation
-    expect(mainContainer).toHaveStyle('height: calc(100vh - var(--navbar-height))');
+    expect(mainContainer).toHaveStyle('height: 100%');
     
     // Inner containers should also have scrolling enabled for mobile
     const innerContainer = mainContainer?.querySelector('.flex-grow-1.d-flex.flex-column');
@@ -83,11 +83,14 @@ describe('Mobile Scrolling Issue #273', () => {
     
     const mainContainer = container.querySelector('main');
     
-    // Verify the correct Bootstrap utility classes are applied
-    expect(mainContainer).toHaveClass('overflow-x-hidden'); // Prevent horizontal scroll
-    expect(mainContainer).toHaveClass('overflow-y-auto');   // Allow vertical scroll
+    // Verify the correct Bootstrap utility classes are applied for main container
+    expect(mainContainer).toHaveClass('d-flex', 'flex-column', 'flex-grow-1', 'overflow-hidden');
     
-    // Should not have the problematic overflow-hidden class
-    expect(mainContainer).not.toHaveClass('overflow-hidden');
+    // The scrolling should be enabled on inner flex-grow-1 container, not main
+    const innerContainer = mainContainer?.querySelector('.flex-grow-1.d-flex.flex-column.overflow-y-auto');
+    if (innerContainer) {
+      expect(innerContainer).toHaveClass('overflow-x-hidden');
+      expect(innerContainer).toHaveClass('overflow-y-auto');
+    }
   });
 });

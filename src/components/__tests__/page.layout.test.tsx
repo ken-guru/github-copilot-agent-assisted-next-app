@@ -31,12 +31,10 @@ describe('Home Page Layout Spacing', () => {
       // Set up initial state to show activity view
       const { container } = render(<Home />);
       
-      // Find the main container
+      // Find the main container - now uses standardized layout
       const mainContainer = container.querySelector('main');
-      expect(mainContainer).toHaveClass('container-fluid', 'd-flex', 'flex-column', 'overflow-x-hidden', 'overflow-y-auto');
-      
-      // Check that the main container has proper height
-      expect(mainContainer).toHaveStyle('height: calc(100vh - var(--navbar-height))');
+      expect(mainContainer).toHaveClass('d-flex', 'flex-column', 'flex-grow-1', 'overflow-hidden');
+      expect(mainContainer).toHaveStyle('height: 100%');
       
       // Find the inner flex container (updated for new overflow classes)
       const innerContainer = mainContainer?.querySelector('.flex-grow-1.d-flex.flex-column.overflow-x-hidden.overflow-y-auto');
@@ -73,7 +71,7 @@ describe('Home Page Layout Spacing', () => {
       const { container } = render(<Home />);
       
       const mainContainer = container.querySelector('main');
-      expect(mainContainer).toHaveClass('overflow-x-hidden', 'overflow-y-auto');
+      expect(mainContainer).toHaveClass('d-flex', 'flex-column', 'flex-grow-1', 'overflow-hidden');
       
       // The flex-grow-1 container should also enable scrolling for mobile
       const flexContainer = mainContainer?.querySelector('.flex-grow-1');
