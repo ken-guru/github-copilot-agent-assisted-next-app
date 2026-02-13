@@ -4,16 +4,16 @@ Project context for AI coding agents working on this Next.js activity tracking a
 
 ## Project Overview
 
-**Stack**: Next.js 15 + React 19 + Bootstrap 5 + TypeScript
+**Stack**: Next.js 16 + React 19 + Bootstrap 5 + TypeScript
 
-An activity timer and tracker application built with AI assistance. Track activities with a state machine approach where only ONE activity can be RUNNING at a time.
+A progressive web application (PWA) for activity tracking with time management. Activities follow a state machine where only ONE activity can be RUNNING at a time.
 
 ## Architecture
 
-### Core Patterns
+### State Management Pattern
 ```typescript
 // Activity State Machine: PENDING → RUNNING → COMPLETED/REMOVED
-// Located: src/utils/activityStateMachine.ts
+// Location: src/utils/activityStateMachine.ts
 
 // Hook Architecture:
 useActivityState (main orchestrator)
@@ -22,15 +22,15 @@ useActivityState (main orchestrator)
 
 // Theme System: CSS Variables + Bootstrap data-bs-theme
 // Light/Dark/System modes with localStorage persistence
-// Located: src/contexts/ThemeContext.tsx
+// Location: src/contexts/ThemeContext.tsx
 ```
 
 ### Key Files
 ```
 src/hooks/useActivityState.ts      # Main state orchestrator
-src/utils/activityStateMachine.ts  # Business logic core
+src/utils/activityStateMachine.ts  # State machine core
 src/contexts/ThemeContext.tsx      # Theme management
-src/components/                    # Bootstrap-wrapped components
+src/components/                    # Bootstrap components
 ```
 
 ## MCP Tools Available
@@ -40,14 +40,13 @@ The following MCP servers are configured for AI-assisted development:
 | Server | Purpose |
 |--------|---------|
 | **github** | Issue/PR management, repository operations |
-| **microsoft.docs.mcp** | Microsoft/Azure documentation lookup |
 | **playwright** | Browser automation for UI verification |
-| **upstash/context7** | Real-time library documentation and code examples |
+| **context7** | Real-time library documentation and code examples |
 
 ## Testing Strategy
 
-- **85% Jest** (component logic, hooks, utilities) - 15x faster
-- **15% Cypress** (complete user workflows only)
+- **85% Jest** (component logic, hooks, utilities) - Fast execution (~15s)
+- **15% Cypress** (complete user workflows only) - Slower but comprehensive (~60s)
 - **Test-First Development**: Write Jest tests BEFORE implementation
 
 ```bash
@@ -60,21 +59,22 @@ npm run build              # Build verification
 ## Development Rules
 
 ### Branch Protection
-- **NEVER commit directly to main** - branch is protected
+- **NEVER commit directly to main** - Protected branch
 - **ALWAYS create feature branch**: `fix-<issue-number>-<brief-description>`
-- **Create PRs into main** - all changes require PR reviews
+- **Create PRs into main** - All changes require review
+- **If working on existing PR branch**: Continue on same branch, don't create new PR
 
 ### Quality Gates (All Must Pass)
-All of these must pass before pushing:
-1. `npm test` - Jest tests
-2. `npm run lint` - ESLint
-3. `npm run type-check` - TypeScript
-4. `npm run build` - Build verification
+Before pushing code, ensure:
+1. `npm test` - Jest tests pass
+2. `npm run lint` - ESLint compliance
+3. `npm run type-check` - TypeScript validation
+4. `npm run build` - Build succeeds
 
 ### Security
 - Never expose local filesystem paths
-- Repository-relative paths only
-- No hardcoded credentials
+- Use repository-relative paths only
+- No hardcoded credentials or secrets
 
 ## Subagent Guidance
 
@@ -90,10 +90,14 @@ For complex tasks, consider delegating to specialized subagents:
 
 ## Key Documentation
 
-- [GitHub Issue Resolution](docs/workflows/github-issue-resolution.md) - Complete workflow for issue resolution
-- [Testing Procedures](docs/workflows/testing-procedures.md) - Jest vs Cypress decision matrix
-- [Memory Log Index](docs/MEMORY_LOG.md) - Historical debugging sessions
+- **[GitHub Issue Resolution](docs/workflows/github-issue-resolution.md)** - Complete workflow
+- **[Testing Procedures](docs/workflows/testing-procedures.md)** - Jest vs Cypress guide
+- **[Memory Log Index](docs/MEMORY_LOG.md)** - Historical debugging sessions
 
-## IMPORTANT
+## Important Notes
 
-Prefer retrieval-led reasoning over pre-training-led reasoning for any Next.js tasks. Use the context7 MCP server to fetch current documentation rather than relying on training data.
+**Current Versions**:
+- Next.js 16.1.6, React 19.2.4, Bootstrap 5.3.8, TypeScript 5.x
+
+**For Next.js Tasks**:
+Use the context7 MCP server to fetch current documentation rather than relying on training data.

@@ -4,313 +4,310 @@
 [![CodeQL Security Scan](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/ken-guru/github-copilot-agent-assisted-next-app/actions/workflows/codeql.yml)
 
 ## Project Context
-You are working on a time management and activity tracking application built with Next.js. This documentation serves as both a guide for developers and a prompt for AI assistance in development.
 
-## Project Scope and Limitations
-```markdown
-This is a hobby project with the following characteristics:
-- Created for learning and experimentation purposes
-- Not intended for production use
-- May contain experimental features
-- Built with AI assistance (primarily GitHub Copilot)
-```
+A progressive web application (PWA) for time management and activity tracking built with Next.js 16, React 19, and Bootstrap 5. This is a learning project developed with AI-assisted techniques, focusing on modern web development practices and offline-first functionality.
 
 ## Development Philosophy
-The application is developed using AI-assisted techniques with these principles:
-- Test-Driven Development (TDD)
-- Component-based architecture
-- Responsive design
-- Theme-aware styling
-- Accessibility considerations
 
-### AI Development Enhancement
+This application follows modern development practices:
+- **Test-First Development**: Jest for unit/integration tests, Cypress for end-to-end workflows
+- **Component-Based Architecture**: Reusable React components with TypeScript
+- **Progressive Enhancement**: Works offline with service worker caching
+- **Responsive Design**: Mobile-first approach with Bootstrap 5
+- **Theme System**: Light/Dark/System modes using CSS variables
+- **Accessibility First**: WCAG compliance and semantic HTML
 
-This project leverages AI-assisted development with GitHub Copilot and MCP (Model Context Protocol) servers.
+### AI-Assisted Development
 
-**Available MCP Servers** (configured in VS Code user settings):
-- **github** - Issue/PR management and repository operations
-- **microsoft.docs.mcp** - Microsoft/Azure documentation lookup
+This project uses GitHub Copilot and MCP (Model Context Protocol) servers for enhanced AI development:
+
+**MCP Servers**:
+- **github** - Issue/PR management
 - **playwright** - Browser automation for UI verification
-- **upstash/context7** - Real-time library documentation
+- **context7** - Real-time library documentation
 
-**AI Context Files**:
-- [AGENTS.md](./AGENTS.md) - Project context for AI coding agents
-- [.github/copilot-instructions.md](.github/copilot-instructions.md) - GitHub Copilot-specific instructions
-- [.github/agents/](.github/agents/) - Custom subagent definitions (Researcher, Implementer, Reviewer)
+**AI Configuration**:
+- [AGENTS.md](./AGENTS.md) - Project context for AI agents
+- [.github/copilot-instructions.md](.github/copilot-instructions.md) - Copilot instructions
+- [.github/agents/](.github/agents/) - Custom agents (Researcher, Implementer, Reviewer)
 
-**Key Workflow**: [GitHub Issue Resolution](./docs/workflows/github-issue-resolution.md)
+**Workflows**: [GitHub Issue Resolution Guide](./docs/workflows/github-issue-resolution.md)
 
-### Change Management Approach
-```markdown
-The project uses a documentation system for tracking changes:
-1. docs/PLANNED_CHANGES.md: 
-   - Contains upcoming feature specifications
-   - Uses standardized template format from docs/templates/PLANNED_CHANGES_TEMPLATE.md
-   - Written in a prompt-friendly format for AI-assisted implementation
-   - Used as input for AI-assisted implementation
-2. docs/IMPLEMENTED_CHANGES.md:
-   - Chronicles completed implementations
-   - Includes timestamps and implementation details
-   - Serves as reference for similar future changes
-3. docs/MEMORY_LOG.md:
-   - Tracks solutions attempted by AI for application issues
-   - Prevents repetitive solution attempts 
-   - Maintains a history of approaches with outcomes and tags
-   - Documents debugging processes in a structured format
-   - Records test implementation strategies and lessons learned
-   - Preserves institutional knowledge about effective approaches
-   - Should be consulted before addressing recurring issues
+### Documentation System
 
-For GitHub issue resolution, follow the systematic workflow: docs/workflows/github-issue-resolution.md
-```
+Structured documentation for tracking development:
+- **[docs/PLANNED_CHANGES.md](./docs/PLANNED_CHANGES.md)** - Feature specifications and upcoming changes
+- **[docs/IMPLEMENTED_CHANGES.md](./docs/IMPLEMENTED_CHANGES.md)** - Completed features with timestamps
+- **[docs/MEMORY_LOG.md](./docs/MEMORY_LOG.md)** - Debugging solutions and historical context
+- **[docs/templates/](./docs/templates/)** - Standardized documentation templates
 
 ## Core Features
-When implementing or modifying features, ensure adherence to these core functionalities:
-```markdown
-- Time Management
+
+- **Time Management**
   - Duration setting for work sessions
   - Deadline tracking capabilities
   
-- Activity Management
-  - Creation and tracking of multiple activities
-  - State machine-based activity lifecycle (PENDING → RUNNING → COMPLETED)
-  - Validated state transitions
+- **Activity Management**
+  - Create and track multiple activities
+  - State machine-based lifecycle: `PENDING → RUNNING → COMPLETED`
+  - Only one activity can run at a time
   - Real-time status monitoring
   
-- Visual Feedback
+- **Visual Feedback**
   - Progress bar for ongoing activities
-  - Timeline visualization
-   - Color-coded activity identification
-      - Activities use a canonical type:
-         ```typescript
-         interface Activity {
-            id: string;
-            name: string;
-            colorIndex: number;
-            createdAt: string;
-            isActive: boolean;
-         }
-         ```
-      - Color sets for display are derived from `colorIndex` using `getNextAvailableColorSet` (see `src/utils/colors.ts`)
+  - Timeline visualization with color-coded activities
   - Break visualization between activities
   
-- Theme System
+- **Theme System**
   - Light/Dark/System theme modes
-  - HSL-based color system
-  - Persistent theme preferences
+  - HSL-based color system with CSS variables
+  - Persistent theme preferences (localStorage)
 
-- Offline Support
+- **Offline Support**
   - Full functionality without network connectivity
-  - Offline status indication
-  - Service worker caching strategies
+  - Offline status indicator
+  - Service worker caching for PWA functionality
   - Update notification system
   
-- Session Sharing
-   - Create read-only share links for sessions
-   - Theme-aware shared page with color normalization
-   - Privacy-preserving payloads (no PII; includes descriptions and exported colors)
-```
+- **Session Sharing**
+  - Create read-only share links
+  - Theme-aware shared view
+  - JSON export/import functionality
+  
+- **AI Features** (Experimental)
+  - Activity planning with OpenAI (Bring Your Own Key)
+  - AI-generated summaries
 
-## Implementation Guidelines
+## Architecture
 
-### Architecture Patterns
-```markdown
-- Component-based UI architecture
-- Custom React hooks for state management
-- Activity State Machine for lifecycle management
-- Theme system using CSS variables
-```
+### Design Patterns
+
+**State Management**:
+- Activity lifecycle managed by state machine (`src/utils/activityStateMachine.ts`)
+- React hooks for state orchestration (`src/hooks/useActivityState.ts`)
+- Timeline management via `useTimelineEntries` hook
+
+**Component Architecture**:
+- Bootstrap 5 components with React Bootstrap
+- TypeScript for type safety
+- Organized by feature and responsibility
+
+**Theme System**:
+- CSS variables with Bootstrap's data-bs-theme
+- Context-based theme management (`src/contexts/ThemeContext.tsx`)
+- Light/Dark/System modes with localStorage persistence
 
 ### Project Structure
+
 ```
 src/
-  ├── app/            # Next.js app directory (routes, layout)
-  ├── components/     # React components
-  │   └── __tests__/  # Component tests
-  ├── hooks/          # Custom React hooks
-  │   └── __tests__/  # Hook tests
-  └── utils/          # Utility functions
-      └── __tests__/  # Utility tests
-docs/                 # Project documentation
-  ├── PLANNED_CHANGES.md    # Upcoming changes (uses template format)
-  ├── IMPLEMENTED_CHANGES.md # Completed changes
-  └── templates/        # Documentation templates
-      ├── PLANNED_CHANGES_TEMPLATE.md
-      ├── COMPONENT_DOCUMENTATION_TEMPLATE.md
-      └── UTILITY_PROPOSAL_TEMPLATE.md
+  ├── app/              # Next.js app directory (App Router)
+  │   ├── page.tsx     # Main application page
+  │   ├── ai/          # AI features
+  │   ├── shared/      # Session sharing
+  │   └── layout.tsx   # Root layout
+  ├── components/       # React components
+  │   ├── feature/     # Feature-specific components
+  │   └── __tests__/   # Component tests
+  ├── hooks/            # Custom React hooks
+  │   └── __tests__/   # Hook tests
+  ├── contexts/         # React contexts (Theme, etc.)
+  ├── utils/            # Utility functions
+  │   └── __tests__/   # Utility tests
+  ├── types/            # TypeScript type definitions
+  └── constants/        # Application constants
+
+docs/                   # Documentation
+  ├── components/       # Component documentation
+  ├── workflows/        # Development workflows
+  ├── dev-guides/       # Developer guides
+  ├── templates/        # Documentation templates
+  └── logged_memories/  # Debugging history
+
+.github/
+  ├── workflows/        # CI/CD pipelines
+  └── agents/           # AI agent definitions
 ```
 
-### Design System Specifications
+### Color System
 
-#### Color System Requirements
-```markdown
-- Use HSL color format exclusively
-- Maintain consistent hue values across themes
+Activities use color indices mapped to predefined color sets:
+```typescript
+interface Activity {
+  id: string;
+  name: string;
+  colorIndex: number;      // Maps to color palette
+  createdAt: string;
+  isActive: boolean;
+}
+```
+
+Color sets are managed in `src/utils/colors.ts` using HSL values for theme compatibility.
+
+### Design System
+
+**Color Requirements**:
+- Use HSL color format for theme compatibility
+- Maintain consistent hue values across light/dark themes
 - Adjust saturation/lightness for theme variants
-- Implement via CSS variables
 - Ensure WCAG compliance for contrast ratios
-```
 
-#### Theme Implementation Requirements
-```markdown
-- Support three modes: Light/Dark/System
-- Use CSS variables for theme values
-- Implement smooth transitions
-- Persist user preferences
-- Handle system preference changes
-```
+**Theme Implementation**:
+- Three modes: Light/Dark/System
+- CSS variables for theme values
+- Smooth transitions between themes
+- Persistent user preferences via localStorage
 
 ## Development Setup
 
-### Environment Requirements
-```bash
-Node.js (Latest LTS)
-npm or yarn
-```
+### Prerequisites
+- Node.js (LTS version)
+- npm or yarn
 
-### Installation Commands
+### Getting Started
+
 ```bash
 # Install dependencies
 npm install
-# or
-yarn install
 
 # Start development server
 npm run dev
-# or
-yarn dev
 
-# Run tests
+# Open browser at http://localhost:3000
+```
+
+### Development Commands
+
+```bash
+# Testing
+npm test                    # Run Jest tests
+npm run test:watch         # Watch mode for tests
+npm run cypress            # Open Cypress Test Runner
+npm run cypress:run        # Run Cypress tests headless
+
+# Code Quality
+npm run lint               # ESLint check
+npm run type-check         # TypeScript validation
+
+# Build
+npm run build              # Production build
+npm start                  # Start production server
+```
+
+### AI Feature Configuration
+
+The application includes experimental AI features using OpenAI (Bring Your Own Key):
+
+```bash
+# 1. Copy environment template
+cp .env.example .env.local
+
+# 2. Configure variables (optional for local dev)
+AI_ENABLE_MOCK=true              # Use mock responses
+AI_FALLBACK_ON_429=true          # Fallback on rate limits
+
+# 3. Use BYOK in the application
+# - Navigate to /ai in the app
+# - Enter your OpenAI API key in the BYOK section
+# - Key is stored in memory only (not persisted)
+```
+
+**Security Notes**:
+- Client-side BYOK only (no server API key needed)
+- Strict CSP limits connections to `https://api.openai.com`
+- Service worker bypasses OpenAI requests
+- Keys are never persisted to localStorage/sessionStorage
+
+## Quality Assurance
+
+### Pre-Deployment Checklist
+
+All checks must pass before deployment:
+
+```bash
+# 1. Type checking
+npm run type-check
+
+# 2. Linting
+npm run lint
+
+# 3. Tests
 npm test
-# or
-yarn test
 
-# Watch mode for tests
-npm run test:watch
-# or
-yarn test:watch
+# 4. Build verification
+npm run build
 ```
 
-### AI Feature (Issue #307) - Local Dev Quickstart
+### Testing Strategy
 
-```markdown
-1) Copy .env.example to .env.local and set variables as needed:
-   - AI_ENABLE_MOCK=true (recommended for local dev)
-   - AI_FALLBACK_ON_429=true (default). Set to false to surface real 429 errors instead of mock fallback.
-   - Note: OPENAI_API_KEY is deprecated and not used; BYOK is client-only.
-
-2) Start the app and open /ai.
-   - Enter your OpenAI key (sk-...) in the BYOK section and Save. That's it—AI is enabled client-side.
-   - Submit a prompt to generate a plan.
-
-3) Summary AI
-   - The Summary component can request an AI summary via /api/ai/summary.
-   - With AI_ENABLE_MOCK=true or when OpenAI returns 429 insufficient_quota, a mock summary is returned.
-
-Notes:
-- On localhost the service worker installs but bypasses request interception to avoid interfering with dev assets; it still intercepts in preview/production builds.
+**Test Pyramid Architecture** (85% Jest / 15% Cypress):
 
 ```
-
-### Deployment Verification
-Before considering any feature or change complete, run these verification steps:
-```markdown
-1. Type checking:
-   ```bash
-   npm run type-check
-   npm run tsc
-   ```
-2. Linting:
-   ```bash
-   npm run lint
-   ```
-3. Ensure all tests pass:
-   ```bash
-   npm test
-   ```
-
-All steps must pass without errors before deploying to Vercel. Address any warnings or errors that could impact deployment.
-
-### Testing Requirements
-When implementing new features or modifying existing ones:
-```markdown
-1. Follow Test Pyramid Architecture:
-   - Jest for component logic, hooks, utilities (fast, comprehensive)
-   - Cypress only for complete user workflows (slow, essential)
-   
-2. Test-Driven Development (TDD):
-   - Write Jest tests before implementation
-   - Focus on edge cases and error conditions
-   - Test both light and dark theme scenarios
-   
-3. Performance Considerations:
-   - Prefer Jest over Cypress when coverage is equivalent
-   - Keep Cypress tests focused on user value
-   - Mock external dependencies in Jest tests
-
-4. Coverage Requirements:
-   - Update existing tests when changing behavior
-   - Validate accessibility compliance in Jest tests
-   - Test keyboard navigation and focus management
-   
-5. For complex browser APIs:
-   - Use module-level mock functions for consistency
-   - Properly restore original methods in afterEach blocks
-   - Clear mock call counts between tests when needed
-   - Document all testing approaches in Memory Log
-   
-6. For service worker tests:
-   - Test logic in Jest (fast, reliable)
-   - Test UI interactions in Cypress (complete workflows)
-   - Handle event timing with appropriate test patterns
-   - Test network-awareness functionality
+🔺 Test Pyramid
+├── E2E Tests (Cypress) - ~16 tests, ~60 seconds
+│   ├── Complete user workflows
+│   ├── Cross-page navigation
+│   ├── File import/export
+│   └── Service worker UI
+├── Integration Tests (Jest) - Component interactions
+│   ├── Component composition
+│   ├── Modal and keyboard navigation
+│   ├── Accessibility compliance
+│   └── Page-level integration
+└── Unit Tests (Jest) - ~135+ tests, ~15 seconds
+    ├── Component logic
+    ├── Custom hooks
+    ├── Utility functions
+    └── State machine
 ```
+
+**When to use Jest vs Cypress**:
+
+| Use Jest For | Use Cypress For |
+|--------------|-----------------|
+| Component rendering | Complete user workflows |
+| Form validation | Cross-page navigation |
+| Keyboard navigation | File operations |
+| State management | Service worker UI |
+| Utility functions | Browser-specific behavior |
+| Accessibility | End-to-end integration |
 
 ## Technology Stack
-When implementing features, utilize these core technologies:
-```markdown
-- Next.js: Application framework
-- React: UI component library
-- TypeScript: Type safety
-- Jest: Testing framework
-- React Testing Library: Component testing
-```
+
+| Category | Technology | Version |
+|----------|-----------|---------|
+| Framework | Next.js | 16.1.6 |
+| UI Library | React | 19.2.4 |
+| UI Components | React Bootstrap | 2.10.10 |
+| CSS Framework | Bootstrap | 5.3.8 |
+| Language | TypeScript | 5.x |
+| Testing | Jest | 30.2.0 |
+| E2E Testing | Cypress | 15.10.0 |
+| PWA Support | Service Workers | Native |
 
 ## Documentation
 
+### For Developers
+
+- **[GitHub Issue Resolution](./docs/workflows/github-issue-resolution.md)** - Step-by-step process for resolving issues
+- **[Testing Procedures](./docs/workflows/testing-procedures.md)** - Jest vs Cypress decision guide
+- **[Code Quality Checklist](./docs/workflows/code-quality-checklist.md)** - Pre-deployment verification
+- **[Test Pyramid Architecture](./docs/dev-guides/test-pyramid-architecture.md)** - Comprehensive testing strategy
+- **[Memory Log Workflow](./docs/dev-guides/memory-log-workflow.md)** - Debugging knowledge management
+
 ### Component Documentation
 
-The application is built using a collection of reusable components. Comprehensive documentation for these components is available in the [Component Documentation Index](./docs/components/README.md).
+- **[Component Index](./docs/components/README.md)** - Complete component documentation
+- **[Session Sharing Guide](./docs/dev-guides/session-sharing.md)** - Developer guide for sharing features
+- **[Time Utilities Guide](./docs/dev-guides/TIME_UTILITIES_GUIDE.md)** - Time calculation utilities
 
-Key component categories:
+### For Users
 
-- **Visualization Components**: [Timeline](./docs/components/Timeline.md), [ProgressBar](./docs/components/ProgressBar.md)
-- **State Management Components**: [ActivityManager](./docs/components/ActivityManager.md), [Summary](./docs/components/Summary.md)
-- **User Input Components**: [TimeSetup](./docs/components/TimeSetup.md), [ActivityButton](./docs/components/ActivityButton.md)
-- **Auxiliary Components**: [ServiceWorkerUpdater](./docs/components/ServiceWorkerUpdater.md), [ActivityForm](./docs/components/ActivityForm.md), [ConfirmationDialog](./docs/components/ConfirmationDialog.md)
-- **Utility Components**: [TimeDisplay](./docs/components/TimeDisplay.md), [OfflineIndicator](./docs/components/OfflineIndicator.md), [ThemeToggle](./docs/components/ThemeToggle.md), [ErrorBoundary](./docs/components/ErrorBoundary.md)
-
-### Development Resources
-
-- [GitHub Issue Resolution Workflow](./docs/workflows/github-issue-resolution.md) - **Complete step-by-step process for resolving GitHub issues with MCP tools**
-  
-### Session Sharing Docs
-- User guide: [docs/SHARING.md](./docs/SHARING.md)
-- Developer guide: [docs/dev-guides/session-sharing.md](./docs/dev-guides/session-sharing.md)
-- [Commit Procedures](./docs/workflows/commit-procedures.md) - Standard procedures for code commits and PR fixes
-- [Testing Procedures](./docs/workflows/testing-procedures.md) - Jest vs Cypress decision matrix and testing strategies
-- [Code Quality Checklist](./docs/workflows/code-quality-checklist.md) - Final verification before deployment
-- [Planning Changes](./docs/PLANNED_CHANGES.md) - How to document upcoming changes
-- [Planning Template](./docs/templates/PLANNED_CHANGES_TEMPLATE.md) - Template for new change requests
-- [Memory Log](./docs/MEMORY_LOG.md) - Project history and issue resolutions
-- **[Memory Log Workflow](./docs/dev-guides/memory-log-workflow.md) - Complete guide for creating and accessing debugging knowledge**
-- [Time Utilities Testing Guide](./docs/dev-guides/TIME_UTILITIES_TESTING.md)
+- **[Session Sharing](./docs/SHARING.md)** - User guide for sharing sessions
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
 
----
-Note: When using this document as a prompt for AI assistance, ensure to provide specific context about which section or feature you're working on to receive more targeted and relevant responses.
+[MIT](https://choosealicense.com/licenses/mit/)
 
 ## Testing
 
