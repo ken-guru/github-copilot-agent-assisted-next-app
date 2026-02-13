@@ -33,7 +33,7 @@
   }
 }
 
-/* Outline button styling - ensure visibility with dark text for contrast */
+/* Outline button default state - ensure visibility with dark text */
 .toggleButton[class*="outline"] {
   /* Use Bootstrap's body text color for good contrast in light mode */
   color: var(--bs-body-color, #212529) !important;
@@ -45,7 +45,27 @@
   fill: none;
 }
 
-/* Secondary (filled) button styling - ensure white icon for selected state */
+/* Outline button hover state - ensure proper contrast with darkened background */
+.toggleButton[class*="outline"]:hover {
+  color: white !important;
+}
+
+.toggleButton[class*="outline"]:hover svg {
+  stroke: white;
+}
+
+/* Outline button focus state - ensure contrast with focus styling */
+.toggleButton[class*="outline"]:focus,
+.toggleButton[class*="outline"]:focus-visible {
+  color: white !important;
+}
+
+.toggleButton[class*="outline"]:focus svg,
+.toggleButton[class*="outline"]:focus-visible svg {
+  stroke: white;
+}
+
+/* Secondary (filled) button default state - ensure white icon for maximum contrast */
 .toggleButton.btn-secondary {
   /* Filled secondary buttons should have white text for maximum contrast */
   color: white !important;
@@ -54,4 +74,33 @@
 .toggleButton.btn-secondary svg {
   stroke: white;
   fill: none;
+}
+
+/* Secondary button hover state - maintain white text for consistency */
+.toggleButton.btn-secondary:hover {
+  color: white !important;
+}
+
+.toggleButton.btn-secondary:hover svg {
+  stroke: white;
+}
+
+/* Secondary button focus state - maintain white text with focus ring */
+.toggleButton.btn-secondary:focus,
+.toggleButton.btn-secondary:focus-visible {
+  color: white !important;
+}
+
+.toggleButton.btn-secondary:focus svg,
+.toggleButton.btn-secondary:focus-visible svg {
+  stroke: white;
+}
+
+/* Active state (when button is pressed/active) */
+.toggleButton.active {
+  color: white !important;
+}
+
+.toggleButton.active svg {
+  stroke: white;
 }
