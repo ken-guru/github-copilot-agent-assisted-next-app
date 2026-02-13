@@ -32,23 +32,32 @@ describe('Activity CRUD Operations', () => {
       return true;
     });
     
+    // Visit activities page but do NOT clear localStorage
+    // This allows data to persist across navigation tests
     cy.visit('/activities');
-    // Clear any existing data
+  });
+
+  // Helper function to clear localStorage for tests that need a clean state
+  const clearLocalStorageForFreshState = () => {
     cy.window().then((win) => {
       win.localStorage.clear();
     });
-  });
+    cy.reload();
+  };
 
   describe('Core E2E User Workflows', () => {
     it('should verify activities page loads and basic functionality exists', () => {
+      // Clear localStorage for this test to ensure a clean state
+      clearLocalStorageForFreshState();
+      
       // Verify the page loads with expected structure
       cy.contains('Your Activities').should('be.visible');
       cy.contains('Add Activity').should('be.visible');
       
-  // Verify essential UI elements with default activities present
-  cy.get('button').contains('Import').should('be.visible');
-  cy.get('button').contains('Export').should('be.visible');
-  cy.get('button').contains('Reset Activities').should('be.visible');
+      // Verify essential UI elements with default activities present
+      cy.get('button').contains('Import').should('be.visible');
+      cy.get('button').contains('Export').should('be.visible');
+      cy.get('button').contains('Reset Activities').should('be.visible');
       
       // This is a high-level smoke test - detailed CRUD testing should be in Jest
     });
@@ -56,6 +65,9 @@ describe('Activity CRUD Operations', () => {
 
   describe('Import/Export Workflows', () => {
     beforeEach(() => {
+      // Clear localStorage to ensure a clean state for each export/import test
+      clearLocalStorageForFreshState();
+      
       // Create test data for export
       cy.contains('Add Activity').click();
       cy.get('[role="dialog"]').within(() => {
@@ -103,7 +115,8 @@ describe('Activity CRUD Operations', () => {
   describe('Navigation Integration', () => {
     it('should navigate to activities page from home', () => {
       cy.visit('/');
-      cy.get('[href="/activities"]').click();
+      // Click visible Activities link (first one - desktop nav, or only one on mobile)
+      cy.get('[href="/activities"]:visible').first().click();
       cy.url().should('include', '/activities');
       cy.contains('Your Activities').should('be.visible');
     });
@@ -123,7 +136,7 @@ describe('Activity CRUD Operations', () => {
       
       // Navigate away and back
       cy.visit('/');
-      cy.get('[href="/activities"]').click();
+      cy.get('[href="/activities"]:visible').first().click();
       
       // Verify activity persists
       cy.contains('Navigation Test Activity').should('be.visible');
@@ -132,8 +145,9 @@ describe('Activity CRUD Operations', () => {
 
   describe('Error Handling Integration', () => {
     it('should handle empty activity list gracefully', () => {
-      // Force empty state: set activities array to empty and reload
+      // Clear localStorage and set empty state for this specific test
       cy.window().then((win) => {
+        win.localStorage.clear();
         win.localStorage.setItem('activities_v1', '[]');
       });
       cy.reload();
@@ -147,6 +161,7 @@ describe('Activity CRUD Operations', () => {
     });
 
     it('should handle modal interactions correctly', () => {
+      // This test doesn't require a clean state, so data from previous tests can persist
       // Test modal opening and closing
       cy.contains('Add Activity').click();
       cy.get('[role="dialog"]').should('be.visible');
