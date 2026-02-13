@@ -195,137 +195,141 @@ export default function AIPlannerPage() {
   // BYOK-only page: server never receives this key and no server AI calls are made here.
   if (!apiKey) {
     return (
-      <div className="container py-3">
-        <Card>
-          <Card.Header>
-            <h5 className="mb-0 d-flex align-items-center">
-              <i className="bi bi-key me-2" aria-hidden="true" />
-              AI Session Planner — Bring Your Own Key
-            </h5>
-          </Card.Header>
-          <Card.Body>
-            <Card className="mb-3">
-              <Card.Body>
-                <Alert variant="warning" className="mb-3">
-                  <Alert.Heading className="h6 mb-2">
-                    <i className="bi bi-shield-exclamation me-2" aria-hidden="true" />
-                    Security Notice
-                  </Alert.Heading>
-                  <ul className="mb-0 small">
-                    <li>Your API key is stored only in memory and will be lost when you close this tab</li>
-                    <li>Do not use this feature on shared computers or untrusted networks</li>
-                    <li>Your API key and prompts are sent directly to OpenAI - not through our servers</li>
-                    <li>Ensure your OpenAI account has appropriate usage limits configured</li>
-                  </ul>
-                </Alert>
-                <Form.Label htmlFor="byokKey">Enter your OpenAI API key (client-only)</Form.Label>
-                <InputGroup className="mb-2">
-                  <Form.Control
-                    id="byokKey"
-                    type="password"
-                    placeholder="sk-..."
-                    value={keyInput}
-                    onChange={(e) => setKeyInput(e.target.value)}
-                  />
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      const trimmed = keyInput.trim();
-                      if (!trimmed) return;
-                      setApiKey(trimmed, 'memory');
-                      setKeyInput(''); // don't keep in input after saving
-                      addToast({ message: 'API key saved (memory only)', variant: 'success' });
-                    }}
-                  >Save</Button>
-                </InputGroup>
-                <Form.Text className="text-body-secondary">Stored only in memory (RAM). Never sent to the server or logged.</Form.Text>
-              </Card.Body>
-            </Card>
-            <div className="d-flex gap-2">
-              <Button type="button" variant="outline-secondary" onClick={() => router.push('/') }>
-                Go Home
-              </Button>
-            </div>
-          </Card.Body>
-        </Card>
-      </div>
+      <main className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
+        <div className="d-flex flex-column flex-grow-1 overflow-y-auto p-3 p-md-4">
+          <Card>
+            <Card.Header>
+              <h5 className="mb-0 d-flex align-items-center">
+                <i className="bi bi-key me-2" aria-hidden="true" />
+                AI Session Planner — Bring Your Own Key
+              </h5>
+            </Card.Header>
+            <Card.Body>
+              <Card className="mb-3">
+                <Card.Body>
+                  <Alert variant="warning" className="mb-3">
+                    <Alert.Heading className="h6 mb-2">
+                      <i className="bi bi-shield-exclamation me-2" aria-hidden="true" />
+                      Security Notice
+                    </Alert.Heading>
+                    <ul className="mb-0 small">
+                      <li>Your API key is stored only in memory and will be lost when you close this tab</li>
+                      <li>Do not use this feature on shared computers or untrusted networks</li>
+                      <li>Your API key and prompts are sent directly to OpenAI - not through our servers</li>
+                      <li>Ensure your OpenAI account has appropriate usage limits configured</li>
+                    </ul>
+                  </Alert>
+                  <Form.Label htmlFor="byokKey">Enter your OpenAI API key (client-only)</Form.Label>
+                  <InputGroup className="mb-2">
+                    <Form.Control
+                      id="byokKey"
+                      type="password"
+                      placeholder="sk-..."
+                      value={keyInput}
+                      onChange={(e) => setKeyInput(e.target.value)}
+                    />
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        const trimmed = keyInput.trim();
+                        if (!trimmed) return;
+                        setApiKey(trimmed, 'memory');
+                        setKeyInput(''); // don't keep in input after saving
+                        addToast({ message: 'API key saved (memory only)', variant: 'success' });
+                      }}
+                    >Save</Button>
+                  </InputGroup>
+                  <Form.Text className="text-body-secondary">Stored only in memory (RAM). Never sent to the server or logged.</Form.Text>
+                </Card.Body>
+              </Card>
+              <div className="d-flex gap-2">
+                <Button type="button" variant="outline-secondary" onClick={() => router.push('/') }>
+                  Go Home
+                </Button>
+              </div>
+            </Card.Body>
+          </Card>
+        </div>
+      </main>
     );
   }
 
   return (
-    <div className="container py-3">
-      <Card>
-        <Card.Header>
-          <h5 className="mb-0 d-flex align-items-center">
-            <i className="bi bi-stars me-2" aria-hidden="true" />
-            AI Session Planner
-          </h5>
-        </Card.Header>
-        <Card.Body>
-          {/* Show prominent offline warning when not connected */}
-          {!online && (
-            <Alert variant="warning" role="alert" data-testid="ai-offline-warning" className="mb-3">
-              AI planning requires a network connection — you are currently offline. Reconnect to use this feature.
-            </Alert>
-          )}
-          <Form onSubmit={handlePlan} aria-label="AI planning form">
-            <Form.Group className="mb-3">
-              <Form.Label htmlFor="aiPrompt">Describe your session</Form.Label>
-              <Form.Control
-                id="aiPrompt"
-                as="textarea"
-                rows={4}
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="e.g., 30-minute study sprint on React and JavaScript, plus a 10-minute break"
-              />
-              <Form.Text className="text-body-secondary">One request per plan to conserve tokens.</Form.Text>
-            </Form.Group>
-            <Alert variant="info" className="mb-3">
-              Mode: Client-only (BYOK). Your key stays on this device.
-            </Alert>
-            <Form.Group className="mb-3">
-              <Form.Label htmlFor="modelSelect">AI Model</Form.Label>
-              <Form.Select
-                id="modelSelect"
-                value={selectedModelId}
-                onChange={(e) => handleModelChange(e.target.value)}
-                aria-label="Select AI model"
-              >
-                {AVAILABLE_MODELS.map(model => (
-                  <option key={model.id} value={model.id}>
-                    {model.name} - ${model.costPer1kTokens.input}/1K tokens - {model.description}
-                  </option>
-                ))}
-              </Form.Select>
-              <Form.Text className="text-body-secondary">
-                Context: {(getModelById(selectedModelId) || AVAILABLE_MODELS[0])?.contextWindow.toLocaleString() || '128000'} tokens
-              </Form.Text>
-            </Form.Group>
-            {error && (
-              <Alert variant="danger" role="alert">{error}</Alert>
+    <main className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
+      <div className="d-flex flex-column flex-grow-1 overflow-y-auto p-3 p-md-4">
+        <Card>
+          <Card.Header>
+            <h5 className="mb-0 d-flex align-items-center">
+              <i className="bi bi-stars me-2" aria-hidden="true" />
+              AI Session Planner
+            </h5>
+          </Card.Header>
+          <Card.Body>
+            {/* Show prominent offline warning when not connected */}
+            {!online && (
+              <Alert variant="warning" role="alert" data-testid="ai-offline-warning" className="mb-3">
+                AI planning requires a network connection — you are currently offline. Reconnect to use this feature.
+              </Alert>
             )}
-            <div className="d-flex gap-2">
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={loading || !online}
-                aria-disabled={loading || !online}
-                title={!online ? 'You are offline. Reconnect to plan with AI.' : 'Generate AI plan'}
-                aria-label="Generate AI plan"
-              >
-                {loading ? (<><Spinner size="sm" className="me-2" animation="border" />Planning…</>) : 'Plan with AI'}
-              </Button>
-              <Button type="button" variant="outline-danger" onClick={() => { clearApiKey(); addToast({ message: 'API key cleared', variant: 'success' }); }}>
-                Clear key
-              </Button>
-              <Button type="button" variant="outline-secondary" onClick={() => router.push('/') }>
-                Cancel
-              </Button>
-            </div>
-          </Form>
-        </Card.Body>
-      </Card>
-    </div>
+            <Form onSubmit={handlePlan} aria-label="AI planning form">
+              <Form.Group className="mb-3">
+                <Form.Label htmlFor="aiPrompt">Describe your session</Form.Label>
+                <Form.Control
+                  id="aiPrompt"
+                  as="textarea"
+                  rows={4}
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  placeholder="e.g., 30-minute study sprint on React and JavaScript, plus a 10-minute break"
+                />
+                <Form.Text className="text-body-secondary">One request per plan to conserve tokens.</Form.Text>
+              </Form.Group>
+              <Alert variant="info" className="mb-3">
+                Mode: Client-only (BYOK). Your key stays on this device.
+              </Alert>
+              <Form.Group className="mb-3">
+                <Form.Label htmlFor="modelSelect">AI Model</Form.Label>
+                <Form.Select
+                  id="modelSelect"
+                  value={selectedModelId}
+                  onChange={(e) => handleModelChange(e.target.value)}
+                  aria-label="Select AI model"
+                >
+                  {AVAILABLE_MODELS.map(model => (
+                    <option key={model.id} value={model.id}>
+                      {model.name} - ${model.costPer1kTokens.input}/1K tokens - {model.description}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Text className="text-body-secondary">
+                  Context: {(getModelById(selectedModelId) || AVAILABLE_MODELS[0])?.contextWindow.toLocaleString() || '128000'} tokens
+                </Form.Text>
+              </Form.Group>
+              {error && (
+                <Alert variant="danger" role="alert">{error}</Alert>
+              )}
+              <div className="d-flex gap-2">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={loading || !online}
+                  aria-disabled={loading || !online}
+                  title={!online ? 'You are offline. Reconnect to plan with AI.' : 'Generate AI plan'}
+                  aria-label="Generate AI plan"
+                >
+                  {loading ? (<><Spinner size="sm" className="me-2" animation="border" />Planning…</>) : 'Plan with AI'}
+                </Button>
+                <Button type="button" variant="outline-danger" onClick={() => { clearApiKey(); addToast({ message: 'API key cleared', variant: 'success' }); }}>
+                  Clear key
+                </Button>
+                <Button type="button" variant="outline-secondary" onClick={() => router.push('/') }>
+                  Cancel
+                </Button>
+              </div>
+            </Form>
+          </Card.Body>
+        </Card>
+      </div>
+    </main>
   );
 }

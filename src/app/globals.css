@@ -196,6 +196,17 @@ button {
   font-weight: 500; 
 }
 
+/* App container - main content wrapper for consistent layout across all pages */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: calc(100vh - var(--navbar-height));
+  overflow: hidden;
+  /* Prevent layout shift from scrollbar appearing/disappearing */
+  scrollbar-gutter: stable;
+}
+
 @media (max-width: 991.98px) {
   .main-content-wrapper { 
     padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + var(--bottom-nav-spacing)); 
