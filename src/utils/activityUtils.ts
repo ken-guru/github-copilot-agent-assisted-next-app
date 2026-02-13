@@ -1,4 +1,4 @@
-import { ActivityStateMachine } from './activityStateMachine';
+import { ActivityStateMachine } from '@mr-timely/shared';
 
 /**
  * @deprecated Use ActivityStateMachine.isCompleted() instead.

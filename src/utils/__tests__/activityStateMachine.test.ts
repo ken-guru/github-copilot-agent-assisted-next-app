@@ -1,4 +1,4 @@
-import { ActivityStateMachine } from '../activityStateMachine';
+import { ActivityStateMachine } from '@mr-timely/shared';
 
 describe('ActivityStateMachine', () => {
   let stateMachine: ActivityStateMachine;

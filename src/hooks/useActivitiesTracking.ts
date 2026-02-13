@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
-import { ActivityStateMachine, ActivityState } from '@/utils/activityStateMachine';
+import { ActivityStateMachine } from '@mr-timely/shared';
+import type { ActivityState } from '@mr-timely/types';
 
 // Determine if we're in a test environment
 const isTestEnvironment = process && process.env && process.env.NODE_ENV === 'test';

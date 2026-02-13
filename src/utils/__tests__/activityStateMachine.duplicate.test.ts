@@ -1,4 +1,4 @@
-import { ActivityStateMachine } from '../activityStateMachine';
+import { ActivityStateMachine } from '@mr-timely/shared';
 
 // Make sure Jest recognizes this file correctly
 describe('ActivityStateMachine Duplicate Activity Handling', () => {

@@ -3,7 +3,7 @@ import { Activity } from '@/types/activity';
 import { isBreakEntry } from '@/types';
 import { useActivitiesTracking } from './useActivitiesTracking';
 import { useTimelineEntries } from './useTimelineEntries';
-import { ActivityState } from '@/utils/activityStateMachine';
+import type { ActivityState } from '@mr-timely/types';
 
 export interface UseActivityStateProps {
   onTimerStart?: () => void;
