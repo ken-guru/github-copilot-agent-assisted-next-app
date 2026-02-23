@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/migration/beta-features-decision-matrix.md -->
+<!-- filepath: docs/migration/beta-features-decision-matrix.md -->
 # Beta Features Decision Matrix
 
 **Date:** 2025-04-29

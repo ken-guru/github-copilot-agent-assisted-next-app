@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/analysis/deprecated-utils-usage.md -->
+<!-- filepath: docs/analysis/deprecated-utils-usage.md -->
 # Deprecated Utils Usage Analysis
 
 **Date:** 2025-04-29

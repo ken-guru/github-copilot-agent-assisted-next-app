@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/migration/documentation-completion-plan.md -->
+<!-- filepath: docs/migration/documentation-completion-plan.md -->
 # Documentation Completion Plan
 
 **Date:** 2025-04-29

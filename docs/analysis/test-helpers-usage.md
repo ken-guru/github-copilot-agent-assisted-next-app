@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/analysis/test-helpers-usage.md -->
+<!-- filepath: docs/analysis/test-helpers-usage.md -->
 # Test Helpers Usage Analysis
 
 **Date:** 2025-04-29

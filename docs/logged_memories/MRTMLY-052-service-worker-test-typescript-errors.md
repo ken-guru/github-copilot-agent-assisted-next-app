@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/logged_memories/MRTMLY-073-service-worker-test-typescript-errors.md -->
+<!-- filepath: docs/logged_memories/MRTMLY-052-service-worker-test-typescript-errors.md -->
 ### Issue: Service Worker Update Error Test TypeScript Errors
 **Date:** 2025-04-09
 **Tags:** #debugging #typescript #type-error #service-worker #test-failures #jest
