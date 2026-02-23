@@ -5,9 +5,11 @@ This document provides a comprehensive inventory of all custom UI components in 
 ## Component Inventory Checklist
 
 ### ✅ Completed Components
-*Components that have been successfully migrated to Bootstrap*
+*Components that already use Bootstrap / React-Bootstrap*
 
-- [ ] None yet
+- [x] **ConfirmationDialog** — Uses `react-bootstrap/Modal` and `react-bootstrap/Button`
+- [x] **ThemeToggle** — Uses `react-bootstrap/ButtonGroup`, `Button`, `OverlayTrigger`, `Tooltip`
+- [x] **Navigation** — Uses `react-bootstrap/Navbar` and `Nav`
 
 ### 🔄 In Progress Components
 *Components currently being migrated*
@@ -21,10 +23,8 @@ This document provides a comprehensive inventory of all custom UI components in 
 - [ ] **ActivityButton** - Activity selection and status display buttons
 - [ ] **ActivityForm** - Form for adding new activities  
 - [ ] **ActivityManager** - Container and management for activities
-- [ ] **ConfirmationDialog** - Modal dialog for confirmations
 - [ ] **ProgressBar** - Progress visualization component
 - [ ] **Summary** - Statistics and summary display cards
-- [ ] **ThemeToggle** - Theme selection toggle buttons
 - [ ] **TimeDisplay** - Time and date display components
 - [ ] **TimeSetup** - Time configuration form
 - [ ] **Timeline** - Timeline visualization component
@@ -157,7 +157,7 @@ This document provides a comprehensive inventory of all custom UI components in 
 1. **ProgressBar** - Direct component replacement
 2. **OfflineIndicator** - Simple Alert replacement
 3. **UpdateNotification** - Toast/Alert replacement
-4. **ConfirmationDialog** - Modal replacement
+4. ~~**ConfirmationDialog** - Modal replacement~~ ✅ Already uses `react-bootstrap/Modal`
 
 ### Phase 2: Medium Complexity
 5. **ActivityForm** - Form components migration
@@ -169,7 +169,7 @@ This document provides a comprehensive inventory of all custom UI components in 
 
 ### Phase 3: High Complexity (Save for Last)
 11. **ActivityButton** - Complex state management
-12. **ThemeToggle** - Theme integration complexity
+12. ~~**ThemeToggle** - Theme integration complexity~~ ✅ Already uses `react-bootstrap/ButtonGroup`
 13. **Timeline** - Complex visualization component
 
 ## Bootstrap Gaps and Custom Solutions
