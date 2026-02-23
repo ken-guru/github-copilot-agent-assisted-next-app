@@ -119,64 +119,19 @@ Navigation component partially uses Bootstrap but could leverage more utilities.
 
 ---
 
-### 5. Consolidate Duplicate ThemeToggle Components
+### 5. ~~Consolidate Duplicate ThemeToggle Components~~ ✅ COMPLETED
 **Priority**: High
 **Effort**: Low
 **Type**: Component Abstraction
-
-**Current State**: 
-Two separate ThemeToggle components exist:
-- `src/components/ThemeToggle.tsx` (Bootstrap-based)
-- `src/components/ui/ThemeToggle.tsx` (CSS modules-based)
-
-**Target State**:
-- Single, consolidated ThemeToggle component using Bootstrap
-- Consistent styling and behavior across the app
-- Unified props interface for different use cases
-
-**Implementation Steps**:
-1. Choose the Bootstrap-based version as the primary component
-2. Migrate any unique features from the CSS modules version
-3. Update all imports to use the single component
-4. Remove duplicate component and CSS module file
-5. Update tests to reference single component
-
-**Dependencies**: None
-**Files to Modify**:
-- Remove: `src/components/ui/ThemeToggle.tsx`
-- Remove: `src/components/ui/ThemeToggle.module.css`
-- Update imports throughout codebase
+**Status**: Already consolidated — only `src/components/ThemeToggle.tsx` (Bootstrap-based) remains. The duplicate `src/components/ui/ThemeToggle.tsx` has been removed.
 
 ---
 
-### 6. Consolidate Duplicate ActivityForm Components
+### 6. ~~Consolidate Duplicate ActivityForm Components~~ ✅ COMPLETED
 **Priority**: High
 **Effort**: Medium
 **Type**: Component Abstraction
-
-**Current State**: 
-Two ActivityForm components with different features:
-- `src/components/ActivityForm.tsx` (simpler version)
-- `src/components/feature/ActivityForm.tsx` (full-featured version)
-
-**Target State**:
-- Single ActivityForm component with configurable complexity
-- Unified props interface supporting both simple and complex modes
-- Consistent validation and styling
-
-**Implementation Steps**:
-1. Merge functionality into the full-featured version
-2. Add `isSimplified` prop to control complexity
-3. Update all imports to use single component
-4. Remove duplicate component
-5. Update tests for merged component
-6. Ensure backward compatibility for existing usage
-
-**Dependencies**: None
-**Files to Modify**:
-- Enhance: `src/components/feature/ActivityForm.tsx`
-- Remove: `src/components/ActivityForm.tsx`
-- Update imports throughout codebase
+**Status**: Already consolidated — the full-featured `src/components/feature/ActivityForm.tsx` is the single form component. The old root-level `ActivityForm.tsx` has been replaced by `ActivityFormSection.tsx` (a layout wrapper, not a duplicate).
 
 ---
 
@@ -314,8 +269,8 @@ Custom media queries and responsive behavior.
 ## Implementation Priority Order
 
 1. **High Priority - Bootstrap Alignment**:
-   - Consolidate duplicate ThemeToggle components
-   - Consolidate duplicate ActivityForm components  
+   - ~~Consolidate duplicate ThemeToggle components~~ ✅
+   - ~~Consolidate duplicate ActivityForm components~~ ✅
    - Convert TimeSetup to Bootstrap Forms
    - Replace Progress Bar with Bootstrap component
 

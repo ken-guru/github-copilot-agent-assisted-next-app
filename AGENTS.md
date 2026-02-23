@@ -4,7 +4,7 @@ Project context for AI coding agents working on this Next.js activity tracking a
 
 ## Project Overview
 
-**Stack**: Next.js 15 + React 19 + Bootstrap 5 + TypeScript
+**Stack**: Next.js 16 + React 19 + Bootstrap 5 + TypeScript
 
 An activity timer and tracker application built with AI assistance. Track activities with a state machine approach where only ONE activity can be RUNNING at a time.
 

@@ -2,7 +2,7 @@
 # GitHub Copilot Instructions
 
 ## PREAMBLE
-Streamlined guidelines for AI-assisted development of a **Next.js 15 + React 19 + Bootstrap 5 + TypeScript** activity tracking application. Focus on GitHub issue resolution using MCP tools.
+Streamlined guidelines for AI-assisted development of a **Next.js 16 + React 19 + Bootstrap 5 + TypeScript** activity tracking application. Focus on GitHub issue resolution using MCP tools.
 
 ## PROJECT ARCHITECTURE ESSENTIALS
 
