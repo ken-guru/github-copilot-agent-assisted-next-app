@@ -260,20 +260,6 @@ cypress/e2e/
 - **Cypress**: `*.cy.ts` for end-to-end workflows
 - **Test IDs**: Use `data-testid` attributes for reliable selectors
 
-## Migration Benefits
-
-### Performance Improvements
-- **Before Migration**: 48 Cypress tests, ~4+ minutes
-- **After Migration**: 16 Cypress tests, ~60 seconds
-- **Performance Gain**: 75% faster execution
-- **Developer Experience**: Faster feedback loop
-
-### Quality Improvements
-- **Better Coverage**: More granular edge case testing
-- **Improved Reliability**: Less flaky than e2e equivalents
-- **Enhanced Maintainability**: Faster tests encourage frequent execution
-- **Clearer Separation**: Obvious boundaries between test types
-
 ## Commands & Scripts
 
 ### Running Tests
