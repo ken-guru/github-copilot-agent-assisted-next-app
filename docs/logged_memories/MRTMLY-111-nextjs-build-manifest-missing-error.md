@@ -6,11 +6,11 @@
 #### Initial State
 - Next.js application failing with ENOENT error:
   ```
-  ⨯ [Error: ENOENT: no such file or directory, open '/Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/.next/server/app/_not-found/page/app-build-manifest.json'] {
+  ⨯ [Error: ENOENT: no such file or directory, open '<project-root>/.next/server/app/_not-found/page/app-build-manifest.json'] {
     errno: -2,
     code: 'ENOENT',
     syscall: 'open',
-    path: '/Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/.next/server/app/_not-found/page/app-build-manifest.json'
+    path: '<project-root>/.next/server/app/_not-found/page/app-build-manifest.json'
   }
   ```
 - Error indicates Next.js is trying to access a build manifest file in the `_not-found` directory that doesn't exist

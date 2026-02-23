@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/migration/deprecated-utils-migration-plan.md -->
+<!-- filepath: docs/migration/deprecated-utils-migration-plan.md -->
 # Deprecated Utils Migration Plan
 
 **Date:** 2025-04-29

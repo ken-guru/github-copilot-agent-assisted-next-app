@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/analysis/draft-docs-status.md -->
+<!-- filepath: docs/analysis/draft-docs-status.md -->
 # Draft Documentation Status Analysis
 
 **Date:** 2025-04-29

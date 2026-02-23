@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/migration/test-helpers-migration-plan.md -->
+<!-- filepath: docs/migration/test-helpers-migration-plan.md -->
 # Test Helpers Migration Plan
 
 **Date:** 2025-04-29

@@ -1,8 +1,8 @@
 # Service Worker Test IIFE Syntax Fix
 
-**Date:** 2023-12-05  
-**Tags:** #serviceWorker #testing #jest #syntax  
-**Status:** Resolved  
+**Date:** 2023-12-05
+**Tags:** #serviceWorker #testing #jest #syntax
+**Status:** Resolved
 
 ## Initial State
 
@@ -10,13 +10,13 @@ After implementing a fix for JSON parsing in our service worker test mocks, we e
 
 ```
 x Expected ',', got '('
-  ,-[/Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/test/service-worker/caching-strategies-extended.test.js:59:1]
+  ,-[<project-root>/test/service-worker/caching-strategies-extended.test.js:59:1]
 56 |             }
 57 |           }
 58 |           return body;
 59 |         }());
   :          ^
-60 |         
+60 |
 61 |         this.clone = jest.fn().mockImplementation(() => {
 62 |           const clone = new Response(this.body, {
   `----

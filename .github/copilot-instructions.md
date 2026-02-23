@@ -47,7 +47,7 @@ src/components/                    # Bootstrap-wrapped components
 **📚 Detailed Workflow**: [/docs/workflows/github-issue-resolution.md](../docs/workflows/github-issue-resolution.md)
 
 1. **Analyze Issue** → Use GitHub MCP tools, delegate research to Researcher subagent if complex
-2. **Verify Problem** → Use Playwright MCP tools for UI issues  
+2. **Verify Problem** → Use Playwright MCP tools for UI issues
 3. **Create Branch** → Never work on main directly. If a PR already exists for the task and you're on its branch, continue on that same branch (do not create a new branch/PR).
 4. **Implement Solution** → Test-first development with Jest
 5. **Quality Checks** → All tests, lint, type-check must pass
@@ -71,7 +71,8 @@ mcp_github_add_issue_comment(issue_number=<NUMBER>, body="...")
 ### Issue Verification (UI/UX Issues)
 ```bash
 # Navigate and reproduce (use network IP, not localhost, for MCP Playwright tools)
-mcp_playwright_browser_navigate(url="http://192.168.86.30:3000")
+# First discover your LAN IP: ipconfig getifaddr en0
+mcp_playwright_browser_navigate(url="http://<LAN_IP>:3000")
 mcp_playwright_browser_snapshot()
 mcp_playwright_browser_take_screenshot(filename="issue-<NUMBER>-current-state.png")
 ```
@@ -156,7 +157,7 @@ When a GitHub Copilot code review is requested:
 ### Quality Gates (All Must Pass)
 ```bash
 npm test                    # All Jest tests
-npm run lint               # ESLint compliance  
+npm run lint               # ESLint compliance
 npm run type-check         # TypeScript validation
 npm run build              # Build verification
 npm run cypress:run        # E2E tests (if workflow changes)

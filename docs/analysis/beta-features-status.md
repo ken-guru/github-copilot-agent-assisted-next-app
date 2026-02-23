@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/analysis/beta-features-status.md -->
+<!-- filepath: docs/analysis/beta-features-status.md -->
 # Beta Features Status Analysis
 
 **Date:** 2025-04-29
