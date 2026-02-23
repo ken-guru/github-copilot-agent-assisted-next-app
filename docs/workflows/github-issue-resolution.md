@@ -44,7 +44,8 @@ For UI/UX issues, verify the problem using Playwright tools:
 #### 2.1 Navigate and Reproduce
 ```bash
 # Navigate to the application
-mcp_playwright_browser_navigate(url="http://localhost:3000")
+# First discover your LAN IP: ipconfig getifaddr en0
+mcp_playwright_browser_navigate(url="http://<LAN_IP>:3000")
 
 # Take accessibility snapshot for analysis
 mcp_playwright_browser_snapshot()

@@ -15,7 +15,7 @@
    - Timer continues running every second, triggering state updates
 
 2. **Live Browser Testing (MCP Playwright)**
-   - Started development server on http://192.168.86.30:3001
+   - Started development server on http://<LAN_IP>:3001
    - Set 2-second timer for testing
    - Started "Homework" activity
    - Waited for overtime alert: "Overtime by 6s" appeared correctly

@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/logged_memories/MRTMLY-185-additional-cleanup-candidates.md -->
+<!-- filepath: docs/logged_memories/MRTMLY-133-additional-cleanup-candidates.md -->
 ### Issue: Additional Cleanup Candidates Analysis and Migration Planning
 **Date:** 2025-04-29
 **Tags:** #maintenance #cleanup #code-quality

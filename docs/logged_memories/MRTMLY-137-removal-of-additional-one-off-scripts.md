@@ -1,4 +1,4 @@
-<!-- filepath: /Users/ken/Workspace/ken-guru/github-copilot-agent-assisted-next-app/docs/logged_memories/MRTMLY-002-removal-of-additional-one-off-scripts.md -->
+<!-- filepath: docs/logged_memories/MRTMLY-137-removal-of-additional-one-off-scripts.md -->
 ### Issue: Removal of Additional One-Off Scripts
 **Date:** 2025-04-29
 **Tags:** #maintenance #cleanup #scripts #testing
