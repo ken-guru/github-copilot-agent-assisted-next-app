@@ -7,6 +7,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
+  // Override React version to avoid eslint-plugin-react auto-detection via
+  // deprecated context.getFilename() API removed in ESLint 10.
+  settings: {
+    react: {
+      version: "19",
+    },
+  },
+}, {
   // Allow CommonJS require() in JavaScript files (non-TypeScript)
   files: [
     "**/*.js",
