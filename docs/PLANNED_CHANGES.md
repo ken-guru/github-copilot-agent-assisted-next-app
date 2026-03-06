@@ -4,6 +4,34 @@ This file contains specifications for upcoming changes to the application. Each 
 
 Once implemented, move the change to `IMPLEMENTED_CHANGES.md` with a timestamp.
 
+## Admin Authentication & Analytics
+
+### Admin Authentication, Session Search, and Analytics Dashboard
+**Priority**: High
+**Effort**: High
+**Type**: New Feature
+
+**Comprehensive Plan**: See [`docs/admin-authentication-plan.md`](./admin-authentication-plan.md)
+
+**Summary**:
+Add admin-only authentication supporting magic links, passkeys, and username/password with 2FA enforcement. Enable admin users to search across shared sessions and view anonymized analytics and usage graphs.
+
+**Key Technical Decisions**:
+- **Auth Library**: Auth.js v5 (formerly NextAuth.js) with Data Access Layer (DAL) pattern
+- **Database**: Vercel Postgres for admin accounts, sessions, and audit logs
+- **Session Storage**: Existing Vercel Blob (read-only from admin) + Vercel Postgres (admin sessions)
+- **Security**: Defense in depth — DAL as primary security enforcement, middleware for convenience only
+- **Admin Independence**: Admin accounts are completely independent from the Vercel deployment user
+
+**Implementation Phases**:
+1. Foundation — Auth.js + magic links + DAL + middleware + admin layout
+2. Enhanced Auth — Passkeys (WebAuthn) + credentials + 2FA enforcement
+3. Session Search — Blob querying + search UI + pagination
+4. Analytics Dashboard — Usage metrics + graphs + cron aggregation
+5. Hardening — Security audit + E2E tests + documentation
+
+---
+
 ## Bootstrap Alignment and Component Improvements
 
 ### 1. Convert TimeSetup Component to Bootstrap Forms
