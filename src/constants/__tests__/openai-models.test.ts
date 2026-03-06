@@ -1,6 +1,5 @@
 // Unit tests for OpenAI model configuration
 import {
-  ModelInfo,
   AVAILABLE_MODELS,
   DEFAULT_MODEL_ID,
   getModelById

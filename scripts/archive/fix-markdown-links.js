@@ -7,7 +7,6 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 
 // Load the ID mapping from the reorganization
 const ID_MAPPING_PATH = './docs/memory_log_id_mapping.json';
@@ -58,7 +57,7 @@ function fixMemoryLogReferences(content, filePath, idMapping) {
 /**
  * Fix known broken link patterns
  */
-function fixKnownBrokenLinks(content, filePath) {
+function fixKnownBrokenLinks(content, _filePath) {
     let fixes = 0;
     let newContent = content;
     
@@ -72,7 +71,7 @@ function fixKnownBrokenLinks(content, filePath) {
     
     // Fix malformed links like [level]('[Service Worker] ' + message)
     const malformedLinkRegex = /\[([^\]]+)\]\(('[^']*'[^)]*)\)/g;
-    newContent = newContent.replace(malformedLinkRegex, (match, text, url) => {
+    newContent = newContent.replace(malformedLinkRegex, (match, text, _url) => {
         fixes++;
         console.log(`  Fixed malformed link: ${match} -> ${text}`);
         return text; // Remove the malformed link, keep text

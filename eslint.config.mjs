@@ -36,7 +36,8 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
   rules: {
     "@typescript-eslint/no-unused-vars": ["warn", { 
       "argsIgnorePattern": "^_",
-      "varsIgnorePattern": "^_"
+      "varsIgnorePattern": "^_",
+      "caughtErrorsIgnorePattern": "^_"
     }],
     "@typescript-eslint/no-explicit-any": "warn",
     // Temporarily enable strict React Hooks rules from v7 to see violations

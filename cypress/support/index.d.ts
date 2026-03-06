@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 declare namespace Cypress {
-  interface Chainable<Subject> {
+  interface Chainable<_Subject> {
     /**
      * Set browser to online mode
      * @example cy.setOnline()

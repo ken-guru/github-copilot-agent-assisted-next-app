@@ -40,7 +40,6 @@ export const useThemeReactive = (): { theme: Theme; ready: boolean } => {
     // This is intentional to prevent FOUC and is safe within useLayoutEffect
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(detectedTheme);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setReady(true);
   }, []);
 

@@ -41,7 +41,6 @@ const mockServiceWorker = {
 // Mock modules before tests
 jest.mock('../serviceWorkerRetry', () => ({
   registerWithRetry: jest.fn().mockImplementation(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     (_url, _config) => {
     // Parameters prefixed with underscore to indicate they're intentionally unused
     return Promise.resolve(mockRegistration);

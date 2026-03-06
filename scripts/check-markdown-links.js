@@ -13,8 +13,8 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const WORKSPACE_ROOT = '.';
-const DOCS_DIR = './docs';
+const _WORKSPACE_ROOT = '.';
+const _DOCS_DIR = './docs';
 
 /**
  * Get all markdown files in the workspace

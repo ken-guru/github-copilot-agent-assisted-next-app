@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const path = require('path');
 
 console.log('🔧 Fixing ID/filename mismatches and incorrect references...\n');
 
@@ -155,7 +154,7 @@ let filesModified = 0;
 fixes.forEach(fix => {
   if (fs.existsSync(fix.file)) {
     let content = fs.readFileSync(fix.file, 'utf8');
-    const originalContent = content;
+    const _originalContent = content;
     let fileModified = false;
 
     fix.replacements.forEach(replacement => {

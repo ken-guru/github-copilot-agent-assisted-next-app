@@ -13,7 +13,7 @@ const util = require('util');
 
 // Convert fs functions to promise-based
 const readdir = util.promisify(fs.readdir);
-const readFile = util.promisify(fs.readFile);
+const _readFile = util.promisify(fs.readFile);
 
 const MEMORY_LOG_DIR = path.resolve(__dirname, '../docs/logged_memories');
 
