@@ -10,7 +10,7 @@ interface MobileTimelineProps {
   currentTime: number;
 }
 
-export const MobileTimeline: React.FC<MobileTimelineProps> = ({ entries, totalDuration, currentTime }) => {
+export const MobileTimeline: React.FC<MobileTimelineProps> = ({ entries, totalDuration: _totalDuration, currentTime }) => {
   // Helper function to extract colors from theme-aware or simple structure
   const getColors = (entry: TimelineEntry) => {
     if (!entry.colors) {

@@ -63,7 +63,6 @@ export default function Summary({
     // Only update currentTime if timer is active to avoid unnecessary recalculations
     if (timerActive) {
       // Capturing timestamp when activity data changes
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentTime(Date.now());
     }
   }, [entries, timerActive]);

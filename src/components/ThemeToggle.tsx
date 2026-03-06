@@ -72,7 +72,6 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
     const savedTheme = localStorage.getItem('theme');
     
     if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'system')) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTheme(savedTheme);
       // Only apply if it differs from what's already set
       if (savedTheme !== 'system') {
@@ -92,7 +91,6 @@ export default function ThemeToggle({ size = 'md', variant = 'standalone' }: The
       // No saved theme, use system preference
       const darkModePreferred = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const systemTheme = darkModePreferred ? 'dark' : 'light';
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTheme('system');
       if (currentTheme !== systemTheme) {
         applyTheme('system');

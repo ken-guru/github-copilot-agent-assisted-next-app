@@ -7,6 +7,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
+  // Explicitly set React version to avoid eslint-plugin-react auto-detection,
+  // which uses deprecated APIs and adds unnecessary overhead.
+  settings: {
+    react: {
+      version: "19",
+    },
+  },
+}, {
   // Allow CommonJS require() in JavaScript files (non-TypeScript)
   files: [
     "**/*.js",
@@ -28,7 +36,8 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
   rules: {
     "@typescript-eslint/no-unused-vars": ["warn", { 
       "argsIgnorePattern": "^_",
-      "varsIgnorePattern": "^_"
+      "varsIgnorePattern": "^_",
+      "caughtErrorsIgnorePattern": "^_"
     }],
     "@typescript-eslint/no-explicit-any": "warn",
     // Temporarily enable strict React Hooks rules from v7 to see violations

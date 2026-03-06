@@ -12,7 +12,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 const DOCS_DIR = './docs';
 const LOGGED_MEMORIES_DIR = path.join(DOCS_DIR, 'logged_memories');
@@ -141,7 +140,7 @@ function resolveDuplicates(files) {
         const match = file.fileName.match(/^MRTMLY-(\d+)-(.+)\.md$/);
         if (match) {
             const baseId = match[1];
-            const baseName = match[2];
+            const _baseName = match[2];
             
             if (!duplicateGroups.has(baseId)) {
                 duplicateGroups.set(baseId, []);

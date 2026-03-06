@@ -42,7 +42,7 @@ log('Running the build command...');
 try {
   execSync('npm run build', { stdio: 'inherit' });
   log('Build completed successfully!');
-} catch (error) {
+} catch (_error) {
   log('Build failed. See error details above.');
   process.exit(1);
 }

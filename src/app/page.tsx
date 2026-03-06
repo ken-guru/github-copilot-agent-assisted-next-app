@@ -16,7 +16,7 @@ function AppContent() {
   const { setIsLoading } = useLoading();
   const [timeSet, setTimeSet] = useState(false);
   const [totalDuration, setTotalDuration] = useState(0);
-  const [isDeadlineMode, setIsDeadlineMode] = useState(false);
+  const [_isDeadlineMode, setIsDeadlineMode] = useState(false);
   const resetDialogRef = useRef<ConfirmationDialogRef>(null);
   
   const {
