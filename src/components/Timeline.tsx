@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import { Card, Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import styles from './Timeline.module.css';
 import { calculateTimeSpans } from '@/utils/timelineCalculations';
@@ -16,6 +16,70 @@ interface TimelineProps {
   timerActive?: boolean;
   allActivitiesCompleted?: boolean;
   showCounter?: boolean;
+}
+
+// Helper to extract hue from HSL color
+function extractHueFromHsl(hslColor: string | undefined): number {
+  if (!hslColor) return 0;
+
+  try {
+    const hueMatch = hslColor.match(/hsl\(\s*(\d+)/);
+    if (hueMatch && hueMatch[1]) {
+      return parseInt(hueMatch[1], 10);
+    }
+    return 0;
+  } catch {
+    return 0;
+  }
+}
+
+// Find the closest color set by hue
+function findClosestColorSet(hue: number, originalColors: ColorSet) {
+  if (hue === 0 && !originalColors.background.includes('hsl(0')) {
+    return internalActivityColors[1]; // Blue color set
+  }
+
+  let closestMatch = internalActivityColors[0];
+  let smallestDiff = 360;
+
+  internalActivityColors.forEach(colorSet => {
+    const lightColorHue = extractHueFromHsl(colorSet.light.background);
+    const hueDiff = Math.abs(lightColorHue - hue);
+    const wrappedHueDiff = Math.min(hueDiff, 360 - hueDiff);
+
+    if (wrappedHueDiff < smallestDiff) {
+      smallestDiff = wrappedHueDiff;
+      closestMatch = colorSet;
+    }
+  });
+
+  return closestMatch;
+}
+
+// Helper function to generate tooltip content for activity details
+function generateTooltipContent(entry: TimelineEntry, duration: number) {
+  const details = [];
+
+  if (entry.startTime) {
+    details.push(`Started: ${new Date(entry.startTime).toLocaleTimeString()}`);
+  }
+  if (entry.endTime) {
+    details.push(`Ended: ${new Date(entry.endTime).toLocaleTimeString()}`);
+  }
+  details.push(`Duration: ${formatTimeHuman(duration)}`);
+  if (entry.description) {
+    details.push(`Description: ${entry.description}`);
+  }
+
+  return (
+    <div style={{ textAlign: 'left' }}>
+      {details.map((detail, index) => (
+        <div key={index} style={{ marginBottom: index < details.length - 1 ? '4px' : '0' }}>
+          {detail}
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function calculateTimeIntervals(duration: number): { interval: number; count: number } {
@@ -40,69 +104,21 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   const hasEntries = entries.length > 0;
   const [currentElapsedTime, setCurrentElapsedTime] = useState(initialElapsedTime);
   
-  // State to track expanded timeline entries - removing as we're using tooltips now
-  // const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set());
-  
-  // Function to toggle entry expansion - removing as we're using tooltips now
-  // const toggleEntryExpansion = (entryId: string) => {
-  //   setExpandedEntries(prev => {
-  //     const newSet = new Set(prev);
-  //     if (newSet.has(entryId)) {
-  //       newSet.delete(entryId);
-  //     } else {
-  //       newSet.add(entryId);
-  //     }
-  //     return newSet;
-  //   });
-  // };
-  
-  // Helper function to generate tooltip content for activity details
-  const generateTooltipContent = (entry: TimelineEntry, duration: number) => {
-    const details = [];
-    
-    if (entry.startTime) {
-      details.push(`Started: ${new Date(entry.startTime).toLocaleTimeString()}`);
-    }
-    if (entry.endTime) {
-      details.push(`Ended: ${new Date(entry.endTime).toLocaleTimeString()}`);
-    }
-    details.push(`Duration: ${formatTimeHuman(duration)}`);
-    if (entry.description) {
-      details.push(`Description: ${entry.description}`);
-    }
-    
-    return (
-      <div style={{ textAlign: 'left' }}>
-        {details.map((detail, index) => (
-          <div key={index} style={{ marginBottom: index < details.length - 1 ? '4px' : '0' }}>
-            {detail}
-          </div>
-        ))}
-      </div>
-    );
-  };
-  
   // Use the reactive theme hook for proper theme detection
   const { theme: currentTheme, ready: themeReady } = useThemeReactive();
-  
-  // Function to get the theme-appropriate color for an activity
-  const getThemeAppropriateColor = (colors?: TimelineEntry['colors']) => {
+
+  // Get the theme-appropriate color for an activity
+  const getThemeAppropriateColor = useCallback((colors?: TimelineEntry['colors']) => {
     if (!colors) return undefined;
-    
-    // If we already have theme-specific colors, use those directly
+
     if ('light' in colors && 'dark' in colors) {
       return currentTheme === 'dark' ? colors.dark : colors.light;
     }
-    
-    // Otherwise, extract hue from current color and find closest theme-aware color
-    // Type assertion needed for TypeScript since we've confirmed it's a ColorSet
+
     const colorSet = colors as ColorSet;
     const hue = extractHueFromHsl(colorSet.background);
-    
-    // Find the closest matching color set in internalActivityColors
     const closestColorSet = findClosestColorSet(hue, colorSet);
-    
-    // Return the appropriate theme version with null checks
+
     if (!closestColorSet) {
       return {
         background: 'var(--background-muted)',
@@ -110,55 +126,11 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
         border: 'var(--border-color)'
       };
     }
-    
-    return currentTheme === 'dark' 
-      ? closestColorSet.dark 
+
+    return currentTheme === 'dark'
+      ? closestColorSet.dark
       : closestColorSet.light;
-  };
-  
-  // Helper to extract hue from HSL color
-  const extractHueFromHsl = (hslColor: string | undefined): number => {
-    if (!hslColor) return 0;
-    
-    try {
-      const hueMatch = hslColor.match(/hsl\(\s*(\d+)/);
-      if (hueMatch && hueMatch[1]) {
-        return parseInt(hueMatch[1], 10);
-      }
-      return 0;
-    } catch {
-      // Fallback for non-HSL colors or parsing errors
-      return 0;
-    }
-  };
-  
-  // Find the closest color set by hue
-  const findClosestColorSet = (hue: number, originalColors: ColorSet) => {
-    // If we can't determine hue from the color, use a fallback
-    if (hue === 0 && !originalColors.background.includes('hsl(0')) {
-      // Default to blue if we can't determine the hue
-      return internalActivityColors[1]; // Blue color set
-    }
-    
-    // Find the closest matching hue in our color sets
-    let closestMatch = internalActivityColors[0];
-    let smallestDiff = 360;
-    
-    internalActivityColors.forEach(colorSet => {
-      const lightColorHue = extractHueFromHsl(colorSet.light.background);
-      const hueDiff = Math.abs(lightColorHue - hue);
-      
-      // Handle hue circle wraparound (e.g., 350 is closer to 10 than 300)
-      const wrappedHueDiff = Math.min(hueDiff, 360 - hueDiff);
-      
-      if (wrappedHueDiff < smallestDiff) {
-        smallestDiff = wrappedHueDiff;
-        closestMatch = colorSet;
-      }
-    });
-    
-    return closestMatch;
-  };
+  }, [currentTheme]);
   
   // Update current elapsed time when prop changes
   useEffect(() => {
