@@ -107,7 +107,7 @@ export default async function SharedPage({ params }: Props) {
   const allActivitiesCompleted = data.sessionData.sessionType === 'completed';
 
   return (
-    <main className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
+    <main className="d-flex flex-column overflow-hidden" style={{ minHeight: 'calc(100vh - var(--navbar-height, 56px))' }}>
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 py-3 px-3">
         <div>
           <h1 className="h3 mb-0">Shared Session</h1>

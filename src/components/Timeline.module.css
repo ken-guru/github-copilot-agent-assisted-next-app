@@ -4,7 +4,7 @@
 .timelineContainer {
   display: flex;
   flex: 1;
-  min-height: min(400px, 60vh); /* Ensure minimum height for timeline visibility */
+  min-height: 400px; /* Ensure minimum height for timeline visibility */
   position: relative;
   overflow: hidden; /* Constrain children from overflowing vertically */
   background: var(--background);
@@ -21,7 +21,6 @@
   z-index: 2;
   padding: var(--space-lg) 0; /* Vertical padding contained within card */
   overflow: hidden; /* Keep overtime section and markers within bounds */
-  height: 100%; /* Match the container height to avoid overflow */
 }
 
 .timeMarker {
@@ -275,5 +274,11 @@
   .timeGap {
     min-height: 1rem; /* Smaller gaps on very small screens */
     font-size: 0.625rem; /* Smaller font */
+  }
+}
+
+@media (max-height: 600px) {
+  .timelineContainer {
+    min-height: 250px; /* Reduce minimum height on short viewports */
   }
 }
