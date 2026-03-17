@@ -195,7 +195,7 @@ export default function AIPlannerPage() {
   // BYOK-only page: server never receives this key and no server AI calls are made here.
   if (!apiKey) {
     return (
-      <main className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
+      <main id="main-content" className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
         <div className="d-flex flex-column flex-grow-1 overflow-y-auto p-3 p-md-4">
           <Card>
             <Card.Header>
@@ -255,7 +255,7 @@ export default function AIPlannerPage() {
   }
 
   return (
-    <main className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
+    <main id="main-content" className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
       <div className="d-flex flex-column flex-grow-1 overflow-y-auto p-3 p-md-4">
         <Card>
           <Card.Header>

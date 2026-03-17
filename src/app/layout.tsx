@@ -22,7 +22,10 @@ const geistMono = Geist_Mono({
 
 // Metadata configuration
 export const metadata: Metadata = {
-  title: 'Mr. Timely',
+  title: {
+    default: 'Mr. Timely',
+    template: '%s — Mr. Timely',
+  },
   description: 'Track your time and activities with Mr. Timely',
   icons: {
     icon: [

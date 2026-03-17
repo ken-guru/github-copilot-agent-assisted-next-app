@@ -56,10 +56,10 @@ const ConfirmationDialog = forwardRef<ConfirmationDialogRef, ConfirmationDialogP
           <p>{message}</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCancel}>
+          <Button variant="secondary" onClick={handleCancel} autoFocus>
             {cancelText}
           </Button>
-          <Button variant="primary" onClick={handleConfirm} autoFocus>
+          <Button variant="primary" onClick={handleConfirm}>
             {confirmText}
           </Button>
         </Modal.Footer>
