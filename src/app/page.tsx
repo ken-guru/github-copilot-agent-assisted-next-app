@@ -155,7 +155,7 @@ function AppContent() {
   
   return (
     <>
-      <main className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
+      <main id="main-content" className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}

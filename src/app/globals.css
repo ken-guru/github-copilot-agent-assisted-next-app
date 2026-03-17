@@ -305,6 +305,23 @@ button {
   }
 }
 
+/* Skip navigation link for keyboard accessibility (WCAG 2.4.1) */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: var(--space-sm);
+  z-index: 9999;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--accent-color);
+  color: #fff;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-weight: 600;
+}
+.skip-to-content:focus {
+  top: var(--space-sm);
+}
+
 /* Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .mobile-timeline-entry {
