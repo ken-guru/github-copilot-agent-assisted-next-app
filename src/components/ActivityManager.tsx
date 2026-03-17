@@ -250,9 +250,10 @@ export default function ActivityManager({
               size="sm" 
               onClick={handleExtendDuration}
               className="d-flex align-items-center"
+              aria-label="Add 1 minute to session duration"
               title="Add 1 minute to session duration"
             >
-              <i className="bi bi-plus-circle me-2"></i>
+              <i className="bi bi-plus-circle me-2" aria-hidden="true"></i>
               1 min
             </Button>
           )}
@@ -262,9 +263,10 @@ export default function ActivityManager({
               size="sm" 
               onClick={handleResetSession}
               className="d-flex align-items-center"
+              aria-label="Reset session and return to time setup"
               title="Reset session and return to time setup"
             >
-              <i className="bi bi-arrow-clockwise me-2"></i>
+              <i className="bi bi-arrow-clockwise me-2" aria-hidden="true"></i>
               Reset
             </Button>
           )}
@@ -278,10 +280,11 @@ export default function ActivityManager({
               onClick={() => setShowShareModal(true)}
               disabled={!online}
               className="d-flex align-items-center"
+              aria-label="Share session"
               title="Share session"
               data-testid="open-share-modal"
             >
-              <i className="bi bi-share me-2" />
+              <i className="bi bi-share me-2" aria-hidden="true" />
               Share
             </Button>
           )}

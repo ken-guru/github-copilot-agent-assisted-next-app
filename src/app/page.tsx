@@ -159,6 +159,7 @@ function AppContent() {
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}
+          title="Reset session"
           message={dialogActions.message}
           confirmText="Reset"
           cancelText="Cancel"

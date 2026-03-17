@@ -69,12 +69,14 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
           <Button
             variant={setupMode === 'duration' ? 'primary' : 'outline-primary'}
             onClick={() => setSetupMode('duration')}
+            aria-pressed={setupMode === 'duration'}
           >
             Set Duration
           </Button>
           <Button
             variant={setupMode === 'deadline' ? 'primary' : 'outline-primary'}
             onClick={() => setSetupMode('deadline')}
+            aria-pressed={setupMode === 'deadline'}
           >
             Set Deadline
           </Button>

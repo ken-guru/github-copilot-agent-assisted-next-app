@@ -206,7 +206,6 @@ const ActivityForm = React.memo(React.forwardRef<ActivityFormRef, ActivityFormPr
                 className="w-100 d-flex align-items-center justify-content-between"
                 style={{ textAlign: 'left' }}
                 disabled={isDisabled}
-                aria-describedby="activityColor"
               >
                 <div className="d-flex align-items-center">
                   <div 

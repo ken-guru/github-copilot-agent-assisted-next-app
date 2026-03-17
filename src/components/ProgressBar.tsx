@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ProgressBar as BootstrapProgressBar } from 'react-bootstrap';
 import { TimelineEntry } from '@/types';
 import { formatTimeHuman } from '@/utils/time';
@@ -16,25 +16,6 @@ export default function ProgressBar({
   elapsedTime,
   timerActive = false
 }: ProgressBarProps) {
-  // State to track if the component is being viewed on mobile
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Effect to check if the device is mobile on mount and when window is resized
-  useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.matchMedia('(max-width: 768px)').matches);
-    };
-    
-    // Initial check
-    checkIsMobile();
-    
-    // Add listener for window resize
-    window.addEventListener('resize', checkIsMobile);
-    
-    // Cleanup
-    return () => window.removeEventListener('resize', checkIsMobile);
-  }, []);
-
   // Always render the progress bar container, even if timer is inactive
   const isActive = timerActive && entries.length > 0 && totalDuration > 0;
   
@@ -74,19 +55,9 @@ export default function ProgressBar({
   );
 
   return (
-    <div className={`w-100 ${isMobile ? 'd-flex flex-column' : ''}`} data-testid="progress-container">
-      {/* Render in different order based on viewport */}
-      {isMobile ? (
-        <>
-          {timeMarkersComponent}
-          {progressBarComponent}
-        </>
-      ) : (
-        <>
-          {progressBarComponent}
-          {timeMarkersComponent}
-        </>
-      )}
+    <div className="w-100" data-testid="progress-container">
+      {progressBarComponent}
+      {timeMarkersComponent}
     </div>
   );
 }
