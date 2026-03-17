@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { Navbar, Nav } from 'react-bootstrap';
 import { useThemeReactive } from '@/hooks/useThemeReactive';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -40,7 +41,7 @@ const Navigation: React.FC = () => {
       data-bs-theme={theme}
     >
       <div className="container-fluid">
-        <Navbar.Brand href="/" data-testid="navbar-brand">
+        <Navbar.Brand as={Link} href="/" data-testid="navbar-brand">
           <i className="bi bi-clock me-2" aria-hidden="true"></i>
           <span className="brand-text d-none d-sm-inline">Mr. Timely</span>
         </Navbar.Brand>
@@ -62,7 +63,8 @@ const Navigation: React.FC = () => {
         <Navbar.Collapse id="basic-navbar-nav" className="order-lg-1 d-none d-lg-block">
           <Nav className="ms-auto me-lg-4">
             {/* Timer - First navigation item */}
-            <Nav.Link 
+            <Nav.Link
+              as={Link}
               href="/"
               active={isTimerActive}
               onClick={closeMobileNav}
@@ -73,7 +75,8 @@ const Navigation: React.FC = () => {
             </Nav.Link>
             
             {/* Activities - Second navigation item */}
-            <Nav.Link 
+            <Nav.Link
+              as={Link}
               href="/activities"
               active={isActivitiesActive}
               onClick={closeMobileNav}
@@ -85,7 +88,8 @@ const Navigation: React.FC = () => {
 
             {/* AI - Conditional navigation item */}
             {showAI && (
-              <Nav.Link 
+              <Nav.Link
+                as={Link}
                 href="/ai"
                 active={isAIActive}
                 onClick={closeMobileNav}
