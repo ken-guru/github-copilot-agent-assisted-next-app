@@ -89,6 +89,8 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                   type="number"
                   id="hours"
                   min="0"
+                  inputMode="numeric"
+                  autoComplete="off"
                   value={isClient ? hours.toString() : "0"}
                   onChange={(e) => {
                     const parsedValue = parseInt(e.target.value, 10);
@@ -103,6 +105,8 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                   id="minutes"
                   min="0"
                   max="59"
+                  inputMode="numeric"
+                  autoComplete="off"
                   value={isClient ? minutes.toString() : "0"}
                   onChange={(e) => {
                     const value = parseInt(e.target.value, 10);
@@ -117,6 +121,8 @@ export default function TimeSetup({ onTimeSet }: TimeSetupProps) {
                   id="seconds"
                   min="0"
                   max="59"
+                  inputMode="numeric"
+                  autoComplete="off"
                   value={isClient ? seconds.toString() : "0"}
                   onChange={(e) => {
                     const value = parseInt(e.target.value, 10);

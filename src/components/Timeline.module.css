@@ -167,9 +167,10 @@
 
 .activityName {
   color: inherit;
-  white-space: normal; /* Allow text to wrap */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   flex: 1; /* Take up remaining space */
-  word-break: break-word; /* Break long words if needed */
 }
 
 .breakEntry {

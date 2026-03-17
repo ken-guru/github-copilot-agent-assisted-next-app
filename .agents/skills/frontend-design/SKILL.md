@@ -8,15 +8,6 @@ This skill guides creation of distinctive, production-grade frontend interfaces 
 
 The user provides frontend requirements: a component, page, application, or interface to build. They may include context about the purpose, audience, or technical constraints.
 
-## Project Context (mr-timely)
-
-This skill is used within a **Next.js + React + Bootstrap 5 + TypeScript** application. Apply all design guidance in harmony with the following established conventions — do not override or replace them:
-
-- **Component Framework**: Bootstrap 5 + React-Bootstrap is the project's component library. Apply this skill's creative direction *within* Bootstrap — use its grid and components expressively rather than bypassing them. "Avoid predictable patterns" means bring intentionality and craft to Bootstrap components, not abandon the framework.
-- **Typography**: The project font is **Geist** (`--font-geist-sans`, `--font-geist-mono`) loaded via `next/font/google` in `src/app/layout.tsx`. Geist is a distinctive, high-quality font — use it with intentional weight/size/spacing choices. The system font stack in `globals.css` (which includes Roboto as a fallback) is a browser fallback only, not an intentional design choice; the skill's guidance about avoiding Roboto applies to intentional font selection, not fallback stacks.
-- **Theme System**: Light/dark/system modes are managed via Bootstrap's `data-bs-theme` attribute and CSS variables defined in `styles/globals.css`. New work must integrate with this system. Respect `--bg-primary`, `--accent-color`, `--text-primary` and the full CSS variable palette already defined rather than introducing separate color systems.
-- **Accessibility**: WCAG compliance is a hard requirement. Animations must respect `prefers-reduced-motion`.
-
 ## Design Thinking
 
 Before coding, understand the context and commit to a BOLD aesthetic direction:

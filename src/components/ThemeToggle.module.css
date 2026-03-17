@@ -25,6 +25,12 @@
   transition: color 0.15s ease-in-out;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .toggleButton {
+    transition: none;
+  }
+}
+
 /* Mobile optimization - ensure icons are visible */
 @media (max-width: 576px) {
   .toggleButton svg {

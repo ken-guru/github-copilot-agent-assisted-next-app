@@ -51,7 +51,7 @@ export default function ProgressBar({
 
   // Render time markers component
   const timeMarkersComponent = totalDuration > 0 && (
-    <div className="d-flex justify-content-between mt-2 px-1" style={{ fontSize: '0.75rem', color: 'var(--bs-text-muted)' }}>
+    <div className="d-flex justify-content-between mt-2 px-1" style={{ fontSize: '0.75rem', color: 'var(--bs-text-muted)', fontVariantNumeric: 'tabular-nums' }}>
       <span>0:00</span>
       <span>{formatTimeHuman(Math.floor(totalDuration / 2) * 1000)}</span>
       <span>{formatTimeHuman(totalDuration * 1000)}</span>

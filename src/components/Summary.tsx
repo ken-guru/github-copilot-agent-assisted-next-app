@@ -572,7 +572,7 @@ export default function Summary({
             <Card className="text-center h-100">
               <Card.Body className="text-center">
                 <div className="card-title small text-muted" data-testid="stat-label-planned">Planned Time</div>
-                <div className="card-text fs-4 fw-bold" data-testid="stat-value-planned">{formatDuration(totalDuration)}</div>
+                <div className="card-text fs-4 fw-bold" style={{ fontVariantNumeric: 'tabular-nums' }} data-testid="stat-value-planned">{formatDuration(totalDuration)}</div>
               </Card.Body>
             </Card>
           </Col>
@@ -581,7 +581,7 @@ export default function Summary({
             <Card className="text-center h-100">
               <Card.Body className="text-center">
                 <div className="card-title small text-muted" data-testid="stat-label-spent">Spent Time</div>
-                <div className="card-text fs-4 fw-bold" data-testid="stat-value-spent">{formatDuration(elapsedTime)}</div>
+                <div className="card-text fs-4 fw-bold" style={{ fontVariantNumeric: 'tabular-nums' }} data-testid="stat-value-spent">{formatDuration(elapsedTime)}</div>
               </Card.Body>
             </Card>
           </Col>
@@ -590,7 +590,7 @@ export default function Summary({
             <Card className="text-center h-100">
               <Card.Body className="text-center">
                 <div className="card-title small text-muted" data-testid="stat-label-idle">Idle Time</div>
-                <div className="card-text fs-4 fw-bold" data-testid="stat-value-idle">{formatDuration(stats.idleTime)}</div>
+                <div className="card-text fs-4 fw-bold" style={{ fontVariantNumeric: 'tabular-nums' }} data-testid="stat-value-idle">{formatDuration(stats.idleTime)}</div>
               </Card.Body>
             </Card>
           </Col>
@@ -599,7 +599,7 @@ export default function Summary({
             <Card className="text-center h-100">
               <Card.Body className="text-center">
                 <div className="card-title small text-muted" data-testid="stat-label-overtime">Overtime</div>
-                <div className="card-text fs-4 fw-bold" data-testid="stat-value-overtime">{formatDuration(overtime)}</div>
+                <div className="card-text fs-4 fw-bold" style={{ fontVariantNumeric: 'tabular-nums' }} data-testid="stat-value-overtime">{formatDuration(overtime)}</div>
               </Card.Body>
             </Card>
           </Col>

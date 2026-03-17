@@ -20,7 +20,8 @@
 :root.dark-mode, :root[data-theme="dark"], .dark {
   --foreground-rgb: 255, 255, 255;
   --background-rgb: 0, 0, 0;
-  
+  color-scheme: dark;
+
   /* Note: Other theme variables are automatically applied via styles/globals.css */
 }
 
@@ -166,7 +167,7 @@ button {
   min-height: 56px; 
   text-decoration: none;
   color: var(--text-secondary, #6c757d); 
-  transition: all 0.2s;
+  transition: color 0.2s, opacity 0.2s;
   position: relative;
 }
 
@@ -301,5 +302,24 @@ button {
 @media (min-width: 992px) {
   .pwa-prompt {
     bottom: 16px;
+  }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-timeline-entry {
+    transition: none;
+  }
+
+  .mobile-timeline-entry.active {
+    animation: none;
+  }
+
+  .bottom-nav-item {
+    transition: none;
+  }
+
+  .swipeable-content {
+    transition: none;
   }
 }
