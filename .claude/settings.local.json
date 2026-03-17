@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebFetch(domain:mr-timely.paulsennet.no)"
-    ]
-  }
-}
