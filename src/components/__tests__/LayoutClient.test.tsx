@@ -110,7 +110,8 @@ describe('LayoutClient', () => {
     
     // Check order: Bootstrap script, skip link, ServiceWorkerUpdater, OfflineIndicator, Navigation, Content
     expect(children[0]).toHaveAttribute('data-testid', 'bootstrap-script');
-    expect(children[1].tagName).toBe('A');
+    expect(children.length).toBeGreaterThan(1);
+    expect(children[1]?.tagName).toBe('A');
     expect(children[1]).toHaveAttribute('href', '#main-content');
     expect(children[1]).toHaveClass('skip-link');
     expect(children[1]).toHaveTextContent('Skip to main content');
