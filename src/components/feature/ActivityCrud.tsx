@@ -316,7 +316,7 @@ const ActivityCrud: React.FC = () => {
   };
 
   return (
-    <div className="container-fluid py-4">
+    <div className="container-fluid">
       {/* Activities List Section */}
       <div className="row">
         <div className="col-12">
