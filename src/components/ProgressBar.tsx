@@ -1,4 +1,3 @@
-import React from 'react';
 import { ProgressBar as BootstrapProgressBar } from 'react-bootstrap';
 import { TimelineEntry } from '@/types';
 import { formatTimeHuman } from '@/utils/time';
