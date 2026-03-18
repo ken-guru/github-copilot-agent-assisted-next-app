@@ -169,7 +169,7 @@ function AppContent() {
         
         <div className="flex-grow-1 d-flex flex-column overflow-x-hidden overflow-y-auto">
           {appState === 'setup' && (
-            <div className="d-flex justify-content-center align-items-start flex-grow-1 p-3 p-md-4">
+            <div className="d-flex flex-column flex-grow-1 p-3 p-md-4">
               <TimeSetup onTimeSet={handleTimeSet} />
             </div>
           )}
@@ -213,7 +213,7 @@ function AppContent() {
           )}
           
           {appState === 'completed' && (
-            <div className="d-flex justify-content-center flex-grow-1 p-3 p-md-4">
+            <div className="d-flex flex-column flex-grow-1 p-3 p-md-4">
               <Summary 
                 entries={processedEntries}
                 totalDuration={totalDuration} 
