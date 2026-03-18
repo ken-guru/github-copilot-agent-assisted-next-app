@@ -108,11 +108,16 @@ describe('LayoutClient', () => {
     const layoutElement = screen.getByTestId('service-worker-updater').parentElement;
     const children = Array.from(layoutElement?.children || []);
     
-    // Check order: Bootstrap script, ServiceWorkerUpdater, OfflineIndicator, Navigation, Content
+    // Check order: Bootstrap script, skip link, ServiceWorkerUpdater, OfflineIndicator, Navigation, Content
     expect(children[0]).toHaveAttribute('data-testid', 'bootstrap-script');
-    expect(children[1]).toHaveAttribute('data-testid', 'service-worker-updater');
-    expect(children[2]).toHaveAttribute('data-testid', 'offline-indicator');
-    expect(children[3]).toHaveAttribute('data-testid', 'navigation');
-    expect(children[4]).toHaveAttribute('data-testid', 'test-content');
+    expect(children.length).toBeGreaterThan(1);
+    expect(children[1]?.tagName).toBe('A');
+    expect(children[1]).toHaveAttribute('href', '#main-content');
+    expect(children[1]).toHaveClass('skip-link');
+    expect(children[1]).toHaveTextContent('Skip to main content');
+    expect(children[2]).toHaveAttribute('data-testid', 'service-worker-updater');
+    expect(children[3]).toHaveAttribute('data-testid', 'offline-indicator');
+    expect(children[4]).toHaveAttribute('data-testid', 'navigation');
+    expect(children[5]).toHaveAttribute('data-testid', 'test-content');
   });
 });

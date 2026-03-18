@@ -51,21 +51,21 @@ describe('ActivityButton', () => {
 
   it('shows start button with play icon when not completed', () => {
     render(<ActivityButton {...defaultProps} />);
-    const startButton = screen.getByRole('button', { name: 'Start' });
+    const startButton = screen.getByRole('button', { name: 'Start Test Activity' });
     expect(startButton).toBeInTheDocument();
     expect(startButton.querySelector('svg')).toBeInTheDocument();
   });
 
   it('shows complete button with checkmark when running', () => {
     render(<ActivityButton {...defaultProps} isRunning={true} />);
-    const completeButton = screen.getByRole('button', { name: 'Complete' });
+    const completeButton = screen.getByRole('button', { name: 'Complete Test Activity' });
     expect(completeButton).toBeInTheDocument();
     expect(completeButton.querySelector('svg')).toBeInTheDocument();
   });
 
   it('handles select events', () => {
     render(<ActivityButton {...defaultProps} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Start' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Start Test Activity' }));
     expect(defaultProps.onSelect).toHaveBeenCalledWith(defaultActivity);
   });
 
@@ -73,7 +73,7 @@ describe('ActivityButton', () => {
     const onRemove = jest.fn();
     render(<ActivityButton {...defaultProps} onRemove={onRemove} />);
     
-    const removeButton = screen.getByRole('button', { name: 'Remove' });
+    const removeButton = screen.getByRole('button', { name: 'Remove Test Activity' });
     expect(removeButton.querySelector('svg')).toBeInTheDocument();
     
     fireEvent.click(removeButton);
@@ -93,7 +93,7 @@ describe('ActivityButton', () => {
       }]}
     />);
     
-    expect(screen.getByRole('button', { name: 'Remove' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Remove Test Activity' })).toBeDisabled();
   });
 
   describe('Timer Display', () => {

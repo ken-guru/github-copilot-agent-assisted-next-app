@@ -136,6 +136,11 @@ export function LayoutClient({ children }: LayoutClientProps) {
           strategy="afterInteractive"
         />
         
+        {/* Skip to main content – first focusable element (WCAG 2.4.1) */}
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+
         {/* Toast notification system */}
         <ToastContainer />
         

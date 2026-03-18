@@ -155,10 +155,11 @@ function AppContent() {
   
   return (
     <>
-      <main className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
+      <main id="main-content" className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
         {/* Confirmation Dialog */}
         <ConfirmationDialog
           ref={resetDialogRef}
+          title="Reset session"
           message={dialogActions.message}
           confirmText="Reset"
           cancelText="Cancel"
@@ -166,15 +167,13 @@ function AppContent() {
           onCancel={dialogActions.onCancel}
         />
         
-        <div className="flex-grow-1 d-flex flex-column overflow-x-hidden overflow-y-auto">
+        <div className="d-flex flex-column flex-grow-1 overflow-x-hidden overflow-y-auto p-3 p-md-4">
           {appState === 'setup' && (
-            <div className="d-flex justify-content-center align-items-start flex-grow-1 p-4">
-              <TimeSetup onTimeSet={handleTimeSet} />
-            </div>
+            <TimeSetup onTimeSet={handleTimeSet} />
           )}
           
           {appState === 'activity' && (
-            <div className="row flex-grow-1 g-3 px-3 pt-3 pb-3 overflow-x-hidden overflow-y-auto">
+            <div className="row flex-grow-1 g-3">
               <div className="col-lg-5 d-flex flex-column overflow-x-hidden overflow-y-auto">
                 <ActivityManager 
                   onActivitySelect={handleActivitySelect} 
@@ -212,16 +211,14 @@ function AppContent() {
           )}
           
           {appState === 'completed' && (
-            <div className="d-flex justify-content-center flex-grow-1 p-4">
-              <Summary 
-                entries={processedEntries}
-                totalDuration={totalDuration} 
-                elapsedTime={elapsedTime}
-                allActivitiesCompleted={allActivitiesCompleted}
-                skippedActivityIds={removedActivityIds}
-                onReset={handleReset}
-              />
-            </div>
+            <Summary 
+              entries={processedEntries}
+              totalDuration={totalDuration} 
+              elapsedTime={elapsedTime}
+              allActivitiesCompleted={allActivitiesCompleted}
+              skippedActivityIds={removedActivityIds}
+              onReset={handleReset}
+            />
           )}
         </div>
       </main>

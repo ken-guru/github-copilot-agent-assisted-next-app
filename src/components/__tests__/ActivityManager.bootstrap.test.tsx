@@ -384,7 +384,7 @@ describe('ActivityManager Bootstrap Integration', () => {
 
       // Start an activity
       const homeworkColumn = screen.getByTestId('activity-column-1');
-      const startButton = within(homeworkColumn).getByRole('button', { name: 'Start' });
+      const startButton = within(homeworkColumn).getByRole('button', { name: 'Start Homework' });
       fireEvent.click(startButton);
 
       // Bootstrap structure should be maintained

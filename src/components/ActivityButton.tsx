@@ -106,20 +106,20 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
                   onClick={handleClick}
                   disabled={isCompleted}
                   className="text-nowrap"
-                  title={isRunning ? "Complete" : "Start"}
-                  aria-label={isRunning ? "Complete" : "Start"}
+                  title={isRunning ? `Complete ${name}` : `Start ${name}`}
+                  aria-label={isRunning ? `Complete ${name}` : `Start ${name}`}
                   data-testid={`${isRunning ? 'complete' : 'start'}-activity-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
                 >
                   {isRunning ? (
                     <>
-                      <svg className="me-1" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="me-1" width="14" height="14" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                       </svg>
                       Complete
                     </>
                   ) : (
                     <>
-                      <svg className="me-1" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="me-1" width="14" height="14" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M8 5v14l11-7z" />
                       </svg>
                       Start
@@ -134,11 +134,11 @@ const ActivityButton: React.FC<ActivityButtonProps> = ({
                     onClick={handleRemove}
                     disabled={isInUse}
                     className={`text-nowrap ${isInUse ? "disabled" : ""}`}
-                    title={isInUse ? "Can't remove while activity is in use" : "Remove activity"}
-                    aria-label="Remove"
+                    title={isInUse ? `Can't remove ${name} while activity is in use` : `Remove ${name}`}
+                    aria-label={`Remove ${name}`}
                     data-testid={`remove-activity-${name.toLowerCase().replace(/\s+/g, '-')}`}
                   >
-                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                     </svg>
                   </Button>

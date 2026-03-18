@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const navItems = [
-  { href: '/', label: 'Timer', icon: 'bi-clock' },
-  { href: '/activities', label: 'Activities', icon: 'bi-list-task' },
-  { href: '/ai', label: 'AI', icon: 'bi-lightbulb' },
+  { href: '/', label: 'Timer', icon: 'bi-stopwatch' },
+  { href: '/activities', label: 'Activities', icon: 'bi-list-check' },
+  { href: '/ai', label: 'AI', icon: 'bi-stars' },
 ];
 
 export const BottomNavigation: React.FC = () => {

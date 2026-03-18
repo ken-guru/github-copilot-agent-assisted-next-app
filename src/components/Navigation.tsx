@@ -40,7 +40,7 @@ const Navigation: React.FC = () => {
       data-bs-theme={theme}
     >
       <div className="container-fluid">
-        <Navbar.Brand href="/" data-testid="navbar-brand">
+        <Navbar.Brand href="/" data-testid="navbar-brand" aria-label="Mr. Timely home">
           <i className="bi bi-clock me-2" aria-hidden="true"></i>
           <span className="brand-text d-none d-sm-inline">Mr. Timely</span>
         </Navbar.Brand>
@@ -65,6 +65,7 @@ const Navigation: React.FC = () => {
             <Nav.Link 
               href="/"
               active={isTimerActive}
+              aria-current={isTimerActive ? 'page' : undefined}
               onClick={closeMobileNav}
               data-testid="timer-nav-item"
             >
@@ -76,6 +77,7 @@ const Navigation: React.FC = () => {
             <Nav.Link 
               href="/activities"
               active={isActivitiesActive}
+              aria-current={isActivitiesActive ? 'page' : undefined}
               onClick={closeMobileNav}
               data-testid="activities-nav-item"
             >
@@ -88,6 +90,7 @@ const Navigation: React.FC = () => {
               <Nav.Link 
                 href="/ai"
                 active={isAIActive}
+                aria-current={isAIActive ? 'page' : undefined}
                 onClick={closeMobileNav}
                 data-testid="ai-nav-item"
               >

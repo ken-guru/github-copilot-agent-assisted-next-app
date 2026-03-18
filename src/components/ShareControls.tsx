@@ -227,6 +227,7 @@ export default function ShareControls({ shareUrl, showOpen = false, showReplace 
       )}
       <ConfirmationDialog
         ref={confirmRef}
+        title="Replace activities"
         message="This will replace your current activities with the shared set. Continue?"
         confirmText="Confirm"
         cancelText="Cancel"

@@ -316,21 +316,17 @@ const ActivityCrud: React.FC = () => {
   };
 
   return (
-    <div className="container-fluid py-4">
+    <>
       {/* Activities List Section */}
-      <div className="row">
-        <div className="col-12">
-          <ActivityList
-            activities={activities}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onAdd={handleAdd}
-            onImport={handleImport}
-            onExport={handleExport}
-            onReset={handleResetToDefault}
-          />
-        </div>
-      </div>
+      <ActivityList
+        activities={activities}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onAdd={handleAdd}
+        onImport={handleImport}
+        onExport={handleExport}
+        onReset={handleResetToDefault}
+      />
 
       {/* Activity Form Modal */}
       <Modal
@@ -623,7 +619,7 @@ const ActivityCrud: React.FC = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </>
   );
 };
 

@@ -303,3 +303,26 @@ button {
     bottom: 16px;
   }
 }
+
+/* Skip to main content link (WCAG 2.4.1 Bypass Blocks)
+   Visually hidden until focused, then snaps to top-left of viewport */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 9999;
+  padding: 0.75rem 1.25rem;
+  background-color: #000;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  transition: top 0.1s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #ffbf00;
+  outline-offset: 2px;
+}

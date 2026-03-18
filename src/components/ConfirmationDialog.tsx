@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
 export interface ConfirmationDialogProps {
+  title?: string;
   message: string;
   confirmText?: string;
   cancelText?: string;
@@ -16,7 +17,7 @@ export interface ConfirmationDialogRef {
 }
 
 const ConfirmationDialog = forwardRef<ConfirmationDialogRef, ConfirmationDialogProps>(
-  ({ message, confirmText = 'Confirm', cancelText = 'Cancel', onConfirm, onCancel }, ref) => {
+  ({ title = 'Confirm action', message, confirmText = 'Confirm', cancelText = 'Cancel', onConfirm, onCancel }, ref) => {
     const [show, setShow] = useState(false);
 
     const showDialog = useCallback(() => {
@@ -48,15 +49,18 @@ const ConfirmationDialog = forwardRef<ConfirmationDialogRef, ConfirmationDialogP
         animation={true}
         className="fade"
       >
+        <Modal.Header closeButton>
+          <Modal.Title>{title}</Modal.Title>
+        </Modal.Header>
         <Modal.Body>
           <p>{message}</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={handleConfirm} autoFocus>
-            {confirmText}
-          </Button>
-          <Button variant="secondary" onClick={handleCancel}>
+          <Button variant="secondary" onClick={handleCancel} autoFocus>
             {cancelText}
+          </Button>
+          <Button variant="primary" onClick={handleConfirm}>
+            {confirmText}
           </Button>
         </Modal.Footer>
       </Modal>

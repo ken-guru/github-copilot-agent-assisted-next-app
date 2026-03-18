@@ -202,6 +202,25 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
     ? `${isOvertime ? 'Overtime: ' : 'Time Left: '}${formatTimeHuman(Math.abs(timeLeft) * 1000)}`
     : `Timer ready: ${formatTimeHuman(totalDuration * 1000)}`;
 
+  // Live region announcement for significant timer state changes (WCAG 4.1.3)
+  const [statusAnnouncement, setStatusAnnouncement] = useState('');
+  const prevIsOvertime = React.useRef(isOvertime);
+  const prevAllCompleted = React.useRef(allActivitiesCompleted);
+  const prevTimerActive = React.useRef(timerActive);
+
+  useEffect(() => {
+    if (timerActive && !prevTimerActive.current) {
+      setStatusAnnouncement('Timer started.');
+    } else if (isOvertime && !prevIsOvertime.current) {
+      setStatusAnnouncement('Time is up. Timer is now in overtime.');
+    } else if (allActivitiesCompleted && !prevAllCompleted.current) {
+      setStatusAnnouncement('All activities completed.');
+    }
+    prevIsOvertime.current = isOvertime;
+    prevAllCompleted.current = allActivitiesCompleted;
+    prevTimerActive.current = timerActive;
+  }, [timerActive, isOvertime, allActivitiesCompleted]);
+
   // Calculate effective duration for timeline - dynamically adjust if in overtime
   const effectiveDuration = useMemo(() => {
     if (isOvertime) {
@@ -308,10 +327,21 @@ export default function Timeline({ entries, totalDuration, elapsedTime: initialE
   
   return (
     <Card className="border h-100 d-flex flex-column w-100">
+      {/* Visually-hidden live region for screen reader announcements (WCAG 4.1.3) */}
+      <div role="status" aria-live="assertive" aria-atomic="true" className="visually-hidden">
+        {statusAnnouncement}
+      </div>
       <Card.Header className="card-header-consistent">
         <h5 className="mb-0">Timeline</h5>
         {showCounter && (
-          <Badge bg="secondary" className="ms-2 text-nowrap" data-testid="time-display">
+          <Badge
+            bg="secondary"
+            className="ms-2 text-nowrap"
+            data-testid="time-display"
+            role="timer"
+            aria-label={timeDisplay}
+            aria-live="off"
+          >
             {timeDisplay}
           </Badge>
         )}

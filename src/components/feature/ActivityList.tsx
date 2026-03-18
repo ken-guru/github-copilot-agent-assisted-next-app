@@ -31,7 +31,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
               overlay={<Tooltip>Create a new custom activity</Tooltip>}
             >
               <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center px-3">
-                <i className="bi bi-plus me-2"></i>
+                <i className="bi bi-plus me-2" aria-hidden="true"></i>
                 Add Activity
               </Button>
             </OverlayTrigger>
@@ -40,7 +40,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
         <Card.Body>
           <div className="text-center py-4">
             <div className="text-muted">
-              <i className="bi bi-kanban fa-2x mb-3"></i>
+              <i className="bi bi-kanban fa-2x mb-3" aria-hidden="true"></i>
               <p>No activities found</p>
               <p className="mb-0 small">You can import a JSON file or reset to defaults to get started.</p>
             </div>
@@ -60,7 +60,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                     onClick={onImport}
                     className="d-flex align-items-center px-3"
                   >
-                    <i className="bi bi-upload me-2"></i>
+                    <i className="bi bi-upload me-2" aria-hidden="true"></i>
                     Import
                   </Button>
                 </OverlayTrigger>
@@ -76,7 +76,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                     onClick={onReset}
                     className="d-flex align-items-center px-3"
                   >
-                    <i className="bi bi-arrow-clockwise me-2"></i>
+                    <i className="bi bi-arrow-clockwise me-2" aria-hidden="true"></i>
                     Reset Activities
                   </Button>
                 </OverlayTrigger>
@@ -98,7 +98,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
             overlay={<Tooltip>Create a new custom activity</Tooltip>}
           >
             <Button variant="primary" onClick={onAdd} size="sm" className="d-flex align-items-center px-3">
-              <i className="bi bi-plus me-2"></i>
+              <i className="bi bi-plus me-2" aria-hidden="true"></i>
               Add Activity
             </Button>
           </OverlayTrigger>
@@ -150,7 +150,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                   aria-label={`Edit ${activity.name}`}
                   className="d-flex align-items-center px-3"
                 >
-                  <i className="bi bi-pencil me-2"></i>
+                  <i className="bi bi-pencil me-2" aria-hidden="true"></i>
                   Edit
                 </Button>
               </OverlayTrigger>
@@ -165,7 +165,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                   aria-label={`Delete ${activity.name}`}
                   className="d-flex align-items-center px-3"
                 >
-                  <i className="bi bi-trash me-2"></i>
+                  <i className="bi bi-trash me-2" aria-hidden="true"></i>
                   Delete
                 </Button>
               </OverlayTrigger>
@@ -189,7 +189,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                   onClick={onImport}
                   className="d-flex align-items-center px-3"
                 >
-                  <i className="bi bi-upload me-2"></i>
+                  <i className="bi bi-upload me-2" aria-hidden="true"></i>
                   Import
                 </Button>
               </OverlayTrigger>
@@ -205,7 +205,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                   onClick={onExport}
                   className="d-flex align-items-center px-3"
                 >
-                  <i className="bi bi-download me-2"></i>
+                  <i className="bi bi-download me-2" aria-hidden="true"></i>
                   Export
                 </Button>
               </OverlayTrigger>
@@ -221,7 +221,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ activities, onEdit, onDelet
                   onClick={onReset}
                   className="d-flex align-items-center px-3"
                 >
-                  <i className="bi bi-arrow-clockwise me-2"></i>
+                  <i className="bi bi-arrow-clockwise me-2" aria-hidden="true"></i>
                   Reset Activities
                 </Button>
               </OverlayTrigger>

@@ -131,7 +131,7 @@ describe('ActivityManager Component', () => {
     });
     
     // Find the Complete button for the running activity
-    const completeButton = await screen.findByRole('button', { name: 'Complete' });
+    const completeButton = await screen.findByRole('button', { name: 'Complete Homework' });
     
     // Click Complete
     fireEvent.click(completeButton);
@@ -188,7 +188,7 @@ describe('ActivityManager Component', () => {
     });
     
     // Find all remove buttons and click the first one
-    const removeButtons = await screen.findAllByRole('button', { name: 'Remove' });
+    const removeButtons = await screen.findAllByRole('button', { name: /^Remove / });
     expect(removeButtons.length).toBeGreaterThan(0);
     const firstRemoveButton = removeButtons[0] as HTMLElement;
     fireEvent.click(firstRemoveButton);
@@ -224,7 +224,7 @@ describe('ActivityManager Component', () => {
     });
     
     // Find all remove buttons
-    const removeButtons = await screen.findAllByRole('button', { name: 'Remove' });
+    const removeButtons = await screen.findAllByRole('button', { name: /^Remove / });
     
     // First button (Homework) should be disabled
     expect(removeButtons[0]).toBeDisabled();
@@ -301,7 +301,7 @@ describe('ActivityManager Component', () => {
     }
     
     // Find the Start button within this item and click it
-    const startButton = within(homeworkItem).getByRole('button', { name: 'Start' });
+    const startButton = within(homeworkItem).getByRole('button', { name: 'Start Homework' });
     fireEvent.click(startButton);
     
     // Should call onActivitySelect with the activity object

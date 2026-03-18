@@ -26,7 +26,8 @@ export const CollapsibleTimeline: React.FC<CollapsibleTimelineProps> = ({
         aria-expanded={isOpen}
         aria-controls="mobile-timeline-collapse"
       >
-        {isOpen ? '▼' : '▶'} Timeline {entries.length > 0 && `(${entries.length})`}
+        <span aria-hidden="true">{isOpen ? '▼' : '▶'}</span>
+        {' '}Timeline{entries.length > 0 && ` (${entries.length})`}
       </Button>
       <Collapse in={isOpen}>
         <div id="mobile-timeline-collapse">
