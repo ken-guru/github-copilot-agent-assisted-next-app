@@ -167,15 +167,13 @@ function AppContent() {
           onCancel={dialogActions.onCancel}
         />
         
-        <div className="flex-grow-1 d-flex flex-column overflow-x-hidden overflow-y-auto">
+        <div className="d-flex flex-column flex-grow-1 overflow-x-hidden overflow-y-auto p-3 p-md-4">
           {appState === 'setup' && (
-            <div className="d-flex flex-column flex-grow-1 p-3 p-md-4">
-              <TimeSetup onTimeSet={handleTimeSet} />
-            </div>
+            <TimeSetup onTimeSet={handleTimeSet} />
           )}
           
           {appState === 'activity' && (
-            <div className="row flex-grow-1 g-3 p-3 p-md-4 overflow-x-hidden overflow-y-auto">
+            <div className="row flex-grow-1 g-3">
               <div className="col-lg-5 d-flex flex-column overflow-x-hidden overflow-y-auto">
                 <ActivityManager 
                   onActivitySelect={handleActivitySelect} 
@@ -213,16 +211,14 @@ function AppContent() {
           )}
           
           {appState === 'completed' && (
-            <div className="d-flex flex-column flex-grow-1 p-3 p-md-4">
-              <Summary 
-                entries={processedEntries}
-                totalDuration={totalDuration} 
-                elapsedTime={elapsedTime}
-                allActivitiesCompleted={allActivitiesCompleted}
-                skippedActivityIds={removedActivityIds}
-                onReset={handleReset}
-              />
-            </div>
+            <Summary 
+              entries={processedEntries}
+              totalDuration={totalDuration} 
+              elapsedTime={elapsedTime}
+              allActivitiesCompleted={allActivitiesCompleted}
+              skippedActivityIds={removedActivityIds}
+              onReset={handleReset}
+            />
           )}
         </div>
       </main>

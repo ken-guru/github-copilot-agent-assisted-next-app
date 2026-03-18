@@ -196,7 +196,7 @@ export default function AIPlannerPage() {
   if (!apiKey) {
     return (
       <main id="main-content" className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
-        <div className="d-flex flex-column flex-grow-1 overflow-y-auto p-3 p-md-4">
+        <div className="d-flex flex-column flex-grow-1 overflow-x-hidden overflow-y-auto p-3 p-md-4">
           <Card>
             <Card.Header>
               <h5 className="mb-0 d-flex align-items-center">
@@ -256,7 +256,7 @@ export default function AIPlannerPage() {
 
   return (
     <main id="main-content" className="d-flex flex-column flex-grow-1 overflow-hidden" style={{ height: '100%' }}>
-      <div className="d-flex flex-column flex-grow-1 overflow-y-auto p-3 p-md-4">
+      <div className="d-flex flex-column flex-grow-1 overflow-x-hidden overflow-y-auto p-3 p-md-4">
         <Card>
           <Card.Header>
             <h5 className="mb-0 d-flex align-items-center">
