@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["es5", "dom"],
+    "target": "ES2017",
+    "lib": ["ES2017", "dom"],
     "types": ["cypress", "node"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -10,11 +10,14 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "baseUrl": ".."
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "*": ["../*"]
+    }
   },
   "include": ["**/*.ts"]
 }
