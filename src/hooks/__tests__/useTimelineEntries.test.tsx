@@ -14,7 +14,7 @@ describe('useTimelineEntries', () => {
 
   beforeEach(() => {
     jest.useFakeTimers();
-    jest.setSystemTime(new Date('2024-01-01'));
+    jest.setSystemTime(new Date('2024-01-01').getTime());
   });
 
   afterEach(() => {
