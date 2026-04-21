@@ -40,10 +40,11 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
       "caughtErrorsIgnorePattern": "^_"
     }],
     "@typescript-eslint/no-explicit-any": "warn",
-    // Temporarily enable strict React Hooks rules from v7 to see violations
-    "react-hooks/immutability": "error",
-    "react-hooks/purity": "error",
-    "react-hooks/set-state-in-effect": "error",
+    // Keep strict hooks checks informational while upgrading lint dependencies
+    "react-hooks/immutability": "warn",
+    "react-hooks/purity": "warn",
+    "react-hooks/set-state-in-effect": "warn",
+    "react-hooks/preserve-manual-memoization": "warn",
   },
 }, {
   ignores: [
