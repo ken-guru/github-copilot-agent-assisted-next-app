@@ -42,7 +42,7 @@
     "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "cypress": "^15.14.0",
+    "cypress": "^15.14.1",
     "eslint": "^10",
     "eslint-config-next": "^16.2.4",
     "fast-check": "^4.7.0",
