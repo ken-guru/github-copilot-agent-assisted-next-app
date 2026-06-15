@@ -44,7 +44,7 @@
     "@types/react-dom": "^19",
     "cypress": "^15.17.0",
     "eslint": "^10",
-    "eslint-config-next": "^16.2.6",
+    "eslint-config-next": "^16.2.9",
     "fast-check": "^4.8.0",
     "jest": "^30.4.2",
     "jest-axe": "^10.0.0",
