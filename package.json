@@ -26,7 +26,7 @@
     "@vercel/speed-insights": "^2.1.0",
     "bootstrap": "^5.3.9",
     "bootstrap-icons": "^1.13.2",
-    "next": "^16.2.12",
+    "next": "^16.4.6",
     "react": "^19.2.7",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.7",
