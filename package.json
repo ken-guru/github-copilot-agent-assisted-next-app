@@ -45,7 +45,7 @@
     "cypress": "^15.17.0",
     "eslint": "^10",
     "eslint-config-next": "^16.2.9",
-    "fast-check": "^4.10.2",
+    "fast-check": "^4.10.3",
     "jest": "^30.4.2",
     "jest-axe": "^10.0.0",
     "jest-environment-jsdom": "^30.4.1",
